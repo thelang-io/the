@@ -165,17 +165,20 @@ void error_Error_free (struct error_Error *n) {
   free(n);
 }
 void __THE_1_test_0 (void *px) {
+  error_stack_push(&err_state, "/test", "test");
   error_stack_pos(&err_state, 2, 3);
   error_assign(&err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")));
   goto L1;
 L1:
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
-  __THE_0_test_0.f(__THE_0_test_0.x);
+  (error_stack_pos(&err_state, 6, 3), __THE_0_test_0.f(__THE_0_test_0.x));
 L2:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
@@ -188,3 +191,6 @@ L2:
 }
 ======= flags =======
 ======= stderr =======
+Uncaught Error: test
+  at test (/test:2:3)
+  at main (/test:6:3)

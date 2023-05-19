@@ -164,9 +164,11 @@ void __THE_1_array_ref_int_free (struct __THE_1_array_ref_int n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const int32_t __THE_0_testInt_0 = 1;
-  const int32_t *__THE_0_var1_0 = &__THE_0_testInt_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const int32_t __THE_0_testInt_0 = 1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t *__THE_0_var1_0 = &__THE_0_testInt_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const struct __THE_1_array_ref_int __THE_0_a_0 = __THE_1_array_ref_int_alloc(3, __THE_0_var1_0, __THE_0_var1_0, __THE_0_var1_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_array_ref_int __THE_0_b_0 = __THE_1_array_ref_int_alloc(3, &__THE_0_testInt_0, &__THE_0_testInt_0, &__THE_0_testInt_0);

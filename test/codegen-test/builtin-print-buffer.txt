@@ -69,6 +69,7 @@ void buffer_free (struct buffer);
 struct str buffer_str (struct buffer);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
@@ -114,6 +115,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -213,15 +218,15 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  const struct buffer __THE_0_buf1_0 = str_toBuffer(str_alloc(""));
+  const struct buffer __THE_0_buf1_0 = (error_stack_pos(&err_state, 2, 25), str_toBuffer(str_alloc("")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  const struct buffer __THE_0_buf2_0 = str_toBuffer(str_alloc("Aaron"));
+  const struct buffer __THE_0_buf2_0 = (error_stack_pos(&err_state, 3, 25), str_toBuffer(str_alloc("Aaron")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_buf1_0)), " ", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL);
+  (error_stack_pos(&err_state, 5, 3), print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_buf1_0)), " ", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf1_0)), THE_EOL);
+  (error_stack_pos(&err_state, 6, 3), print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf1_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL);
+  (error_stack_pos(&err_state, 7, 3), print(stdout, "sz", buffer_str(buffer_copy(__THE_0_buf2_0)), THE_EOL));
 L3:
   buffer_free((struct buffer) __THE_0_buf2_0);
 L2:

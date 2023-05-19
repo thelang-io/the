@@ -194,25 +194,31 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct
   return n2;
 }
 void __THE_1_job1_0 (void *px) {
+  error_stack_push(&err_state, "/test", "job1");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void __THE_1_job2_0 (void *px) {
+  error_stack_push(&err_state, "/test", "job2");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_job1_0 = (struct __THE_1_fn$1000) {&__THE_1_job1_0, NULL, 0};
   const struct __THE_1_fn$1000 __THE_0_job2_0 = (struct __THE_1_fn$1000) {&__THE_1_job2_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   const struct __THE_1_Test_0 *__THE_0_test1_0 = __THE_1_Test_0_alloc(__THE_1_fn$1000_copy(__THE_0_job1_0));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_copy(__THE_0_test1_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_test2_0 = __THE_1_Test_0_realloc(__THE_0_test2_0, __THE_1_Test_0_alloc(__THE_1_fn$1000_copy(__THE_0_job2_0)));
-L3:
+L5:
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);
-L2:
+L4:
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test1_0);
-L1:
+L3:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

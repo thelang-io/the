@@ -275,7 +275,7 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  print(stdout, "sz", buffer_str((error_stack_pos(&err_state, 2, 9), fs_readFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")))), THE_EOL);
+  (error_stack_pos(&err_state, 2, 3), print(stdout, "sz", buffer_str((error_stack_pos(&err_state, 2, 9), fs_readFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")))), THE_EOL));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

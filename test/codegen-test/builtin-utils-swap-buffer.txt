@@ -228,19 +228,19 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  struct buffer __THE_0_a_0 = str_toBuffer(str_alloc("aaron"));
+  struct buffer __THE_0_a_0 = (error_stack_pos(&err_state, 2, 12), str_toBuffer(str_alloc("aaron")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  struct buffer __THE_0_b_0 = str_toBuffer(str_alloc("delasy"));
+  struct buffer __THE_0_b_0 = (error_stack_pos(&err_state, 3, 12), str_toBuffer(str_alloc("delasy")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_a_0)), " ", buffer_str(buffer_copy(__THE_0_b_0)), THE_EOL);
+  (error_stack_pos(&err_state, 5, 3), print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_a_0)), " ", buffer_str(buffer_copy(__THE_0_b_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 6, 3), utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct buffer)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_a_0)), " ", buffer_str(buffer_copy(__THE_0_b_0)), THE_EOL);
+  (error_stack_pos(&err_state, 7, 3), print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_a_0)), " ", buffer_str(buffer_copy(__THE_0_b_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 8, 3), utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct buffer)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_a_0)), " ", buffer_str(buffer_copy(__THE_0_b_0)), THE_EOL);
+  (error_stack_pos(&err_state, 9, 3), print(stdout, "szsz", buffer_str(buffer_copy(__THE_0_a_0)), " ", buffer_str(buffer_copy(__THE_0_b_0)), THE_EOL));
 L3:
   buffer_free((struct buffer) __THE_0_b_0);
 L2:

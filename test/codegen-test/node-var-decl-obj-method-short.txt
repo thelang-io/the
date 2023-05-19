@@ -164,15 +164,18 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
   free(n);
 }
 void __THE_1_TestSDtest_0 (void *px) {
+  error_stack_push(&err_state, "/test", "Test.test");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_TestSDtest_0 = (struct __THE_1_fn$1000) {&__THE_1_TestSDtest_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   const struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc();
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
-L1:
+L2:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

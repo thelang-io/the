@@ -203,15 +203,25 @@ int main () {
   __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_c1_0))) : str_copy(__THE_0_a1_0));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_d1_0 = str_realloc(__THE_0_d1_0, true ? str_copy(__THE_0_c1_0) : str_copy(__THE_0_b1_0 = str_realloc(__THE_0_b1_0, str_copy(__THE_0_a1_0))));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const int32_t __THE_0_a2_0 = 0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   int32_t __THE_0_b2_0 = __THE_0_a2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_b2_0 = __THE_0_a2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   int32_t __THE_0_c2_0 = 1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_c2_0 = __THE_0_b2_0 = __THE_0_a2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   int32_t __THE_0_d2_0 = 2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_d2_0 = __THE_0_c2_0 = __THE_0_b2_0 = __THE_0_a2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_d2_0 = true ? __THE_0_b2_0 : __THE_0_a2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_d2_0 = true ? __THE_0_b2_0 = __THE_0_c2_0 : __THE_0_a2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_d2_0 = true ? __THE_0_c2_0 : (__THE_0_b2_0 = __THE_0_a2_0);
 L5:
   str_free((struct str) __THE_0_d1_0);

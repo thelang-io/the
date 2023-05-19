@@ -232,17 +232,17 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   {
     struct __THE_1_array_int __THE_0_i_0 = __THE_1_array_int_alloc(0);
-    for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_i_0)) < 3; (error_stack_pos(&err_state, 2, 29), __THE_1_array_int_push(&__THE_0_i_0, __THE_1_array_int_alloc(1, 0)))) {
+    for (; (error_stack_pos(&err_state, 2, 18), __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_i_0))) < 3; (error_stack_pos(&err_state, 2, 29), __THE_1_array_int_push(&__THE_0_i_0, __THE_1_array_int_alloc(1, 0)))) {
     }
     __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_i_0);
   }
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(0);
-  for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)) < 3; (error_stack_pos(&err_state, 6, 21), __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, 0)))) {
+  for (; (error_stack_pos(&err_state, 6, 10), __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0))) < 3; (error_stack_pos(&err_state, 6, 21), __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, 0)))) {
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   struct __THE_1_array_int __THE_0_b_0 = __THE_1_array_int_alloc(0);
-  while (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)) < 3) {
+  while ((error_stack_pos(&err_state, 10, 10), __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0))) < 3) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
     (error_stack_pos(&err_state, 11, 5), __THE_1_array_int_push(&__THE_0_b_0, __THE_1_array_int_alloc(1, 0)));
 L5:
@@ -252,7 +252,7 @@ L5:
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   struct __THE_1_array_int __THE_0_c_0 = __THE_1_array_int_alloc(0);
   while (1) {
-    if (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0)) == 3) {
+    if ((error_stack_pos(&err_state, 16, 8), __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0))) == 3) {
       break;
     }
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
@@ -263,7 +263,7 @@ L7:
   }
   {
     struct __THE_1_array_int __THE_0_d_0 = __THE_1_array_int_alloc(0);
-    for (; __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_d_0)) < 3;) {
+    for (; (error_stack_pos(&err_state, 23, 18), __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_d_0))) < 3;) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
       (error_stack_pos(&err_state, 24, 5), __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, 0)));
 L9:
@@ -276,7 +276,7 @@ L8:
   {
     struct __THE_1_array_int __THE_0_e_0 = __THE_1_array_int_alloc(0);
     for (;; (error_stack_pos(&err_state, 27, 19), __THE_1_array_int_push(&__THE_0_e_0, __THE_1_array_int_alloc(1, 0)))) {
-      if (__THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_e_0)) == 3) {
+      if ((error_stack_pos(&err_state, 28, 8), __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_e_0))) == 3) {
         break;
       }
     }

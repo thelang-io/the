@@ -344,23 +344,23 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_map_strMSintME __THE_0_test4_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 0, str_alloc("key3"), 3, str_alloc("key4"), 4);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test1_0)), THE_EOL);
+  (error_stack_pos(&err_state, 7, 3), print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test1_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   (error_stack_pos(&err_state, 8, 3), __THE_1_map_strMSintME_merge(&__THE_0_test1_0, __THE_1_map_strMSintME_copy(__THE_0_test2_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test1_0)), THE_EOL);
+  (error_stack_pos(&err_state, 9, 3), print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test1_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test2_0)), THE_EOL);
+  (error_stack_pos(&err_state, 11, 3), print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test2_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   (error_stack_pos(&err_state, 12, 3), __THE_1_map_strMSintME_merge(&__THE_0_test2_0, __THE_1_map_strMSintME_copy(__THE_0_test3_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test2_0)), THE_EOL);
+  (error_stack_pos(&err_state, 13, 3), print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test2_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test3_0)), THE_EOL);
+  (error_stack_pos(&err_state, 15, 3), print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test3_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   (error_stack_pos(&err_state, 16, 3), __THE_1_map_strMSintME_merge(&__THE_0_test3_0, __THE_1_map_strMSintME_copy(__THE_0_test4_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test3_0)), THE_EOL);
+  (error_stack_pos(&err_state, 17, 3), print(stdout, "sz", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_test3_0)), THE_EOL));
 L5:
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test4_0);
 L4:

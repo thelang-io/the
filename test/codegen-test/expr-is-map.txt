@@ -446,13 +446,13 @@ int main () {
   const struct any __THE_0_a_0 = __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if (__THE_0_a_0.t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 3, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d)))), THE_EOL);
+    (error_stack_pos(&err_state, 3, 22), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 3, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d)))), THE_EOL));
 L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    print(stdout, "zz", "any", THE_EOL);
+    (error_stack_pos(&err_state, 4, 10), print(stdout, "zz", "any", THE_EOL));
 L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;
@@ -461,13 +461,13 @@ L4:
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 7, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d)))), THE_EOL);
+    (error_stack_pos(&err_state, 7, 22), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 7, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d)))), THE_EOL));
 L6:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L5;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
-    print(stdout, "zz", "any", THE_EOL);
+    (error_stack_pos(&err_state, 8, 10), print(stdout, "zz", "any", THE_EOL));
 L7:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L5;
@@ -476,13 +476,13 @@ L7:
   const struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_c_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if (__THE_0_c_0.t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 11, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v2)))), THE_EOL);
+    (error_stack_pos(&err_state, 11, 22), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 11, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v2)))), THE_EOL));
 L9:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L8;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
-    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 12, 27), float_str(__THE_0_c_0.v3))), THE_EOL);
+    (error_stack_pos(&err_state, 12, 10), print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 12, 27), float_str(__THE_0_c_0.v3))), THE_EOL));
 L10:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L8;
@@ -491,13 +491,13 @@ L10:
   const struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_d_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L12;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 15, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v2)))), THE_EOL);
+    (error_stack_pos(&err_state, 15, 22), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 15, 42), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v2)))), THE_EOL));
 L12:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L11;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
-    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 16, 27), float_str(__THE_0_d_0.v3))), THE_EOL);
+    (error_stack_pos(&err_state, 16, 10), print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 16, 27), float_str(__THE_0_d_0.v3))), THE_EOL));
 L13:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L11;
@@ -506,13 +506,13 @@ L13:
   struct any __THE_0_e_0 = __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L15;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 19, 82), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d)))), THE_EOL);
+    (error_stack_pos(&err_state, 19, 62), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 19, 82), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d)))), THE_EOL));
 L15:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L14;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L16;
-    print(stdout, "zz", "any", THE_EOL);
+    (error_stack_pos(&err_state, 20, 10), print(stdout, "zz", "any", THE_EOL));
 L16:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L14;
@@ -521,13 +521,13 @@ L16:
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L18;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 23, 51), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d)))), THE_EOL);
+    (error_stack_pos(&err_state, 23, 31), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 23, 51), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d)))), THE_EOL));
 L18:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L17;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L19;
-    print(stdout, "zz", "any", THE_EOL);
+    (error_stack_pos(&err_state, 24, 10), print(stdout, "zz", "any", THE_EOL));
 L19:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L17;
@@ -536,13 +536,13 @@ L19:
   struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3));
   if ((__THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L21;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 27, 82), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v2)))), THE_EOL);
+    (error_stack_pos(&err_state, 27, 62), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 27, 82), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v2)))), THE_EOL));
 L21:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L20;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L22;
-    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 28, 27), float_str(__THE_0_g_0.v3))), THE_EOL);
+    (error_stack_pos(&err_state, 28, 10), print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 28, 27), float_str(__THE_0_g_0.v3))), THE_EOL));
 L22:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L20;
@@ -551,33 +551,33 @@ L22:
   struct __THE_1_union_map_strMSintMEUSfloatUE __THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14);
   if ((__THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_map_strMSintME) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L24;
-    print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 31, 51), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v2)))), THE_EOL);
+    (error_stack_pos(&err_state, 31, 31), print(stdout, "sz", cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 31, 51), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v2)))), THE_EOL));
 L24:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L23;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L25;
-    print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 32, 27), float_str(__THE_0_h_0.v3))), THE_EOL);
+    (error_stack_pos(&err_state, 32, 10), print(stdout, "sz", cstr_concat_str("float ", (error_stack_pos(&err_state, 32, 27), float_str(__THE_0_h_0.v3))), THE_EOL));
 L25:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L23;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", (__THE_0_a_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 34, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  (error_stack_pos(&err_state, 34, 3), print(stdout, "sz", (__THE_0_a_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 34, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_a_0.d)->d)))) : str_alloc("any"), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", (__THE_0_b_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 35, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  (error_stack_pos(&err_state, 35, 3), print(stdout, "sz", (__THE_0_b_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 35, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_b_0.d)->d)))) : str_alloc("any"), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", (__THE_0_c_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 36, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 36, 62), float_str(__THE_0_c_0.v3))), THE_EOL);
+  (error_stack_pos(&err_state, 36, 3), print(stdout, "sz", (__THE_0_c_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 36, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_c_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 36, 62), float_str(__THE_0_c_0.v3))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", (__THE_0_d_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 37, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 37, 62), float_str(__THE_0_d_0.v3))), THE_EOL);
+  (error_stack_pos(&err_state, 37, 3), print(stdout, "sz", (__THE_0_d_0.t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 37, 41), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_d_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 37, 62), float_str(__THE_0_d_0.v3))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 38, 81), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  (error_stack_pos(&err_state, 38, 3), print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_map_strMSintME_alloc(__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 38, 81), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_e_0.d)->d)))) : str_alloc("any"), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 39, 50), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d)))) : str_alloc("any"), THE_EOL);
+  (error_stack_pos(&err_state, 39, 3), print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 39, 50), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(((struct __THE_1_any_map_strMSintME *) __THE_0_f_0.d)->d)))) : str_alloc("any"), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 40, 81), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 40, 102), float_str(__THE_0_g_0.v3))), THE_EOL);
+  (error_stack_pos(&err_state, 40, 3), print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_map_strMSintME, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3)))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 40, 81), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_g_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 40, 102), float_str(__THE_0_g_0.v3))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 41, 50), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 41, 71), float_str(__THE_0_h_0.v3))), THE_EOL);
+  (error_stack_pos(&err_state, 41, 3), print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_map_strMSintMEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_map_strMSintMEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_map_strMSintME) ? cstr_concat_str("int[str] ", (error_stack_pos(&err_state, 41, 50), __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_h_0.v2)))) : cstr_concat_str("float ", (error_stack_pos(&err_state, 41, 71), float_str(__THE_0_h_0.v3))), THE_EOL));
 L23:
   __THE_1_union_map_strMSintMEUSfloatUE_free((struct __THE_1_union_map_strMSintMEUSfloatUE) __THE_0_h_0);
 L20:

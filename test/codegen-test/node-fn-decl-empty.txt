@@ -59,6 +59,7 @@ struct __THE_1_fn$1000 {
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 void str_free (struct str);
 void error_Error_free (struct error_Error *);
@@ -66,6 +67,10 @@ void __THE_1_test_0 (void *);
 
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -79,14 +84,17 @@ void error_Error_free (struct error_Error *n) {
   free(n);
 }
 void __THE_1_test_0 (void *px) {
+  error_stack_push(&err_state, "/test", "test");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  __THE_0_test_0.f(__THE_0_test_0.x);
-L1:
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+  (error_stack_pos(&err_state, 5, 3), __THE_0_test_0.f(__THE_0_test_0.x));
+L2:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

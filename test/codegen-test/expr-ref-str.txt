@@ -214,7 +214,9 @@ int main () {
   const struct str __THE_0_v4_0 = true ? str_copy(__THE_0_a_0) : str_copy(*__THE_0_ref1_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   const struct str __THE_0_v5_0 = false ? str_copy(*__THE_0_ref1_0) : str_copy(__THE_0_b_0);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   const struct str *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
+L8:
   str_free((struct str) __THE_0_v5_0);
 L7:
   str_free((struct str) __THE_0_v4_0);

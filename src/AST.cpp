@@ -1089,11 +1089,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       }
 
       auto propType = type->getProp(parserExprObjProp.id.val);
+      auto propInit = this->_nodeExpr(parserExprObjProp.init, propType, varStack);
 
-      exprObjProps.push_back(ASTObjProp{
-        parserExprObjProp.id.val,
-        this->_nodeExpr(parserExprObjProp.init, propType, varStack)
-      });
+      exprObjProps.push_back(ASTObjProp{parserExprObjProp.id.val, propInit});
     }
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprObj{exprObjProps});

@@ -693,9 +693,11 @@ bool __THE_1_array_ref_int_ne (struct __THE_1_array_ref_int n1, struct __THE_1_a
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const int32_t __THE_0_intA_0 = 1;
-  const int32_t __THE_0_intB_0 = 2;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const int32_t __THE_0_intA_0 = 1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t __THE_0_intB_0 = 2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t *__THE_0_optIntA_0 = __THE_1_opt_int_alloc(__THE_0_intA_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const int32_t *__THE_0_optIntB_0 = NULL;

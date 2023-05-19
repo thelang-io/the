@@ -75,6 +75,7 @@ bool buffer_eq (struct buffer, struct buffer);
 bool buffer_ne (struct buffer, struct buffer);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
@@ -114,6 +115,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -184,33 +189,33 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  buffer_eq(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("")));
+  buffer_eq((error_stack_pos(&err_state, 2, 3), str_toBuffer(str_alloc(""))), (error_stack_pos(&err_state, 2, 20), str_toBuffer(str_alloc(""))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_ne(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("")));
+  buffer_ne((error_stack_pos(&err_state, 3, 3), str_toBuffer(str_alloc(""))), (error_stack_pos(&err_state, 3, 20), str_toBuffer(str_alloc(""))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("")));
+  buffer_eq((error_stack_pos(&err_state, 4, 3), str_toBuffer(str_alloc("\t"))), (error_stack_pos(&err_state, 4, 22), str_toBuffer(str_alloc(""))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("")));
+  buffer_ne((error_stack_pos(&err_state, 5, 3), str_toBuffer(str_alloc("\t"))), (error_stack_pos(&err_state, 5, 22), str_toBuffer(str_alloc(""))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_eq(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("\t")));
+  buffer_eq((error_stack_pos(&err_state, 6, 3), str_toBuffer(str_alloc(""))), (error_stack_pos(&err_state, 6, 20), str_toBuffer(str_alloc("\t"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_ne(str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("\t")));
+  buffer_ne((error_stack_pos(&err_state, 7, 3), str_toBuffer(str_alloc(""))), (error_stack_pos(&err_state, 7, 20), str_toBuffer(str_alloc("\t"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\t")));
+  buffer_eq((error_stack_pos(&err_state, 8, 3), str_toBuffer(str_alloc("\t"))), (error_stack_pos(&err_state, 8, 22), str_toBuffer(str_alloc("\t"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\t")));
+  buffer_ne((error_stack_pos(&err_state, 9, 3), str_toBuffer(str_alloc("\t"))), (error_stack_pos(&err_state, 9, 22), str_toBuffer(str_alloc("\t"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_eq(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\n")));
+  buffer_eq((error_stack_pos(&err_state, 10, 3), str_toBuffer(str_alloc("\t"))), (error_stack_pos(&err_state, 10, 22), str_toBuffer(str_alloc("\n"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_ne(str_toBuffer(str_alloc("\t")), str_toBuffer(str_alloc("\n")));
+  buffer_ne((error_stack_pos(&err_state, 11, 3), str_toBuffer(str_alloc("\t"))), (error_stack_pos(&err_state, 11, 22), str_toBuffer(str_alloc("\n"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_eq(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Aaron")));
+  buffer_eq((error_stack_pos(&err_state, 12, 3), str_toBuffer(str_alloc("Aaron"))), (error_stack_pos(&err_state, 12, 25), str_toBuffer(str_alloc("Aaron"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_ne(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Aaron")));
+  buffer_ne((error_stack_pos(&err_state, 13, 3), str_toBuffer(str_alloc("Aaron"))), (error_stack_pos(&err_state, 13, 25), str_toBuffer(str_alloc("Aaron"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_eq(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Delasy")));
+  buffer_eq((error_stack_pos(&err_state, 14, 3), str_toBuffer(str_alloc("Aaron"))), (error_stack_pos(&err_state, 14, 25), str_toBuffer(str_alloc("Delasy"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_ne(str_toBuffer(str_alloc("Aaron")), str_toBuffer(str_alloc("Delasy")));
+  buffer_ne((error_stack_pos(&err_state, 15, 3), str_toBuffer(str_alloc("Aaron"))), (error_stack_pos(&err_state, 15, 25), str_toBuffer(str_alloc("Delasy"))));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

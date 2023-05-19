@@ -107,6 +107,7 @@ struct __THE_1_fn$1000P {
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 void str_free (struct str);
 void error_Error_free (struct error_Error *);
@@ -114,6 +115,10 @@ enum __THE_1_Test_0 __THE_1_inc_0 (void *, struct __THE_1_fn$1000P);
 
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -127,56 +132,78 @@ void error_Error_free (struct error_Error *n) {
   free(n);
 }
 enum __THE_1_Test_0 __THE_1_inc_0 (void *px, struct __THE_1_fn$1000P p) {
+  enum __THE_1_Test_0 v;
+  error_stack_push(&err_state, "/test", "inc");
   enum __THE_1_Test_0 *__THE_0_test_0 = p.n0;
   if (*__THE_0_test_0 == __THE_0_TestSDRed_0) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
     *__THE_0_test_0 = __THE_0_TestSDGreen_0;
+L2:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else if (*__THE_0_test_0 == __THE_0_TestSDGreen_0) {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     *__THE_0_test_0 = __THE_0_TestSDBlue_0;
+L3:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     *__THE_0_test_0 = __THE_0_TestSDRed_0;
+L4:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
   }
+L1:
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_inc_0 = (struct __THE_1_fn$1000) {&__THE_1_inc_0, NULL, 0};
-  for (enum __THE_1_Test_0 __THE_0_i_0 = __THE_0_TestSDRed_0; __THE_0_i_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_i_0})) {
+  for (enum __THE_1_Test_0 __THE_0_i_0 = __THE_0_TestSDRed_0; __THE_0_i_0 != __THE_0_TestSDBlue_0; (error_stack_pos(&err_state, 14, 35), __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_i_0}))) {
   }
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
   enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
-  for (; __THE_0_a_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0})) {
+  for (; __THE_0_a_0 != __THE_0_TestSDBlue_0; (error_stack_pos(&err_state, 18, 22), __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0}))) {
   }
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_TestSDRed_0;
   while (__THE_0_b_0 != __THE_0_TestSDBlue_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_b_0});
-L1:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
+    (error_stack_pos(&err_state, 23, 5), __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_b_0}));
+L6:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L0;
+    if (err_state.id != -1) goto L5;
   }
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   enum __THE_1_Test_0 __THE_0_c_0 = __THE_0_TestSDRed_0;
   while (1) {
     if (__THE_0_c_0 == __THE_0_TestSDBlue_0) {
       break;
     }
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
-    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_c_0});
-L2:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
+    (error_stack_pos(&err_state, 32, 5), __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_c_0}));
+L7:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L0;
+    if (err_state.id != -1) goto L5;
   }
   for (enum __THE_1_Test_0 __THE_0_d_0 = __THE_0_TestSDRed_0; __THE_0_d_0 != __THE_0_TestSDBlue_0;) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_d_0});
-L3:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
+    (error_stack_pos(&err_state, 36, 5), __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_d_0}));
+L8:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L0;
+    if (err_state.id != -1) goto L5;
   }
-  for (enum __THE_1_Test_0 __THE_0_e_0 = __THE_0_TestSDRed_0;; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_e_0})) {
+  for (enum __THE_1_Test_0 __THE_0_e_0 = __THE_0_TestSDRed_0;; (error_stack_pos(&err_state, 39, 24), __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_e_0}))) {
     if (__THE_0_e_0 == __THE_0_TestSDBlue_0) {
       break;
     }
   }
-L0:
+L5:
+  err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

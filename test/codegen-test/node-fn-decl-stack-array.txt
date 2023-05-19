@@ -82,6 +82,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void str_free (struct str);
@@ -114,6 +115,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -197,6 +202,7 @@ void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$1003P p) {
+  error_stack_push(&err_state, "/test", "test");
   struct __THE_1_mainSDtest_0X *x = px;
   struct __THE_1_array_int *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_array_int __THE_0_newA_0 = p.n0;
@@ -205,6 +211,8 @@ void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$1003P p) {
 L3:
   err_state.buf_idx--;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_newA_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);
@@ -222,7 +230,7 @@ int main () {
   const struct __THE_1_fn$1003 __THE_0_mainSDtest_0;
   __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$1003P) {__THE_1_array_int_alloc(3, 4, 5, 6)});
+  (error_stack_pos(&err_state, 8, 3), __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$1003P) {__THE_1_array_int_alloc(3, 4, 5, 6)}));
 L2:
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_mainSDtest_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);

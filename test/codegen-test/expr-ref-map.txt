@@ -254,7 +254,9 @@ int main () {
   const struct __THE_1_map_strMSintME __THE_0_v4_0 = true ? __THE_1_map_strMSintME_copy(__THE_0_a_0) : __THE_1_map_strMSintME_copy(*__THE_0_ref1_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_map_strMSintME __THE_0_v5_0 = false ? __THE_1_map_strMSintME_copy(*__THE_0_ref1_0) : __THE_1_map_strMSintME_copy(__THE_0_b_0);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_map_strMSintME *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
+L5:
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_v5_0);
 L4:
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_v4_0);

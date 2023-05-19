@@ -82,6 +82,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
@@ -118,6 +119,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -224,6 +229,9 @@ struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000 n) {
   return str_alloc("[Function]");
 }
 void __THE_1_test_0 (void *px) {
+  error_stack_push(&err_state, "/test", "test");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {
   if (n.x == NULL) return n;
@@ -239,9 +247,14 @@ struct str __THE_1_fn$1001_str (struct __THE_1_fn$1001 n) {
   return str_alloc("[Function]");
 }
 struct __THE_1_fn$1000 __THE_1_testAnon_0 (void *px) {
+  struct __THE_1_fn$1000 v;
+  error_stack_push(&err_state, "/test", "testAnon");
   struct __THE_1_testAnon_0X *x = px;
   const struct __THE_1_fn$1000 *__THE_0_test_0 = x->__THE_0_test_0;
-  return __THE_1_fn$1000_copy(*__THE_0_test_0);
+  v = __THE_1_fn$1000_copy(*__THE_0_test_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 void __THE_1_testAnon_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_testAnon_0X x) {
   size_t l = sizeof(struct __THE_1_testAnon_0X);
@@ -257,15 +270,15 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_testAnon_0;
   __THE_1_testAnon_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_testAnon_0, (struct __THE_1_testAnon_0X) {&__THE_0_test_0});
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  print(stdout, "szszsz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_test_0)), " ", __THE_1_fn$1001_str(__THE_1_fn$1001_copy(__THE_0_testAnon_0)), " ", __THE_1_fn$1000_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  print(stdout, "sz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_test_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  print(stdout, "sz", __THE_1_fn$1001_str(__THE_1_fn$1001_copy(__THE_0_testAnon_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  print(stdout, "sz", __THE_1_fn$1000_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
-L1:
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
+  (error_stack_pos(&err_state, 8, 3), print(stdout, "szszsz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_test_0)), " ", __THE_1_fn$1001_str(__THE_1_fn$1001_copy(__THE_0_testAnon_0)), " ", __THE_1_fn$1000_str((error_stack_pos(&err_state, 8, 25), __THE_0_testAnon_0.f(__THE_0_testAnon_0.x))), THE_EOL));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  (error_stack_pos(&err_state, 9, 3), print(stdout, "sz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_test_0)), THE_EOL));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  (error_stack_pos(&err_state, 10, 3), print(stdout, "sz", __THE_1_fn$1001_str(__THE_1_fn$1001_copy(__THE_0_testAnon_0)), THE_EOL));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  (error_stack_pos(&err_state, 11, 3), print(stdout, "sz", __THE_1_fn$1000_str((error_stack_pos(&err_state, 11, 9), __THE_0_testAnon_0.f(__THE_0_testAnon_0.x))), THE_EOL));
+L3:
   err_state.buf_idx--;
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_testAnon_0);
   error_stack_pop(&err_state);

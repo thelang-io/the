@@ -440,7 +440,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 5, 3), fs_copyFileSync(str_copy(__THE_0_fromPath_0), str_copy(__THE_0_toPath_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", buffer_str((error_stack_pos(&err_state, 6, 9), fs_readFileSync(str_copy(__THE_0_toPath_0)))), THE_EOL);
+  (error_stack_pos(&err_state, 6, 3), print(stdout, "sz", buffer_str((error_stack_pos(&err_state, 6, 9), fs_readFileSync(str_copy(__THE_0_toPath_0)))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 7, 3), fs_rmSync(str_copy(__THE_0_toPath_0)));
 L3:

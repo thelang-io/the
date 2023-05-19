@@ -270,19 +270,19 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   {
     struct __THE_1_map_strMSintME __THE_0_i_0 = __THE_1_map_strMSintME_alloc(0);
-    for (; __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_i_0)) < 3; (error_stack_pos(&err_state, 2, 32), __THE_1_map_strMSintME_set(&__THE_0_i_0, (error_stack_pos(&err_state, 2, 38), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_i_0)))), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_i_0))))) {
+    for (; (error_stack_pos(&err_state, 2, 21), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_i_0))) < 3; (error_stack_pos(&err_state, 2, 32), __THE_1_map_strMSintME_set(&__THE_0_i_0, (error_stack_pos(&err_state, 2, 38), int_str((error_stack_pos(&err_state, 2, 38), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_i_0))))), (error_stack_pos(&err_state, 2, 51), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_i_0)))))) {
     }
     __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_i_0);
   }
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(0);
-  for (; __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_a_0)) < 3; (error_stack_pos(&err_state, 6, 21), __THE_1_map_strMSintME_set(&__THE_0_a_0, (error_stack_pos(&err_state, 6, 27), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_a_0)))), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_a_0))))) {
+  for (; (error_stack_pos(&err_state, 6, 10), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_a_0))) < 3; (error_stack_pos(&err_state, 6, 21), __THE_1_map_strMSintME_set(&__THE_0_a_0, (error_stack_pos(&err_state, 6, 27), int_str((error_stack_pos(&err_state, 6, 27), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_a_0))))), (error_stack_pos(&err_state, 6, 40), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_a_0)))))) {
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   struct __THE_1_map_strMSintME __THE_0_b_0 = __THE_1_map_strMSintME_alloc(0);
-  while (__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0)) < 3) {
+  while ((error_stack_pos(&err_state, 10, 10), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0))) < 3) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
-    (error_stack_pos(&err_state, 11, 5), __THE_1_map_strMSintME_set(&__THE_0_b_0, (error_stack_pos(&err_state, 11, 11), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0)))), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0))));
+    (error_stack_pos(&err_state, 11, 5), __THE_1_map_strMSintME_set(&__THE_0_b_0, (error_stack_pos(&err_state, 11, 11), int_str((error_stack_pos(&err_state, 11, 11), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0))))), (error_stack_pos(&err_state, 11, 24), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0)))));
 L5:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L4;
@@ -290,20 +290,20 @@ L5:
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   struct __THE_1_map_strMSintME __THE_0_c_0 = __THE_1_map_strMSintME_alloc(0);
   while (1) {
-    if (__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_c_0)) == 3) {
+    if ((error_stack_pos(&err_state, 16, 8), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_c_0))) == 3) {
       break;
     }
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
-    (error_stack_pos(&err_state, 20, 5), __THE_1_map_strMSintME_set(&__THE_0_c_0, (error_stack_pos(&err_state, 20, 11), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_c_0)))), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_c_0))));
+    (error_stack_pos(&err_state, 20, 5), __THE_1_map_strMSintME_set(&__THE_0_c_0, (error_stack_pos(&err_state, 20, 11), int_str((error_stack_pos(&err_state, 20, 11), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_c_0))))), (error_stack_pos(&err_state, 20, 24), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_c_0)))));
 L7:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L6;
   }
   {
     struct __THE_1_map_strMSintME __THE_0_d_0 = __THE_1_map_strMSintME_alloc(0);
-    for (; __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_d_0)) < 3;) {
+    for (; (error_stack_pos(&err_state, 23, 21), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_d_0))) < 3;) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
-      (error_stack_pos(&err_state, 24, 5), __THE_1_map_strMSintME_set(&__THE_0_d_0, (error_stack_pos(&err_state, 24, 11), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_d_0)))), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_d_0))));
+      (error_stack_pos(&err_state, 24, 5), __THE_1_map_strMSintME_set(&__THE_0_d_0, (error_stack_pos(&err_state, 24, 11), int_str((error_stack_pos(&err_state, 24, 11), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_d_0))))), (error_stack_pos(&err_state, 24, 24), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_d_0)))));
 L9:
       err_state.buf_idx--;
       if (err_state.id != -1) goto L8;
@@ -313,8 +313,8 @@ L8:
   }
   {
     struct __THE_1_map_strMSintME __THE_0_e_0 = __THE_1_map_strMSintME_alloc(0);
-    for (;; (error_stack_pos(&err_state, 27, 22), __THE_1_map_strMSintME_set(&__THE_0_e_0, (error_stack_pos(&err_state, 27, 28), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_e_0)))), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_e_0))))) {
-      if (__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_e_0)) == 3) {
+    for (;; (error_stack_pos(&err_state, 27, 22), __THE_1_map_strMSintME_set(&__THE_0_e_0, (error_stack_pos(&err_state, 27, 28), int_str((error_stack_pos(&err_state, 27, 28), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_e_0))))), (error_stack_pos(&err_state, 27, 41), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_e_0)))))) {
+      if ((error_stack_pos(&err_state, 28, 8), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_e_0))) == 3) {
         break;
       }
     }

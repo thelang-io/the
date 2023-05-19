@@ -266,7 +266,7 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  const struct buffer __THE_0_data_0 = str_toBuffer(str_alloc("test"));
+  const struct buffer __THE_0_data_0 = (error_stack_pos(&err_state, 2, 11), str_toBuffer(str_alloc("test")));
   if (str_eq_cstr(os_name(), "Windows")) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     (error_stack_pos(&err_state, 5, 5), fs_appendFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("C:", str_alloc(THE_PATH_SEP)), "Windows"), str_alloc(THE_PATH_SEP)), "System32"), str_alloc(THE_PATH_SEP)), "kernel32.dll"), buffer_copy(__THE_0_data_0)));

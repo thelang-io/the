@@ -358,11 +358,11 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str __THE_0_dir2_0 = (error_stack_pos(&err_state, 3, 11), path_tempDirectory());
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", str_copy(__THE_0_dir1_0), THE_EOL);
+  (error_stack_pos(&err_state, 5, 3), print(stdout, "sz", str_copy(__THE_0_dir1_0), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", str_copy(__THE_0_dir2_0), THE_EOL);
+  (error_stack_pos(&err_state, 6, 3), print(stdout, "sz", str_copy(__THE_0_dir2_0), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "tz", str_eq_str(str_copy(__THE_0_dir1_0), str_copy(__THE_0_dir2_0)), THE_EOL);
+  (error_stack_pos(&err_state, 7, 3), print(stdout, "tz", str_eq_str(str_copy(__THE_0_dir1_0), str_copy(__THE_0_dir2_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 9, 3), fs_rmdirSync(str_copy(__THE_0_dir1_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;

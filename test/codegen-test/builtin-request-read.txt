@@ -919,20 +919,22 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct request_Response *__THE_0_res_0 = (error_stack_pos(&err_state, 3, 10), request_read(&__THE_0_req_0));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  request_close(&__THE_0_req_0);
+  (error_stack_pos(&err_state, 4, 3), request_close(&__THE_0_req_0));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?ip", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
-  print(stdout, "z", THE_EOL);
-  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
+  (error_stack_pos(&err_state, 6, 3), print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?ip", " ", __THE_0_res_0->__THE_0_status, THE_EOL));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  (error_stack_pos(&err_state, 7, 3), print(stdout, "z", THE_EOL));
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < (error_stack_pos(&err_state, 9, 20), __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers))); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    print(stdout, "sz", (error_stack_pos(&err_state, 10, 11), request_Header_str(request_Header_copy(*(error_stack_pos(&err_state, 10, 11), __THE_1_array_request_Header_at(__THE_0_res_0->__THE_0_headers, __THE_0_i_0))))), THE_EOL);
+    (error_stack_pos(&err_state, 10, 5), print(stdout, "sz", (error_stack_pos(&err_state, 10, 11), request_Header_str(request_Header_copy(*(error_stack_pos(&err_state, 10, 11), __THE_1_array_request_Header_at(__THE_0_res_0->__THE_0_headers, __THE_0_i_0))))), THE_EOL));
 L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L3;
   }
-  print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", buffer_to_str(buffer_copy(__THE_0_res_0->__THE_0_data)), THE_EOL);
+  (error_stack_pos(&err_state, 13, 3), print(stdout, "z", THE_EOL));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  (error_stack_pos(&err_state, 14, 3), print(stdout, "sz", (error_stack_pos(&err_state, 14, 9), buffer_to_str(buffer_copy(__THE_0_res_0->__THE_0_data))), THE_EOL));
 L3:
   request_Response_free((struct request_Response *) __THE_0_res_0);
 L2:

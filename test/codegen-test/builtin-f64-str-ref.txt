@@ -241,14 +241,17 @@ size_t __THE_1_array_f64_len (struct __THE_1_array_f64 n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const double __THE_0_a_0 = 0.0;
-  const double __THE_0_b_0 = 1.1;
-  const double __THE_0_c_0 = 999.999;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const double __THE_0_a_0 = 0.0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const double __THE_0_b_0 = 1.1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const double __THE_0_c_0 = 999.999;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const struct __THE_1_array_f64 __THE_0_arr_0 = __THE_1_array_f64_alloc(3, __THE_0_a_0, __THE_0_b_0, __THE_0_c_0);
-  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_f64_len(__THE_1_array_f64_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < (error_stack_pos(&err_state, 7, 20), __THE_1_array_f64_len(__THE_1_array_f64_copy(__THE_0_arr_0))); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stdout, "sz", (error_stack_pos(&err_state, 8, 11), f64_str(*(error_stack_pos(&err_state, 8, 11), __THE_1_array_f64_at(__THE_0_arr_0, __THE_0_i_0)))), THE_EOL);
+    (error_stack_pos(&err_state, 8, 5), print(stdout, "sz", (error_stack_pos(&err_state, 8, 11), f64_str(*(error_stack_pos(&err_state, 8, 11), __THE_1_array_f64_at(__THE_0_arr_0, __THE_0_i_0)))), THE_EOL));
 L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;

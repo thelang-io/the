@@ -65,6 +65,7 @@ void buffer_free (struct buffer);
 struct str cstr_concat_str (const char *, struct str);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
@@ -104,6 +105,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -182,15 +187,15 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  buffer_free((struct buffer) str_toBuffer(str_alloc("")));
+  buffer_free((struct buffer) (error_stack_pos(&err_state, 2, 3), str_toBuffer(str_alloc(""))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_free((struct buffer) str_toBuffer(str_alloc("0")));
+  buffer_free((struct buffer) (error_stack_pos(&err_state, 3, 3), str_toBuffer(str_alloc("0"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_free((struct buffer) str_toBuffer(str_alloc("test")));
+  buffer_free((struct buffer) (error_stack_pos(&err_state, 4, 3), str_toBuffer(str_alloc("test"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_free((struct buffer) str_toBuffer(str_alloc("test in test")));
+  buffer_free((struct buffer) (error_stack_pos(&err_state, 5, 3), str_toBuffer(str_alloc("test in test"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  buffer_free((struct buffer) str_toBuffer(str_concat_cstr(cstr_concat_str("multiline ", str_alloc(THE_EOL)), " test")));
+  buffer_free((struct buffer) (error_stack_pos(&err_state, 6, 3), str_toBuffer(str_concat_cstr(cstr_concat_str("multiline ", str_alloc(THE_EOL)), " test"))));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

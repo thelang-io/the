@@ -67,6 +67,7 @@ void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 bool fs_isAbsoluteSync (struct str);
@@ -106,6 +107,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -213,16 +218,16 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  fs_isAbsoluteSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-absolute-sync-root.txt"));
+  (error_stack_pos(&err_state, 2, 3), fs_isAbsoluteSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-absolute-sync-root.txt")));
   if (str_eq_cstr(os_name(), "Windows")) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
-    fs_isAbsoluteSync(str_alloc("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync-root.txt"));
+    (error_stack_pos(&err_state, 5, 5), fs_isAbsoluteSync(str_alloc("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync-root.txt")));
 L2:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    fs_isAbsoluteSync(str_alloc("/test/fixtures/builtin-fs-is-absolute-sync-root.txt"));
+    (error_stack_pos(&err_state, 7, 5), fs_isAbsoluteSync(str_alloc("/test/fixtures/builtin-fs-is-absolute-sync-root.txt")));
 L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;

@@ -90,6 +90,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
@@ -120,6 +121,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -216,28 +221,37 @@ void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
   free(n);
 }
 void __THE_1_HumanSDtalk_0 (void *px) {
+  error_stack_push(&err_state, "/test", "Human.talk");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  print(stdout, "zz", "Human walks in meters", THE_EOL);
+  (error_stack_pos(&err_state, 5, 5), print(stdout, "zz", "Human walks in meters", THE_EOL));
 L1:
   err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void __THE_1_HumanSDwalk_0 (void *px, struct __THE_1_Human_0 **__THE_0_self_0) {
+  error_stack_push(&err_state, "/test", "Human.walk");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   (*__THE_0_self_0)->__THE_0_distance += 1;
+L2:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_HumanSDtalk_0 = (struct __THE_1_fn$1000) {&__THE_1_HumanSDtalk_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_HumanSDwalk_0 = (struct __THE_1_fn$1001) {&__THE_1_HumanSDwalk_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   struct __THE_1_Human_0 *__THE_0_person_0 = __THE_1_Human_0_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, &__THE_0_person_0);
-L3:
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
+  (error_stack_pos(&err_state, 18, 3), __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
+  (error_stack_pos(&err_state, 19, 3), __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, &__THE_0_person_0));
+L4:
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person_0);
-L2:
+L3:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

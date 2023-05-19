@@ -62,6 +62,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
@@ -90,6 +91,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -190,15 +195,15 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  print(stdout, "sz", str_lowerFirst(str_alloc("")), THE_EOL);
+  (error_stack_pos(&err_state, 2, 3), print(stdout, "sz", (error_stack_pos(&err_state, 2, 9), str_lowerFirst(str_alloc(""))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  print(stdout, "sz", str_lowerFirst(str_alloc("a")), THE_EOL);
+  (error_stack_pos(&err_state, 3, 3), print(stdout, "sz", (error_stack_pos(&err_state, 3, 9), str_lowerFirst(str_alloc("a"))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  print(stdout, "sz", str_lowerFirst(str_alloc("test")), THE_EOL);
+  (error_stack_pos(&err_state, 4, 3), print(stdout, "sz", (error_stack_pos(&err_state, 4, 9), str_lowerFirst(str_alloc("test"))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  print(stdout, "sz", str_lowerFirst(str_alloc("A")), THE_EOL);
+  (error_stack_pos(&err_state, 5, 3), print(stdout, "sz", (error_stack_pos(&err_state, 5, 9), str_lowerFirst(str_alloc("A"))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  print(stdout, "sz", str_lowerFirst(str_alloc("TEST_TEST09$/!")), THE_EOL);
+  (error_stack_pos(&err_state, 6, 3), print(stdout, "sz", (error_stack_pos(&err_state, 6, 9), str_lowerFirst(str_alloc("TEST_TEST09$/!"))), THE_EOL));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

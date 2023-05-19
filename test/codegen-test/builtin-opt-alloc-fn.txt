@@ -162,6 +162,9 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_testFn_0 (void *px) {
+  error_stack_push(&err_state, "/test", "testFn");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 struct __THE_1_fn$1000 *__THE_1_opt_fn$1000_alloc (struct __THE_1_fn$1000 n) {
   struct __THE_1_fn$1000 *r = alloc(sizeof(struct __THE_1_fn$1000));
@@ -177,18 +180,18 @@ void __THE_1_opt_fn$1000_free (struct __THE_1_fn$1000 *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_testFn_0 = (struct __THE_1_fn$1000) {&__THE_1_testFn_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   const struct __THE_1_fn$1000 *__THE_0_optFn_0 = NULL;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  const struct __THE_1_fn$1000 *__THE_0_optFnNilInit_0 = NULL;
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  const struct __THE_1_fn$1000 *__THE_0_optFnNilInit_0 = NULL;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_fn$1000 *__THE_0_optFnValCopy_0 = __THE_1_opt_fn$1000_alloc(__THE_1_fn$1000_copy(__THE_0_testFn_0));
   __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFnValCopy_0);
-L3:
+L4:
   __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFnNilInit_0);
-L2:
+L3:
   __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFn_0);
-L1:
+L2:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

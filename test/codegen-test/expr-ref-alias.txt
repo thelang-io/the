@@ -172,16 +172,23 @@ void error_Error_free (struct error_Error *n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  uint64_t __THE_0_a_0 = 1;
-  uint64_t __THE_0_b_0 = 0xFF;
-  uint64_t *__THE_0_ref1_0 = &__THE_0_a_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  uint64_t __THE_0_a_0 = 1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  uint64_t __THE_0_b_0 = 0xFF;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  uint64_t *__THE_0_ref1_0 = &__THE_0_a_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 8, 3), u64_str(*__THE_0_ref1_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_0_ref1_0 = &__THE_0_b_0;
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 10, 3), u64_str(*__THE_0_ref1_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const uint64_t __THE_0_v4_0 = true ? __THE_0_a_0 : *__THE_0_ref1_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const uint64_t __THE_0_v5_0 = false ? *__THE_0_ref1_0 : __THE_0_b_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const uint64_t *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
 L1:
   err_state.buf_idx--;

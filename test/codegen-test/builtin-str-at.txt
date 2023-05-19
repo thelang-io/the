@@ -219,7 +219,8 @@ int main () {
   const char __THE_0_c5_0 = *(error_stack_pos(&err_state, 8, 14), str_at(__THE_0_test_0, -2));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const char __THE_0_c6_0 = *(error_stack_pos(&err_state, 9, 14), str_at(__THE_0_test_0, -3));
-  print(stdout, "czczczczczcz", __THE_0_c1_0, " ", __THE_0_c2_0, " ", __THE_0_c3_0, " ", __THE_0_c4_0, " ", __THE_0_c5_0, " ", __THE_0_c6_0, THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  (error_stack_pos(&err_state, 11, 3), print(stdout, "czczczczczcz", __THE_0_c1_0, " ", __THE_0_c2_0, " ", __THE_0_c3_0, " ", __THE_0_c4_0, " ", __THE_0_c5_0, " ", __THE_0_c6_0, THE_EOL));
 L2:
   str_free((struct str) __THE_0_test_0);
 L1:

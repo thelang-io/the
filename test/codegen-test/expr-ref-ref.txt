@@ -173,18 +173,27 @@ void error_Error_free (struct error_Error *n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const int32_t __THE_0_testInt1_0 = 1;
-  const int32_t __THE_0_testInt2_0 = 2;
-  int32_t *__THE_0_a_0 = &__THE_0_testInt1_0;
-  int32_t *__THE_0_b_0 = &__THE_0_testInt2_0;
-  int32_t **__THE_0_ref1_0 = &__THE_0_a_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const int32_t __THE_0_testInt1_0 = 1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t __THE_0_testInt2_0 = 2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  int32_t *__THE_0_a_0 = &__THE_0_testInt1_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  int32_t *__THE_0_b_0 = &__THE_0_testInt2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  int32_t **__THE_0_ref1_0 = &__THE_0_a_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 9, 3), int_str(**__THE_0_ref1_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_0_ref1_0 = &__THE_0_b_0;
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   str_free((struct str) (error_stack_pos(&err_state, 11, 3), int_str(**__THE_0_ref1_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t *__THE_0_v4_0 = true ? __THE_0_a_0 : *__THE_0_ref1_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t **__THE_0_v5_0 = false ? __THE_0_ref1_0 : &__THE_0_b_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const int32_t **__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
 L1:
   err_state.buf_idx--;

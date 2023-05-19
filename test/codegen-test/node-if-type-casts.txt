@@ -96,6 +96,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
@@ -130,6 +131,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -263,176 +268,320 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   int32_t *__THE_0_test_0 = NULL;
   if (__THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_test_0), NULL)) {
-    print(stdout, "iz", 1, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
+    (error_stack_pos(&err_state, 8, 20), print(stdout, "iz", 1, THE_EOL));
+L3:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
+    (error_stack_pos(&err_state, 8, 38), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L4:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_test_0), NULL)) {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
+    (error_stack_pos(&err_state, 9, 20), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L5:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
-    print(stdout, "iz", 2, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
+    (error_stack_pos(&err_state, 9, 41), print(stdout, "iz", 2, THE_EOL));
+L6:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_eq(NULL, __THE_1_opt_int_copy(__THE_0_test_0))) {
-    print(stdout, "iz", 3, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
+    (error_stack_pos(&err_state, 10, 20), print(stdout, "iz", 3, THE_EOL));
+L7:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
+    (error_stack_pos(&err_state, 10, 38), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L8:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_ne(NULL, __THE_1_opt_int_copy(__THE_0_test_0))) {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
+    (error_stack_pos(&err_state, 11, 20), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L9:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
-    print(stdout, "iz", 4, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
+    (error_stack_pos(&err_state, 11, 41), print(stdout, "iz", 4, THE_EOL));
+L10:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_eq((__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, __THE_1_opt_int_alloc(5)))), NULL)) {
-    print(stdout, "iz", 5, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L11;
+    (error_stack_pos(&err_state, 13, 26), print(stdout, "iz", 5, THE_EOL));
+L11:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L12;
     *__THE_0_test_0;
+L12:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_eq((__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, NULL))), NULL)) {
-    print(stdout, "iz", 5, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
+    (error_stack_pos(&err_state, 14, 28), print(stdout, "iz", 5, THE_EOL));
+L13:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L14;
     *__THE_0_test_0;
+L14:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_ne((__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, __THE_1_opt_int_alloc(6)))), NULL)) {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L15;
+    (error_stack_pos(&err_state, 15, 26), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L15:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L16;
     6;
+L16:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_ne((__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, NULL))), NULL)) {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L17;
+    (error_stack_pos(&err_state, 16, 28), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L17:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L18;
     6;
+L18:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_eq(NULL, (__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, NULL))))) {
-    print(stdout, "iz", 7, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L19;
+    (error_stack_pos(&err_state, 17, 28), print(stdout, "iz", 7, THE_EOL));
+L19:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L20;
     *__THE_0_test_0;
+L20:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_eq(NULL, (__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, __THE_1_opt_int_alloc(7)))))) {
-    print(stdout, "iz", 7, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L21;
+    (error_stack_pos(&err_state, 18, 26), print(stdout, "iz", 7, THE_EOL));
+L21:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L22;
     *__THE_0_test_0;
+L22:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_ne(NULL, (__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, __THE_1_opt_int_alloc(8)))))) {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L23;
+    (error_stack_pos(&err_state, 19, 26), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L23:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L24;
     8;
+L24:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (__THE_1_opt_int_ne(NULL, (__THE_1_opt_int_copy(__THE_0_test_0 = __THE_1_opt_int_realloc(__THE_0_test_0, NULL))))) {
-    print(stdout, "iz", *__THE_0_test_0, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L25;
+    (error_stack_pos(&err_state, 20, 28), print(stdout, "iz", *__THE_0_test_0, THE_EOL));
+L25:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L26;
     8;
+L26:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L2;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   struct __THE_1_Test_0 *__THE_0_test2_0 = __THE_1_Test_0_alloc(NULL);
   if (__THE_1_opt_int_eq(__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a), NULL)) {
-    print(stdout, "iz", 1, THE_EOL);
-  } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L4:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L28;
+    (error_stack_pos(&err_state, 24, 23), print(stdout, "iz", 1, THE_EOL));
+L28:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
+  } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L29;
+    (error_stack_pos(&err_state, 24, 41), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L29:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_ne(__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a), NULL)) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L5:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L30;
+    (error_stack_pos(&err_state, 25, 23), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L30:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
   } else {
-    print(stdout, "iz", 2, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L31;
+    (error_stack_pos(&err_state, 25, 47), print(stdout, "iz", 2, THE_EOL));
+L31:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_eq(NULL, __THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a))) {
-    print(stdout, "iz", 3, THE_EOL);
-  } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L6:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L32;
+    (error_stack_pos(&err_state, 26, 23), print(stdout, "iz", 3, THE_EOL));
+L32:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
+  } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L33;
+    (error_stack_pos(&err_state, 26, 41), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L33:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_ne(NULL, __THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a))) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L7:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L34;
+    (error_stack_pos(&err_state, 27, 23), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L34:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
   } else {
-    print(stdout, "iz", 4, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L35;
+    (error_stack_pos(&err_state, 27, 47), print(stdout, "iz", 4, THE_EOL));
+L35:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_eq((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(5)))), NULL)) {
-    print(stdout, "iz", 5, THE_EOL);
-  } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L8:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L36;
+    (error_stack_pos(&err_state, 29, 29), print(stdout, "iz", 5, THE_EOL));
+L36:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
+  } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L37;
+    (error_stack_pos(&err_state, 29, 47), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L37:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_eq((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL))), NULL)) {
-    print(stdout, "iz", 5, THE_EOL);
-  } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L9:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L38;
+    (error_stack_pos(&err_state, 30, 31), print(stdout, "iz", 5, THE_EOL));
+L38:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
+  } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L39;
+    (error_stack_pos(&err_state, 30, 49), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L39:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_ne((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL))), NULL)) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L10:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L40;
+    (error_stack_pos(&err_state, 31, 31), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L40:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
   } else {
-    print(stdout, "iz", 6, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L41;
+    (error_stack_pos(&err_state, 31, 55), print(stdout, "iz", 6, THE_EOL));
+L41:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_ne((__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(6)))), NULL)) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L11;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L11:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L42;
+    (error_stack_pos(&err_state, 32, 29), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L42:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
   } else {
-    print(stdout, "iz", 6, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L43;
+    (error_stack_pos(&err_state, 32, 53), print(stdout, "iz", 6, THE_EOL));
+L43:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_eq(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL))))) {
-    print(stdout, "iz", 7, THE_EOL);
-  } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L12;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L12:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L44;
+    (error_stack_pos(&err_state, 33, 31), print(stdout, "iz", 7, THE_EOL));
+L44:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
+  } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L45;
+    (error_stack_pos(&err_state, 33, 49), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L45:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_eq(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(7)))))) {
-    print(stdout, "iz", 7, THE_EOL);
-  } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L13:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L46;
+    (error_stack_pos(&err_state, 34, 29), print(stdout, "iz", 7, THE_EOL));
+L46:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
+  } else {
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L47;
+    (error_stack_pos(&err_state, 34, 47), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L47:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_ne(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, __THE_1_opt_int_alloc(8)))))) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L14;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L14:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L48;
+    (error_stack_pos(&err_state, 35, 29), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L48:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
   } else {
-    print(stdout, "iz", 8, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L49;
+    (error_stack_pos(&err_state, 35, 53), print(stdout, "iz", 8, THE_EOL));
+L49:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
   if (__THE_1_opt_int_ne(NULL, (__THE_1_opt_int_copy(__THE_0_test2_0->__THE_0_a = __THE_1_opt_int_realloc(__THE_0_test2_0->__THE_0_a, NULL))))) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L15;
-    print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL);
-L15:
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L50;
+    (error_stack_pos(&err_state, 36, 31), print(stdout, "iz", *__THE_0_test2_0->__THE_0_a, THE_EOL));
+L50:
     err_state.buf_idx--;
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L27;
   } else {
-    print(stdout, "iz", 8, THE_EOL);
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L51;
+    (error_stack_pos(&err_state, 36, 55), print(stdout, "iz", 8, THE_EOL));
+L51:
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L27;
   }
-L3:
+L27:
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);
 L2:
   __THE_1_opt_int_free((int32_t *) __THE_0_test_0);

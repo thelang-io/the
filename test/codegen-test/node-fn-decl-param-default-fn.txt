@@ -151,6 +151,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str str_alloc (const char *);
@@ -193,6 +194,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -279,22 +284,43 @@ struct __THE_1_fn$1000 __THE_1_fn$1000_realloc (struct __THE_1_fn$1000 n1, struc
   return n2;
 }
 struct str __THE_1_jobA_0 (void *px) {
-  return str_alloc("a");
+  struct str v;
+  error_stack_push(&err_state, "/test", "jobA");
+  v = str_alloc("a");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 struct str __THE_1_jobA2_0 (void *px) {
-  return str_alloc("a2");
+  struct str v;
+  error_stack_push(&err_state, "/test", "jobA2");
+  v = str_alloc("a2");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 struct str __THE_1_jobB_0 (void *px) {
-  return str_alloc("b");
+  struct str v;
+  error_stack_push(&err_state, "/test", "jobB");
+  v = str_alloc("b");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 struct str __THE_1_jobC_0 (void *px) {
-  return str_alloc("c");
+  struct str v;
+  error_stack_push(&err_state, "/test", "jobC");
+  v = str_alloc("c");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
 }
 struct __THE_1_fn$1000 __THE_1_test1_0 (void *px, struct __THE_1_fn$1001P p) {
   struct __THE_1_fn$1000 v;
+  error_stack_push(&err_state, "/test", "test1");
   struct __THE_1_test1_0X *x = px;
   const struct __THE_1_fn$1000 *__THE_0_jobC_0 = x->__THE_0_jobC_0;
   const struct __THE_1_fn$1000 *__THE_0_jobB_0 = x->__THE_0_jobB_0;
@@ -308,14 +334,23 @@ struct __THE_1_fn$1000 __THE_1_test1_0 (void *px, struct __THE_1_fn$1001P p) {
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_c_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 struct str __THE_1_test1SDjobTmp_0 (void *px) {
+  unsigned char r = 0;
+  struct str v;
+  error_stack_push(&err_state, "/test", "jobTmp");
   struct __THE_1_test1SDjobTmp_0X *x = px;
   const struct __THE_1_fn$1000 *__THE_0_c_0 = x->__THE_0_c_0;
   const struct __THE_1_fn$1000 *__THE_0_b_0 = x->__THE_0_b_0;
   const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
-  return str_concat_str(str_concat_str((*__THE_0_a_0).f((*__THE_0_a_0).x), (*__THE_0_b_0).f((*__THE_0_b_0).x)), (*__THE_0_c_0).f((*__THE_0_c_0).x));
+  r = 1;
+  v = str_concat_str(str_concat_str((error_stack_pos(&err_state, 19, 12), (*__THE_0_a_0).f((*__THE_0_a_0).x)), (error_stack_pos(&err_state, 19, 18), (*__THE_0_b_0).f((*__THE_0_b_0).x))), (error_stack_pos(&err_state, 19, 24), (*__THE_0_c_0).f((*__THE_0_c_0).x)));
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 void __THE_1_test1SDjobTmp_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test1SDjobTmp_0X x) {
   size_t l = sizeof(struct __THE_1_test1SDjobTmp_0X);
@@ -337,6 +372,7 @@ void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1002P p) {
+  error_stack_push(&err_state, "/test", "test2");
   struct __THE_1_mainSDtest2_0X *x = px;
   struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$1001 *__THE_0_test1_0 = x->__THE_0_test1_0;
@@ -345,13 +381,15 @@ void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1002P p) {
   const struct __THE_1_fn$1000 __THE_0_a2_0 = p.n0;
   const struct __THE_1_fn$1000 __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_fn$1000_copy(*__THE_0_jobB_0);
   const struct __THE_1_fn$1000 __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_fn$1000_copy(*__THE_0_jobC_0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-  *__THE_0_a_0 = __THE_1_fn$1000_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_a2_0), 1, __THE_1_fn$1000_copy(__THE_0_b_0), 1, __THE_1_fn$1000_copy(__THE_0_c_0)}));
-L4:
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
+  *__THE_0_a_0 = __THE_1_fn$1000_realloc(*__THE_0_a_0, (error_stack_pos(&err_state, 37, 9), (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_a2_0), 1, __THE_1_fn$1000_copy(__THE_0_b_0), 1, __THE_1_fn$1000_copy(__THE_0_c_0)})));
+L9:
   err_state.buf_idx--;
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_c_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a2_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_mainSDtest2_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
@@ -370,42 +408,42 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_jobC_0 = (struct __THE_1_fn$1000) {&__THE_1_jobC_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_test1_0;
   __THE_1_test1_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_jobC_0, &__THE_0_jobB_0});
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 0, (struct __THE_1_fn$1000) {}, 0, (struct __THE_1_fn$1000) {}}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 0, (struct __THE_1_fn$1000) {}, 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) (error_stack_pos(&err_state, 26, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 0, (struct __THE_1_fn$1000) {}, 0, (struct __THE_1_fn$1000) {}})));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) (error_stack_pos(&err_state, 27, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}})));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) (error_stack_pos(&err_state, 28, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)})));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) (error_stack_pos(&err_state, 29, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}})));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) (error_stack_pos(&err_state, 30, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 0, (struct __THE_1_fn$1000) {}, 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)})));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) (error_stack_pos(&err_state, 31, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)})));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) (error_stack_pos(&err_state, 32, 3), __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_jobA_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)})));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   struct __THE_1_fn$1000 __THE_0_a_0 = __THE_1_fn$1000_copy(__THE_0_jobA_0);
   const struct __THE_1_fn$1002 __THE_0_mainSDtest2_0;
   __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1002 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0, &__THE_0_jobC_0, &__THE_0_jobB_0});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 0, (struct __THE_1_fn$1000) {}, 0, (struct __THE_1_fn$1000) {}});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 0, (struct __THE_1_fn$1000) {}, 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)});
-L3:
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  (error_stack_pos(&err_state, 40, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 0, (struct __THE_1_fn$1000) {}, 0, (struct __THE_1_fn$1000) {}}));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  (error_stack_pos(&err_state, 41, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}}));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  (error_stack_pos(&err_state, 42, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  (error_stack_pos(&err_state, 43, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn$1000) {}}));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  (error_stack_pos(&err_state, 44, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 0, (struct __THE_1_fn$1000) {}, 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  (error_stack_pos(&err_state, 45, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  (error_stack_pos(&err_state, 46, 3), __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_jobA2_0), 1, __THE_1_fn$1000_copy(__THE_0_jobB_0), 1, __THE_1_fn$1000_copy(__THE_0_jobC_0)}));
+L8:
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_mainSDtest2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
-L2:
+L7:
   err_state.buf_idx--;
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_test1_0);
   error_stack_pop(&err_state);

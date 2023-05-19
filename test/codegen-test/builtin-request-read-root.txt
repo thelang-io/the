@@ -777,7 +777,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   request_Response_free((struct request_Response *) (error_stack_pos(&err_state, 3, 3), request_read(&__THE_0_req_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  request_close(&__THE_0_req_0);
+  (error_stack_pos(&err_state, 4, 3), request_close(&__THE_0_req_0));
 L2:
   request_Request_free((struct request_Request *) __THE_0_req_0);
 L1:

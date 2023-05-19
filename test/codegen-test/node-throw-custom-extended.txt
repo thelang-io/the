@@ -233,7 +233,7 @@ int main () {
       error_unset(&err_state);
       const struct __THE_1_MyError_0 *__THE_0_err_0 = (struct __THE_1_MyError_0 *) err_state.ctx;
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-      print(stdout, "zzsz", "MyError:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
+      (error_stack_pos(&err_state, 12, 5), print(stdout, "zzsz", "MyError:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL));
 L1:
       err_state.buf_idx--;
       if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);

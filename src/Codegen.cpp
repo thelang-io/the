@@ -184,9 +184,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObjDef(this->ast->typeMap.get("url_URL"));
 
   auto nodes = this->ast->gen();
+  this->throws = ASTChecker(nodes).throws();
   auto mainCode = std::string();
 
-  if (ASTChecker(nodes).throws()) {
+  if (this->throws) {
     mainCode += this->_apiEval(R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", "main");)" EOL);
 
     auto mainCleanUpBoilerplate = std::string();
@@ -916,7 +917,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
       code += this->_node(node, true, CODEGEN_PHASE_INIT);
-    } else if (nodeChecker.throws() && throwWrappableNode) {
+    } else if (this->throws && throwWrappableNode) {
       if (!jumpedBefore) {
         code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) ");
         this->state.cleanUp.add(this->_apiEval("_{err_state}.buf_idx--;"));
@@ -955,7 +956,8 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp) {
       code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
     }
 
-    if (!this->state.cleanUp.empty() && nodesChecker.throws() && !nodesParentChecker.is<ASTNodeMain>()) {
+    // todo test
+    if (!this->state.cleanUp.empty() && this->throws && !nodesParentChecker.is<ASTNodeMain>()) {
       code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) ");
 
       if (initialCleanUp.isClosestJump()) {
@@ -1258,7 +1260,8 @@ std::string Codegen::_fnDecl (
 
       auto bodyCode = std::string();
 
-      if (fnType.throws) {
+      // todo test
+      if (this->throws) {
         bodyCode += R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(");)" EOL;
         this->state.cleanUp.add(this->_apiEval("if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);"));
         this->state.cleanUp.add("_{error_stack_pop}(&_{err_state});");
@@ -1921,6 +1924,9 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
 }
 
 std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root) {
+  auto line = std::to_string(nodeExpr.start.line);
+  auto col = std::to_string(nodeExpr.start.col + 1);
+
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
     auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
     auto code = std::string();
@@ -2050,6 +2056,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
 
         code = this->_apiEval("_{" + typeField.callInfo.codeName + "}" + code, 1);
+
+        if (this->throws) {
+          code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), ") + code + ")";
+        }
+
         fieldTypeHasCallInfo = true;
         fieldType = typeField.type;
       } else if (exprAccess.prop != std::nullopt && objTypeInfo.realType->isEnum()) {
@@ -2079,10 +2090,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       } else if (exprAccess.elem != std::nullopt) {
         auto objCode = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, true);
         auto objElemCode = this->_nodeExpr(*exprAccess.elem, this->ast->typeMap.get("int"));
-        auto line = std::to_string(nodeExpr.start.line);
-        auto col = std::to_string(nodeExpr.start.col + 1);
 
-        code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), ", 2);
+        code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), ");
 
         if (objTypeInfo.realType->isArray()) {
           code += this->_apiEval("_{" + objTypeInfo.realTypeName + "_at}(" + objCode + ", " + objElemCode + ")", 1);
@@ -2575,10 +2584,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       code = this->_genCopyFn(targetType, "*" + code);
     }
 
-    if (fnType.throws && fnType.callInfo.codeName != "new_error") {
-      auto line = std::to_string(nodeExpr.start.line);
-      auto col = std::to_string(nodeExpr.start.col + 1);
-      code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), " + code + ")", 2);
+    if (this->throws && fnType.callInfo.codeName != "new_error") {
+      code = this->_apiEval("(_{error_stack_pos}(&_{err_state}, " + line + ", " + col + "), ") + code + ")";
     }
 
     code = !root ? code : this->_genFreeFn(nodeExpr.type, code);

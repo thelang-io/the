@@ -168,13 +168,19 @@ void __THE_1_array_ref_int_free (struct __THE_1_array_ref_int n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const int32_t __THE_0_testInt1_0 = 1;
-  const int32_t __THE_0_testInt2_0 = 2;
-  const int32_t __THE_0_testInt3_0 = 3;
-  const int32_t *__THE_0_var1_0 = &__THE_0_testInt1_0;
-  const int32_t *__THE_0_var2_0 = &__THE_0_testInt2_0;
-  const int32_t *__THE_0_var3_0 = &__THE_0_testInt3_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const int32_t __THE_0_testInt1_0 = 1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t __THE_0_testInt2_0 = 2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t __THE_0_testInt3_0 = 3;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t *__THE_0_var1_0 = &__THE_0_testInt1_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t *__THE_0_var2_0 = &__THE_0_testInt2_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  const int32_t *__THE_0_var3_0 = &__THE_0_testInt3_0;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_array_ref_int_free((struct __THE_1_array_ref_int) __THE_1_array_ref_int_alloc(3, __THE_0_var1_0, __THE_0_var2_0, __THE_0_var3_0));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   __THE_1_array_ref_int_free((struct __THE_1_array_ref_int) __THE_1_array_ref_int_alloc(3, __THE_0_var1_0, __THE_0_var2_0, __THE_0_var3_0));

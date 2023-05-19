@@ -112,6 +112,7 @@ void any_free (struct any);
 struct str any_str (struct any);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
@@ -165,6 +166,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -346,8 +351,9 @@ void __THE_1_any_str_free (struct any _n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
-  const int32_t __THE_0_testInt_0 = 1;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  const int32_t __THE_0_testInt_0 = 1;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const struct any __THE_0_v1_0 = {0, NULL, 0, NULL, NULL};
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_v2_0 = __THE_1_any_bool_alloc(true);
@@ -364,23 +370,23 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   const struct any __THE_0_v8_0 = __THE_1_any_str_alloc(str_alloc("test"));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "szszszszszszszsz", any_str(any_copy(__THE_0_v1_0)), " ", any_str(any_copy(__THE_0_v2_0)), " ", any_str(any_copy(__THE_0_v3_0)), " ", any_str(any_copy(__THE_0_v4_0)), " ", any_str(any_copy(__THE_0_v5_0)), " ", any_str(any_copy(__THE_0_v6_0)), " ", any_str(any_copy(__THE_0_v7_0)), " ", any_str(any_copy(__THE_0_v8_0)), THE_EOL);
+  (error_stack_pos(&err_state, 13, 3), print(stdout, "szszszszszszszsz", any_str(any_copy(__THE_0_v1_0)), " ", any_str(any_copy(__THE_0_v2_0)), " ", any_str(any_copy(__THE_0_v3_0)), " ", any_str(any_copy(__THE_0_v4_0)), " ", any_str(any_copy(__THE_0_v5_0)), " ", any_str(any_copy(__THE_0_v6_0)), " ", any_str(any_copy(__THE_0_v7_0)), " ", any_str(any_copy(__THE_0_v8_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v1_0)), THE_EOL);
+  (error_stack_pos(&err_state, 14, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v1_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v2_0)), THE_EOL);
+  (error_stack_pos(&err_state, 15, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v2_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v3_0)), THE_EOL);
+  (error_stack_pos(&err_state, 16, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v3_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v4_0)), THE_EOL);
+  (error_stack_pos(&err_state, 17, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v4_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v5_0)), THE_EOL);
+  (error_stack_pos(&err_state, 18, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v5_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v6_0)), THE_EOL);
+  (error_stack_pos(&err_state, 19, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v6_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v7_0)), THE_EOL);
+  (error_stack_pos(&err_state, 20, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v7_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
-  print(stdout, "sz", any_str(any_copy(__THE_0_v8_0)), THE_EOL);
+  (error_stack_pos(&err_state, 21, 3), print(stdout, "sz", any_str(any_copy(__THE_0_v8_0)), THE_EOL));
 L9:
   any_free((struct any) __THE_0_v8_0);
 L8:

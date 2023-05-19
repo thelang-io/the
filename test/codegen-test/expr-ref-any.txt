@@ -206,7 +206,9 @@ int main () {
   const struct any __THE_0_v6_0 = true ? any_copy(__THE_0_a_0) : any_copy(__THE_0_a_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct any __THE_0_v7_0 = false ? any_copy(__THE_0_b_0) : any_copy(__THE_0_b_0);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   const struct any *__THE_0_v8_0 = false ? __THE_0_ref1_0 : __THE_0_ref2_0;
+L7:
   any_free((struct any) __THE_0_v7_0);
 L6:
   any_free((struct any) __THE_0_v6_0);

@@ -261,66 +261,71 @@ void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
   free(n);
 }
 struct str __THE_1_test3_0 (void *px) {
-  return str_alloc("test");
+  struct str v;
+  error_stack_push(&err_state, "/test", "test3");
+  v = str_alloc("test");
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   const struct __THE_1_Test2_0 *__THE_0_test2_0 = __THE_1_Test2_0_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(8, __THE_1_Test2_0_copy(__THE_0_test2_0));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  int32_t __THE_0_a_0 = __THE_0_test1_0->__THE_0_b;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  const struct str __THE_0_b_0 = str_copy(__THE_0_test1_0->__THE_0_test2->__THE_0_c);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
+  int32_t __THE_0_a_0 = __THE_0_test1_0->__THE_0_b;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
+  const struct str __THE_0_b_0 = str_copy(__THE_0_test1_0->__THE_0_test2->__THE_0_c);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct str __THE_0_c_0 = (error_stack_pos(&err_state, 20, 8), int_str(__THE_0_a_0 = 2));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  const int32_t __THE_0_d_0 = str_len(str_alloc("test1test2"));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  const int32_t __THE_0_e_0 = str_len(__THE_0_test3_0.f(__THE_0_test3_0.x));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  const int32_t __THE_0_f_0 = str_len(1 > 2 ? str_alloc("test1") : str_alloc("test2"));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  const struct str __THE_0_g_0 = (error_stack_pos(&err_state, 24, 8), bool_str(true));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  const struct str __THE_0_h_0 = (error_stack_pos(&err_state, 25, 8), bool_str(false));
+  const int32_t __THE_0_d_0 = (error_stack_pos(&err_state, 21, 8), str_len(str_alloc("test1test2")));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  const int32_t __THE_0_e_0 = (error_stack_pos(&err_state, 22, 8), str_len((error_stack_pos(&err_state, 22, 8), __THE_0_test3_0.f(__THE_0_test3_0.x))));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  const int32_t __THE_0_f_0 = (error_stack_pos(&err_state, 23, 8), str_len(1 > 2 ? str_alloc("test1") : str_alloc("test2")));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  const struct str __THE_0_g_0 = (error_stack_pos(&err_state, 24, 8), bool_str(true));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  const struct str __THE_0_m_0 = (error_stack_pos(&err_state, 26, 8), char_str('a'));
+  const struct str __THE_0_h_0 = (error_stack_pos(&err_state, 25, 8), bool_str(false));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
-  const struct str __THE_0_n_0 = (error_stack_pos(&err_state, 27, 8), int_str(1));
+  const struct str __THE_0_m_0 = (error_stack_pos(&err_state, 26, 8), char_str('a'));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
+  const struct str __THE_0_n_0 = (error_stack_pos(&err_state, 27, 8), int_str(1));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L10;
   const struct str __THE_0_o_0 = (error_stack_pos(&err_state, 28, 8), float_str(3.14));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L10;
-  const int32_t __THE_0_p_0 = str_len(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L10;
-  const struct str __THE_0_q_0 = (error_stack_pos(&err_state, 30, 8), int_str(__THE_0_a_0));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L11;
+  const int32_t __THE_0_p_0 = (error_stack_pos(&err_state, 29, 8), str_len(str_alloc("test")));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L11;
+  const struct str __THE_0_q_0 = (error_stack_pos(&err_state, 30, 8), int_str(__THE_0_a_0));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L12;
   const struct str __THE_0_r_0 = (error_stack_pos(&err_state, 31, 8), bool_str(!2));
   str_free((struct str) __THE_0_r_0);
-L11:
+L12:
   str_free((struct str) __THE_0_q_0);
-L10:
+L11:
   str_free((struct str) __THE_0_o_0);
-L9:
+L10:
   str_free((struct str) __THE_0_n_0);
-L8:
+L9:
   str_free((struct str) __THE_0_m_0);
-L7:
+L8:
   str_free((struct str) __THE_0_h_0);
-L6:
+L7:
   str_free((struct str) __THE_0_g_0);
-L5:
+L6:
   str_free((struct str) __THE_0_c_0);
-L4:
+L5:
   str_free((struct str) __THE_0_b_0);
-L3:
+L4:
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
-L2:
+L3:
   __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) __THE_0_test2_0);
-L1:
+L2:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

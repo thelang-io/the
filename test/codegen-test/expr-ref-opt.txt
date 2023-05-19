@@ -212,7 +212,9 @@ int main () {
   const int32_t *__THE_0_v4_0 = true ? __THE_1_opt_int_copy(__THE_0_a_0) : __THE_1_opt_int_copy(*__THE_0_ref1_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const int32_t *__THE_0_v5_0 = false ? __THE_1_opt_int_copy(*__THE_0_ref1_0) : __THE_1_opt_int_copy(__THE_0_b_0);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const int32_t **__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
+L5:
   __THE_1_opt_int_free((int32_t *) __THE_0_v5_0);
 L4:
   __THE_1_opt_int_free((int32_t *) __THE_0_v4_0);

@@ -100,6 +100,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 void str_free (struct str);
@@ -135,6 +136,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -196,42 +201,76 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 int32_t __THE_1_test1SDtest2SDtest3_0 (void *px) {
-  return 1;
+  unsigned char r = 0;
+  int32_t v;
+  error_stack_push(&err_state, "/test", "test3");
+  r = 1;
+  v = 1;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 int32_t __THE_1_test1SDtest2_0 (void *px) {
+  unsigned char r = 0;
+  int32_t v;
+  error_stack_push(&err_state, "/test", "test2");
   const struct __THE_1_fn$1000 __THE_0_test1SDtest2SDtest3_0 = (struct __THE_1_fn$1000) {&__THE_1_test1SDtest2SDtest3_0, NULL, 0};
-  return __THE_0_test1SDtest2SDtest3_0.f(__THE_0_test1SDtest2SDtest3_0.x);
+  r = 1;
+  v = (error_stack_pos(&err_state, 7, 12), __THE_0_test1SDtest2SDtest3_0.f(__THE_0_test1SDtest2SDtest3_0.x));
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 int32_t __THE_1_test1_0 (void *px) {
+  int32_t v;
+  error_stack_push(&err_state, "/test", "test1");
   const struct __THE_1_fn$1000 __THE_0_test1SDtest2_0 = (struct __THE_1_fn$1000) {&__THE_1_test1SDtest2_0, NULL, 0};
-  return __THE_0_test1SDtest2_0.f(__THE_0_test1SDtest2_0.x);
+  v = (error_stack_pos(&err_state, 10, 10), __THE_0_test1SDtest2_0.f(__THE_0_test1SDtest2_0.x));
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 int32_t __THE_1_mainSDtest4_0 (void *px) {
   unsigned char r = 0;
   int32_t v;
+  error_stack_push(&err_state, "/test", "test4");
   struct __THE_1_mainSDtest4_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$1000 __THE_0_mainSDtest4SDtest5_0;
   __THE_1_mainSDtest4SDtest5_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4SDtest5_0, (struct __THE_1_mainSDtest4SDtest5_0X) {__THE_0_a_0});
   r = 1;
-  v = __THE_0_mainSDtest4SDtest5_0.f(__THE_0_mainSDtest4SDtest5_0.x);
+  v = (error_stack_pos(&err_state, 25, 12), __THE_0_mainSDtest4SDtest5_0.f(__THE_0_mainSDtest4SDtest5_0.x));
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4SDtest5_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 int32_t __THE_1_mainSDtest4SDtest5_0 (void *px) {
+  unsigned char r = 0;
   int32_t v;
+  error_stack_push(&err_state, "/test", "test5");
   struct __THE_1_mainSDtest4SDtest5_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$1000 __THE_0_mainSDtest4SDtest5SDtest6_0;
   __THE_1_mainSDtest4SDtest5SDtest6_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4SDtest5SDtest6_0, (struct __THE_1_mainSDtest4SDtest5SDtest6_0X) {__THE_0_a_0});
-  v = __THE_0_mainSDtest4SDtest5SDtest6_0.f(__THE_0_mainSDtest4SDtest5SDtest6_0.x);
+  r = 1;
+  v = (error_stack_pos(&err_state, 22, 14), __THE_0_mainSDtest4SDtest5SDtest6_0.f(__THE_0_mainSDtest4SDtest5SDtest6_0.x));
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4SDtest5SDtest6_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 int32_t __THE_1_mainSDtest4SDtest5SDtest6_0 (void *px) {
+  unsigned char r = 0;
+  int32_t v;
+  error_stack_push(&err_state, "/test", "test6");
   struct __THE_1_mainSDtest4SDtest5SDtest6_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
-  return *__THE_0_a_0;
+  r = 1;
+  v = *__THE_0_a_0;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  return v;
 }
 void __THE_1_mainSDtest4SDtest5SDtest6_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSDtest4SDtest5SDtest6_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest4SDtest5SDtest6_0X);
@@ -261,15 +300,15 @@ void __THE_1_mainSDtest4_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_main
 int main () {
   error_stack_push(&err_state, "/test", "main");
   const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  const int32_t __THE_0_a_0 = __THE_0_test1_0.f(__THE_0_test1_0.x);
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
+  const int32_t __THE_0_a_0 = (error_stack_pos(&err_state, 14, 8), __THE_0_test1_0.f(__THE_0_test1_0.x));
   const struct __THE_1_fn$1000 __THE_0_mainSDtest4_0;
   __THE_1_mainSDtest4_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4_0, (struct __THE_1_mainSDtest4_0X) {&__THE_0_a_0});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
-  const int32_t __THE_0_b_0 = __THE_0_mainSDtest4_0.f(__THE_0_mainSDtest4_0.x);
-L4:
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  const int32_t __THE_0_b_0 = (error_stack_pos(&err_state, 28, 8), __THE_0_mainSDtest4_0.f(__THE_0_mainSDtest4_0.x));
+L8:
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4_0);
-L1:
+L4:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

@@ -249,23 +249,32 @@ struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str self
 }
 bool __THE_1_filterOne_0 (void *px, struct __THE_1_fn$0P p) {
   bool v;
+  error_stack_push(&err_state, "/test", "filterOne");
   const struct str __THE_0_it_0 = p.n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "1");
   str_free((struct str) __THE_0_it_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 bool __THE_1_filterTwo_0 (void *px, struct __THE_1_fn$0P p) {
   bool v;
+  error_stack_push(&err_state, "/test", "filterTwo");
   const struct str __THE_0_it_0 = p.n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "2");
   str_free((struct str) __THE_0_it_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 bool __THE_1_filterTwoOrOne_0 (void *px, struct __THE_1_fn$0P p) {
   bool v;
+  error_stack_push(&err_state, "/test", "filterTwoOrOne");
   const struct str __THE_0_it_0 = p.n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "1") && str_ne_cstr(str_copy(__THE_0_it_0), "2");
   str_free((struct str) __THE_0_it_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 

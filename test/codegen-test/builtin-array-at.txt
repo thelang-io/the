@@ -230,7 +230,8 @@ int main () {
   const int32_t __THE_0_num5_0 = *(error_stack_pos(&err_state, 7, 15), __THE_1_array_int_at(__THE_0_test_0, -2));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const int32_t __THE_0_num6_0 = *(error_stack_pos(&err_state, 8, 15), __THE_1_array_int_at(__THE_0_test_0, -3));
-  print(stdout, "iziziziziziz", __THE_0_num1_0, " ", __THE_0_num2_0, " ", __THE_0_num3_0, " ", __THE_0_num4_0, " ", __THE_0_num5_0, " ", __THE_0_num6_0, THE_EOL);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  (error_stack_pos(&err_state, 10, 3), print(stdout, "iziziziziziz", __THE_0_num1_0, " ", __THE_0_num2_0, " ", __THE_0_num3_0, " ", __THE_0_num4_0, " ", __THE_0_num5_0, " ", __THE_0_num6_0, THE_EOL));
 L2:
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test_0);
 L1:

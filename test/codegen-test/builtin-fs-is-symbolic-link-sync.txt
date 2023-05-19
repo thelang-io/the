@@ -454,21 +454,21 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync.txt");
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  print(stdout, "tz", (error_stack_pos(&err_state, 4, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0))), THE_EOL);
+  (error_stack_pos(&err_state, 4, 3), print(stdout, "tz", (error_stack_pos(&err_state, 4, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  print(stdout, "tz", (error_stack_pos(&err_state, 5, 9), fs_isSymbolicLinkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"))), THE_EOL);
+  (error_stack_pos(&err_state, 5, 3), print(stdout, "tz", (error_stack_pos(&err_state, 5, 9), fs_isSymbolicLinkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  print(stdout, "tz", (error_stack_pos(&err_state, 6, 9), fs_isSymbolicLinkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"))), THE_EOL);
+  (error_stack_pos(&err_state, 6, 3), print(stdout, "tz", (error_stack_pos(&err_state, 6, 9), fs_isSymbolicLinkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   (error_stack_pos(&err_state, 9, 3), fs_linkSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"), str_copy(__THE_0_fileName_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  print(stdout, "tz", (error_stack_pos(&err_state, 10, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0))), THE_EOL);
+  (error_stack_pos(&err_state, 10, 3), print(stdout, "tz", (error_stack_pos(&err_state, 10, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   struct str __THE_0_fileName2_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "builtin-fs-is-symbolic-sync-symlink.txt");
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 14, 3), fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "tz", (error_stack_pos(&err_state, 15, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0))), THE_EOL);
+  (error_stack_pos(&err_state, 15, 3), print(stdout, "tz", (error_stack_pos(&err_state, 15, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 16, 3), fs_unlinkSync(str_copy(__THE_0_fileName2_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
@@ -482,7 +482,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 24, 3), fs_linkSync(str_copy(__THE_0_fileName_0), str_copy(__THE_0_fileName2_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "tz", (error_stack_pos(&err_state, 25, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0))), THE_EOL);
+  (error_stack_pos(&err_state, 25, 3), print(stdout, "tz", (error_stack_pos(&err_state, 25, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName2_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 26, 3), fs_unlinkSync(str_copy(__THE_0_fileName2_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
@@ -492,7 +492,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 31, 3), fs_linkSync(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_copy(__THE_0_fileName_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "tz", (error_stack_pos(&err_state, 32, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0))), THE_EOL);
+  (error_stack_pos(&err_state, 32, 3), print(stdout, "tz", (error_stack_pos(&err_state, 32, 9), fs_isSymbolicLinkSync(str_copy(__THE_0_fileName_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   (error_stack_pos(&err_state, 33, 3), fs_unlinkSync(str_copy(__THE_0_fileName_0)));
 L3:

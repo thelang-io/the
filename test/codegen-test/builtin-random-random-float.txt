@@ -216,42 +216,42 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-    print(stdout, "fz", (error_stack_pos(&err_state, 3, 11), random_randomFloat(0, 0, 0, 0)), THE_EOL);
+    (error_stack_pos(&err_state, 3, 5), print(stdout, "fz", (error_stack_pos(&err_state, 3, 11), random_randomFloat(0, 0, 0, 0)), THE_EOL));
 L1:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L0;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
-    print(stdout, "fz", (error_stack_pos(&err_state, 6, 11), random_randomFloat(1, -1, 1, 1)), THE_EOL);
+    (error_stack_pos(&err_state, 6, 5), print(stdout, "fz", (error_stack_pos(&err_state, 6, 11), random_randomFloat(1, -1, 1, 1)), THE_EOL));
 L2:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L0;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stdout, "fz", (error_stack_pos(&err_state, 9, 11), random_randomFloat(1, -1, 1, 0)), THE_EOL);
+    (error_stack_pos(&err_state, 9, 5), print(stdout, "fz", (error_stack_pos(&err_state, 9, 11), random_randomFloat(1, -1, 1, 0)), THE_EOL));
 L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L0;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    print(stdout, "fz", (error_stack_pos(&err_state, 12, 11), random_randomFloat(1, -100, 1, 100)), THE_EOL);
+    (error_stack_pos(&err_state, 12, 5), print(stdout, "fz", (error_stack_pos(&err_state, 12, 11), random_randomFloat(1, -100, 1, 100)), THE_EOL));
 L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L0;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
-    print(stdout, "fz", (error_stack_pos(&err_state, 15, 11), random_randomFloat(1, -100, 1, 0)), THE_EOL);
+    (error_stack_pos(&err_state, 15, 5), print(stdout, "fz", (error_stack_pos(&err_state, 15, 11), random_randomFloat(1, -100, 1, 0)), THE_EOL));
 L5:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L0;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
-    print(stdout, "fz", (error_stack_pos(&err_state, 18, 11), random_randomFloat(1, 0, 1, 100)), THE_EOL);
+    (error_stack_pos(&err_state, 18, 5), print(stdout, "fz", (error_stack_pos(&err_state, 18, 11), random_randomFloat(1, 0, 1, 100)), THE_EOL));
 L6:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L0;

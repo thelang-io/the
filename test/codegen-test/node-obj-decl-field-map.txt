@@ -94,6 +94,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 void error_assign (err_state_t *, int, void *);
 void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, char *, char *);
 struct str error_stack_str (err_state_t *);
 struct str int_str (int32_t);
@@ -140,6 +141,10 @@ void error_assign (err_state_t *state, int id, void *ctx) {
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  state->stack[state->stack_idx - 1].line = line;
+  state->stack[state->stack_idx - 1].col = col;
 }
 void error_stack_push (err_state_t *state, char *file, char *name) {
   state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
@@ -397,9 +402,9 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   __THE_0_test2_0 = __THE_1_Test_0_realloc(__THE_0_test2_0, __THE_1_Test_0_alloc(__THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 4, str_alloc("key2"), 5), __THE_1_map_strMSstrME_alloc(2, str_alloc("key1"), str_alloc("string3"), str_alloc("key2"), str_alloc("string4"))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_test1_0)), THE_EOL);
+  (error_stack_pos(&err_state, 11, 3), print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_test1_0)), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_test2_0)), THE_EOL);
+  (error_stack_pos(&err_state, 12, 3), print(stdout, "sz", __THE_1_Test_0_str(__THE_1_Test_0_copy(__THE_0_test2_0)), THE_EOL));
 L3:
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0);
 L2:

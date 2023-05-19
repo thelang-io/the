@@ -313,34 +313,37 @@ struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE
   return n2;
 }
 void __THE_1_printTest_0 (void *px, struct __THE_1_fn$1000P p) {
+  error_stack_push(&err_state, "/test", "printTest");
   const struct __THE_1_union_strUSintUScharUSboolUE __THE_0_test_0 = p.n0;
   if (__THE_0_test_0.t == TYPE_str) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
-    print(stdout, "zzsz", "test is str:", " ", (error_stack_pos(&err_state, 3, 27), str_trimStart(str_concat_cstr(str_copy(__THE_0_test_0.v2), " test"))), THE_EOL);
+    (error_stack_pos(&err_state, 3, 5), print(stdout, "zzsz", "test is str:", " ", (error_stack_pos(&err_state, 3, 27), str_trimStart(str_concat_cstr(str_copy(__THE_0_test_0.v2), " test"))), THE_EOL));
 L2:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   } else if (__THE_0_test_0.t == TYPE_int) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stdout, "zziz", "test is int:", " ", __THE_0_test_0.v3 + 1, THE_EOL);
+    (error_stack_pos(&err_state, 5, 5), print(stdout, "zziz", "test is int:", " ", __THE_0_test_0.v3 + 1, THE_EOL));
 L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   } else if (__THE_0_test_0.t == TYPE_char) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    print(stdout, "zzbz", "test is char:", " ", char_byte(__THE_0_test_0.v4), THE_EOL);
+    (error_stack_pos(&err_state, 7, 5), print(stdout, "zzbz", "test is char:", " ", (error_stack_pos(&err_state, 7, 28), char_byte(__THE_0_test_0.v4)), THE_EOL));
 L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   } else {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
-    print(stdout, "zzsz", "test is bool:", " ", __THE_0_test_0.v5 == false ? str_alloc("false") : str_alloc("true"), THE_EOL);
+    (error_stack_pos(&err_state, 9, 5), print(stdout, "zzsz", "test is bool:", " ", __THE_0_test_0.v5 == false ? str_alloc("false") : str_alloc("true"), THE_EOL));
 L5:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L1;
   }
 L1:
   __THE_1_union_strUSintUScharUSboolUE_free((struct __THE_1_union_strUSintUScharUSboolUE) __THE_0_test_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
@@ -349,35 +352,35 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
   struct __THE_1_union_strUSintUScharUSboolUE __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_str, str_alloc(""));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 15, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_str, str_alloc("string")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 17, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_int, 0));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 19, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_int, 10));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 21, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_char, '\0'));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 23, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_char, '\n'));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 25, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_bool, true));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 27, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_bool, false));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)});
+  (error_stack_pos(&err_state, 29, 3), __THE_0_printTest_0.f(__THE_0_printTest_0.x, (struct __THE_1_fn$1000P) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}));
 L7:
   __THE_1_union_strUSintUScharUSboolUE_free((struct __THE_1_union_strUSintUScharUSboolUE) __THE_0_test_0);
 L6:

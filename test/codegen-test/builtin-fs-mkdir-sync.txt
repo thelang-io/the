@@ -303,7 +303,7 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   (error_stack_pos(&err_state, 4, 3), fs_mkdirSync(str_copy(__THE_0_dirName_0)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  print(stdout, "tz", (error_stack_pos(&err_state, 5, 9), fs_isDirectorySync(str_copy(__THE_0_dirName_0))), THE_EOL);
+  (error_stack_pos(&err_state, 5, 3), print(stdout, "tz", (error_stack_pos(&err_state, 5, 9), fs_isDirectorySync(str_copy(__THE_0_dirName_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   (error_stack_pos(&err_state, 6, 3), fs_rmdirSync(str_copy(__THE_0_dirName_0)));
 L2:

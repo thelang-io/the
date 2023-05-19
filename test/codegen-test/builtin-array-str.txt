@@ -262,13 +262,13 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct __THE_1_array_int __THE_0_test3_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), " ", (error_stack_pos(&err_state, 7, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0))), THE_EOL);
+  (error_stack_pos(&err_state, 7, 3), print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0)), " ", (error_stack_pos(&err_state, 7, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test0_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), " ", (error_stack_pos(&err_state, 8, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0))), THE_EOL);
+  (error_stack_pos(&err_state, 8, 3), print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0)), " ", (error_stack_pos(&err_state, 8, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test1_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), " ", (error_stack_pos(&err_state, 9, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0))), THE_EOL);
+  (error_stack_pos(&err_state, 9, 3), print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0)), " ", (error_stack_pos(&err_state, 9, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test2_0))), THE_EOL));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), " ", (error_stack_pos(&err_state, 10, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0))), THE_EOL);
+  (error_stack_pos(&err_state, 10, 3), print(stdout, "szsz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0)), " ", (error_stack_pos(&err_state, 10, 16), __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_test3_0))), THE_EOL));
 L5:
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test3_0);
 L4:

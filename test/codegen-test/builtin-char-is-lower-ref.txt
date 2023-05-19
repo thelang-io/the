@@ -233,9 +233,9 @@ int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_array_char __THE_0_arr_0 = __THE_1_array_char_alloc(9, '\0', '\n', '\t', 'A', 'a', '0', '9', '_', '-');
-  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_char_len(__THE_1_array_char_copy(__THE_0_arr_0)); __THE_0_i_0++) {
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < (error_stack_pos(&err_state, 4, 20), __THE_1_array_char_len(__THE_1_array_char_copy(__THE_0_arr_0))); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stdout, "tz", char_isLower(*(error_stack_pos(&err_state, 5, 11), __THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0))), THE_EOL);
+    (error_stack_pos(&err_state, 5, 5), print(stdout, "tz", (error_stack_pos(&err_state, 5, 11), char_isLower(*(error_stack_pos(&err_state, 5, 11), __THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0)))), THE_EOL));
 L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;

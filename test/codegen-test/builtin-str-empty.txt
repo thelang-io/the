@@ -206,16 +206,17 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main");
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  const bool __THE_0_result1_0 = str_empty(str_alloc(""));
+  const bool __THE_0_result1_0 = (error_stack_pos(&err_state, 2, 14), str_empty(str_alloc("")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  const bool __THE_0_result2_0 = str_empty((error_stack_pos(&err_state, 3, 14), char_repeat('\0', 1)));
+  const bool __THE_0_result2_0 = (error_stack_pos(&err_state, 3, 14), str_empty((error_stack_pos(&err_state, 3, 14), char_repeat('\0', 1))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  const bool __THE_0_result3_0 = str_empty(str_alloc("t"));
+  const bool __THE_0_result3_0 = (error_stack_pos(&err_state, 4, 14), str_empty(str_alloc("t")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  const bool __THE_0_result4_0 = str_empty(str_alloc("test"));
+  const bool __THE_0_result4_0 = (error_stack_pos(&err_state, 5, 14), str_empty(str_alloc("test")));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  const bool __THE_0_result5_0 = str_empty((error_stack_pos(&err_state, 6, 14), char_repeat('\0', 0xFFFFFFF)));
-  print(stdout, "tztztztztz", __THE_0_result1_0, " ", __THE_0_result2_0, " ", __THE_0_result3_0, " ", __THE_0_result4_0, " ", __THE_0_result5_0, THE_EOL);
+  const bool __THE_0_result5_0 = (error_stack_pos(&err_state, 6, 14), str_empty((error_stack_pos(&err_state, 6, 14), char_repeat('\0', 0xFFFFFFF))));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  (error_stack_pos(&err_state, 7, 3), print(stdout, "tztztztztz", __THE_0_result1_0, " ", __THE_0_result2_0, " ", __THE_0_result3_0, " ", __THE_0_result4_0, " ", __THE_0_result5_0, THE_EOL));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

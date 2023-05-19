@@ -160,13 +160,15 @@ void error_Error_free (struct error_Error *n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main");
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const int32_t __THE_0_a_0 = 1;
   if (__THE_0_a_0 == 1) {
     error_stack_pos(&err_state, 4, 5);
     error_assign(&err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")));
-    goto L0;
+    goto L1;
   }
-L0:
+L1:
+  err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
