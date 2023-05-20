@@ -18,10 +18,10 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenURL = {
-  R"(struct _{url_URL} *url_parse (_{struct str} s) {)" EOL
+  R"(struct _{url_URL} *url_parse (_{struct str} s, int line, int col) {)" EOL
   R"(  if (s.l == 0) {)" EOL
   R"(    _{str_free}(s);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL"), (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
   R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{size_t} i = 0;)" EOL
@@ -32,11 +32,11 @@ const std::vector<std::string> codegenURL = {
   R"(      break;)" EOL
   R"(    } else if (!_{isalnum}(ch) && ch != '.' && ch != '-' && ch != '+') {)" EOL
   R"(      _{str_free}(s);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL protocol"), (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL protocol"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
   R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    } else if (i == s.l - 1) {)" EOL
   R"(      _{str_free}(s);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL"), (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
   R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(  })" EOL
@@ -64,12 +64,12 @@ const std::vector<std::string> codegenURL = {
   R"(    if (ch == '@' && hostname_start != 0 && pathname_start == 0) {)" EOL
   R"(      _{str_free}(protocol);)" EOL
   R"(      _{str_free}(s);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("URL auth is not supported"), (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("URL auth is not supported"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
   R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    } else if (ch == ':' && port_start != 0 && (pathname_start == 0 || search_start == 0 || hash_start == 0)) {)" EOL
   R"(      _{str_free}(protocol);)" EOL
   R"(      _{str_free}(s);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL port"), (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL port"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
   R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(    if (ch == ':' && hostname_start != 0 && pathname_start == 0) port_start = i;)" EOL
@@ -84,7 +84,7 @@ const std::vector<std::string> codegenURL = {
   R"(    _{str_free}(hostname);)" EOL
   R"(    _{str_free}(protocol);)" EOL
   R"(    _{str_free}(s);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL hostname"), (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid URL hostname"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
   R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  } else if (hostname_start != 0 && hostname_start != hostname_end) {)" EOL
   R"(    hostname.l = hostname_end - hostname_start;)" EOL
@@ -117,7 +117,7 @@ const std::vector<std::string> codegenURL = {
   R"(      _{str_free}(hostname);)" EOL
   R"(      _{str_free}(protocol);)" EOL
   R"(      _{str_free}(s);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("URL origin is not present"), (_{struct str}) {_{NULL}, 0}));)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("URL origin is not present"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
   R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(    origin.l = protocol.l + 2 + host.l;)" EOL

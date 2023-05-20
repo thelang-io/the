@@ -79,28 +79,6 @@ const BANNER := "/*!" + os_EOL +
   " * limitations under the License." + os_EOL +
   " */" + os_EOL
 
-const ENTITIES_THROWS_METADATA := {
-  "TYPE_error_Error": true,
-  "array_request_Header": true,
-  "array_request_Header_free": false,
-  "array_str": true,
-  "array_str_free": false,
-  "error_Error": false,
-  "error_Error_alloc": true,
-  "fs_Stats": false,
-  "fs_Stats_alloc": true,
-  "map_str_str": false,
-  "pair_str_str": false,
-  "request_Header": false,
-  "request_Header_alloc": true,
-  "request_Request": false,
-  "request_Response": false,
-  "request_Response_alloc": true,
-  "url_URL": false,
-  "url_URL_alloc": true,
-  "url_URL_free": false
-}
-
 const ENTITIES_TRANSFORMER := {
   "array_request_Header": "__THE_1_array_request_Header",
   "array_request_Header_free": "__THE_1_array_request_Header_free",
@@ -500,15 +478,6 @@ main {
           if api.has(dependency) {
             apiDep := api.get(dependency)
             if apiDep.throws {
-              throws = true
-              break
-            }
-          } else {
-            if !ENTITIES_THROWS_METADATA.has(dependency) {
-              panic("Throw metadata does not exist for dependency `" + dependency + "`")
-            }
-
-            if ENTITIES_THROWS_METADATA.get(dependency) {
               throws = true
               break
             }

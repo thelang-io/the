@@ -36,8 +36,8 @@ main {
 #include <stdlib.h>
 
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -55,49 +55,59 @@ struct str {
 };
 
 struct error_Error;
+struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
-struct __THE_1_fn$1001;
 struct __THE_1_fn$1001P;
+struct __THE_1_fn$1001;
 
 struct error_Error {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
+struct __THE_1_fn$1000P {
+  int line;
+  int col;
+};
 struct __THE_1_fn$1000 {
-  void (*f) (void *);
+  void (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$1001P {
+  int line;
+  int col;
+  int32_t n0;
+  int32_t n1;
 };
 struct __THE_1_fn$1001 {
   int32_t (*f) (void *, struct __THE_1_fn$1001P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
-  int32_t n0;
-  int32_t n1;
-};
 
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
 void str_free (struct str);
 void error_Error_free (struct error_Error *);
-void __THE_1_test1_0 (void *);
+void __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
 int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$1001P);
 
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -120,7 +130,7 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;
@@ -136,10 +146,10 @@ void error_Error_free (struct error_Error *n) {
   str_free((struct str) n->__THE_0_stack);
   free(n);
 }
-void __THE_1_test1_0 (void *px) {
-  error_stack_push(&err_state, "/test", "test1");
+void __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
+  error_stack_push(&err_state, "/test", "test1", p.line, p.col);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  (error_stack_pos(&err_state, 2, 3), print(stdout, "iz", 1, THE_EOL));
+  print(stdout, "iz", 1, THE_EOL);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
@@ -147,7 +157,7 @@ L1:
 }
 int32_t __THE_1_test2_0 (void *px, struct __THE_1_fn$1001P p) {
   int32_t v;
-  error_stack_push(&err_state, "/test", "test2");
+  error_stack_push(&err_state, "/test", "test2", p.line, p.col);
   const int32_t __THE_0_a_0 = p.n0;
   const int32_t __THE_0_b_0 = p.n1;
   v = __THE_0_a_0 + __THE_0_b_0 + 2;
@@ -157,13 +167,13 @@ int32_t __THE_1_test2_0 (void *px, struct __THE_1_fn$1001P p) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-  (error_stack_pos(&err_state, 13, 3), __THE_0_test1_0.f(__THE_0_test1_0.x));
+  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {13, 3});
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 14, 3), print(stdout, "iz", (error_stack_pos(&err_state, 14, 9), __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {4, 2})), THE_EOL));
+  print(stdout, "iz", __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {14, 9, 4, 2}), THE_EOL);
 L3:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

@@ -18,9 +18,27 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenError = {
-  R"(void error_assign (_{err_state_t} *state, int id, void *ctx) {)" EOL
+  R"~(void error_alloc (_{err_state_t} *state, _{size_t} n1) {)~" EOL
+  R"~(  char d[4096];)~" EOL
+  R"~(  _{size_t} l = 0;)~" EOL
+  R"~(  for (int i = state->stack_idx - 1; i >= 0; i--) {)~" EOL
+  R"~(    _{err_stack_t} it = state->stack[i];)~" EOL
+  R"~(    const char *fmt = _{THE_EOL} "  at %s (%s)";)~" EOL
+  R"~(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file);)~" EOL
+  R"~(    if (l + z >= 4096) {)~" EOL
+  R"~(      break;)~" EOL
+  R"~(    })~" EOL
+  R"~(    _{sprintf}(&d[l], fmt, it.name, it.file);)~" EOL
+  R"~(    l += z;)~" EOL
+  R"~(  })~" EOL
+  R"~(  _{fprintf}(_{stderr}, "Allocation Error: failed to allocate %zu bytes%s" _{THE_EOL}, n1, d);)~" EOL
+  R"~(  _{exit}(_{EXIT_FAILURE});)~" EOL
+  R"~(})~" EOL,
+
+  R"(void error_assign (_{err_state_t} *state, int id, void *ctx, int line, int col) {)" EOL
   R"(  state->id = id;)" EOL
   R"(  state->ctx = ctx;)" EOL
+  R"(  _{error_stack_pos}(state, line, col);)" EOL
   R"(  *((_{struct str} *) &((struct _{error_Error} *) state->ctx)->__THE_0_stack) = _{error_stack_str}(state);)" EOL
   R"(})" EOL,
 
@@ -29,22 +47,21 @@ const std::vector<std::string> codegenError = {
   R"(})" EOL,
 
   R"(void error_stack_pos (_{err_state_t} *state, int line, int col) {)" EOL
-  R"(  state->stack[state->stack_idx - 1].line = line;)" EOL
-  R"(  state->stack[state->stack_idx - 1].col = col;)" EOL
+  R"(  if (line != 0) state->stack[state->stack_idx - 1].line = line;)" EOL
+  R"(  if (col != 0) state->stack[state->stack_idx - 1].col = col;)" EOL
   R"(})" EOL,
 
-  R"(void error_stack_push (_{err_state_t} *state, char *file, char *name) {)" EOL
-  R"(  state->stack[state->stack_idx++] = (_{err_stack_t}) {file, name, 0, 0};)" EOL
+  R"(void error_stack_push (_{err_state_t} *state, const char *file, const char *name, int line, int col) {)" EOL
+  R"(  state->stack[state->stack_idx].file = file;)" EOL
+  R"(  state->stack[state->stack_idx].name = name;)" EOL
+  R"(  _{error_stack_pos}(state, line, col);)" EOL
+  R"(  state->stack_idx++;)" EOL
   R"(})" EOL,
 
   R"~(_{struct str} error_stack_str (_{err_state_t} *state) {)~" EOL
   R"~(  _{struct str} message = ((struct _{error_Error} *) state->ctx)->__THE_0_message;)~" EOL
   R"~(  _{size_t} l = message.l;)~" EOL
-  R"~(  char *d = _{malloc}(l);)~" EOL
-  R"~(  if (d == _{NULL}) {)~" EOL
-  R"~(    _{fprintf}(_{stderr}, "Fatal Error: failed to allocate %zu bytes in stack generation" _{THE_EOL}, l);)~" EOL
-  R"~(    _{exit}(_{EXIT_FAILURE});)~" EOL
-  R"~(  })~" EOL
+  R"~(  char *d = _{alloc}(l);)~" EOL
   R"~(  _{memcpy}(d, message.d, l);)~" EOL
   R"~(  for (int i = state->stack_idx - 1; i >= 0; i--) {)~" EOL
   R"~(    _{err_stack_t} it = state->stack[i];)~" EOL
@@ -60,11 +77,7 @@ const std::vector<std::string> codegenError = {
   R"~(      fmt = _{THE_EOL} "  at %s (%s:%d:%d)";)~" EOL
   R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file, it.line, it.col);)~" EOL
   R"~(    })~" EOL
-  R"~(    d = _{realloc}(d, l + z + 1);)~" EOL
-  R"~(    if (d == _{NULL}) {)~" EOL
-  R"~(      _{fprintf}(_{stderr}, "Fatal Error: failed to reallocate %zu bytes in stack generation" _{THE_EOL}, l + z);)~" EOL
-  R"~(      _{exit}(_{EXIT_FAILURE});)~" EOL
-  R"~(    })~" EOL
+  R"~(    d = _{re_alloc}(d, l + z + 1);)~" EOL
   R"~(    if (it.col == 0 && it.line == 0) {)~" EOL
   R"~(      _{sprintf}(&d[l], fmt, it.name, it.file);)~" EOL
   R"~(    } else if (it.col == 0) {)~" EOL

@@ -35,8 +35,8 @@ struct buffer {
   size_t l;
 };
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -71,33 +71,28 @@ void *alloc (size_t);
 struct buffer buffer_copy (const struct buffer);
 void buffer_free (struct buffer);
 struct str buffer_to_str (struct buffer);
-void error_assign (err_state_t *, int, void *);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct buffer str_toBuffer (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_array_buffer_Buffer __THE_1_array_buffer_Buffer_alloc (size_t, ...);
-struct buffer *__THE_1_array_buffer_Buffer_at (struct __THE_1_array_buffer_Buffer, int32_t);
+struct buffer *__THE_1_array_buffer_Buffer_at (struct __THE_1_array_buffer_Buffer, int32_t, int, int);
 struct __THE_1_array_buffer_Buffer __THE_1_array_buffer_Buffer_copy (const struct __THE_1_array_buffer_Buffer);
 void __THE_1_array_buffer_Buffer_free (struct __THE_1_array_buffer_Buffer);
 size_t __THE_1_array_buffer_Buffer_len (struct __THE_1_array_buffer_Buffer);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    const char *fmt = "failed to allocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 struct buffer buffer_copy (const struct buffer o) {
@@ -111,29 +106,45 @@ void buffer_free (struct buffer o) {
 struct str buffer_to_str (struct buffer b) {
   return (struct str) {(char *) b.d, b.l};
 }
-void error_assign (err_state_t *state, int id, void *ctx) {
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  error_stack_pos(state, line, col);
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
   size_t l = message.l;
-  char *d = malloc(l);
-  if (d == NULL) {
-    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+  char *d = alloc(l);
   memcpy(d, message.d, l);
   for (int i = state->stack_idx - 1; i >= 0; i--) {
     err_stack_t it = state->stack[i];
@@ -149,11 +160,7 @@ struct str error_stack_str (err_state_t *state) {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
       z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
     }
-    d = realloc(d, l + z + 1);
-    if (d == NULL) {
-      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
-      exit(EXIT_FAILURE);
-    }
+    d = re_alloc(d, l + z + 1);
     if (it.col == 0 && it.line == 0) {
       sprintf(&d[l], fmt, it.name, it.file);
     } else if (it.col == 0) {
@@ -186,13 +193,18 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;
     }
   }
   va_end(args);
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -226,13 +238,13 @@ struct __THE_1_array_buffer_Buffer __THE_1_array_buffer_Buffer_alloc (size_t x, 
   va_end(args);
   return (struct __THE_1_array_buffer_Buffer) {d, x};
 }
-struct buffer *__THE_1_array_buffer_Buffer_at (struct __THE_1_array_buffer_Buffer n, int32_t i) {
+struct buffer *__THE_1_array_buffer_Buffer_at (struct __THE_1_array_buffer_Buffer n, int32_t i, int line, int col) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     const char *fmt = "index %" PRId32 " out of array bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
     char *d = alloc(z + 1);
     sprintf(d, fmt, i);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
@@ -254,12 +266,12 @@ size_t __THE_1_array_buffer_Buffer_len (struct __THE_1_array_buffer_Buffer n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  const struct __THE_1_array_buffer_Buffer __THE_0_arr_0 = __THE_1_array_buffer_Buffer_alloc(2, (error_stack_pos(&err_state, 2, 11), str_toBuffer(str_alloc(""))), (error_stack_pos(&err_state, 2, 26), str_toBuffer(str_alloc("test"))));
-  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < (error_stack_pos(&err_state, 4, 20), __THE_1_array_buffer_Buffer_len(__THE_1_array_buffer_Buffer_copy(__THE_0_arr_0))); __THE_0_i_0++) {
+  const struct __THE_1_array_buffer_Buffer __THE_0_arr_0 = __THE_1_array_buffer_Buffer_alloc(2, str_toBuffer(str_alloc("")), str_toBuffer(str_alloc("test")));
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_buffer_Buffer_len(__THE_1_array_buffer_Buffer_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    (error_stack_pos(&err_state, 5, 5), print(stdout, "sz", (error_stack_pos(&err_state, 5, 11), buffer_to_str(buffer_copy(*(error_stack_pos(&err_state, 5, 11), __THE_1_array_buffer_Buffer_at(__THE_0_arr_0, __THE_0_i_0))))), THE_EOL));
+    print(stdout, "sz", buffer_to_str(buffer_copy(*__THE_1_array_buffer_Buffer_at(__THE_0_arr_0, __THE_0_i_0, 5, 11))), THE_EOL);
 L3:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L2;

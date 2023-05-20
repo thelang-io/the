@@ -1595,3 +1595,10 @@ INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenThrowTest, testing::Values(
   "throw-node-throw-inside-try",
   "throw-node-throw-raw"
 ));
+
+// todo try
+//  nested
+//  scopes
+//  far-sibling
+//  another type
+//  multiple types handlers

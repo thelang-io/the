@@ -28,8 +28,8 @@ main {
 #define TYPE_error_Error 1
 
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -57,12 +57,14 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
-void error_assign (err_state_t *, int, void *);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str error_stack_str (err_state_t *);
-struct str fs_realpathSync (struct str);
+struct str fs_realpathSync (struct str, int, int);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -71,16 +73,9 @@ void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    const char *fmt = "failed to allocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 struct str cstr_concat_str (const char *r, struct str s) {
@@ -91,29 +86,45 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
-void error_assign (err_state_t *state, int id, void *ctx) {
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  error_stack_pos(state, line, col);
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
   size_t l = message.l;
-  char *d = malloc(l);
-  if (d == NULL) {
-    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+  char *d = alloc(l);
   memcpy(d, message.d, l);
   for (int i = state->stack_idx - 1; i >= 0; i--) {
     err_stack_t it = state->stack[i];
@@ -129,11 +140,7 @@ struct str error_stack_str (err_state_t *state) {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
       z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
     }
-    d = realloc(d, l + z + 1);
-    if (d == NULL) {
-      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
-      exit(EXIT_FAILURE);
-    }
+    d = re_alloc(d, l + z + 1);
     if (it.col == 0 && it.line == 0) {
       sprintf(&d[l], fmt, it.name, it.file);
     } else if (it.col == 0) {
@@ -145,7 +152,7 @@ struct str error_stack_str (err_state_t *state) {
   }
   return (struct str) {d, l};
 }
-struct str fs_realpathSync (struct str s) {
+struct str fs_realpathSync (struct str s, int line, int col) {
   char *c = str_cstr(s);
   char *d = NULL;
   #ifdef THE_OS_WINDOWS
@@ -155,7 +162,7 @@ struct str fs_realpathSync (struct str s) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
       goto fs_realpathSync_cleanup1;
     }
     size_t l = GetFinalPathNameByHandle(h, NULL, 0, VOLUME_NAME_DOS);
@@ -164,7 +171,7 @@ struct str fs_realpathSync (struct str s) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
       goto fs_realpathSync_cleanup2;
     }
     char *r = alloc(l + 1);
@@ -173,7 +180,7 @@ struct str fs_realpathSync (struct str s) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
       goto fs_realpathSync_cleanup3;
     }
     if (memcmp(r, "\\\\?\\UNC\\", 8) == 0) {
@@ -200,7 +207,7 @@ fs_realpathSync_cleanup2:
     size_t z = snprintf(NULL, 0, fmt, c);
     char *d = alloc(z + 1);
     sprintf(d, fmt, c);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     goto fs_realpathSync_cleanup1;
   }
 fs_realpathSync_cleanup1:
@@ -208,6 +215,11 @@ fs_realpathSync_cleanup1:
   str_free((struct str) s);
   if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return (struct str) {d, l};
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -254,9 +266,9 @@ void error_Error_free (struct error_Error *n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  str_free((struct str) (error_stack_pos(&err_state, 2, 3), fs_realpathSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"))));
+  str_free((struct str) fs_realpathSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"), 2, 3));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

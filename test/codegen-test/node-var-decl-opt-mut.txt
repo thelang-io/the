@@ -24,8 +24,8 @@ main {
 #include <stdlib.h>
 
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -52,7 +52,8 @@ struct error_Error {
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void error_stack_pop (err_state_t *);
-void error_stack_push (err_state_t *, char *, char *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void str_free (struct str);
 void error_Error_free (struct error_Error *);
 void __THE_1_opt_int_free (int32_t *);
@@ -60,8 +61,15 @@ void __THE_1_opt_int_free (int32_t *);
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_pos (err_state_t *state, int line, int col) {
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 void str_free (struct str s) {
   free(s.d);
@@ -77,7 +85,7 @@ void __THE_1_opt_int_free (int32_t *n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L0;
   int32_t *__THE_0_r_0 = NULL;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;

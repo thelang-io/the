@@ -33,8 +33,8 @@ main {
 #define TYPE_error_Error 1
 
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -52,6 +52,7 @@ struct str {
 };
 
 struct error_Error;
+struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
 struct __THE_1_mainSDtest3_0X;
 
@@ -59,8 +60,12 @@ struct error_Error {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
+struct __THE_1_fn$1000P {
+  int line;
+  int col;
+};
 struct __THE_1_fn$1000 {
-  void (*f) (void *);
+  void (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
 };
@@ -73,30 +78,25 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 void *alloc (size_t);
 struct str char_str (char);
 struct str cstr_concat_str (const char *, struct str);
-void error_assign (err_state_t *, int, void *);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str error_stack_str (err_state_t *);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
-char *str_at (struct str, int32_t);
+char *str_at (struct str, int32_t, int, int);
 void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_mainSDtest3_0 (void *);
+void __THE_1_mainSDtest3_0 (void *, struct __THE_1_fn$1000P);
 void __THE_1_mainSDtest3_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest3_0X);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    const char *fmt = "failed to allocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 struct str char_str (char c) {
@@ -111,29 +111,45 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
-void error_assign (err_state_t *state, int id, void *ctx) {
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  error_stack_pos(state, line, col);
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
   size_t l = message.l;
-  char *d = malloc(l);
-  if (d == NULL) {
-    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+  char *d = alloc(l);
   memcpy(d, message.d, l);
   for (int i = state->stack_idx - 1; i >= 0; i--) {
     err_stack_t it = state->stack[i];
@@ -149,11 +165,7 @@ struct str error_stack_str (err_state_t *state) {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
       z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
     }
-    d = realloc(d, l + z + 1);
-    if (d == NULL) {
-      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
-      exit(EXIT_FAILURE);
-    }
+    d = re_alloc(d, l + z + 1);
     if (it.col == 0 && it.line == 0) {
       sprintf(&d[l], fmt, it.name, it.file);
     } else if (it.col == 0) {
@@ -165,19 +177,24 @@ struct str error_stack_str (err_state_t *state) {
   }
   return (struct str) {d, l};
 }
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
+}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-char *str_at (struct str s, int32_t i) {
+char *str_at (struct str s, int32_t i, int line, int col) {
   if ((i >= 0 && i >= s.l) || (i < 0 && i < -((int32_t) s.l))) {
     const char *fmt = "index %" PRId32 " out of string bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
     char *d = alloc(z + 1);
     sprintf(d, fmt, i);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   return i < 0 ? &s.d[s.l + i] : &s.d[i];
@@ -199,12 +216,12 @@ void error_Error_free (struct error_Error *n) {
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest3_0 (void *px) {
-  error_stack_push(&err_state, "/test", "test3");
+void __THE_1_mainSDtest3_0 (void *px, struct __THE_1_fn$1000P p) {
+  error_stack_push(&err_state, "/test", "test3", p.line, p.col);
   struct __THE_1_mainSDtest3_0X *x = px;
   const struct str *__THE_0_test1_0 = x->__THE_0_test1_0;
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-  const struct str __THE_0_test4_0 = cstr_concat_str("string", (error_stack_pos(&err_state, 6, 25), char_str(*(error_stack_pos(&err_state, 6, 25), str_at(*__THE_0_test1_0, 6)))));
+  const struct str __THE_0_test4_0 = cstr_concat_str("string", char_str(*str_at(*__THE_0_test1_0, 6, 6, 25)));
   str_free((struct str) __THE_0_test4_0);
 L4:
   err_state.buf_idx--;
@@ -221,15 +238,15 @@ void __THE_1_mainSDtest3_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_main
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_test1_0 = str_alloc("string1");
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  const struct str __THE_0_test2_0 = cstr_concat_str("string", (error_stack_pos(&err_state, 3, 23), char_str(*(error_stack_pos(&err_state, 3, 23), str_at(__THE_0_test1_0, 6)))));
+  const struct str __THE_0_test2_0 = cstr_concat_str("string", char_str(*str_at(__THE_0_test1_0, 6, 3, 23)));
   const struct __THE_1_fn$1000 __THE_0_mainSDtest3_0;
   __THE_1_mainSDtest3_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest3_0, (struct __THE_1_mainSDtest3_0X) {&__THE_0_test1_0});
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 9, 3), __THE_0_mainSDtest3_0.f(__THE_0_mainSDtest3_0.x));
+  __THE_0_mainSDtest3_0.f(__THE_0_mainSDtest3_0.x, (struct __THE_1_fn$1000P) {9, 3});
 L3:
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest3_0);
   str_free((struct str) __THE_0_test2_0);

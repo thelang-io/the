@@ -49,11 +49,9 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_error_Error 1
-
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -188,17 +186,15 @@ struct __THE_1_map_strMSref_intME {
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
-void error_assign (err_state_t *, int, void *);
+void error_alloc (err_state_t *, size_t);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
-struct str error_stack_str (err_state_t *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
-struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_alloc (int, ...);
 bool __THE_1_map_strMSstrME_eq (struct __THE_1_map_strMSstrME, struct __THE_1_map_strMSstrME);
@@ -249,71 +245,39 @@ bool __THE_1_map_strMSref_intME_eq (struct __THE_1_map_strMSref_intME, struct __
 void __THE_1_map_strMSref_intME_free (struct __THE_1_map_strMSref_intME);
 bool __THE_1_map_strMSref_intME_ne (struct __THE_1_map_strMSref_intME, struct __THE_1_map_strMSref_intME);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    const char *fmt = "failed to allocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_assign (err_state_t *state, int id, void *ctx) {
-  state->id = id;
-  state->ctx = ctx;
-  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
-}
-struct str error_stack_str (err_state_t *state) {
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
-  size_t l = message.l;
-  char *d = malloc(l);
-  if (d == NULL) {
-    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  memcpy(d, message.d, l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
-    size_t z;
-    char *fmt;
-    if (it.col == 0 && it.line == 0) {
-      fmt = THE_EOL "  at %s (%s)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file);
-    } else if (it.col == 0) {
-      fmt = THE_EOL "  at %s (%s:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
-    } else {
-      fmt = THE_EOL "  at %s (%s:%d:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
-    }
-    d = realloc(d, l + z + 1);
-    if (d == NULL) {
-      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
-      exit(EXIT_FAILURE);
-    }
-    if (it.col == 0 && it.line == 0) {
-      sprintf(&d[l], fmt, it.name, it.file);
-    } else if (it.col == 0) {
-      sprintf(&d[l], fmt, it.name, it.file, it.line);
-    } else {
-      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
-    }
-    l += z;
-  }
-  return (struct str) {d, l};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -336,7 +300,7 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;
@@ -362,12 +326,6 @@ bool str_ne_str (struct str s1, struct str s2) {
   bool r = s1.l != s2.l || memcmp(s1.d, s2.d, s1.l) != 0;
   free(s1.d);
   free(s2.d);
-  return r;
-}
-struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
-  struct error_Error *r = alloc(sizeof(struct error_Error));
-  struct error_Error s = {__THE_0_message, __THE_0_stack};
-  memcpy(r, &s, sizeof(struct error_Error));
   return r;
 }
 void error_Error_free (struct error_Error *n) {
@@ -833,7 +791,7 @@ bool __THE_1_map_strMSref_intME_ne (struct __THE_1_map_strMSref_intME n1, struct
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const int32_t __THE_0_intA_0 = 1;
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
@@ -843,41 +801,41 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const int32_t *__THE_0_optIntB_0 = NULL;
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 9, 3), print(stdout, "zztz", "{ \"key1\": [1, 2], \"key2\": [3, 4] } == { \"key1\": [1, 2], \"key2\": [3, 4] }:", " ", __THE_1_map_strMSarray_intME_eq(__THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 1, 2), str_alloc("key2"), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 1, 2), str_alloc("key2"), __THE_1_array_int_alloc(2, 3, 4))), THE_EOL));
+  print(stdout, "zztz", "{ \"key1\": [1, 2], \"key2\": [3, 4] } == { \"key1\": [1, 2], \"key2\": [3, 4] }:", " ", __THE_1_map_strMSarray_intME_eq(__THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 1, 2), str_alloc("key2"), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 1, 2), str_alloc("key2"), __THE_1_array_int_alloc(2, 3, 4))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 10, 3), print(stdout, "zztz", "{ \"key1\": [1, 2], \"key2\": [3, 4] } != { \"key1\": [0, 1], \"key2\": [2, 3] }:", " ", __THE_1_map_strMSarray_intME_ne(__THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 1, 2), str_alloc("key2"), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 0, 1), str_alloc("key2"), __THE_1_array_int_alloc(2, 2, 3))), THE_EOL));
+  print(stdout, "zztz", "{ \"key1\": [1, 2], \"key2\": [3, 4] } != { \"key1\": [0, 1], \"key2\": [2, 3] }:", " ", __THE_1_map_strMSarray_intME_ne(__THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 1, 2), str_alloc("key2"), __THE_1_array_int_alloc(2, 3, 4)), __THE_1_map_strMSarray_intME_alloc(2, str_alloc("key1"), __THE_1_array_int_alloc(2, 0, 1), str_alloc("key2"), __THE_1_array_int_alloc(2, 2, 3))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 11, 3), print(stdout, "zztz", "{ \"key\": true } == { \"key\": true }:", " ", __THE_1_map_strMSboolME_eq(__THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true), __THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": true } == { \"key\": true }:", " ", __THE_1_map_strMSboolME_eq(__THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true), __THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 12, 3), print(stdout, "zztz", "{ \"key\": false } != { \"key\": true }:", " ", __THE_1_map_strMSboolME_ne(__THE_1_map_strMSboolME_alloc(1, str_alloc("key"), false), __THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": false } != { \"key\": true }:", " ", __THE_1_map_strMSboolME_ne(__THE_1_map_strMSboolME_alloc(1, str_alloc("key"), false), __THE_1_map_strMSboolME_alloc(1, str_alloc("key"), true)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 13, 3), print(stdout, "zztz", "{ \"key\": 'a' } == { \"key\": 'a' }:", " ", __THE_1_map_strMScharME_eq(__THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a'), __THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a')), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": 'a' } == { \"key\": 'a' }:", " ", __THE_1_map_strMScharME_eq(__THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a'), __THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a')), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 14, 3), print(stdout, "zztz", "{ \"key\": 'a' } != { \"key\": 'c' }:", " ", __THE_1_map_strMScharME_ne(__THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a'), __THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'c')), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": 'a' } != { \"key\": 'c' }:", " ", __THE_1_map_strMScharME_ne(__THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'a'), __THE_1_map_strMScharME_alloc(1, str_alloc("key"), 'c')), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 15, 3), print(stdout, "zztz", "{ \"key\": 3.14 } == { \"key\": 3.14 }:", " ", __THE_1_map_strMSfloatME_eq(__THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14), __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": 3.14 } == { \"key\": 3.14 }:", " ", __THE_1_map_strMSfloatME_eq(__THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14), __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 16, 3), print(stdout, "zztz", "{ \"key\": 3.14 } != { \"key\": 2.16 }:", " ", __THE_1_map_strMSfloatME_ne(__THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14), __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 2.16)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": 3.14 } != { \"key\": 2.16 }:", " ", __THE_1_map_strMSfloatME_ne(__THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14), __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 2.16)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 17, 3), print(stdout, "zztz", "{ \"key\": 1 } == { \"key\": 1 }:", " ", __THE_1_map_strMSintME_eq(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": 1 } == { \"key\": 1 }:", " ", __THE_1_map_strMSintME_eq(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 18, 3), print(stdout, "zztz", "{ \"key\": 1 } != { \"key\": 0 }:", " ", __THE_1_map_strMSintME_ne(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 0)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": 1 } != { \"key\": 0 }:", " ", __THE_1_map_strMSintME_ne(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 0)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 19, 3), print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } == { \"key\": TestObj{a: 1} }:", " ", __THE_1_map_strMSTestObjME_eq(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1))), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } == { \"key\": TestObj{a: 1} }:", " ", __THE_1_map_strMSTestObjME_eq(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 20, 3), print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } != { \"key\": TestObj{a: 2} }:", " ", __THE_1_map_strMSTestObjME_ne(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(2))), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } != { \"key\": TestObj{a: 2} }:", " ", __THE_1_map_strMSTestObjME_ne(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(2))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 21, 3), print(stdout, "zztz", "{ \"key\": optIntA } == { \"key\": optIntA }:", " ", __THE_1_map_strMSopt_intME_eq(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0))), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": optIntA } == { \"key\": optIntA }:", " ", __THE_1_map_strMSopt_intME_eq(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 22, 3), print(stdout, "zztz", "{ \"key\": optIntA } != { \"key\": optIntB }:", " ", __THE_1_map_strMSopt_intME_ne(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntB_0))), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": optIntA } != { \"key\": optIntB }:", " ", __THE_1_map_strMSopt_intME_ne(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntB_0))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 23, 3), print(stdout, "zztz", "{ \"key\": ref intA } == { \"key\": ref intA }:", " ", __THE_1_map_strMSref_intME_eq(__THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0), __THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": ref intA } == { \"key\": ref intA }:", " ", __THE_1_map_strMSref_intME_eq(__THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0), __THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 24, 3), print(stdout, "zztz", "{ \"key\": ref intA } != { \"key\": ref intB }:", " ", __THE_1_map_strMSref_intME_ne(__THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0), __THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intB_0)), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": ref intA } != { \"key\": ref intB }:", " ", __THE_1_map_strMSref_intME_ne(__THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0), __THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intB_0)), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 25, 3), print(stdout, "zztz", "{ \"key\": \"test1\" } == { \"key\": \"test1\" }:", " ", __THE_1_map_strMSstrME_eq(__THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test1")), __THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test1"))), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": \"test1\" } == { \"key\": \"test1\" }:", " ", __THE_1_map_strMSstrME_eq(__THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test1")), __THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test1"))), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  (error_stack_pos(&err_state, 26, 3), print(stdout, "zztz", "{ \"key\": \"test1\" } != { \"key\": \"test2\" }:", " ", __THE_1_map_strMSstrME_ne(__THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test1")), __THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test2"))), THE_EOL));
+  print(stdout, "zztz", "{ \"key\": \"test1\" } != { \"key\": \"test2\" }:", " ", __THE_1_map_strMSstrME_ne(__THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test1")), __THE_1_map_strMSstrME_alloc(1, str_alloc("key"), str_alloc("test2"))), THE_EOL);
 L3:
   __THE_1_opt_int_free((int32_t *) __THE_0_optIntB_0);
 L2:

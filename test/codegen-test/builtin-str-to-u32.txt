@@ -62,8 +62,8 @@ main {
 #define TYPE_error_Error 1
 
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -90,54 +90,65 @@ struct error_Error {
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
-void error_assign (err_state_t *, int, void *);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-uint32_t str_toU32 (struct str, unsigned char, int32_t);
+uint32_t str_toU32 (struct str, unsigned char, int32_t, int, int);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    const char *fmt = "failed to allocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_assign (err_state_t *state, int id, void *ctx) {
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  error_stack_pos(state, line, col);
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
   size_t l = message.l;
-  char *d = malloc(l);
-  if (d == NULL) {
-    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+  char *d = alloc(l);
   memcpy(d, message.d, l);
   for (int i = state->stack_idx - 1; i >= 0; i--) {
     err_stack_t it = state->stack[i];
@@ -153,11 +164,7 @@ struct str error_stack_str (err_state_t *state) {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
       z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
     }
-    d = realloc(d, l + z + 1);
-    if (d == NULL) {
-      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
-      exit(EXIT_FAILURE);
-    }
+    d = re_alloc(d, l + z + 1);
     if (it.col == 0 && it.line == 0) {
       sprintf(&d[l], fmt, it.name, it.file);
     } else if (it.col == 0) {
@@ -190,13 +197,18 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;
     }
   }
   va_end(args);
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -213,14 +225,14 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-uint32_t str_toU32 (struct str self, unsigned char o1, int32_t n1) {
+uint32_t str_toU32 (struct str self, unsigned char o1, int32_t n1, int line, int col) {
   if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
     const char *fmt = "radix %" PRId32 " is invalid, must be >= 2 and <= 36, or 0";
     size_t z = snprintf(NULL, 0, fmt, n1);
     char *d = alloc(z + 1);
     sprintf(d, fmt, n1);
     free(self.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   char *c = str_cstr(self);
@@ -234,7 +246,7 @@ uint32_t str_toU32 (struct str self, unsigned char o1, int32_t n1) {
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   } else if (errno != 0 || e == c || *e != 0 || self.d[0] == '-') {
     const char *fmt = "value `%s` has invalid syntax";
@@ -243,7 +255,7 @@ uint32_t str_toU32 (struct str self, unsigned char o1, int32_t n1) {
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   free(c);
@@ -263,67 +275,67 @@ void error_Error_free (struct error_Error *n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  (error_stack_pos(&err_state, 2, 3), print(stdout, "uz", (error_stack_pos(&err_state, 2, 9), str_toU32(str_alloc("0"), 0, 0)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("0"), 0, 0, 2, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 3, 3), print(stdout, "uz", (error_stack_pos(&err_state, 3, 9), str_toU32(str_alloc("1"), 0, 0)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("1"), 0, 0, 3, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 4, 3), print(stdout, "uz", (error_stack_pos(&err_state, 4, 9), str_toU32(str_alloc("10"), 0, 0)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("10"), 0, 0, 4, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 5, 3), print(stdout, "uz", (error_stack_pos(&err_state, 5, 9), str_toU32(str_alloc("100"), 0, 0)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("100"), 0, 0, 5, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 6, 3), print(stdout, "uz", (error_stack_pos(&err_state, 6, 9), str_toU32(str_alloc("4294967295"), 0, 0)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("4294967295"), 0, 0, 6, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 8, 3), print(stdout, "uz", (error_stack_pos(&err_state, 8, 9), str_toU32(str_alloc("0000"), 1, 2)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("0000"), 1, 2, 8, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 9, 3), print(stdout, "uz", (error_stack_pos(&err_state, 9, 9), str_toU32(str_alloc("0001"), 1, 2)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("0001"), 1, 2, 9, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 10, 3), print(stdout, "uz", (error_stack_pos(&err_state, 10, 9), str_toU32(str_alloc("1010"), 1, 2)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("1010"), 1, 2, 10, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 11, 3), print(stdout, "uz", (error_stack_pos(&err_state, 11, 9), str_toU32(str_alloc("01100100"), 1, 2)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("01100100"), 1, 2, 11, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 12, 3), print(stdout, "uz", (error_stack_pos(&err_state, 12, 9), str_toU32(str_alloc("11111111111111111111111111111111"), 1, 2)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("11111111111111111111111111111111"), 1, 2, 12, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 14, 3), print(stdout, "uz", (error_stack_pos(&err_state, 14, 9), str_toU32(str_alloc("0"), 1, 8)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("0"), 1, 8, 14, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 15, 3), print(stdout, "uz", (error_stack_pos(&err_state, 15, 9), str_toU32(str_alloc("1"), 1, 8)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("1"), 1, 8, 15, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 16, 3), print(stdout, "uz", (error_stack_pos(&err_state, 16, 9), str_toU32(str_alloc("12"), 1, 8)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("12"), 1, 8, 16, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 17, 3), print(stdout, "uz", (error_stack_pos(&err_state, 17, 9), str_toU32(str_alloc("144"), 1, 8)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("144"), 1, 8, 17, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 18, 3), print(stdout, "uz", (error_stack_pos(&err_state, 18, 9), str_toU32(str_alloc("37777777777"), 1, 8)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("37777777777"), 1, 8, 18, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 20, 3), print(stdout, "uz", (error_stack_pos(&err_state, 20, 9), str_toU32(str_alloc("0"), 1, 10)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("0"), 1, 10, 20, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 21, 3), print(stdout, "uz", (error_stack_pos(&err_state, 21, 9), str_toU32(str_alloc("1"), 1, 10)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("1"), 1, 10, 21, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 22, 3), print(stdout, "uz", (error_stack_pos(&err_state, 22, 9), str_toU32(str_alloc("10"), 1, 10)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("10"), 1, 10, 22, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 23, 3), print(stdout, "uz", (error_stack_pos(&err_state, 23, 9), str_toU32(str_alloc("100"), 1, 10)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("100"), 1, 10, 23, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 24, 3), print(stdout, "uz", (error_stack_pos(&err_state, 24, 9), str_toU32(str_alloc("4294967295"), 1, 10)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("4294967295"), 1, 10, 24, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 26, 3), print(stdout, "uz", (error_stack_pos(&err_state, 26, 9), str_toU32(str_alloc("0"), 1, 16)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("0"), 1, 16, 26, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 27, 3), print(stdout, "uz", (error_stack_pos(&err_state, 27, 9), str_toU32(str_alloc("1"), 1, 16)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("1"), 1, 16, 27, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 28, 3), print(stdout, "uz", (error_stack_pos(&err_state, 28, 9), str_toU32(str_alloc("A"), 1, 16)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("A"), 1, 16, 28, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 29, 3), print(stdout, "uz", (error_stack_pos(&err_state, 29, 9), str_toU32(str_alloc("64"), 1, 16)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("64"), 1, 16, 29, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 30, 3), print(stdout, "uz", (error_stack_pos(&err_state, 30, 9), str_toU32(str_alloc("FFFFFFFF"), 1, 16)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("FFFFFFFF"), 1, 16, 30, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 32, 3), print(stdout, "uz", (error_stack_pos(&err_state, 32, 9), str_toU32(str_alloc("0"), 1, 36)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("0"), 1, 36, 32, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 33, 3), print(stdout, "uz", (error_stack_pos(&err_state, 33, 9), str_toU32(str_alloc("1"), 1, 36)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("1"), 1, 36, 33, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 34, 3), print(stdout, "uz", (error_stack_pos(&err_state, 34, 9), str_toU32(str_alloc("A"), 1, 36)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("A"), 1, 36, 34, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 35, 3), print(stdout, "uz", (error_stack_pos(&err_state, 35, 9), str_toU32(str_alloc("2S"), 1, 36)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("2S"), 1, 36, 35, 9), THE_EOL);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 36, 3), print(stdout, "uz", (error_stack_pos(&err_state, 36, 9), str_toU32(str_alloc("1Z141Z3"), 1, 36)), THE_EOL));
+  print(stdout, "uz", str_toU32(str_alloc("1Z141Z3"), 1, 36, 36, 9), THE_EOL);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

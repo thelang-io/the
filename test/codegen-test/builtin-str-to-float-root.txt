@@ -55,8 +55,8 @@ main {
 #define TYPE_error_Error 1
 
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -83,53 +83,64 @@ struct error_Error {
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
-void error_assign (err_state_t *, int, void *);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str error_stack_str (err_state_t *);
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 char *str_cstr (const struct str);
 void str_free (struct str);
-double str_toFloat (struct str);
+double str_toFloat (struct str, int, int);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    const char *fmt = "failed to allocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_assign (err_state_t *state, int id, void *ctx) {
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  error_stack_pos(state, line, col);
   *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 struct str error_stack_str (err_state_t *state) {
   struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
   size_t l = message.l;
-  char *d = malloc(l);
-  if (d == NULL) {
-    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+  char *d = alloc(l);
   memcpy(d, message.d, l);
   for (int i = state->stack_idx - 1; i >= 0; i--) {
     err_stack_t it = state->stack[i];
@@ -145,11 +156,7 @@ struct str error_stack_str (err_state_t *state) {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
       z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
     }
-    d = realloc(d, l + z + 1);
-    if (d == NULL) {
-      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
-      exit(EXIT_FAILURE);
-    }
+    d = re_alloc(d, l + z + 1);
     if (it.col == 0 && it.line == 0) {
       sprintf(&d[l], fmt, it.name, it.file);
     } else if (it.col == 0) {
@@ -160,6 +167,11 @@ struct str error_stack_str (err_state_t *state) {
     l += z;
   }
   return (struct str) {d, l};
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -176,7 +188,7 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-double str_toFloat (struct str self) {
+double str_toFloat (struct str self, int line, int col) {
   char *c = str_cstr(self);
   char *e = NULL;
   errno = 0;
@@ -188,7 +200,7 @@ double str_toFloat (struct str self) {
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   } else if (errno != 0 || e == c || *e != 0) {
     const char *fmt = "value `%s` has invalid syntax";
@@ -197,7 +209,7 @@ double str_toFloat (struct str self) {
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
     longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   }
   free(c);
@@ -217,65 +229,65 @@ void error_Error_free (struct error_Error *n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  (error_stack_pos(&err_state, 2, 3), str_toFloat(str_alloc("0")));
+  str_toFloat(str_alloc("0"), 2, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 3, 3), str_toFloat(str_alloc("1")));
+  str_toFloat(str_alloc("1"), 3, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 4, 3), str_toFloat(str_alloc("10")));
+  str_toFloat(str_alloc("10"), 4, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 5, 3), str_toFloat(str_alloc("100")));
+  str_toFloat(str_alloc("100"), 5, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 6, 3), str_toFloat(str_alloc("179769000000000006323030492138942643493033036433685336215410983289126434148906289940615299632196609445533816320312774433484859900046491141051651091672734470972759941382582304802812882753059262973637182942535982636884444611376868582636745405553206881859340916340092953230149901406738427651121855107737424232448")));
+  str_toFloat(str_alloc("179769000000000006323030492138942643493033036433685336215410983289126434148906289940615299632196609445533816320312774433484859900046491141051651091672734470972759941382582304802812882753059262973637182942535982636884444611376868582636745405553206881859340916340092953230149901406738427651121855107737424232448"), 6, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 7, 3), str_toFloat(str_alloc("-0")));
+  str_toFloat(str_alloc("-0"), 7, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 8, 3), str_toFloat(str_alloc("-1")));
+  str_toFloat(str_alloc("-1"), 8, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 9, 3), str_toFloat(str_alloc("-10")));
+  str_toFloat(str_alloc("-10"), 9, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 10, 3), str_toFloat(str_alloc("-100")));
+  str_toFloat(str_alloc("-100"), 10, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 11, 3), str_toFloat(str_alloc("-179769000000000006323030492138942643493033036433685336215410983289126434148906289940615299632196609445533816320312774433484859900046491141051651091672734470972759941382582304802812882753059262973637182942535982636884444611376868582636745405553206881859340916340092953230149901406738427651121855107737424232448")));
+  str_toFloat(str_alloc("-179769000000000006323030492138942643493033036433685336215410983289126434148906289940615299632196609445533816320312774433484859900046491141051651091672734470972759941382582304802812882753059262973637182942535982636884444611376868582636745405553206881859340916340092953230149901406738427651121855107737424232448"), 11, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 12, 3), str_toFloat(str_alloc("0.0")));
+  str_toFloat(str_alloc("0.0"), 12, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 13, 3), str_toFloat(str_alloc("0.1")));
+  str_toFloat(str_alloc("0.1"), 13, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 14, 3), str_toFloat(str_alloc("0.10")));
+  str_toFloat(str_alloc("0.10"), 14, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 15, 3), str_toFloat(str_alloc("0.100")));
+  str_toFloat(str_alloc("0.100"), 15, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 16, 3), str_toFloat(str_alloc("0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000222507")));
+  str_toFloat(str_alloc("0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000222507"), 16, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 17, 3), str_toFloat(str_alloc("-0.0")));
+  str_toFloat(str_alloc("-0.0"), 17, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 18, 3), str_toFloat(str_alloc("-0.1")));
+  str_toFloat(str_alloc("-0.1"), 18, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 19, 3), str_toFloat(str_alloc("-0.10")));
+  str_toFloat(str_alloc("-0.10"), 19, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 20, 3), str_toFloat(str_alloc("-0.100")));
+  str_toFloat(str_alloc("-0.100"), 20, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 21, 3), str_toFloat(str_alloc("-0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000222507")));
+  str_toFloat(str_alloc("-0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000222507"), 21, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 22, 3), str_toFloat(str_alloc("0e0")));
+  str_toFloat(str_alloc("0e0"), 22, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 23, 3), str_toFloat(str_alloc("1E+1")));
+  str_toFloat(str_alloc("1E+1"), 23, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 24, 3), str_toFloat(str_alloc("10.E+10")));
+  str_toFloat(str_alloc("10.E+10"), 24, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 25, 3), str_toFloat(str_alloc("100.E+100")));
+  str_toFloat(str_alloc("100.E+100"), 25, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 26, 3), str_toFloat(str_alloc("1.79769E+308")));
+  str_toFloat(str_alloc("1.79769E+308"), 26, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 27, 3), str_toFloat(str_alloc("1e-1")));
+  str_toFloat(str_alloc("1e-1"), 27, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 28, 3), str_toFloat(str_alloc("10.e-10")));
+  str_toFloat(str_alloc("10.e-10"), 28, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 29, 3), str_toFloat(str_alloc("100.e-100")));
+  str_toFloat(str_alloc("100.e-100"), 29, 3);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
-  (error_stack_pos(&err_state, 30, 3), str_toFloat(str_alloc("2.22507e-307")));
+  str_toFloat(str_alloc("2.22507e-307"), 30, 3);
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

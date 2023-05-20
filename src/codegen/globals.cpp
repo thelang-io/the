@@ -18,16 +18,9 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenGlobals = {
-  R"(void *alloc (_{size_t} l) {)" EOL
-  R"(  void *r = _{malloc}(l);)" EOL
-  R"(  if (r == _{NULL}) {)" EOL
-  R"(    const char *fmt = "failed to allocate %zu bytes";)" EOL
-  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, l);)" EOL
-  R"(    char *d = _{alloc}(z + 1);)" EOL
-  R"(    _{sprintf}(d, fmt, l);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
-  R"(  })" EOL
+  R"(void *alloc (_{size_t} n1) {)" EOL
+  R"(  void *r = _{malloc}(n1);)" EOL
+  R"(  if (r == _{NULL}) _{error_alloc}(&_{err_state}, n1);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL,
 
@@ -52,7 +45,7 @@ const std::vector<std::string> codegenGlobals = {
   R"(      case 'k': _{sprintf}(buf, "%" _{PRId32}, _{va_arg}(args, _{int32_t})); _{fputs}(buf, stream); break;)" EOL
   R"(      case 'l': _{sprintf}(buf, "%" _{PRId64}, _{va_arg}(args, _{int64_t})); _{fputs}(buf, stream); break;)" EOL
   R"(      case 'p': _{sprintf}(buf, "%p", _{va_arg}(args, void *)); _{fputs}(buf, stream); break;)" EOL
-  R"(      case 's': s = _{va_arg}(args, _{struct str}); _{fwrite}(s.d, 1, s.l, stream); _{str_free}(s); break;)" EOL
+  R"(      case 's': s = _{va_arg}(args, _{struct str}); _{fwrite}(s.d, 1, s.l, stream); _{free}(s.d); break;)" EOL
   R"(      case 'u': _{sprintf}(buf, "%" _{PRIu32}, _{va_arg}(args, _{uint32_t})); _{fputs}(buf, stream); break;)" EOL
   R"(      case 'y': _{sprintf}(buf, "%" _{PRIu64}, _{va_arg}(args, _{uint64_t})); _{fputs}(buf, stream); break;)" EOL
   R"(      case 'z': _{fputs}(_{va_arg}(args, char *), stream); break;)" EOL
@@ -61,16 +54,9 @@ const std::vector<std::string> codegenGlobals = {
   R"(  _{va_end}(args);)" EOL
   R"(})" EOL,
 
-  R"(void *re_alloc (void *d, _{size_t} l) {)" EOL
-  R"(  void *r = _{realloc}(d, l);)" EOL
-  R"(  if (r == _{NULL}) {)" EOL
-  R"(    const char *fmt = "failed to reallocate %zu bytes";)" EOL
-  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, l);)" EOL
-  R"(    char *d = _{alloc}(z + 1);)" EOL
-  R"(    _{sprintf}(d, fmt, l);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}));)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
-  R"(  })" EOL
+  R"(void *re_alloc (void *n1, _{size_t} n2) {)" EOL
+  R"(  void *r = _{realloc}(n1, n2);)" EOL
+  R"(  if (r == _{NULL}) _{error_alloc}(&_{err_state}, n2);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL
 };

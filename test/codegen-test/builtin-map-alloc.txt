@@ -90,11 +90,9 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_error_Error 1
-
 typedef struct {
-  char *file;
-  char *name;
+  const char *file;
+  const char *name;
   int line;
   int col;
 } err_stack_t;
@@ -297,17 +295,15 @@ struct __THE_1_map_u64MSintME {
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
 
 void *alloc (size_t);
-void error_assign (err_state_t *, int, void *);
+void error_alloc (err_state_t *, size_t);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, char *, char *);
-struct str error_stack_str (err_state_t *);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 bool str_eq_str (struct str, struct str);
 void str_free (struct str);
-struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_map_boolMSintME __THE_1_map_boolMSintME_alloc (int, ...);
 struct __THE_1_map_boolMSintME __THE_1_map_boolMSintME_copy (const struct __THE_1_map_boolMSintME);
@@ -374,82 +370,43 @@ struct __THE_1_map_u64MSintME __THE_1_map_u64MSintME_copy (const struct __THE_1_
 void __THE_1_map_u64MSintME_free (struct __THE_1_map_u64MSintME);
 struct __THE_1_map_u64MSintME *__THE_1_map_u64MSintME_set (struct __THE_1_map_u64MSintME *, uint64_t, int32_t);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    const char *fmt = "failed to allocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_assign (err_state_t *state, int id, void *ctx) {
-  state->id = id;
-  state->ctx = ctx;
-  *((struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack) = error_stack_str(state);
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
 }
 void error_stack_pop (err_state_t *state) {
   state->stack_idx--;
 }
 void error_stack_pos (err_state_t *state, int line, int col) {
-  state->stack[state->stack_idx - 1].line = line;
-  state->stack[state->stack_idx - 1].col = col;
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, char *file, char *name) {
-  state->stack[state->stack_idx++] = (err_stack_t) {file, name, 0, 0};
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
-struct str error_stack_str (err_state_t *state) {
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
-  size_t l = message.l;
-  char *d = malloc(l);
-  if (d == NULL) {
-    fprintf(stderr, "Fatal Error: failed to allocate %zu bytes in stack generation" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
-  memcpy(d, message.d, l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
-    size_t z;
-    char *fmt;
-    if (it.col == 0 && it.line == 0) {
-      fmt = THE_EOL "  at %s (%s)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file);
-    } else if (it.col == 0) {
-      fmt = THE_EOL "  at %s (%s:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
-    } else {
-      fmt = THE_EOL "  at %s (%s:%d:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
-    }
-    d = realloc(d, l + z + 1);
-    if (d == NULL) {
-      fprintf(stderr, "Fatal Error: failed to reallocate %zu bytes in stack generation" THE_EOL, l + z);
-      exit(EXIT_FAILURE);
-    }
-    if (it.col == 0 && it.line == 0) {
-      sprintf(&d[l], fmt, it.name, it.file);
-    } else if (it.col == 0) {
-      sprintf(&d[l], fmt, it.name, it.file, it.line);
-    } else {
-      sprintf(&d[l], fmt, it.name, it.file, it.line, it.col);
-    }
-    l += z;
-  }
-  return (struct str) {d, l};
-}
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    const char *fmt = "failed to reallocate %zu bytes";
-    size_t z = snprintf(NULL, 0, fmt, l);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, l);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}));
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  }
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
   return r;
 }
 struct str str_alloc (const char *r) {
@@ -471,12 +428,6 @@ bool str_eq_str (struct str s1, struct str s2) {
 }
 void str_free (struct str s) {
   free(s.d);
-}
-struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
-  struct error_Error *r = alloc(sizeof(struct error_Error));
-  struct error_Error s = {__THE_0_message, __THE_0_stack};
-  memcpy(r, &s, sizeof(struct error_Error));
-  return r;
 }
 void error_Error_free (struct error_Error *n) {
   str_free((struct str) n->__THE_0_message);
@@ -951,7 +902,7 @@ struct __THE_1_map_u64MSintME *__THE_1_map_u64MSintME_set (struct __THE_1_map_u6
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main");
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_boolMSintME __THE_0_map1Bool_0 = __THE_1_map_boolMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
@@ -987,67 +938,67 @@ int main () {
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L17;
   struct __THE_1_map_boolMSintME __THE_0_map2Bool_0 = __THE_1_map_boolMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L18;
-  (error_stack_pos(&err_state, 20, 3), __THE_1_map_boolMSintME_set(&__THE_0_map2Bool_0, true, 1));
+  __THE_1_map_boolMSintME_set(&__THE_0_map2Bool_0, true, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L18;
   struct __THE_1_map_byteMSintME __THE_0_map2Byte_0 = __THE_1_map_byteMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L19;
-  (error_stack_pos(&err_state, 22, 3), __THE_1_map_byteMSintME_set(&__THE_0_map2Byte_0, 1, 1));
+  __THE_1_map_byteMSintME_set(&__THE_0_map2Byte_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L19;
   struct __THE_1_map_charMSintME __THE_0_map2Char_0 = __THE_1_map_charMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L20;
-  (error_stack_pos(&err_state, 24, 3), __THE_1_map_charMSintME_set(&__THE_0_map2Char_0, 'a', 1));
+  __THE_1_map_charMSintME_set(&__THE_0_map2Char_0, 'a', 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L20;
   struct __THE_1_map_f32MSintME __THE_0_map2F32_0 = __THE_1_map_f32MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L21;
-  (error_stack_pos(&err_state, 26, 3), __THE_1_map_f32MSintME_set(&__THE_0_map2F32_0, 3.14, 1));
+  __THE_1_map_f32MSintME_set(&__THE_0_map2F32_0, 3.14, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L21;
   struct __THE_1_map_f64MSintME __THE_0_map2F64_0 = __THE_1_map_f64MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L22;
-  (error_stack_pos(&err_state, 28, 3), __THE_1_map_f64MSintME_set(&__THE_0_map2F64_0, 3.14, 1));
+  __THE_1_map_f64MSintME_set(&__THE_0_map2F64_0, 3.14, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L22;
   struct __THE_1_map_floatMSintME __THE_0_map2Float_0 = __THE_1_map_floatMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
-  (error_stack_pos(&err_state, 30, 3), __THE_1_map_floatMSintME_set(&__THE_0_map2Float_0, 3.14, 1));
+  __THE_1_map_floatMSintME_set(&__THE_0_map2Float_0, 3.14, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L23;
   struct __THE_1_map_i8MSintME __THE_0_map2I8_0 = __THE_1_map_i8MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L24;
-  (error_stack_pos(&err_state, 32, 3), __THE_1_map_i8MSintME_set(&__THE_0_map2I8_0, 1, 1));
+  __THE_1_map_i8MSintME_set(&__THE_0_map2I8_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L24;
   struct __THE_1_map_i16MSintME __THE_0_map2I16_0 = __THE_1_map_i16MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L25;
-  (error_stack_pos(&err_state, 34, 3), __THE_1_map_i16MSintME_set(&__THE_0_map2I16_0, 1, 1));
+  __THE_1_map_i16MSintME_set(&__THE_0_map2I16_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L25;
   struct __THE_1_map_i32MSintME __THE_0_map2I32_0 = __THE_1_map_i32MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L26;
-  (error_stack_pos(&err_state, 36, 3), __THE_1_map_i32MSintME_set(&__THE_0_map2I32_0, 1, 1));
+  __THE_1_map_i32MSintME_set(&__THE_0_map2I32_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L26;
   struct __THE_1_map_i64MSintME __THE_0_map2I64_0 = __THE_1_map_i64MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L27;
-  (error_stack_pos(&err_state, 38, 3), __THE_1_map_i64MSintME_set(&__THE_0_map2I64_0, 1, 1));
+  __THE_1_map_i64MSintME_set(&__THE_0_map2I64_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L27;
   struct __THE_1_map_intMSintME __THE_0_map2Int_0 = __THE_1_map_intMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L28;
-  (error_stack_pos(&err_state, 40, 3), __THE_1_map_intMSintME_set(&__THE_0_map2Int_0, 1, 1));
+  __THE_1_map_intMSintME_set(&__THE_0_map2Int_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L28;
   struct __THE_1_map_strMSintME __THE_0_map2Str_0 = __THE_1_map_strMSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L29;
-  (error_stack_pos(&err_state, 42, 3), __THE_1_map_strMSintME_set(&__THE_0_map2Str_0, str_alloc("test"), 1));
+  __THE_1_map_strMSintME_set(&__THE_0_map2Str_0, str_alloc("test"), 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L29;
   struct __THE_1_map_u8MSintME __THE_0_map2U8_0 = __THE_1_map_u8MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L30;
-  (error_stack_pos(&err_state, 44, 3), __THE_1_map_u8MSintME_set(&__THE_0_map2U8_0, 1, 1));
+  __THE_1_map_u8MSintME_set(&__THE_0_map2U8_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L30;
   struct __THE_1_map_u16MSintME __THE_0_map2U16_0 = __THE_1_map_u16MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L31;
-  (error_stack_pos(&err_state, 46, 3), __THE_1_map_u16MSintME_set(&__THE_0_map2U16_0, 1, 1));
+  __THE_1_map_u16MSintME_set(&__THE_0_map2U16_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L31;
   struct __THE_1_map_u32MSintME __THE_0_map2U32_0 = __THE_1_map_u32MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L32;
-  (error_stack_pos(&err_state, 48, 3), __THE_1_map_u32MSintME_set(&__THE_0_map2U32_0, 1, 1));
+  __THE_1_map_u32MSintME_set(&__THE_0_map2U32_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L32;
   struct __THE_1_map_u64MSintME __THE_0_map2U64_0 = __THE_1_map_u64MSintME_alloc(0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L33;
-  (error_stack_pos(&err_state, 50, 3), __THE_1_map_u64MSintME_set(&__THE_0_map2U64_0, 1, 1));
+  __THE_1_map_u64MSintME_set(&__THE_0_map2U64_0, 1, 1);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L33;
   const struct __THE_1_map_boolMSintME __THE_0_map3Bool_0 = __THE_1_map_boolMSintME_copy(__THE_0_map2Bool_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L34;

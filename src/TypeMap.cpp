@@ -1040,13 +1040,13 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   auto clearTypeFn = TypeFn{refSelfType, {}, clearCallInfo.throws, true, clearCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".clear", "@array.clear", clearTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"clear", this->_items.back().get(), false, true});
-  auto concatCallInfo = TypeCallInfo{typeName(selfType->name + "_concat"), true, "self_0", selfType, false, true};
+  auto concatCallInfo = TypeCallInfo{typeName(selfType->name + "_concat"), true, "self_0", selfType, false, false};
   auto concatTypeFn = TypeFn{selfType, {
     TypeFnParam{"other", selfType, false, true, false}
   }, concatCallInfo.throws, true, concatCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".concat", "@array.concat", concatTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"concat", this->_items.back().get(), false, true});
-  auto containsCallInfo = TypeCallInfo{typeName(selfType->name + "_contains"), true, "self_0", selfType, false, elementType->shouldBeFreed()};
+  auto containsCallInfo = TypeCallInfo{typeName(selfType->name + "_contains"), true, "self_0", selfType, false, false};
   auto containsTypeFn = TypeFn{this->get("bool"), {
     TypeFnParam{"search", elementType, false, true, false}
   }, containsCallInfo.throws, true, containsCallInfo};
@@ -1060,7 +1060,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   }, filterCallInfo.throws, true, filterCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".filter", "@array.filter", filterTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"filter", this->_items.back().get(), false, true});
-  auto forEachCallInfo = TypeCallInfo{typeName(selfType->name + "_forEach"), true, "self_0", selfType, false, elementType->shouldBeFreed()};
+  auto forEachCallInfo = TypeCallInfo{typeName(selfType->name + "_forEach"), true, "self_0", selfType, false, true};
   auto forEachTypeFn = TypeFn{this->get("void"), {
     TypeFnParam{"iterator", this->createFn({
       TypeFnParam{"it", elementType, false, true, false},
@@ -1069,13 +1069,13 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   }, forEachCallInfo.throws, true, forEachCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".forEach", "@array.forEach", forEachTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"forEach", this->_items.back().get(), false, true});
-  auto joinCallInfo = TypeCallInfo{typeName(selfType->name + "_join"), true, "self_0", selfType, false, true};
+  auto joinCallInfo = TypeCallInfo{typeName(selfType->name + "_join"), true, "self_0", selfType, false, false};
   auto joinTypeFn = TypeFn{this->get("str"), {
     TypeFnParam{"separator", this->get("str"), false, false, false}
   }, joinCallInfo.throws, true, joinCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".join", "@array.join", joinTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"join", this->_items.back().get(), false, true});
-  auto mergeCallInfo = TypeCallInfo{typeName(selfType->name + "_merge"), true, "self_0", refSelfType, true, true};
+  auto mergeCallInfo = TypeCallInfo{typeName(selfType->name + "_merge"), true, "self_0", refSelfType, true, false};
   auto mergeTypeFn = TypeFn{refSelfType, {
     TypeFnParam{"other", selfType, false, true, false}
   }, mergeCallInfo.throws, true, mergeCallInfo};
@@ -1085,7 +1085,7 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   auto popTypeFn = TypeFn{elementType, {}, popCallInfo.throws, true, popCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".pop", "@array.pop", popTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"pop", this->_items.back().get(), false, true});
-  auto pushCallInfo = TypeCallInfo{typeName(selfType->name + "_push"), true, "self_0", refSelfType, true, true};
+  auto pushCallInfo = TypeCallInfo{typeName(selfType->name + "_push"), true, "self_0", refSelfType, true, false};
   auto pushTypeFn = TypeFn{this->get("void"), {
     TypeFnParam{"elements", this->createArr(elementType), false, false, true}
   }, pushCallInfo.throws, true, pushCallInfo};
@@ -1097,18 +1097,18 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   }, removeCallInfo.throws, true, removeCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".remove", "@array.remove", removeTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"remove", this->_items.back().get(), false, true});
-  auto reverseCallInfo = TypeCallInfo{typeName(selfType->name + "_reverse"), true, "self_0", selfType, false, true};
+  auto reverseCallInfo = TypeCallInfo{typeName(selfType->name + "_reverse"), true, "self_0", selfType, false, false};
   auto reverseTypeFn = TypeFn{selfType, {}, reverseCallInfo.throws, true, reverseCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".reverse", "@array.reverse", reverseTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"reverse", this->_items.back().get(), false, true});
-  auto sliceCallInfo = TypeCallInfo{typeName(selfType->name + "_slice"), true, "self_0", selfType, false, true};
+  auto sliceCallInfo = TypeCallInfo{typeName(selfType->name + "_slice"), true, "self_0", selfType, false, false};
   auto sliceTypeFn = TypeFn{selfType, {
     TypeFnParam{"start", this->get("int"), false, false, false},
     TypeFnParam{"end", this->get("int"), false, false, false}
   }, sliceCallInfo.throws, true, sliceCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".slice", "@array.slice", sliceTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"slice", this->_items.back().get(), false, true});
-  auto sortCallInfo = TypeCallInfo{typeName(selfType->name + "_sort"), true, "self_0", refSelfType, true, elementType->shouldBeFreed()};
+  auto sortCallInfo = TypeCallInfo{typeName(selfType->name + "_sort"), true, "self_0", refSelfType, true, true};
   auto sortTypeFn = TypeFn{refSelfType, {
     TypeFnParam{"comparator", this->createFn({
       TypeFnParam{"a", elementType, false, true, false},
@@ -1117,14 +1117,14 @@ void TypeMap::_arrTypeDef (Type *selfType, Type *refSelfType, Type *elementType,
   }, sortCallInfo.throws, true, sortCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".sort", "@array.sort", sortTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"sort", this->_items.back().get(), false, true});
-  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, true};
+  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, false};
   auto strTypeFn = TypeFn{this->get("str"), {}, strCallInfo.throws, true, strCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@array.str", strTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 }
 
 void TypeMap::_enumTypeDef (Type *selfType, [[maybe_unused]] Type *refSelfType) {
-  auto rawValueCallInfo = TypeCallInfo{typeName(selfType->codeName + "_rawValue"), true, "self_0", selfType, false, true};
+  auto rawValueCallInfo = TypeCallInfo{typeName(selfType->codeName + "_rawValue"), true, "self_0", selfType, false, false};
   selfType->fields.push_back(TypeField{"rawValue", this->get("str"), false, true, rawValueCallInfo});
   auto strCallInfo = TypeCallInfo{"enum_str", true, "self_0", selfType, false, codegenAPI.at("enum_str").throws};
   auto strTypeFn = TypeFn{this->get("str"), {}, strCallInfo.throws, true, strCallInfo};
@@ -1133,7 +1133,7 @@ void TypeMap::_enumTypeDef (Type *selfType, [[maybe_unused]] Type *refSelfType) 
 }
 
 void TypeMap::_fnTypeDef (Type *selfType, [[maybe_unused]] Type *refSelfType) {
-  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, true};
+  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, false};
   auto strTypeFn = TypeFn{this->get("str"), {}, strCallInfo.throws, true, strCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@fn.str", strTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
@@ -1144,11 +1144,11 @@ void TypeMap::_mapTypeDef (Type *selfType, Type *refSelfType, Type *keyType, Typ
   selfType->fields.push_back(TypeField{"empty", this->get("bool"), false, true, emptyCallInfo});
   auto capCallInfo = TypeCallInfo{typeName(selfType->name + "_cap"), true, "self_0", selfType, false, false};
   selfType->fields.push_back(TypeField{"cap", this->get("int"), false, true, capCallInfo});
-  auto keysCallInfo = TypeCallInfo{typeName(selfType->name + "_keys"), true, "self_0", selfType, false, true};
+  auto keysCallInfo = TypeCallInfo{typeName(selfType->name + "_keys"), true, "self_0", selfType, false, false};
   selfType->fields.push_back(TypeField{"keys", this->createArr(keyType), false, true, keysCallInfo});
   auto lenCallInfo = TypeCallInfo{typeName(selfType->name + "_len"), true, "self_0", selfType, false, false};
   selfType->fields.push_back(TypeField{"len", this->get("int"), false, true, lenCallInfo});
-  auto valuesCallInfo = TypeCallInfo{typeName(selfType->name + "_values"), true, "self_0", selfType, false, true};
+  auto valuesCallInfo = TypeCallInfo{typeName(selfType->name + "_values"), true, "self_0", selfType, false, false};
   selfType->fields.push_back(TypeField{"values", this->createArr(valueType), false, true, valuesCallInfo});
   auto clearCallInfo = TypeCallInfo{typeName(selfType->name + "_clear"), true, "self_0", refSelfType, true, false};
   auto clearTypeFn = TypeFn{refSelfType, {}, clearCallInfo.throws, true, clearCallInfo};
@@ -1160,13 +1160,13 @@ void TypeMap::_mapTypeDef (Type *selfType, Type *refSelfType, Type *keyType, Typ
   }, getCallInfo.throws, true, getCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".get", "@map.get", getTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"get", this->_items.back().get(), false, true});
-  auto hasCallInfo = TypeCallInfo{typeName(selfType->name + "_has"), true, "self_0", selfType, false, keyType->shouldBeFreed()};
+  auto hasCallInfo = TypeCallInfo{typeName(selfType->name + "_has"), true, "self_0", selfType, false, false};
   auto hasTypeFn = TypeFn{this->get("bool"), {
     TypeFnParam{"key", keyType, false, true, false}
   }, hasCallInfo.throws, true, hasCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".has", "@map.has", hasTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"has", this->_items.back().get(), false, true});
-  auto mergeCallInfo = TypeCallInfo{typeName(selfType->name + "_merge"), true, "self_0", refSelfType, true, true};
+  auto mergeCallInfo = TypeCallInfo{typeName(selfType->name + "_merge"), true, "self_0", refSelfType, true, false};
   auto mergeTypeFn = TypeFn{refSelfType, {
     TypeFnParam{"other", selfType, false, true, false}
   }, mergeCallInfo.throws, true, mergeCallInfo};
@@ -1178,24 +1178,24 @@ void TypeMap::_mapTypeDef (Type *selfType, Type *refSelfType, Type *keyType, Typ
   }, removeCallInfo.throws, true, removeCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".remove", "@map.remove", removeTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"remove", this->_items.back().get(), false, true});
-  auto reserveCallInfo = TypeCallInfo{typeName(selfType->name + "_reserve"), true, "self_0", refSelfType, true, true};
+  auto reserveCallInfo = TypeCallInfo{typeName(selfType->name + "_reserve"), true, "self_0", refSelfType, true, false};
   auto reserveTypeFn = TypeFn{refSelfType, {
     TypeFnParam{"size", this->get("int"), false, true, false}
   }, reserveCallInfo.throws, true, reserveCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".reserve", "@map.reserve", reserveTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"reserve", this->_items.back().get(), false, true});
-  auto setCallInfo = TypeCallInfo{typeName(selfType->name + "_set"), true, "self_0", refSelfType, true, true};
+  auto setCallInfo = TypeCallInfo{typeName(selfType->name + "_set"), true, "self_0", refSelfType, true, false};
   auto setTypeFn = TypeFn{refSelfType, {
     TypeFnParam{"key", keyType, false, true, false},
     TypeFnParam{"value", valueType, false, true, false}
   }, setCallInfo.throws, true, setCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".set", "@map.set", setTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"set", this->_items.back().get(), false, true});
-  auto shrinkCallInfo = TypeCallInfo{typeName(selfType->name + "_shrink"), true, "self_0", refSelfType, true, true};
+  auto shrinkCallInfo = TypeCallInfo{typeName(selfType->name + "_shrink"), true, "self_0", refSelfType, true, false};
   auto shrinkTypeFn = TypeFn{refSelfType, {}, shrinkCallInfo.throws, true, shrinkCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".shrink", "@map.shrink", shrinkTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"shrink", this->_items.back().get(), false, true});
-  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, true};
+  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, false};
   auto strTypeFn = TypeFn{this->get("str"), {}, strCallInfo.throws, true, strCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@map.str", strTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
@@ -1208,7 +1208,7 @@ void TypeMap::_objTypeDef (Type *selfType, [[maybe_unused]] Type *refSelfType) {
     "self_0",
     selfType,
     false,
-    true
+    false
   };
   auto strTypeFn = TypeFn{this->get("str"), {}, strCallInfo.throws, true, strCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@obj.str", strTypeFn, {}, true}));
@@ -1216,14 +1216,14 @@ void TypeMap::_objTypeDef (Type *selfType, [[maybe_unused]] Type *refSelfType) {
 }
 
 void TypeMap::_optTypeDef (Type *selfType, [[maybe_unused]] Type *refSelfType) {
-  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, true};
+  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, false};
   auto strTypeFn = TypeFn{this->get("str"), {}, strCallInfo.throws, true, strCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@opt.str", strTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
 }
 
 void TypeMap::_unionTypeDef (Type *selfType, [[maybe_unused]] Type *refSelfType) {
-  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, true};
+  auto strCallInfo = TypeCallInfo{typeName(selfType->name + "_str"), true, "self_0", selfType, false, false};
   auto strTypeFn = TypeFn{this->get("str"), {}, strCallInfo.throws, true, strCallInfo};
   this->_items.push_back(std::make_unique<Type>(Type{selfType->name + ".str", "@union.str", strTypeFn, {}, true}));
   selfType->fields.push_back(TypeField{"str", this->_items.back().get(), false, true});
