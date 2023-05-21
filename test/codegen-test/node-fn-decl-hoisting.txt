@@ -87,6 +87,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -150,7 +151,7 @@ struct __THE_1_test2_0X {
   const struct __THE_1_fn$1001 *__THE_0_test1_0;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
@@ -162,8 +163,6 @@ struct str int_str (int32_t);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
-void str_free (struct str);
-void error_Error_free (struct error_Error *);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 int64_t __THE_1_factorial_0 (void *, struct __THE_1_fn$1000P);
 void __THE_1_factorial_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_factorial_0X);
@@ -263,14 +262,6 @@ struct str str_concat_cstr (struct str s, const char *r) {
   memcpy(&d[s.l], r, l - s.l);
   free(s.d);
   return (struct str) {d, l};
-}
-void str_free (struct str s) {
-  free(s.d);
-}
-void error_Error_free (struct error_Error *n) {
-  str_free((struct str) n->__THE_0_message);
-  str_free((struct str) n->__THE_0_stack);
-  free(n);
 }
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
@@ -442,7 +433,7 @@ L0:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

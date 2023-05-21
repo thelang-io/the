@@ -46,6 +46,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -59,12 +60,12 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 void error_alloc (err_state_t *, size_t);
-void error_assign (err_state_t *, int, void *, int, int);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
@@ -108,9 +109,10 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
+void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  state->_free = f;
   error_stack_pos(state, line, col);
   error_stack_str(state);
 }
@@ -167,7 +169,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c1, c2);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c1, c2);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup1;
     }
   #else
@@ -179,7 +181,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c1);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c1);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup1;
     }
     struct stat sb1;
@@ -188,7 +190,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c1);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c1);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup2;
     }
     if ((sb1.st_mode & S_IFMT) != S_IFREG) {
@@ -196,7 +198,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c1);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c1);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup2;
     }
     int fd2 = open(c2, O_WRONLY | O_CREAT);
@@ -205,7 +207,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c2);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c2);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup2;
     }
     struct stat sb2;
@@ -214,7 +216,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c2);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c2);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup3;
     }
     if (sb1.st_dev == sb2.st_dev && sb1.st_ino == sb2.st_ino) {
@@ -222,7 +224,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c2);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c2);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup3;
     }
     if (sb2.st_size > 0 && ftruncate(fd2, 0) != 0) {
@@ -230,7 +232,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c2);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c2);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup3;
     }
     if (fchmod(fd2, sb1.st_mode) != 0) {
@@ -238,7 +240,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c2);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c2);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_copyFileSync_cleanup3;
     }
     size_t bytes = sb1.st_size;
@@ -249,7 +251,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
         size_t z = snprintf(NULL, 0, fmt, c1);
         char *d = alloc(z + 1);
         sprintf(d, fmt, c1);
-        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
         goto fs_copyFileSync_cleanup3;
       }
       size_t read_bytes = read_bytes_raw;
@@ -261,7 +263,7 @@ void fs_copyFileSync (struct str n1, struct str n2, int line, int col) {
           size_t z = snprintf(NULL, 0, fmt, c2);
           char *d = alloc(z + 1);
           sprintf(d, fmt, c2);
-          error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+          error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
           goto fs_copyFileSync_cleanup3;
         }
         written_bytes += (size_t) written_bytes_raw;
@@ -339,7 +341,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

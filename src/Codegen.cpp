@@ -199,7 +199,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     mainCleanUpBoilerplate += R"(if (_{err_state}.id != -1) {)" EOL;
     mainCleanUpBoilerplate += R"(  struct _{error_Error} *err = _{err_state}.ctx;)" EOL;
     mainCleanUpBoilerplate += R"(  _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL;
-    mainCleanUpBoilerplate += R"(  _{error_Error_free}(err);)" EOL;
+    mainCleanUpBoilerplate += R"(  _{err_state}._free(_{err_state}.ctx);)" EOL;
     mainCleanUpBoilerplate += R"(  _{exit}(_{EXIT_FAILURE});)" EOL;
     mainCleanUpBoilerplate += R"(})";
     this->state.cleanUp.add(this->_apiEval(mainCleanUpBoilerplate));
@@ -295,6 +295,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "  int buf_idx;" EOL;
     builtinStructDefCode += "  err_stack_t stack[10];" EOL;
     builtinStructDefCode += "  int stack_idx;" EOL;
+    builtinStructDefCode += "  void (*_free) (void *);" EOL;
     builtinStructDefCode += "} err_state_t;" EOL;
   }
 
@@ -361,7 +362,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.varErrState) {
-    builtinVarCode += "err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};" EOL;
+    builtinVarCode += "err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};" EOL;
   }
 
   if (this->builtins.varLibOpensslInit) {
@@ -1839,12 +1840,14 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
     auto nodeThrow = std::get<ASTNodeThrow>(*node.body);
-    auto argNodeExpr = this->_nodeExpr(nodeThrow.arg, nodeThrow.arg.type);
-    auto argNodeExprDef = this->_typeDef(nodeThrow.arg.type);
+    auto argTypeInfo = this->_typeInfo(nodeThrow.arg.type);
+    auto argNodeExpr = this->_nodeExpr(nodeThrow.arg, argTypeInfo.type);
+    auto argNodeExprDef = this->_typeDef(argTypeInfo.type);
     auto line = std::to_string(node.start.line);
     auto col = std::to_string(node.start.col + 1);
 
-    code += std::string(this->indent, ' ') + "_{error_assign}(&_{err_state}, _{" + argNodeExprDef + "}, (void *) " + argNodeExpr + ", " + line + ", " + col + ");" EOL;
+    code += std::string(this->indent, ' ') + "_{error_assign}(&_{err_state}, _{" + argNodeExprDef + "}, ";
+    code += "(void *) " + argNodeExpr + ", (void (*) (void *)) &_{" + argTypeInfo.typeName + "_free}, " + line + ", " + col + ");" EOL;
 
     if (this->state.cleanUp.isClosestJump()) {
       code += std::string(this->indent, ' ') + this->_apiEval("_{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);" EOL);
@@ -3152,7 +3155,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL;
     def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, i);)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return i < 0 ? &n.d[n.l + i] : &n.d[i];)" EOL;
@@ -3309,7 +3312,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *, int, int);";
     def += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *self, int line, int col) {" EOL;
     def += R"(  if (self->l == 0) {)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return &self->d[0];)" EOL;
@@ -3365,7 +3368,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *, int, int);";
     def += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *self, int line, int col) {" EOL;
     def += "  if (self->l == 0) {" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += "  }" EOL;
     def += "  return &self->d[self->l - 1];" EOL;
@@ -3482,7 +3485,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL;
     def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, n1);)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL;
+    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
     def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  _{size_t} i = n1 < 0 ? n1 + self->l : n1;)" EOL;
@@ -3890,7 +3893,7 @@ std::string Codegen::_typeNameMap (Type *type) {
       def += "  " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
     }
 
-    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL;
+    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
     def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(})";
 
@@ -4034,7 +4037,7 @@ std::string Codegen::_typeNameMap (Type *type) {
       def += "  " + this->_genFreeFn(mapType.keyType, "k") + ";" EOL;
     }
 
-    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}), line, col);)" EOL;
+    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
     def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
     def += R"(})";
 

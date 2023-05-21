@@ -35,9 +35,10 @@ const std::vector<std::string> codegenError = {
   R"~(  _{exit}(_{EXIT_FAILURE});)~" EOL
   R"~(})~" EOL,
 
-  R"(void error_assign (_{err_state_t} *state, int id, void *ctx, int line, int col) {)" EOL
+  R"(void error_assign (_{err_state_t} *state, int id, void *ctx, void (*f) (void *), int line, int col) {)" EOL
   R"(  state->id = id;)" EOL
   R"(  state->ctx = ctx;)" EOL
+  R"(  state->_free = f;)" EOL
   R"(  _{error_stack_pos}(state, line, col);)" EOL
   R"(  _{error_stack_str}(state);)" EOL
   R"(})" EOL,
@@ -92,6 +93,7 @@ const std::vector<std::string> codegenError = {
 
   R"(void error_unset (_{err_state_t} *state) {)" EOL
   R"(  state->id = -1;)" EOL
+  R"(  state->_free = (void *) 0;)" EOL
   R"(})" EOL,
 
   R"(struct _{error_Error} *new_error (_{struct str} n1) {)" EOL

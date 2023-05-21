@@ -94,6 +94,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -123,7 +124,7 @@ struct __THE_1_union_ColorUSfloatUE {
   };
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void any_free (struct any);
@@ -136,8 +137,6 @@ void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str float_str (double);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
-void str_free (struct str);
-void error_Error_free (struct error_Error *);
 struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0);
 struct any __THE_1_any_Color_0_alloc (enum __THE_1_Color_0);
 struct any __THE_1_any_Color_0_copy (const struct any);
@@ -237,14 +236,6 @@ struct str str_alloc (const char *r) {
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
-}
-void str_free (struct str s) {
-  free(s.d);
-}
-void error_Error_free (struct error_Error *n) {
-  str_free((struct str) n->__THE_0_message);
-  str_free((struct str) n->__THE_0_stack);
-  free(n);
 }
 struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0 n) {
   if (n == __THE_0_ColorSDRed_0) return str_alloc("Red");
@@ -451,7 +442,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

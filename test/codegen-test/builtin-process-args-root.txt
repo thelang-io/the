@@ -35,6 +35,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -55,7 +56,7 @@ struct __THE_1_array_str {
 
 int argc = 0;
 char **argv = (void *) 0;
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -65,7 +66,6 @@ void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct __THE_1_array_str process_args ();
 struct str str_alloc (const char *);
 void str_free (struct str);
-void error_Error_free (struct error_Error *);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 
 void *alloc (size_t n1) {
@@ -116,11 +116,6 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-void error_Error_free (struct error_Error *n) {
-  str_free((struct str) n->__THE_0_message);
-  str_free((struct str) n->__THE_0_stack);
-  free(n);
-}
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
@@ -138,7 +133,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

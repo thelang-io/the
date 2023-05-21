@@ -78,6 +78,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -136,7 +137,7 @@ struct __THE_1_TestStr_0 {
   const struct str __THE_0_a;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -149,7 +150,6 @@ struct str str_copy (const struct str);
 bool str_eq_str (struct str, struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
-void error_Error_free (struct error_Error *);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 bool __THE_1_array_int_eq (struct __THE_1_array_int, struct __THE_1_array_int);
@@ -294,11 +294,6 @@ bool str_ne_str (struct str s1, struct str s2) {
   free(s1.d);
   free(s2.d);
   return r;
-}
-void error_Error_free (struct error_Error *n) {
-  str_free((struct str) n->__THE_0_message);
-  str_free((struct str) n->__THE_0_stack);
-  free(n);
 }
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
@@ -683,7 +678,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

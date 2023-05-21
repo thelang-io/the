@@ -45,6 +45,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -63,12 +64,12 @@ struct __THE_1_array_str {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 void error_alloc (err_state_t *, size_t);
-void error_assign (err_state_t *, int, void *, int, int);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
@@ -113,9 +114,10 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
+void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  state->_free = f;
   error_stack_pos(state, line, col);
   error_stack_str(state);
 }
@@ -173,14 +175,14 @@ struct __THE_1_array_str fs_scandirSync (struct str s, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_scandirSync_cleanup1;
     } else if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
       const char *fmt = "failed to scan non-directory `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_scandirSync_cleanup1;
     }
     const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");
@@ -194,7 +196,7 @@ struct __THE_1_array_str fs_scandirSync (struct str s, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_scandirSync_cleanup1;
     } else if (h == INVALID_HANDLE_VALUE) {
       goto fs_scandirSync_cleanup1;
@@ -213,7 +215,7 @@ struct __THE_1_array_str fs_scandirSync (struct str s, int line, int col) {
         size_t z = snprintf(NULL, 0, fmt, c);
         char *d = alloc(z + 1);
         sprintf(d, fmt, c);
-        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
         goto fs_scandirSync_cleanup2;
       }
     }
@@ -226,14 +228,14 @@ fs_scandirSync_cleanup2:
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_scandirSync_cleanup1;
     } else if ((sb.st_mode & S_IFMT) != S_IFDIR) {
       const char *fmt = "failed to scan non-directory `%s`";
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_scandirSync_cleanup1;
     }
     DIR *f = opendir(c);
@@ -242,7 +244,7 @@ fs_scandirSync_cleanup2:
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_scandirSync_cleanup1;
     }
     struct dirent *a;
@@ -331,7 +333,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

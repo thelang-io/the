@@ -48,6 +48,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -85,14 +86,12 @@ struct __THE_1_fn$1001 {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
-void str_free (struct str);
-void error_Error_free (struct error_Error *);
 void __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
 int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$1001P);
 
@@ -138,14 +137,6 @@ void print (FILE *stream, const char *fmt, ...) {
   }
   va_end(args);
 }
-void str_free (struct str s) {
-  free(s.d);
-}
-void error_Error_free (struct error_Error *n) {
-  str_free((struct str) n->__THE_0_message);
-  str_free((struct str) n->__THE_0_stack);
-  free(n);
-}
 void __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
   error_stack_push(&err_state, "/test", "test1", p.line, p.col);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
@@ -180,7 +171,7 @@ L3:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

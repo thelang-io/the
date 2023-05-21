@@ -49,6 +49,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -62,14 +63,14 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str buffer_str (struct buffer);
 struct str cstr_concat_str (const char *, struct str);
 void error_alloc (err_state_t *, size_t);
-void error_assign (err_state_t *, int, void *, int, int);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
@@ -130,9 +131,10 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, int line, int col) {
+void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
   state->id = id;
   state->ctx = ctx;
+  state->_free = f;
   error_stack_pos(state, line, col);
   error_stack_str(state);
 }
@@ -188,7 +190,7 @@ void fs_appendFileSync (struct str s, struct buffer b, int line, int col) {
     size_t z = snprintf(NULL, 0, fmt, c);
     char *d = alloc(z + 1);
     sprintf(d, fmt, c);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto fs_appendFileSync_cleanup1;
   }
   if (b.l != 0) {
@@ -197,7 +199,7 @@ void fs_appendFileSync (struct str s, struct buffer b, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_appendFileSync_cleanup2;
     }
   }
@@ -217,7 +219,7 @@ struct buffer fs_readFileSync (struct str s, int line, int col) {
     size_t z = snprintf(NULL, 0, fmt, c);
     char *d = alloc(z + 1);
     sprintf(d, fmt, c);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto fs_readFileSync_cleanup;
   }
   unsigned char *d = NULL;
@@ -243,7 +245,7 @@ void fs_rmSync (struct str s, int line, int col) {
     size_t z = snprintf(NULL, 0, fmt, c);
     char *d = alloc(z + 1);
     sprintf(d, fmt, c);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), line, col);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto fs_rmSync_cleanup;
   }
 fs_rmSync_cleanup:
@@ -359,7 +361,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

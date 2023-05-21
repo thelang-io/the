@@ -57,6 +57,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -84,7 +85,7 @@ struct __THE_1_Human_0 {
   const int32_t __THE_0_age;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -101,7 +102,6 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
-void error_Error_free (struct error_Error *);
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double, double);
 struct __THE_1_Point_0 *__THE_1_Point_0_copy (const struct __THE_1_Point_0 *);
 void __THE_1_Point_0_free (struct __THE_1_Point_0 *);
@@ -245,11 +245,6 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-void error_Error_free (struct error_Error *n) {
-  str_free((struct str) n->__THE_0_message);
-  str_free((struct str) n->__THE_0_stack);
-  free(n);
-}
 struct __THE_1_Point_0 *__THE_1_Point_0_alloc (double __THE_0_x, double __THE_0_y) {
   struct __THE_1_Point_0 *r = alloc(sizeof(struct __THE_1_Point_0));
   struct __THE_1_Point_0 s = {__THE_0_x, __THE_0_y};
@@ -349,7 +344,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }

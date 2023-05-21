@@ -26,7 +26,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_appendFileSync_cleanup1;)" EOL
   R"(  })" EOL
   R"(  if (b.l != 0) {)" EOL
@@ -35,7 +35,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_appendFileSync_cleanup2;)" EOL
   R"(    })" EOL
   R"(  })" EOL
@@ -60,7 +60,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, m, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, m, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_chmodSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_chmodSync_cleanup:)" EOL
@@ -80,7 +80,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, u, g, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, u, g, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_chownSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_chownSync_cleanup:)" EOL
@@ -135,7 +135,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c1, c2);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c1, c2);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup1;)" EOL
   R"(    })" EOL
   R"(  #else)" EOL
@@ -147,7 +147,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c1);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c1);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup1;)" EOL
   R"(    })" EOL
   R"(    _{struct stat} sb1;)" EOL
@@ -156,7 +156,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c1);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c1);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup2;)" EOL
   R"(    })" EOL
   R"(    if ((sb1.st_mode & _{S_IFMT}) != _{S_IFREG}) {)" EOL
@@ -164,7 +164,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c1);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c1);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup2;)" EOL
   R"(    })" EOL
   R"(    int fd2 = _{open}(c2, _{O_WRONLY} | _{O_CREAT});)" EOL
@@ -173,7 +173,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c2);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c2);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup2;)" EOL
   R"(    })" EOL
   R"(    _{struct stat} sb2;)" EOL
@@ -182,7 +182,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c2);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c2);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup3;)" EOL
   R"(    })" EOL
   R"(    if (sb1.st_dev == sb2.st_dev && sb1.st_ino == sb2.st_ino) {)" EOL
@@ -190,7 +190,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c2);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c2);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup3;)" EOL
   R"(    })" EOL
   R"(    if (sb2.st_size > 0 && _{ftruncate}(fd2, 0) != 0) {)" EOL
@@ -198,7 +198,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c2);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c2);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup3;)" EOL
   R"(    })" EOL
   R"(    if (_{fchmod}(fd2, sb1.st_mode) != 0) {)" EOL
@@ -206,7 +206,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c2);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c2);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_copyFileSync_cleanup3;)" EOL
   R"(    })" EOL
   R"(    _{size_t} bytes = sb1.st_size;)" EOL
@@ -217,7 +217,7 @@ const std::vector<std::string> codegenFs = {
   R"(        _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c1);)" EOL
   R"(        char *d = _{alloc}(z + 1);)" EOL
   R"(        _{sprintf}(d, fmt, c1);)" EOL
-  R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(        goto fs_copyFileSync_cleanup3;)" EOL
   R"(      })" EOL
   R"(      _{size_t} read_bytes = read_bytes_raw;)" EOL
@@ -229,7 +229,7 @@ const std::vector<std::string> codegenFs = {
   R"(          _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c2);)" EOL
   R"(          char *d = _{alloc}(z + 1);)" EOL
   R"(          _{sprintf}(d, fmt, c2);)" EOL
-  R"(          _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(          _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(          goto fs_copyFileSync_cleanup3;)" EOL
   R"(        })" EOL
   R"(        written_bytes += (_{size_t}) written_bytes_raw;)" EOL
@@ -377,7 +377,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c1, c2);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c1, c2);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_linkSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_linkSync_cleanup:)" EOL
@@ -400,7 +400,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_mkdirSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_mkdirSync_cleanup:)" EOL
@@ -417,7 +417,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_readFileSync_cleanup;)" EOL
   R"(  })" EOL
   R"(  unsigned char *d = _{NULL};)" EOL
@@ -447,7 +447,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_realpathSync_cleanup1;)" EOL
   R"(    })" EOL
   R"(    _{size_t} l = _{GetFinalPathNameByHandle}(h, _{NULL}, 0, _{VOLUME_NAME_DOS});)" EOL
@@ -456,7 +456,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_realpathSync_cleanup2;)" EOL
   R"(    })" EOL
   R"(    char *r = _{alloc}(l + 1);)" EOL
@@ -465,7 +465,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_realpathSync_cleanup3;)" EOL
   R"(    })" EOL
   R"(    if (_{memcmp}(r, "\\\\?\\UNC\\", 8) == 0) {)" EOL
@@ -492,7 +492,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_realpathSync_cleanup1;)" EOL
   R"(  })" EOL
   R"(fs_realpathSync_cleanup1:)" EOL
@@ -510,7 +510,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c1, c2);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c1, c2);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_renameSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_renameSync_cleanup:)" EOL
@@ -528,7 +528,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_rmSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_rmSync_cleanup:)" EOL
@@ -549,7 +549,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_rmdirSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_rmdirSync_cleanup:)" EOL
@@ -568,14 +568,14 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_scandirSync_cleanup1;)" EOL
   R"(    } else if (!(_{GetFileAttributes}(c) & _{FILE_ATTRIBUTE_DIRECTORY})) {)" EOL
   R"(      const char *fmt = "failed to scan non-directory `%s`";)" EOL
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_scandirSync_cleanup1;)" EOL
   R"(    })" EOL
   R"(    const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");)" EOL
@@ -589,7 +589,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_scandirSync_cleanup1;)" EOL
   R"(    } else if (h == _{INVALID_HANDLE_VALUE}) {)" EOL
   R"(      goto fs_scandirSync_cleanup1;)" EOL
@@ -608,7 +608,7 @@ const std::vector<std::string> codegenFs = {
   R"(        _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(        char *d = _{alloc}(z + 1);)" EOL
   R"(        _{sprintf}(d, fmt, c);)" EOL
-  R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(        goto fs_scandirSync_cleanup2;)" EOL
   R"(      })" EOL
   R"(    })" EOL
@@ -621,14 +621,14 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_scandirSync_cleanup1;)" EOL
   R"(    } else if ((sb.st_mode & _{S_IFMT}) != _{S_IFDIR}) {)" EOL
   R"(      const char *fmt = "failed to scan non-directory `%s`";)" EOL
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_scandirSync_cleanup1;)" EOL
   R"(    })" EOL
   R"(    _{DIR} *f = _{opendir}(c);)" EOL
@@ -637,7 +637,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_scandirSync_cleanup1;)" EOL
   R"(    })" EOL
   R"(    _{struct dirent} *a;)" EOL
@@ -674,7 +674,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_statSync_cleanup;)" EOL
   R"(    })" EOL
   R"(    r = _{fs_Stats_alloc}(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, sb.st_size, 0, 4096);)" EOL
@@ -685,7 +685,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_statSync_cleanup;)" EOL
   R"(    })" EOL
   R"(    #ifdef _{THE_OS_MACOS})" EOL
@@ -718,7 +718,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_unlinkSync_cleanup;)" EOL
   R"(  })" EOL
   R"(fs_unlinkSync_cleanup:)" EOL
@@ -735,7 +735,7 @@ const std::vector<std::string> codegenFs = {
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_writeFileSync_cleanup1;)" EOL
   R"(  })" EOL
   R"(  if (b.l != 0) {)" EOL
@@ -744,7 +744,7 @@ const std::vector<std::string> codegenFs = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, c);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), line, col);)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto fs_writeFileSync_cleanup2;)" EOL
   R"(    })" EOL
   R"(  })" EOL

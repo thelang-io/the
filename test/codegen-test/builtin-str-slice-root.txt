@@ -91,6 +91,7 @@ typedef struct {
   int buf_idx;
   err_stack_t stack[10];
   int stack_idx;
+  void (*_free) (void *);
 } err_state_t;
 struct str {
   char *d;
@@ -104,7 +105,7 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0};
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -115,7 +116,6 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_slice (struct str, unsigned char, int32_t, unsigned char, int32_t);
-void error_Error_free (struct error_Error *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -177,11 +177,6 @@ struct str str_slice (struct str s, unsigned char o1, int32_t n1, unsigned char 
   for (size_t i = 0; i1 < i2; i1++) d[i++] = s.d[i1];
   free(s.d);
   return (struct str) {d, l};
-}
-void error_Error_free (struct error_Error *n) {
-  str_free((struct str) n->__THE_0_message);
-  str_free((struct str) n->__THE_0_stack);
-  free(n);
 }
 
 int main () {
@@ -304,7 +299,7 @@ L1:
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
     fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    error_Error_free(err);
+    err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
 }
