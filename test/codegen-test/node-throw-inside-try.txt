@@ -245,6 +245,7 @@ int main () {
           goto L1;
 L1:
           err_state.buf_idx--;
+          error_Error_free((struct error_Error *) __THE_0_err_0);
           if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
           break;
         }
@@ -264,6 +265,7 @@ L1:
       print(stdout, "zzsz", "Error Outer:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
 L2:
       err_state.buf_idx--;
+      error_Error_free((struct error_Error *) __THE_0_err_0);
       if (err_state.id != -1) goto L0;
       break;
     }

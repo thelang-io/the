@@ -239,6 +239,7 @@ int main () {
       goto L1;
 L1:
       err_state.buf_idx--;
+      error_Error_free((struct error_Error *) __THE_0_err_0);
       if (err_state.id != -1) goto L0;
       break;
     }

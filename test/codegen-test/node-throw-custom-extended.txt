@@ -87,6 +87,7 @@ struct str str_copy (const struct str);
 void str_free (struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_MyError_0 *__THE_1_MyError_0_alloc (struct str, struct str, int32_t, struct str);
+void __THE_1_MyError_0_free (struct __THE_1_MyError_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -221,6 +222,12 @@ struct __THE_1_MyError_0 *__THE_1_MyError_0_alloc (struct str __THE_0_message, s
   memcpy(r, &s, sizeof(struct __THE_1_MyError_0));
   return r;
 }
+void __THE_1_MyError_0_free (struct __THE_1_MyError_0 *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  str_free((struct str) n->__THE_0_reserved2);
+  free(n);
+}
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
@@ -239,6 +246,7 @@ int main () {
       print(stdout, "zzsz", "MyError:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
 L1:
       err_state.buf_idx--;
+      __THE_1_MyError_0_free((struct __THE_1_MyError_0 *) __THE_0_err_0);
       if (err_state.id != -1) goto L0;
       break;
     }
