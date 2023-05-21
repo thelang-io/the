@@ -1,10 +1,11 @@
-name: the/qrcode
+name: the/algorithm
 version: 0.1.0
-description: QR Code Generator
+description: Algorithms Library
 license: MIT
-main: src/qrcode
+main: src/main
 
 files:
+  - src/main
   - src/qrcode
 
 scripts:
