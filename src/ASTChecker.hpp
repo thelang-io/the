@@ -348,6 +348,16 @@ class ASTChecker {
         if (this->_hasNode<T>(nodeIf.body)) {
           return true;
         }
+
+        if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTNode>(*nodeIf.alt)) {
+          // todo test
+          auto nodeIfAlt = std::get<ASTNode>(*nodeIf.alt);
+          return std::holds_alternative<T>(*nodeIfAlt.body);
+        } else if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
+          // todo test
+          auto nodeIfAlt = std::get<ASTBlock>(*nodeIf.alt);
+          return this->_hasNode<T>(nodeIfAlt);
+        }
       } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
         auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
 
@@ -368,6 +378,17 @@ class ASTChecker {
 
         return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
           return it.body != std::nullopt && this->_hasNode<T>(*it.body);
+        });
+      } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
+        // todo test
+        auto nodeTry = std::get<ASTNodeTry>(*node.body);
+
+        if (this->_hasNode<T>(nodeTry.body)) {
+          return true;
+        }
+
+        return std::any_of(nodeTry.handlers.begin(), nodeTry.handlers.end(), [&] (const auto &it) -> bool {
+          return this->_hasNode<T>(it.body);
         });
       }
     }
@@ -402,7 +423,16 @@ class ASTChecker {
       return nodeFnDecl.body != std::nullopt && !nodeFnDecl.body->empty() && nodeFnDecl.body->back().body == node.body;
     } else if (std::holds_alternative<ASTNodeIf>(*parent.body)) {
       auto nodeIf = std::get<ASTNodeIf>(*parent.body);
-      return nodeIf.body.back().body == node.body;
+
+      if (nodeIf.body.back().body == node.body) {
+        return true;
+      } else if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
+        // todo test
+        auto nodeIfAlt = std::get<ASTBlock>(*nodeIf.alt);
+        return nodeIfAlt.back().body == node.body;
+      }
+
+      return false;
     } else if (std::holds_alternative<ASTNodeLoop>(*parent.body)) {
       auto nodeLoop = std::get<ASTNodeLoop>(*parent.body);
       return nodeLoop.body.back().body == node.body;
@@ -414,6 +444,17 @@ class ASTChecker {
 
       return std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
         return it.body != std::nullopt && !it.body->empty() && it.body->back().body == node.body;
+      });
+    } else if (std::holds_alternative<ASTNodeTry>(*parent.body)) {
+      // todo test
+      auto nodeTry = std::get<ASTNodeTry>(*parent.body);
+
+      if (nodeTry.body.back().body == node.body) {
+        return true;
+      }
+
+      return std::any_of(nodeTry.handlers.begin(), nodeTry.handlers.end(), [&] (const auto &it) -> bool {
+        return it.body.back().body == node.body;
       });
     }
 

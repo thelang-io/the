@@ -237,8 +237,8 @@ L7:
     str_free((struct str) __THE_0_b_0);
 L6:
     err_state.buf_idx--;
-    if (r == 1) goto L5;
     if (err_state.id != -1) goto L5;
+    if (r == 1) goto L5;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   struct str __THE_0_c_0 = str_alloc("c");
@@ -260,8 +260,8 @@ L12:
     str_free((struct str) __THE_0_d_0);
 L11:
     err_state.buf_idx--;
-    if (r == 1) goto L10;
     if (err_state.id != -1) goto L10;
+    if (r == 1) goto L10;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L10;
   __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc("a2"));

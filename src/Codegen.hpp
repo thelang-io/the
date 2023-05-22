@@ -189,7 +189,7 @@ class Codegen {
   );
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  std::string _block (const ASTBlock &, bool = true);
+  std::string _block (const ASTBlock &, bool = true, const std::string & = "");
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
   std::string _exprCallDefaultArg (const CodegenTypeInfo &);
   std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &);

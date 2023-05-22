@@ -262,9 +262,9 @@ L4:
       str_free((struct str) __THE_0_j_0);
 L3:
       err_state.buf_idx--;
+      if (err_state.id != -1) goto L2;
       if (b1 == 1) break;
       if (r == 1) goto L2;
-      if (err_state.id != -1) goto L2;
     }
 L2:
     str_free((struct str) __THE_0_i_0);
@@ -285,8 +285,8 @@ L11:
       str_free((struct str) __THE_0_j_0);
 L10:
       err_state.buf_idx--;
-      if (b1 == 1) break;
       if (err_state.id != -1) goto L9;
+      if (b1 == 1) break;
     }
 L9:
     str_free((struct str) __THE_0_i_0);
@@ -334,8 +334,8 @@ L17:
     str_free((struct str) __THE_0_test2_0);
 L18:
     err_state.buf_idx--;
-    if (b1 == 1) break;
     if (err_state.id != -1) goto L1;
+    if (b1 == 1) break;
   }
   v = __THE_0_result_0;
 L1:

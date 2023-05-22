@@ -1241,6 +1241,23 @@ INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenPassTest, testing::Values(
   "node-throw-raw"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
+  "node-try",
+  "node-try-nested",
+  "node-try-scoped",
+  "node-try-scoped-child",
+  "node-try-custom",
+  "node-try-multiple",
+  "node-try-inside-fn-with-return",
+  "node-try-inside-if",
+  "node-try-inside-if-with-return",
+  "node-try-inside-loop",
+  "node-try-inside-loop-deep",
+  "node-try-inside-loop-with-break",
+  "node-try-inside-loop-with-continue",
+  "node-try-inside-loop-with-return"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeTypeDecl, CodegenPassTest, testing::Values(
   "node-type-decl",
   "node-type-decl-alias",
@@ -1596,9 +1613,21 @@ INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenThrowTest, testing::Values(
   "throw-node-throw-raw"
 ));
 
-// todo try
-//  nested
-//  scopes
-//  far-sibling
-//  another type
-//  multiple types handlers
+INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
+  "throw-node-try",
+  "throw-node-try-nested",
+  "throw-node-try-nested2",
+  "throw-node-try-scoped",
+  "throw-node-try-scoped-child",
+  "throw-node-try-custom",
+  "throw-node-try-multiple",
+  "throw-node-try-multiple2",
+  "throw-node-try-inside-fn-with-return",
+  "throw-node-try-inside-if",
+  "throw-node-try-inside-if-with-return",
+  "throw-node-try-inside-loop",
+  "throw-node-try-inside-loop-deep",
+  "throw-node-try-inside-loop-with-break",
+  "throw-node-try-inside-loop-with-continue",
+  "throw-node-try-inside-loop-with-return"
+));

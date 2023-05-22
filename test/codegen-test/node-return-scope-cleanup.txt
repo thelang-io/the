@@ -454,8 +454,8 @@ L3:
     __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
 L2:
     err_state.buf_idx--;
-    if (r == 1) goto L1;
     if (err_state.id != -1) goto L1;
+    if (r == 1) goto L1;
   } else if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 0) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     const struct __THE_1_array_str __THE_0_name_0 = __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 1, 0, 0);
@@ -466,8 +466,8 @@ L5:
     __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
 L4:
     err_state.buf_idx--;
-    if (r == 1) goto L1;
     if (err_state.id != -1) goto L1;
+    if (r == 1) goto L1;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "zz", "return 3", THE_EOL);
@@ -498,8 +498,8 @@ L9:
       str_free((struct str) __THE_0_name_0);
 L8:
       err_state.buf_idx--;
-      if (r == 1) goto L7;
       if (err_state.id != -1) goto L7;
+      if (r == 1) goto L7;
     } else if (str_len(str_copy(*__THE_0_item_0)) > 0) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
       const struct str __THE_0_name_0 = str_slice(str_copy(*__THE_0_item_0), 1, 1, 0, 0);
@@ -510,8 +510,8 @@ L11:
       str_free((struct str) __THE_0_name_0);
 L10:
       err_state.buf_idx--;
-      if (r == 1) goto L7;
       if (err_state.id != -1) goto L7;
+      if (r == 1) goto L7;
     }
     if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
     const struct str __THE_0_value_0 = str_alloc("");
@@ -521,8 +521,8 @@ L12:
     str_free((struct str) __THE_0_value_0);
 L7:
     err_state.buf_idx--;
-    if (r == 1) goto L6;
     if (err_state.id != -1) goto L6;
+    if (r == 1) goto L6;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   print(stdout, "zz", "return 3", THE_EOL);
@@ -551,8 +551,8 @@ L15:
     __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
 L14:
     err_state.buf_idx--;
-    if (r == 1) goto L13;
     if (err_state.id != -1) goto L13;
+    if (r == 1) goto L13;
   } else if (__THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_items_0)) > 0) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L16;
     const struct __THE_1_array_str __THE_0_name_0 = __THE_1_array_str_slice(__THE_1_array_str_copy(__THE_0_items_0), 1, 1, 0, 0);
@@ -566,8 +566,8 @@ L17:
     __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_name_0);
 L16:
     err_state.buf_idx--;
-    if (r == 1) goto L13;
     if (err_state.id != -1) goto L13;
+    if (r == 1) goto L13;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L13;
   print(stdout, "zz", "return 4", THE_EOL);
@@ -604,8 +604,8 @@ L21:
       str_free((struct str) __THE_0_name_0);
 L20:
       err_state.buf_idx--;
-      if (r == 1) goto L19;
       if (err_state.id != -1) goto L19;
+      if (r == 1) goto L19;
     } else if (str_len(str_copy(*__THE_0_item_0)) > 0) {
       if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L22;
       const struct str __THE_0_name_0 = str_slice(str_copy(*__THE_0_item_0), 1, 1, 0, 0);
@@ -619,8 +619,8 @@ L23:
       str_free((struct str) __THE_0_name_0);
 L22:
       err_state.buf_idx--;
-      if (r == 1) goto L19;
       if (err_state.id != -1) goto L19;
+      if (r == 1) goto L19;
     }
     if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L19;
     const struct str __THE_0_value_0 = str_alloc("");
@@ -630,8 +630,8 @@ L24:
     str_free((struct str) __THE_0_value_0);
 L19:
     err_state.buf_idx--;
-    if (r == 1) goto L18;
     if (err_state.id != -1) goto L18;
+    if (r == 1) goto L18;
   }
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L18;
   print(stdout, "zz", "return 4", THE_EOL);
