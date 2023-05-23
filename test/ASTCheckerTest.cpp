@@ -220,6 +220,57 @@ TEST_F(ASTCheckerTest, HasReturn) {
   ).has<ASTNodeReturn>());
 
   EXPECT_TRUE(this->node_(
+    "if 1 > 2 {" EOL
+    "} else {" EOL
+    "  print(\"Test\")" EOL
+    "}" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "if 1 > 2 {" EOL
+    "} else {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+    "print(\"Test\")" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "if 1 > 2 {" EOL
+    "} else {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "if 1 > 2 {" EOL
+    "} elif 2 > 3 {" EOL
+    "}" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "if 1 > 2 {" EOL
+    "} elif 2 > 3 {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+    "print(\"Test\")" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "if 1 > 2 {" EOL
+    "} elif 2 > 3 {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
     "loop i := 0;; {" EOL
     "}" EOL
   ).has<ASTNodeVarDecl>());
@@ -287,6 +338,87 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "  }" EOL
     "}" EOL
   ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "  print(\"Test\")" EOL
+    "} catch err: error_Error {" EOL
+    "}" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "} catch err: error_Error {" EOL
+    "}" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "} catch err: error_Error {" EOL
+    "}" EOL
+    "print(\"Test\")" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "} catch err: error_Error {" EOL
+    "  print(\"Test\")" EOL
+    "}" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "} catch err: error_Error {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "} catch err: error_Error {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+    "print(\"Test\")" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "} catch err: error_Error {" EOL
+    "} catch err: error_Error {" EOL
+    "  print(\"Test\")" EOL
+    "}" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "} catch err: error_Error {" EOL
+    "} catch err: error_Error {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+  ).has<ASTNodeReturn>());
+
+  EXPECT_TRUE(this->node_(
+    "try {" EOL
+    "} catch err: error_Error {" EOL
+    "} catch err: error_Error {" EOL
+    "  print(\"Test\")" EOL
+    "  return" EOL
+    "}" EOL
+    "print(\"Test\")" EOL
+    "return" EOL
+  ).has<ASTNodeReturn>());
 }
 
 TEST_F(ASTCheckerTest, IsFnDecl) {
@@ -333,6 +465,73 @@ TEST_F(ASTCheckerTest, IsLastOnFnDecl) {
 TEST_F(ASTCheckerTest, IsLastOnIf) {
   auto ast = testing::NiceMock<MockAST>(
     "if true {" EOL
+    "  a := 1" EOL
+    "  if 1 > 2 {" EOL
+    "    return" EOL
+    "  }" EOL
+    "  return" EOL
+    "}" EOL
+  );
+
+  auto nodes = ast.gen();
+  auto node = std::get<ASTNodeIf>(*nodes[0].body);
+
+  EXPECT_FALSE(ASTChecker(node.body[0]).isLast());
+  EXPECT_FALSE(ASTChecker(node.body[1]).isLast());
+  EXPECT_TRUE(ASTChecker(node.body[2]).isLast());
+}
+
+TEST_F(ASTCheckerTest, IsLastOnElif) {
+  auto ast = testing::NiceMock<MockAST>(
+    "if true {" EOL
+    "} elif false {" EOL
+    "  a := 1" EOL
+    "  if 1 > 2 {" EOL
+    "    return" EOL
+    "  }" EOL
+    "  return" EOL
+    "}" EOL
+  );
+
+  auto nodes = ast.gen();
+  auto node = std::get<ASTNodeIf>(*nodes[0].body);
+  auto nodeElif = std::get<ASTNodeIf>(*std::get<ASTNode>(*node.alt).body);
+
+  EXPECT_FALSE(ASTChecker(nodeElif.body[0]).isLast());
+  EXPECT_FALSE(ASTChecker(nodeElif.body[1]).isLast());
+  EXPECT_TRUE(ASTChecker(nodeElif.body[2]).isLast());
+}
+
+TEST_F(ASTCheckerTest, IsLastOnElse) {
+  auto ast = testing::NiceMock<MockAST>(
+    "if true {" EOL
+    "} else {" EOL
+    "  a := 1" EOL
+    "  if 1 > 2 {" EOL
+    "    return" EOL
+    "  }" EOL
+    "  return" EOL
+    "}" EOL
+  );
+
+  auto nodes = ast.gen();
+  auto node = std::get<ASTNodeIf>(*nodes[0].body);
+  auto nodeElse = std::get<ASTBlock>(*node.alt);
+
+  EXPECT_FALSE(ASTChecker(nodeElse[0]).isLast());
+  EXPECT_FALSE(ASTChecker(nodeElse[1]).isLast());
+  EXPECT_TRUE(ASTChecker(nodeElse[2]).isLast());
+}
+
+TEST_F(ASTCheckerTest, IsLastOnIfWithElse) {
+  auto ast = testing::NiceMock<MockAST>(
+    "if true {" EOL
+    "  a := 1" EOL
+    "  if 1 > 2 {" EOL
+    "    return" EOL
+    "  }" EOL
+    "  return" EOL
+    "} else {" EOL
     "  a := 1" EOL
     "  if 1 > 2 {" EOL
     "    return" EOL
@@ -429,6 +628,46 @@ TEST_F(ASTCheckerTest, IsLastOnObjDecl) {
   auto methodNode = (*node.methods[0].body)[0];
   methodNode.parent = &nodes[1];
   EXPECT_FALSE(ASTChecker(methodNode).isLast());
+}
+
+TEST_F(ASTCheckerTest, IsLastOnTry) {
+  auto ast = testing::NiceMock<MockAST>(
+    "try {" EOL
+    "  a := 1" EOL
+    "  if 1 > 2 {" EOL
+    "    return" EOL
+    "  }" EOL
+    "  return" EOL
+    "} catch err: error_Error {" EOL
+    "}" EOL
+  );
+
+  auto nodes = ast.gen();
+  auto node = std::get<ASTNodeTry>(*nodes[0].body);
+
+  EXPECT_FALSE(ASTChecker(node.body[0]).isLast());
+  EXPECT_FALSE(ASTChecker(node.body[1]).isLast());
+  EXPECT_TRUE(ASTChecker(node.body[2]).isLast());
+}
+
+TEST_F(ASTCheckerTest, IsLastOnTryHandler) {
+  auto ast = testing::NiceMock<MockAST>(
+    "try {" EOL
+    "} catch err: error_Error {" EOL
+    "  a := 1" EOL
+    "  if 1 > 2 {" EOL
+    "    return" EOL
+    "  }" EOL
+    "  return" EOL
+    "}" EOL
+  );
+
+  auto nodes = ast.gen();
+  auto node = std::get<ASTNodeTry>(*nodes[0].body);
+
+  EXPECT_FALSE(ASTChecker(node.handlers[0].body[0]).isLast());
+  EXPECT_FALSE(ASTChecker(node.handlers[0].body[1]).isLast());
+  EXPECT_TRUE(ASTChecker(node.handlers[0].body[2]).isLast());
 }
 
 TEST_F(ASTCheckerTest, ThrowsOnManyIsLast) {
