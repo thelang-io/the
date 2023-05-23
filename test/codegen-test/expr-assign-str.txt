@@ -61,21 +61,11 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
-
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
-
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -111,19 +101,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -162,66 +139,31 @@ struct str str_realloc (struct str s1, struct str s2) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0___0 = str_alloc("");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct str __THE_0_a_0 = str_alloc("test1");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   struct str __THE_0_b_0 = str_copy(__THE_0_a_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   __THE_0_b_0 = str_realloc(__THE_0_b_0, str_copy(__THE_0_a_0));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   struct str __THE_0_c_0 = str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_c_0 = str_realloc(__THE_0_c_0, str_copy(__THE_0_b_0 = str_realloc(__THE_0_b_0, str_copy(__THE_0_a_0))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   __THE_0_c_0 = str_realloc(__THE_0_c_0, str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   struct str __THE_0_d_0 = str_alloc("test2");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   __THE_0_d_0 = str_realloc(__THE_0_d_0, str_copy(__THE_0_c_0 = str_realloc(__THE_0_c_0, str_copy(__THE_0_b_0 = str_realloc(__THE_0_b_0, str_copy(__THE_0_a_0))))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   __THE_0_d_0 = str_realloc(__THE_0_d_0, str_concat_str(str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   __THE_0_d_0 = str_realloc(__THE_0_d_0, true ? str_alloc("test3") : cstr_concat_str("test4", str_copy(__THE_0_a_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   __THE_0_d_0 = str_realloc(__THE_0_d_0, true ? str_copy(__THE_0_b_0 = str_realloc(__THE_0_b_0, (str_concat_cstr(cstr_concat_str("test5", (str_copy(__THE_0_c_0 = str_realloc(__THE_0_c_0, str_alloc("test6"))))), "test7")))) : str_alloc("test8test9"));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   struct str __THE_0_e_0 = str_alloc("test3");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_e_0 = str_realloc(__THE_0_e_0, str_concat_str(str_copy(__THE_0_e_0), str_copy(__THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_str(str_copy(__THE_0_b_0), str_copy(__THE_0_a_0))))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_e_0 = str_realloc(__THE_0_e_0, str_concat_str(str_copy(__THE_0_e_0), str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_e_0 = str_realloc(__THE_0_e_0, str_concat_str(str_copy(__THE_0_e_0), str_copy(__THE_0_c_0 = str_realloc(__THE_0_c_0, str_concat_str(str_copy(__THE_0_c_0), str_copy(__THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_str(str_copy(__THE_0_b_0), str_copy(__THE_0_a_0)))))))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_e_0 = str_realloc(__THE_0_e_0, str_concat_str(str_copy(__THE_0_e_0), str_concat_str(str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)), str_copy(__THE_0_c_0))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_e_0 = str_realloc(__THE_0_e_0, str_concat_str(str_copy(__THE_0_e_0), true ? str_alloc("test3") : str_concat_str(cstr_concat_str("test4", str_copy(__THE_0_a_0)), str_copy(__THE_0_d_0))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   __THE_0_e_0 = str_realloc(__THE_0_e_0, str_concat_str(str_copy(__THE_0_e_0), true ? str_copy(__THE_0_b_0 = str_realloc(__THE_0_b_0, str_concat_str(str_copy(__THE_0_b_0), (str_concat_cstr(cstr_concat_str("test5", (str_copy(__THE_0_c_0 = str_realloc(__THE_0_c_0, str_concat_cstr(str_copy(__THE_0_c_0), "test6"))))), "test7"))))) : cstr_concat_str("test8test9", str_copy(__THE_0_d_0))));
-L7:
   str_free((struct str) __THE_0_e_0);
-L6:
   str_free((struct str) __THE_0_d_0);
-L5:
   str_free((struct str) __THE_0_c_0);
-L4:
   str_free((struct str) __THE_0_b_0);
-L3:
   str_free((struct str) __THE_0_a_0);
-L2:
   str_free((struct str) __THE_0___0);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

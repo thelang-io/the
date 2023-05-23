@@ -57,18 +57,9 @@ typedef struct {
   int stack_idx;
   void (*_free) (void *);
 } err_state_t;
-struct str {
-  char *d;
-  size_t l;
-};
 
-struct error_Error;
 struct __THE_1_Test_0;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_Test_0 {
   const bool __THE_0_p01;
   const unsigned char __THE_0_p02;
@@ -91,9 +82,6 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (bool, unsigned char, char, float, double, double, int8_t, int16_t, int32_t, int64_t, int32_t, uint8_t, uint16_t, uint32_t, uint64_t);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 
@@ -118,19 +106,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
-}
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (bool __THE_0_p01, unsigned char __THE_0_p02, char __THE_0_p03, float __THE_0_p04, double __THE_0_p05, double __THE_0_p06, int8_t __THE_0_p07, int16_t __THE_0_p08, int32_t __THE_0_p09, int64_t __THE_0_p10, int32_t __THE_0_p11, uint8_t __THE_0_p12, uint16_t __THE_0_p13, uint32_t __THE_0_p14, uint64_t __THE_0_p15) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_p01, __THE_0_p02, __THE_0_p03, __THE_0_p04, __THE_0_p05, __THE_0_p06, __THE_0_p07, __THE_0_p08, __THE_0_p09, __THE_0_p10, __THE_0_p11, __THE_0_p12, __THE_0_p13, __THE_0_p14, __THE_0_p15};
@@ -142,19 +117,8 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(false, 0, '\0', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

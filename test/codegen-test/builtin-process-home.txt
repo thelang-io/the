@@ -65,9 +65,7 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
-void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 struct str process_home (int, int);
@@ -105,18 +103,9 @@ void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), in
   error_stack_pos(state, line, col);
   error_stack_str(state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
 void error_stack_pos (err_state_t *state, int line, int col) {
   if (line != 0) state->stack[state->stack_idx - 1].line = line;
   if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 void error_stack_str (err_state_t *state) {
   struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
@@ -220,18 +209,7 @@ void error_Error_free (struct error_Error *n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "sz", process_home(2, 9), THE_EOL);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

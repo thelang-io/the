@@ -49,19 +49,12 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
 struct __THE_1_fn$1001P;
 struct __THE_1_fn$1001;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_fn$1000P {
-  int line;
-  int col;
   int32_t n0;
 };
 struct __THE_1_fn$1000 {
@@ -70,8 +63,6 @@ struct __THE_1_fn$1000 {
   size_t l;
 };
 struct __THE_1_fn$1001P {
-  int line;
-  int col;
   struct str n0;
 };
 struct __THE_1_fn$1001 {
@@ -84,9 +75,6 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str str_alloc (const char *);
 void str_free (struct str);
 void __THE_1_mainSDx_0 (void *, struct __THE_1_fn$1000P);
@@ -113,19 +101,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
-}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -136,43 +111,20 @@ void str_free (struct str s) {
   free(s.d);
 }
 void __THE_1_mainSDx_0 (void *px, struct __THE_1_fn$1000P p) {
-  error_stack_push(&err_state, "/test", "x", p.line, p.col);
   const int32_t __THE_0_a_0 = p.n0;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void __THE_1_mainSDx_1 (void *px, struct __THE_1_fn$1001P p) {
-  error_stack_push(&err_state, "/test", "x", p.line, p.col);
   const struct str __THE_0_b_0 = p.n0;
   str_free((struct str) __THE_0_b_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   if (1 > 2) {
     const struct __THE_1_fn$1000 __THE_0_mainSDx_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSDx_0, NULL, 0};
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
-    __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.x, (struct __THE_1_fn$1000P) {4, 5, 1});
-L2:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L0;
+    __THE_0_mainSDx_0.f(__THE_0_mainSDx_0.x, (struct __THE_1_fn$1000P) {1});
   } else {
     const struct __THE_1_fn$1001 __THE_0_mainSDx_1 = (struct __THE_1_fn$1001) {&__THE_1_mainSDx_1, NULL, 0};
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.x, (struct __THE_1_fn$1001P) {7, 5, str_alloc("test")});
-L4:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L0;
-  }
-L0:
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
+    __THE_0_mainSDx_1.f(__THE_0_mainSDx_1.x, (struct __THE_1_fn$1001P) {str_alloc("test")});
   }
 }
 ======= flags =======

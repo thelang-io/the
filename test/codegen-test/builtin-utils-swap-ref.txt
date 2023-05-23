@@ -55,17 +55,10 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_fn$1000P {
-  int line;
-  int col;
   int32_t n0;
   int32_t n1;
 };
@@ -79,9 +72,6 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
 void utils_swap (void *, void *, size_t);
 void __THE_1_printRefs_0 (void *, struct __THE_1_fn$1000P);
@@ -106,19 +96,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -157,47 +134,22 @@ void utils_swap (void *a, void *b, size_t l) {
   free(t);
 }
 void __THE_1_printRefs_0 (void *px, struct __THE_1_fn$1000P p) {
-  error_stack_push(&err_state, "/test", "printRefs", p.line, p.col);
   const int32_t __THE_0_a_0 = p.n0;
   const int32_t __THE_0_b_0 = p.n1;
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "iziz", __THE_0_a_0, " ", __THE_0_b_0, THE_EOL);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_printRefs_0 = (struct __THE_1_fn$1000) {&__THE_1_printRefs_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   const int32_t __THE_0_refA_0 = 1;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const int32_t __THE_0_refB_0 = 2;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   int32_t *__THE_0_a_0 = &__THE_0_refA_0;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   int32_t *__THE_0_b_0 = &__THE_0_refB_0;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, (struct __THE_1_fn$1000P) {9, 3, *__THE_0_a_0, *__THE_0_b_0});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, (struct __THE_1_fn$1000P) {*__THE_0_a_0, *__THE_0_b_0});
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(int32_t *));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, (struct __THE_1_fn$1000P) {11, 3, *__THE_0_a_0, *__THE_0_b_0});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, (struct __THE_1_fn$1000P) {*__THE_0_a_0, *__THE_0_b_0});
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(int32_t *));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, (struct __THE_1_fn$1000P) {13, 3, *__THE_0_a_0, *__THE_0_b_0});
-L2:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
+  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, (struct __THE_1_fn$1000P) {*__THE_0_a_0, *__THE_0_b_0});
 }
 ======= flags =======
 ======= stdout =======

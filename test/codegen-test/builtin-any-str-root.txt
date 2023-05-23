@@ -82,40 +82,25 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_Test1_0;
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
 struct __THE_1_any_int;
-struct __THE_1_fn$1001P;
 struct __THE_1_fn$1001;
 struct __THE_1_mainSDtestCtx_0X;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_Test1_0 {
   const struct any __THE_0_a;
 };
-struct __THE_1_fn$1000P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1000 {
-  struct any (*f) (void *, struct __THE_1_fn$1000P);
+  struct any (*f) (void *);
   void *x;
   size_t l;
 };
 struct __THE_1_any_int {
   int32_t d;
 };
-struct __THE_1_fn$1001P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1001 {
-  void (*f) (void *, struct __THE_1_fn$1001P);
+  void (*f) (void *);
   void *x;
   size_t l;
 };
@@ -135,9 +120,6 @@ void any_free (struct any);
 struct any any_realloc (struct any, struct any);
 struct str any_str (struct any);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct any);
@@ -145,9 +127,9 @@ void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 struct any __THE_1_any_int_alloc (int32_t);
 struct any __THE_1_any_int_copy (const struct any);
 void __THE_1_any_int_free (struct any);
-struct any __THE_1_testCall_0 (void *, struct __THE_1_fn$1000P);
+struct any __THE_1_testCall_0 (void *);
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
-void __THE_1_mainSDtestCtx_0 (void *, struct __THE_1_fn$1001P);
+void __THE_1_mainSDtestCtx_0 (void *);
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSDtestCtx_0X);
 
 void *alloc (size_t n1) {
@@ -185,19 +167,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
-}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -233,41 +202,25 @@ void __THE_1_any_int_free (struct any _n) {
   struct __THE_1_any_int *n = _n.d;
   free(n);
 }
-struct any __THE_1_testCall_0 (void *px, struct __THE_1_fn$1000P p) {
-  struct any v;
-  error_stack_push(&err_state, "/test", "testCall", p.line, p.col);
-  v = __THE_1_any_int_alloc(1);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  return v;
+struct any __THE_1_testCall_0 (void *px) {
+  return __THE_1_any_int_alloc(1);
 }
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtestCtx_0 (void *px, struct __THE_1_fn$1001P p) {
-  error_stack_push(&err_state, "/test", "testCtx", p.line, p.col);
+void __THE_1_mainSDtestCtx_0 (void *px) {
   struct __THE_1_mainSDtestCtx_0X *x = px;
   struct any *__THE_0_test2_0 = x->__THE_0_test2_0;
   const struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
   const struct any **__THE_0_refTest_0 = x->__THE_0_refTest_0;
   const struct any *__THE_0_test_0 = x->__THE_0_test_0;
   const struct __THE_1_fn$1000 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
   str_free((struct str) any_str(any_copy(*__THE_0_test_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   str_free((struct str) any_str(any_copy((*__THE_0_test1_0)->__THE_0_a)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   str_free((struct str) any_str(any_copy(*__THE_0_test2_0 = any_realloc(*__THE_0_test2_0, __THE_1_any_int_alloc(5)))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  str_free((struct str) any_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x, (struct __THE_1_fn$1000P) {27, 5})));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  str_free((struct str) any_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x)));
   str_free((struct str) any_str(any_copy(*__THE_0_test_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   str_free((struct str) any_str(any_copy(**__THE_0_refTest_0)));
-L6:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtestCtx_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
@@ -279,51 +232,25 @@ void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_ma
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_testCall_0 = (struct __THE_1_fn$1000) {&__THE_1_testCall_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   const struct any __THE_0_test_0 = {0, NULL, 0, NULL, NULL};
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct any *__THE_0_refTest_0 = &__THE_0_test_0;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_1_any_int_alloc(2));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   struct any __THE_0_test2_0 = __THE_1_any_int_alloc(3);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   str_free((struct str) any_str(any_copy(__THE_0_test_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   str_free((struct str) any_str(any_copy(__THE_0_test1_0->__THE_0_a)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   str_free((struct str) any_str(any_copy(__THE_0_test2_0 = any_realloc(__THE_0_test2_0, __THE_1_any_int_alloc(4)))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
-  str_free((struct str) any_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x, (struct __THE_1_fn$1000P) {18, 3})));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
+  str_free((struct str) any_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x)));
   str_free((struct str) any_str(1 > 2 ? any_copy(__THE_0_test_0) : any_copy(__THE_0_test2_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   str_free((struct str) any_str(any_copy(__THE_0_test_0)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   str_free((struct str) any_str(any_copy(*__THE_0_refTest_0)));
   const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtestCtx_0.f(__THE_0_mainSDtestCtx_0.x, (struct __THE_1_fn$1001P) {32, 3});
-L7:
+  __THE_0_mainSDtestCtx_0.f(__THE_0_mainSDtestCtx_0.x);
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtestCtx_0);
-L5:
   any_free((struct any) __THE_0_test2_0);
-L4:
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
-L3:
   any_free((struct any) __THE_0_test_0);
-L2:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

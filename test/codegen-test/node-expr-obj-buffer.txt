@@ -1,8 +1,11 @@
 ======= stdin =======
-fn test () {}
+obj Test {
+  a: buffer_Buffer
+}
 
 main {
-  a := test
+  Test{}
+  Test{a: "test".toBuffer()}
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -24,6 +27,10 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
 typedef struct {
   const char *file;
   const char *name;
@@ -39,27 +46,34 @@ typedef struct {
   int stack_idx;
   void (*_free) (void *);
 } err_state_t;
-
-struct __THE_1_fn$1000;
-
-struct __THE_1_fn$1000 {
-  void (*f) (void *);
-  void *x;
+struct str {
+  char *d;
   size_t l;
+};
+
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  const struct buffer __THE_0_a;
 };
 
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
+void buffer_free (struct buffer);
 void error_alloc (err_state_t *, size_t);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_test_0 (void *);
+struct str str_alloc (const char *);
+struct buffer str_toBuffer (struct str);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct buffer);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
 }
 void error_alloc (err_state_t *state, size_t n1) {
   char d[4096];
@@ -77,22 +91,29 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
-  if (n.x == NULL) return n;
-  void *x = alloc(n.l);
-  memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
-  if (n.x != NULL) free(n.x);
+struct buffer str_toBuffer (struct str s) {
+  return (struct buffer) {(unsigned char *) s.d, s.l};
 }
-void __THE_1_test_0 (void *px) {
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct buffer __THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  buffer_free((struct buffer) n->__THE_0_a);
+  free(n);
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_a_0 = __THE_1_fn$1000_copy(__THE_0_test_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc((struct buffer) {}));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(str_toBuffer(str_alloc("test"))));
 }
 ======= flags =======
 ======= stdout =======

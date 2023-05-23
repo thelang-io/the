@@ -105,20 +105,10 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
-struct __THE_1_fn$1000P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1000 {
-  int32_t (*f) (void *, struct __THE_1_fn$1000P);
+  int32_t (*f) (void *);
   void *x;
   size_t l;
 };
@@ -128,18 +118,15 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 void *alloc (size_t);
 bool cstr_eq_cstr (const char *, const char *);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 bool str_eq_cstr (struct str, const char *);
 bool str_eq_str (struct str, struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
-int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
-int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$1000P);
-int32_t __THE_1_test3_0 (void *, struct __THE_1_fn$1000P);
+int32_t __THE_1_test1_0 (void *);
+int32_t __THE_1_test2_0 (void *);
+int32_t __THE_1_test3_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -165,19 +152,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -208,147 +182,86 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-int32_t __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
+int32_t __THE_1_test1_0 (void *px) {
   unsigned char r = 0;
   int32_t v;
-  error_stack_push(&err_state, "/test", "test1", p.line, p.col);
   if (cstr_eq_cstr("a", "b")) {
-    r = 1;
-    v = 2;
-    goto L1;
+    return 2;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   struct str __THE_0_a_0 = str_alloc("a");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct str __THE_0_a2_0 = str_alloc("a2");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct str __THE_0_a3_0 = str_alloc("a3");
   if (str_eq_cstr(str_copy(__THE_0_a_0), "a")) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
     struct str __THE_0_b_0 = str_alloc("b");
     if (str_eq_cstr(str_copy(__THE_0_b_0), "c")) {
       r = 1;
       v = 1;
-      goto L7;
+      goto L1;
     }
-    if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
     __THE_0_b_0 = str_realloc(__THE_0_b_0, str_alloc("b2"));
-L7:
+L1:
     str_free((struct str) __THE_0_b_0);
-L6:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
-    if (r == 1) goto L5;
+    if (r == 1) goto L0;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   struct str __THE_0_c_0 = str_alloc("c");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   const struct str __THE_0_c2_0 = str_alloc("c2");
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   const struct str __THE_0_c3_0 = str_alloc("c3");
   if (str_eq_cstr(str_copy(__THE_0_c_0), "a")) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L11;
     struct str __THE_0_d_0 = str_alloc("d");
     if (str_eq_cstr(str_copy(__THE_0_d_0), "e")) {
       r = 1;
       v = 2;
-      goto L12;
+      goto L3;
     }
-    if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L12;
     __THE_0_d_0 = str_realloc(__THE_0_d_0, str_alloc("b2"));
-L12:
+L3:
     str_free((struct str) __THE_0_d_0);
-L11:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L10;
-    if (r == 1) goto L10;
+    if (r == 1) goto L2;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L10;
   __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc("a2"));
   v = 3;
-L10:
-  str_free((struct str) __THE_0_c3_0);
-L9:
-  str_free((struct str) __THE_0_c2_0);
-L8:
-  str_free((struct str) __THE_0_c_0);
-L5:
-  str_free((struct str) __THE_0_a3_0);
-L4:
-  str_free((struct str) __THE_0_a2_0);
-L3:
-  str_free((struct str) __THE_0_a_0);
 L2:
-  err_state.buf_idx--;
-L1:
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  str_free((struct str) __THE_0_c3_0);
+  str_free((struct str) __THE_0_c2_0);
+  str_free((struct str) __THE_0_c_0);
+L0:
+  str_free((struct str) __THE_0_a3_0);
+  str_free((struct str) __THE_0_a2_0);
+  str_free((struct str) __THE_0_a_0);
   return v;
 }
-int32_t __THE_1_test2_0 (void *px, struct __THE_1_fn$1000P p) {
+int32_t __THE_1_test2_0 (void *px) {
   unsigned char r = 0;
   int32_t v;
-  error_stack_push(&err_state, "/test", "test2", p.line, p.col);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
   const struct str __THE_0_a_0 = str_alloc("a");
   if (str_eq_cstr(str_copy(__THE_0_a_0), "b")) {
     r = 1;
     v = 1;
-    goto L14;
+    goto L4;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L14;
   const struct str __THE_0_b_0 = str_alloc("a");
   v = str_eq_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)) ? 2 : 0;
   str_free((struct str) __THE_0_b_0);
-L14:
+L4:
   str_free((struct str) __THE_0_a_0);
-L13:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
-int32_t __THE_1_test3_0 (void *px, struct __THE_1_fn$1000P p) {
-  unsigned char r = 0;
-  int32_t v;
-  error_stack_push(&err_state, "/test", "test3", p.line, p.col);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L16;
+int32_t __THE_1_test3_0 (void *px) {
   const int32_t __THE_0_a_0 = 1;
   if (__THE_0_a_0 == 2) {
-    r = 1;
-    v = __THE_0_a_0;
-    goto L16;
+    return __THE_0_a_0;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L16;
   const int32_t __THE_0_b_0 = 2;
-  v = __THE_0_a_0 == __THE_0_b_0 ? 2 : 0;
-L16:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  return v;
+  return __THE_0_a_0 == __THE_0_b_0 ? 2 : 0;
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
   const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L17;
-  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {61, 3});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L17;
-  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {62, 3});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L17;
-  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {63, 3});
-L17:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
+  __THE_0_test1_0.f(__THE_0_test1_0.x);
+  __THE_0_test2_0.f(__THE_0_test2_0.x);
+  __THE_0_test3_0.f(__THE_0_test3_0.x);
 }
 ======= flags =======
 ======= stdout =======

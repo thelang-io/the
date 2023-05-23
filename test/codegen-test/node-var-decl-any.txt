@@ -3,22 +3,6 @@ main {
   a: any
 }
 ======= code =======
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
-  #define THE_OS_WINDOWS
-  #define THE_EOL "\r\n"
-  #define THE_PATH_SEP "\\"
-#else
-  #if defined(__APPLE__)
-    #define THE_OS_MACOS
-  #elif defined(__linux__)
-    #define THE_OS_LINUX
-  #endif
-  #define THE_EOL "\n"
-  #define THE_PATH_SEP "/"
-#endif
-
-#include <setjmp.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 struct any {
@@ -28,71 +12,16 @@ struct any {
   struct any (*_copy) (const struct any);
   void (*_free) (struct any);
 };
-typedef struct {
-  const char *file;
-  const char *name;
-  int line;
-  int col;
-} err_stack_t;
-typedef struct {
-  int id;
-  void *ctx;
-  jmp_buf buf[10];
-  int buf_idx;
-  err_stack_t stack[10];
-  int stack_idx;
-  void (*_free) (void *);
-} err_state_t;
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
-
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
-
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void any_free (struct any);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 
 void any_free (struct any n) {
   if (n.d != NULL) n._free(n);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
-}
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_a_0 = {0, NULL, 0, NULL, NULL};
   any_free((struct any) __THE_0_a_0);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

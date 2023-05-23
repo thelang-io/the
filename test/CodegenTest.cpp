@@ -40,6 +40,12 @@ const auto passStderrTests = std::set<std::string>{
   "builtin-print-to"
 };
 
+void codegenTestGen (const std::string &input) {
+  auto ast = testing::NiceMock<MockAST>(input);
+  auto codegen = Codegen(&ast);
+  codegen.gen();
+}
+
 TEST(CodegenTest, GetsEnvVar) {
   EXPECT_NE(Codegen::getEnvVar("PATH"), "");
   EXPECT_EQ(Codegen::getEnvVar("test_non_existing"), "");
@@ -51,6 +57,34 @@ TEST(CodegenTest, StringifyFlags) {
   EXPECT_EQ(Codegen::stringifyFlags({"test"}), "test");
   EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2"}), "test1 test2");
   EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2", "test3"}), "test1 test2 test3");
+}
+
+TEST(CodegenTest, ThrowsOnObjExprDefaultFieldInvalidType) {
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("obj Test { a: (int) -> void } main { a: Test }");
+  }, "tried object expression default field on invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("obj Test { a: ref int } main { a: Test }");
+  }, "tried object expression default field on invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("obj Test { a: int | str } main { a: Test }");
+  }, "tried object expression default field on invalid type");
+}
+
+TEST(CodegenTest, ThrowsOnVarDeclInitInvalidType) {
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("main { a: (int) -> void }");
+  }, "tried node variable declaration of invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("main { a: ref int }");
+  }, "tried node variable declaration of invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("main { a: int | str }");
+  }, "tried node variable declaration of invalid type");
 }
 
 class CodegenPassTest : public testing::TestWithParam<const char *> {
@@ -1078,6 +1112,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-obj-alias",
   "node-expr-obj-any",
   "node-expr-obj-array",
+  "node-expr-obj-buffer",
   "node-expr-obj-enum",
   "node-expr-obj-fn",
   "node-expr-obj-map",

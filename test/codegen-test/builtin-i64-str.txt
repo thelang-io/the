@@ -73,36 +73,21 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_Test1_0;
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
-struct __THE_1_fn$1001P;
 struct __THE_1_fn$1001;
 struct __THE_1_mainSDtestCtx_0X;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_Test1_0 {
   const int64_t __THE_0_i;
 };
-struct __THE_1_fn$1000P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1000 {
-  int64_t (*f) (void *, struct __THE_1_fn$1000P);
+  int64_t (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1001 {
-  void (*f) (void *, struct __THE_1_fn$1001P);
+  void (*f) (void *);
   void *x;
   size_t l;
 };
@@ -118,17 +103,14 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str i64_str (int64_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int64_t);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-int64_t __THE_1_testCall_0 (void *, struct __THE_1_fn$1000P);
+int64_t __THE_1_testCall_0 (void *);
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
-void __THE_1_mainSDtestCtx_0 (void *, struct __THE_1_fn$1001P);
+void __THE_1_mainSDtestCtx_0 (void *);
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSDtestCtx_0X);
 
 void *alloc (size_t n1) {
@@ -151,19 +133,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 struct str i64_str (int64_t d) {
   char buf[24];
@@ -188,52 +157,31 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int64_t __THE_0_i) {
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
   free(n);
 }
-int64_t __THE_1_testCall_0 (void *px, struct __THE_1_fn$1000P p) {
-  int64_t v;
-  error_stack_push(&err_state, "/test", "testCall", p.line, p.col);
-  v = 1;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  return v;
+int64_t __THE_1_testCall_0 (void *px) {
+  return 1;
 }
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtestCtx_0 (void *px, struct __THE_1_fn$1001P p) {
-  error_stack_push(&err_state, "/test", "testCtx", p.line, p.col);
+void __THE_1_mainSDtestCtx_0 (void *px) {
   struct __THE_1_mainSDtestCtx_0X *x = px;
   int64_t *__THE_0_test2_0 = x->__THE_0_test2_0;
   const struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
   const int64_t **__THE_0_refTest_0 = x->__THE_0_refTest_0;
   const int64_t *__THE_0_test_0 = x->__THE_0_test_0;
   const struct __THE_1_fn$1000 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
   const struct str __THE_0_v11_0 = i64_str(*__THE_0_test_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L14;
   const struct str __THE_0_v12_0 = i64_str((*__THE_0_test1_0)->__THE_0_i);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   const struct str __THE_0_v13_0 = i64_str(*__THE_0_test2_0 = 6);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L16;
-  const struct str __THE_0_v14_0 = i64_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x, (struct __THE_1_fn$1000P) {29, 12}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L17;
+  const struct str __THE_0_v14_0 = i64_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
   const struct str __THE_0_v15_0 = i64_str(*__THE_0_test_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L18;
   const struct str __THE_0_v16_0 = i64_str(**__THE_0_refTest_0);
   str_free((struct str) __THE_0_v16_0);
-L18:
   str_free((struct str) __THE_0_v15_0);
-L17:
   str_free((struct str) __THE_0_v14_0);
-L16:
   str_free((struct str) __THE_0_v13_0);
-L15:
   str_free((struct str) __THE_0_v12_0);
-L14:
   str_free((struct str) __THE_0_v11_0);
-L13:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtestCtx_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
@@ -245,65 +193,33 @@ void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_ma
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_testCall_0 = (struct __THE_1_fn$1000) {&__THE_1_testCall_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   const int64_t __THE_0_test_0 = 2;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const int64_t *__THE_0_refTest_0 = &__THE_0_test_0;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(3);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   int64_t __THE_0_test2_0 = 4;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct str __THE_0_v1_0 = i64_str(__THE_0_test_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct str __THE_0_v2_0 = i64_str(__THE_0_test1_0->__THE_0_i);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct str __THE_0_v3_0 = i64_str(__THE_0_test2_0 = 5);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct str __THE_0_v4_0 = i64_str(__THE_0_test_0 + __THE_0_test2_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  const struct str __THE_0_v5_0 = i64_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x, (struct __THE_1_fn$1000P) {19, 9}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  const struct str __THE_0_v5_0 = i64_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
   const struct str __THE_0_v6_0 = i64_str(1 > 2 ? __THE_0_test_0 : __THE_0_test2_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   const struct str __THE_0_v7_0 = i64_str(__THE_0_test_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L10;
   const struct str __THE_0_v8_0 = i64_str(*__THE_0_refTest_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L11;
   const struct str __THE_0_v9_0 = i64_str(-__THE_0_test_0);
   const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtestCtx_0);
   str_free((struct str) __THE_0_v9_0);
-L11:
   str_free((struct str) __THE_0_v8_0);
-L10:
   str_free((struct str) __THE_0_v7_0);
-L9:
   str_free((struct str) __THE_0_v6_0);
-L8:
   str_free((struct str) __THE_0_v5_0);
-L7:
   str_free((struct str) __THE_0_v4_0);
-L6:
   str_free((struct str) __THE_0_v3_0);
-L5:
   str_free((struct str) __THE_0_v2_0);
-L4:
   str_free((struct str) __THE_0_v1_0);
-L3:
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
-L2:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

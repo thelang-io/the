@@ -74,19 +74,12 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
 struct __THE_1_any_int;
 struct __THE_1_any_str;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_fn$1000P {
-  int line;
-  int col;
   struct str n0;
   struct any n1;
 };
@@ -108,9 +101,6 @@ void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
@@ -150,19 +140,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -248,66 +225,32 @@ void __THE_1_any_str_free (struct any _n) {
   free(n);
 }
 void __THE_1_printAny_0 (void *px, struct __THE_1_fn$1000P p) {
-  error_stack_push(&err_state, "/test", "printAny", p.line, p.col);
   const struct str __THE_0_prefix_0 = p.n0;
   const struct any __THE_0_v_0 = p.n1;
   if (__THE_0_v_0.t == TYPE_int) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
     print(stdout, "szzziz", str_copy(__THE_0_prefix_0), " ", "is int:", " ", ((struct __THE_1_any_int *) __THE_0_v_0.d)->d, THE_EOL);
-L2:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
   }
   if (__THE_0_v_0.t == TYPE_str) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     print(stdout, "szzzsz", str_copy(__THE_0_prefix_0), " ", "is str:", " ", str_copy(((struct __THE_1_any_str *) __THE_0_v_0.d)->d), THE_EOL);
-L3:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
   }
-L1:
   any_free((struct any) __THE_0_v_0);
   str_free((struct str) __THE_0_prefix_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_printAny_0 = (struct __THE_1_fn$1000) {&__THE_1_printAny_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   struct any __THE_0_a_0 = __THE_1_any_int_alloc(1);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   struct any __THE_0_b_0 = __THE_1_any_str_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {15, 3, str_alloc("a"), any_copy(__THE_0_a_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {16, 3, str_alloc("b"), any_copy(__THE_0_b_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {18, 3, str_alloc("a"), any_copy(__THE_0_a_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {19, 3, str_alloc("b"), any_copy(__THE_0_b_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {21, 3, str_alloc("a"), any_copy(__THE_0_a_0)});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {22, 3, str_alloc("b"), any_copy(__THE_0_b_0)});
-L6:
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)});
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, (struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)});
   any_free((struct any) __THE_0_b_0);
-L5:
   any_free((struct any) __THE_0_a_0);
-L4:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

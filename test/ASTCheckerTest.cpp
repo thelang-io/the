@@ -24,18 +24,18 @@ class ASTCheckerTest : public testing::Test {
  protected:
   std::shared_ptr<AST> ast_;
 
-  ASTChecker expr_ (const std::string &decl, const std::string &code, std::size_t idx = 1) {
+  ASTChecker expr_ (const std::string &decl, const std::string &code) {
     auto actualDecl = decl.empty() ? "t := 1" : decl;
     auto parser = testing::NiceMock<MockParser>("main { " + actualDecl + "; " + code + " }");
     this->ast_ = std::make_shared<AST>(&parser);
     auto nodes = this->ast_->gen();
     auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
 
-    if (nodeMain.body.size() <= idx || !std::holds_alternative<ASTNodeExpr>(*nodeMain.body[idx].body)) {
+    if (!std::holds_alternative<ASTNodeExpr>(*nodeMain.body.back().body)) {
       throw Error("Expected expressions node in ASTCheckerTest");
     }
 
-    return ASTChecker(std::get<ASTNodeExpr>(*nodeMain.body[idx].body));
+    return ASTChecker(std::get<ASTNodeExpr>(*nodeMain.body.back().body));
   }
 
   ASTChecker node_ (const std::string &code) {
@@ -119,7 +119,7 @@ TEST_F(ASTCheckerTest, GetExprOfType) {
   EXPECT_EQ(this->expr_("", "-2").getExprOfType<ASTExprUnary>().size(), 1);
 
   EXPECT_EQ(this->expr_("arr := [1, 2, 3]", "arr[1]").getExprOfType<ASTExprLit>().size(), 1);
-  EXPECT_EQ(this->expr_("obj Test { arr: int[] }; test: Test", "test.arr[1]", 2).getExprOfType<ASTExprLit>().size(), 1);
+  EXPECT_EQ(this->expr_("obj Test { arr: int[] }; test: Test", "test.arr[1]").getExprOfType<ASTExprLit>().size(), 1);
   EXPECT_EQ(this->expr_("", "[1, 2, 3]").getExprOfType<ASTExprLit>().size(), 3);
   EXPECT_EQ(this->expr_("a := 1", "a = 2").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->expr_("a := 1", "a = 2").getExprOfType<ASTExprLit>().size(), 1);
@@ -687,81 +687,68 @@ TEST_F(ASTCheckerTest, ThrowsOnRootIsLast) {
 }
 
 TEST_F(ASTCheckerTest, ThrowsExpr) {
-  EXPECT_TRUE(this->expr_("a: any", "a").throws());
-  EXPECT_FALSE(this->expr_("a: bool", "a").throws());
-  EXPECT_FALSE(this->expr_("a: char", "a").throws());
-  EXPECT_FALSE(this->expr_("a: float", "a").throws());
-  EXPECT_FALSE(this->expr_("a: int", "a").throws());
-  EXPECT_TRUE(this->expr_("a: str", "a").throws());
-
-  EXPECT_TRUE(this->expr_("", "[1, 2, 3]").throws());
-  EXPECT_TRUE(this->expr_("", "{\"key1\":\"val1\", \"key2\":\"val2\"}").throws());
-  EXPECT_TRUE(this->expr_("obj Test { a: int }", "Test{}").throws());
-  EXPECT_TRUE(this->expr_("", "\"test\"").throws());
-  EXPECT_TRUE(this->expr_("mut a: int?", "a = nil").throws());
+  EXPECT_TRUE(this->expr_("a := [0]", "[a.first, 2, 3]").throws());
+  EXPECT_TRUE(this->expr_("a := [\"val1\"]", "{\"key1\": a.first, \"key2\": \"val2\"}").throws());
+  EXPECT_TRUE(this->expr_("obj Test { a: int }; a := [1]", "Test{a: a.first}").throws());
+  EXPECT_TRUE(this->expr_("test := [\"1\"]", "test.first.toInt").throws());
 
   EXPECT_TRUE(this->expr_("a: int[]", "a[1]").throws());
-  EXPECT_TRUE(this->expr_("obj Test { b: str }; a := Test{}", "a.b", 2).throws());
-  EXPECT_FALSE(this->expr_("a: str; refA := ref a", "refA.empty", 2).throws());
-  EXPECT_TRUE(this->expr_("a: int[]; refA := ref a", "refA.first", 2).throws());
-  EXPECT_TRUE(this->expr_("obj Test { b: int }; a: Test", "a.b", 2).throws());
+  EXPECT_FALSE(this->expr_("obj Test { b: str }; a := Test{}", "a.b").throws());
+  EXPECT_FALSE(this->expr_("a: str; refA := ref a", "refA.empty").throws());
+  EXPECT_TRUE(this->expr_("a: int[]; refA := ref a", "refA.first").throws());
+  EXPECT_FALSE(this->expr_("obj Test { b: int }; a: Test", "a.b").throws());
 
-  EXPECT_TRUE(this->expr_("obj Test { a: int }; test := Test{}", "test.a = 1", 2).throws());
-  EXPECT_TRUE(this->expr_("obj Test { a: int }; test := Test{}; mut a := 0", "a = test.a", 3).throws());
+  EXPECT_TRUE(this->expr_("obj Test { a: int }; test := Test{}; a := [1]", "test.a = a.first").throws());
+  EXPECT_TRUE(this->expr_("obj Test { a: int[] }; test := Test{}; mut a := 0", "a = test.a.first").throws());
 
-  EXPECT_TRUE(this->expr_("obj Test { a: int }; test := Test{}; mut a := 0", "a + test.a", 3).throws());
-  EXPECT_TRUE(this->expr_("obj Test { a: int }; test := Test{}; mut a := 0", "test.a + a", 3).throws());
+  EXPECT_TRUE(this->expr_("obj Test { a: int[] }; test := Test{}; mut a := 0", "a + test.a.first").throws());
+  EXPECT_TRUE(this->expr_("obj Test { a: int[] }; test := Test{}; mut a := 0", "test.a.first + a").throws());
 
-  EXPECT_TRUE(this->expr_("test: int[]", "test.contains(0)").throws());
-  EXPECT_TRUE(this->expr_("test: str[]", "test.contains(\"0\")").throws());
-  EXPECT_TRUE(this->expr_("fn test (a: str, b: str) {}; t := ref test", "t(\"test\", \"test2\")", 2).throws());
+  EXPECT_TRUE(this->expr_("test: int[]", "test.contains(test.first)").throws());
+  EXPECT_TRUE(this->expr_("testArr: str[] fn test (a: str, b: str) {}; t := ref test", "t(testArr.first, \"test2\")").throws());
+  EXPECT_TRUE(this->expr_("a := [[\"1\"], [\"2\", \"3\"], [\"6\", \"7\", \"8\"]]", "a.first.reverse()").throws());
 
-  EXPECT_TRUE(this->expr_("a: int?", "a ? 1 : 0").throws());
-  EXPECT_TRUE(this->expr_("obj Test { b: int }; a := Test{}", "true ? a.b : 1", 2).throws());
-  EXPECT_TRUE(this->expr_("obj Test { b: int }; a := Test{}", "true ? 1 : a.b", 2).throws());
+  EXPECT_TRUE(this->expr_("a: int?[]", "a.first ? 1 : 0").throws());
+  EXPECT_TRUE(this->expr_("obj Test { b: int[] }; a := Test{}", "true ? a.b.first : 1").throws());
+  EXPECT_TRUE(this->expr_("obj Test { b: int[] }; a := Test{}", "true ? 1 : a.b.first").throws());
 
-  EXPECT_TRUE(this->expr_("a: int", "a is int?").throws());
-  EXPECT_TRUE(this->expr_("a: int?", "a is int").throws());
-  EXPECT_TRUE(this->expr_("a: int?", "ref a").throws());
-  EXPECT_TRUE(this->expr_("a: int?", "!a").throws());
+  EXPECT_TRUE(this->expr_("a: int?[]", "a.first is int?").throws());
+  EXPECT_TRUE(this->expr_("a: int[]", "ref a.first").throws());
+  EXPECT_TRUE(this->expr_("a: int[]", "!a.first").throws());
 }
 
 TEST_F(ASTCheckerTest, ThrowsNode) {
   EXPECT_TRUE(this->node_("throw error_NewError(\"test\")").throws());
   EXPECT_TRUE(this->node_("try {} catch err: error_Error {}").throws());
 
-  EXPECT_TRUE(this->node_("fn test () int { return 1 } enum Color { Red = test() }").throws());
-  EXPECT_TRUE(this->node_("\"test\"").throws());
+  EXPECT_TRUE(this->node_("enum Color { Red = [1].first }").throws());
   EXPECT_TRUE(this->node_("fn test () { throw error_NewError(\"test\") }").throws());
-  EXPECT_TRUE(this->node_("fn test (a: str) {}").throws());
-  EXPECT_TRUE(this->node_("fn test (a := \"test\") {}").throws());
-  EXPECT_TRUE(this->node_("if \"a\".len == 1 {}").throws());
-  EXPECT_TRUE(this->node_("if true { a := \"test\" }").throws());
-  EXPECT_TRUE(this->node_("if true {} else { a := \"test\" }").throws());
-  EXPECT_TRUE(this->node_("if true {} elif \"a\".len == 1 {}").throws());
-  EXPECT_TRUE(this->node_("if true {} elif false { a := \"test\" }").throws());
+  EXPECT_TRUE(this->node_("[1].first").throws());
+  EXPECT_TRUE(this->node_("fn test (arr := [1], a := arr.first) {}").throws());
+  EXPECT_TRUE(this->node_("if [1].first == 1 {}").throws());
+  EXPECT_TRUE(this->node_("if true { a := [1].first }").throws());
+  EXPECT_TRUE(this->node_("if true {} else { a := [1].first }").throws());
+  EXPECT_TRUE(this->node_("if true {} elif [1].first == 1 {}").throws());
+  EXPECT_TRUE(this->node_("if true {} elif false { a := [1].first }").throws());
 
-  EXPECT_TRUE(this->node_("loop { \"test\" }").throws());
-  EXPECT_TRUE(this->node_("loop \"test\".len == 1 {}").throws());
-  EXPECT_TRUE(this->node_("loop a := \"test\"; a.len < 1; a += \"a\" {}").throws());
-  EXPECT_TRUE(this->node_("loop a := 0; \"test\".len < 1; a++ {}").throws());
-  EXPECT_TRUE(this->node_("loop a := 0; a < 1; a += \"a\".len {}").throws());
+  EXPECT_TRUE(this->node_("loop { [1].first }").throws());
+  EXPECT_TRUE(this->node_("loop [1].first == 1 {}").throws());
+  EXPECT_TRUE(this->node_("loop a := [1].first; a < 1; a++ {}").throws());
+  EXPECT_TRUE(this->node_("loop a := [1]; a.first < 1; a += \"a\" {}").throws());
+  EXPECT_TRUE(this->node_("loop a := 0; [1].first < 1; a++ {}").throws());
+  EXPECT_TRUE(this->node_("loop a := 0; a < 1; a += [1].first {}").throws());
 
-  EXPECT_TRUE(this->node_("fn test () { return \"test\" }").throws());
+  EXPECT_TRUE(this->node_("obj Test { fn test (a := [1].first) {} }").throws());
+  EXPECT_TRUE(this->node_("obj Test { fn test () { [1].first } }").throws());
 
-  EXPECT_TRUE(this->node_("a: any").throws());
-  EXPECT_FALSE(this->node_("a: bool").throws());
-  EXPECT_FALSE(this->node_("a: char").throws());
-  EXPECT_FALSE(this->node_("a: float").throws());
-  EXPECT_FALSE(this->node_("a: int").throws());
-  EXPECT_TRUE(this->node_("a: str").throws());
+  EXPECT_TRUE(this->node_("fn test () int { return [1].first }").throws());
 
-  EXPECT_TRUE(this->node_("a := \"test\"").throws());
-  EXPECT_TRUE(this->node_("a: int? = nil").throws());
+  EXPECT_TRUE(this->node_("a := [1].first").throws());
+  EXPECT_TRUE(this->node_("a: int? = [1].first").throws());
 }
 
 TEST_F(ASTCheckerTest, ThrowsNodeMain) {
-  auto parser = testing::NiceMock<MockParser>("main { a := \"test\" }");
+  auto parser = testing::NiceMock<MockParser>("main { throw error_NewError(\"test\") }");
   auto ast = AST(&parser);
   auto nodes = ast.gen();
   EXPECT_TRUE(ASTChecker(nodes).throws());

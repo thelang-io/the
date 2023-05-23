@@ -61,35 +61,20 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_Human_0;
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
-struct __THE_1_fn$1001P;
 struct __THE_1_fn$1001;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_Human_0 {
   int32_t __THE_0_distance;
 };
-struct __THE_1_fn$1000P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1000 {
-  void (*f) (void *, struct __THE_1_fn$1000P);
+  void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1001 {
-  void (*f) (void *, struct __THE_1_Human_0 **, struct __THE_1_fn$1001P);
+  void (*f) (void *, struct __THE_1_Human_0 **);
   void *x;
   size_t l;
 };
@@ -98,14 +83,11 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
 struct __THE_1_Human_0 *__THE_1_Human_0_alloc (int32_t);
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-void __THE_1_HumanSDtalk_0 (void *, struct __THE_1_fn$1000P);
-void __THE_1_HumanSDwalk_0 (void *, struct __THE_1_Human_0 **, struct __THE_1_fn$1001P);
+void __THE_1_HumanSDtalk_0 (void *);
+void __THE_1_HumanSDwalk_0 (void *, struct __THE_1_Human_0 **);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -127,19 +109,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -179,46 +148,20 @@ struct __THE_1_Human_0 *__THE_1_Human_0_alloc (int32_t __THE_0_distance) {
 void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
   free(n);
 }
-void __THE_1_HumanSDtalk_0 (void *px, struct __THE_1_fn$1000P p) {
-  error_stack_push(&err_state, "/test", "Human.talk", p.line, p.col);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+void __THE_1_HumanSDtalk_0 (void *px) {
   print(stdout, "zz", "Human walks in meters", THE_EOL);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-void __THE_1_HumanSDwalk_0 (void *px, struct __THE_1_Human_0 **__THE_0_self_0, struct __THE_1_fn$1001P p) {
-  error_stack_push(&err_state, "/test", "Human.walk", p.line, p.col);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+void __THE_1_HumanSDwalk_0 (void *px, struct __THE_1_Human_0 **__THE_0_self_0) {
   (*__THE_0_self_0)->__THE_0_distance += 1;
-L2:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_HumanSDtalk_0 = (struct __THE_1_fn$1000) {&__THE_1_HumanSDtalk_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_HumanSDwalk_0 = (struct __THE_1_fn$1001) {&__THE_1_HumanSDwalk_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
   struct __THE_1_Human_0 *__THE_0_person_0 = __THE_1_Human_0_alloc(0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
-  __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x, (struct __THE_1_fn$1000P) {18, 3});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
-  __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, &__THE_0_person_0, (struct __THE_1_fn$1001P) {19, 3});
-L4:
+  __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x);
+  __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, &__THE_0_person_0);
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person_0);
-L3:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

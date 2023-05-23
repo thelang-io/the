@@ -55,7 +55,6 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_pair_strMSintME;
 struct __THE_1_map_strMSintME;
 struct __THE_1_fn$1003P;
@@ -63,10 +62,6 @@ struct __THE_1_fn$1003;
 struct __THE_1_fn$1004P;
 struct __THE_1_fn$1004;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_pair_strMSintME {
   struct str f;
   int32_t s;
@@ -77,8 +72,6 @@ struct __THE_1_map_strMSintME {
   size_t l;
 };
 struct __THE_1_fn$1003P {
-  int line;
-  int col;
   struct __THE_1_map_strMSintME n0;
 };
 struct __THE_1_fn$1003 {
@@ -87,8 +80,6 @@ struct __THE_1_fn$1003 {
   size_t l;
 };
 struct __THE_1_fn$1004P {
-  int line;
-  int col;
   struct __THE_1_map_strMSintME n0;
   unsigned char o1;
   struct __THE_1_map_strMSintME n1;
@@ -103,9 +94,6 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
@@ -140,19 +128,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 void *re_alloc (void *n1, size_t n2) {
   void *r = realloc(n1, n2);
@@ -221,54 +196,29 @@ struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_set (struct __THE_1_map_st
 }
 struct __THE_1_map_strMSintME __THE_1_test1_0 (void *px, struct __THE_1_fn$1003P p) {
   struct __THE_1_map_strMSintME v;
-  error_stack_push(&err_state, "/test", "test1", p.line, p.col);
   struct __THE_1_map_strMSintME __THE_0_a_0 = p.n0;
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   __THE_1_map_strMSintME_set(&__THE_0_a_0, str_alloc("key4"), 2);
   v = __THE_1_map_strMSintME_copy(__THE_0_a_0);
-L1:
-  err_state.buf_idx--;
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 struct __THE_1_map_strMSintME __THE_1_test2_0 (void *px, struct __THE_1_fn$1004P p) {
   struct __THE_1_map_strMSintME v;
-  error_stack_push(&err_state, "/test", "test2", p.line, p.col);
   struct __THE_1_map_strMSintME __THE_0_a_0 = p.n0;
   struct __THE_1_map_strMSintME __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
   __THE_0_b_0 = __THE_1_map_strMSintME_realloc(__THE_0_b_0, __THE_1_map_strMSintME_copy(__THE_0_a_0));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   __THE_1_map_strMSintME_set(&__THE_0_a_0, str_alloc("key4"), __THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_b_0)));
   v = __THE_1_map_strMSintME_copy(__THE_0_a_0);
-L2:
-  err_state.buf_idx--;
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_b_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1003 __THE_0_test1_0 = (struct __THE_1_fn$1003) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$1004 __THE_0_test2_0 = (struct __THE_1_fn$1004) {&__THE_1_test2_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {11, 3, __THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 0, str_alloc("key2"), 1)}));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1004P) {12, 3, __THE_1_map_strMSintME_alloc(2, str_alloc("key3"), 2, str_alloc("key4"), 3), 0, (struct __THE_1_map_strMSintME) {}}));
-L3:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {__THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 0, str_alloc("key2"), 1)}));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1004P) {__THE_1_map_strMSintME_alloc(2, str_alloc("key3"), 2, str_alloc("key4"), 3), 0, (struct __THE_1_map_strMSintME) {}}));
 }
 ======= flags =======
 ======= stdout =======

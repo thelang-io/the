@@ -44,23 +44,7 @@ main {
   }
 }
 ======= code =======
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
-  #define THE_OS_WINDOWS
-  #define THE_EOL "\r\n"
-  #define THE_PATH_SEP "\\"
-#else
-  #if defined(__APPLE__)
-    #define THE_OS_MACOS
-  #elif defined(__linux__)
-    #define THE_OS_LINUX
-  #endif
-  #define THE_EOL "\n"
-  #define THE_PATH_SEP "/"
-#endif
-
-#include <setjmp.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <stddef.h>
 
 enum __THE_1_Test_0 {
   __THE_0_TestSDRed_0,
@@ -68,37 +52,10 @@ enum __THE_1_Test_0 {
   __THE_0_TestSDBlue_0
 };
 
-typedef struct {
-  const char *file;
-  const char *name;
-  int line;
-  int col;
-} err_stack_t;
-typedef struct {
-  int id;
-  void *ctx;
-  jmp_buf buf[10];
-  int buf_idx;
-  err_stack_t stack[10];
-  int stack_idx;
-  void (*_free) (void *);
-} err_state_t;
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
 struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_fn$1000P {
-  int line;
-  int col;
   enum __THE_1_Test_0 *n0;
 };
 struct __THE_1_fn$1000 {
@@ -107,105 +64,44 @@ struct __THE_1_fn$1000 {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
-
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 enum __THE_1_Test_0 __THE_1_inc_0 (void *, struct __THE_1_fn$1000P);
 
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
-}
 enum __THE_1_Test_0 __THE_1_inc_0 (void *px, struct __THE_1_fn$1000P p) {
-  enum __THE_1_Test_0 v;
-  error_stack_push(&err_state, "/test", "inc", p.line, p.col);
   enum __THE_1_Test_0 *__THE_0_test_0 = p.n0;
   if (*__THE_0_test_0 == __THE_0_TestSDRed_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
     *__THE_0_test_0 = __THE_0_TestSDGreen_0;
-L2:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
   } else if (*__THE_0_test_0 == __THE_0_TestSDGreen_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     *__THE_0_test_0 = __THE_0_TestSDBlue_0;
-L3:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     *__THE_0_test_0 = __THE_0_TestSDRed_0;
-L4:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L1;
   }
-L1:
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  return v;
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_inc_0 = (struct __THE_1_fn$1000) {&__THE_1_inc_0, NULL, 0};
-  for (enum __THE_1_Test_0 __THE_0_i_0 = __THE_0_TestSDRed_0; __THE_0_i_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {14, 35, &__THE_0_i_0})) {
+  for (enum __THE_1_Test_0 __THE_0_i_0 = __THE_0_TestSDRed_0; __THE_0_i_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_i_0})) {
   }
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
   enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
-  for (; __THE_0_a_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {18, 22, &__THE_0_a_0})) {
+  for (; __THE_0_a_0 != __THE_0_TestSDBlue_0; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0})) {
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_TestSDRed_0;
   while (__THE_0_b_0 != __THE_0_TestSDBlue_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
-    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {23, 5, &__THE_0_b_0});
-L6:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
+    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_b_0});
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   enum __THE_1_Test_0 __THE_0_c_0 = __THE_0_TestSDRed_0;
   while (1) {
     if (__THE_0_c_0 == __THE_0_TestSDBlue_0) {
       break;
     }
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
-    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {32, 5, &__THE_0_c_0});
-L7:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
+    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_c_0});
   }
   for (enum __THE_1_Test_0 __THE_0_d_0 = __THE_0_TestSDRed_0; __THE_0_d_0 != __THE_0_TestSDBlue_0;) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
-    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {36, 5, &__THE_0_d_0});
-L8:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
+    __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_d_0});
   }
-  for (enum __THE_1_Test_0 __THE_0_e_0 = __THE_0_TestSDRed_0;; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {39, 24, &__THE_0_e_0})) {
+  for (enum __THE_1_Test_0 __THE_0_e_0 = __THE_0_TestSDRed_0;; __THE_0_inc_0.f(__THE_0_inc_0.x, (struct __THE_1_fn$1000P) {&__THE_0_e_0})) {
     if (__THE_0_e_0 == __THE_0_TestSDBlue_0) {
       break;
     }
-  }
-L5:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
   }
 }
 ======= flags =======

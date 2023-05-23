@@ -472,10 +472,6 @@ class ASTChecker {
 
   bool _throwsExpr (const std::vector<ASTNodeExpr> &exprs) const {
     for (const auto &nodeExpr : exprs) {
-      if (nodeExpr.type->shouldBeFreed()) {
-        return true;
-      }
-
       if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
         auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
 
@@ -492,6 +488,14 @@ class ASTChecker {
             if (!typeField.callInfo.empty() && typeField.callInfo.throws) {
               return true;
             }
+          }
+        }
+      } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
+        auto exprArray = std::get<ASTExprArray>(*nodeExpr.body);
+
+        for (const auto &element : exprArray.elements) {
+          if (this->_throwsExpr({ element })) {
+            return true;
           }
         }
       } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
@@ -532,8 +536,24 @@ class ASTChecker {
       } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {
         auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
 
-        if (this->_throwsExpr({ exprIs.expr }) || exprIs.type->shouldBeFreed()) {
+        if (this->_throwsExpr({ exprIs.expr })) {
           return true;
+        }
+      } else if (std::holds_alternative<ASTExprMap>(*nodeExpr.body)) {
+        auto exprMap = std::get<ASTExprMap>(*nodeExpr.body);
+
+        for (const auto &prop : exprMap.props) {
+          if (this->_throwsExpr({ prop.init })) {
+            return true;
+          }
+        }
+      } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
+        auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
+
+        for (const auto &prop : exprObj.props) {
+          if (this->_throwsExpr({ prop.init })) {
+            return true;
+          }
         }
       } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
         auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
@@ -579,7 +599,7 @@ class ASTChecker {
         }
 
         for (const auto &param : nodeFnDecl.params) {
-          if ((param.init != std::nullopt && this->_throwsExpr({ *param.init })) || param.var->type->shouldBeFreed()) {
+          if (param.init != std::nullopt && this->_throwsExpr({ *param.init })) {
             return true;
           }
         }
@@ -613,6 +633,20 @@ class ASTChecker {
         if (this->_throwsNode(nodeMain.body)) {
           return true;
         }
+      } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+        auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+
+        for (const auto &method : nodeObjDecl.methods) {
+          for (const auto &param : method.params) {
+            if (param.init != std::nullopt && this->_throwsExpr({ *param.init })) {
+              return true;
+            }
+          }
+
+          if (method.body != std::nullopt && this->_throwsNode(*method.body)) {
+            return true;
+          }
+        }
       } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
         auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
 
@@ -622,7 +656,7 @@ class ASTChecker {
       } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
         auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
 
-        if ((nodeVarDecl.init != std::nullopt && this->_throwsExpr({ *nodeVarDecl.init })) || nodeVarDecl.var->type->shouldBeFreed()) {
+        if (nodeVarDecl.init != std::nullopt && this->_throwsExpr({ *nodeVarDecl.init })) {
           return true;
         }
       }

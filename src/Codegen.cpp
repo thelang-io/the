@@ -2057,8 +2057,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
 
         if (this->throws && typeField.callInfo.throws) {
-          code += typeField.callInfo.isSelfFirst ? ", " : "";
-          code += line + ", " + col;
+          code += ", " + line + ", " + col;
         }
 
         code = this->_apiEval("_{" + typeField.callInfo.codeName + "}(" + code + ")", 1);

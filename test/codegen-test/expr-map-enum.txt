@@ -55,14 +55,9 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_pair_strMSTestME;
 struct __THE_1_map_strMSTestME;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_pair_strMSTestME {
   struct str f;
   enum __THE_1_Test_0 s;
@@ -77,9 +72,6 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct __THE_1_map_strMSTestME __THE_1_map_strMSTestME_alloc (int, ...);
@@ -106,19 +98,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
-}
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
   char *d = alloc(l);
@@ -144,23 +123,10 @@ void __THE_1_map_strMSTestME_free (struct __THE_1_map_strMSTestME n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSTestME __THE_0_a_0 = __THE_1_map_strMSTestME_alloc(3, str_alloc("key1"), __THE_0_TestSDRed_0, str_alloc("key2"), __THE_0_TestSDGreen_0, str_alloc("key3"), __THE_0_TestSDBlue_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct __THE_1_map_strMSTestME __THE_0_b_0 = __THE_1_map_strMSTestME_alloc(3, str_alloc("key1"), __THE_0_TestSDRed_0, str_alloc("key2"), __THE_0_TestSDGreen_0, str_alloc("key3"), __THE_0_TestSDBlue_0);
   __THE_1_map_strMSTestME_free((struct __THE_1_map_strMSTestME) __THE_0_b_0);
-L2:
   __THE_1_map_strMSTestME_free((struct __THE_1_map_strMSTestME) __THE_0_a_0);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

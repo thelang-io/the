@@ -101,15 +101,10 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_any_Color_0;
 struct __THE_1_any_float;
 struct __THE_1_union_ColorUSfloatUE;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_any_Color_0 {
   enum __THE_1_Color_0 d;
 };
@@ -131,9 +126,6 @@ void any_free (struct any);
 struct any any_realloc (struct any, struct any);
 struct str cstr_concat_str (const char *, struct str);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str float_str (double);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
@@ -183,19 +175,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 struct str float_str (double f) {
   char buf[512];
@@ -291,160 +270,66 @@ struct __THE_1_union_ColorUSfloatUE __THE_1_union_ColorUSfloatUE_realloc (struct
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct any __THE_0_a_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDRed_0);
   if (__THE_0_a_0.t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_a_0.d)->d)), THE_EOL);
-L3:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
     print(stdout, "zz", "any", THE_EOL);
-L4:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
   if (__THE_0_b_0.t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_b_0.d)->d)), THE_EOL);
-L6:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L7;
     print(stdout, "zz", "any", THE_EOL);
-L7:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_union_ColorUSfloatUE __THE_0_c_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDGreen_0);
   if (__THE_0_c_0.t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_c_0.v2)), THE_EOL);
-L8:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L9;
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_c_0.v3)), THE_EOL);
-L9:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_union_ColorUSfloatUE __THE_0_d_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L10;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_d_0.v2)), THE_EOL);
-L10:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L11;
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_d_0.v3)), THE_EOL);
-L11:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L5;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   struct any __THE_0_e_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDBlue_0);
   if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_Color_0_alloc(__THE_0_ColorSDBlue_0))).t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L13;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_e_0.d)->d)), THE_EOL);
-L13:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L12;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L14;
     print(stdout, "zz", "any", THE_EOL);
-L14:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L12;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L12;
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
   if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L16;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_f_0.d)->d)), THE_EOL);
-L16:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L15;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L17;
     print(stdout, "zz", "any", THE_EOL);
-L17:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L15;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   struct __THE_1_union_ColorUSfloatUE __THE_0_g_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDRed_0);
   if ((__THE_0_g_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDRed_0))).t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L18;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_g_0.v2)), THE_EOL);
-L18:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L15;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L19;
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
-L19:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L15;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   struct __THE_1_union_ColorUSfloatUE __THE_0_h_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14);
   if ((__THE_0_h_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_Color_0) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L20;
     print(stdout, "sz", cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_h_0.v2)), THE_EOL);
-L20:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L15;
   } else {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L21;
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_h_0.v3)), THE_EOL);
-L21:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L15;
   }
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", (__THE_0_a_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_a_0.d)->d)) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", (__THE_0_b_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_b_0.d)->d)) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", (__THE_0_c_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_c_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_c_0.v3)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", (__THE_0_d_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_d_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_d_0.v3)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_Color_0_alloc(__THE_0_ColorSDGreen_0))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_e_0.d)->d)) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_f_0.d)->d)) : str_alloc("any"), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDBlue_0))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_g_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L15;
   print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_h_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_h_0.v3)), THE_EOL);
-L15:
   any_free((struct any) __THE_0_f_0);
-L12:
   any_free((struct any) __THE_0_e_0);
-L5:
   any_free((struct any) __THE_0_b_0);
-L2:
   any_free((struct any) __THE_0_a_0);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

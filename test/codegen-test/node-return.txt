@@ -9,135 +9,44 @@ main {
   test3()
 }
 ======= code =======
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
-  #define THE_OS_WINDOWS
-  #define THE_EOL "\r\n"
-  #define THE_PATH_SEP "\\"
-#else
-  #if defined(__APPLE__)
-    #define THE_OS_MACOS
-  #elif defined(__linux__)
-    #define THE_OS_LINUX
-  #endif
-  #define THE_EOL "\n"
-  #define THE_PATH_SEP "/"
-#endif
-
-#include <setjmp.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
-typedef struct {
-  const char *file;
-  const char *name;
-  int line;
-  int col;
-} err_stack_t;
-typedef struct {
-  int id;
-  void *ctx;
-  jmp_buf buf[10];
-  int buf_idx;
-  err_stack_t stack[10];
-  int stack_idx;
-  void (*_free) (void *);
-} err_state_t;
-struct str {
-  char *d;
-  size_t l;
-};
-
-struct error_Error;
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
-struct __THE_1_fn$1001P;
 struct __THE_1_fn$1001;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
-struct __THE_1_fn$1000P {
-  int line;
-  int col;
-};
 struct __THE_1_fn$1000 {
-  void (*f) (void *, struct __THE_1_fn$1000P);
+  void (*f) (void *);
   void *x;
   size_t l;
-};
-struct __THE_1_fn$1001P {
-  int line;
-  int col;
 };
 struct __THE_1_fn$1001 {
-  int32_t (*f) (void *, struct __THE_1_fn$1001P);
+  int32_t (*f) (void *);
   void *x;
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+void __THE_1_test1_0 (void *);
+void __THE_1_test2_0 (void *);
+int32_t __THE_1_test3_0 (void *);
 
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
-void __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
-void __THE_1_test2_0 (void *, struct __THE_1_fn$1000P);
-int32_t __THE_1_test3_0 (void *, struct __THE_1_fn$1001P);
-
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void __THE_1_test1_0 (void *px) {
+  return;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void __THE_1_test2_0 (void *px) {
+  return;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
-}
-void __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
-  error_stack_push(&err_state, "/test", "test1", p.line, p.col);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-}
-void __THE_1_test2_0 (void *px, struct __THE_1_fn$1000P p) {
-  error_stack_push(&err_state, "/test", "test2", p.line, p.col);
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-}
-int32_t __THE_1_test3_0 (void *px, struct __THE_1_fn$1001P p) {
-  int32_t v;
-  error_stack_push(&err_state, "/test", "test3", p.line, p.col);
-  v = 1;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
-  return v;
+int32_t __THE_1_test3_0 (void *px) {
+  return 1;
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_test3_0 = (struct __THE_1_fn$1001) {&__THE_1_test3_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {6, 3});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
-  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {7, 3});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
-  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1001P) {8, 3});
-L4:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
+  __THE_0_test1_0.f(__THE_0_test1_0.x);
+  __THE_0_test2_0.f(__THE_0_test2_0.x);
+  __THE_0_test3_0.f(__THE_0_test3_0.x);
 }
 ======= flags =======
 ======= stdout =======

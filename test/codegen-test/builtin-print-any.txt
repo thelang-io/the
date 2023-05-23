@@ -77,17 +77,12 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_any_bool;
 struct __THE_1_any_float;
 struct __THE_1_any_char;
 struct __THE_1_any_int;
 struct __THE_1_any_str;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_any_bool {
   bool d;
 };
@@ -111,9 +106,6 @@ struct any any_copy (const struct any);
 void any_free (struct any);
 struct str any_str (struct any);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
@@ -164,19 +156,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -304,68 +283,32 @@ void __THE_1_any_str_free (struct any _n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const int32_t __THE_0_testInt_0 = 1;
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   const struct any __THE_0_v1_0 = {0, NULL, 0, NULL, NULL};
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
   const struct any __THE_0_v2_0 = __THE_1_any_bool_alloc(true);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   const struct any __THE_0_v3_0 = __THE_1_any_bool_alloc(false);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L4;
   const struct any __THE_0_v4_0 = __THE_1_any_float_alloc(3.14);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct any __THE_0_v5_0 = __THE_1_any_char_alloc('a');
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct any __THE_0_v6_0 = __THE_1_any_int_alloc(28);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   const struct any __THE_0_v7_0 = __THE_1_any_int_alloc(__THE_0_testInt_0);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
   const struct any __THE_0_v8_0 = __THE_1_any_str_alloc(str_alloc("test"));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "szszszszszszszsz", any_str(any_copy(__THE_0_v1_0)), " ", any_str(any_copy(__THE_0_v2_0)), " ", any_str(any_copy(__THE_0_v3_0)), " ", any_str(any_copy(__THE_0_v4_0)), " ", any_str(any_copy(__THE_0_v5_0)), " ", any_str(any_copy(__THE_0_v6_0)), " ", any_str(any_copy(__THE_0_v7_0)), " ", any_str(any_copy(__THE_0_v8_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v1_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v2_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v3_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v4_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v5_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v6_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v7_0)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L9;
   print(stdout, "sz", any_str(any_copy(__THE_0_v8_0)), THE_EOL);
-L9:
   any_free((struct any) __THE_0_v8_0);
-L8:
   any_free((struct any) __THE_0_v7_0);
-L7:
   any_free((struct any) __THE_0_v6_0);
-L6:
   any_free((struct any) __THE_0_v5_0);
-L5:
   any_free((struct any) __THE_0_v4_0);
-L4:
   any_free((struct any) __THE_0_v3_0);
-L3:
   any_free((struct any) __THE_0_v2_0);
-L2:
   any_free((struct any) __THE_0_v1_0);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======

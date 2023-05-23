@@ -69,13 +69,8 @@ struct str {
   size_t l;
 };
 
-struct error_Error;
 struct __THE_1_array_str;
 
-struct error_Error {
-  const struct str __THE_0_message;
-  const struct str __THE_0_stack;
-};
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
@@ -85,9 +80,6 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void error_stack_pop (err_state_t *);
-void error_stack_pos (err_state_t *, int, int);
-void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
@@ -119,19 +111,6 @@ void error_alloc (err_state_t *state, size_t n1) {
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
-}
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
-}
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
-}
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -266,66 +245,31 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
 }
 
 int main () {
-  error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc(""), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc(""), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("\r"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("\r"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("\r\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("\r\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("\r\r"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("\r\r"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("\r\n\r\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("\r\n\r\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("\n\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("\n\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\r"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\r"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2\r"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2\r"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2\r\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2\r\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\rTest2\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2\r"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2\r"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2\r\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\r\nTest2\r\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\r\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\r\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\r"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\r"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\n"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\nTest3"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\nTest3"), 1, true)), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "szsz", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\nTest3\n"), 0, false)), " ", __THE_1_array_str_str(str_lines(str_alloc("Test1\nTest2\nTest3\n"), 1, true)), THE_EOL);
-L1:
-  err_state.buf_idx--;
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) {
-    struct error_Error *err = err_state.ctx;
-    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-    err_state._free(err_state.ctx);
-    exit(EXIT_FAILURE);
-  }
 }
 ======= flags =======
 ======= stdout =======
