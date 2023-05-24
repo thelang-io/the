@@ -21,16 +21,16 @@ enum __THE_1_Color_0 {
   __THE_0_ColorSDBlue_0
 };
 
-struct __THE_1_fn$1000;
 struct __THE_1_fn$1000P;
+struct __THE_1_fn$1000;
 
+struct __THE_1_fn$1000P {
+  enum __THE_1_Color_0 n0;
+};
 struct __THE_1_fn$1000 {
   void (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
-};
-struct __THE_1_fn$1000P {
-  enum __THE_1_Color_0 n0;
 };
 
 void __THE_1_testCall_0 (void *, struct __THE_1_fn$1000P);

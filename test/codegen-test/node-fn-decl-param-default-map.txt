@@ -42,6 +42,7 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -49,6 +50,21 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
@@ -56,10 +72,10 @@ struct str {
 
 struct __THE_1_pair_strMSintME;
 struct __THE_1_map_strMSintME;
-struct __THE_1_fn$1003;
 struct __THE_1_fn$1003P;
-struct __THE_1_fn$1004;
+struct __THE_1_fn$1003;
 struct __THE_1_fn$1004P;
+struct __THE_1_fn$1004;
 struct __THE_1_mainSDtest2_0X;
 
 struct __THE_1_pair_strMSintME {
@@ -71,12 +87,19 @@ struct __THE_1_map_strMSintME {
   size_t c;
   size_t l;
 };
+struct __THE_1_fn$1003P {
+  struct __THE_1_map_strMSintME n0;
+  unsigned char o1;
+  struct __THE_1_map_strMSintME n1;
+  unsigned char o2;
+  struct __THE_1_map_strMSintME n2;
+};
 struct __THE_1_fn$1003 {
   struct __THE_1_map_strMSintME (*f) (void *, struct __THE_1_fn$1003P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1003P {
+struct __THE_1_fn$1004P {
   struct __THE_1_map_strMSintME n0;
   unsigned char o1;
   struct __THE_1_map_strMSintME n1;
@@ -88,19 +111,15 @@ struct __THE_1_fn$1004 {
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1004P {
-  struct __THE_1_map_strMSintME n0;
-  unsigned char o1;
-  struct __THE_1_map_strMSintME n1;
-  unsigned char o2;
-  struct __THE_1_map_strMSintME n2;
-};
 struct __THE_1_mainSDtest2_0X {
   struct __THE_1_map_strMSintME *__THE_0_a_0;
   const struct __THE_1_fn$1003 *__THE_0_test1_0;
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+
 void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
@@ -116,20 +135,30 @@ void __THE_1_fn$1004_free (struct __THE_1_fn$1004);
 void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1004P);
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1004 *, struct __THE_1_mainSDtest2_0X);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
   }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
   return r;
 }
 struct str str_alloc (const char *r) {

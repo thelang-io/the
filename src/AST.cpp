@@ -16,6 +16,7 @@
 
 #include "AST.hpp"
 #include <regex>
+#include "ASTChecker.hpp"
 #include "Parser.hpp"
 #include "config.hpp"
 
@@ -95,6 +96,13 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
       if (method.body != std::nullopt) {
         AST::populateParents(*method.body, &node);
       }
+    }
+  } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
+    auto &nodeTry = std::get<ASTNodeTry>(*node.body);
+    AST::populateParents(nodeTry.body, &node);
+
+    for (auto &handler : nodeTry.handlers) {
+      AST::populateParents(handler.body, &node);
     }
   }
 }
@@ -345,7 +353,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           : this->_type(*stmtFnDecl.returnType);
 
         this->varMap.restore();
-        auto nodeFnDeclVarType = this->typeMap.createFn(nodeFnDeclVarParams, nodeFnDeclVarReturnType);
+        auto nodeFnDeclVarType = this->typeMap.createFn(nodeFnDeclVarParams, nodeFnDeclVarReturnType, false);
         auto nodeFnDeclVarAliasType = this->typeMap.createAlias(nodeFnDeclName, nodeFnDeclVarType);
 
         this->varMap.add(nodeFnDeclName, nodeFnDeclVarAliasType->codeName, nodeFnDeclVarType);
@@ -429,7 +437,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto methodDeclReturnType = stmtFnDecl.returnType == std::nullopt
               ? this->typeMap.get("void")
               : this->_type(*stmtFnDecl.returnType);
-            auto methodDeclType = this->typeMap.createMethod(methodDeclTypeParams, methodDeclReturnType, methodDeclCallInfo);
+            auto methodDeclType = this->typeMap.createMethod(methodDeclTypeParams, methodDeclReturnType, false, methodDeclCallInfo);
             auto methodDeclAliasType = this->typeMap.createAlias(methodDeclName, methodDeclType);
 
             this->varMap.restore();
@@ -527,6 +535,14 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       : this->_block(*stmtFnDecl.body, nodeFnDeclVarStack);
     this->varMap.restore();
     this->typeMap.stack.pop_back();
+
+    if (nodeFnDeclBody != std::nullopt) {
+      auto throws = ASTChecker(*nodeFnDeclBody).throws();
+
+      if (throws) {
+        nodeFnDeclVar->type = this->typeMap.createFn(fnType.params, fnType.returnType, true, fnType.callInfo);
+      }
+    }
 
     auto nodeFnDeclStack = nodeFnDeclVarStack.snapshot();
     varStack.mark(nodeFnDeclStack);
@@ -665,6 +681,15 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       this->varMap.restore();
       this->typeMap.stack.pop_back();
 
+      if (methodDeclBody != std::nullopt) {
+        auto methodType = std::get<TypeFn>(methodDeclVar->type->body);
+        auto throws = ASTChecker(*methodDeclBody).throws();
+
+        if (throws) {
+          methodDeclVar->type = this->typeMap.createMethod(methodType.params, methodType.returnType, true, methodType.callInfo);
+        }
+      }
+
       auto methodDeclStack = methodDeclVarStack.snapshot();
       varStack.mark(methodDeclStack);
 
@@ -689,6 +714,53 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     auto nodeReturn = ASTNodeReturn{nodeReturnBody};
     return this->_wrapNode(stmt, nodeReturn);
+  } else if (std::holds_alternative<ParserStmtThrow>(*stmt.body)) {
+    auto stmtThrow = std::get<ParserStmtThrow>(*stmt.body);
+    auto nodeThrowArg = this->_nodeExpr(stmtThrow.arg, nullptr, varStack);
+
+    if (
+      !nodeThrowArg.type->isObj() ||
+      nodeThrowArg.type->fieldNth(0) == std::nullopt ||
+      nodeThrowArg.type->fieldNth(0)->name != "message" ||
+      !nodeThrowArg.type->fieldNth(0)->type->isStr() ||
+      nodeThrowArg.type->fieldNth(1) == std::nullopt ||
+      nodeThrowArg.type->fieldNth(1)->name != "stack" ||
+      !nodeThrowArg.type->fieldNth(1)->type->isStr()
+    ) {
+      throw Error(this->reader, stmtThrow.arg.start, stmtThrow.arg.end, E1028);
+    }
+
+    auto nodeThrow = ASTNodeThrow{nodeThrowArg};
+    return this->_wrapNode(stmt, nodeThrow);
+  } else if (std::holds_alternative<ParserStmtTry>(*stmt.body)) {
+    auto stmtTry = std::get<ParserStmtTry>(*stmt.body);
+    auto nodeTryBody = this->_block(stmtTry.body, varStack);
+    auto nodeTryHandlers = std::vector<ASTCatchClause>{};
+
+    for (const auto &stmtTryHandler : stmtTry.handlers) {
+      this->varMap.save();
+      auto handlerParam = this->_node(stmtTryHandler.param, varStack);
+      auto handlerParamVarDecl = std::get<ASTNodeVarDecl>(*handlerParam.body);
+      auto handlerBody = this->_block(stmtTryHandler.body, varStack);
+      this->varMap.restore();
+
+      if (
+        !handlerParamVarDecl.var->type->isObj() ||
+        handlerParamVarDecl.var->type->fieldNth(0) == std::nullopt ||
+        handlerParamVarDecl.var->type->fieldNth(0)->name != "message" ||
+        !handlerParamVarDecl.var->type->fieldNth(0)->type->isStr() ||
+        handlerParamVarDecl.var->type->fieldNth(1) == std::nullopt ||
+        handlerParamVarDecl.var->type->fieldNth(1)->name != "stack" ||
+        !handlerParamVarDecl.var->type->fieldNth(1)->type->isStr()
+      ) {
+        throw Error(this->reader, stmtTryHandler.param.start, stmtTryHandler.param.end, E1029);
+      }
+
+      nodeTryHandlers.push_back(ASTCatchClause{handlerParam, handlerBody});
+    }
+
+    auto nodeTry = ASTNodeTry{nodeTryBody, nodeTryHandlers};
+    return this->_wrapNode(stmt, nodeTry);
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*stmt.body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*stmt.body);
     auto type = this->typeMap.get(stmtTypeDecl.id.val);
@@ -1017,11 +1089,9 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       }
 
       auto propType = type->getProp(parserExprObjProp.id.val);
+      auto propInit = this->_nodeExpr(parserExprObjProp.init, propType, varStack);
 
-      exprObjProps.push_back(ASTObjProp{
-        parserExprObjProp.id.val,
-        this->_nodeExpr(parserExprObjProp.init, propType, varStack)
-      });
+      exprObjProps.push_back(ASTObjProp{parserExprObjProp.id.val, propInit});
     }
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprObj{exprObjProps});
@@ -1404,7 +1474,7 @@ Type *AST::_type (const ParserType &type) {
       fnParams.push_back(TypeFnParam{paramName, paramType, typeFnParam.mut, !typeFnParam.variadic, typeFnParam.variadic});
     }
 
-    return this->typeMap.createFn(fnParams, fnReturnType);
+    return this->typeMap.createFn(fnParams, fnReturnType, false);
   } else if (std::holds_alternative<ParserTypeId>(*type.body)) {
     auto typeId = std::get<ParserTypeId>(*type.body);
 
@@ -1464,12 +1534,12 @@ Type *AST::_type (const ParserType &type) {
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 ASTNode AST::_wrapNode ([[maybe_unused]] const ParserStmt &stmt, const ASTNodeBody &body) {
-  return ASTNode{std::make_shared<ASTNodeBody>(body), nullptr};
+  return ASTNode{std::make_shared<ASTNodeBody>(body), nullptr, stmt.start, stmt.end};
 }
 
 ASTNodeExpr AST::_wrapNodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, const ASTExpr &expr) {
   auto nodeExprType = this->_nodeExprType(stmtExpr, targetType);
-  return ASTNodeExpr{nodeExprType, std::make_shared<ASTExpr>(expr), stmtExpr.parenthesized};
+  return ASTNodeExpr{nodeExprType, std::make_shared<ASTExpr>(expr), stmtExpr.parenthesized, stmtExpr.start, stmtExpr.end};
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)

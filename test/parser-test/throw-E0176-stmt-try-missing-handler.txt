@@ -1,0 +1,10 @@
+======= stdin =======
+try {
+  a := "test"
+} catch err {
+  print(err.stack)
+}
+======= stderr =======
+/test:3:9: E0176 - Unexpected statement after catch keyword
+  3 | } catch err {
+    |         ^~~

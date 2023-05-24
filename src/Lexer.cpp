@@ -116,7 +116,8 @@ std::tuple<ReaderLocation, Token> Lexer::next (bool keepComments) {
   if (Token::isIdStart(ch0)) {
     this->_walk(Token::isIdContinue);
 
-    if (this->val == "async") return {startLoc, this->_tok(TK_KW_ASYNC)};
+    if (this->val == "as") return {startLoc, this->_tok(TK_KW_AS)};
+    else if (this->val == "async") return {startLoc, this->_tok(TK_KW_ASYNC)};
     else if (this->val == "await") return {startLoc, this->_tok(TK_KW_AWAIT)};
     else if (this->val == "break") return {startLoc, this->_tok(TK_KW_BREAK)};
     else if (this->val == "catch") return {startLoc, this->_tok(TK_KW_CATCH)};
@@ -126,6 +127,7 @@ std::tuple<ReaderLocation, Token> Lexer::next (bool keepComments) {
     else if (this->val == "else") return {startLoc, this->_tok(TK_KW_ELSE)};
     else if (this->val == "enum") return {startLoc, this->_tok(TK_KW_ENUM)};
     else if (this->val == "false") return {startLoc, this->_tok(TK_KW_FALSE)};
+    else if (this->val == "finally") return {startLoc, this->_tok(TK_KW_FINALLY)};
     else if (this->val == "fn") return {startLoc, this->_tok(TK_KW_FN)};
     else if (this->val == "from") return {startLoc, this->_tok(TK_KW_FROM)};
     else if (this->val == "if") return {startLoc, this->_tok(TK_KW_IF)};

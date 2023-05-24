@@ -16,7 +16,7 @@
 
 fn panic (message: str) {
   print("Error:", message, to: "stderr")
-  exit(1)
+  process_exit(1)
 }
 
 const ID_TOKEN_START := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"
@@ -259,7 +259,7 @@ fn tokenize (content: str) Token[] {
     ch := reader.next()
     mut t := TokenType.Unknown
 
-    if ch.isSpace() { continue }
+    if ch.isWhitespace { continue }
     if ch == '=' { t = .OpEq }
     if ch == '<' { t = .OpLBrack }
     if ch == '>' { t = .OpRBrack }
@@ -473,7 +473,7 @@ fn transformNode (node: XMLNode) ASTNode {
       }
     }
 
-    nodeReturnType := params.empty() ? node.nodes[1] : node.nodes[2]
+    nodeReturnType := params.empty ? node.nodes[1] : node.nodes[2]
     expectXMLNode(nodeReturnType, "StmtFnDeclReturnType", 1)
     returnType := transformNodeType(nodeReturnType.nodes[0])
 
@@ -567,7 +567,7 @@ fn transformNodeType (node: XMLNode) ASTType {
       }
     }
 
-    nodeReturnType := params.empty() ? node.nodes[0] : node.nodes[1]
+    nodeReturnType := params.empty ? node.nodes[0] : node.nodes[1]
     expectXMLNode(nodeReturnType, "TypeFnReturnType", 1)
     returnType := transformNodeType(nodeReturnType.nodes[0])
     return ASTTypeFn{params: params, returnType: returnType}
@@ -653,13 +653,13 @@ fn generateNode (node: ASTNode, prefix := "") str {
       paramIdx++
     }
 
-    paramsCode = paramsCode.empty() ? "" : os_EOL + paramsCode + os_EOL
+    paramsCode = paramsCode.empty ? "" : os_EOL + paramsCode + os_EOL
     paramsCode = ", {" + paramsCode + "}"
 
     callInfoName := node.id + "CallInfo"
     typeFnName := node.id + "TypeFn"
 
-    if prefix.empty() {
+    if prefix.empty {
       return
         "auto " + callInfoName + " = TypeCallInfo{\"" + node.id + "\"" + callInfo + "};" + os_EOL +
         "auto " + typeFnName + " = TypeFn{" + returnType + paramsCode + ", false, " + callInfoName + "};" + os_EOL +
@@ -668,7 +668,7 @@ fn generateNode (node: ASTNode, prefix := "") str {
       return
         "auto " + callInfoName + " = TypeCallInfo{selfType->name + \"_" + node.id + "\"" + callInfo + "};" + os_EOL +
         "auto " + typeFnName + " = TypeFn{" + returnType + paramsCode + ", true, " + callInfoName + "};" + os_EOL +
-        "this->_items.push_back(std::make_unique<Type>(Type{selfType->name + \"." + node.id + "\", \"@" + prefix.lowerFirst() + "." + node.id + "\", " + typeFnName + ", {}, true}));" + os_EOL +
+        "this->_items.push_back(std::make_unique<Type>(Type{selfType->name + \"." + node.id + "\", \"@" + prefix.lowerFirst + "." + node.id + "\", " + typeFnName + ", {}, true}));" + os_EOL +
         "selfType->fields.push_back(TypeField{\"" + node.id + "\", this->_items.back().get(), false, true});"
     }
   }
@@ -685,7 +685,7 @@ fn generateNode (node: ASTNode, prefix := "") str {
   }
 
   if node is ASTVarDecl {
-    if prefix.empty() {
+    if prefix.empty {
       return ""
     }
 
@@ -742,12 +742,12 @@ fn generateType (t: ASTType) str {
         param.variadic.str() + "}"
     }
 
-    paramsCode = paramsCode.empty()
+    paramsCode = paramsCode.empty
       ? "{}"
       : "{" + os_EOL + paramsCode + os_EOL + "  }"
 
     return "this->createFn(" + paramsCode + ", " +
-      generateType(t.returnType) + ", std::nullopt, true)"
+      generateType(t.returnType) + ")"
   }
 
   if t is ASTTypeId {
@@ -790,7 +790,7 @@ main {
   ast := transform(nodes)
   result := generate(ast).trim()
 
-  if !result.empty() {
+  if !result.empty {
     print(result)
   }
 }

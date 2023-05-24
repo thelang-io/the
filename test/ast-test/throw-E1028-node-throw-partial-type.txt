@@ -1,0 +1,12 @@
+======= stdin =======
+obj MyError {
+  message: str
+}
+
+main {
+  throw MyError{message: "Test"}
+}
+======= stderr =======
+/test:6:9: E1028 - Throw argument required to be object with first field string `message` and second field string `stack`
+  6 |   throw MyError{message: "Test"}
+    |         ^~~~~~~~~~~~~~~~~~~~~~~~

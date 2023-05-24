@@ -25,6 +25,7 @@ main {
 #endif
 
 #include <inttypes.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,17 +35,39 @@ main {
   #include <unistd.h>
 #endif
 
+#define TYPE_error_Error 1
+
 struct buffer {
   unsigned char *d;
   size_t l;
 };
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct fs_Stats;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct fs_Stats {
   const uint64_t __THE_0_dev;
   const uint32_t __THE_0_mode;
@@ -66,16 +89,25 @@ struct fs_Stats {
   const int64_t __THE_0_blockSize;
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str cstr_concat_str (const char *, struct str);
-void fs_chownSync (struct str, int32_t, int32_t);
-void fs_rmSync (struct str);
-struct fs_Stats *fs_statSync (struct str);
-void fs_writeFileSync (struct str, struct buffer);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
+void error_stack_str (err_state_t *);
+void fs_chownSync (struct str, int32_t, int32_t, int, int);
+void fs_rmSync (struct str, int, int);
+struct fs_Stats *fs_statSync (struct str, int, int);
+void fs_writeFileSync (struct str, struct buffer, int, int);
 void print (FILE *, const char *, ...);
 int32_t process_getgid ();
 int32_t process_getuid ();
+void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
@@ -83,15 +115,14 @@ struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
 struct buffer str_toBuffer (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 struct fs_Stats *fs_Stats_alloc (uint64_t, uint32_t, int64_t, uint64_t, int32_t, int32_t, uint64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t, int64_t);
 void fs_Stats_free (struct fs_Stats *);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 void buffer_free (struct buffer o) {
@@ -105,43 +136,130 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
-void fs_chownSync (struct str s, int32_t u, int32_t g) {
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  state->id = id;
+  state->ctx = ctx;
+  state->_free = f;
+  error_stack_pos(state, line, col);
+  error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
+}
+void error_stack_str (err_state_t *state) {
+  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  stack->l = message.l;
+  stack->d = re_alloc(stack->d, stack->l);
+  memcpy(stack->d, message.d, stack->l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    stack->d = re_alloc(stack->d, stack->l + z + 1);
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line, it.col);
+    }
+    stack->l += z;
+  }
+}
+void fs_chownSync (struct str s, int32_t u, int32_t g, int line, int col) {
   #ifdef THE_OS_WINDOWS
     str_free(s);
     return;
   #endif
   char *c = str_cstr(s);
   if (chown(c, u, g) != 0) {
-    fprintf(stderr, "Error: failed to change owner to %" PRId32 " and group to %" PRId32 " for file `%s`" THE_EOL, u, g, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to change owner to %" PRId32 " and group to %" PRId32 " for file `%s`";
+    size_t z = snprintf(NULL, 0, fmt, u, g, c);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, u, g, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto fs_chownSync_cleanup;
   }
+fs_chownSync_cleanup:
   str_free(s);
   free(c);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-void fs_rmSync (struct str s) {
+void fs_rmSync (struct str s, int line, int col) {
   char *c = str_cstr(s);
   if (remove(c) != 0) {
-    fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to remove file `%s`";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto fs_rmSync_cleanup;
   }
+fs_rmSync_cleanup:
   free(c);
   str_free(s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
-struct fs_Stats *fs_statSync (struct str s) {
+struct fs_Stats *fs_statSync (struct str s, int line, int col) {
   char *c = str_cstr(s);
   struct fs_Stats *r;
   #ifdef THE_OS_WINDOWS
     struct _stat sb;
     if (_stat(c, &sb) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_statSync_cleanup;
     }
     r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atime, 0, sb.st_mtime, 0, sb.st_ctime, 0, sb.st_ctime, 0, sb.st_size, 0, 4096);
   #else
     struct stat sb;
     if (stat(c, &sb) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_statSync_cleanup;
     }
     #ifdef THE_OS_MACOS
       r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atimespec.tv_sec, sb.st_atimespec.tv_nsec, sb.st_mtimespec.tv_sec, sb.st_mtimespec.tv_nsec, sb.st_ctimespec.tv_sec, sb.st_ctimespec.tv_nsec, sb.st_birthtimespec.tv_sec, sb.st_birthtimespec.tv_nsec, sb.st_size, sb.st_blocks, sb.st_blksize);
@@ -149,27 +267,40 @@ struct fs_Stats *fs_statSync (struct str s) {
       r = fs_Stats_alloc(sb.st_dev, sb.st_mode, sb.st_nlink, sb.st_ino, sb.st_uid, sb.st_gid, sb.st_rdev, sb.st_atim.tv_sec, sb.st_atim.tv_nsec, sb.st_mtim.tv_sec, sb.st_mtim.tv_nsec, sb.st_ctim.tv_sec, sb.st_ctim.tv_nsec, sb.st_ctim.tv_sec, sb.st_ctim.tv_nsec, sb.st_size, sb.st_blocks, sb.st_blksize);
     #endif
   #endif
+fs_statSync_cleanup:
   free(c);
   str_free(s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return r;
 }
-void fs_writeFileSync (struct str s, struct buffer b) {
+void fs_writeFileSync (struct str s, struct buffer b, int line, int col) {
   char *c = str_cstr(s);
   FILE *f = fopen(c, "wb");
   if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s` for writing" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to open file `%s` for writing";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto fs_writeFileSync_cleanup1;
   }
   if (b.l != 0) {
     if (fwrite(b.d, b.l, 1, f) != 1) {
-      fprintf(stderr, "Error: failed to write file `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to write file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_writeFileSync_cleanup2;
     }
   }
+fs_writeFileSync_cleanup2:
   fclose(f);
+fs_writeFileSync_cleanup1:
   free(c);
   str_free(s);
   buffer_free(b);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
 }
 void print (FILE *stream, const char *fmt, ...) {
   va_list args;
@@ -192,7 +323,7 @@ void print (FILE *stream, const char *fmt, ...) {
       case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
       case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
       case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); str_free(s); break;
+      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
       case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
       case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
       case 'z': fputs(va_arg(args, char *), stream); break;
@@ -213,6 +344,11 @@ int32_t process_getuid () {
   #else
     return getuid();
   #endif
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -254,6 +390,17 @@ void str_free (struct str s) {
 struct buffer str_toBuffer (struct str s) {
   return (struct buffer) {(unsigned char *) s.d, s.l};
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
 struct fs_Stats *fs_Stats_alloc (uint64_t __THE_0_dev, uint32_t __THE_0_mode, int64_t __THE_0_nlink, uint64_t __THE_0_ino, int32_t __THE_0_uid, int32_t __THE_0_gid, uint64_t __THE_0_rdev, int64_t __THE_0_atime, int64_t __THE_0_atimeNs, int64_t __THE_0_mtime, int64_t __THE_0_mtimeNs, int64_t __THE_0_ctime, int64_t __THE_0_ctimeNs, int64_t __THE_0_btime, int64_t __THE_0_btimeNs, int64_t __THE_0_size, int64_t __THE_0_blocks, int64_t __THE_0_blockSize) {
   struct fs_Stats *r = alloc(sizeof(struct fs_Stats));
   struct fs_Stats s = {__THE_0_dev, __THE_0_mode, __THE_0_nlink, __THE_0_ino, __THE_0_uid, __THE_0_gid, __THE_0_rdev, __THE_0_atime, __THE_0_atimeNs, __THE_0_mtime, __THE_0_mtimeNs, __THE_0_ctime, __THE_0_ctimeNs, __THE_0_btime, __THE_0_btimeNs, __THE_0_size, __THE_0_blocks, __THE_0_blockSize};
@@ -265,14 +412,32 @@ void fs_Stats_free (struct fs_Stats *n) {
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main", 0, 0);
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct str __THE_0_fileName_0 = str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test-builtin-fs-chown-sync.txt");
-  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_toBuffer(str_alloc("")));
-  fs_chownSync(str_copy(__THE_0_fileName_0), process_getuid(), process_getgid());
-  const struct fs_Stats *__THE_0_stat_0 = fs_statSync(str_copy(__THE_0_fileName_0));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  fs_writeFileSync(str_copy(__THE_0_fileName_0), str_toBuffer(str_alloc("")), 3, 3);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  fs_chownSync(str_copy(__THE_0_fileName_0), process_getuid(), process_getgid(), 5, 3);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  const struct fs_Stats *__THE_0_stat_0 = fs_statSync(str_copy(__THE_0_fileName_0), 6, 11);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   print(stdout, "kzkz", __THE_0_stat_0->__THE_0_uid, " ", __THE_0_stat_0->__THE_0_gid, THE_EOL);
-  fs_rmSync(str_copy(__THE_0_fileName_0));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
+  fs_rmSync(str_copy(__THE_0_fileName_0), 9, 3);
+L3:
   fs_Stats_free((struct fs_Stats *) __THE_0_stat_0);
+L2:
   str_free((struct str) __THE_0_fileName_0);
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

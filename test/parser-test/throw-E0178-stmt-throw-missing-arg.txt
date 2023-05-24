@@ -1,0 +1,6 @@
+======= stdin =======
+throw;
+======= stderr =======
+/test:1:6: E0178 - Expected throw statement argument
+  1 | throw;
+    |      ^

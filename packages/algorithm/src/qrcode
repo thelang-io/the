@@ -1,0 +1,1479 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+const ERROR_CORRECTION_TABLE := [
+  [[16, 10, 1, 16, 0, 0], [19, 7, 1, 19, 0, 0], [9, 17, 1, 9, 0, 0], [13, 13, 1, 13, 0, 0]],
+  [[28, 16, 1, 28, 0, 0], [34, 10, 1, 34, 0, 0], [16, 28, 1, 16, 0, 0], [22, 22, 1, 22, 0, 0]],
+  [[44, 26, 1, 44, 0, 0], [55, 15, 1, 55, 0, 0], [26, 22, 2, 13, 0, 0], [34, 18, 2, 17, 0, 0]],
+  [[64, 18, 2, 32, 0, 0], [80, 20, 1, 80, 0, 0], [36, 16, 4, 9, 0, 0], [48, 26, 2, 24, 0, 0]],
+  [[86, 24, 2, 43, 0, 0], [108, 26, 1, 108, 0, 0], [46, 22, 2, 11, 2, 12], [62, 18, 2, 15, 2, 16]],
+  [[108, 16, 4, 27, 0, 0], [136, 18, 2, 68, 0, 0], [60, 28, 4, 15, 0, 0], [76, 24, 4, 19, 0, 0]],
+  [[124, 18, 4, 31, 0, 0], [156, 20, 2, 78, 0, 0], [66, 26, 4, 13, 1, 14], [88, 18, 2, 14, 4, 15]],
+  [[154, 22, 2, 38, 2, 39], [194, 24, 2, 97, 0, 0], [86, 26, 4, 14, 2, 15], [110, 22, 4, 18, 2, 19]],
+  [[182, 22, 3, 36, 2, 37], [232, 30, 2, 116, 0, 0], [100, 24, 4, 12, 4, 13], [132, 20, 4, 16, 4, 17]],
+  [[216, 26, 4, 43, 1, 44], [274, 18, 2, 68, 2, 69], [122, 28, 6, 15, 2, 16], [154, 24, 6, 19, 2, 20]],
+  [[254, 30, 1, 50, 4, 51], [324, 20, 4, 81, 0, 0], [140, 24, 3, 12, 8, 13], [180, 28, 4, 22, 4, 23]],
+  [[290, 22, 6, 36, 2, 37], [370, 24, 2, 92, 2, 93], [158, 28, 7, 14, 4, 15], [206, 26, 4, 20, 6, 21]],
+  [[334, 22, 8, 37, 1, 38], [428, 26, 4, 107, 0, 0], [180, 22, 12, 11, 4, 12], [244, 24, 8, 20, 4, 21]],
+  [[365, 24, 4, 40, 5, 41], [461, 30, 3, 115, 1, 116], [197, 24, 11, 12, 5, 1], [261, 20, 11, 16, 5, 17]],
+  [[415, 24, 5, 41, 5, 42], [523, 22, 5, 87, 1, 88], [223, 24, 11, 12, 7, 13], [295, 30, 5, 24, 7, 25]],
+  [[453, 28, 7, 45, 3, 46], [589, 24, 5, 98, 1, 99], [253, 30, 3, 15, 13, 16], [325, 24, 15, 19, 2, 20]],
+  [[507, 28, 10, 46, 1, 47], [647, 28, 1, 107, 5, 108], [283, 28, 2, 14, 17, 15], [367, 28, 1, 22, 15, 23]],
+  [[563, 26, 9, 43, 4, 44], [721, 30, 5, 120, 1, 121], [313, 28, 2, 14, 19, 15], [397, 28, 17, 22, 1, 23]],
+  [[627, 26, 3, 44, 11, 45], [795, 28, 3, 113, 4, 114], [341, 26, 9, 13, 16, 14], [445, 26, 17, 21, 4, 22]],
+  [[669, 26, 3, 41, 13, 42], [861, 28, 3, 107, 5, 108], [385, 28, 15, 15, 10, 16], [485, 30, 15, 24, 5, 25]],
+  [[714, 26, 17, 42, 0, 0], [932, 28, 4, 116, 4, 117], [406, 30, 19, 16, 6, 17], [512, 28, 17, 22, 6, 23]],
+  [[782, 28, 17, 46, 0, 0], [1006, 28, 2, 111, 7, 112], [442, 24, 34, 13, 0, 0], [568, 30, 7, 24, 16, 25]],
+  [[860, 28, 4, 47, 14, 48], [1094, 30, 4, 121, 5, 122], [464, 30, 16, 15, 14, 16], [614, 30, 11, 24, 14, 25]],
+  [[914, 28, 6, 45, 14, 46], [1174, 30, 6, 117, 4, 118], [514, 30, 30, 16, 2, 17], [664, 30, 11, 24, 16, 25]],
+  [[1000, 28, 8, 47, 13, 48], [1276, 26, 8, 106, 4, 107], [538, 30, 22, 15, 13, 16], [718, 30, 7, 24, 22, 25]],
+  [[1062, 28, 19, 46, 4, 47], [1370, 28, 10, 114, 2, 115], [596, 30, 33, 16, 4, 17], [754, 28, 28, 22, 6, 23]],
+  [[1128, 28, 22, 45, 3, 46], [1468, 30, 8, 122, 4, 123], [628, 30, 12, 15, 28, 16], [808, 30, 8, 23, 26, 24]],
+  [[1193, 28, 3, 45, 23, 46], [1531, 30, 3, 117, 10, 118], [661, 30, 11, 15, 31, 16], [871, 30, 4, 24, 31, 25]],
+  [[1267, 28, 21, 45, 7, 46], [1631, 30, 7, 116, 7, 117], [701, 30, 19, 15, 26, 16], [911, 30, 1, 23, 37, 24]],
+  [[1373, 28, 19, 47, 10, 48], [1735, 30, 5, 115, 10, 116], [745, 30, 23, 15, 25, 16], [985, 30, 15, 24, 25, 25]],
+  [[1455, 28, 2, 46, 29, 47], [1843, 30, 13, 115, 3, 116], [793, 30, 23, 15, 28, 16], [1033, 30, 42, 24, 1, 25]],
+  [[1541, 28, 10, 46, 23, 47], [1955, 30, 17, 115, 0, 0], [845, 30, 19, 15, 35, 16], [1115, 30, 10, 24, 35, 25]],
+  [[1631, 28, 14, 46, 21, 47], [2071, 30, 17, 115, 1, 116], [901, 30, 11, 15, 46, 16], [1171, 30, 29, 24, 19, 25]],
+  [[1725, 28, 14, 46, 23, 47], [2191, 30, 13, 115, 6, 116], [961, 30, 59, 16, 1, 17], [1231, 30, 44, 24, 7, 25]],
+  [[1812, 28, 12, 47, 26, 48], [2306, 30, 12, 121, 7, 122], [986, 30, 22, 15, 41, 16], [1286, 30, 39, 24, 14, 25]],
+  [[1914, 28, 6, 47, 34, 48], [2434, 30, 6, 121, 14, 122], [1054, 30, 2, 15, 64, 16], [1354, 30, 46, 24, 10, 25]],
+  [[1992, 28, 29, 46, 14, 47], [2566, 30, 17, 122, 4, 123], [1096, 30, 24, 15, 46, 16], [1426, 30, 49, 24, 10, 25]],
+  [[2102, 28, 13, 46, 32, 47], [2702, 30, 4, 122, 18, 123], [1142, 30, 42, 15, 32, 16], [1502, 30, 48, 24, 14, 25]],
+  [[2216, 28, 40, 47, 7, 48], [2812, 30, 20, 117, 4, 118], [1222, 30, 10, 15, 67, 16], [1582, 30, 43, 24, 22, 25]],
+  [[2334, 28, 18, 47, 31, 48], [2956, 30, 19, 118, 6, 119], [1276, 30, 20, 15, 61, 16], [1666, 30, 34, 24, 34, 25]]
+]
+
+enum ErrorCorrectionLevel {
+  L = 1, // ~7%
+  M = 0, // ~15%
+  Q = 3, // ~25%
+  H = 2, // ~30%
+}
+
+/* note Kanji is not supported */
+enum Mode {
+  Numeric = 1,
+  Alphanumeric = 2,
+  Byte = 4,
+  Kanji = 8,
+}
+
+obj ErrorCorrectionTableEntry {
+  totalDataCodewords: int
+  errorCorrectionCodewordsPerBlock: int
+  group1Blocks: int
+  group1Codewords: int
+  group2Blocks: int
+  group2Codewords: int
+}
+
+obj IByteArray {
+  mut data: byte[]
+  mut len: int
+
+  fn at (mut self: ref Self, idx: int) byte {
+    return self.len <= idx ? 0 : self.data[idx]
+  }
+
+  fn compare (self: ref Self, other: Self) bool {
+    if self.len != other.len {
+      return false
+    }
+
+    loop i := 0; i < self.len; i++ {
+      if self.data[i] != other.data[i] {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  fn merge (mut self: ref Self, other: Self) {
+    offset := self.len
+    self.reserve(offset + other.len)
+
+    loop i := 0; i < other.len; i++ {
+      self.data[offset + i] = other.at(i)
+    }
+  }
+
+  fn padEnd (mut self: ref Self, length: int) {
+    if self.len >= length {
+      return
+    }
+    loop i := length - self.len - 1; i >= 0; i-- {
+      self.data.push(0)
+    }
+    self.len = length
+  }
+
+  fn padStart (mut self: ref Self, length: int) {
+    if self.len >= length {
+      return
+    }
+    tmp := self.data
+    self.data = []
+    loop i := length - self.len - 1; i >= 0; i-- {
+      self.data.push(0)
+    }
+    self.data.merge(tmp)
+    self.len = length
+  }
+
+  fn push (mut self: ref Self, item: byte) {
+    self.data.push(item)
+    self.len++
+  }
+
+  fn reserve (mut self: ref Self, length: int) {
+    if self.len < length {
+      loop i := self.len; i < length; i++ {
+        self.data.push(0)
+      }
+      self.len = length
+    }
+  }
+
+  fn set (mut self: ref Self, other: Self, offset: int) {
+    loop i := 0; i < other.len; i++ {
+      self.data[offset + i] = other.at(i)
+    }
+  }
+
+  fn slice (mut self: ref Self, start := 0, end := self.len) IByteArray {
+    return ByteArray_fromPlain(self.data.slice(start, end))
+  }
+}
+
+fn ByteArray (len := 0) IByteArray {
+  mut result := IByteArray{}
+  result.reserve(len)
+  return result
+}
+
+fn ByteArray_fromPlain (arr: byte[]) IByteArray {
+  arrLength := arr.len
+  mut result := IByteArray{}
+  result.reserve(arrLength)
+  loop i := 0; i < arrLength; i++ {
+    val: byte = arr[i]
+    result.data[i] = val
+  }
+  return result
+}
+
+fn ByteArray_fromInt (mut num: int, padding := 0) IByteArray {
+  mut arr: byte[]
+  loop num != 0 {
+    arr.push(num & 1 ? 1 : 0)
+    num >>= 1
+  }
+  mut result := ByteArray_fromPlain(arr.reverse())
+  if padding != 0 {
+    result.padStart(padding)
+  }
+  return result
+}
+
+fn Math_abs (x: float) float {
+  return x < 0 ? -x : x
+}
+
+fn raise (message: str) {
+  print("Error:", message, to: "stderr")
+  process_exit(1)
+}
+
+fn isNumericMode (ch: char) bool {
+  return ch.isDigit
+}
+
+fn isAlphanumericMode (ch: char) bool {
+  return alphanumericTable(ch) != -1
+}
+
+fn isByteMode (ch: char) bool {
+  b := ch.byte
+  return b
+}
+
+fn isKanjiMode (ch: char) bool {
+  return false
+}
+
+fn alphanumericTable (ch: char) int {
+  if ch == '0' { return 0 }
+  elif ch == '1' { return 1 }
+  elif ch == '2' { return 2 }
+  elif ch == '3' { return 3 }
+  elif ch == '4' { return 4 }
+  elif ch == '5' { return 5 }
+  elif ch == '6' { return 6 }
+  elif ch == '7' { return 7 }
+  elif ch == '8' { return 8 }
+  elif ch == '9' { return 9 }
+  elif ch == 'A' { return 10 }
+  elif ch == 'B' { return 11 }
+  elif ch == 'C' { return 12 }
+  elif ch == 'D' { return 13 }
+  elif ch == 'E' { return 14 }
+  elif ch == 'F' { return 15 }
+  elif ch == 'G' { return 16 }
+  elif ch == 'H' { return 17 }
+  elif ch == 'I' { return 18 }
+  elif ch == 'J' { return 19 }
+  elif ch == 'K' { return 20 }
+  elif ch == 'L' { return 21 }
+  elif ch == 'M' { return 22 }
+  elif ch == 'N' { return 23 }
+  elif ch == 'O' { return 24 }
+  elif ch == 'P' { return 25 }
+  elif ch == 'Q' { return 26 }
+  elif ch == 'R' { return 27 }
+  elif ch == 'S' { return 28 }
+  elif ch == 'T' { return 29 }
+  elif ch == 'U' { return 30 }
+  elif ch == 'V' { return 31 }
+  elif ch == 'W' { return 32 }
+  elif ch == 'X' { return 33 }
+  elif ch == 'Y' { return 34 }
+  elif ch == 'Z' { return 35 }
+  elif ch == ' ' { return 36 }
+  elif ch == '$' { return 37 }
+  elif ch == '%' { return 38 }
+  elif ch == '*' { return 39 }
+  elif ch == '+' { return 40 }
+  elif ch == '-' { return 41 }
+  elif ch == '.' { return 42 }
+  elif ch == '/' { return 43 }
+  elif ch == ':' { return 44 }
+  else { return -1 }
+}
+
+fn characterCapacityTable (errorCorrectionLevel: ErrorCorrectionLevel, mode: Mode, length: int) int {
+  e := errorCorrectionLevel
+  m := mode
+  l := length
+
+  if e == .L && ((m == .Numeric && l <= 41) || (m == .Alphanumeric && l <= 25) || (m == .Byte && l <= 17) || (m == .Kanji && l <= 10)) { return 1 }
+  elif e == .M && ((m == .Numeric && l <= 34) || (m == .Alphanumeric && l <= 20) || (m == .Byte && l <= 14) || (m == .Kanji && l <= 8)) { return 1 }
+  elif e == .Q && ((m == .Numeric && l <= 27) || (m == .Alphanumeric && l <= 16) || (m == .Byte && l <= 11) || (m == .Kanji && l <= 7)) { return 1 }
+  elif e == .H && ((m == .Numeric && l <= 17) || (m == .Alphanumeric && l <= 10) || (m == .Byte && l <= 7) || (m == .Kanji && l <= 4)) { return 1 }
+  elif e == .L && ((m == .Numeric && l <= 77) || (m == .Alphanumeric && l <= 47) || (m == .Byte && l <= 32) || (m == .Kanji && l <= 20)) { return 2 }
+  elif e == .M && ((m == .Numeric && l <= 63) || (m == .Alphanumeric && l <= 38) || (m == .Byte && l <= 26) || (m == .Kanji && l <= 16)) { return 2 }
+  elif e == .Q && ((m == .Numeric && l <= 48) || (m == .Alphanumeric && l <= 29) || (m == .Byte && l <= 20) || (m == .Kanji && l <= 12)) { return 2 }
+  elif e == .H && ((m == .Numeric && l <= 34) || (m == .Alphanumeric && l <= 20) || (m == .Byte && l <= 14) || (m == .Kanji && l <= 8)) { return 2 }
+  elif e == .L && ((m == .Numeric && l <= 127) || (m == .Alphanumeric && l <= 77) || (m == .Byte && l <= 53) || (m == .Kanji && l <= 32)) { return 3 }
+  elif e == .M && ((m == .Numeric && l <= 101) || (m == .Alphanumeric && l <= 61) || (m == .Byte && l <= 42) || (m == .Kanji && l <= 26)) { return 3 }
+  elif e == .Q && ((m == .Numeric && l <= 77) || (m == .Alphanumeric && l <= 47) || (m == .Byte && l <= 32) || (m == .Kanji && l <= 20)) { return 3 }
+  elif e == .H && ((m == .Numeric && l <= 58) || (m == .Alphanumeric && l <= 35) || (m == .Byte && l <= 24) || (m == .Kanji && l <= 15)) { return 3 }
+  elif e == .L && ((m == .Numeric && l <= 187) || (m == .Alphanumeric && l <= 114) || (m == .Byte && l <= 78) || (m == .Kanji && l <= 48)) { return 4 }
+  elif e == .M && ((m == .Numeric && l <= 149) || (m == .Alphanumeric && l <= 90) || (m == .Byte && l <= 62) || (m == .Kanji && l <= 38)) { return 4 }
+  elif e == .Q && ((m == .Numeric && l <= 111) || (m == .Alphanumeric && l <= 67) || (m == .Byte && l <= 46) || (m == .Kanji && l <= 28)) { return 4 }
+  elif e == .H && ((m == .Numeric && l <= 82) || (m == .Alphanumeric && l <= 50) || (m == .Byte && l <= 34) || (m == .Kanji && l <= 21)) { return 4 }
+  elif e == .L && ((m == .Numeric && l <= 255) || (m == .Alphanumeric && l <= 154) || (m == .Byte && l <= 106) || (m == .Kanji && l <= 65)) { return 5 }
+  elif e == .M && ((m == .Numeric && l <= 202) || (m == .Alphanumeric && l <= 122) || (m == .Byte && l <= 84) || (m == .Kanji && l <= 52)) { return 5 }
+  elif e == .Q && ((m == .Numeric && l <= 144) || (m == .Alphanumeric && l <= 87) || (m == .Byte && l <= 60) || (m == .Kanji && l <= 37)) { return 5 }
+  elif e == .H && ((m == .Numeric && l <= 106) || (m == .Alphanumeric && l <= 64) || (m == .Byte && l <= 44) || (m == .Kanji && l <= 27)) { return 5 }
+  elif e == .L && ((m == .Numeric && l <= 322) || (m == .Alphanumeric && l <= 195) || (m == .Byte && l <= 134) || (m == .Kanji && l <= 82)) { return 6 }
+  elif e == .M && ((m == .Numeric && l <= 255) || (m == .Alphanumeric && l <= 154) || (m == .Byte && l <= 106) || (m == .Kanji && l <= 65)) { return 6 }
+  elif e == .Q && ((m == .Numeric && l <= 178) || (m == .Alphanumeric && l <= 108) || (m == .Byte && l <= 74) || (m == .Kanji && l <= 45)) { return 6 }
+  elif e == .H && ((m == .Numeric && l <= 139) || (m == .Alphanumeric && l <= 84) || (m == .Byte && l <= 58) || (m == .Kanji && l <= 36)) { return 6 }
+  elif e == .L && ((m == .Numeric && l <= 370) || (m == .Alphanumeric && l <= 224) || (m == .Byte && l <= 154) || (m == .Kanji && l <= 95)) { return 7 }
+  elif e == .M && ((m == .Numeric && l <= 293) || (m == .Alphanumeric && l <= 178) || (m == .Byte && l <= 122) || (m == .Kanji && l <= 75)) { return 7 }
+  elif e == .Q && ((m == .Numeric && l <= 207) || (m == .Alphanumeric && l <= 125) || (m == .Byte && l <= 86) || (m == .Kanji && l <= 53)) { return 7 }
+  elif e == .H && ((m == .Numeric && l <= 154) || (m == .Alphanumeric && l <= 93) || (m == .Byte && l <= 64) || (m == .Kanji && l <= 39)) { return 7 }
+  elif e == .L && ((m == .Numeric && l <= 461) || (m == .Alphanumeric && l <= 279) || (m == .Byte && l <= 192) || (m == .Kanji && l <= 118)) { return 8 }
+  elif e == .M && ((m == .Numeric && l <= 365) || (m == .Alphanumeric && l <= 221) || (m == .Byte && l <= 152) || (m == .Kanji && l <= 93)) { return 8 }
+  elif e == .Q && ((m == .Numeric && l <= 259) || (m == .Alphanumeric && l <= 157) || (m == .Byte && l <= 108) || (m == .Kanji && l <= 66)) { return 8 }
+  elif e == .H && ((m == .Numeric && l <= 202) || (m == .Alphanumeric && l <= 122) || (m == .Byte && l <= 84) || (m == .Kanji && l <= 52)) { return 8 }
+  elif e == .L && ((m == .Numeric && l <= 552) || (m == .Alphanumeric && l <= 335) || (m == .Byte && l <= 230) || (m == .Kanji && l <= 141)) { return 9 }
+  elif e == .M && ((m == .Numeric && l <= 432) || (m == .Alphanumeric && l <= 262) || (m == .Byte && l <= 180) || (m == .Kanji && l <= 111)) { return 9 }
+  elif e == .Q && ((m == .Numeric && l <= 312) || (m == .Alphanumeric && l <= 189) || (m == .Byte && l <= 130) || (m == .Kanji && l <= 80)) { return 9 }
+  elif e == .H && ((m == .Numeric && l <= 235) || (m == .Alphanumeric && l <= 143) || (m == .Byte && l <= 98) || (m == .Kanji && l <= 60)) { return 9 }
+  elif e == .L && ((m == .Numeric && l <= 652) || (m == .Alphanumeric && l <= 395) || (m == .Byte && l <= 271) || (m == .Kanji && l <= 167)) { return 10 }
+  elif e == .M && ((m == .Numeric && l <= 513) || (m == .Alphanumeric && l <= 311) || (m == .Byte && l <= 213) || (m == .Kanji && l <= 131)) { return 10 }
+  elif e == .Q && ((m == .Numeric && l <= 364) || (m == .Alphanumeric && l <= 221) || (m == .Byte && l <= 151) || (m == .Kanji && l <= 93)) { return 10 }
+  elif e == .H && ((m == .Numeric && l <= 288) || (m == .Alphanumeric && l <= 174) || (m == .Byte && l <= 119) || (m == .Kanji && l <= 74)) { return 10 }
+  elif e == .L && ((m == .Numeric && l <= 772) || (m == .Alphanumeric && l <= 468) || (m == .Byte && l <= 321) || (m == .Kanji && l <= 198)) { return 11 }
+  elif e == .M && ((m == .Numeric && l <= 604) || (m == .Alphanumeric && l <= 366) || (m == .Byte && l <= 251) || (m == .Kanji && l <= 155)) { return 11 }
+  elif e == .Q && ((m == .Numeric && l <= 427) || (m == .Alphanumeric && l <= 259) || (m == .Byte && l <= 177) || (m == .Kanji && l <= 109)) { return 11 }
+  elif e == .H && ((m == .Numeric && l <= 331) || (m == .Alphanumeric && l <= 200) || (m == .Byte && l <= 137) || (m == .Kanji && l <= 85)) { return 11 }
+  elif e == .L && ((m == .Numeric && l <= 883) || (m == .Alphanumeric && l <= 535) || (m == .Byte && l <= 367) || (m == .Kanji && l <= 226)) { return 12 }
+  elif e == .M && ((m == .Numeric && l <= 691) || (m == .Alphanumeric && l <= 419) || (m == .Byte && l <= 287) || (m == .Kanji && l <= 177)) { return 12 }
+  elif e == .Q && ((m == .Numeric && l <= 489) || (m == .Alphanumeric && l <= 296) || (m == .Byte && l <= 203) || (m == .Kanji && l <= 125)) { return 12 }
+  elif e == .H && ((m == .Numeric && l <= 374) || (m == .Alphanumeric && l <= 227) || (m == .Byte && l <= 155) || (m == .Kanji && l <= 96)) { return 12 }
+  elif e == .L && ((m == .Numeric && l <= 1022) || (m == .Alphanumeric && l <= 619) || (m == .Byte && l <= 425) || (m == .Kanji && l <= 262)) { return 13 }
+  elif e == .M && ((m == .Numeric && l <= 796) || (m == .Alphanumeric && l <= 483) || (m == .Byte && l <= 331) || (m == .Kanji && l <= 204)) { return 13 }
+  elif e == .Q && ((m == .Numeric && l <= 580) || (m == .Alphanumeric && l <= 352) || (m == .Byte && l <= 241) || (m == .Kanji && l <= 149)) { return 13 }
+  elif e == .H && ((m == .Numeric && l <= 427) || (m == .Alphanumeric && l <= 259) || (m == .Byte && l <= 177) || (m == .Kanji && l <= 109)) { return 13 }
+  elif e == .L && ((m == .Numeric && l <= 1101) || (m == .Alphanumeric && l <= 667) || (m == .Byte && l <= 458) || (m == .Kanji && l <= 282)) { return 14 }
+  elif e == .M && ((m == .Numeric && l <= 871) || (m == .Alphanumeric && l <= 528) || (m == .Byte && l <= 362) || (m == .Kanji && l <= 223)) { return 14 }
+  elif e == .Q && ((m == .Numeric && l <= 621) || (m == .Alphanumeric && l <= 376) || (m == .Byte && l <= 258) || (m == .Kanji && l <= 159)) { return 14 }
+  elif e == .H && ((m == .Numeric && l <= 468) || (m == .Alphanumeric && l <= 283) || (m == .Byte && l <= 194) || (m == .Kanji && l <= 120)) { return 14 }
+  elif e == .L && ((m == .Numeric && l <= 1250) || (m == .Alphanumeric && l <= 758) || (m == .Byte && l <= 520) || (m == .Kanji && l <= 320)) { return 15 }
+  elif e == .M && ((m == .Numeric && l <= 991) || (m == .Alphanumeric && l <= 600) || (m == .Byte && l <= 412) || (m == .Kanji && l <= 254)) { return 15 }
+  elif e == .Q && ((m == .Numeric && l <= 703) || (m == .Alphanumeric && l <= 426) || (m == .Byte && l <= 292) || (m == .Kanji && l <= 180)) { return 15 }
+  elif e == .H && ((m == .Numeric && l <= 530) || (m == .Alphanumeric && l <= 321) || (m == .Byte && l <= 220) || (m == .Kanji && l <= 136)) { return 15 }
+  elif e == .L && ((m == .Numeric && l <= 1408) || (m == .Alphanumeric && l <= 854) || (m == .Byte && l <= 586) || (m == .Kanji && l <= 361)) { return 16 }
+  elif e == .M && ((m == .Numeric && l <= 1082) || (m == .Alphanumeric && l <= 656) || (m == .Byte && l <= 450) || (m == .Kanji && l <= 277)) { return 16 }
+  elif e == .Q && ((m == .Numeric && l <= 775) || (m == .Alphanumeric && l <= 470) || (m == .Byte && l <= 322) || (m == .Kanji && l <= 198)) { return 16 }
+  elif e == .H && ((m == .Numeric && l <= 602) || (m == .Alphanumeric && l <= 365) || (m == .Byte && l <= 250) || (m == .Kanji && l <= 154)) { return 16 }
+  elif e == .L && ((m == .Numeric && l <= 1548) || (m == .Alphanumeric && l <= 938) || (m == .Byte && l <= 644) || (m == .Kanji && l <= 397)) { return 17 }
+  elif e == .M && ((m == .Numeric && l <= 1212) || (m == .Alphanumeric && l <= 734) || (m == .Byte && l <= 504) || (m == .Kanji && l <= 310)) { return 17 }
+  elif e == .Q && ((m == .Numeric && l <= 876) || (m == .Alphanumeric && l <= 531) || (m == .Byte && l <= 364) || (m == .Kanji && l <= 224)) { return 17 }
+  elif e == .H && ((m == .Numeric && l <= 674) || (m == .Alphanumeric && l <= 408) || (m == .Byte && l <= 280) || (m == .Kanji && l <= 173)) { return 17 }
+  elif e == .L && ((m == .Numeric && l <= 1725) || (m == .Alphanumeric && l <= 1046) || (m == .Byte && l <= 718) || (m == .Kanji && l <= 442)) { return 18 }
+  elif e == .M && ((m == .Numeric && l <= 1346) || (m == .Alphanumeric && l <= 816) || (m == .Byte && l <= 560) || (m == .Kanji && l <= 345)) { return 18 }
+  elif e == .Q && ((m == .Numeric && l <= 948) || (m == .Alphanumeric && l <= 574) || (m == .Byte && l <= 394) || (m == .Kanji && l <= 243)) { return 18 }
+  elif e == .H && ((m == .Numeric && l <= 746) || (m == .Alphanumeric && l <= 452) || (m == .Byte && l <= 310) || (m == .Kanji && l <= 191)) { return 18 }
+  elif e == .L && ((m == .Numeric && l <= 1903) || (m == .Alphanumeric && l <= 1153) || (m == .Byte && l <= 792) || (m == .Kanji && l <= 488)) { return 19 }
+  elif e == .M && ((m == .Numeric && l <= 1500) || (m == .Alphanumeric && l <= 909) || (m == .Byte && l <= 624) || (m == .Kanji && l <= 384)) { return 19 }
+  elif e == .Q && ((m == .Numeric && l <= 1063) || (m == .Alphanumeric && l <= 644) || (m == .Byte && l <= 442) || (m == .Kanji && l <= 272)) { return 19 }
+  elif e == .H && ((m == .Numeric && l <= 813) || (m == .Alphanumeric && l <= 493) || (m == .Byte && l <= 338) || (m == .Kanji && l <= 208)) { return 19 }
+  elif e == .L && ((m == .Numeric && l <= 2061) || (m == .Alphanumeric && l <= 1249) || (m == .Byte && l <= 858) || (m == .Kanji && l <= 528)) { return 20 }
+  elif e == .M && ((m == .Numeric && l <= 1600) || (m == .Alphanumeric && l <= 970) || (m == .Byte && l <= 666) || (m == .Kanji && l <= 410)) { return 20 }
+  elif e == .Q && ((m == .Numeric && l <= 1159) || (m == .Alphanumeric && l <= 702) || (m == .Byte && l <= 482) || (m == .Kanji && l <= 297)) { return 20 }
+  elif e == .H && ((m == .Numeric && l <= 919) || (m == .Alphanumeric && l <= 557) || (m == .Byte && l <= 382) || (m == .Kanji && l <= 235)) { return 20 }
+  elif e == .L && ((m == .Numeric && l <= 2232) || (m == .Alphanumeric && l <= 1352) || (m == .Byte && l <= 929) || (m == .Kanji && l <= 572)) { return 21 }
+  elif e == .M && ((m == .Numeric && l <= 1708) || (m == .Alphanumeric && l <= 1035) || (m == .Byte && l <= 711) || (m == .Kanji && l <= 438)) { return 21 }
+  elif e == .Q && ((m == .Numeric && l <= 1224) || (m == .Alphanumeric && l <= 742) || (m == .Byte && l <= 509) || (m == .Kanji && l <= 314)) { return 21 }
+  elif e == .H && ((m == .Numeric && l <= 969) || (m == .Alphanumeric && l <= 587) || (m == .Byte && l <= 403) || (m == .Kanji && l <= 248)) { return 21 }
+  elif e == .L && ((m == .Numeric && l <= 2409) || (m == .Alphanumeric && l <= 1460) || (m == .Byte && l <= 1003) || (m == .Kanji && l <= 618)) { return 22 }
+  elif e == .M && ((m == .Numeric && l <= 1872) || (m == .Alphanumeric && l <= 1134) || (m == .Byte && l <= 779) || (m == .Kanji && l <= 480)) { return 22 }
+  elif e == .Q && ((m == .Numeric && l <= 1358) || (m == .Alphanumeric && l <= 823) || (m == .Byte && l <= 565) || (m == .Kanji && l <= 348)) { return 22 }
+  elif e == .H && ((m == .Numeric && l <= 1056) || (m == .Alphanumeric && l <= 640) || (m == .Byte && l <= 439) || (m == .Kanji && l <= 270)) { return 22 }
+  elif e == .L && ((m == .Numeric && l <= 2620) || (m == .Alphanumeric && l <= 1588) || (m == .Byte && l <= 1091) || (m == .Kanji && l <= 672)) { return 23 }
+  elif e == .M && ((m == .Numeric && l <= 2059) || (m == .Alphanumeric && l <= 1248) || (m == .Byte && l <= 857) || (m == .Kanji && l <= 528)) { return 23 }
+  elif e == .Q && ((m == .Numeric && l <= 1468) || (m == .Alphanumeric && l <= 890) || (m == .Byte && l <= 611) || (m == .Kanji && l <= 376)) { return 23 }
+  elif e == .H && ((m == .Numeric && l <= 1108) || (m == .Alphanumeric && l <= 672) || (m == .Byte && l <= 461) || (m == .Kanji && l <= 284)) { return 23 }
+  elif e == .L && ((m == .Numeric && l <= 2812) || (m == .Alphanumeric && l <= 1704) || (m == .Byte && l <= 1171) || (m == .Kanji && l <= 721)) { return 24 }
+  elif e == .M && ((m == .Numeric && l <= 2188) || (m == .Alphanumeric && l <= 1326) || (m == .Byte && l <= 911) || (m == .Kanji && l <= 561)) { return 24 }
+  elif e == .Q && ((m == .Numeric && l <= 1588) || (m == .Alphanumeric && l <= 963) || (m == .Byte && l <= 661) || (m == .Kanji && l <= 407)) { return 24 }
+  elif e == .H && ((m == .Numeric && l <= 1228) || (m == .Alphanumeric && l <= 744) || (m == .Byte && l <= 511) || (m == .Kanji && l <= 315)) { return 24 }
+  elif e == .L && ((m == .Numeric && l <= 3057) || (m == .Alphanumeric && l <= 1853) || (m == .Byte && l <= 1273) || (m == .Kanji && l <= 784)) { return 25 }
+  elif e == .M && ((m == .Numeric && l <= 2395) || (m == .Alphanumeric && l <= 1451) || (m == .Byte && l <= 997) || (m == .Kanji && l <= 614)) { return 25 }
+  elif e == .Q && ((m == .Numeric && l <= 1718) || (m == .Alphanumeric && l <= 1041) || (m == .Byte && l <= 715) || (m == .Kanji && l <= 440)) { return 25 }
+  elif e == .H && ((m == .Numeric && l <= 1286) || (m == .Alphanumeric && l <= 779) || (m == .Byte && l <= 535) || (m == .Kanji && l <= 330)) { return 25 }
+  elif e == .L && ((m == .Numeric && l <= 3283) || (m == .Alphanumeric && l <= 1990) || (m == .Byte && l <= 1367) || (m == .Kanji && l <= 842)) { return 26 }
+  elif e == .M && ((m == .Numeric && l <= 2544) || (m == .Alphanumeric && l <= 1542) || (m == .Byte && l <= 1059) || (m == .Kanji && l <= 652)) { return 26 }
+  elif e == .Q && ((m == .Numeric && l <= 1804) || (m == .Alphanumeric && l <= 1094) || (m == .Byte && l <= 751) || (m == .Kanji && l <= 462)) { return 26 }
+  elif e == .H && ((m == .Numeric && l <= 1425) || (m == .Alphanumeric && l <= 864) || (m == .Byte && l <= 593) || (m == .Kanji && l <= 365)) { return 26 }
+  elif e == .L && ((m == .Numeric && l <= 3517) || (m == .Alphanumeric && l <= 2132) || (m == .Byte && l <= 1465) || (m == .Kanji && l <= 902)) { return 27 }
+  elif e == .M && ((m == .Numeric && l <= 2701) || (m == .Alphanumeric && l <= 1637) || (m == .Byte && l <= 1125) || (m == .Kanji && l <= 692)) { return 27 }
+  elif e == .Q && ((m == .Numeric && l <= 1933) || (m == .Alphanumeric && l <= 1172) || (m == .Byte && l <= 805) || (m == .Kanji && l <= 496)) { return 27 }
+  elif e == .H && ((m == .Numeric && l <= 1501) || (m == .Alphanumeric && l <= 910) || (m == .Byte && l <= 625) || (m == .Kanji && l <= 385)) { return 27 }
+  elif e == .L && ((m == .Numeric && l <= 3669) || (m == .Alphanumeric && l <= 2223) || (m == .Byte && l <= 1528) || (m == .Kanji && l <= 940)) { return 28 }
+  elif e == .M && ((m == .Numeric && l <= 2857) || (m == .Alphanumeric && l <= 1732) || (m == .Byte && l <= 1190) || (m == .Kanji && l <= 732)) { return 28 }
+  elif e == .Q && ((m == .Numeric && l <= 2085) || (m == .Alphanumeric && l <= 1263) || (m == .Byte && l <= 868) || (m == .Kanji && l <= 534)) { return 28 }
+  elif e == .H && ((m == .Numeric && l <= 1581) || (m == .Alphanumeric && l <= 958) || (m == .Byte && l <= 658) || (m == .Kanji && l <= 405)) { return 28 }
+  elif e == .L && ((m == .Numeric && l <= 3909) || (m == .Alphanumeric && l <= 2369) || (m == .Byte && l <= 1628) || (m == .Kanji && l <= 1002)) { return 29 }
+  elif e == .M && ((m == .Numeric && l <= 3035) || (m == .Alphanumeric && l <= 1839) || (m == .Byte && l <= 1264) || (m == .Kanji && l <= 778)) { return 29 }
+  elif e == .Q && ((m == .Numeric && l <= 2181) || (m == .Alphanumeric && l <= 1322) || (m == .Byte && l <= 908) || (m == .Kanji && l <= 559)) { return 29 }
+  elif e == .H && ((m == .Numeric && l <= 1677) || (m == .Alphanumeric && l <= 1016) || (m == .Byte && l <= 698) || (m == .Kanji && l <= 430)) { return 29 }
+  elif e == .L && ((m == .Numeric && l <= 4158) || (m == .Alphanumeric && l <= 2520) || (m == .Byte && l <= 1732) || (m == .Kanji && l <= 1066)) { return 30 }
+  elif e == .M && ((m == .Numeric && l <= 3289) || (m == .Alphanumeric && l <= 1994) || (m == .Byte && l <= 1370) || (m == .Kanji && l <= 843)) { return 30 }
+  elif e == .Q && ((m == .Numeric && l <= 2358) || (m == .Alphanumeric && l <= 1429) || (m == .Byte && l <= 982) || (m == .Kanji && l <= 604)) { return 30 }
+  elif e == .H && ((m == .Numeric && l <= 1782) || (m == .Alphanumeric && l <= 1080) || (m == .Byte && l <= 742) || (m == .Kanji && l <= 457)) { return 30 }
+  elif e == .L && ((m == .Numeric && l <= 4417) || (m == .Alphanumeric && l <= 2677) || (m == .Byte && l <= 1840) || (m == .Kanji && l <= 1132)) { return 31 }
+  elif e == .M && ((m == .Numeric && l <= 3486) || (m == .Alphanumeric && l <= 2113) || (m == .Byte && l <= 1452) || (m == .Kanji && l <= 894)) { return 31 }
+  elif e == .Q && ((m == .Numeric && l <= 2473) || (m == .Alphanumeric && l <= 1499) || (m == .Byte && l <= 1030) || (m == .Kanji && l <= 634)) { return 31 }
+  elif e == .H && ((m == .Numeric && l <= 1897) || (m == .Alphanumeric && l <= 1150) || (m == .Byte && l <= 790) || (m == .Kanji && l <= 486)) { return 31 }
+  elif e == .L && ((m == .Numeric && l <= 4686) || (m == .Alphanumeric && l <= 2840) || (m == .Byte && l <= 1952) || (m == .Kanji && l <= 1201)) { return 32 }
+  elif e == .M && ((m == .Numeric && l <= 3693) || (m == .Alphanumeric && l <= 2238) || (m == .Byte && l <= 1538) || (m == .Kanji && l <= 947)) { return 32 }
+  elif e == .Q && ((m == .Numeric && l <= 2670) || (m == .Alphanumeric && l <= 1618) || (m == .Byte && l <= 1112) || (m == .Kanji && l <= 684)) { return 32 }
+  elif e == .H && ((m == .Numeric && l <= 2022) || (m == .Alphanumeric && l <= 1226) || (m == .Byte && l <= 842) || (m == .Kanji && l <= 518)) { return 32 }
+  elif e == .L && ((m == .Numeric && l <= 4965) || (m == .Alphanumeric && l <= 3009) || (m == .Byte && l <= 2068) || (m == .Kanji && l <= 1273)) { return 33 }
+  elif e == .M && ((m == .Numeric && l <= 3909) || (m == .Alphanumeric && l <= 2369) || (m == .Byte && l <= 1628) || (m == .Kanji && l <= 1002)) { return 33 }
+  elif e == .Q && ((m == .Numeric && l <= 2805) || (m == .Alphanumeric && l <= 1700) || (m == .Byte && l <= 1168) || (m == .Kanji && l <= 719)) { return 33 }
+  elif e == .H && ((m == .Numeric && l <= 2157) || (m == .Alphanumeric && l <= 1307) || (m == .Byte && l <= 898) || (m == .Kanji && l <= 553)) { return 33 }
+  elif e == .L && ((m == .Numeric && l <= 5253) || (m == .Alphanumeric && l <= 3183) || (m == .Byte && l <= 2188) || (m == .Kanji && l <= 1347)) { return 34 }
+  elif e == .M && ((m == .Numeric && l <= 4134) || (m == .Alphanumeric && l <= 2506) || (m == .Byte && l <= 1722) || (m == .Kanji && l <= 1060)) { return 34 }
+  elif e == .Q && ((m == .Numeric && l <= 2949) || (m == .Alphanumeric && l <= 1787) || (m == .Byte && l <= 1228) || (m == .Kanji && l <= 756)) { return 34 }
+  elif e == .H && ((m == .Numeric && l <= 2301) || (m == .Alphanumeric && l <= 1394) || (m == .Byte && l <= 958) || (m == .Kanji && l <= 590)) { return 34 }
+  elif e == .L && ((m == .Numeric && l <= 5529) || (m == .Alphanumeric && l <= 3351) || (m == .Byte && l <= 2303) || (m == .Kanji && l <= 1417)) { return 35 }
+  elif e == .M && ((m == .Numeric && l <= 4343) || (m == .Alphanumeric && l <= 2632) || (m == .Byte && l <= 1809) || (m == .Kanji && l <= 1113)) { return 35 }
+  elif e == .Q && ((m == .Numeric && l <= 3081) || (m == .Alphanumeric && l <= 1867) || (m == .Byte && l <= 1283) || (m == .Kanji && l <= 790)) { return 35 }
+  elif e == .H && ((m == .Numeric && l <= 2361) || (m == .Alphanumeric && l <= 1431) || (m == .Byte && l <= 983) || (m == .Kanji && l <= 605)) { return 35 }
+  elif e == .L && ((m == .Numeric && l <= 5836) || (m == .Alphanumeric && l <= 3537) || (m == .Byte && l <= 2431) || (m == .Kanji && l <= 1496)) { return 36 }
+  elif e == .M && ((m == .Numeric && l <= 4588) || (m == .Alphanumeric && l <= 2780) || (m == .Byte && l <= 1911) || (m == .Kanji && l <= 1176)) { return 36 }
+  elif e == .Q && ((m == .Numeric && l <= 3244) || (m == .Alphanumeric && l <= 1966) || (m == .Byte && l <= 1351) || (m == .Kanji && l <= 832)) { return 36 }
+  elif e == .H && ((m == .Numeric && l <= 2524) || (m == .Alphanumeric && l <= 1530) || (m == .Byte && l <= 1051) || (m == .Kanji && l <= 647)) { return 36 }
+  elif e == .L && ((m == .Numeric && l <= 6153) || (m == .Alphanumeric && l <= 3729) || (m == .Byte && l <= 2563) || (m == .Kanji && l <= 1577)) { return 37 }
+  elif e == .M && ((m == .Numeric && l <= 4775) || (m == .Alphanumeric && l <= 2894) || (m == .Byte && l <= 1989) || (m == .Kanji && l <= 1224)) { return 37 }
+  elif e == .Q && ((m == .Numeric && l <= 3417) || (m == .Alphanumeric && l <= 2071) || (m == .Byte && l <= 1423) || (m == .Kanji && l <= 876)) { return 37 }
+  elif e == .H && ((m == .Numeric && l <= 2625) || (m == .Alphanumeric && l <= 1591) || (m == .Byte && l <= 1093) || (m == .Kanji && l <= 673)) { return 37 }
+  elif e == .L && ((m == .Numeric && l <= 6479) || (m == .Alphanumeric && l <= 3927) || (m == .Byte && l <= 2699) || (m == .Kanji && l <= 1661)) { return 38 }
+  elif e == .M && ((m == .Numeric && l <= 5039) || (m == .Alphanumeric && l <= 3054) || (m == .Byte && l <= 2099) || (m == .Kanji && l <= 1292)) { return 38 }
+  elif e == .Q && ((m == .Numeric && l <= 3599) || (m == .Alphanumeric && l <= 2181) || (m == .Byte && l <= 1499) || (m == .Kanji && l <= 923)) { return 38 }
+  elif e == .H && ((m == .Numeric && l <= 2735) || (m == .Alphanumeric && l <= 1658) || (m == .Byte && l <= 1139) || (m == .Kanji && l <= 701)) { return 38 }
+  elif e == .L && ((m == .Numeric && l <= 6743) || (m == .Alphanumeric && l <= 4087) || (m == .Byte && l <= 2809) || (m == .Kanji && l <= 1729)) { return 39 }
+  elif e == .M && ((m == .Numeric && l <= 5313) || (m == .Alphanumeric && l <= 3220) || (m == .Byte && l <= 2213) || (m == .Kanji && l <= 1362)) { return 39 }
+  elif e == .Q && ((m == .Numeric && l <= 3791) || (m == .Alphanumeric && l <= 2298) || (m == .Byte && l <= 1579) || (m == .Kanji && l <= 972)) { return 39 }
+  elif e == .H && ((m == .Numeric && l <= 2927) || (m == .Alphanumeric && l <= 1774) || (m == .Byte && l <= 1219) || (m == .Kanji && l <= 750)) { return 39 }
+  elif e == .L && ((m == .Numeric && l <= 7089) || (m == .Alphanumeric && l <= 4296) || (m == .Byte && l <= 2953) || (m == .Kanji && l <= 1817)) { return 40 }
+  elif e == .M && ((m == .Numeric && l <= 5596) || (m == .Alphanumeric && l <= 3391) || (m == .Byte && l <= 2331) || (m == .Kanji && l <= 1435)) { return 40 }
+  elif e == .Q && ((m == .Numeric && l <= 3993) || (m == .Alphanumeric && l <= 2420) || (m == .Byte && l <= 1663) || (m == .Kanji && l <= 1024)) { return 40 }
+  elif e == .H && ((m == .Numeric && l <= 3057) || (m == .Alphanumeric && l <= 1852) || (m == .Byte && l <= 1273) || (m == .Kanji && l <= 784)) { return 40 }
+  else { raise("QRCode input is too long to calculate version") }
+}
+
+fn requiredRemainderBits (version: int) int {
+  if version >= 2 && version <= 6 { return 7 }
+  elif version >= 21 && version <= 27 { return 4 }
+  elif (version >= 14 && version <= 20) || (version >= 28 && version <= 34) { return 3 }
+  else { return 0 }
+}
+
+fn alignmentPatternLocations (version: int) int[] {
+  if version == 1 { return [] }
+  elif version == 2 { return [6, 18] }
+  elif version == 3 { return [6, 22] }
+  elif version == 4 { return [6, 26] }
+  elif version == 5 { return [6, 30] }
+  elif version == 6 { return [6, 34] }
+  elif version == 7 { return [6, 22, 38] }
+  elif version == 8 { return [6, 24, 42] }
+  elif version == 9 { return [6, 26, 46] }
+  elif version == 10 { return [6, 28, 50] }
+  elif version == 11 { return [6, 30, 54] }
+  elif version == 12 { return [6, 32, 58] }
+  elif version == 13 { return [6, 34, 62] }
+  elif version == 14 { return [6, 26, 46, 66] }
+  elif version == 15 { return [6, 26, 48, 70] }
+  elif version == 16 { return [6, 26, 50, 74] }
+  elif version == 17 { return [6, 30, 54, 78] }
+  elif version == 18 { return [6, 30, 56, 82] }
+  elif version == 19 { return [6, 30, 58, 86] }
+  elif version == 20 { return [6, 34, 62, 90] }
+  elif version == 21 { return [6, 28, 50, 72, 94] }
+  elif version == 22 { return [6, 26, 50, 74, 98] }
+  elif version == 23 { return [6, 30, 54, 78, 102] }
+  elif version == 24 { return [6, 28, 54, 80, 106] }
+  elif version == 25 { return [6, 32, 58, 84, 110] }
+  elif version == 26 { return [6, 30, 58, 86, 114] }
+  elif version == 27 { return [6, 34, 62, 90, 118] }
+  elif version == 28 { return [6, 26, 50, 74, 98, 122] }
+  elif version == 29 { return [6, 30, 54, 78, 102, 126] }
+  elif version == 30 { return [6, 26, 52, 78, 104, 130] }
+  elif version == 31 { return [6, 30, 56, 82, 108, 134] }
+  elif version == 32 { return [6, 34, 60, 86, 112, 138] }
+  elif version == 33 { return [6, 30, 58, 86, 114, 142] }
+  elif version == 34 { return [6, 34, 62, 90, 118, 146] }
+  elif version == 35 { return [6, 30, 54, 78, 102, 126, 150] }
+  elif version == 36 { return [6, 24, 50, 76, 102, 128, 154] }
+  elif version == 37 { return [6, 28, 54, 80, 106, 132, 158] }
+  elif version == 38 { return [6, 32, 58, 84, 110, 136, 162] }
+  elif version == 39 { return [6, 26, 54, 82, 110, 138, 166] }
+  elif version == 40 { return [6, 30, 58, 86, 114, 142, 170] }
+  else { raise("QRCode input is too long for alignment pattern locations") }
+}
+
+fn mask0 (x: int, y: int) bool { return (x + y) % 2 == 0 }
+fn mask1 (x: int, y: int) bool { return y % 2 == 0 }
+fn mask2 (x: int, y: int) bool { return x % 3 == 0 }
+fn mask3 (x: int, y: int) bool { return (x + y) % 3 == 0 }
+fn mask4 (x: int, y: int) bool { _x: float = x; _y: float = y; v1: int = (_y / 2); v2: int = (_x / 3); return (v1 + v2) % 2 == 0 }
+fn mask5 (x: int, y: int) bool { return ((x * y) % 2) + ((x * y) % 3) == 0 }
+fn mask6 (x: int, y: int) bool { return (((x * y) % 2) + ((x * y) % 3)) % 2 == 0 }
+fn mask7 (x: int, y: int) bool { return (((x + y) % 2) + ((x * y) % 3)) % 2 == 0 }
+
+const MASKS := {
+  "0": mask0,
+  "1": mask1,
+  "2": mask2,
+  "3": mask3,
+  "4": mask4,
+  "5": mask5,
+  "6": mask6,
+  "7": mask7,
+}
+
+obj IPolynomial {
+  _exp: IByteArray
+  _log: IByteArray
+
+  fn div (self: ref Self, dividend: IByteArray, divisor: IByteArray) IByteArray {
+    quotientLength := dividend.len - divisor.len + 1
+    mut result := dividend
+    loop i := 0; i < quotientLength; i++ {
+      if result.at(0) != 0 {
+        factor := self._exp.at((self._log.at(result.at(0)) + self._log.at(divisor.at(0)) * 254) % 255)
+        factorDivisor := self.mul(divisor, ByteArray_fromPlain([factor]))
+        loop j := 0; j < result.len; j++ {
+          result.data[j] ^= factorDivisor.at(j)
+        }
+      }
+      result = result.slice(1)
+    }
+    return result
+  }
+
+  fn errorDataCorrection (self: ref Self, mut data: IByteArray, eccCodewords: int) IByteArray {
+    data.padEnd(data.len + eccCodewords)
+    return self.div(data, self.generateSequence(eccCodewords))
+  }
+
+  fn generateSequence (self: ref Self, degree: int) IByteArray {
+    mut result := ByteArray_fromPlain([1])
+    loop i := 0; i < degree; i++ {
+      result = self.mul(result, ByteArray_fromPlain([1, self._exp.at(i)]))
+    }
+    return result
+  }
+
+  fn mul (self: ref Self, poly1: IByteArray, poly2: IByteArray) IByteArray {
+    mut result := ByteArray(poly1.len + poly2.len - 1)
+    loop i := 0; i < result.len; i++ {
+      mut coefficient := 0
+      loop j := 0; j <= i; j++ {
+        if poly1.len > j && poly2.len > i - j {
+          coefficient ^= self._exp.at((self._log.at(poly1.at(j)) + self._log.at(poly2.at(i - j))) % 255)
+        }
+      }
+      result.data[i] = coefficient
+    }
+    return result
+  }
+}
+
+fn Polynomial () IPolynomial {
+  mut exp := ByteArray(256)
+  mut log := ByteArray(256)
+  mut val := 1
+
+  loop exponent := 1; exponent < 256; exponent++ {
+    val = val > 127 ? ((val << 1) ^ 285) : val << 1
+    exp.data[exponent % 255] = val
+    log.data[val] = exponent % 255
+  }
+
+  return IPolynomial{_exp: exp, _log: log}
+}
+
+obj IQRCode {
+  mut _a: int
+  mut _b: ErrorCorrectionTableEntry
+  mut _d: byte[][]
+  mut _e: ErrorCorrectionLevel
+  mut _f: IByteArray
+  mut _g: IByteArray
+  _i: buffer_Buffer
+  _l: int
+  mut _m: Mode
+  mut _o: IByteArray
+  _p: IPolynomial
+  mut _q: int[][]
+  _s: str
+  mut _v: int
+  mut _w: IByteArray
+  mut _x: int
+  mut _z: int
+
+  fn calcPenaltyScore (mut self: ref Self) int {
+    return self.calcPenalty1() + self.calcPenalty2() + self.calcPenalty3() + self.calcPenalty4()
+  }
+
+  fn calcPenalty1 (mut self: ref Self) int {
+    mut count := 0
+    mut module: byte = 0
+    mut penalty := 0
+
+    loop k := 0; k < 2; k++ {
+      loop i := 0; i < self._z; i++ {
+        loop j := 0; j < self._z; j++ {
+          currentModule := self._d[i][j]
+
+          if module != currentModule {
+            module = currentModule
+            count = 1
+          } else {
+            count++
+
+            if count == 5 {
+              penalty += 3
+            } elif count > 5 {
+              penalty++
+            }
+          }
+        }
+
+        count = 0
+      }
+
+      self.transposeData()
+    }
+
+    return penalty
+  }
+
+  fn calcPenalty2 (mut self: ref Self) int {
+    mut count := 0
+
+    loop i := 0; i < self._z - 1; i++ {
+      loop j := 0; j < self._z - 1; j++ {
+        currentModule := self._d[i][j]
+
+        if (
+          self._d[i][j + 1] == currentModule &&
+          self._d[i + 1][j] == currentModule &&
+          self._d[i + 1][j + 1] == currentModule
+        ) {
+          count++
+        }
+      }
+    }
+
+    return count * 3
+  }
+
+  fn calcPenalty3 (mut self: ref Self) int {
+    byteArray1 := ByteArray_fromPlain([2, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1])
+    byteArray2 := ByteArray_fromPlain(byteArray1.data.reverse())
+    sliceLen := byteArray1.len
+    mut count := 0
+
+    loop k := 0; k < 2; k++ {
+      loop i := 0; i < self._z; i++ {
+        loop j := 0; j < self._z - sliceLen + 1; j++ {
+          modulesSlice := ByteArray_fromPlain(self._d[i].slice(j, j + sliceLen))
+
+          if modulesSlice.compare(byteArray1) || modulesSlice.compare(byteArray2) {
+            count++
+          }
+        }
+      }
+
+      self.transposeData()
+    }
+
+    return count * 40
+  }
+
+  fn calcPenalty4 (mut self: ref Self) int {
+    mut dark := 0.0
+
+    loop i := 0; i < self._z; i++ {
+      loop j := 0; j < self._z; j++ {
+        if self._d[i][j] == 2 {
+          dark++
+        }
+      }
+    }
+
+    total: float = self._z * self._z
+    delta: int = (Math_abs(dark * 20 - total * 10) + total - 1) / total - 1
+    return delta * 10
+  }
+
+  fn drawAlignmentPattern (mut self: ref Self, x: int, y: int) {
+    b1: byte = 1
+    b2: byte = 2
+
+    self._d[x][y] = b2
+    self._d[x + 1][y] = b2
+    self._d[x + 2][y] = b2
+    self._d[x + 3][y] = b2
+    self._d[x + 4][y] = b2
+    self._d[x + 4][y + 1] = b2
+    self._d[x + 4][y + 2] = b2
+    self._d[x + 4][y + 3] = b2
+    self._d[x + 4][y + 4] = b2
+    self._d[x + 3][y + 4] = b2
+    self._d[x + 2][y + 4] = b2
+    self._d[x + 1][y + 4] = b2
+    self._d[x][y + 4] = b2
+    self._d[x][y + 3] = b2
+    self._d[x][y + 2] = b2
+    self._d[x][y + 1] = b2
+
+    self._d[x + 1][y + 1] = b1
+    self._d[x + 2][y + 1] = b1
+    self._d[x + 3][y + 1] = b1
+    self._d[x + 3][y + 2] = b1
+    self._d[x + 3][y + 3] = b1
+    self._d[x + 2][y + 3] = b1
+    self._d[x + 1][y + 3] = b1
+    self._d[x + 1][y + 2] = b1
+
+    self._d[x + 2][y + 2] = b2
+  }
+
+  fn drawAlignmentPatterns (mut self: ref Self, positions: int[]) {
+    mut matrixPositions: int[][]
+    positionsLen := positions.len
+
+    loop i := 0; i < positionsLen; i++ {
+      positionA := positions[i]
+
+      loop j := 0; j < positionsLen; j++ {
+        matrixPositions.push([positions[i], positions[j]])
+      }
+    }
+
+    matrixPositionsLen := matrixPositions.len
+
+    loop i := 0; i < matrixPositionsLen; i++ {
+      matrixPosition := matrixPositions[i]
+      if (
+        !self.drawCollidesRectangle(
+          matrixPosition[0] - 2,
+          matrixPosition[1] - 2,
+          matrixPosition[0] + 2,
+          matrixPosition[1] + 2
+        )
+      ) {
+        self.drawAlignmentPattern(matrixPosition[0] - 2, matrixPosition[1] - 2)
+      }
+    }
+  }
+
+  fn drawCollidesPoint (self: ref Self, x: int, y: int) bool {
+    return self._d[x][y] != 0
+  }
+
+  fn drawCollidesRectangle (self: ref Self, x1: int, y1: int, x2: int, y2: int) bool {
+    loop x := x1; x <= x2; x++ {
+      loop y := y1; y <= y2; y++ {
+        if self._d[x][y] != 0 {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
+  fn drawDarkModule (mut self: ref Self) {
+    b2: byte = 2
+    self._d[8][self._z - 8] = b2
+  }
+
+  fn drawData (mut self: ref Self) {
+    b1: byte = 1
+    b2: byte = 2
+    seqLen := self._q.len
+
+    loop i := 0; i < seqLen; i++ {
+      x: int = self._q[i][0]
+      y: int = self._q[i][1]
+      self._d[x][y] = self._o.at(i) == 0 ? b1 : b2
+    }
+  }
+
+  fn drawFinderPattern (mut self: ref Self, x: int, y: int) {
+    b1: byte = 1
+    b2: byte = 2
+
+    self._d[x][y] = b2
+    self._d[x + 1][y] = b2
+    self._d[x + 2][y] = b2
+    self._d[x + 3][y] = b2
+    self._d[x + 4][y] = b2
+    self._d[x + 5][y] = b2
+    self._d[x + 6][y] = b2
+    self._d[x + 6][y + 1] = b2
+    self._d[x + 6][y + 2] = b2
+    self._d[x + 6][y + 3] = b2
+    self._d[x + 6][y + 4] = b2
+    self._d[x + 6][y + 5] = b2
+    self._d[x + 6][y + 6] = b2
+    self._d[x + 5][y + 6] = b2
+    self._d[x + 4][y + 6] = b2
+    self._d[x + 3][y + 6] = b2
+    self._d[x + 2][y + 6] = b2
+    self._d[x + 1][y + 6] = b2
+    self._d[x][y + 6] = b2
+    self._d[x][y + 5] = b2
+    self._d[x][y + 4] = b2
+    self._d[x][y + 3] = b2
+    self._d[x][y + 2] = b2
+    self._d[x][y + 1] = b2
+
+    self._d[x + 1][y + 1] = b1
+    self._d[x + 2][y + 1] = b1
+    self._d[x + 3][y + 1] = b1
+    self._d[x + 4][y + 1] = b1
+    self._d[x + 5][y + 1] = b1
+    self._d[x + 5][y + 2] = b1
+    self._d[x + 5][y + 3] = b1
+    self._d[x + 5][y + 4] = b1
+    self._d[x + 5][y + 5] = b1
+    self._d[x + 4][y + 5] = b1
+    self._d[x + 3][y + 5] = b1
+    self._d[x + 2][y + 5] = b1
+    self._d[x + 1][y + 5] = b1
+    self._d[x + 1][y + 4] = b1
+    self._d[x + 1][y + 3] = b1
+    self._d[x + 1][y + 2] = b1
+
+    self._d[x + 2][y + 2] = b2
+    self._d[x + 3][y + 2] = b2
+    self._d[x + 4][y + 2] = b2
+    self._d[x + 4][y + 3] = b2
+    self._d[x + 4][y + 4] = b2
+    self._d[x + 3][y + 4] = b2
+    self._d[x + 2][y + 4] = b2
+    self._d[x + 2][y + 3] = b2
+    self._d[x + 2][y + 2] = b2
+    self._d[x + 3][y + 3] = b2
+
+    if y == 0 && x == 0 {
+      self._d[x][y + 7] = b1
+      self._d[x + 1][y + 7] = b1
+      self._d[x + 2][y + 7] = b1
+      self._d[x + 3][y + 7] = b1
+      self._d[x + 4][y + 7] = b1
+      self._d[x + 5][y + 7] = b1
+      self._d[x + 6][y + 7] = b1
+      self._d[x + 7][y + 7] = b1
+
+      self._d[x + 7][y] = b1
+      self._d[x + 7][y + 1] = b1
+      self._d[x + 7][y + 2] = b1
+      self._d[x + 7][y + 3] = b1
+      self._d[x + 7][y + 4] = b1
+      self._d[x + 7][y + 5] = b1
+      self._d[x + 7][y + 6] = b1
+      self._d[x + 7][y + 7] = b1
+    } elif y == 0 {
+      self._d[x][y + 7] = b1
+      self._d[x + 1][y + 7] = b1
+      self._d[x + 2][y + 7] = b1
+      self._d[x + 3][y + 7] = b1
+      self._d[x + 4][y + 7] = b1
+      self._d[x + 5][y + 7] = b1
+      self._d[x + 6][y + 7] = b1
+
+      self._d[x - 1][y] = b1
+      self._d[x - 1][y + 1] = b1
+      self._d[x - 1][y + 2] = b1
+      self._d[x - 1][y + 3] = b1
+      self._d[x - 1][y + 4] = b1
+      self._d[x - 1][y + 5] = b1
+      self._d[x - 1][y + 6] = b1
+      self._d[x - 1][y + 7] = b1
+    } elif x == 0 {
+      self._d[x][y - 1] = b1
+      self._d[x + 1][y - 1] = b1
+      self._d[x + 2][y - 1] = b1
+      self._d[x + 3][y - 1] = b1
+      self._d[x + 4][y - 1] = b1
+      self._d[x + 5][y - 1] = b1
+      self._d[x + 6][y - 1] = b1
+      self._d[x + 7][y - 1] = b1
+
+      self._d[x + 7][y] = b1
+      self._d[x + 7][y + 1] = b1
+      self._d[x + 7][y + 2] = b1
+      self._d[x + 7][y + 3] = b1
+      self._d[x + 7][y + 4] = b1
+      self._d[x + 7][y + 5] = b1
+      self._d[x + 7][y + 6] = b1
+    }
+  }
+
+  fn drawFormatModule (mut self: ref Self) {
+    b1: byte = 1
+    b2: byte = 2
+
+    self._d[0][8] = self._f.at(0) == 0 ? b1 : b2
+    self._d[1][8] = self._f.at(1) == 0 ? b1 : b2
+    self._d[2][8] = self._f.at(2) == 0 ? b1 : b2
+    self._d[3][8] = self._f.at(3) == 0 ? b1 : b2
+    self._d[4][8] = self._f.at(4) == 0 ? b1 : b2
+    self._d[5][8] = self._f.at(5) == 0 ? b1 : b2
+    self._d[7][8] = self._f.at(6) == 0 ? b1 : b2
+    self._d[self._z - 8][8] = self._f.at(7) == 0 ? b1 : b2
+    self._d[self._z - 7][8] = self._f.at(8) == 0 ? b1 : b2
+    self._d[self._z - 6][8] = self._f.at(9) == 0 ? b1 : b2
+    self._d[self._z - 5][8] = self._f.at(10) == 0 ? b1 : b2
+    self._d[self._z - 4][8] = self._f.at(11) == 0 ? b1 : b2
+    self._d[self._z - 3][8] = self._f.at(12) == 0 ? b1 : b2
+    self._d[self._z - 2][8] = self._f.at(13) == 0 ? b1 : b2
+    self._d[self._z - 1][8] = self._f.at(14) == 0 ? b1 : b2
+
+    self._d[8][self._z - 1] = self._f.at(0) == 0 ? b1 : b2
+    self._d[8][self._z - 2] = self._f.at(1) == 0 ? b1 : b2
+    self._d[8][self._z - 3] = self._f.at(2) == 0 ? b1 : b2
+    self._d[8][self._z - 4] = self._f.at(3) == 0 ? b1 : b2
+    self._d[8][self._z - 5] = self._f.at(4) == 0 ? b1 : b2
+    self._d[8][self._z - 6] = self._f.at(5) == 0 ? b1 : b2
+    self._d[8][self._z - 7] = self._f.at(6) == 0 ? b1 : b2
+    self._d[8][8] = self._f.at(7) == 0 ? b1 : b2
+    self._d[8][7] = self._f.at(8) == 0 ? b1 : b2
+    self._d[8][5] = self._f.at(9) == 0 ? b1 : b2
+    self._d[8][4] = self._f.at(10) == 0 ? b1 : b2
+    self._d[8][3] = self._f.at(11) == 0 ? b1 : b2
+    self._d[8][2] = self._f.at(12) == 0 ? b1 : b2
+    self._d[8][1] = self._f.at(13) == 0 ? b1 : b2
+    self._d[8][0] = self._f.at(14) == 0 ? b1 : b2
+  }
+
+  fn drawMaskData (mut self: ref Self) {
+    b1: byte = 1
+    b2: byte = 2
+    mask := MASKS.get(self._a.str())
+    seqLen := self._q.len
+
+    loop i := 0; i < seqLen; i++ {
+      x: int = self._q[i][0]
+      y: int = self._q[i][1]
+      if mask(x, y) {
+        self._d[x][y] = self._d[x][y] == 1 ? b2 : b1
+      }
+    }
+
+    self.updateFormatModules()
+    self.drawFormatModule()
+    self.updateVersionModules()
+    self.drawVersionModule()
+  }
+
+  fn drawReserveFormatInformationArea (mut self: ref Self) {
+    b1: byte = 1
+
+    self._d[8][0] = b1
+    self._d[8][1] = b1
+    self._d[8][2] = b1
+    self._d[8][3] = b1
+    self._d[8][4] = b1
+    self._d[8][5] = b1
+    self._d[8][7] = b1
+    self._d[8][8] = b1
+    self._d[7][8] = b1
+    self._d[5][8] = b1
+    self._d[4][8] = b1
+    self._d[3][8] = b1
+    self._d[2][8] = b1
+    self._d[1][8] = b1
+    self._d[0][8] = b1
+
+    self._d[self._z - 8][8] = b1
+    self._d[self._z - 7][8] = b1
+    self._d[self._z - 6][8] = b1
+    self._d[self._z - 5][8] = b1
+    self._d[self._z - 4][8] = b1
+    self._d[self._z - 3][8] = b1
+    self._d[self._z - 2][8] = b1
+    self._d[self._z - 1][8] = b1
+
+    self._d[8][self._z - 7] = b1
+    self._d[8][self._z - 6] = b1
+    self._d[8][self._z - 5] = b1
+    self._d[8][self._z - 4] = b1
+    self._d[8][self._z - 3] = b1
+    self._d[8][self._z - 2] = b1
+    self._d[8][self._z - 1] = b1
+  }
+
+  fn drawReserveVersionInformationArea (mut self: ref Self) {
+    if self._v < 7 {
+      return
+    }
+
+    b1: byte = 1
+
+    self._d[self._z - 11][0] = b1
+    self._d[self._z - 10][0] = b1
+    self._d[self._z - 9][0] = b1
+    self._d[self._z - 11][1] = b1
+    self._d[self._z - 10][1] = b1
+    self._d[self._z - 9][1] = b1
+    self._d[self._z - 11][2] = b1
+    self._d[self._z - 10][2] = b1
+    self._d[self._z - 9][2] = b1
+    self._d[self._z - 11][3] = b1
+    self._d[self._z - 10][3] = b1
+    self._d[self._z - 9][3] = b1
+    self._d[self._z - 11][4] = b1
+    self._d[self._z - 10][4] = b1
+    self._d[self._z - 9][4] = b1
+    self._d[self._z - 11][5] = b1
+    self._d[self._z - 10][5] = b1
+    self._d[self._z - 9][5] = b1
+
+    self._d[0][self._z - 11] = b1
+    self._d[0][self._z - 10] = b1
+    self._d[0][self._z - 9] = b1
+    self._d[1][self._z - 11] = b1
+    self._d[1][self._z - 10] = b1
+    self._d[1][self._z - 9] = b1
+    self._d[2][self._z - 11] = b1
+    self._d[2][self._z - 10] = b1
+    self._d[2][self._z - 9] = b1
+    self._d[3][self._z - 11] = b1
+    self._d[3][self._z - 10] = b1
+    self._d[3][self._z - 9] = b1
+    self._d[4][self._z - 11] = b1
+    self._d[4][self._z - 10] = b1
+    self._d[4][self._z - 9] = b1
+    self._d[5][self._z - 11] = b1
+    self._d[5][self._z - 10] = b1
+    self._d[5][self._z - 9] = b1
+  }
+
+  fn drawTimingPatterns (mut self: ref Self) {
+    b1: byte = 1
+    b2: byte = 2
+
+    loop i := self._z - 9; i >= 8; i-- {
+      self._d[i][6] = i & 1 ? b1 : b2
+    }
+
+    loop i := self._z - 9; i >= 8; i-- {
+      self._d[6][i] = i & 1 ? b1 : b2
+    }
+  }
+
+  fn drawVersionModule (mut self: ref Self) {
+    if self._v < 7 {
+      return
+    }
+
+    b1: byte = 1
+    b2: byte = 2
+
+    self._d[self._z - 11][0] = self._w.at(0) == 0 ? b1 : b2
+    self._d[self._z - 10][0] = self._w.at(1) == 0 ? b1 : b2
+    self._d[self._z - 9][0] = self._w.at(2) == 0 ? b1 : b2
+    self._d[self._z - 11][1] = self._w.at(3) == 0 ? b1 : b2
+    self._d[self._z - 10][1] = self._w.at(4) == 0 ? b1 : b2
+    self._d[self._z - 9][1] = self._w.at(5) == 0 ? b1 : b2
+    self._d[self._z - 11][2] = self._w.at(6) == 0 ? b1 : b2
+    self._d[self._z - 10][2] = self._w.at(7) == 0 ? b1 : b2
+    self._d[self._z - 9][2] = self._w.at(8) == 0 ? b1 : b2
+    self._d[self._z - 11][3] = self._w.at(9) == 0 ? b1 : b2
+    self._d[self._z - 10][3] = self._w.at(10) == 0 ? b1 : b2
+    self._d[self._z - 9][3] = self._w.at(11) == 0 ? b1 : b2
+    self._d[self._z - 11][4] = self._w.at(12) == 0 ? b1 : b2
+    self._d[self._z - 10][4] = self._w.at(13) == 0 ? b1 : b2
+    self._d[self._z - 9][4] = self._w.at(14) == 0 ? b1 : b2
+    self._d[self._z - 11][5] = self._w.at(15) == 0 ? b1 : b2
+    self._d[self._z - 10][5] = self._w.at(16) == 0 ? b1 : b2
+    self._d[self._z - 9][5] = self._w.at(17) == 0 ? b1 : b2
+
+    self._d[0][self._z - 11] = self._w.at(0) == 0 ? b1 : b2
+    self._d[0][self._z - 10] = self._w.at(1) == 0 ? b1 : b2
+    self._d[0][self._z - 9] = self._w.at(2) == 0 ? b1 : b2
+    self._d[1][self._z - 11] = self._w.at(3) == 0 ? b1 : b2
+    self._d[1][self._z - 10] = self._w.at(4) == 0 ? b1 : b2
+    self._d[1][self._z - 9] = self._w.at(5) == 0 ? b1 : b2
+    self._d[2][self._z - 11] = self._w.at(6) == 0 ? b1 : b2
+    self._d[2][self._z - 10] = self._w.at(7) == 0 ? b1 : b2
+    self._d[2][self._z - 9] = self._w.at(8) == 0 ? b1 : b2
+    self._d[3][self._z - 11] = self._w.at(9) == 0 ? b1 : b2
+    self._d[3][self._z - 10] = self._w.at(10) == 0 ? b1 : b2
+    self._d[3][self._z - 9] = self._w.at(11) == 0 ? b1 : b2
+    self._d[4][self._z - 11] = self._w.at(12) == 0 ? b1 : b2
+    self._d[4][self._z - 10] = self._w.at(13) == 0 ? b1 : b2
+    self._d[4][self._z - 9] = self._w.at(14) == 0 ? b1 : b2
+    self._d[5][self._z - 11] = self._w.at(15) == 0 ? b1 : b2
+    self._d[5][self._z - 10] = self._w.at(16) == 0 ? b1 : b2
+    self._d[5][self._z - 9] = self._w.at(17) == 0 ? b1 : b2
+  }
+
+  fn encode (mut self: ref Self, ecc := ErrorCorrectionLevel.Q, mask: int? = nil) byte[][] {
+    self._e = ecc
+
+    self.updateMode()
+    self.updateVersion()
+    self.updateModulesSize()
+    self.updateCharacterCountIndicator()
+    self.updateErrorCorrectionTableEntry()
+
+    self._o.merge(ByteArray_fromInt(self._m, 4))
+    self._o.merge(ByteArray_fromInt(self._l, self._x))
+
+    if self._m == .Numeric {
+      self._o.merge(self.encodeInputNumeric())
+    } elif self._m == .Alphanumeric {
+      self._o.merge(self.encodeInputAlphanumeric())
+    } elif self._m == .Byte {
+      self._o.merge(self.encodeInputByte())
+    } elif self._m == .Kanji {
+      self._o.merge(self.encodeInputKanji())
+    }
+
+    outputLen1 := self._o.len
+    requiredBitsCount := self._b.totalDataCodewords * 8
+
+    if requiredBitsCount > outputLen1 {
+      delta := requiredBitsCount - outputLen1
+      self._o.padEnd(outputLen1 + (delta > 4 ? 4 : delta))
+    }
+
+    outputLen2 := self._o.len
+
+    if outputLen2 % 8 != 0 {
+      self._o.padEnd(outputLen2 + 8 - (outputLen2 % 8))
+    }
+
+    outputLen3 := self._o.len
+
+    if requiredBitsCount > outputLen3 {
+      delta := (requiredBitsCount - outputLen3) / 8
+      byteArray017 := ByteArray_fromInt(17, 8)
+      byteArray236 := ByteArray_fromInt(236, 8)
+
+      loop i := 0; i < delta; i++ {
+        self._o.merge(i & 1 ? byteArray017 : byteArray236)
+      }
+    }
+
+    self.transformOutputToBytes()
+    self.updateErrorDataCorrection()
+    self.transformOutputToBits()
+    self._o.padEnd(self._o.len + requiredRemainderBits(self._v))
+
+    self.initDisplay()
+    self.drawFinderPattern(0, 0)
+    self.drawFinderPattern(self._z - 7, 0)
+    self.drawFinderPattern(0, self._z - 7)
+    self.drawAlignmentPatterns(alignmentPatternLocations(self._v))
+    self.drawTimingPatterns()
+    self.drawDarkModule()
+    self.drawReserveFormatInformationArea()
+    self.drawReserveVersionInformationArea()
+    self.updateModuleSequence()
+
+    if mask == nil {
+      self.maskData()
+    } else {
+      self._a = mask
+      self.drawData()
+      self.drawMaskData()
+    }
+
+    return self._d
+  }
+
+  fn encodeInputNumeric (self: ref Self) IByteArray {
+    mut result := ByteArray()
+
+    loop i := 0; i < self._l; i += 3 {
+      group := self._s.slice(i, i + 3)
+      groupLen := group.len
+      arrLen := i < self._l - 3 ? 10 : groupLen == 1 ? 4 : groupLen == 2 ? 7 : 10
+
+      result.merge(ByteArray_fromInt(group.toInt(), arrLen))
+    }
+
+    return result
+  }
+
+  fn encodeInputAlphanumeric (self: ref Self) IByteArray {
+    mut result := ByteArray()
+
+    loop i := 0; i < self._l; i += 2 {
+      group := self._s.slice(i, i + 2)
+      groupLen := group.len
+
+      if groupLen == 1 {
+        result.merge(ByteArray_fromInt(alphanumericTable(group[0]), 6))
+      } else {
+        val := (45 * alphanumericTable(group[0])) + alphanumericTable(group[1])
+        result.merge(ByteArray_fromInt(val, 11))
+      }
+    }
+
+    return result
+  }
+
+  fn encodeInputByte (self: ref Self) IByteArray {
+    mut result := ByteArray(self._l * 8)
+
+    loop i := 0; i < self._l; i++ {
+      result.set(ByteArray_fromInt(self._s[i].byte, 8), i * 8)
+    }
+
+    return result
+  }
+
+  fn encodeInputKanji (self: ref Self) IByteArray {
+    return ByteArray()
+  }
+
+  fn initDisplay (mut self: ref Self) {
+    mut line: byte[]
+
+    loop i := 0; i < self._z; i++ {
+      line.push(0)
+    }
+
+    loop i := 0; i < self._z; i++ {
+      self._d.push(line)
+    }
+  }
+
+  fn maskData (mut self: ref Self) {
+    mut lowestPenalty := math_MaxInt
+    mut lowestPenaltyIndex := 0
+
+    loop i := 0; i < 8; i++ {
+      self._a = i
+      self.drawData()
+      self.drawMaskData()
+      penalty := self.calcPenaltyScore()
+
+      if penalty < lowestPenalty {
+        lowestPenalty = penalty
+        lowestPenaltyIndex = i
+      }
+    }
+
+    self._a = lowestPenaltyIndex
+    self.drawData()
+    self.drawMaskData()
+  }
+
+  fn transformOutputToBits (mut self: ref Self) {
+    mut result := ByteArray()
+
+    loop i := 0; i < self._o.len; i++ {
+      result.merge(ByteArray_fromInt(self._o.at(i), 8))
+    }
+
+    self._o = result
+  }
+
+  fn transformOutputToBytes (mut self: ref Self) {
+    mut result := ByteArray(self._o.len / 8)
+
+    loop i := 0; i < self._o.len; i++ {
+      result.data[i >> 3] |= self._o.at(i) << (7 - (i & 7))
+    }
+
+    self._o = result
+  }
+
+  fn transposeData (mut self: ref Self) {
+    mut result := self._d
+
+    loop i := 0; i < self._z; i++ {
+      loop j := 0; j < self._z; j++ {
+        it: byte = self._d[j][i]
+        result[i][j] = it
+      }
+    }
+
+    self._d = result
+  }
+
+  fn updateFormatModules (mut self: ref Self) {
+    errorCorrectionLevelIndex: int = self._e
+    data := errorCorrectionLevelIndex << 3 | self._a
+    mut rem := data
+    loop i := 0; i < 10; i++ {
+      rem = (rem << 1) ^ ((rem >> 9) * 0x537)
+    }
+    bits := (data << 10 | rem) ^ 0x5412
+
+    self._f = ByteArray(15)
+    loop i := 0; i < self._f.len; i++ {
+      self._f.data[self._f.len - i - 1] = ((bits >> i) & 1) != 0
+    }
+  }
+
+  fn updateErrorCorrectionTableEntry (mut self: ref Self) {
+    errorCorrectionLevelIndex: int = self._e
+    entry := ERROR_CORRECTION_TABLE[self._v - 1][errorCorrectionLevelIndex]
+
+    self._b = ErrorCorrectionTableEntry{
+      totalDataCodewords: entry[0],
+      errorCorrectionCodewordsPerBlock: entry[1],
+      group1Blocks: entry[2],
+      group1Codewords: entry[3],
+      group2Blocks: entry[4],
+      group2Codewords: entry[5]
+    }
+  }
+
+  fn updateErrorDataCorrection (mut self: ref Self) {
+    eccPerBlock := self._b.errorCorrectionCodewordsPerBlock
+    mut dataCodewordsBlocks: IByteArray[]
+    mut eccCodewordsBlocks: IByteArray[]
+    mut offset := 0
+
+    loop i := 0; i < self._b.group1Blocks; i++ {
+      dataCodewordsBlocks.push(self._o.slice(offset, offset + self._b.group1Codewords))
+      eccCodewordsBlocks.push(self._p.errorDataCorrection(dataCodewordsBlocks.last, eccPerBlock))
+      offset += self._b.group1Codewords
+    }
+
+    loop i := 0; i < self._b.group2Blocks; i++ {
+      dataCodewordsBlocks.push(self._o.slice(offset, offset + self._b.group2Codewords))
+      eccCodewordsBlocks.push(self._p.errorDataCorrection(dataCodewordsBlocks.last, eccPerBlock))
+      offset += self._b.group2Codewords
+    }
+
+    maxCodewords := self._b.group1Codewords > self._b.group2Codewords
+      ? self._b.group1Codewords
+      : self._b.group2Codewords
+
+    dataCodewordsBlocksLen := dataCodewordsBlocks.len
+    eccCodewordsBlocksLen := eccCodewordsBlocks.len
+    self._o = ByteArray(0)
+
+    loop i := 0; i < maxCodewords; i++ {
+      loop j := 0; j < dataCodewordsBlocksLen; j++ {
+        if i < dataCodewordsBlocks[j].len {
+          self._o.push(dataCodewordsBlocks[j].at(i))
+        }
+      }
+    }
+
+    loop i := 0; i < eccPerBlock; i++ {
+      loop j := 0; j < eccCodewordsBlocksLen; j++ {
+        self._o.push(eccCodewordsBlocks[j].at(i))
+      }
+    }
+  }
+
+  fn updateCharacterCountIndicator (mut self: ref Self) {
+    if self._v <= 9 && self._m == .Numeric { self._x = 10 }
+    elif self._v <= 9 && self._m == .Alphanumeric { self._x = 9 }
+    elif self._v <= 9 && self._m == .Byte { self._x = 8 }
+    elif self._v <= 9 && self._m == .Kanji { self._x = 8 }
+    elif self._v <= 26 && self._m == .Numeric { self._x = 12 }
+    elif self._v <= 26 && self._m == .Alphanumeric { self._x = 11 }
+    elif self._v <= 26 && self._m == .Byte { self._x = 16 }
+    elif self._v <= 26 && self._m == .Kanji { self._x = 10 }
+    elif self._v <= 40 && self._m == .Numeric { self._x = 14 }
+    elif self._v <= 40 && self._m == .Alphanumeric { self._x = 13 }
+    elif self._v <= 40 && self._m == .Byte { self._x = 16 }
+    elif self._v <= 40 && self._m == .Kanji { self._x = 12 }
+    else { raise("QRCode input is too long to calculate character count indicator") }
+  }
+
+  fn updateMode (mut self: ref Self) {
+    loop i := self._l - 1; i >= 0; i-- {
+      ch := self._s[i]
+      isNumeric := isNumericMode(ch)
+      isAlphanumeric := isAlphanumericMode(ch)
+      isByte := isByteMode(ch)
+      isKanji := isKanjiMode(ch)
+
+      if isNumericMode(ch) {
+        if self._m < .Numeric {
+          self._m = .Numeric
+        }
+      } elif isAlphanumericMode(ch) {
+        if self._m < .Alphanumeric {
+          self._m = .Alphanumeric
+        }
+      } elif isByteMode(ch) {
+        if self._m < .Byte {
+          self._m = .Byte
+        }
+      } elif isKanjiMode(ch) {
+        if self._m < .Kanji {
+          self._m = .Kanji
+        }
+      }
+    }
+  }
+
+  fn updateModuleSequence (mut self: ref Self) {
+    mut result: int[][]
+    mut next := 1
+    mut x := self._z - 2
+    mut y := self._z
+
+    loop i := 0; i < self._o.len; {
+      if next == 1 {
+        x += 1
+        y -= 1
+        next = 2
+      } elif next == 2 {
+        x -= 1
+        next = 1
+      } elif next == 3 {
+        x += 1
+        y += 1
+        next = 4
+      } elif next == 4 {
+        x -= 1
+        next = 3
+      }
+
+      shouldChangeDirection := y < 0 || y == self._z
+
+      if shouldChangeDirection && next < 3 {
+        x -= x == 8 ? 4 : 3
+        next = 3
+        continue
+      } elif shouldChangeDirection && next > 2 {
+        x -= x == 8 ? 4 : 3
+        next = 1
+        continue
+      } elif self.drawCollidesPoint(x, y) {
+        continue
+      }
+
+      result.push([x, y])
+      i++
+    }
+
+    self._q = result
+  }
+
+  fn updateModulesSize (mut self: ref Self) {
+    self._z = self._v * 4 + 17
+  }
+
+  fn updateVersion (mut self: ref Self) {
+    self._v = characterCapacityTable(self._e, self._m, self._l)
+  }
+
+  fn updateVersionModules (mut self: ref Self) {
+    if self._v < 7 {
+      return
+    }
+
+    mut rem := self._v
+    loop i := 0; i < 12; i++ {
+      rem = (rem << 1) ^ ((rem >> 11) * 0x1F25)
+    }
+    bits: i64 = (self._v << 12) | rem
+
+    self._w = ByteArray(18)
+    loop i := 0; i < self._w.len; i++ {
+      self._w.data[i] = ((bits >> i) & 1) != 0
+    }
+  }
+}
+
+fn QRCode (input: buffer_Buffer) IQRCode {
+  s := input.str()
+
+  return IQRCode{
+    _i: input,
+    _l: s.len,
+    _p: Polynomial(),
+    _s: s
+  }
+}
+
+fn QRCode_toTerminal (qrcode: IQRCode) {
+  block := ' '.repeat(2)
+  mut result := ""
+
+  loop i := 0; i < qrcode._z; i++ {
+    loop j := 0; j < qrcode._z; j++ {
+      module := qrcode._d[j][i]
+      result += module == 1
+        ? "\033[1;47m" + block + "\033[0m"
+        : module == 2
+          ? "\033[1;40m" + block + "\033[0m"
+          : block
+    }
+
+    result += os_EOL
+  }
+
+  print(result, terminator: "")
+}

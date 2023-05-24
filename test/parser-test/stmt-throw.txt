@@ -1,0 +1,21 @@
+======= stdin =======
+throw Error("Test")
+======= stdout =======
+<StmtThrow start="1:1" end="1:20">
+  <ExprCall start="1:7" end="1:20">
+    <ExprCallCallee>
+      <ExprAccess start="1:7" end="1:12">
+        <Token type="ID" val="Error" start="1:7" end="1:12" />
+      </ExprAccess>
+    </ExprCallCallee>
+    <ExprCallArgs>
+      <ExprCallArg>
+        <ExprCallArgExpr>
+          <ExprLit start="1:13" end="1:19">
+            <Token type="LIT_STR" val="\"Test\"" start="1:13" end="1:19" />
+          </ExprLit>
+        </ExprCallArgExpr>
+      </ExprCallArg>
+    </ExprCallArgs>
+  </ExprCall>
+</StmtThrow>

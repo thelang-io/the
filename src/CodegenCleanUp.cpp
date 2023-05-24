@@ -135,3 +135,10 @@ std::string CodegenCleanUp::gen (std::size_t indent) const {
 bool CodegenCleanUp::hasCleanUp (CodegenCleanUpType t) const {
   return !this->empty() || (this->type != t && this->parent != nullptr && this->parent->hasCleanUp(t));
 }
+
+bool CodegenCleanUp::isClosestJump () const {
+  if (!this->empty()) {
+    return false;
+  }
+  return this->jumpUsed || (this->parent != nullptr && this->parent->isClosestJump());
+}

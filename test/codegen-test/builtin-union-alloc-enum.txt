@@ -17,8 +17,8 @@ main {
 ======= code =======
 #include <stdarg.h>
 
-#define TYPE_HairColor_0 1
-#define TYPE_EyeColor_0 2
+#define TYPE_HairColor_0 2
+#define TYPE_EyeColor_0 3
 
 enum __THE_1_HairColor_0 {
   __THE_0_HairColorSDBlack_0,
@@ -36,8 +36,8 @@ struct __THE_1_union_HairColorUSEyeColorUE;
 struct __THE_1_union_HairColorUSEyeColorUE {
   int t;
   union {
-    enum __THE_1_HairColor_0 v1;
-    enum __THE_1_EyeColor_0 v2;
+    enum __THE_1_HairColor_0 v2;
+    enum __THE_1_EyeColor_0 v3;
   };
 };
 
@@ -47,8 +47,8 @@ struct __THE_1_union_HairColorUSEyeColorUE __THE_1_union_HairColorUSEyeColorUE_a
   struct __THE_1_union_HairColorUSEyeColorUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_HairColor_0) r.v1 = va_arg(args, enum __THE_1_HairColor_0);
-  if (t == TYPE_EyeColor_0) r.v2 = va_arg(args, enum __THE_1_EyeColor_0);
+  if (t == TYPE_HairColor_0) r.v2 = va_arg(args, enum __THE_1_HairColor_0);
+  if (t == TYPE_EyeColor_0) r.v3 = va_arg(args, enum __THE_1_EyeColor_0);
   va_end(args);
   return r;
 }

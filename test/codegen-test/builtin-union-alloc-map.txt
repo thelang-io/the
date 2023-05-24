@@ -18,15 +18,31 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_map_strMSintME 1
-#define TYPE_map_strMSstrME 2
+#define TYPE_map_strMSintME 2
+#define TYPE_map_strMSstrME 3
 
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
@@ -59,12 +75,15 @@ struct __THE_1_map_strMSintME {
 struct __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE {
   int t;
   union {
-    struct __THE_1_map_strMSintME v1;
-    struct __THE_1_map_strMSstrME v2;
+    struct __THE_1_map_strMSintME v2;
+    struct __THE_1_map_strMSstrME v3;
   };
 };
 
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+
 void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
 struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_alloc (int, ...);
@@ -74,13 +93,26 @@ void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
 struct __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE_alloc (int, ...);
 void __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE_free (struct __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
+}
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -124,14 +156,14 @@ struct __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE __THE_1_union_map_strMSint
   struct __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_map_strMSintME) r.v1 = va_arg(args, struct __THE_1_map_strMSintME);
-  if (t == TYPE_map_strMSstrME) r.v2 = va_arg(args, struct __THE_1_map_strMSstrME);
+  if (t == TYPE_map_strMSintME) r.v2 = va_arg(args, struct __THE_1_map_strMSintME);
+  if (t == TYPE_map_strMSstrME) r.v3 = va_arg(args, struct __THE_1_map_strMSstrME);
   va_end(args);
   return r;
 }
 void __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE_free (struct __THE_1_union_map_strMSintMEUSmap_strMSstrMEUE n) {
-  if (n.t == TYPE_map_strMSintME) __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n.v1);
-  if (n.t == TYPE_map_strMSstrME) __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n.v2);
+  if (n.t == TYPE_map_strMSintME) __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n.v2);
+  if (n.t == TYPE_map_strMSstrME) __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n.v3);
 }
 
 int main () {

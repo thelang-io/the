@@ -17,6 +17,7 @@
 #ifndef SRC_AST_EXPR_HPP
 #define SRC_AST_EXPR_HPP
 
+#include "Reader.hpp"
 #include "VarMap.hpp"
 
 enum ASTExprAssignOp {
@@ -109,6 +110,8 @@ struct ASTNodeExpr {
   Type *type;
   std::shared_ptr<ASTExpr> body;
   bool parenthesized = false;
+  ReaderLocation start;
+  ReaderLocation end;
 
   bool isLit () const;
   std::string litBody () const;

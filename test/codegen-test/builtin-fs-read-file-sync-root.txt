@@ -17,36 +17,68 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define TYPE_error_Error 1
 
 struct buffer {
   unsigned char *d;
   size_t l;
 };
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+
 void *alloc (size_t);
 void buffer_free (struct buffer);
 struct str cstr_concat_str (const char *, struct str);
-struct buffer fs_readFileSync (struct str);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
+void error_stack_str (err_state_t *);
+struct buffer fs_readFileSync (struct str, int, int);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 void buffer_free (struct buffer o) {
@@ -60,12 +92,83 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
-struct buffer fs_readFileSync (struct str s) {
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  state->id = id;
+  state->ctx = ctx;
+  state->_free = f;
+  error_stack_pos(state, line, col);
+  error_stack_str(state);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
+}
+void error_stack_str (err_state_t *state) {
+  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+  stack->l = message.l;
+  stack->d = re_alloc(stack->d, stack->l);
+  memcpy(stack->d, message.d, stack->l);
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    size_t z;
+    char *fmt;
+    if (it.col == 0 && it.line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+    }
+    stack->d = re_alloc(stack->d, stack->l + z + 1);
+    if (it.col == 0 && it.line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it.name, it.file);
+    } else if (it.col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line);
+    } else {
+      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line, it.col);
+    }
+    stack->l += z;
+  }
+}
+struct buffer fs_readFileSync (struct str s, int line, int col) {
   char *c = str_cstr(s);
   FILE *f = fopen(c, "rb");
   if (f == NULL) {
-    fprintf(stderr, "Error: failed to open file `%s` for reading" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to open file `%s` for reading";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, c);
+    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto fs_readFileSync_cleanup;
   }
   unsigned char *d = NULL;
   unsigned char b[4096];
@@ -77,16 +180,15 @@ struct buffer fs_readFileSync (struct str s) {
     l += y;
   }
   fclose(f);
+fs_readFileSync_cleanup:
   free(c);
   str_free((struct str) s);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return (struct buffer) {d, l};
 }
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
   return r;
 }
 struct str str_alloc (const char *r) {
@@ -121,9 +223,31 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
 
 int main () {
-  buffer_free((struct buffer) fs_readFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt")));
+  error_stack_push(&err_state, "/test", "main", 0, 0);
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  buffer_free((struct buffer) fs_readFileSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "test.txt"), 2, 3));
+L1:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

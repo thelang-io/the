@@ -19,6 +19,7 @@
 
 #include "ASTExpr.hpp"
 
+struct ASTCatchClause;
 struct ASTFnDeclParam;
 struct ASTNodeBreak;
 struct ASTNodeContinue;
@@ -29,6 +30,8 @@ struct ASTNodeLoop;
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
 struct ASTNodeReturn;
+struct ASTNodeThrow;
+struct ASTNodeTry;
 struct ASTNodeTypeDecl;
 struct ASTNodeVarDecl;
 
@@ -43,23 +46,34 @@ using ASTNodeBody = std::variant<
   ASTNodeMain,
   ASTNodeObjDecl,
   ASTNodeReturn,
+  ASTNodeThrow,
+  ASTNodeTry,
   ASTNodeTypeDecl,
   ASTNodeVarDecl
 >;
 
-struct ASTFnDeclParam {
-  std::shared_ptr<Var> var;
-  std::optional<ASTNodeExpr> init;
-};
-
 struct ASTNode {
   std::shared_ptr<ASTNodeBody> body;
   ASTNode *parent;
+  ReaderLocation start;
+  ReaderLocation end;
 
   std::string xml (std::size_t = 0) const;
 };
 
 using ASTBlock = std::vector<ASTNode>;
+
+struct ASTCatchClause {
+  ASTNode param;
+  ASTBlock body;
+
+  std::string xml (std::size_t = 0) const;
+};
+
+struct ASTFnDeclParam {
+  std::shared_ptr<Var> var;
+  std::optional<ASTNodeExpr> init;
+};
 
 struct ASTNodeBreak {
 };
@@ -115,6 +129,15 @@ struct ASTNodeObjDecl {
 
 struct ASTNodeReturn {
   std::optional<ASTNodeExpr> body;
+};
+
+struct ASTNodeThrow {
+  ASTNodeExpr arg;
+};
+
+struct ASTNodeTry {
+  ASTBlock body;
+  std::vector<ASTCatchClause> handlers;
 };
 
 struct ASTNodeTypeDecl {

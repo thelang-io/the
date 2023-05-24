@@ -19,7 +19,7 @@
 
 const std::vector<std::string> codegenEnum = {
   R"(_{struct str} enum_str (int d) {)" EOL
-  R"(  char buf[512];)" EOL
+  R"(  char buf[24];)" EOL
   R"(  _{sprintf}(buf, "%d", d);)" EOL
   R"(  return _{str_alloc}(buf);)" EOL
   R"(})" EOL

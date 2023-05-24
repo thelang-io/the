@@ -38,7 +38,8 @@ bool TypeCallInfo::empty () const {
     !this->isSelfFirst &&
     this->selfCodeName.empty() &&
     this->selfType == nullptr &&
-    !this->isSelfMut;
+    !this->isSelfMut &&
+    !this->throws;
 }
 
 std::string TypeCallInfo::xml (std::size_t indent, std::set<std::string> parentTypes) const {
@@ -133,6 +134,25 @@ Type *Type::largest (Type *a, Type *b) {
   ) ? a : b;
 }
 
+std::optional<TypeField> Type::fieldNth (std::size_t idx) const {
+  if (this->isAlias()) {
+    return std::get<TypeAlias>(this->body).type->fieldNth(idx);
+  } else if (this->isRef()) {
+    return std::get<TypeRef>(this->body).refType->fieldNth(idx);
+  }
+
+  auto result = std::vector<TypeField>{};
+
+  for (const auto &field : this->fields) {
+    if (field.builtin || field.type->isMethod()) {
+      continue;
+    }
+    result.push_back(field);
+  }
+
+  return idx >= result.size() ? std::optional<TypeField>{} : result[idx];
+}
+
 Type *Type::getEnumerator (const std::string &memberName) const {
   if (!this->isEnum()) {
     throw Error("tried to get a member of non-enum");
@@ -163,7 +183,7 @@ TypeField Type::getField (const std::string &fieldName) const {
   });
 
   if (typeField == this->fields.end()) {
-    throw Error("tried to get non-existing field");
+    throw Error("tried to get non-existing field `" + fieldName + "`");
   }
 
   return *typeField;
@@ -682,7 +702,7 @@ bool Type::shouldBeFreed () const {
   return
     this->isAny() ||
     this->isArray() ||
-    this->isFn() ||
+    (this->isFn() && !this->builtin) ||
     this->isMap() ||
     this->isObj() ||
     this->isOpt() ||
@@ -726,6 +746,11 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
 
   result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
   result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
+
+  if (this->isFn()) {
+    auto fnType = std::get<TypeFn>(this->body);
+    result += fnType.throws ? " throws" : "";
+  }
 
   if (this->isEnumerator() || (this->isObj() && parentTypes.contains(this->codeName))) {
     return result + " />";

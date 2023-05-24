@@ -25,21 +25,16 @@ enum __THE_1_Test_0 {
   __THE_0_TestSDBlue_0
 };
 
-struct __THE_1_fn$1000;
 struct __THE_1_fn$1000P;
-struct __THE_1_fn$1001;
+struct __THE_1_fn$1000;
 struct __THE_1_fn$1001P;
+struct __THE_1_fn$1001;
 
-struct __THE_1_fn$1000 {
-  enum __THE_1_Test_0 (*f) (void *, struct __THE_1_fn$1000P);
-  void *x;
-  size_t l;
-};
 struct __THE_1_fn$1000P {
   enum __THE_1_Test_0 n0;
 };
-struct __THE_1_fn$1001 {
-  enum __THE_1_Test_0 (*f) (void *, struct __THE_1_fn$1001P);
+struct __THE_1_fn$1000 {
+  enum __THE_1_Test_0 (*f) (void *, struct __THE_1_fn$1000P);
   void *x;
   size_t l;
 };
@@ -47,6 +42,11 @@ struct __THE_1_fn$1001P {
   enum __THE_1_Test_0 n0;
   unsigned char o1;
   enum __THE_1_Test_0 n1;
+};
+struct __THE_1_fn$1001 {
+  enum __THE_1_Test_0 (*f) (void *, struct __THE_1_fn$1001P);
+  void *x;
+  size_t l;
 };
 
 enum __THE_1_Test_0 __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);

@@ -48,10 +48,10 @@ class TypeTest : public testing::Test {
     this->fn_ = this->tm_.createFn({
       TypeFnParam{"a", this->tm_.get("int"), false, true, false},
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-    }, this->tm_.get("int"));
+    }, this->tm_.get("int"), false);
 
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
-    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
+    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.createObj("Test", "Test_0", {
       TypeField{"a", this->tm_.get("int"), false, false},
@@ -251,6 +251,54 @@ TEST_F(TypeTest, RealOnRef) {
   EXPECT_EQ(Type::real(this->ref_), this->tm_.get("int"));
 }
 
+TEST_F(TypeTest, FieldNthGetsZero) {
+  auto type1 = this->tm_.createAlias("Test", this->obj_);
+  auto type2 = this->tm_.createRef(this->obj_);
+
+  EXPECT_EQ(this->obj_->fieldNth(0)->name, "a");
+  EXPECT_EQ(type1->fieldNth(0)->name, "a");
+  EXPECT_EQ(type2->fieldNth(0)->name, "a");
+}
+
+TEST_F(TypeTest, FieldNthGetsOne) {
+  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("int"), false, false}
+  });
+
+  auto type2 = this->tm_.createAlias("Test", type1);
+  auto type3 = this->tm_.createRef(type1);
+
+  EXPECT_EQ(type1->fieldNth(1)->name, "b");
+  EXPECT_EQ(type2->fieldNth(1)->name, "b");
+  EXPECT_EQ(type3->fieldNth(1)->name, "b");
+}
+
+TEST_F(TypeTest, FieldNthReturnsNull) {
+  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {});
+  auto type2 = this->tm_.createAlias("Test", type1);
+  auto type3 = this->tm_.createRef(type2);
+
+  EXPECT_EQ(type1->fieldNth(0), std::nullopt);
+  EXPECT_EQ(type2->fieldNth(0), std::nullopt);
+  EXPECT_EQ(type3->fieldNth(0), std::nullopt);
+  EXPECT_EQ(this->obj_->fieldNth(1), std::nullopt);
+}
+
+TEST_F(TypeTest, GetsEnumerator) {
+  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
+}
+
+TEST_F(TypeTest, GetsNonExistingEnumerator) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->any_->getEnumerator("a");
+  }, "tried to get a member of non-enum");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->enum_->getEnumerator("White");
+  }, "tried to get non-existing enum member");
+}
+
 TEST_F(TypeTest, GetsField) {
   EXPECT_EQ(this->alias_->getField("str").name, "str");
   EXPECT_EQ(this->any_->getField("str").name, "str");
@@ -268,65 +316,51 @@ TEST_F(TypeTest, GetsField) {
 TEST_F(TypeTest, GetsNonExistingField) {
   EXPECT_THROW_WITH_MESSAGE({
     this->alias_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->any_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->arr_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->enum_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->fn_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->map_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->obj_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->opt_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->ref_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->union_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("int")->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("str")->getField("a");
-  }, "tried to get non-existing field");
-}
-
-TEST_F(TypeTest, GetsEnumerator) {
-  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
-}
-
-TEST_F(TypeTest, GetsNonExistingEnumerator) {
-  EXPECT_THROW_WITH_MESSAGE({
-    this->any_->getEnumerator("a");
-  }, "tried to get a member of non-enum");
-
-  EXPECT_THROW_WITH_MESSAGE({
-    this->enum_->getEnumerator("White");
-  }, "tried to get non-existing enum member");
+  }, "tried to get non-existing field `a`");
 }
 
 TEST_F(TypeTest, GetsProp) {
@@ -706,27 +740,27 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfFn) {
-  auto type1 = this->tm_.createFn({}, this->tm_.get("int"));
+  auto type1 = this->tm_.createFn({}, this->tm_.get("int"), false);
 
   auto type2 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("int"));
+  }, this->tm_.get("int"), false);
 
   auto type3 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("str"), false, false, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"));
+  }, this->tm_.get("str"), false);
 
-  auto type4 = this->tm_.createFn({}, this->tm_.get("void"));
+  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), false);
 
   auto type5 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"));
+  }, this->tm_.get("void"), false);
 
   auto type6 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"));
+  }, this->tm_.get("str"), false);
 
   EXPECT_TRUE(this->fn_->isFn());
   EXPECT_TRUE(type1->isFn());
@@ -1221,6 +1255,7 @@ TEST_F(TypeTest, ShouldBeFreed) {
   EXPECT_TRUE(this->arr_->shouldBeFreed());
   EXPECT_FALSE(this->enum_->shouldBeFreed());
   EXPECT_TRUE(this->fn_->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("request_open")->shouldBeFreed());
   EXPECT_TRUE(this->map_->shouldBeFreed());
   EXPECT_TRUE(this->obj_->shouldBeFreed());
   EXPECT_TRUE(this->opt_->shouldBeFreed());

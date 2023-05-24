@@ -21,9 +21,7 @@
 #include <set>
 #include <string>
 
-// (?<!_\{|[a-zA-Z0-9_])(EXIT_FAILURE|EXIT_SUCCESS|FILE|NULL|PRId8|PRId16|PRId32|PRId64|PRIu8|PRIu16|PRIu32|PRIu64|THE_EOL|THE_OS_WINDOWS|THE_PATH_SEP|alloc|bool|exit|false|fprintf|fputc|fputs|fread|free|fwrite|int8_t|int16_t|int32_t|int64_t|malloc|memcmp|memcpy|printf|re_alloc|realloc|size_t|snprintf|sprintf|stderr|stdout|str_alloc|str_free|strlen|struct any|struct buffer|struct str|true|uin8_t|uint16_t|uint32_t|uint64_t|va_arg|va_end|va_list|va_start)(?!}|[a-zA-Z0-9_])
-
-extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
+extern inline const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"THE_EOL", {"definitions"}},
   std::pair<std::string, std::set<std::string>>{"THE_OS_LINUX", {"definitions"}},
   std::pair<std::string, std::set<std::string>>{"THE_OS_MACOS", {"definitions"}},
@@ -34,11 +32,14 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
 
   std::pair<std::string, std::set<std::string>>{"struct any", {"typeAny"}},
   std::pair<std::string, std::set<std::string>>{"struct buffer", {"typeBuffer"}},
+  std::pair<std::string, std::set<std::string>>{"err_stack_t", {"typeErrStack"}},
+  std::pair<std::string, std::set<std::string>>{"err_state_t", {"typeErrState"}},
   std::pair<std::string, std::set<std::string>>{"struct request", {"typeRequest"}},
   std::pair<std::string, std::set<std::string>>{"struct str", {"typeStr"}},
   std::pair<std::string, std::set<std::string>>{"struct win_reparse_data_buffer", {"typeWinReparseDataBuffer"}},
 
   std::pair<std::string, std::set<std::string>>{"environ", {"varEnviron"}},
+  std::pair<std::string, std::set<std::string>>{"err_state", {"varErrState"}},
   std::pair<std::string, std::set<std::string>>{"lib_openssl_init", {"varLibOpensslInit"}},
   std::pair<std::string, std::set<std::string>>{"lib_ws2_init", {"varLibWs2Init"}},
 
@@ -108,6 +109,12 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
 
   std::pair<std::string, std::set<std::string>>{"getpwuid", {"libPwd"}},
 
+  std::pair<std::string, std::set<std::string>>{"struct jmp_buf", {"libSetJmp"}},
+  std::pair<std::string, std::set<std::string>>{"longjmp", {"libSetJmp"}},
+  std::pair<std::string, std::set<std::string>>{"setjmp", {"libSetJmp"}},
+
+  std::pair<std::string, std::set<std::string>>{"noreturn", {"libStdNoReturn"}},
+
   std::pair<std::string, std::set<std::string>>{"va_arg", {"libStdarg"}},
   std::pair<std::string, std::set<std::string>>{"va_end", {"libStdarg"}},
   std::pair<std::string, std::set<std::string>>{"va_list", {"libStdarg"}},
@@ -161,7 +168,6 @@ extern const std::map<std::string, std::set<std::string>> codegenMetadata = {
   std::pair<std::string, std::set<std::string>>{"stdout", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"_pclose", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"_popen", {"libStdio"}},
-  std::pair<std::string, std::set<std::string>>{"_snprintf", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"_unlink", {"libStdio"}},
 
   std::pair<std::string, std::set<std::string>>{"EXIT_SUCCESS", {"libStdlib"}},

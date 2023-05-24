@@ -1,0 +1,345 @@
+======= stdin =======
+try {
+} catch err: Error {
+}
+
+try {
+  result := request("GET", "localhost")
+  print(result.body)
+} catch err: Error {
+}
+
+try {
+} catch err: Error {
+  print(err.stack, to: "stderr")
+}
+
+try {
+} catch err1: Error1 {
+  print("Error1:", err1.stack, to: "stderr")
+} catch err2: Error2 {
+  print("Error2:", err2.stack, to: "stderr")
+} catch err3: Error3 {
+  print("Error3:", err3.stack, to: "stderr")
+}
+======= stdout =======
+<StmtTry start="1:1" end="3:2">
+  <StmtTryHandlers>
+    <CatchClause>
+      <CatchClauseParam>
+        <StmtVarDecl start="2:9" end="2:19">
+          <StmtVarDeclId>
+            <Token type="ID" val="err" start="2:9" end="2:12" />
+          </StmtVarDeclId>
+          <StmtVarDeclType>
+            <TypeId start="2:14" end="2:19">
+              <Token type="ID" val="Error" start="2:14" end="2:19" />
+            </TypeId>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </CatchClauseParam>
+      <CatchClauseBody>
+      </CatchClauseBody>
+    </CatchClause>
+  </StmtTryHandlers>
+</StmtTry>
+<StmtTry start="5:1" end="9:2">
+  <StmtTryBody>
+    <StmtVarDecl start="6:3" end="6:40">
+      <StmtVarDeclId>
+        <Token type="ID" val="result" start="6:3" end="6:9" />
+      </StmtVarDeclId>
+      <StmtVarDeclInit>
+        <ExprCall start="6:13" end="6:40">
+          <ExprCallCallee>
+            <ExprAccess start="6:13" end="6:20">
+              <Token type="ID" val="request" start="6:13" end="6:20" />
+            </ExprAccess>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprLit start="6:21" end="6:26">
+                  <Token type="LIT_STR" val="\"GET\"" start="6:21" end="6:26" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprLit start="6:28" end="6:39">
+                  <Token type="LIT_STR" val="\"localhost\"" start="6:28" end="6:39" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </StmtVarDeclInit>
+    </StmtVarDecl>
+    <ExprCall start="7:3" end="7:21">
+      <ExprCallCallee>
+        <ExprAccess start="7:3" end="7:8">
+          <Token type="ID" val="print" start="7:3" end="7:8" />
+        </ExprAccess>
+      </ExprCallCallee>
+      <ExprCallArgs>
+        <ExprCallArg>
+          <ExprCallArgExpr>
+            <ExprAccess start="7:9" end="7:20">
+              <ExprAccessExpr>
+                <ExprAccess start="7:9" end="7:15">
+                  <Token type="ID" val="result" start="7:9" end="7:15" />
+                </ExprAccess>
+              </ExprAccessExpr>
+              <ExprAccessProp>
+                <Token type="ID" val="body" start="7:16" end="7:20" />
+              </ExprAccessProp>
+            </ExprAccess>
+          </ExprCallArgExpr>
+        </ExprCallArg>
+      </ExprCallArgs>
+    </ExprCall>
+  </StmtTryBody>
+  <StmtTryHandlers>
+    <CatchClause>
+      <CatchClauseParam>
+        <StmtVarDecl start="8:9" end="8:19">
+          <StmtVarDeclId>
+            <Token type="ID" val="err" start="8:9" end="8:12" />
+          </StmtVarDeclId>
+          <StmtVarDeclType>
+            <TypeId start="8:14" end="8:19">
+              <Token type="ID" val="Error" start="8:14" end="8:19" />
+            </TypeId>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </CatchClauseParam>
+      <CatchClauseBody>
+      </CatchClauseBody>
+    </CatchClause>
+  </StmtTryHandlers>
+</StmtTry>
+<StmtTry start="11:1" end="14:2">
+  <StmtTryHandlers>
+    <CatchClause>
+      <CatchClauseParam>
+        <StmtVarDecl start="12:9" end="12:19">
+          <StmtVarDeclId>
+            <Token type="ID" val="err" start="12:9" end="12:12" />
+          </StmtVarDeclId>
+          <StmtVarDeclType>
+            <TypeId start="12:14" end="12:19">
+              <Token type="ID" val="Error" start="12:14" end="12:19" />
+            </TypeId>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </CatchClauseParam>
+      <CatchClauseBody>
+        <ExprCall start="13:3" end="13:33">
+          <ExprCallCallee>
+            <ExprAccess start="13:3" end="13:8">
+              <Token type="ID" val="print" start="13:3" end="13:8" />
+            </ExprAccess>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprAccess start="13:9" end="13:18">
+                  <ExprAccessExpr>
+                    <ExprAccess start="13:9" end="13:12">
+                      <Token type="ID" val="err" start="13:9" end="13:12" />
+                    </ExprAccess>
+                  </ExprAccessExpr>
+                  <ExprAccessProp>
+                    <Token type="ID" val="stack" start="13:13" end="13:18" />
+                  </ExprAccessProp>
+                </ExprAccess>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgId>
+                <Token type="ID" val="to" start="13:20" end="13:22" />
+              </ExprCallArgId>
+              <ExprCallArgExpr>
+                <ExprLit start="13:24" end="13:32">
+                  <Token type="LIT_STR" val="\"stderr\"" start="13:24" end="13:32" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </CatchClauseBody>
+    </CatchClause>
+  </StmtTryHandlers>
+</StmtTry>
+<StmtTry start="16:1" end="23:2">
+  <StmtTryHandlers>
+    <CatchClause>
+      <CatchClauseParam>
+        <StmtVarDecl start="17:9" end="17:21">
+          <StmtVarDeclId>
+            <Token type="ID" val="err1" start="17:9" end="17:13" />
+          </StmtVarDeclId>
+          <StmtVarDeclType>
+            <TypeId start="17:15" end="17:21">
+              <Token type="ID" val="Error1" start="17:15" end="17:21" />
+            </TypeId>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </CatchClauseParam>
+      <CatchClauseBody>
+        <ExprCall start="18:3" end="18:45">
+          <ExprCallCallee>
+            <ExprAccess start="18:3" end="18:8">
+              <Token type="ID" val="print" start="18:3" end="18:8" />
+            </ExprAccess>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprLit start="18:9" end="18:18">
+                  <Token type="LIT_STR" val="\"Error1:\"" start="18:9" end="18:18" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprAccess start="18:20" end="18:30">
+                  <ExprAccessExpr>
+                    <ExprAccess start="18:20" end="18:24">
+                      <Token type="ID" val="err1" start="18:20" end="18:24" />
+                    </ExprAccess>
+                  </ExprAccessExpr>
+                  <ExprAccessProp>
+                    <Token type="ID" val="stack" start="18:25" end="18:30" />
+                  </ExprAccessProp>
+                </ExprAccess>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgId>
+                <Token type="ID" val="to" start="18:32" end="18:34" />
+              </ExprCallArgId>
+              <ExprCallArgExpr>
+                <ExprLit start="18:36" end="18:44">
+                  <Token type="LIT_STR" val="\"stderr\"" start="18:36" end="18:44" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </CatchClauseBody>
+    </CatchClause>
+    <CatchClause>
+      <CatchClauseParam>
+        <StmtVarDecl start="19:9" end="19:21">
+          <StmtVarDeclId>
+            <Token type="ID" val="err2" start="19:9" end="19:13" />
+          </StmtVarDeclId>
+          <StmtVarDeclType>
+            <TypeId start="19:15" end="19:21">
+              <Token type="ID" val="Error2" start="19:15" end="19:21" />
+            </TypeId>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </CatchClauseParam>
+      <CatchClauseBody>
+        <ExprCall start="20:3" end="20:45">
+          <ExprCallCallee>
+            <ExprAccess start="20:3" end="20:8">
+              <Token type="ID" val="print" start="20:3" end="20:8" />
+            </ExprAccess>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprLit start="20:9" end="20:18">
+                  <Token type="LIT_STR" val="\"Error2:\"" start="20:9" end="20:18" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprAccess start="20:20" end="20:30">
+                  <ExprAccessExpr>
+                    <ExprAccess start="20:20" end="20:24">
+                      <Token type="ID" val="err2" start="20:20" end="20:24" />
+                    </ExprAccess>
+                  </ExprAccessExpr>
+                  <ExprAccessProp>
+                    <Token type="ID" val="stack" start="20:25" end="20:30" />
+                  </ExprAccessProp>
+                </ExprAccess>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgId>
+                <Token type="ID" val="to" start="20:32" end="20:34" />
+              </ExprCallArgId>
+              <ExprCallArgExpr>
+                <ExprLit start="20:36" end="20:44">
+                  <Token type="LIT_STR" val="\"stderr\"" start="20:36" end="20:44" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </CatchClauseBody>
+    </CatchClause>
+    <CatchClause>
+      <CatchClauseParam>
+        <StmtVarDecl start="21:9" end="21:21">
+          <StmtVarDeclId>
+            <Token type="ID" val="err3" start="21:9" end="21:13" />
+          </StmtVarDeclId>
+          <StmtVarDeclType>
+            <TypeId start="21:15" end="21:21">
+              <Token type="ID" val="Error3" start="21:15" end="21:21" />
+            </TypeId>
+          </StmtVarDeclType>
+        </StmtVarDecl>
+      </CatchClauseParam>
+      <CatchClauseBody>
+        <ExprCall start="22:3" end="22:45">
+          <ExprCallCallee>
+            <ExprAccess start="22:3" end="22:8">
+              <Token type="ID" val="print" start="22:3" end="22:8" />
+            </ExprAccess>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprLit start="22:9" end="22:18">
+                  <Token type="LIT_STR" val="\"Error3:\"" start="22:9" end="22:18" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgExpr>
+                <ExprAccess start="22:20" end="22:30">
+                  <ExprAccessExpr>
+                    <ExprAccess start="22:20" end="22:24">
+                      <Token type="ID" val="err3" start="22:20" end="22:24" />
+                    </ExprAccess>
+                  </ExprAccessExpr>
+                  <ExprAccessProp>
+                    <Token type="ID" val="stack" start="22:25" end="22:30" />
+                  </ExprAccessProp>
+                </ExprAccess>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+            <ExprCallArg>
+              <ExprCallArgId>
+                <Token type="ID" val="to" start="22:32" end="22:34" />
+              </ExprCallArgId>
+              <ExprCallArgExpr>
+                <ExprLit start="22:36" end="22:44">
+                  <Token type="LIT_STR" val="\"stderr\"" start="22:36" end="22:44" />
+                </ExprLit>
+              </ExprCallArgExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </CatchClauseBody>
+    </CatchClause>
+  </StmtTryHandlers>
+</StmtTry>

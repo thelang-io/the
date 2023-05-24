@@ -37,35 +37,64 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_array_str;
-struct __THE_1_fn$0;
 struct __THE_1_fn$0P;
+struct __THE_1_fn$0;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
+};
+struct __THE_1_fn$0P {
+  int line;
+  int col;
+  struct str n0;
 };
 struct __THE_1_fn$0 {
   bool (*f) (void *, struct __THE_1_fn$0P);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$0P {
-  struct str n0;
-};
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
@@ -75,18 +104,44 @@ struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str)
 void __THE_1_array_str_free (struct __THE_1_array_str);
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
-struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str, struct __THE_1_fn$0);
+struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str, struct __THE_1_fn$0, int, int);
 bool __THE_1_filterOne_0 (void *, struct __THE_1_fn$0P);
 bool __THE_1_filterTwo_0 (void *, struct __THE_1_fn$0P);
 bool __THE_1_filterTwoOrOne_0 (void *, struct __THE_1_fn$0P);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
+}
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_stack_pop (err_state_t *state) {
+  state->stack_idx--;
+}
+void error_stack_pos (err_state_t *state, int line, int col) {
+  if (line != 0) state->stack[state->stack_idx - 1].line = line;
+  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+}
+void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
+  state->stack[state->stack_idx].file = file;
+  state->stack[state->stack_idx].name = name;
+  error_stack_pos(state, line, col);
+  state->stack_idx++;
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -135,11 +190,11 @@ struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0 n) {
 void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str self, struct __THE_1_fn$0 n1) {
+struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str self, struct __THE_1_fn$0 n1, int line, int col) {
   size_t l = 0;
   struct str *d = alloc(self.l * sizeof(struct str));
   for (size_t i = 0; i < self.l; i++) {
-    if (n1.f(n1.x, (struct __THE_1_fn$0P) {str_copy(self.d[i])})) {
+    if (n1.f(n1.x, (struct __THE_1_fn$0P) {line, col, str_copy(self.d[i])})) {
       d[l++] = str_copy(self.d[i]);
     }
   }
@@ -149,50 +204,89 @@ struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str self
 }
 bool __THE_1_filterOne_0 (void *px, struct __THE_1_fn$0P p) {
   bool v;
+  error_stack_push(&err_state, "/test", "filterOne", p.line, p.col);
   const struct str __THE_0_it_0 = p.n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "1");
   str_free((struct str) __THE_0_it_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 bool __THE_1_filterTwo_0 (void *px, struct __THE_1_fn$0P p) {
   bool v;
+  error_stack_push(&err_state, "/test", "filterTwo", p.line, p.col);
   const struct str __THE_0_it_0 = p.n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "2");
   str_free((struct str) __THE_0_it_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 bool __THE_1_filterTwoOrOne_0 (void *px, struct __THE_1_fn$0P p) {
   bool v;
+  error_stack_push(&err_state, "/test", "filterTwoOrOne", p.line, p.col);
   const struct str __THE_0_it_0 = p.n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "1") && str_ne_cstr(str_copy(__THE_0_it_0), "2");
   str_free((struct str) __THE_0_it_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
 
 int main () {
+  error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$0 __THE_0_filterOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterOne_0, NULL, 0};
   const struct __THE_1_fn$0 __THE_0_filterTwo_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwo_0, NULL, 0};
   const struct __THE_1_fn$0 __THE_0_filterTwoOrOne_0 = (struct __THE_1_fn$0) {&__THE_1_filterTwoOrOne_0, NULL, 0};
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   const struct __THE_1_array_str __THE_0_test0_0 = __THE_1_array_str_alloc(0);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
   const struct __THE_1_array_str __THE_0_test1_0 = __THE_1_array_str_alloc(1, str_alloc("1"));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   const struct __THE_1_array_str __THE_0_test2_0 = __THE_1_array_str_alloc(2, str_alloc("1"), str_alloc("2"));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
   const struct __THE_1_array_str __THE_0_test3_0 = __THE_1_array_str_alloc(3, str_alloc("1"), str_alloc("2"), str_alloc("3"));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterOne_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0)));
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0)));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterOne_0), 11, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0), 12, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0), 13, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterOne_0), 14, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test1_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0), 15, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test0_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0), 16, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterOne_0), 17, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0), 18, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test2_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0), 19, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterOne_0), 20, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwo_0), 21, 3));
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L8;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_1_array_str_filter(__THE_1_array_str_copy(__THE_0_test3_0), __THE_1_fn$0_copy(__THE_0_filterTwoOrOne_0), 22, 3));
+L8:
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test3_0);
+L7:
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test2_0);
+L6:
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test1_0);
+L5:
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_test0_0);
+L4:
+  err_state.buf_idx--;
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stdout =======

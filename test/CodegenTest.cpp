@@ -24,8 +24,10 @@
 #include "utils.hpp"
 
 const auto valgrindArguments = std::string(
-  "--error-exitcode=1 "
+  "--error-exitcode=255 "
+  "--errors-for-leak-kinds=all "
   "--leak-check=full "
+  "--quiet "
   "--show-leak-kinds=all "
   "--track-origins=yes"
 );
@@ -38,6 +40,12 @@ const auto passStderrTests = std::set<std::string>{
   "builtin-print-to"
 };
 
+void codegenTestGen (const std::string &input) {
+  auto ast = testing::NiceMock<MockAST>(input);
+  auto codegen = Codegen(&ast);
+  codegen.gen();
+}
+
 TEST(CodegenTest, GetsEnvVar) {
   EXPECT_NE(Codegen::getEnvVar("PATH"), "");
   EXPECT_EQ(Codegen::getEnvVar("test_non_existing"), "");
@@ -49,6 +57,34 @@ TEST(CodegenTest, StringifyFlags) {
   EXPECT_EQ(Codegen::stringifyFlags({"test"}), "test");
   EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2"}), "test1 test2");
   EXPECT_EQ(Codegen::stringifyFlags({"test1", "test2", "test3"}), "test1 test2 test3");
+}
+
+TEST(CodegenTest, ThrowsOnObjExprDefaultFieldInvalidType) {
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("obj Test { a: (int) -> void } main { a: Test }");
+  }, "tried object expression default field on invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("obj Test { a: ref int } main { a: Test }");
+  }, "tried object expression default field on invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("obj Test { a: int | str } main { a: Test }");
+  }, "tried object expression default field on invalid type");
+}
+
+TEST(CodegenTest, ThrowsOnVarDeclInitInvalidType) {
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("main { a: (int) -> void }");
+  }, "tried node variable declaration of invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("main { a: ref int }");
+  }, "tried node variable declaration of invalid type");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    codegenTestGen("main { a: int | str }");
+  }, "tried node variable declaration of invalid type");
 }
 
 class CodegenPassTest : public testing::TestWithParam<const char *> {
@@ -77,13 +113,16 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
  protected:
   bool isPlatformDefault_ = true;
   bool testCompile_ = false;
+  bool testMemcheck_ = false;
   std::string testPlatform_ = "default";
 
   void SetUp () override {
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
+    auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
     auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
 
     this->testCompile_ = testCompile != std::nullopt && testCompile == "ON";
+    this->testMemcheck_ = testMemcheck != std::nullopt && testMemcheck == "ON";
 
     if (testPlatform != std::nullopt) {
       this->testPlatform_ = *testPlatform;
@@ -181,7 +220,8 @@ TEST_P(CodegenThrowTest, Throws) {
     return;
   }
 
-  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(filePath, fileName);
+  auto cmd = (this->testMemcheck_ ? "valgrind " + valgrindArguments + " " : "") + filePath;
+  auto [actualStdout, actualStderr, actualReturnCode] = execCmd(cmd, fileName);
   std::filesystem::remove(filePath);
 
   #if defined(OS_MACOS)
@@ -1072,6 +1112,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-obj-alias",
   "node-expr-obj-any",
   "node-expr-obj-array",
+  "node-expr-obj-buffer",
   "node-expr-obj-enum",
   "node-expr-obj-fn",
   "node-expr-obj-map",
@@ -1220,6 +1261,36 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return",
   "node-return-scope-cleanup"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenPassTest, testing::Values(
+  "node-throw",
+  "node-throw-custom",
+  "node-throw-custom-extended",
+  "node-throw-inside-fn-decl",
+  "node-throw-inside-if",
+  "node-throw-inside-loop",
+  "node-throw-inside-obj-decl",
+  "node-throw-inside-obj-decl-method",
+  "node-throw-inside-try",
+  "node-throw-raw"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
+  "node-try",
+  "node-try-nested",
+  "node-try-scoped",
+  "node-try-scoped-child",
+  "node-try-custom",
+  "node-try-multiple",
+  "node-try-inside-fn-with-return",
+  "node-try-inside-if",
+  "node-try-inside-if-with-return",
+  "node-try-inside-loop",
+  "node-try-inside-loop-deep",
+  "node-try-inside-loop-with-break",
+  "node-try-inside-loop-with-continue",
+  "node-try-inside-loop-with-return"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeTypeDecl, CodegenPassTest, testing::Values(
@@ -1442,7 +1513,8 @@ INSTANTIATE_TEST_SUITE_P(BuiltinRequest, CodegenThrowTest, testing::Values(
   "throw-builtin-request-open-invalid-host",
   "throw-builtin-request-open-invalid-port",
   "throw-builtin-request-open-invalid-protocol",
-  "throw-builtin-request-open-long-port"
+  "throw-builtin-request-open-long-port",
+  "throw-builtin-request-open-invalid-cert-cipher"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinStr, CodegenThrowTest, testing::Values(
@@ -1561,4 +1633,36 @@ INSTANTIATE_TEST_SUITE_P(BuiltinURL, CodegenThrowTest, testing::Values(
   "throw-builtin-url-parse-invalid-port",
   "throw-builtin-url-parse-invalid-protocol",
   "throw-builtin-url-parse-string"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenThrowTest, testing::Values(
+  "throw-node-throw",
+  "throw-node-throw-custom",
+  "throw-node-throw-custom-extended",
+  "throw-node-throw-inside-fn-decl",
+  "throw-node-throw-inside-if",
+  "throw-node-throw-inside-loop",
+  "throw-node-throw-inside-obj-decl",
+  "throw-node-throw-inside-obj-decl-method",
+  "throw-node-throw-inside-try",
+  "throw-node-throw-raw"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
+  "throw-node-try",
+  "throw-node-try-nested",
+  "throw-node-try-nested2",
+  "throw-node-try-scoped",
+  "throw-node-try-scoped-child",
+  "throw-node-try-custom",
+  "throw-node-try-multiple",
+  "throw-node-try-multiple2",
+  "throw-node-try-inside-fn-with-return",
+  "throw-node-try-inside-if",
+  "throw-node-try-inside-if-with-return",
+  "throw-node-try-inside-loop",
+  "throw-node-try-inside-loop-deep",
+  "throw-node-try-inside-loop-with-break",
+  "throw-node-try-inside-loop-with-continue",
+  "throw-node-try-inside-loop-with-return"
 ));

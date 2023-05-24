@@ -1,0 +1,19 @@
+// Error API
+
+/* Used as base for error handling. */
+obj error_Error {
+  /* Message of the error. */
+  message: str
+  /* Stack trace of the error. */
+  stack: str
+
+  /* Returns a string representation. */
+  fn str (self: Self) str
+}
+
+/**
+ * Constructs Error object with specified message and returns it.
+ *
+ * @param message - Message of the error.
+ */
+fn error_NewError (message: str) Error

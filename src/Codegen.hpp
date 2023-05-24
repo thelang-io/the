@@ -17,9 +17,8 @@
 #ifndef SRC_CODEGEN_HPP
 #define SRC_CODEGEN_HPP
 
-#include <map>
-#include <set>
 #include "AST.hpp"
+#include "codegen-api.hpp"
 #include "CodegenCleanUp.hpp"
 
 enum CodegenEntityType {
@@ -34,14 +33,6 @@ enum CodegenPhase {
   CODEGEN_PHASE_ALLOC_METHOD,
   CODEGEN_PHASE_INIT,
   CODEGEN_PHASE_FULL
-};
-
-struct CodegenApiItem {
-  bool enabled = false;
-  std::string name;
-  std::string decl = "";
-  std::string def = "";
-  std::set<std::string> dependencies = {};
 };
 
 struct CodegenBuiltins {
@@ -60,6 +51,8 @@ struct CodegenBuiltins {
   bool libOpensslSsl = false;
   bool libOpensslRand = false;
   bool libPwd = false;
+  bool libSetJmp = false;
+  bool libStdNoReturn = false;
   bool libStdarg = false;
   bool libStdbool = false;
   bool libStddef = false;
@@ -80,10 +73,13 @@ struct CodegenBuiltins {
   bool libWinsock2 = false;
   bool typeAny = false;
   bool typeBuffer = false;
+  bool typeErrStack = false;
+  bool typeErrState = false;
   bool typeRequest = false;
   bool typeStr = false;
   bool typeWinReparseDataBuffer = false;
   bool varEnviron = false;
+  bool varErrState = false;
   bool varLibOpensslInit = false;
   bool varLibWs2Init = false;
 };
@@ -137,9 +133,14 @@ struct CodegenTypeInfoItem {
   std::string typeRefCodeConst;
 };
 
+struct CodegenStateBuiltinsEntities {
+  std::optional<std::vector<std::string> *> builtins = std::nullopt;
+  std::optional<std::vector<std::string> *> entities = std::nullopt;
+};
+
 class Codegen {
  public:
-  std::map<std::string, CodegenApiItem> api = {};
+  std::map<std::string, CodegenAPIItem> api = {};
   AST *ast;
   Reader *reader;
   CodegenState state;
@@ -151,6 +152,10 @@ class Codegen {
   std::size_t indent = 0;
   std::size_t lastTypeIdx = 1;
   bool needMainArgs = false;
+  std::vector<CodegenStateBuiltinsEntities> builtinsEntitiesBuffer = {};
+  std::vector<std::string> bufferBuiltins = {};
+  std::vector<std::string> bufferEntities = {};
+  bool throws = false;
 
   static void compile (
     const std::string &,
@@ -182,20 +187,16 @@ class Codegen {
     const std::string & = "",
     const std::optional<std::set<std::string> *> & = std::nullopt
   );
-  void _apiDecl (const std::vector<std::string> &);
-  void _apiDef (const std::vector<std::string> &);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  std::string _block (const ASTBlock &, bool = true);
+  std::string _block (const ASTBlock &, bool = true, const std::string & = "");
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
-  std::string _exprAssign (const ASTExprAssign &);
   std::string _exprCallDefaultArg (const CodegenTypeInfo &);
   std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &);
   std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
   std::string _exprObjDefaultField (const CodegenTypeInfo &);
   std::string _fnDecl (
-    Type *,
-    const std::string &,
+    std::shared_ptr<Var>,
     const std::vector<std::shared_ptr<Var>> &,
     const std::vector<ASTFnDeclParam> &,
     const std::optional<ASTBlock> &,
@@ -209,6 +210,8 @@ class Codegen {
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
   std::string _nodeVarDeclInit (const CodegenTypeInfo &);
+  void _restoreStateBuiltinsEntities ();
+  void _saveStateBuiltinsEntities ();
   std::string _type (Type *);
   std::string _typeDef (Type *);
   std::string _typeDefIdx (Type *);

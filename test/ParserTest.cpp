@@ -117,6 +117,14 @@ INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return-no-arg"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtThrow, ParserPassTest, testing::Values(
+  "stmt-throw"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtTry, ParserPassTest, testing::Values(
+  "stmt-try"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserPassTest, testing::Values(
   "stmt-type-decl"
 ));
@@ -248,6 +256,16 @@ INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
   "throw-E0123-stmt-obj-decl-expected-member",
   "throw-E0173-stmt-obj-decl-unexpected-field-init",
   "throw-E0173-stmt-obj-decl-unexpected-field-short"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtThrow, ParserThrowTest, testing::Values(
+  "throw-E0178-stmt-throw-missing-arg"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtTry, ParserThrowTest, testing::Values(
+  "throw-E0174-stmt-try-invalid-handler-param",
+  "throw-E0176-stmt-try-missing-handler",
+  "throw-E0177-stmt-try-mutable-handler-param"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserThrowTest, testing::Values(

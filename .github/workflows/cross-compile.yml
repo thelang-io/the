@@ -2,7 +2,7 @@ name: Cross Compile
 
 on:
   push:
-    branches: [main]
+    branches: ['main']
     paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/cross-compile.yml']
   pull_request:
     paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/cross-compile.yml']
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   cross-compile:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
       matrix:
@@ -23,12 +23,14 @@ jobs:
           - platform: windows
     steps:
       - uses: actions/checkout@v3
+      - uses: thelang-io/setup-the@v1
       - run: sudo apt-get update
       - run: sudo apt-get install mingw-w64 ninja-build
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz | sudo tar -C /usr/local -xz
       - run: echo "DEPS_DIR=/usr/local/the/cross-compile/${{ matrix.config.platform }}" >> $GITHUB_ENV
       - run: echo "/usr/local/the/osxcross/bin" >> $GITHUB_PATH
       - run: sudo sed -i 's/#define _WIN32_WINNT .*/#define _WIN32_WINNT 0x0A00/' /usr/share/mingw-w64/include/_mingw.h
+      - run: the run scripts/pre-process-codegen
       - run: cmake . -B ./build -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_PLATFORM=${{ matrix.config.platform }}
       - run: cmake --build build
       - run: ctest --output-on-failure --test-dir build

@@ -24,7 +24,7 @@ const std::vector<std::string> codegenProcess = {
   R"(  return (struct _{array_str}) {d, (_{size_t}) argc};)" EOL
   R"(})" EOL,
 
-  R"(_{struct str} process_cwd () {)" EOL
+  R"(_{struct str} process_cwd (int line, int col) {)" EOL
   R"(  char buf[256];)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    char *p = _{_getcwd}(buf, 256);)" EOL
@@ -32,8 +32,8 @@ const std::vector<std::string> codegenProcess = {
   R"(    char *p = _{getcwd}(buf, 256);)" EOL
   R"(  #endif)" EOL
   R"(  if (p == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to retrieve current working directory information" _{THE_EOL});)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve current working directory information"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  return _{str_alloc}(buf);)" EOL
   R"(})" EOL,
@@ -76,12 +76,12 @@ const std::vector<std::string> codegenProcess = {
   R"(  #endif)" EOL
   R"(})" EOL,
 
-  R"(_{struct str} process_home () {)" EOL
+  R"(_{struct str} process_home (int line, int col) {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    char r[0xFFFF];)" EOL
   R"(    if (_{GetEnvironmentVariable}("USERPROFILE", r, 0xFFFF) == 0) {)" EOL
-  R"(      _{fprintf}(_{stderr}, "Error: environment variable `USERPROFILE` is not set" _{THE_EOL});)" EOL
-  R"(      _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("environment variable `USERPROFILE` is not set"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(    })" EOL
   R"(  #else)" EOL
   R"(    char *r = _{getenv}("HOME");)" EOL
@@ -92,7 +92,7 @@ const std::vector<std::string> codegenProcess = {
   R"(  return _{str_alloc}(r);)" EOL
   R"(})" EOL,
 
-  R"(_{struct buffer} process_runSync (_{struct str} s) {)" EOL
+  R"(_{struct buffer} process_runSync (_{struct str} s, int line, int col) {)" EOL
   R"(  char *c = _{str_cstr}(s);)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{FILE} *f = _{_popen}(c, "r");)" EOL
@@ -100,8 +100,14 @@ const std::vector<std::string> codegenProcess = {
   R"(    _{FILE} *f = _{popen}(c, "r");)" EOL
   R"(  #endif)" EOL
   R"(  if (f == _{NULL}) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: failed to run process `%s`" _{THE_EOL}, c);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "failed to run process `%s`";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
+  R"(    _{sprintf}(d, fmt, c);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{str_free}((_{struct str}) s);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  unsigned char *d = _{NULL};)" EOL
   R"(  unsigned char b[4096];)" EOL
@@ -118,8 +124,14 @@ const std::vector<std::string> codegenProcess = {
   R"(    int e = _{pclose}(f) / 256;)" EOL
   R"(  #endif)" EOL
   R"(  if (e != 0) {)" EOL
-  R"(    _{fprintf}(_{stderr}, "Error: process `%s` exited with exit code %d" _{THE_EOL}, c, e);)" EOL
-  R"(    _{exit}(_{EXIT_FAILURE});)" EOL
+  R"(    const char *fmt = "process `%s` exited with exit code %d";)" EOL
+  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c, e);)" EOL
+  R"(    char *d = _{alloc}(z + 1);)" EOL
+  R"(    _{sprintf}(d, fmt, c, e);)" EOL
+  R"(    _{free}(c);)" EOL
+  R"(    _{str_free}((_{struct str}) s);)" EOL
+  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
