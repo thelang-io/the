@@ -20,6 +20,13 @@
 #include "../src/config.hpp"
 #include "utils.hpp"
 
+Reader readerTestGen (const std::string &path, const std::string &input) {
+  auto f1 = std::ofstream(path);
+  f1 << input;
+  f1.close();
+  return Reader(path);
+}
+
 class ReaderTest : public testing::Test {
  protected:
   Reader *r1_ = nullptr;
@@ -131,4 +138,15 @@ TEST_F(ReaderTest, ThrowsOnNextOnEof) {
   EXPECT_THROW_WITH_MESSAGE({
     this->r1_->next();
   }, "tried to read on reader eof");
+}
+
+TEST_F(ReaderTest, ReadsShebang) {
+  auto p = "test_shebang.txt";
+  auto content = std::string("main {" EOL "  print(\"Hello, World!\")" EOL "}" EOL);
+
+  EXPECT_EQ(readerTestGen(p, "#!/usr/bin/env the run").content, "");
+  EXPECT_EQ(readerTestGen(p, "#!/usr/bin/env the run" EOL).content, "");
+  EXPECT_EQ(readerTestGen(p, "#!/usr/bin/env the run" EOL + content).content, content);
+
+  std::filesystem::remove(p);
 }

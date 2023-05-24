@@ -50,6 +50,13 @@ Reader::Reader (const std::string &p) {
   this->loc = ReaderLocation{};
   this->path = canonicalPath;
   this->content = c.str();
+
+  if (this->content.starts_with("#!")) {
+    this->content = this->content.find('\n') != std::string::npos
+      ? this->content.substr(this->content.find_first_of('\n') + 1)
+      : "";
+  }
+
   this->size = this->content.length();
 }
 
