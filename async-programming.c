@@ -3,6 +3,7 @@
  * Licensed under the MIT License
  */
 
+#include <limits.h>
 #include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -15,6 +16,7 @@
 typedef void *(*threadpool_func_t) (void *, void *);
 
 typedef struct threadpool_job {
+  unsigned int id;
   threadpool_func_t func;
   void *ctx;
   struct threadpool_job *next;
@@ -30,6 +32,7 @@ typedef struct threadpool {
   pthread_cond_t cond1;
   pthread_cond_t cond2;
   threadpool_job_t *jobs;
+  unsigned int last_job;
   pthread_mutex_t lock;
   threadpool_thread_t *threads;
   int working_threads;
@@ -37,7 +40,7 @@ typedef struct threadpool {
 
 threadpool_t threadpool_init (int);
 void threadpool_deinit (threadpool_t);
-void threadpool_add (threadpool_t, threadpool_func_t, void *);
+unsigned int threadpool_add (threadpool_t, threadpool_func_t, void *);
 void threadpool_add_and_wait (threadpool_t, threadpool_func_t, void *);
 threadpool_job_t *threadpool_next (threadpool_t);
 void threadpool_wait (threadpool_t);
@@ -53,6 +56,7 @@ threadpool_t threadpool_init (int count) {
   pthread_cond_init(&self->cond1, NULL);
   pthread_cond_init(&self->cond2, NULL);
   self->jobs = NULL;
+  self->last_job = 1;
   pthread_mutex_init(&self->lock, NULL);
   self->threads = NULL;
   self->working_threads = 0;
@@ -93,8 +97,15 @@ void threadpool_deinit (threadpool_t self) {
   free(self);
 }
 
-void threadpool_add (threadpool_t self, threadpool_func_t func, void *ctx) {
+unsigned int threadpool_add (threadpool_t self, threadpool_func_t func, void *ctx) {
   threadpool_job_t *job = malloc(sizeof(threadpool_job_t));
+
+  if (self->last_job == UINT_MAX) {
+    job->id = self->last_job;
+    self->last_job = 1;
+  } else {
+    job->id = self->last_job++;
+  }
 
   job->func = func;
   job->ctx = ctx;
@@ -115,10 +126,11 @@ void threadpool_add (threadpool_t self, threadpool_func_t func, void *ctx) {
 
   pthread_cond_broadcast(&self->cond1);
   pthread_mutex_unlock(&self->lock);
+  return job->id;
 }
 
 void threadpool_add_and_wait (threadpool_t self, threadpool_func_t func, void *ctx) {
-  // todo add job, assign unique id to it
+  unsigned int jobId = threadpool_add(self, func, ctx);
   // todo check if popped job has id that you are waiting for
 }
 
