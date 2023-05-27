@@ -1,6 +1,8 @@
 /*!
- * Copyright (c) Aaron Delasy
- * Licensed under the MIT License
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
  */
 
 #include <limits.h>
@@ -13,7 +15,22 @@
 
 #define EOL "\n"
 
-typedef void *(*threadpool_func_t) (void *, void *);
+typedef struct {
+  int testVar;
+} ctx_t;
+
+typedef struct {
+  void *ctx;
+  void *params;
+  int step;
+  void *ret;
+} data_t;
+
+struct fn0P {
+  int n0;
+};
+
+typedef void *(*threadpool_func_t) (void *, data_t);
 
 typedef struct threadpool_job {
   unsigned int id;
@@ -41,7 +58,6 @@ typedef struct threadpool {
 threadpool_t threadpool_init (int);
 void threadpool_deinit (threadpool_t);
 unsigned int threadpool_add (threadpool_t, threadpool_func_t, void *);
-void threadpool_add_and_wait (threadpool_t, threadpool_func_t, void *);
 threadpool_job_t *threadpool_next (threadpool_t);
 void threadpool_wait (threadpool_t);
 void *threadpool_worker (void *);
@@ -97,18 +113,18 @@ void threadpool_deinit (threadpool_t self) {
   free(self);
 }
 
-unsigned int threadpool_add (threadpool_t self, threadpool_func_t func, void *ctx) {
+unsigned int threadpool_add (threadpool_t self, threadpool_func_t func, void *params) {
   threadpool_job_t *job = malloc(sizeof(threadpool_job_t));
 
   if (self->last_job == UINT_MAX) {
     job->id = self->last_job;
-    self->last_job = 1;
+    self->last_job = 0;
   } else {
     job->id = self->last_job++;
   }
 
   job->func = func;
-  job->ctx = ctx;
+  job->params = params;
   job->next = NULL;
   pthread_mutex_lock(&self->lock);
 
@@ -127,11 +143,6 @@ unsigned int threadpool_add (threadpool_t self, threadpool_func_t func, void *ct
   pthread_cond_broadcast(&self->cond1);
   pthread_mutex_unlock(&self->lock);
   return job->id;
-}
-
-void threadpool_add_and_wait (threadpool_t self, threadpool_func_t func, void *ctx) {
-  unsigned int jobId = threadpool_add(self, func, ctx);
-  // todo check if popped job has id that you are waiting for
 }
 
 threadpool_job_t *threadpool_next (threadpool_t self) {
@@ -165,7 +176,7 @@ void *threadpool_worker (void *params) {
     pthread_mutex_unlock(&self->lock);
 
     if (job != NULL) {
-      job->func(self, job->ctx);
+      job->func(self, (data_t) {job->ctx});
       threadpool_job_deinit(job);
     }
 
@@ -212,29 +223,61 @@ void threadpool_thread_deinit (threadpool_thread_t *self) {
   free(self);
 }
 
-void await (int ms) {
-  usleep(ms * 1e3);
-}
-
 unsigned long long date_now () {
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
   return ts.tv_sec * 1e3 + ts.tv_nsec / 1e6;
 }
 
-void *test2 (__unused void *_tp, __unused void *_p) {
-  printf("Started2" EOL);
-  await(1000);
-  printf("Done2" EOL);
+void *await (void *_tp, data_t data) {
+  struct fn0P *p = (struct fn0P *) data.params;
+  int ms = p->n0;
+  usleep(ms * 1e3);
   return NULL;
 }
 
-void *test (void *_tp, __unused void *_p) {
+void *test2 (void *_tp, data_t data) {
   threadpool_t tp = _tp;
-  printf("Started" EOL);
-  await(1000);
-  threadpool_add_and_wait(tp, test2, NULL);
-  printf("Done" EOL);
+  ctx_t *ctx = data.ctx;
+  int *testVar = &ctx->testVar;
+
+  switch (data.step) {
+    case 0: {
+      *testVar = 1000;
+      printf("Started2" EOL);
+      threadpool_add(tp, await, (void *) &(struct fn0P) {*testVar});
+      data.step = 1;
+      break;
+    }
+    case 1: {
+      printf("Var: %d" EOL, *testVar);
+      printf("Done2" EOL);
+      break;
+    }
+  }
+
+  return NULL;
+}
+
+void *test (void *_tp, data_t data) {
+  threadpool_t tp = _tp;
+
+  switch (data.step) {
+    case 0: {
+      printf("Started" EOL);
+      threadpool_add(tp, await, (void *) &(struct fn0P) {1000});
+      break;
+    }
+    case 1: {
+      threadpool_add(tp, test2, NULL);
+      break;
+    }
+    case 2: {
+      printf("Done" EOL);
+      break;
+    }
+  }
+
   return NULL;
 }
 
