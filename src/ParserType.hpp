@@ -65,6 +65,7 @@ struct ParserTypeFnParam {
 struct ParserTypeFn {
   std::vector<ParserTypeFnParam> params;
   ParserType returnType;
+  bool async;
 };
 
 struct ParserTypeId {

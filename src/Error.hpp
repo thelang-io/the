@@ -117,6 +117,9 @@
 #define E0176 "E0176 - Unexpected statement after catch keyword"
 #define E0177 "E0177 - Catch clause parameter can't be mutable"
 #define E0178 "E0178 - Expected throw statement argument"
+#define E0179 "E0179 - Expected function declaration after `async` keyword"
+#define E0180 "E0180 - Expected function type after `async` keyword"
+#define E0181 "E0181 - Expected expression after `await` keyword"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

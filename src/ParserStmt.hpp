@@ -116,6 +116,7 @@ struct ParserStmtFnDecl {
   std::vector<ParserStmtFnDeclParam> params;
   std::optional<ParserType> returnType;
   std::optional<ParserBlock> body;
+  bool async;
 };
 
 struct ParserStmtIf {
