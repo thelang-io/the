@@ -950,6 +950,18 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
 
       return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprAssign.right.end}, shouldWrap);
     }
+  } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body) && !stmtExpr.parenthesized) {
+    // todo test
+    auto exprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
+    auto tkAwait = Token{TK_KW_AWAIT};
+
+    if (tkAwait.precedence() < precedence) {
+      auto [newStmtExpr, shouldWrap] = this->_wrapExpr(exprAwait.arg, loc, tok, precedence, wrap);
+      auto newExprAwait = ParserExprAwait{newStmtExpr};
+      auto newExpr = std::make_shared<ParserExpr>(newExprAwait);
+
+      return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprAwait.arg.end}, shouldWrap);
+    }
   } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
 

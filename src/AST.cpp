@@ -353,7 +353,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           : this->_type(*stmtFnDecl.returnType);
 
         this->varMap.restore();
-        auto nodeFnDeclVarType = this->typeMap.createFn(nodeFnDeclVarParams, nodeFnDeclVarReturnType, false);
+        // todo test
+        auto nodeFnDeclVarType = this->typeMap.createFn(nodeFnDeclVarParams, nodeFnDeclVarReturnType, false, stmtFnDecl.async);
         auto nodeFnDeclVarAliasType = this->typeMap.createAlias(nodeFnDeclName, nodeFnDeclVarType);
 
         this->varMap.add(nodeFnDeclName, nodeFnDeclVarAliasType->codeName, nodeFnDeclVarType);
@@ -437,7 +438,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto methodDeclReturnType = stmtFnDecl.returnType == std::nullopt
               ? this->typeMap.get("void")
               : this->_type(*stmtFnDecl.returnType);
-            auto methodDeclType = this->typeMap.createMethod(methodDeclTypeParams, methodDeclReturnType, false, methodDeclCallInfo);
+            // todo test
+            auto methodDeclType = this->typeMap.createMethod(methodDeclTypeParams, methodDeclReturnType, false, stmtFnDecl.async, methodDeclCallInfo);
             auto methodDeclAliasType = this->typeMap.createAlias(methodDeclName, methodDeclType);
 
             this->varMap.restore();
@@ -540,7 +542,8 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       auto throws = ASTChecker(*nodeFnDeclBody).throws();
 
       if (throws) {
-        nodeFnDeclVar->type = this->typeMap.createFn(fnType.params, fnType.returnType, true, fnType.callInfo);
+        // todo test
+        nodeFnDeclVar->type = this->typeMap.createFn(fnType.params, fnType.returnType, true, fnType.async, fnType.callInfo);
       }
     }
 
@@ -686,7 +689,8 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         auto throws = ASTChecker(*methodDeclBody).throws();
 
         if (throws) {
-          methodDeclVar->type = this->typeMap.createMethod(methodType.params, methodType.returnType, true, methodType.callInfo);
+          // todo test
+          methodDeclVar->type = this->typeMap.createMethod(methodType.params, methodType.returnType, true, methodType.async, methodType.callInfo);
         }
       }
 
@@ -890,6 +894,12 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     auto exprAssignRight = this->_nodeExpr(parserExprAssign.right, exprAssignLeft.type, varStack);
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAssign{exprAssignLeft, exprAssignOp, exprAssignRight});
+  } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body)) {
+    // todo test
+    auto parserExprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
+    auto exprAwaitExpr = this->_nodeExpr(parserExprAwait.arg, nullptr, varStack);
+
+    return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAwait{exprAwaitExpr});
   } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body)) {
     auto parserExprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
     auto exprBinaryOp = ASTExprBinaryOp{};
@@ -1239,6 +1249,12 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     auto rightType = this->_nodeExprType(exprAssign.right, leftType);
 
     return this->_wrapNodeExprType(stmtExpr, targetType, leftType->isRef() && !rightType->isRef() ? Type::real(leftType) : leftType);
+  } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body)) {
+    // todo test
+    auto exprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
+    auto exprAwaitExprType = this->_nodeExprType(exprAwait.arg, nullptr);
+
+    return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.createRef(exprAwaitExprType));
   } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body)) {
     auto exprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
     auto exprBinaryLeftType = static_cast<Type *>(nullptr);
@@ -1474,7 +1490,8 @@ Type *AST::_type (const ParserType &type) {
       fnParams.push_back(TypeFnParam{paramName, paramType, typeFnParam.mut, !typeFnParam.variadic, typeFnParam.variadic});
     }
 
-    return this->typeMap.createFn(fnParams, fnReturnType, false);
+    // todo test
+    return this->typeMap.createFn(fnParams, fnReturnType, false, typeFn.async);
   } else if (std::holds_alternative<ParserTypeId>(*type.body)) {
     auto typeId = std::get<ParserTypeId>(*type.body);
 

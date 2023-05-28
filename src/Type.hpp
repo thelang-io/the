@@ -95,9 +95,10 @@ struct TypeFnParam {
 struct TypeFn {
   Type *returnType;
   std::vector<TypeFnParam> params = {};
-  bool throws = false;
-  bool isMethod = false;
-  TypeCallInfo callInfo = {};
+  bool throws;
+  bool isMethod;
+  TypeCallInfo callInfo;
+  bool async;
 };
 
 struct TypeBodyMap {
