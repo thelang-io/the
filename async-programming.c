@@ -1,11 +1,8 @@
 /*!
- * Copyright (c) 2018 Aaron Delasy
- *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
  */
 
-#include <limits.h>
 #include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -23,19 +20,22 @@ typedef struct {
   void *ctx;
   void *params;
   int step;
-  void *ret;
 } data_t;
 
 struct fn0P {
   int n0;
 };
 
-typedef void *(*threadpool_func_t) (void *, data_t);
+struct threadpool_job;
+typedef void (*threadpool_func_t) (void *, struct threadpool_job *, data_t);
 
 typedef struct threadpool_job {
-  unsigned int id;
+  struct threadpool_job *parent;
   threadpool_func_t func;
   void *ctx;
+  void *params;
+  int step;
+  bool referenced;
   struct threadpool_job *next;
 } threadpool_job_t;
 
@@ -49,7 +49,6 @@ typedef struct threadpool {
   pthread_cond_t cond1;
   pthread_cond_t cond2;
   threadpool_job_t *jobs;
-  unsigned int last_job;
   pthread_mutex_t lock;
   threadpool_thread_t *threads;
   int working_threads;
@@ -57,11 +56,12 @@ typedef struct threadpool {
 
 threadpool_t threadpool_init (int);
 void threadpool_deinit (threadpool_t);
-unsigned int threadpool_add (threadpool_t, threadpool_func_t, void *);
-threadpool_job_t *threadpool_next (threadpool_t);
+void threadpool_add (threadpool_t, threadpool_func_t, void *, void *, threadpool_job_t *);
+void threadpool_insert (threadpool_t, threadpool_job_t *);
 void threadpool_wait (threadpool_t);
 void *threadpool_worker (void *);
 void threadpool_job_deinit (threadpool_job_t *);
+threadpool_job_t *threadpool_job_ref (threadpool_job_t *);
 threadpool_thread_t *threadpool_thread_init (threadpool_t, threadpool_thread_t *);
 void threadpool_thread_deinit (threadpool_thread_t *);
 
@@ -72,7 +72,6 @@ threadpool_t threadpool_init (int count) {
   pthread_cond_init(&self->cond1, NULL);
   pthread_cond_init(&self->cond2, NULL);
   self->jobs = NULL;
-  self->last_job = 1;
   pthread_mutex_init(&self->lock, NULL);
   self->threads = NULL;
   self->working_threads = 0;
@@ -113,19 +112,27 @@ void threadpool_deinit (threadpool_t self) {
   free(self);
 }
 
-unsigned int threadpool_add (threadpool_t self, threadpool_func_t func, void *params) {
+void threadpool_add (
+  threadpool_t self,
+  threadpool_func_t func,
+  void *ctx,
+  void *params,
+  threadpool_job_t *parent
+) {
   threadpool_job_t *job = malloc(sizeof(threadpool_job_t));
 
-  if (self->last_job == UINT_MAX) {
-    job->id = self->last_job;
-    self->last_job = 0;
-  } else {
-    job->id = self->last_job++;
-  }
-
+  job->parent = parent;
   job->func = func;
+  job->ctx = ctx;
   job->params = params;
+  job->step = 0;
+  job->referenced = false;
   job->next = NULL;
+
+  threadpool_insert(self, job);
+}
+
+void threadpool_insert (threadpool_t self, threadpool_job_t *job) {
   pthread_mutex_lock(&self->lock);
 
   if (self->jobs == NULL) {
@@ -142,17 +149,6 @@ unsigned int threadpool_add (threadpool_t self, threadpool_func_t func, void *pa
 
   pthread_cond_broadcast(&self->cond1);
   pthread_mutex_unlock(&self->lock);
-  return job->id;
-}
-
-threadpool_job_t *threadpool_next (threadpool_t self) {
-  threadpool_job_t *job = self->jobs;
-
-  if (self->jobs != NULL) {
-    self->jobs = self->jobs->next;
-  }
-
-  return job;
 }
 
 void *threadpool_worker (void *params) {
@@ -161,7 +157,7 @@ void *threadpool_worker (void *params) {
   while (1) {
     pthread_mutex_lock(&self->lock);
 
-    while (self->jobs == NULL && self->active) {
+    while (self->active && self->jobs == NULL) {
       pthread_cond_wait(&self->cond1, &self->lock);
     }
 
@@ -171,12 +167,20 @@ void *threadpool_worker (void *params) {
       pthread_exit(NULL);
     }
 
-    threadpool_job_t *job = threadpool_next(self);
+    threadpool_job_t *job = self->jobs;
+    self->jobs = self->jobs->next;
     self->working_threads++;
     pthread_mutex_unlock(&self->lock);
 
     if (job != NULL) {
-      job->func(self, (data_t) {job->ctx});
+      int step = job->step;
+      job->step++;
+      job->func(self, job, (data_t) {job->ctx, job->params, step});
+
+      if (job->parent != NULL && !job->referenced) {
+        threadpool_insert(self, job->parent);
+      }
+
       threadpool_job_deinit(job);
     }
 
@@ -195,7 +199,7 @@ void threadpool_wait (threadpool_t self) {
   pthread_mutex_lock(&self->lock);
 
   while (1) {
-    if (self->jobs != NULL || self->working_threads != 0) {
+    if (self->working_threads != 0 || self->jobs != NULL) {
       pthread_cond_wait(&self->cond2, &self->lock);
     } else {
       break;
@@ -207,6 +211,21 @@ void threadpool_wait (threadpool_t self) {
 
 void threadpool_job_deinit (threadpool_job_t *self) {
   free(self);
+}
+
+threadpool_job_t *threadpool_job_ref (threadpool_job_t *self) {
+  threadpool_job_t *r = malloc(sizeof(threadpool_job_t));
+
+  r->parent = self->parent;
+  r->func = self->func;
+  r->ctx = self->ctx;
+  r->params = self->params;
+  r->step = self->step;
+  r->referenced = self->referenced;
+  r->next = NULL;
+  self->referenced = true;
+
+  return r;
 }
 
 threadpool_thread_t *threadpool_thread_init (threadpool_t tp, threadpool_thread_t *next) {
@@ -223,72 +242,96 @@ void threadpool_thread_deinit (threadpool_thread_t *self) {
   free(self);
 }
 
+ctx_t *ctx_alloc () {
+  return malloc(sizeof(ctx_t));
+}
+
+struct fn0P *fn0P_alloc (int n0) {
+  struct fn0P *r = malloc(sizeof(struct fn0P));
+  r->n0 = n0;
+  return r;
+}
+
+unsigned long long thread_id () {
+  unsigned long long id;
+  pthread_threadid_np(NULL, &id);
+  return id;
+}
+
 unsigned long long date_now () {
   struct timespec ts;
   clock_gettime(CLOCK_REALTIME, &ts);
-  return ts.tv_sec * 1e3 + ts.tv_nsec / 1e6;
+  return ts.tv_sec * 1000 + ts.tv_nsec / 1000;
 }
 
-void *await (void *_tp, data_t data) {
+void await (__unused void *_tp, __unused threadpool_job_t *self, data_t data) {
   struct fn0P *p = (struct fn0P *) data.params;
   int ms = p->n0;
-  usleep(ms * 1e3);
-  return NULL;
+  printf("Thread-%llu: AWAIT: %d" EOL, thread_id(), ms);
+  usleep(ms * 1000);
 }
 
-void *test2 (void *_tp, data_t data) {
+void test3 (void *_tp, threadpool_job_t *self, data_t data) {
+  threadpool_t tp = _tp;
+
+  switch (data.step) {
+    case 0: {
+      printf("Thread-%llu: START_3" EOL, thread_id());
+      threadpool_add(tp, await, data.ctx, fn0P_alloc(1000), threadpool_job_ref(self));
+      break;
+    }
+    case 1: {
+      printf("Thread-%llu: END_3" EOL, thread_id());
+    }
+  }
+}
+
+void test2 (void *_tp, threadpool_job_t *self, data_t data) {
   threadpool_t tp = _tp;
   ctx_t *ctx = data.ctx;
   int *testVar = &ctx->testVar;
 
   switch (data.step) {
     case 0: {
+      printf("Thread-%llu: START_2" EOL, thread_id());
       *testVar = 1000;
-      printf("Started2" EOL);
-      threadpool_add(tp, await, (void *) &(struct fn0P) {*testVar});
-      data.step = 1;
+      threadpool_add(tp, await, data.ctx, fn0P_alloc(*testVar), threadpool_job_ref(self));
       break;
     }
     case 1: {
-      printf("Var: %d" EOL, *testVar);
-      printf("Done2" EOL);
-      break;
+      printf("Thread-%llu: END_2" EOL, thread_id());
     }
   }
-
-  return NULL;
 }
 
-void *test (void *_tp, data_t data) {
+void test1 (void *_tp, threadpool_job_t *self, data_t data) {
   threadpool_t tp = _tp;
 
   switch (data.step) {
     case 0: {
-      printf("Started" EOL);
-      threadpool_add(tp, await, (void *) &(struct fn0P) {1000});
+      printf("Thread-%llu: START_1" EOL, thread_id());
+      threadpool_add(tp, await, data.ctx, fn0P_alloc(1000), threadpool_job_ref(self));
       break;
     }
     case 1: {
-      threadpool_add(tp, test2, NULL);
+      printf("Thread-%llu: MIDDLE_1" EOL, thread_id());
+      threadpool_add(tp, test3, data.ctx, NULL, NULL);
+      threadpool_add(tp, test2, data.ctx, NULL, threadpool_job_ref(self));
       break;
     }
     case 2: {
-      printf("Done" EOL);
-      break;
+      printf("Thread-%llu: END_1" EOL, thread_id());
     }
   }
-
-  return NULL;
 }
 
 int main () {
-  threadpool_t tp = threadpool_init(4);
+  threadpool_t tp = threadpool_init(6);
 
-  printf("%llu" EOL, date_now());
-  threadpool_add(tp, test, NULL);
-  printf("Hello, World!" EOL);
+  printf("Thread-%llu: %llu" EOL, thread_id(), date_now());
+  threadpool_add(tp, test1, ctx_alloc(), NULL, NULL);
   threadpool_wait(tp);
-  printf("%llu" EOL, date_now());
+  printf("Thread-%llu: %llu" EOL, thread_id(), date_now());
 
   threadpool_deinit(tp);
 }
