@@ -48,10 +48,10 @@ class TypeTest : public testing::Test {
     this->fn_ = this->tm_.createFn({
       TypeFnParam{"a", this->tm_.get("int"), false, true, false},
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-    }, this->tm_.get("int"), false);
+    }, this->tm_.get("int"), false, false);
 
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
-    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
+    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.createObj("Test", "Test_0", {
       TypeField{"a", this->tm_.get("int"), false, false},
@@ -740,27 +740,27 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfFn) {
-  auto type1 = this->tm_.createFn({}, this->tm_.get("int"), false);
+  auto type1 = this->tm_.createFn({}, this->tm_.get("int"), false, false);
 
   auto type2 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("int"), false);
+  }, this->tm_.get("int"), false, false);
 
   auto type3 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("str"), false, false, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"), false);
+  }, this->tm_.get("str"), false, false);
 
-  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), false);
+  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), false, false);
 
   auto type5 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), false);
+  }, this->tm_.get("void"), false, false);
 
   auto type6 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"), false);
+  }, this->tm_.get("str"), false, false);
 
   EXPECT_TRUE(this->fn_->isFn());
   EXPECT_TRUE(type1->isFn());
