@@ -50,6 +50,7 @@ struct CodegenBuiltins {
   bool libNetinetIn = false;
   bool libOpensslSsl = false;
   bool libOpensslRand = false;
+  bool libPthread = false;
   bool libPwd = false;
   bool libSetJmp = false;
   bool libStdNoReturn = false;
@@ -77,6 +78,10 @@ struct CodegenBuiltins {
   bool typeErrState = false;
   bool typeRequest = false;
   bool typeStr = false;
+  bool typeThreadpool = false;
+  bool typeThreadpoolFunc = false;
+  bool typeThreadpoolJob = false;
+  bool typeThreadpoolThread = false;
   bool typeWinReparseDataBuffer = false;
   bool varEnviron = false;
   bool varErrState = false;
@@ -100,6 +105,7 @@ struct CodegenState {
   CodegenCleanUp cleanUp;
   std::set<std::string> contextVars = {};
   Type *returnType = nullptr;
+  bool insideAsync = false;
   std::map<std::string, Type *> typeCasts = {};
 };
 

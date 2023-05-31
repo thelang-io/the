@@ -188,18 +188,22 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
   auto mainCode = std::string();
 
+  if (ASTChecker(nodes).async()) {
+    mainCode += this->_apiEval(R"(  _{threadpool_t} *tp = _{threadpool_init}(4);)" EOL);
+    this->state.cleanUp.add(this->_apiEval("_{threadpool_deinit}(tp);"));
+    this->state.cleanUp.add(this->_apiEval("_{threadpool_wait}(tp);"));
+  }
+
   if (this->throws) {
     mainCode += this->_apiEval(R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", "main", 0, 0);)" EOL);
 
-    auto mainCleanUpBoilerplate = std::string();
-    mainCleanUpBoilerplate += R"(_{error_stack_pop}(&_{err_state});)" EOL;
-    mainCleanUpBoilerplate += R"(if (_{err_state}.id != -1) {)" EOL;
-    mainCleanUpBoilerplate += R"(  struct _{error_Error} *err = _{err_state}.ctx;)" EOL;
-    mainCleanUpBoilerplate += R"(  _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL;
-    mainCleanUpBoilerplate += R"(  _{err_state}._free(_{err_state}.ctx);)" EOL;
-    mainCleanUpBoilerplate += R"(  _{exit}(_{EXIT_FAILURE});)" EOL;
-    mainCleanUpBoilerplate += R"(})";
-    this->state.cleanUp.add(this->_apiEval(mainCleanUpBoilerplate));
+    this->state.cleanUp.add(this->_apiEval(R"(})"));
+    this->state.cleanUp.add(this->_apiEval(R"(  _{exit}(_{EXIT_FAILURE});)"));
+    this->state.cleanUp.add(this->_apiEval(R"(  _{err_state}._free(_{err_state}.ctx);)"));
+    this->state.cleanUp.add(this->_apiEval(R"(  _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)"));
+    this->state.cleanUp.add(this->_apiEval(R"(  struct _{error_Error} *err = _{err_state}.ctx;)"));
+    this->state.cleanUp.add(this->_apiEval(R"(if (_{err_state}.id != -1) {)"));
+    this->state.cleanUp.add(this->_apiEval(R"(_{error_stack_pop}(&_{err_state});)"));
   }
 
   mainCode += this->_block(nodes, false);
@@ -313,6 +317,41 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "  char *d;" EOL;
     builtinStructDefCode += "  size_t l;" EOL;
     builtinStructDefCode += "};" EOL;
+  }
+
+  if (this->builtins.typeThreadpoolThread) {
+    builtinStructDefCode += "typedef struct threadpool_thread {" EOL;
+    builtinStructDefCode += "  pthread_t id;" EOL;
+    builtinStructDefCode += "  struct threadpool_thread *next;" EOL;
+    builtinStructDefCode += "} threadpool_thread_t;" EOL;
+  }
+
+  if (this->builtins.typeThreadpoolJob) {
+    builtinStructDefCode += "typedef struct threadpool_job {" EOL;
+    builtinStructDefCode += "  struct threadpool_job *parent;" EOL;
+    builtinStructDefCode += "  void (*func) (void *, struct threadpool_job *, void *, void *, int);" EOL;
+    builtinStructDefCode += "  void *ctx;" EOL;
+    builtinStructDefCode += "  void *params;" EOL;
+    builtinStructDefCode += "  int step;" EOL;
+    builtinStructDefCode += "  bool referenced;" EOL;
+    builtinStructDefCode += "  struct threadpool_job *next;" EOL;
+    builtinStructDefCode += "} threadpool_job_t;" EOL;
+  }
+
+  if (this->builtins.typeThreadpoolFunc) {
+    builtinStructDefCode += "typedef void (*threadpool_func_t) (void *, threadpool_job_t *, void *, void *, int);" EOL;
+  }
+
+  if (this->builtins.typeThreadpool) {
+    builtinStructDefCode += "typedef struct {" EOL;
+    builtinStructDefCode += "  bool active;" EOL;
+    builtinStructDefCode += "  pthread_cond_t cond1;" EOL;
+    builtinStructDefCode += "  pthread_cond_t cond2;" EOL;
+    builtinStructDefCode += "  threadpool_job_t *jobs;" EOL;
+    builtinStructDefCode += "  pthread_mutex_t lock;" EOL;
+    builtinStructDefCode += "  threadpool_thread_t *threads;" EOL;
+    builtinStructDefCode += "  int working_threads;" EOL;
+    builtinStructDefCode += "} threadpool_t;" EOL;
   }
 
   if (this->builtins.typeWinReparseDataBuffer) {
@@ -442,6 +481,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     this->builtins.libDirent ||
     this->builtins.libNetdb ||
     this->builtins.libNetinetIn ||
+    this->builtins.libPthread ||
     this->builtins.libPwd ||
     this->builtins.libSysSocket ||
     this->builtins.libSysUtsname ||
@@ -453,6 +493,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
     headers += this->builtins.libNetdb ? "  #include <netdb.h>" EOL : "";
     headers += this->builtins.libNetinetIn ? "  #include <netinet/in.h>" EOL : "";
+    headers += this->builtins.libPthread ? "  #include <pthread.h>" EOL : "";
     headers += this->builtins.libPwd ? "  #include <pwd.h>" EOL : "";
     headers += this->builtins.libSysSocket ? "  #include <sys/socket.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
@@ -602,6 +643,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     if (std::find(this->flags.begin(), this->flags.end(), "W:-luser32") == this->flags.end()) {
       this->flags.emplace_back("W:-luser32");
     }
+  } else if (name == "libPthread") {
+    this->builtins.libPthread = true;
   } else if (name == "libPwd") {
     this->builtins.libPwd = true;
   } else if (name == "libSetJmp") {
@@ -672,6 +715,21 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "typeStr") {
     this->builtins.typeStr = true;
     this->_activateBuiltin("libStdlib");
+  } else if (name == "typeThreadpool") {
+    this->builtins.typeThreadpool = true;
+    this->_activateBuiltin("libPthread");
+    this->_activateBuiltin("libStdbool");
+    this->_activateBuiltin("typeThreadpoolJob");
+    this->_activateBuiltin("typeThreadpoolThread");
+  } else if (name == "typeThreadpoolFunc") {
+    this->builtins.typeThreadpoolFunc = true;
+    this->_activateBuiltin("typeThreadpoolJob");
+  } else if (name == "typeThreadpoolJob") {
+    this->builtins.typeThreadpoolJob = true;
+    this->_activateBuiltin("libStdbool");
+  } else if (name == "typeThreadpoolThread") {
+    this->builtins.typeThreadpoolThread = true;
+    this->_activateBuiltin("libPthread");
   } else if (name == "typeWinReparseDataBuffer") {
     this->builtins.typeWinReparseDataBuffer = true;
     this->_activateBuiltin("definitions");
@@ -1227,6 +1285,7 @@ std::string Codegen::_fnDecl (
   auto typeName = Codegen::typeName(codeName);
   auto varTypeInfo = this->_typeInfo(type);
   auto fnType = std::get<TypeFn>(type->body);
+  auto isAsync = fnType.async;
   auto paramsName = varTypeInfo.typeName + "P";
   auto contextName = typeName + "X";
   auto code = std::string();
@@ -1250,6 +1309,10 @@ std::string Codegen::_fnDecl (
           auto typeRefCode = (contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst);
 
           def += "  " + typeRefCode + contextVarName + ";" EOL;
+        }
+
+        if (isAsync) {
+          // todo list all scope variables
         }
 
         def += "};";
@@ -1279,6 +1342,10 @@ std::string Codegen::_fnDecl (
 
           bodyCode += "  " + typeRefCode + contextVarName + " = x->" + contextVarName + ";" EOL;
           this->state.contextVars.insert(contextVarName);
+        }
+
+        if (isAsync) {
+          // todo list all scope variables
         }
       }
 
@@ -1317,6 +1384,7 @@ std::string Codegen::_fnDecl (
 
       this->indent = 0;
       this->state.returnType = returnTypeInfo.type;
+      this->state.insideAsync = isAsync;
       bodyCode += this->_block(*body, false);
       this->indent = 2;
       this->varMap.restore();
