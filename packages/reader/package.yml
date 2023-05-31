@@ -1,5 +1,5 @@
 name: the/reader
-version: 1.0.2
+version: 1.0.3
 description: The programming language reader
 license: MIT
 main: src/reader
@@ -8,4 +8,4 @@ files:
   - src/reader
 
 packages:
-  the/error: 1.1.1
+  the/error: 1.1.2

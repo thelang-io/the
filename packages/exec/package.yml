@@ -1,5 +1,5 @@
 name: the/exec
-version: 0.1.0
+version: 0.1.1
 description: System commands wrapper
 license: MIT
 main: src/exec

@@ -1,5 +1,5 @@
 name: the/algorithm
-version: 0.1.0
+version: 0.1.1
 description: Algorithms Library
 license: MIT
 main: src/main
@@ -9,4 +9,4 @@ files:
   - src/qrcode
 
 packages:
-  the/testing: 0.1.2
+  the/testing: 0.2.0
