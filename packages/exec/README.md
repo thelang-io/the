@@ -1,2 +1,2 @@
 # the/exec
-JSON parser
+System commands wrapper

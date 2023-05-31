@@ -1,11 +1,8 @@
 name: the/exec
 version: 0.1.0
-description: Exec
+description: System commands wrapper
 license: MIT
 main: src/exec
 
 files:
   - src/exec
-
-scripts:
-  test: the build && the run build/result

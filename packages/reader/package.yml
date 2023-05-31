@@ -1,6 +1,6 @@
 name: the/reader
 version: 1.0.2
-description: The Programming Language reader
+description: The programming language reader
 license: MIT
 main: src/reader
 
@@ -9,7 +9,3 @@ files:
 
 packages:
   the/error: 1.1.1
-  the/testing: 0.1.2
-
-scripts:
-  test: the build && the run build/result

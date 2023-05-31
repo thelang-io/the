@@ -6,6 +6,3 @@ main: src/json
 
 files:
   - src/json
-
-scripts:
-  test: the build && the run build/result

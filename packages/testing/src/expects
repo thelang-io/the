@@ -3,5 +3,6 @@
  * Licensed under the MIT License
  */
 
-main {
+fn EXPECT_EQ (a: any, b: any) {
+  MATCH_ANY(a, b)
 }

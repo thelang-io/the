@@ -5,7 +5,7 @@ license: MIT
 main: src/yaml
 
 files:
+  - src/node
+  - src/state
+  - src/token
   - src/yaml
-
-scripts:
-  test: the build && the run build/result

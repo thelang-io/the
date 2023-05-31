@@ -5,8 +5,8 @@ license: MIT
 main: src/main
 
 files:
-  - src/main
+  - src/base64
   - src/qrcode
 
-scripts:
-  test: the build && the run build/result
+packages:
+  the/testing: 0.1.2

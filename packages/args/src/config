@@ -33,8 +33,8 @@ obj ArgsConfigItem {
     return result + (result.len == 0 ? "" : " ")
   }
 
-  fn rightCol (self: ref Self, maxLineLen: int, leftColMaxLen: u32) str {
-    descrSplit := str_split(self.description, " ")
+  fn rightCol (self: ref Self, maxLineLen: int, leftColMaxLen: int) str {
+    descrSplit := self.description.split(" ")
 
     mut result := ""
     mut lineLen := 0
@@ -54,7 +54,7 @@ obj ArgsConfigItem {
     return result
   }
 
-  fn text (self: ref Self, maxLineLen: int, leftColMaxLen: u32) str {
+  fn text (self: ref Self, maxLineLen: int, leftColMaxLen: int) str {
     leftCol := self.leftCol()
     mut result := ""
 
@@ -62,9 +62,7 @@ obj ArgsConfigItem {
       result += "    " + leftCol + os_EOL + ' '.repeat(leftColMaxLen)
       result += self.rightCol(maxLineLen, leftColMaxLen) + os_EOL
     } else {
-      offset: u32 = leftColMaxLen - leftCol.len - 4
-
-      result += "    " + leftCol + ' '.repeat(offset)
+      result += "    " + leftCol + ' '.repeat(leftColMaxLen - leftCol.len - 4)
       result += self.rightCol(maxLineLen, leftColMaxLen) + os_EOL
     }
 

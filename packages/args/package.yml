@@ -12,7 +12,3 @@ files:
 
 packages:
   the/error: 1.1.1
-  the/testing: 0.1.2
-
-scripts:
-  test: the build && the run build/result
