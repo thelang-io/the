@@ -1,0 +1,32 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+fn TEST_base64_encode () {
+  EXPECT_EQ(base64_encode("0".toBuffer()), "MA==")
+  EXPECT_EQ(base64_encode("A".toBuffer()), "QQ==")
+  EXPECT_EQ(base64_encode("ABC".toBuffer()), "QUJD")
+  EXPECT_EQ(base64_encode("ABCDE".toBuffer()), "QUJDREU=")
+  EXPECT_EQ(base64_encode("HELLO WORLD".toBuffer()), "SEVMTE8gV09STEQ=")
+  EXPECT_EQ(base64_encode("Hello, World!".toBuffer()), "SGVsbG8sIFdvcmxkIQ==")
+
+  EXPECT_EQ(
+    base64_encode("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tortor quam, tincidunt id nisl ac, vulputate sagittis nibh. Pellentesque nec diam orci. Proin malesuada nisl aliquam lacus viverra, sit amet pharetra nulla blandit. Phasellus porttitor, elit at gravida efficitur, lacus leo accumsan tellus, nec ornare augue magna quis mauris. Aliquam commodo eleifend lorem quis rhoncus. Aliquam rutrum tempus malesuada. Morbi mollis massa sit amet condimentum lacinia. Duis eu maximus ipsum. Proin placerat, ligula vel elementum consequat, purus lectus tempor magna, quis commodo nulla nisl ut ante. Duis viverra finibus lacus, a sollicitudin justo elementum id. Quisque venenatis mattis placerat. Suspendisse potenti.".toBuffer()),
+    "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gTWFlY2VuYXMgdG9ydG9yIHF1YW0sIHRpbmNpZHVudCBpZCBuaXNsIGFjLCB2dWxwdXRhdGUgc2FnaXR0aXMgbmliaC4gUGVsbGVudGVzcXVlIG5lYyBkaWFtIG9yY2kuIFByb2luIG1hbGVzdWFkYSBuaXNsIGFsaXF1YW0gbGFjdXMgdml2ZXJyYSwgc2l0IGFtZXQgcGhhcmV0cmEgbnVsbGEgYmxhbmRpdC4gUGhhc2VsbHVzIHBvcnR0aXRvciwgZWxpdCBhdCBncmF2aWRhIGVmZmljaXR1ciwgbGFjdXMgbGVvIGFjY3Vtc2FuIHRlbGx1cywgbmVjIG9ybmFyZSBhdWd1ZSBtYWduYSBxdWlzIG1hdXJpcy4gQWxpcXVhbSBjb21tb2RvIGVsZWlmZW5kIGxvcmVtIHF1aXMgcmhvbmN1cy4gQWxpcXVhbSBydXRydW0gdGVtcHVzIG1hbGVzdWFkYS4gTW9yYmkgbW9sbGlzIG1hc3NhIHNpdCBhbWV0IGNvbmRpbWVudHVtIGxhY2luaWEuIER1aXMgZXUgbWF4aW11cyBpcHN1bS4gUHJvaW4gcGxhY2VyYXQsIGxpZ3VsYSB2ZWwgZWxlbWVudHVtIGNvbnNlcXVhdCwgcHVydXMgbGVjdHVzIHRlbXBvciBtYWduYSwgcXVpcyBjb21tb2RvIG51bGxhIG5pc2wgdXQgYW50ZS4gRHVpcyB2aXZlcnJhIGZpbmlidXMgbGFjdXMsIGEgc29sbGljaXR1ZGluIGp1c3RvIGVsZW1lbnR1bSBpZC4gUXVpc3F1ZSB2ZW5lbmF0aXMgbWF0dGlzIHBsYWNlcmF0LiBTdXNwZW5kaXNzZSBwb3RlbnRpLg=="
+  )
+}
+
+fn TEST_base64_decode () {
+  EXPECT_EQ(base64_decode("MA=="), "0".toBuffer())
+  EXPECT_EQ(base64_decode("QQ=="), "A".toBuffer())
+  EXPECT_EQ(base64_decode("QUJD"), "ABC".toBuffer())
+  EXPECT_EQ(base64_decode("QUJDREU="), "ABCDE".toBuffer())
+  EXPECT_EQ(base64_decode("SEVMTE8gV09STEQ="), "HELLO WORLD".toBuffer())
+  EXPECT_EQ(base64_decode("SGVsbG8sIFdvcmxkIQ==", "Hello, World!".toBuffer()))
+
+  EXPECT_EQ(
+    base64_decode("TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4gTWFlY2VuYXMgdG9ydG9yIHF1YW0sIHRpbmNpZHVudCBpZCBuaXNsIGFjLCB2dWxwdXRhdGUgc2FnaXR0aXMgbmliaC4gUGVsbGVudGVzcXVlIG5lYyBkaWFtIG9yY2kuIFByb2luIG1hbGVzdWFkYSBuaXNsIGFsaXF1YW0gbGFjdXMgdml2ZXJyYSwgc2l0IGFtZXQgcGhhcmV0cmEgbnVsbGEgYmxhbmRpdC4gUGhhc2VsbHVzIHBvcnR0aXRvciwgZWxpdCBhdCBncmF2aWRhIGVmZmljaXR1ciwgbGFjdXMgbGVvIGFjY3Vtc2FuIHRlbGx1cywgbmVjIG9ybmFyZSBhdWd1ZSBtYWduYSBxdWlzIG1hdXJpcy4gQWxpcXVhbSBjb21tb2RvIGVsZWlmZW5kIGxvcmVtIHF1aXMgcmhvbmN1cy4gQWxpcXVhbSBydXRydW0gdGVtcHVzIG1hbGVzdWFkYS4gTW9yYmkgbW9sbGlzIG1hc3NhIHNpdCBhbWV0IGNvbmRpbWVudHVtIGxhY2luaWEuIER1aXMgZXUgbWF4aW11cyBpcHN1bS4gUHJvaW4gcGxhY2VyYXQsIGxpZ3VsYSB2ZWwgZWxlbWVudHVtIGNvbnNlcXVhdCwgcHVydXMgbGVjdHVzIHRlbXBvciBtYWduYSwgcXVpcyBjb21tb2RvIG51bGxhIG5pc2wgdXQgYW50ZS4gRHVpcyB2aXZlcnJhIGZpbmlidXMgbGFjdXMsIGEgc29sbGljaXR1ZGluIGp1c3RvIGVsZW1lbnR1bSBpZC4gUXVpc3F1ZSB2ZW5lbmF0aXMgbWF0dGlzIHBsYWNlcmF0LiBTdXNwZW5kaXNzZSBwb3RlbnRpLg=="),
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tortor quam, tincidunt id nisl ac, vulputate sagittis nibh. Pellentesque nec diam orci. Proin malesuada nisl aliquam lacus viverra, sit amet pharetra nulla blandit. Phasellus porttitor, elit at gravida efficitur, lacus leo accumsan tellus, nec ornare augue magna quis mauris. Aliquam commodo eleifend lorem quis rhoncus. Aliquam rutrum tempus malesuada. Morbi mollis massa sit amet condimentum lacinia. Duis eu maximus ipsum. Proin placerat, ligula vel elementum consequat, purus lectus tempor magna, quis commodo nulla nisl ut ante. Duis viverra finibus lacus, a sollicitudin justo elementum id. Quisque venenatis mattis placerat. Suspendisse potenti.".toBuffer()
+  )
+}

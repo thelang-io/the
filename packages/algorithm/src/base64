@@ -1,0 +1,108 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+const BASE64_TABLE := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+fn base64_encode (data: buffer_Buffer) str {
+  in := data.str()
+  len := in.len
+
+  mut result := '\0'.repeat(len * 4 / 3 + 4)
+  mut i := 0
+  mut pos := 0
+
+  loop len - pos >= 3 {
+    ch1: char = BASE64_TABLE[in[pos] >> 2]
+    ch2: char = BASE64_TABLE[((in[pos++] & 0x03) << 4) | (in[pos] >> 4)]
+    ch3: char = BASE64_TABLE[((in[pos++] & 0x0F) << 2) | (in[pos] >> 6)]
+    ch4: char = BASE64_TABLE[in[pos++] & 0x3F]
+
+    result[i++] = ch1
+    result[i++] = ch2
+    result[i++] = ch3
+    result[i++] = ch4
+  }
+
+  if len - pos != 0 {
+    ch1: char = BASE64_TABLE[in[pos] >> 2]
+    result[i++] = ch1
+
+    if len - pos == 1 {
+      ch2: char = BASE64_TABLE[(in[pos] & 0x03) << 4]
+      result[i++] = ch2
+      result[i++] = '='
+    } else {
+      ch2: char = BASE64_TABLE[((in[pos++] & 0x03) << 4) | (in[pos] >> 4)]
+      ch3: char = BASE64_TABLE[(in[pos++] & 0x0F) << 2]
+      result[i++] = ch2
+      result[i++] = ch3
+    }
+
+    result[i++] = '='
+  }
+
+  return result
+}
+
+fn base64_decode (data: str) buffer_Buffer {
+  dataLen := data.len
+  base64TableLen := BASE64_TABLE.len
+  char128: char = 0x80
+  mut table := char128.repeat(256)
+
+  loop i := 0; i < base64TableLen - 1; i++ {
+    idx: int = BASE64_TABLE[i].byte
+    table[idx] = i
+  }
+
+  table[0x3D] = '\0'
+  mut count := 0
+
+  loop i := 0; i < dataLen; i++ {
+    idx: int = data[i]
+    if table[idx] != 0x80 {
+      count++
+    }
+  }
+
+  if count == 0 || count % 4 != 0 {
+    throw error_NewError("The string to be decoded is not correctly encoded")
+  }
+
+  mut result := '\0'.repeat(count / 4 * 3)
+  mut pos := 0
+  mut block := '\0'.repeat(4)
+  mut blockCount := 0
+  mut pad := 0
+
+  loop i := 0; i < dataLen; i++ {
+    idx: int = data[i]
+    ch: char = table[idx]
+
+    if ch == 0x80 {
+      continue
+    } elif data[i] == '=' {
+      pad++
+    }
+
+    block[blockCount++] = ch
+
+    if blockCount == 4 {
+      result[pos++] = (block[0] << 2) | (block[1] >> 4)
+      result[pos++] = (block[1] << 4) | (block[2] >> 2)
+      result[pos++] = (block[2] << 6) | block[3]
+      blockCount = 0
+
+      if pad > 2 {
+        throw error_NewError("The string to be decoded is not correctly encoded")
+      } elif pad > 0 {
+        result = result.slice(0, pos - pad)
+        break
+      }
+    }
+  }
+
+  return result.toBuffer()
+}
