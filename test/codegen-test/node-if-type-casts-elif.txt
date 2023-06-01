@@ -241,7 +241,7 @@ struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE
 void __THE_1_printTest_0 (void *px, struct __THE_1_fn$1000P p) {
   const struct __THE_1_union_strUSintUScharUSboolUE __THE_0_test_0 = p.n0;
   if (__THE_0_test_0.t == TYPE_str) {
-    print(stdout, "zzsz", "test is str:", " ", str_trimStart(str_concat_cstr(str_copy(__THE_0_test_0.v2), " test")), THE_EOL);
+    print(stdout, "zzsz", "test is str:", " ", str_trimStart((str_concat_cstr(str_copy(__THE_0_test_0.v2), " test"))), THE_EOL);
   } else if (__THE_0_test_0.t == TYPE_int) {
     print(stdout, "zziz", "test is int:", " ", __THE_0_test_0.v3 + 1, THE_EOL);
   } else if (__THE_0_test_0.t == TYPE_char) {

@@ -180,9 +180,9 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   const struct __THE_1_fn$1000 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
   const struct str __THE_0_v11_0 = enum_str(*__THE_0_test_0);
   const struct str __THE_0_v12_0 = enum_str((*__THE_0_test1_0)->__THE_0_e);
-  const struct str __THE_0_v13_0 = enum_str(*__THE_0_test2_0 = __THE_0_ColorSDBlue_0);
+  const struct str __THE_0_v13_0 = enum_str((*__THE_0_test2_0 = __THE_0_ColorSDBlue_0));
   const struct str __THE_0_v14_0 = enum_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
-  const struct str __THE_0_v15_0 = enum_str(*__THE_0_test_0);
+  const struct str __THE_0_v15_0 = enum_str((*__THE_0_test_0));
   const struct str __THE_0_v16_0 = enum_str(**__THE_0_refTest_0);
   str_free((struct str) __THE_0_v16_0);
   str_free((struct str) __THE_0_v15_0);
@@ -208,9 +208,9 @@ int main () {
   enum __THE_1_Color_0 __THE_0_test2_0 = __THE_0_ColorSDRed_0;
   const struct str __THE_0_v1_0 = enum_str(__THE_0_test_0);
   const struct str __THE_0_v2_0 = enum_str(__THE_0_test1_0->__THE_0_e);
-  const struct str __THE_0_v3_0 = enum_str(__THE_0_test2_0 = __THE_0_ColorSDGreen_0);
+  const struct str __THE_0_v3_0 = enum_str((__THE_0_test2_0 = __THE_0_ColorSDGreen_0));
   const struct str __THE_0_v4_0 = enum_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
-  const struct str __THE_0_v5_0 = enum_str(__THE_0_test_0);
+  const struct str __THE_0_v5_0 = enum_str((__THE_0_test_0));
   const struct str __THE_0_v6_0 = enum_str(*__THE_0_refTest_0);
   const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});

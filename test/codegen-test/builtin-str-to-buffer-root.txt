@@ -115,7 +115,7 @@ int main () {
   buffer_free((struct buffer) str_toBuffer(str_alloc("0")));
   buffer_free((struct buffer) str_toBuffer(str_alloc("test")));
   buffer_free((struct buffer) str_toBuffer(str_alloc("test in test")));
-  buffer_free((struct buffer) str_toBuffer(str_concat_cstr(cstr_concat_str("multiline ", str_alloc(THE_EOL)), " test")));
+  buffer_free((struct buffer) str_toBuffer((str_concat_cstr(cstr_concat_str("multiline ", str_alloc(THE_EOL)), " test"))));
 }
 ======= flags =======
 ======= stdout =======

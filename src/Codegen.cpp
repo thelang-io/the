@@ -239,6 +239,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   auto builtinWinExternCode = std::string();
   auto builtinFnDeclCode = std::string();
   auto builtinFnDefCode = std::string();
+  auto builtinStructDeclCode = std::string();
   auto builtinStructDefCode = std::string();
   auto builtinVarCode = std::string();
 
@@ -319,17 +320,28 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "};" EOL;
   }
 
-  if (this->builtins.typeThreadpoolThread) {
-    builtinStructDefCode += "typedef struct threadpool_thread {" EOL;
-    builtinStructDefCode += "  pthread_t id;" EOL;
-    builtinStructDefCode += "  struct threadpool_thread *next;" EOL;
-    builtinStructDefCode += "} threadpool_thread_t;" EOL;
+  if (this->builtins.typeThreadpool) {
+    builtinStructDeclCode += "struct threadpool;" EOL;
+    builtinStructDefCode += "typedef struct threadpool {" EOL;
+    builtinStructDefCode += "  bool active;" EOL;
+    builtinStructDefCode += "  pthread_cond_t cond1;" EOL;
+    builtinStructDefCode += "  pthread_cond_t cond2;" EOL;
+    builtinStructDefCode += "  struct threadpool_job *jobs;" EOL;
+    builtinStructDefCode += "  pthread_mutex_t lock;" EOL;
+    builtinStructDefCode += "  struct threadpool_thread *threads;" EOL;
+    builtinStructDefCode += "  int working_threads;" EOL;
+    builtinStructDefCode += "} threadpool_t;" EOL;
+  }
+
+  if (this->builtins.typeThreadpoolFunc) {
+    builtinStructDefCode += "typedef void (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, int);" EOL;
   }
 
   if (this->builtins.typeThreadpoolJob) {
+    builtinStructDeclCode += "struct threadpool_job;" EOL;
     builtinStructDefCode += "typedef struct threadpool_job {" EOL;
     builtinStructDefCode += "  struct threadpool_job *parent;" EOL;
-    builtinStructDefCode += "  void (*func) (void *, struct threadpool_job *, void *, void *, int);" EOL;
+    builtinStructDefCode += "  void (*func) (struct threadpool *, struct threadpool_job *, void *, void *, int);" EOL;
     builtinStructDefCode += "  void *ctx;" EOL;
     builtinStructDefCode += "  void *params;" EOL;
     builtinStructDefCode += "  int step;" EOL;
@@ -338,20 +350,12 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "} threadpool_job_t;" EOL;
   }
 
-  if (this->builtins.typeThreadpoolFunc) {
-    builtinStructDefCode += "typedef void (*threadpool_func_t) (void *, threadpool_job_t *, void *, void *, int);" EOL;
-  }
-
-  if (this->builtins.typeThreadpool) {
-    builtinStructDefCode += "typedef struct {" EOL;
-    builtinStructDefCode += "  bool active;" EOL;
-    builtinStructDefCode += "  pthread_cond_t cond1;" EOL;
-    builtinStructDefCode += "  pthread_cond_t cond2;" EOL;
-    builtinStructDefCode += "  threadpool_job_t *jobs;" EOL;
-    builtinStructDefCode += "  pthread_mutex_t lock;" EOL;
-    builtinStructDefCode += "  threadpool_thread_t *threads;" EOL;
-    builtinStructDefCode += "  int working_threads;" EOL;
-    builtinStructDefCode += "} threadpool_t;" EOL;
+  if (this->builtins.typeThreadpoolThread) {
+    builtinStructDeclCode += "struct threadpool_thread;" EOL;
+    builtinStructDefCode += "typedef struct threadpool_thread {" EOL;
+    builtinStructDefCode += "  pthread_t id;" EOL;
+    builtinStructDefCode += "  struct threadpool_thread *next;" EOL;
+    builtinStructDefCode += "} threadpool_thread_t;" EOL;
   }
 
   if (this->builtins.typeWinReparseDataBuffer) {
@@ -423,6 +427,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   builtinExternCode += builtinExternCode.empty() ? "" : EOL;
   defineCode += defineCode.empty() ? "" : EOL;
   enumDeclCode += enumDeclCode.empty() ? "" : EOL;
+  builtinStructDeclCode += builtinStructDeclCode.empty() ? "" : EOL;
   builtinStructDefCode += builtinStructDefCode.empty() ? "" : EOL;
   structDeclCode += structDeclCode.empty() ? "" : EOL;
   structDefCode += structDefCode.empty() ? "" : EOL;
@@ -517,6 +522,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
   output += defineCode;
   output += enumDeclCode;
+  output += builtinStructDeclCode;
   output += builtinStructDefCode;
   output += structDeclCode;
   output += structDefCode;
@@ -723,6 +729,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     this->_activateBuiltin("typeThreadpoolThread");
   } else if (name == "typeThreadpoolFunc") {
     this->builtins.typeThreadpoolFunc = true;
+    this->_activateBuiltin("typeThreadpool");
     this->_activateBuiltin("typeThreadpoolJob");
   } else if (name == "typeThreadpoolJob") {
     this->builtins.typeThreadpoolJob = true;
@@ -1285,9 +1292,9 @@ std::string Codegen::_fnDecl (
   auto typeName = Codegen::typeName(codeName);
   auto varTypeInfo = this->_typeInfo(type);
   auto fnType = std::get<TypeFn>(type->body);
-  auto isAsync = fnType.async;
   auto paramsName = varTypeInfo.typeName + "P";
   auto contextName = typeName + "X";
+  auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
   auto code = std::string();
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
@@ -1311,7 +1318,7 @@ std::string Codegen::_fnDecl (
           def += "  " + typeRefCode + contextVarName + ";" EOL;
         }
 
-        if (isAsync) {
+        if (fnType.async) {
           // todo list all scope variables
         }
 
@@ -1344,9 +1351,15 @@ std::string Codegen::_fnDecl (
           this->state.contextVars.insert(contextVarName);
         }
 
-        if (isAsync) {
+        if (fnType.async) {
           // todo list all scope variables
         }
+      }
+
+      if (hasSelfParam) {
+        auto selfTypeInfo = this->_typeInfo(fnType.callInfo.selfType);
+        bodyCode += "  " + (fnType.callInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst) +
+          Codegen::name(fnType.callInfo.selfCodeName) + " = p.self;" EOL;
       }
 
       if (!params.empty()) {
@@ -1376,7 +1389,7 @@ std::string Codegen::_fnDecl (
         }
       }
 
-      if (fnType.isMethod && fnType.callInfo.isSelfFirst && fnType.callInfo.selfType->shouldBeFreed()) {
+      if (hasSelfParam && fnType.callInfo.selfType->shouldBeFreed()) {
         this->state.cleanUp.add(this->_genFreeFn(fnType.callInfo.selfType, Codegen::name(fnType.callInfo.selfCodeName)) + ";");
       }
 
@@ -1384,7 +1397,7 @@ std::string Codegen::_fnDecl (
 
       this->indent = 0;
       this->state.returnType = returnTypeInfo.type;
-      this->state.insideAsync = isAsync;
+      this->state.insideAsync = fnType.async;
       bodyCode += this->_block(*body, false);
       this->indent = 2;
       this->varMap.restore();
@@ -1407,15 +1420,7 @@ std::string Codegen::_fnDecl (
       decl += returnTypeInfo.typeCode + typeName + " (void *";
       def += returnTypeInfo.typeCode + typeName + " (void *px";
 
-      if (fnType.isMethod && fnType.callInfo.isSelfFirst) {
-        auto selfTypeInfo = this->_typeInfo(fnType.callInfo.selfType);
-
-        decl += ", " + (fnType.callInfo.isSelfMut ? selfTypeInfo.typeCodeTrimmed : selfTypeInfo.typeCodeConstTrimmed);
-        def += ", " + (fnType.callInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst) +
-          Codegen::name(fnType.callInfo.selfCodeName);
-      }
-
-      if (this->throws || !params.empty()) {
+      if (this->throws || !params.empty() || hasSelfParam) {
         decl += ", struct _{" + paramsName + "}";
         def += ", struct _{" + paramsName + "} p";
       }
@@ -2519,17 +2524,31 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         1
       );
     } else {
-      auto hasParams = this->throws || !fnType.params.empty();
+      auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
       auto hasThrowParams = this->throws && !calleeTypeInfo.realType->builtin;
-      auto bodyCode = std::string();
+      auto hasParams = (!fnType.params.empty() || hasSelfParam || hasThrowParams) && !calleeTypeInfo.realType->builtin;
+      auto paramsCode = std::string();
 
-      if (hasParams && !calleeTypeInfo.realType->builtin) {
+      if (hasParams) {
         auto paramsName = calleeTypeInfo.realTypeName + "P";
-        bodyCode += this->_apiEval("(struct _{" + paramsName + "}) {");
+        paramsCode += this->_apiEval(", (struct _{" + paramsName + "}) {");
       }
 
       if (hasThrowParams) {
-        bodyCode += line + ", " + col;
+        paramsCode += line + ", " + col;
+      }
+
+      if (hasSelfParam) {
+        auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
+        auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
+
+        paramsCode += !hasThrowParams ? "" : ", ";
+
+        if (calleeTypeInfo.realType->builtin) {
+          paramsCode += this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, fnType.callInfo.isSelfMut);
+        } else {
+          paramsCode += this->_genCopyFn(fnType.callInfo.selfType, this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, true));
+        }
       }
 
       for (auto i = static_cast<std::size_t>(0); i < fnType.params.size(); i++) {
@@ -2552,10 +2571,10 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         }
 
         if (!param.required && !param.variadic) {
-          bodyCode += std::string(i == 0 && !hasThrowParams ? "" : ", ") + (foundArg == std::nullopt ? "0" : "1");
+          paramsCode += std::string(i == 0 && !hasThrowParams && !hasSelfParam ? "" : ", ") + (foundArg == std::nullopt ? "0" : "1");
         }
 
-        bodyCode += i == 0 && (param.required || param.variadic) && !hasThrowParams ? "" : ", ";
+        paramsCode += i == 0 && (param.required || param.variadic) && !hasThrowParams && !hasSelfParam ? "" : ", ";
 
         if (param.variadic) {
           auto paramTypeElementType = std::get<TypeArray>(param.type->body).elementType;
@@ -2575,22 +2594,22 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
             }
           }
 
-          bodyCode += this->_apiEval("_{" + paramTypeInfo.typeName + "_alloc}(") + std::to_string(variadicArgs.size());
+          paramsCode += this->_apiEval("_{" + paramTypeInfo.typeName + "_alloc}(") + std::to_string(variadicArgs.size());
 
           for (const auto &variadicArg : variadicArgs) {
-            bodyCode += ", " + this->_nodeExpr(variadicArg.expr, paramTypeElementType);
+            paramsCode += ", " + this->_nodeExpr(variadicArg.expr, paramTypeElementType);
           }
 
-          bodyCode += ")";
+          paramsCode += ")";
         } else if (foundArg != std::nullopt) {
-          bodyCode += this->_nodeExpr(foundArg->expr, paramTypeInfo.type);
+          paramsCode += this->_nodeExpr(foundArg->expr, paramTypeInfo.type);
         } else {
-          bodyCode += this->_exprCallDefaultArg(paramTypeInfo);
+          paramsCode += this->_exprCallDefaultArg(paramTypeInfo);
         }
       }
 
-      if (hasParams && !calleeTypeInfo.realType->builtin) {
-        bodyCode += "}";
+      if (hasParams) {
+        paramsCode += "}";
       }
 
       auto fnName = std::string();
@@ -2611,50 +2630,23 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
         fnName = "*" + fnName;
       }
 
-      if (fnName.starts_with("*")) {
-        fnName = "(" + fnName + ")";
-      }
-
-      auto selfCode = std::string();
-      auto isSelfParenthesized = false;
-
-      if (fnType.isMethod && fnType.callInfo.isSelfFirst) {
-        auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
-        auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
-
-        selfCode += calleeTypeInfo.realType->builtin ? "" : ", ";
-        isSelfParenthesized = nodeExprAccess.parenthesized;
-
-        if (calleeTypeInfo.realType->builtin) {
-          selfCode += this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, fnType.callInfo.isSelfMut);
-        } else {
-          selfCode += this->_genCopyFn(fnType.callInfo.selfType, this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, true));
+      if (fnType.async) {
+        paramsCode = paramsCode.empty() ? this->_apiEval("_{NULL}") : paramsCode;
+        code = this->_apiEval("_{threadpool_add}(tp, ") + fnName + ".f, " + fnName + ".x, " + paramsCode + this->_apiEval(", _{NULL})");
+      } else {
+        if (fnName.starts_with("*")) {
+          fnName = "(" + fnName + ")";
         }
-      }
 
-      auto argsCode = selfCode;
+        code = fnName;
+        code += (!calleeTypeInfo.realType->builtin || fnType.callInfo.empty()) ? ".f(" + code + ".x" : "(";
+        code += paramsCode;
 
-      if (!bodyCode.empty()) {
-        argsCode += !calleeTypeInfo.realType->builtin || !selfCode.empty() ? ", " : "";
-        argsCode += bodyCode;
-      }
+        if (this->throws && calleeTypeInfo.realType->builtin && fnType.callInfo.throws) {
+          code += paramsCode.empty() ? "" : ", ";
+          code += line + ", " + col;
+        }
 
-      if (this->throws && calleeTypeInfo.realType->builtin && fnType.callInfo.throws) {
-        argsCode += argsCode.empty() ? "" : ", ";
-        argsCode += line + ", " + col;
-      }
-
-      code = fnName;
-
-      if (!calleeTypeInfo.realType->builtin || fnType.callInfo.empty()) {
-        code += ".f(" + code + ".x";
-      } else if (!isSelfParenthesized) {
-        code += "(";
-      }
-
-      code += argsCode;
-
-      if (!isSelfParenthesized) {
         code += ")";
       }
     }
@@ -3676,7 +3668,8 @@ std::string Codegen::_typeNameFn (Type *type) {
   }
 
   auto fnType = std::get<TypeFn>(type->body);
-  auto hasParams = this->throws || !fnType.params.empty();
+  auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
+  auto hasParams = this->throws || !fnType.params.empty() || hasSelfParam;
   auto paramsName = typeName + "P";
   auto paramsEntityIdx = 0;
 
@@ -3684,6 +3677,16 @@ std::string Codegen::_typeNameFn (Type *type) {
     paramsEntityIdx = this->_apiEntity(paramsName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
       auto paramsCode = std::string();
       auto paramIdx = static_cast<std::size_t>(0);
+
+      if (this->throws) {
+        paramsCode += "  int line;" EOL;
+        paramsCode += "  int col;" EOL;
+      }
+
+      if (hasSelfParam) {
+        auto selfTypeInfo = this->_typeInfo(fnType.callInfo.selfType);
+        paramsCode += "  " + (fnType.callInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst) + "self;" EOL;
+      }
 
       for (const auto &param : fnType.params) {
         auto paramTypeInfo = this->_typeInfo(param.type);
@@ -3699,12 +3702,6 @@ std::string Codegen::_typeNameFn (Type *type) {
 
       decl += "struct " + paramsName + ";";
       def += "struct " + paramsName + " {" EOL;
-
-      if (this->throws) {
-        def += "  int line;" EOL;
-        def += "  int col;" EOL;
-      }
-
       def += paramsCode;
       def += "};";
 
@@ -3714,20 +3711,10 @@ std::string Codegen::_typeNameFn (Type *type) {
 
   this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
     auto returnTypeInfo = this->_typeInfo(fnType.returnType);
-    auto functorArgs = std::string("void *");
-
-    if (fnType.isMethod && fnType.callInfo.isSelfFirst) {
-      auto selfTypeInfo = this->_typeInfo(fnType.callInfo.selfType);
-      functorArgs += ", " + (fnType.callInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst);
-    }
-
-    if (hasParams) {
-      functorArgs += ", struct _{" + paramsName + "}";
-    }
 
     decl += "struct " + typeName + ";";
     def += "struct " + typeName + " {" EOL;
-    def += "  " + returnTypeInfo.typeCode + "(*f) (" + functorArgs + ");" EOL;
+    def += "  " + returnTypeInfo.typeCode + "(*f) (void *" + (hasParams ? ", struct _{" + paramsName + "}" : "") + ");" EOL;
     def += "  void *x;" EOL;
     def += "  _{size_t} l;" EOL;
     def += "};";

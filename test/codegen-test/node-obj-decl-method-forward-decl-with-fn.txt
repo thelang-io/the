@@ -61,6 +61,7 @@ struct str {
 };
 
 struct __THE_1_fn$1000;
+struct __THE_1_fn$1001P;
 struct __THE_1_fn$1001;
 struct __THE_1_testGo_0X;
 struct __THE_1_Test_0;
@@ -70,8 +71,11 @@ struct __THE_1_fn$1000 {
   void *x;
   size_t l;
 };
+struct __THE_1_fn$1001P {
+  struct __THE_1_Test_0 **self;
+};
 struct __THE_1_fn$1001 {
-  void (*f) (void *, struct __THE_1_Test_0 **);
+  void (*f) (void *, struct __THE_1_fn$1001P);
   void *x;
   size_t l;
 };
@@ -92,7 +96,7 @@ void __THE_1_testGo_0 (void *);
 void __THE_1_testGo_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_testGo_0X);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-void __THE_1_TestSDgo_0 (void *, struct __THE_1_Test_0 **);
+void __THE_1_TestSDgo_0 (void *, struct __THE_1_fn$1001P);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -152,7 +156,7 @@ void __THE_1_testGo_0 (void *px) {
   const struct __THE_1_fn$1001 *__THE_0_TestSDgo_0 = x->__THE_0_TestSDgo_0;
   struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(0);
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
-  (*__THE_0_TestSDgo_0).f((*__THE_0_TestSDgo_0).x, &__THE_0_test_0);
+  (*__THE_0_TestSDgo_0).f((*__THE_0_TestSDgo_0).x, (struct __THE_1_fn$1001P) {&__THE_0_test_0});
   print(stdout, "iz", __THE_0_test_0->__THE_0_a, THE_EOL);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
 }
@@ -173,7 +177,8 @@ struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
   free(n);
 }
-void __THE_1_TestSDgo_0 (void *px, struct __THE_1_Test_0 **__THE_0_self_0) {
+void __THE_1_TestSDgo_0 (void *px, struct __THE_1_fn$1001P p) {
+  struct __THE_1_Test_0 **__THE_0_self_0 = p.self;
   (*__THE_0_self_0)->__THE_0_a += 1;
 }
 
