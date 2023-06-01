@@ -11,4 +11,4 @@ files:
   - src/state
 
 packages:
-  the/error: 1.1.2
+  the/error: 1.1.3

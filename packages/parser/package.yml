@@ -11,5 +11,5 @@ files:
   - src/tokenizer
 
 packages:
-  the/error: 1.1.2
+  the/error: 1.1.3
   the/reader: 1.0.3
