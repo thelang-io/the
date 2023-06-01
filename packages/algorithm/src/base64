@@ -43,7 +43,7 @@ fn base64_encode (data: buffer_Buffer) str {
     result[i++] = '='
   }
 
-  return result
+  return result.slice(0, i)
 }
 
 fn base64_decode (data: str) buffer_Buffer {
@@ -68,7 +68,8 @@ fn base64_decode (data: str) buffer_Buffer {
   }
 
   if count == 0 || count % 4 != 0 {
-    throw error_NewError("The string to be decoded is not correctly encoded")
+    // throw error_NewError("The string to be decoded is not correctly encoded")
+    return "".toBuffer()
   }
 
   mut result := '\0'.repeat(count / 4 * 3)
@@ -96,7 +97,8 @@ fn base64_decode (data: str) buffer_Buffer {
       blockCount = 0
 
       if pad > 2 {
-        throw error_NewError("The string to be decoded is not correctly encoded")
+        // throw error_NewError("The string to be decoded is not correctly encoded")
+        return "".toBuffer()
       } elif pad > 0 {
         result = result.slice(0, pos - pad)
         break
