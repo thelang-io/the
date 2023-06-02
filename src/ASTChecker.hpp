@@ -23,6 +23,254 @@
 
 class ASTChecker {
  public:
+  // todo test
+  static std::vector<ASTNodeExpr> flattenExpr (const std::vector<ASTNodeExpr> &exprs) {
+    auto result = std::vector<ASTNodeExpr>{};
+
+    for (const auto &expr : exprs) {
+      result.push_back(expr);
+
+      if (std::holds_alternative<ASTExprAccess>(*expr.body)) {
+        auto exprBody = std::get<ASTExprAccess>(*expr.body);
+
+        if (exprBody.expr != std::nullopt && std::holds_alternative<ASTNodeExpr>(*exprBody.expr)) {
+          auto childResult = ASTChecker::flattenExpr({ std::get<ASTNodeExpr>(*exprBody.expr) });
+          result.insert(result.end(), childResult.begin(), childResult.end());
+        }
+
+        if (exprBody.elem != std::nullopt) {
+          auto childResult = ASTChecker::flattenExpr({ *exprBody.elem });
+          result.insert(result.end(), childResult.begin(), childResult.end());
+        }
+      } else if (std::holds_alternative<ASTExprArray>(*expr.body)) {
+        auto exprBody = std::get<ASTExprArray>(*expr.body);
+
+        for (const auto &element : exprBody.elements) {
+          auto childResult = ASTChecker::flattenExpr({ element });
+          result.insert(result.end(), childResult.begin(), childResult.end());
+        }
+      } else if (std::holds_alternative<ASTExprAssign>(*expr.body)) {
+        auto exprBody = std::get<ASTExprAssign>(*expr.body);
+        auto childResult1 = ASTChecker::flattenExpr({ exprBody.left });
+        result.insert(result.end(), childResult1.begin(), childResult1.end());
+        auto childResult2 = ASTChecker::flattenExpr({ exprBody.right });
+        result.insert(result.end(), childResult2.begin(), childResult2.end());
+      } else if (std::holds_alternative<ASTExprAwait>(*expr.body)) {
+        auto exprBody = std::get<ASTExprAwait>(*expr.body);
+        auto childResult = ASTChecker::flattenExpr({ exprBody.arg });
+        result.insert(result.end(), childResult.begin(), childResult.end());
+      } else if (std::holds_alternative<ASTExprBinary>(*expr.body)) {
+        auto exprBody = std::get<ASTExprBinary>(*expr.body);
+        auto childResult1 = ASTChecker::flattenExpr({ exprBody.left });
+        result.insert(result.end(), childResult1.begin(), childResult1.end());
+        auto childResult2 = ASTChecker::flattenExpr({ exprBody.right });
+        result.insert(result.end(), childResult2.begin(), childResult2.end());
+      } else if (std::holds_alternative<ASTExprCall>(*expr.body)) {
+        auto exprBody = std::get<ASTExprCall>(*expr.body);
+        auto childResult1 = ASTChecker::flattenExpr({ exprBody.callee });
+        result.insert(result.end(), childResult1.begin(), childResult1.end());
+
+        for (const auto &arg : exprBody.args) {
+          auto childResult2 = ASTChecker::flattenExpr({ arg.expr });
+          result.insert(result.end(), childResult2.begin(), childResult2.end());
+        }
+      } else if (std::holds_alternative<ASTExprCond>(*expr.body)) {
+        auto exprBody = std::get<ASTExprCond>(*expr.body);
+        auto childResult1 = ASTChecker::flattenExpr({ exprBody.cond });
+        result.insert(result.end(), childResult1.begin(), childResult1.end());
+        auto childResult2 = ASTChecker::flattenExpr({ exprBody.body });
+        result.insert(result.end(), childResult2.begin(), childResult2.end());
+        auto childResult3 = ASTChecker::flattenExpr({ exprBody.alt });
+        result.insert(result.end(), childResult3.begin(), childResult3.end());
+      } else if (std::holds_alternative<ASTExprIs>(*expr.body)) {
+        auto exprBody = std::get<ASTExprIs>(*expr.body);
+        auto childResult = ASTChecker::flattenExpr({ exprBody.expr });
+        result.insert(result.end(), childResult.begin(), childResult.end());
+      } else if (std::holds_alternative<ASTExprMap>(*expr.body)) {
+        auto exprBody = std::get<ASTExprMap>(*expr.body);
+
+        for (const auto &prop : exprBody.props) {
+          auto childResult = ASTChecker::flattenExpr({ prop.init });
+          result.insert(result.end(), childResult.begin(), childResult.end());
+        }
+      } else if (std::holds_alternative<ASTExprObj>(*expr.body)) {
+        auto exprBody = std::get<ASTExprObj>(*expr.body);
+
+        for (const auto &prop : exprBody.props) {
+          auto childResult = ASTChecker::flattenExpr({ prop.init });
+          result.insert(result.end(), childResult.begin(), childResult.end());
+        }
+      } else if (std::holds_alternative<ASTExprRef>(*expr.body)) {
+        auto exprBody = std::get<ASTExprRef>(*expr.body);
+        auto childResult = ASTChecker::flattenExpr({ exprBody.expr });
+        result.insert(result.end(), childResult.begin(), childResult.end());
+      } else if (std::holds_alternative<ASTExprUnary>(*expr.body)) {
+        auto exprBody = std::get<ASTExprUnary>(*expr.body);
+        auto childResult = ASTChecker::flattenExpr({ exprBody.arg });
+        result.insert(result.end(), childResult.begin(), childResult.end());
+      }
+    }
+
+    return result;
+  }
+
+  // todo test
+  static std::vector<ASTNode> flattenNode (const std::vector<ASTNode> &nodes) {
+    auto result = std::vector<ASTNode>{};
+
+    for (const auto &node : nodes) {
+      result.push_back(node);
+
+      if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeFnDecl>(*node.body);
+
+        if (nodeBody.body != std::nullopt) {
+          for (const auto &item : *nodeBody.body) {
+            auto childResult = ASTChecker::flattenNode({ item });
+            result.insert(result.end(), childResult.begin(), childResult.end());
+          }
+        }
+      } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeIf>(*node.body);
+
+        for (const auto &item : nodeBody.body) {
+          auto childResult1 = ASTChecker::flattenNode({ item });
+          result.insert(result.end(), childResult1.begin(), childResult1.end());
+        }
+
+        if (nodeBody.alt != std::nullopt && std::holds_alternative<ASTBlock>(*nodeBody.alt)) {
+          auto nodeBodyAlt = std::get<ASTBlock>(*nodeBody.alt);
+
+          for (const auto &item : nodeBodyAlt) {
+            auto childResult2 = ASTChecker::flattenNode({ item });
+            result.insert(result.end(), childResult2.begin(), childResult2.end());
+          }
+        } else if (nodeBody.alt != std::nullopt && std::holds_alternative<ASTNode>(*nodeBody.alt)) {
+          auto childResult3 = ASTChecker::flattenNode({ std::get<ASTNode>(*nodeBody.alt) });
+          result.insert(result.end(), childResult3.begin(), childResult3.end());
+        }
+      } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeLoop>(*node.body);
+
+        if (nodeBody.init != std::nullopt) {
+          auto childResult1 = ASTChecker::flattenNode({ *nodeBody.init });
+          result.insert(result.end(), childResult1.begin(), childResult1.end());
+        }
+
+        for (const auto &item : nodeBody.body) {
+          auto childResult2 = ASTChecker::flattenNode({ item });
+          result.insert(result.end(), childResult2.begin(), childResult2.end());
+        }
+      } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeMain>(*node.body);
+
+        for (const auto &item : nodeBody.body) {
+          auto childResult = ASTChecker::flattenNode({ item });
+          result.insert(result.end(), childResult.begin(), childResult.end());
+        }
+      } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeObjDecl>(*node.body);
+
+        for (const auto &method : nodeBody.methods) {
+          if (method.body != std::nullopt) {
+            for (const auto &item : *method.body) {
+              auto childResult = ASTChecker::flattenNode({ item });
+              result.insert(result.end(), childResult.begin(), childResult.end());
+            }
+          }
+        }
+      } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeTry>(*node.body);
+
+        for (const auto &item : nodeBody.body) {
+          auto childResult1 = ASTChecker::flattenNode({ item });
+          result.insert(result.end(), childResult1.begin(), childResult1.end());
+        }
+
+        for (const auto &handler : nodeBody.handlers) {
+          auto childResult2 = ASTChecker::flattenNode({ handler.param });
+          result.insert(result.end(), childResult2.begin(), childResult2.end());
+
+          for (const auto &item : handler.body) {
+            auto childResult3 = ASTChecker::flattenNode({ item });
+            result.insert(result.end(), childResult3.begin(), childResult3.end());
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  // todo test
+  static std::vector<ASTNodeExpr> flattenNodeExprs (const std::vector<ASTNode> &nodes) {
+    auto flattenNodes = ASTChecker::flattenNode(nodes);
+    auto result = std::vector<ASTNodeExpr>{};
+
+    for (const auto &node : flattenNodes) {
+      if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeEnumDecl>(*node.body);
+
+        for (const auto &member : nodeBody.members) {
+          if (member.init != std::nullopt) {
+            result.push_back(*member.init);
+          }
+        }
+      } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeExpr>(*node.body);
+        result.push_back(nodeBody);
+      } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeFnDecl>(*node.body);
+
+        for (const auto &param : nodeBody.params) {
+          if (param.init != std::nullopt) {
+            result.push_back(*param.init);
+          }
+        }
+      } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeIf>(*node.body);
+        result.push_back(nodeBody.cond);
+      } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeLoop>(*node.body);
+
+        if (nodeBody.cond != std::nullopt) {
+          result.push_back(*nodeBody.cond);
+        }
+
+        if (nodeBody.upd != std::nullopt) {
+          result.push_back(*nodeBody.upd);
+        }
+      } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeObjDecl>(*node.body);
+
+        for (const auto &method : nodeBody.methods) {
+          for (const auto &param : method.params) {
+            if (param.init != std::nullopt) {
+              result.push_back(*param.init);
+            }
+          }
+        }
+      } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeReturn>(*node.body);
+
+        if (nodeBody.body != std::nullopt) {
+          result.push_back(*nodeBody.body);
+        }
+      } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeThrow>(*node.body);
+        result.push_back(nodeBody.arg);
+      } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeVarDecl>(*node.body);
+
+        if (nodeBody.init != std::nullopt) {
+          result.push_back(*nodeBody.init);
+        }
+      }
+    }
+
+    return result;
+  }
+
   explicit ASTChecker (const ASTNodeExpr &expr) {
     this->_exprs = {expr};
   }
@@ -103,8 +351,9 @@ class ASTChecker {
   std::vector<ASTNode> _nodes;
 
   // todo test
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   bool _asyncExpr (const std::vector<ASTNodeExpr> &exprs) const {
-    auto result = this->_flattenExpr(exprs);
+    auto result = ASTChecker::flattenExpr(exprs);
 
     return std::any_of(result.begin(), result.end(), [] (const auto &it) -> bool {
       if (std::holds_alternative<ASTExprAwait>(*it.body)) {
@@ -122,7 +371,7 @@ class ASTChecker {
 
   // todo test
   bool _asyncNode (const std::vector<ASTNode> &nodes) const {
-    auto flattenNodes = this->_flattenNode(nodes);
+    auto flattenNodes = ASTChecker::flattenNode(nodes);
 
     for (const auto &node : flattenNodes) {
       if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
@@ -135,7 +384,7 @@ class ASTChecker {
       }
     }
 
-    return this->_asyncExpr(this->_flattenNodeExprs(flattenNodes));
+    return this->_asyncExpr(ASTChecker::flattenNodeExprs(flattenNodes));
   }
 
   void _checkNode () const {
@@ -153,254 +402,9 @@ class ASTChecker {
     return std::holds_alternative<T>(*nodes.back().body);
   }
 
-  std::vector<ASTNodeExpr> _flattenExpr (const std::vector<ASTNodeExpr> &exprs) const {
-    auto result = std::vector<ASTNodeExpr>{};
-
-    for (const auto &expr : exprs) {
-      result.push_back(expr);
-
-      if (std::holds_alternative<ASTExprAccess>(*expr.body)) {
-        auto exprBody = std::get<ASTExprAccess>(*expr.body);
-
-        if (exprBody.expr != std::nullopt && std::holds_alternative<ASTNodeExpr>(*exprBody.expr)) {
-          auto childResult = this->_flattenExpr({ std::get<ASTNodeExpr>(*exprBody.expr) });
-          result.insert(result.end(), childResult.begin(), childResult.end());
-        }
-
-        if (exprBody.elem != std::nullopt) {
-          auto childResult = this->_flattenExpr({ *exprBody.elem });
-          result.insert(result.end(), childResult.begin(), childResult.end());
-        }
-      } else if (std::holds_alternative<ASTExprArray>(*expr.body)) {
-        auto exprBody = std::get<ASTExprArray>(*expr.body);
-
-        for (const auto &element : exprBody.elements) {
-          auto childResult = this->_flattenExpr({ element });
-          result.insert(result.end(), childResult.begin(), childResult.end());
-        }
-      } else if (std::holds_alternative<ASTExprAssign>(*expr.body)) {
-        auto exprBody = std::get<ASTExprAssign>(*expr.body);
-        auto childResult1 = this->_flattenExpr({ exprBody.left });
-        result.insert(result.end(), childResult1.begin(), childResult1.end());
-        auto childResult2 = this->_flattenExpr({ exprBody.right });
-        result.insert(result.end(), childResult2.begin(), childResult2.end());
-      } else if (std::holds_alternative<ASTExprAwait>(*expr.body)) {
-        auto exprBody = std::get<ASTExprAwait>(*expr.body);
-        auto childResult = this->_flattenExpr({ exprBody.arg });
-        result.insert(result.end(), childResult.begin(), childResult.end());
-      } else if (std::holds_alternative<ASTExprBinary>(*expr.body)) {
-        auto exprBody = std::get<ASTExprBinary>(*expr.body);
-        auto childResult1 = this->_flattenExpr({ exprBody.left });
-        result.insert(result.end(), childResult1.begin(), childResult1.end());
-        auto childResult2 = this->_flattenExpr({ exprBody.right });
-        result.insert(result.end(), childResult2.begin(), childResult2.end());
-      } else if (std::holds_alternative<ASTExprCall>(*expr.body)) {
-        auto exprBody = std::get<ASTExprCall>(*expr.body);
-        auto childResult1 = this->_flattenExpr({ exprBody.callee });
-        result.insert(result.end(), childResult1.begin(), childResult1.end());
-
-        for (const auto &arg : exprBody.args) {
-          auto childResult2 = this->_flattenExpr({ arg.expr });
-          result.insert(result.end(), childResult2.begin(), childResult2.end());
-        }
-      } else if (std::holds_alternative<ASTExprCond>(*expr.body)) {
-        auto exprBody = std::get<ASTExprCond>(*expr.body);
-        auto childResult1 = this->_flattenExpr({ exprBody.cond });
-        result.insert(result.end(), childResult1.begin(), childResult1.end());
-        auto childResult2 = this->_flattenExpr({ exprBody.body });
-        result.insert(result.end(), childResult2.begin(), childResult2.end());
-        auto childResult3 = this->_flattenExpr({ exprBody.alt });
-        result.insert(result.end(), childResult3.begin(), childResult3.end());
-      } else if (std::holds_alternative<ASTExprIs>(*expr.body)) {
-        auto exprBody = std::get<ASTExprIs>(*expr.body);
-        auto childResult = this->_flattenExpr({ exprBody.expr });
-        result.insert(result.end(), childResult.begin(), childResult.end());
-      } else if (std::holds_alternative<ASTExprMap>(*expr.body)) {
-        auto exprBody = std::get<ASTExprMap>(*expr.body);
-
-        for (const auto &prop : exprBody.props) {
-          auto childResult = this->_flattenExpr({ prop.init });
-          result.insert(result.end(), childResult.begin(), childResult.end());
-        }
-      } else if (std::holds_alternative<ASTExprObj>(*expr.body)) {
-        auto exprBody = std::get<ASTExprObj>(*expr.body);
-
-        for (const auto &prop : exprBody.props) {
-          auto childResult = this->_flattenExpr({ prop.init });
-          result.insert(result.end(), childResult.begin(), childResult.end());
-        }
-      } else if (std::holds_alternative<ASTExprRef>(*expr.body)) {
-        auto exprBody = std::get<ASTExprRef>(*expr.body);
-        auto childResult = this->_flattenExpr({ exprBody.expr });
-        result.insert(result.end(), childResult.begin(), childResult.end());
-      } else if (std::holds_alternative<ASTExprUnary>(*expr.body)) {
-        auto exprBody = std::get<ASTExprUnary>(*expr.body);
-        auto childResult = this->_flattenExpr({ exprBody.arg });
-        result.insert(result.end(), childResult.begin(), childResult.end());
-      }
-    }
-
-    return result;
-  }
-
-  std::vector<ASTNode> _flattenNode (const std::vector<ASTNode> &nodes) const {
-    auto result = std::vector<ASTNode>{};
-
-    for (const auto &node : nodes) {
-      result.push_back(node);
-
-      if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeFnDecl>(*node.body);
-
-         if (nodeBody.body != std::nullopt) {
-           for (const auto &item : *nodeBody.body) {
-             auto childResult = this->_flattenNode({ item });
-             result.insert(result.end(), childResult.begin(), childResult.end());
-           }
-         }
-      } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeIf>(*node.body);
-
-        for (const auto &item : nodeBody.body) {
-          auto childResult1 = this->_flattenNode({ item });
-          result.insert(result.end(), childResult1.begin(), childResult1.end());
-        }
-
-        if (nodeBody.alt != std::nullopt && std::holds_alternative<ASTBlock>(*nodeBody.alt)) {
-          auto nodeBodyAlt = std::get<ASTBlock>(*nodeBody.alt);
-
-          for (const auto &item : nodeBodyAlt) {
-            auto childResult2 = this->_flattenNode({ item });
-            result.insert(result.end(), childResult2.begin(), childResult2.end());
-          }
-        } else if (nodeBody.alt != std::nullopt && std::holds_alternative<ASTNode>(*nodeBody.alt)) {
-          auto childResult3 = this->_flattenNode({ std::get<ASTNode>(*nodeBody.alt) });
-          result.insert(result.end(), childResult3.begin(), childResult3.end());
-        }
-      } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeLoop>(*node.body);
-
-        if (nodeBody.init != std::nullopt) {
-          auto childResult1 = this->_flattenNode({ *nodeBody.init });
-          result.insert(result.end(), childResult1.begin(), childResult1.end());
-        }
-
-        for (const auto &item : nodeBody.body) {
-          auto childResult2 = this->_flattenNode({ item });
-          result.insert(result.end(), childResult2.begin(), childResult2.end());
-        }
-      } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeMain>(*node.body);
-
-        for (const auto &item : nodeBody.body) {
-          auto childResult = this->_flattenNode({ item });
-          result.insert(result.end(), childResult.begin(), childResult.end());
-        }
-      } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeObjDecl>(*node.body);
-
-        for (const auto &method : nodeBody.methods) {
-          if (method.body != std::nullopt) {
-            for (const auto &item : *method.body) {
-              auto childResult = this->_flattenNode({ item });
-              result.insert(result.end(), childResult.begin(), childResult.end());
-            }
-          }
-        }
-      } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeTry>(*node.body);
-
-        for (const auto &item : nodeBody.body) {
-          auto childResult1 = this->_flattenNode({ item });
-          result.insert(result.end(), childResult1.begin(), childResult1.end());
-        }
-
-        for (const auto &handler : nodeBody.handlers) {
-          auto childResult2 = this->_flattenNode({ handler.param });
-          result.insert(result.end(), childResult2.begin(), childResult2.end());
-
-          for (const auto &item : handler.body) {
-            auto childResult3 = this->_flattenNode({ item });
-            result.insert(result.end(), childResult3.begin(), childResult3.end());
-          }
-        }
-      }
-    }
-
-    return result;
-  }
-
-  std::vector<ASTNodeExpr> _flattenNodeExprs (const std::vector<ASTNode> &nodes) const {
-    auto flattenNodes = this->_flattenNode(nodes);
-    auto result = std::vector<ASTNodeExpr>{};
-
-    for (const auto &node : flattenNodes) {
-      if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeEnumDecl>(*node.body);
-
-        for (const auto &member : nodeBody.members) {
-          if (member.init != std::nullopt) {
-            result.push_back(*member.init);
-          }
-        }
-      } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeExpr>(*node.body);
-        result.push_back(nodeBody);
-      } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeFnDecl>(*node.body);
-
-        for (const auto &param : nodeBody.params) {
-          if (param.init != std::nullopt) {
-            result.push_back(*param.init);
-          }
-        }
-      } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeIf>(*node.body);
-        result.push_back(nodeBody.cond);
-      } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeLoop>(*node.body);
-
-        if (nodeBody.cond != std::nullopt) {
-          result.push_back(*nodeBody.cond);
-        }
-
-        if (nodeBody.upd != std::nullopt) {
-          result.push_back(*nodeBody.upd);
-        }
-      } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeObjDecl>(*node.body);
-
-        for (const auto &method : nodeBody.methods) {
-          for (const auto &param : method.params) {
-            if (param.init != std::nullopt) {
-              result.push_back(*param.init);
-            }
-          }
-        }
-      } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeReturn>(*node.body);
-
-        if (nodeBody.body != std::nullopt) {
-          result.push_back(*nodeBody.body);
-        }
-      } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeThrow>(*node.body);
-        result.push_back(nodeBody.arg);
-      } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-        auto nodeBody = std::get<ASTNodeVarDecl>(*node.body);
-
-        if (nodeBody.init != std::nullopt) {
-          result.push_back(*nodeBody.init);
-        }
-      }
-    }
-
-    return result;
-  }
-
   template <typename T>
   std::vector<ASTNodeExpr> _getExprOfType (const std::vector<ASTNodeExpr> &exprs) const {
-    auto result = this->_flattenExpr(exprs);
+    auto result = ASTChecker::flattenExpr(exprs);
 
     result.erase(std::remove_if(result.begin(), result.end(), [] (const auto &it) -> bool {
       return !std::holds_alternative<T>(*it.body);
@@ -411,7 +415,7 @@ class ASTChecker {
 
   template <typename T>
   std::vector<ASTNodeExpr> _getExprOfTypeFromNodes (const std::vector<ASTNode> &nodes) const {
-    return this->_getExprOfType<T>(this->_flattenNodeExprs(nodes));
+    return this->_getExprOfType<T>(ASTChecker::flattenNodeExprs(nodes));
   }
 
   template <typename T>
@@ -553,8 +557,9 @@ class ASTChecker {
     throw Error("tried isLast on unknown node");
   }
 
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   bool _throwsExpr (const std::vector<ASTNodeExpr> &exprs) const {
-    auto result = this->_flattenExpr(exprs);
+    auto result = ASTChecker::flattenExpr(exprs);
 
     return std::any_of(result.begin(), result.end(), [] (const auto &it) -> bool {
       if (std::holds_alternative<ASTExprAccess>(*it.body)) {
@@ -582,7 +587,7 @@ class ASTChecker {
   }
 
   bool _throwsNode (const std::vector<ASTNode> &nodes) const {
-    auto flattenNodes = this->_flattenNode(nodes);
+    auto flattenNodes = ASTChecker::flattenNode(nodes);
 
     for (const auto &node : flattenNodes) {
       if (std::holds_alternative<ASTNodeThrow>(*node.body) || std::holds_alternative<ASTNodeTry>(*node.body)) {
@@ -590,7 +595,7 @@ class ASTChecker {
       }
     }
 
-    return this->_throwsExpr(this->_flattenNodeExprs(flattenNodes));
+    return this->_throwsExpr(ASTChecker::flattenNodeExprs(flattenNodes));
   }
 };
 
