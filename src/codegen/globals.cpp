@@ -58,5 +58,12 @@ const std::vector<std::string> codegenGlobals = {
   R"(  void *r = _{realloc}(n1, n2);)" EOL
   R"(  if (r == _{NULL}) _{error_alloc}(&_{err_state}, n2);)" EOL
   R"(  return r;)" EOL
+  R"(})" EOL,
+
+  R"(void *xalloc (void *n1, _{size_t} n2) {)" EOL
+  R"(  void *r = _{malloc}(n2);)" EOL
+  R"(  if (r == _{NULL}) _{error_alloc}(&_{err_state}, n2);)" EOL
+  R"(  _{memcpy}(r, n1, n2);)" EOL
+  R"(  return r;)" EOL
   R"(})" EOL
 };
