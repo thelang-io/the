@@ -899,7 +899,11 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     auto parserExprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
     auto exprAwaitExpr = this->_nodeExpr(parserExprAwait.arg, nullptr, varStack);
 
-    if (!exprAwaitExpr.type->isFn() || !std::get<TypeFn>(exprAwaitExpr.type->body).async) {
+    if (
+      !std::holds_alternative<ASTExprCall>(*exprAwaitExpr.body) ||
+      !std::get<ASTExprCall>(*exprAwaitExpr.body).callee.type->isFn() ||
+      !std::get<TypeFn>(std::get<ASTExprCall>(*exprAwaitExpr.body).callee.type->body).async
+    ) {
       // todo test
       throw Error(this->reader, parserExprAwait.arg.start, parserExprAwait.arg.end, E1030);
     }

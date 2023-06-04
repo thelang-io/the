@@ -106,19 +106,19 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
 struct __THE_1_fn$1001;
 struct __THE_1_Test1_0;
 struct __THE_1_Test2_0;
 
-struct __THE_1_fn$1000P {
-  int32_t *n0;
-};
 struct __THE_1_fn$1000 {
-  int32_t *(*f) (void *, struct __THE_1_fn$1000P);
+  int32_t *(*f) (void *, void *);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$1000P {
+  int32_t *n0;
 };
 struct __THE_1_fn$1001 {
   int32_t (*f) (void *);
@@ -149,6 +149,7 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
+void *xalloc (void *, size_t);
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001);
@@ -158,7 +159,7 @@ struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_Test1_0 *, struct __THE_1_Test1_0 **);
 void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
-int32_t *__THE_1_job1_0 (void *, struct __THE_1_fn$1000P);
+int32_t *__THE_1_job1_0 (void *, void *);
 int32_t __THE_1_job2_0 (void *);
 
 void *alloc (size_t n1) {
@@ -209,6 +210,12 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
@@ -255,8 +262,9 @@ void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) n->__THE_0_test1);
   free(n);
 }
-int32_t *__THE_1_job1_0 (void *px, struct __THE_1_fn$1000P p) {
-  const int32_t *__THE_0_a_0 = p.n0;
+int32_t *__THE_1_job1_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  const int32_t *__THE_0_a_0 = p->n0;
   return __THE_0_a_0;
 }
 int32_t __THE_1_job2_0 (void *px) {
@@ -285,18 +293,18 @@ int main () {
   __THE_0_test1_0->__THE_0_b = str_realloc(__THE_0_test1_0->__THE_0_b, str_concat_str(str_copy(__THE_0_test1_0->__THE_0_b), str_concat_str(str_copy(*__THE_0_test1_0->__THE_0_refB), str_copy(__THE_0_b_0))));
   *__THE_0_test1_0->__THE_0_refA = __THE_0_a_0 + *__THE_0_test1_0->__THE_0_refA;
   *__THE_0_test1_0->__THE_0_refB = str_realloc(*__THE_0_test1_0->__THE_0_refB, str_concat_str(str_copy(*__THE_0_test1_0->__THE_0_refB), str_copy(__THE_0_b_0)));
-  const int32_t __THE_0_v01_0 = *(*__THE_0_refTest1_0)->__THE_0_fn1.f((*__THE_0_refTest1_0)->__THE_0_fn1.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0}) + *(*__THE_0_test1_0->__THE_0_refFn1).f((*__THE_0_test1_0->__THE_0_refFn1).x, (struct __THE_1_fn$1000P) {__THE_0_refA_0});
+  const int32_t __THE_0_v01_0 = *(*__THE_0_refTest1_0)->__THE_0_fn1.f((*__THE_0_refTest1_0)->__THE_0_fn1.x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) + *(*__THE_0_test1_0->__THE_0_refFn1).f((*__THE_0_test1_0->__THE_0_refFn1).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
   const int32_t __THE_0_v02_0 = __THE_0_test1_0->__THE_0_fn2.f(__THE_0_test1_0->__THE_0_fn2.x) + (*(*__THE_0_refTest1_0)->__THE_0_refFn2).f((*(*__THE_0_refTest1_0)->__THE_0_refFn2).x);
-  const int32_t __THE_0_v03_0 = *__THE_0_test1_0->__THE_0_fn1.f(__THE_0_test1_0->__THE_0_fn1.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0}) + (*(*__THE_0_refTest1_0)->__THE_0_refFn2).f((*(*__THE_0_refTest1_0)->__THE_0_refFn2).x);
-  const int32_t __THE_0_v04_0 = __THE_0_test1_0->__THE_0_fn2.f(__THE_0_test1_0->__THE_0_fn2.x) + *(*(*__THE_0_refTest1_0)->__THE_0_refFn1).f((*(*__THE_0_refTest1_0)->__THE_0_refFn1).x, (struct __THE_1_fn$1000P) {__THE_0_refA_0});
-  const int32_t __THE_0_v05_0 = *__THE_0_test1_0->__THE_0_fn1.f(__THE_0_test1_0->__THE_0_fn1.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0}) + __THE_0_test1_0->__THE_0_fn2.f(__THE_0_test1_0->__THE_0_fn2.x);
-  const int32_t __THE_0_v06_0 = *(*(*__THE_0_refTest1_0)->__THE_0_refFn1).f((*(*__THE_0_refTest1_0)->__THE_0_refFn1).x, (struct __THE_1_fn$1000P) {__THE_0_refA_0}) + (*(*__THE_0_refTest1_0)->__THE_0_refFn2).f((*(*__THE_0_refTest1_0)->__THE_0_refFn2).x);
-  const int32_t __THE_0_v21_0 = *(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_fn1.f((*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_fn1.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0}) + *(*__THE_0_test2_0->__THE_0_test1->__THE_0_refFn1).f((*__THE_0_test2_0->__THE_0_test1->__THE_0_refFn1).x, (struct __THE_1_fn$1000P) {__THE_0_refA_0});
+  const int32_t __THE_0_v03_0 = *__THE_0_test1_0->__THE_0_fn1.f(__THE_0_test1_0->__THE_0_fn1.x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) + (*(*__THE_0_refTest1_0)->__THE_0_refFn2).f((*(*__THE_0_refTest1_0)->__THE_0_refFn2).x);
+  const int32_t __THE_0_v04_0 = __THE_0_test1_0->__THE_0_fn2.f(__THE_0_test1_0->__THE_0_fn2.x) + *(*(*__THE_0_refTest1_0)->__THE_0_refFn1).f((*(*__THE_0_refTest1_0)->__THE_0_refFn1).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
+  const int32_t __THE_0_v05_0 = *__THE_0_test1_0->__THE_0_fn1.f(__THE_0_test1_0->__THE_0_fn1.x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) + __THE_0_test1_0->__THE_0_fn2.f(__THE_0_test1_0->__THE_0_fn2.x);
+  const int32_t __THE_0_v06_0 = *(*(*__THE_0_refTest1_0)->__THE_0_refFn1).f((*(*__THE_0_refTest1_0)->__THE_0_refFn1).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P))) + (*(*__THE_0_refTest1_0)->__THE_0_refFn2).f((*(*__THE_0_refTest1_0)->__THE_0_refFn2).x);
+  const int32_t __THE_0_v21_0 = *(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_fn1.f((*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_fn1.x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) + *(*__THE_0_test2_0->__THE_0_test1->__THE_0_refFn1).f((*__THE_0_test2_0->__THE_0_test1->__THE_0_refFn1).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
   const int32_t __THE_0_v22_0 = __THE_0_test2_0->__THE_0_test1->__THE_0_fn2.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn2.x) + (*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).x);
-  const int32_t __THE_0_v23_0 = *__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0}) + (*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).x);
-  const int32_t __THE_0_v24_0 = __THE_0_test2_0->__THE_0_test1->__THE_0_fn2.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn2.x) + *(*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).x, (struct __THE_1_fn$1000P) {__THE_0_refA_0});
-  const int32_t __THE_0_v25_0 = *__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.x, (struct __THE_1_fn$1000P) {&__THE_0_a_0}) + __THE_0_test2_0->__THE_0_test1->__THE_0_fn2.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn2.x);
-  const int32_t __THE_0_v26_0 = *(*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).x, (struct __THE_1_fn$1000P) {__THE_0_refA_0}) + (*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).x);
+  const int32_t __THE_0_v23_0 = *__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) + (*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).x);
+  const int32_t __THE_0_v24_0 = __THE_0_test2_0->__THE_0_test1->__THE_0_fn2.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn2.x) + *(*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
+  const int32_t __THE_0_v25_0 = *__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn1.x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) + __THE_0_test2_0->__THE_0_test1->__THE_0_fn2.f(__THE_0_test2_0->__THE_0_test1->__THE_0_fn2.x);
+  const int32_t __THE_0_v26_0 = *(*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn1).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P))) + (*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).f((*(*__THE_0_test2_0->__THE_0_refTest1)->__THE_0_refFn2).x);
   __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) __THE_0_test4_0);
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test3_0);
   __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) __THE_0_test2_0);

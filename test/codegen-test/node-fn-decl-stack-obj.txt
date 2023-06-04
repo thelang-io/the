@@ -50,20 +50,20 @@ typedef struct {
 } err_state_t;
 
 struct __THE_1_Test_0;
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
 struct __THE_1_mainSDtest_0X;
 
 struct __THE_1_Test_0 {
   const int32_t __THE_0_a;
 };
-struct __THE_1_fn$1000P {
-  struct __THE_1_Test_0 *n0;
-};
 struct __THE_1_fn$1000 {
-  void (*f) (void *, struct __THE_1_fn$1000P);
+  void (*f) (void *, void *);
   void *x;
   size_t l;
+};
+struct __THE_1_fn$1000P {
+  struct __THE_1_Test_0 *n0;
 };
 struct __THE_1_mainSDtest_0X {
   struct __THE_1_Test_0 **__THE_0_a_0;
@@ -73,12 +73,13 @@ err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
+void *xalloc (void *, size_t);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
 struct __THE_1_Test_0 *__THE_1_Test_0_copy (const struct __THE_1_Test_0 *);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *, struct __THE_1_Test_0 *);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_mainSDtest_0 (void *, void *);
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest_0X);
 
 void *alloc (size_t n1) {
@@ -102,6 +103,12 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_a};
@@ -124,10 +131,11 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$1000P p) {
+void __THE_1_mainSDtest_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
   struct __THE_1_mainSDtest_0X *x = px;
   struct __THE_1_Test_0 **__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_Test_0 *__THE_0_newA_0 = p.n0;
+  const struct __THE_1_Test_0 *__THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = __THE_1_Test_0_realloc(*__THE_0_a_0, __THE_1_Test_0_copy(__THE_0_newA_0));
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_newA_0);
 }
@@ -144,7 +152,7 @@ int main () {
   struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc(1);
   const struct __THE_1_fn$1000 __THE_0_mainSDtest_0;
   __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$1000P) {__THE_1_Test_0_alloc(2)});
+  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_Test_0_alloc(2)}, sizeof(struct __THE_1_fn$1000P)));
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
 }

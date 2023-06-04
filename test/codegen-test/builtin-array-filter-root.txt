@@ -66,8 +66,8 @@ struct str {
 
 struct error_Error;
 struct __THE_1_array_str;
-struct __THE_1_fn$0P;
 struct __THE_1_fn$0;
+struct __THE_1_fn$0P;
 
 struct error_Error {
   const struct str __THE_0_message;
@@ -77,15 +77,15 @@ struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
+struct __THE_1_fn$0 {
+  bool (*f) (void *, void *);
+  void *x;
+  size_t l;
+};
 struct __THE_1_fn$0P {
   int line;
   int col;
   struct str n0;
-};
-struct __THE_1_fn$0 {
-  bool (*f) (void *, struct __THE_1_fn$0P);
-  void *x;
-  size_t l;
 };
 
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
@@ -99,15 +99,16 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 bool str_ne_cstr (struct str, const char *);
+void *xalloc (void *, size_t);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 struct __THE_1_fn$0 __THE_1_fn$0_copy (const struct __THE_1_fn$0);
 void __THE_1_fn$0_free (struct __THE_1_fn$0);
 struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str, struct __THE_1_fn$0, int, int);
-bool __THE_1_filterOne_0 (void *, struct __THE_1_fn$0P);
-bool __THE_1_filterTwo_0 (void *, struct __THE_1_fn$0P);
-bool __THE_1_filterTwoOrOne_0 (void *, struct __THE_1_fn$0P);
+bool __THE_1_filterOne_0 (void *, void *);
+bool __THE_1_filterTwo_0 (void *, void *);
+bool __THE_1_filterTwoOrOne_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -162,6 +163,12 @@ bool str_ne_cstr (struct str s, const char *c) {
   free(s.d);
   return r;
 }
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
   struct str *d = alloc(x * sizeof(struct str));
@@ -194,7 +201,7 @@ struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str self
   size_t l = 0;
   struct str *d = alloc(self.l * sizeof(struct str));
   for (size_t i = 0; i < self.l; i++) {
-    if (n1.f(n1.x, (struct __THE_1_fn$0P) {line, col, str_copy(self.d[i])})) {
+    if (n1.f(n1.x, xalloc(&(struct __THE_1_fn$0P) {line, col, str_copy(self.d[i])}, sizeof(struct __THE_1_fn$0P)))) {
       d[l++] = str_copy(self.d[i]);
     }
   }
@@ -202,30 +209,33 @@ struct __THE_1_array_str __THE_1_array_str_filter (struct __THE_1_array_str self
   __THE_1_array_str_free((struct __THE_1_array_str) self);
   return (struct __THE_1_array_str) {d, l};
 }
-bool __THE_1_filterOne_0 (void *px, struct __THE_1_fn$0P p) {
+bool __THE_1_filterOne_0 (void *px, void *pp) {
   bool v;
-  error_stack_push(&err_state, "/test", "filterOne", p.line, p.col);
-  const struct str __THE_0_it_0 = p.n0;
+  struct __THE_1_fn$0P *p = pp;
+  error_stack_push(&err_state, "/test", "filterOne", p->line, p->col);
+  const struct str __THE_0_it_0 = p->n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "1");
   str_free((struct str) __THE_0_it_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
-bool __THE_1_filterTwo_0 (void *px, struct __THE_1_fn$0P p) {
+bool __THE_1_filterTwo_0 (void *px, void *pp) {
   bool v;
-  error_stack_push(&err_state, "/test", "filterTwo", p.line, p.col);
-  const struct str __THE_0_it_0 = p.n0;
+  struct __THE_1_fn$0P *p = pp;
+  error_stack_push(&err_state, "/test", "filterTwo", p->line, p->col);
+  const struct str __THE_0_it_0 = p->n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "2");
   str_free((struct str) __THE_0_it_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
   return v;
 }
-bool __THE_1_filterTwoOrOne_0 (void *px, struct __THE_1_fn$0P p) {
+bool __THE_1_filterTwoOrOne_0 (void *px, void *pp) {
   bool v;
-  error_stack_push(&err_state, "/test", "filterTwoOrOne", p.line, p.col);
-  const struct str __THE_0_it_0 = p.n0;
+  struct __THE_1_fn$0P *p = pp;
+  error_stack_push(&err_state, "/test", "filterTwoOrOne", p->line, p->col);
+  const struct str __THE_0_it_0 = p->n0;
   v = str_ne_cstr(str_copy(__THE_0_it_0), "1") && str_ne_cstr(str_copy(__THE_0_it_0), "2");
   str_free((struct str) __THE_0_it_0);
   error_stack_pop(&err_state);

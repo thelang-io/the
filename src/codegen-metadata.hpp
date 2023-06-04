@@ -172,6 +172,7 @@ extern inline const std::map<std::string, std::set<std::string>> codegenMetadata
   std::pair<std::string, std::set<std::string>>{"FILE", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"TMP_MAX", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"fclose", {"libStdio"}},
+  std::pair<std::string, std::set<std::string>>{"fflush", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"fopen", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"fprintf", {"libStdio"}},
   std::pair<std::string, std::set<std::string>>{"fputc", {"libStdio"}},

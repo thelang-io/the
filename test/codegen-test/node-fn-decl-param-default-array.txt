@@ -86,10 +86,10 @@ struct str {
 
 struct error_Error;
 struct __THE_1_array_int;
-struct __THE_1_fn$1003P;
 struct __THE_1_fn$1003;
-struct __THE_1_fn$1004P;
+struct __THE_1_fn$1003P;
 struct __THE_1_fn$1004;
+struct __THE_1_fn$1004P;
 struct __THE_1_mainSDtest2_0X;
 
 struct error_Error {
@@ -98,6 +98,11 @@ struct error_Error {
 };
 struct __THE_1_array_int {
   int32_t *d;
+  size_t l;
+};
+struct __THE_1_fn$1003 {
+  struct __THE_1_array_int (*f) (void *, void *);
+  void *x;
   size_t l;
 };
 struct __THE_1_fn$1003P {
@@ -109,8 +114,8 @@ struct __THE_1_fn$1003P {
   unsigned char o2;
   struct __THE_1_array_int n2;
 };
-struct __THE_1_fn$1003 {
-  struct __THE_1_array_int (*f) (void *, struct __THE_1_fn$1003P);
+struct __THE_1_fn$1004 {
+  void (*f) (void *, void *);
   void *x;
   size_t l;
 };
@@ -122,11 +127,6 @@ struct __THE_1_fn$1004P {
   struct __THE_1_array_int n1;
   unsigned char o2;
   struct __THE_1_array_int n2;
-};
-struct __THE_1_fn$1004 {
-  void (*f) (void *, struct __THE_1_fn$1004P);
-  void *x;
-  size_t l;
 };
 struct __THE_1_mainSDtest2_0X {
   struct __THE_1_array_int *__THE_0_a_0;
@@ -144,6 +144,7 @@ void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void error_stack_str (err_state_t *);
 void *re_alloc (void *, size_t);
 void str_free (struct str);
+void *xalloc (void *, size_t);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
@@ -153,9 +154,9 @@ void __THE_1_array_int_free (struct __THE_1_array_int);
 size_t __THE_1_array_int_len (struct __THE_1_array_int);
 void __THE_1_array_int_push (struct __THE_1_array_int *, struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
-struct __THE_1_array_int __THE_1_test1_0 (void *, struct __THE_1_fn$1003P);
+struct __THE_1_array_int __THE_1_test1_0 (void *, void *);
 void __THE_1_fn$1004_free (struct __THE_1_fn$1004);
-void __THE_1_mainSDtest2_0 (void *, struct __THE_1_fn$1004P);
+void __THE_1_mainSDtest2_0 (void *, void *);
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1004 *, struct __THE_1_mainSDtest2_0X);
 
 void *alloc (size_t n1) {
@@ -238,6 +239,12 @@ void *re_alloc (void *n1, size_t n2) {
 void str_free (struct str s) {
   free(s.d);
 }
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
 struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
   struct error_Error *r = alloc(sizeof(struct error_Error));
   struct error_Error s = {__THE_0_message, __THE_0_stack};
@@ -295,12 +302,13 @@ struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1,
   __THE_1_array_int_free((struct __THE_1_array_int) n1);
   return n2;
 }
-struct __THE_1_array_int __THE_1_test1_0 (void *px, struct __THE_1_fn$1003P p) {
+struct __THE_1_array_int __THE_1_test1_0 (void *px, void *pp) {
   struct __THE_1_array_int v;
-  error_stack_push(&err_state, "/test", "test1", p.line, p.col);
-  const struct __THE_1_array_int __THE_0_a_0 = p.n0;
-  const struct __THE_1_array_int __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_array_int_alloc(2, 1, 2);
-  const struct __THE_1_array_int __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_array_int_alloc(3, 1, 2, 3);
+  struct __THE_1_fn$1003P *p = pp;
+  error_stack_push(&err_state, "/test", "test1", p->line, p->col);
+  const struct __THE_1_array_int __THE_0_a_0 = p->n0;
+  const struct __THE_1_array_int __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_array_int_alloc(2, 1, 2);
+  const struct __THE_1_array_int __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_array_int_alloc(3, 1, 2, 3);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   struct __THE_1_array_int __THE_0_d_0 = __THE_1_array_int_alloc(0);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)); __THE_0_i_0++) {
@@ -339,16 +347,17 @@ L1:
 void __THE_1_fn$1004_free (struct __THE_1_fn$1004 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest2_0 (void *px, struct __THE_1_fn$1004P p) {
-  error_stack_push(&err_state, "/test", "test2", p.line, p.col);
+void __THE_1_mainSDtest2_0 (void *px, void *pp) {
+  struct __THE_1_fn$1004P *p = pp;
+  error_stack_push(&err_state, "/test", "test2", p->line, p->col);
   struct __THE_1_mainSDtest2_0X *x = px;
   struct __THE_1_array_int *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$1003 *__THE_0_test1_0 = x->__THE_0_test1_0;
-  const struct __THE_1_array_int __THE_0_a2_0 = p.n0;
-  const struct __THE_1_array_int __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_array_int_alloc(3, 13, 14, 15);
-  const struct __THE_1_array_int __THE_0_c_0 = p.o2 == 1 ? p.n2 : __THE_1_array_int_alloc(3, 16, 17, 18);
+  const struct __THE_1_array_int __THE_0_a2_0 = p->n0;
+  const struct __THE_1_array_int __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_array_int_alloc(3, 13, 14, 15);
+  const struct __THE_1_array_int __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_array_int_alloc(3, 16, 17, 18);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L8;
-  *__THE_0_a_0 = __THE_1_array_int_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, (struct __THE_1_fn$1003P) {31, 9, __THE_1_array_int_copy(__THE_0_a2_0), 1, __THE_1_array_int_copy(__THE_0_b_0), 1, __THE_1_array_int_copy(__THE_0_c_0)}));
+  *__THE_0_a_0 = __THE_1_array_int_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn$1003P) {31, 9, __THE_1_array_int_copy(__THE_0_a2_0), 1, __THE_1_array_int_copy(__THE_0_b_0), 1, __THE_1_array_int_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn$1003P))));
 L8:
   err_state.buf_idx--;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_c_0);
@@ -370,37 +379,37 @@ int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1003 __THE_0_test1_0 = (struct __THE_1_fn$1003) {&__THE_1_test1_0, NULL, 0};
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L6;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {20, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 0, (struct __THE_1_array_int) {}, 0, (struct __THE_1_array_int) {}}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {20, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 0, (struct __THE_1_array_int) {}, 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1003P))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {21, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 0, (struct __THE_1_array_int) {}}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {21, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1003P))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {22, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {22, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {23, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 0, (struct __THE_1_array_int) {}}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {23, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1003P))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {24, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 0, (struct __THE_1_array_int) {}, 1, __THE_1_array_int_alloc(3, 7, 8, 9)}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {24, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 0, (struct __THE_1_array_int) {}, 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {25, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {25, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1003P) {26, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {26, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 10, 11, 12);
   const struct __THE_1_fn$1004 __THE_0_mainSDtest2_0;
   __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1004 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {34, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 0, (struct __THE_1_array_int) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {34, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1004P)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {35, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {35, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1004P)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {36, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {36, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {37, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {37, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1004P)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {38, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {38, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {39, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {39, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L7;
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, (struct __THE_1_fn$1004P) {40, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)});
+  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {40, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
 L7:
   __THE_1_fn$1004_free((struct __THE_1_fn$1004) __THE_0_mainSDtest2_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);

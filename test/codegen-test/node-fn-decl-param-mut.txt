@@ -18,21 +18,59 @@ main {
   test3(4, 5, 6)
 }
 ======= code =======
-#include <stddef.h>
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct __THE_1_fn$1000P;
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
+
 struct __THE_1_fn$1000;
-struct __THE_1_fn$1001P;
+struct __THE_1_fn$1000P;
 struct __THE_1_fn$1001;
-struct __THE_1_fn$1002P;
+struct __THE_1_fn$1001P;
 struct __THE_1_fn$1002;
+struct __THE_1_fn$1002P;
 
+struct __THE_1_fn$1000 {
+  int32_t (*f) (void *, void *);
+  void *x;
+  size_t l;
+};
 struct __THE_1_fn$1000P {
   int32_t n0;
 };
-struct __THE_1_fn$1000 {
-  int32_t (*f) (void *, struct __THE_1_fn$1000P);
+struct __THE_1_fn$1001 {
+  int32_t (*f) (void *, void *);
   void *x;
   size_t l;
 };
@@ -41,8 +79,8 @@ struct __THE_1_fn$1001P {
   unsigned char o1;
   int32_t n1;
 };
-struct __THE_1_fn$1001 {
-  int32_t (*f) (void *, struct __THE_1_fn$1001P);
+struct __THE_1_fn$1002 {
+  int32_t (*f) (void *, void *);
   void *x;
   size_t l;
 };
@@ -53,31 +91,55 @@ struct __THE_1_fn$1002P {
   unsigned char o2;
   double n2;
 };
-struct __THE_1_fn$1002 {
-  int32_t (*f) (void *, struct __THE_1_fn$1002P);
-  void *x;
-  size_t l;
-};
 
-int32_t __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
-int32_t __THE_1_test2_0 (void *, struct __THE_1_fn$1001P);
-int32_t __THE_1_test3_0 (void *, struct __THE_1_fn$1002P);
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
 
-int32_t __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
-  int32_t __THE_0_a_0 = p.n0;
+void error_alloc (err_state_t *, size_t);
+void *xalloc (void *, size_t);
+int32_t __THE_1_test1_0 (void *, void *);
+int32_t __THE_1_test2_0 (void *, void *);
+int32_t __THE_1_test3_0 (void *, void *);
+
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
+int32_t __THE_1_test1_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  int32_t __THE_0_a_0 = p->n0;
   __THE_0_a_0 = 2;
   return __THE_0_a_0;
 }
-int32_t __THE_1_test2_0 (void *px, struct __THE_1_fn$1001P p) {
-  int32_t __THE_0_a_0 = p.n0;
-  int32_t __THE_0_b_0 = p.o1 == 1 ? p.n1 : 2;
+int32_t __THE_1_test2_0 (void *px, void *pp) {
+  struct __THE_1_fn$1001P *p = pp;
+  int32_t __THE_0_a_0 = p->n0;
+  int32_t __THE_0_b_0 = p->o1 == 1 ? p->n1 : 2;
   __THE_0_a_0 = __THE_0_b_0;
   return __THE_0_a_0 + __THE_0_b_0;
 }
-int32_t __THE_1_test3_0 (void *px, struct __THE_1_fn$1002P p) {
-  int32_t __THE_0_a_0 = p.n0;
-  int32_t __THE_0_b_0 = p.o1 == 1 ? p.n1 : 2;
-  double __THE_0_c_0 = p.o2 == 1 ? p.n2 : 3;
+int32_t __THE_1_test3_0 (void *px, void *pp) {
+  struct __THE_1_fn$1002P *p = pp;
+  int32_t __THE_0_a_0 = p->n0;
+  int32_t __THE_0_b_0 = p->o1 == 1 ? p->n1 : 2;
+  double __THE_0_c_0 = p->o2 == 1 ? p->n2 : 3;
   __THE_0_c_0 = __THE_0_b_0;
   return __THE_0_a_0 + __THE_0_b_0 + __THE_0_c_0;
 }
@@ -86,9 +148,9 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
   const struct __THE_1_fn$1002 __THE_0_test3_0 = (struct __THE_1_fn$1002) {&__THE_1_test3_0, NULL, 0};
-  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {1});
-  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {2, 1, 3});
-  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1002P) {4, 1, 5, 1, 6});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1000P) {1}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1001P) {2, 1, 3}, sizeof(struct __THE_1_fn$1001P)));
+  __THE_0_test3_0.f(__THE_0_test3_0.x, xalloc(&(struct __THE_1_fn$1002P) {4, 1, 5, 1, 6}, sizeof(struct __THE_1_fn$1002P)));
 }
 ======= flags =======
 ======= stdout =======

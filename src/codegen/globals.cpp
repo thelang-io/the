@@ -25,33 +25,113 @@ const std::vector<std::string> codegenGlobals = {
   R"(})" EOL,
 
   R"(void print (_{FILE} *stream, const char *fmt, ...) {)" EOL
+  R"(  char *d = _{alloc}(1024);)" EOL
+  R"(  _{size_t} cap = 1024;)" EOL
+  R"(  _{size_t} len = 0;)" EOL
+  R"(  _{size_t} y;)" EOL
   R"(  _{va_list} args;)" EOL
   R"(  _{va_start}(args, fmt);)" EOL
-  R"(  char buf[512];)" EOL
-  R"(  _{struct str} s;)" EOL
   R"(  while (*fmt) {)" EOL
   R"(    switch (*fmt++) {)" EOL
-  R"(      case 't': _{fputs}(_{va_arg}(args, int) ? "true" : "false", stream); break;)" EOL
-  R"(      case 'b': _{sprintf}(buf, "%u", _{va_arg}(args, unsigned)); _{fputs}(buf, stream); break;)" EOL
-  R"(      case 'c': _{fputc}(_{va_arg}(args, int), stream); break;)" EOL
+  R"(      case 't': {)" EOL
+  R"(        int a = _{va_arg}(args, int);)" EOL
+  R"(        y = a == 0 ? 5 : 4;)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{memcpy}(&d[len], a == 0 ? "false" : "true", y);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 'b': {)" EOL
+  R"(        unsigned int a = _{va_arg}(args, unsigned int);)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%u", a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%u", a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 'c': {)" EOL
+  R"(        char a = _{va_arg}(args, int);)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%c", a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%c", a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
   R"(      case 'e':)" EOL
   R"(      case 'f':)" EOL
-  R"(      case 'g': _{snprintf}(buf, 512, "%f", _{va_arg}(args, double)); _{fputs}(buf, stream); break;)" EOL
+  R"(      case 'g': {)" EOL
+  R"(        double a = _{va_arg}(args, double);)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%f", a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%f", a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
   R"(      case 'h':)" EOL
   R"(      case 'j':)" EOL
   R"(      case 'v':)" EOL
-  R"(      case 'w': _{sprintf}(buf, "%d", _{va_arg}(args, int)); _{fputs}(buf, stream); break;)" EOL
+  R"(      case 'w': {)" EOL
+  R"(        int a = _{va_arg}(args, int);)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%d", a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%d", a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
   R"(      case 'i':)" EOL
-  R"(      case 'k': _{sprintf}(buf, "%" _{PRId32}, _{va_arg}(args, _{int32_t})); _{fputs}(buf, stream); break;)" EOL
-  R"(      case 'l': _{sprintf}(buf, "%" _{PRId64}, _{va_arg}(args, _{int64_t})); _{fputs}(buf, stream); break;)" EOL
-  R"(      case 'p': _{sprintf}(buf, "%p", _{va_arg}(args, void *)); _{fputs}(buf, stream); break;)" EOL
-  R"(      case 's': s = _{va_arg}(args, _{struct str}); _{fwrite}(s.d, 1, s.l, stream); _{free}(s.d); break;)" EOL
-  R"(      case 'u': _{sprintf}(buf, "%" _{PRIu32}, _{va_arg}(args, _{uint32_t})); _{fputs}(buf, stream); break;)" EOL
-  R"(      case 'y': _{sprintf}(buf, "%" _{PRIu64}, _{va_arg}(args, _{uint64_t})); _{fputs}(buf, stream); break;)" EOL
-  R"(      case 'z': _{fputs}(_{va_arg}(args, char *), stream); break;)" EOL
+  R"(      case 'k': {)" EOL
+  R"(        _{int32_t} a = _{va_arg}(args, _{int32_t});)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%" _{PRId32}, a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%" _{PRId32}, a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 'l': {)" EOL
+  R"(        _{int64_t} a = _{va_arg}(args, _{int64_t});)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%" _{PRId64}, a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%" _{PRId64}, a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 'p': {)" EOL
+  R"(        void *a = _{va_arg}(args, void *);)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%p", a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%p", a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 's': {)" EOL
+  R"(        _{struct str} a = _{va_arg}(args, _{struct str});)" EOL
+  R"(        y = a.l;)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{memcpy}(&d[len], a.d, y);)" EOL
+  R"(        _{free}(a.d);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 'u': {)" EOL
+  R"(        _{uint32_t} a = _{va_arg}(args, _{uint32_t});)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%" _{PRIu32}, a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%" _{PRIu32}, a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 'y': {)" EOL
+  R"(        _{uint64_t} a = _{va_arg}(args, _{uint64_t});)" EOL
+  R"(        y = _{snprintf}(_{NULL}, 0, "%" _{PRIu64}, a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{sprintf}(&d[len], "%" _{PRIu64}, a);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
+  R"(      case 'z': {)" EOL
+  R"(        char *a = _{va_arg}(args, char *);)" EOL
+  R"(        y = _{strlen}(a);)" EOL
+  R"(        if (len + y >= cap) d = _{re_alloc}(d, cap += (y / 1024 + 1) * 1024);)" EOL
+  R"(        _{memcpy}(&d[len], a, y);)" EOL
+  R"(        break;)" EOL
+  R"(      })" EOL
   R"(    })" EOL
+  R"(    len += y;)" EOL
   R"(  })" EOL
   R"(  _{va_end}(args);)" EOL
+  R"(  d[len] = '\0';)" EOL
+  R"(  _{fputs}(d, stream);)" EOL
+  R"(  _{fflush}(stream);)" EOL
+  R"(  _{free}(d);)" EOL
   R"(})" EOL,
 
   R"(void *re_alloc (void *n1, _{size_t} n2) {)" EOL

@@ -161,6 +161,7 @@ class Codegen {
   std::vector<CodegenStateBuiltinsEntities> builtinsEntitiesBuffer = {};
   std::vector<std::string> bufferBuiltins = {};
   std::vector<std::string> bufferEntities = {};
+  bool async = false;
   bool throws = false;
 
   static void compile (

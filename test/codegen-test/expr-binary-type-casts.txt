@@ -97,18 +97,18 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000P;
 struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
 
+struct __THE_1_fn$1000 {
+  void (*f) (void *, void *);
+  void *x;
+  size_t l;
+};
 struct __THE_1_fn$1000P {
   struct str *n0;
   unsigned char o1;
   int32_t n1;
-};
-struct __THE_1_fn$1000 {
-  void (*f) (void *, struct __THE_1_fn$1000P);
-  void *x;
-  size_t l;
 };
 
 err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
@@ -125,6 +125,7 @@ bool str_eq_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
+void *xalloc (void *, size_t);
 struct str *__THE_1_opt_str_alloc (struct str);
 struct str *__THE_1_opt_str_copy (const struct str *);
 bool __THE_1_opt_str_eq (struct str *, struct str *);
@@ -132,10 +133,10 @@ void __THE_1_opt_str_free (struct str *);
 bool __THE_1_opt_str_ne (struct str *, struct str *);
 struct str *__THE_1_opt_str_realloc (struct str *, struct str *);
 struct str __THE_1_opt_str_str (struct str *);
-void __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
-void __THE_1_test2_0 (void *, struct __THE_1_fn$1000P);
-void __THE_1_test3_0 (void *, struct __THE_1_fn$1000P);
-void __THE_1_test4_0 (void *, struct __THE_1_fn$1000P);
+void __THE_1_test1_0 (void *, void *);
+void __THE_1_test2_0 (void *, void *);
+void __THE_1_test3_0 (void *, void *);
+void __THE_1_test4_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -159,33 +160,113 @@ void error_alloc (err_state_t *state, size_t n1) {
   exit(EXIT_FAILURE);
 }
 void print (FILE *stream, const char *fmt, ...) {
+  char *d = alloc(1024);
+  size_t cap = 1024;
+  size_t len = 0;
+  size_t y;
   va_list args;
   va_start(args, fmt);
-  char buf[512];
-  struct str s;
   while (*fmt) {
     switch (*fmt++) {
-      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
-      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
-      case 'c': fputc(va_arg(args, int), stream); break;
+      case 't': {
+        int a = va_arg(args, int);
+        y = a == 0 ? 5 : 4;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a == 0 ? "false" : "true", y);
+        break;
+      }
+      case 'b': {
+        unsigned int a = va_arg(args, unsigned int);
+        y = snprintf(NULL, 0, "%u", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%u", a);
+        break;
+      }
+      case 'c': {
+        char a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%c", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%c", a);
+        break;
+      }
       case 'e':
       case 'f':
-      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'g': {
+        double a = va_arg(args, double);
+        y = snprintf(NULL, 0, "%f", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%f", a);
+        break;
+      }
       case 'h':
       case 'j':
       case 'v':
-      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'w': {
+        int a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%d", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%d", a);
+        break;
+      }
       case 'i':
-      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
-      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
-      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
-      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
-      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
-      case 'z': fputs(va_arg(args, char *), stream); break;
+      case 'k': {
+        int32_t a = va_arg(args, int32_t);
+        y = snprintf(NULL, 0, "%" PRId32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId32, a);
+        break;
+      }
+      case 'l': {
+        int64_t a = va_arg(args, int64_t);
+        y = snprintf(NULL, 0, "%" PRId64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId64, a);
+        break;
+      }
+      case 'p': {
+        void *a = va_arg(args, void *);
+        y = snprintf(NULL, 0, "%p", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%p", a);
+        break;
+      }
+      case 's': {
+        struct str a = va_arg(args, struct str);
+        y = a.l;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a.d, y);
+        free(a.d);
+        break;
+      }
+      case 'u': {
+        uint32_t a = va_arg(args, uint32_t);
+        y = snprintf(NULL, 0, "%" PRIu32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu32, a);
+        break;
+      }
+      case 'y': {
+        uint64_t a = va_arg(args, uint64_t);
+        y = snprintf(NULL, 0, "%" PRIu64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu64, a);
+        break;
+      }
+      case 'z': {
+        char *a = va_arg(args, char *);
+        y = strlen(a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a, y);
+        break;
+      }
     }
+    len += y;
   }
   va_end(args);
+  d[len] = '\0';
+  fputs(d, stream);
+  fflush(stream);
+  free(d);
 }
 void *re_alloc (void *n1, size_t n2) {
   void *r = realloc(n1, n2);
@@ -256,6 +337,12 @@ bool str_ne_str (struct str s1, struct str s2) {
   free(s2.d);
   return r;
 }
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
 struct str *__THE_1_opt_str_alloc (struct str n) {
   struct str *r = alloc(sizeof(struct str));
   *r = n;
@@ -296,9 +383,10 @@ struct str __THE_1_opt_str_str (struct str *n) {
   __THE_1_opt_str_free((struct str *) n);
   return r;
 }
-void __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
-  const struct str *__THE_0_test_0 = p.n0;
-  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+void __THE_1_test1_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  const struct str *__THE_0_test_0 = p->n0;
+  const int32_t __THE_0_a_0 = p->o1 == 1 ? p->n1 : 2;
   if (__THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
     print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
   } else {
@@ -306,9 +394,10 @@ void __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
 }
-void __THE_1_test2_0 (void *px, struct __THE_1_fn$1000P p) {
-  const struct str *__THE_0_test_0 = p.n0;
-  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+void __THE_1_test2_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  const struct str *__THE_0_test_0 = p->n0;
+  const int32_t __THE_0_a_0 = p->o1 == 1 ? p->n1 : 2;
   if (__THE_0_a_0 == 2 && __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
     print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
   } else {
@@ -316,9 +405,10 @@ void __THE_1_test2_0 (void *px, struct __THE_1_fn$1000P p) {
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
 }
-void __THE_1_test3_0 (void *px, struct __THE_1_fn$1000P p) {
-  const struct str *__THE_0_test_0 = p.n0;
-  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+void __THE_1_test3_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  const struct str *__THE_0_test_0 = p->n0;
+  const int32_t __THE_0_a_0 = p->o1 == 1 ? p->n1 : 2;
   if ((__THE_0_a_0 == 2 && __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) || __THE_1_opt_str_ne(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
     print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
   } else {
@@ -326,9 +416,10 @@ void __THE_1_test3_0 (void *px, struct __THE_1_fn$1000P p) {
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
 }
-void __THE_1_test4_0 (void *px, struct __THE_1_fn$1000P p) {
-  const struct str *__THE_0_test_0 = p.n0;
-  const int32_t __THE_0_a_0 = p.o1 == 1 ? p.n1 : 2;
+void __THE_1_test4_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  const struct str *__THE_0_test_0 = p->n0;
+  const int32_t __THE_0_a_0 = p->o1 == 1 ? p->n1 : 2;
   if ((__THE_0_a_0 == 2 && __THE_1_opt_str_eq(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) || __THE_1_opt_str_eq(__THE_1_opt_str_copy(__THE_0_test_0), NULL)) {
     print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
   } else {
@@ -344,21 +435,21 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_test4_0 = (struct __THE_1_fn$1000) {&__THE_1_test4_0, NULL, 0};
   const int32_t __THE_0_a_0 = 2;
   struct str *__THE_0_test_0 = NULL;
-  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test1")));
-  __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, NULL);
-  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test2")));
-  __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, NULL);
-  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test3")));
-  __THE_0_test3_0.f(__THE_0_test3_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test3_0.f(__THE_0_test3_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, NULL);
-  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_test_0 = __THE_1_opt_str_realloc(__THE_0_test_0, __THE_1_opt_str_alloc(str_alloc("test4")));
-  __THE_0_test4_0.f(__THE_0_test4_0.x, (struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0});
+  __THE_0_test4_0.f(__THE_0_test4_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_opt_str_copy(__THE_0_test_0), 0, 0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
 }
 ======= flags =======

@@ -158,6 +158,7 @@ Codegen::Codegen (AST *a) {
 
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   auto nodes = this->ast->gen();
+  this->async = ASTChecker(nodes).async();
   this->throws = ASTChecker(nodes).throws();
 
   for (const auto &[name, item] : codegenAPI) {
@@ -188,10 +189,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
   auto mainCode = std::string();
 
-  if (ASTChecker(nodes).async()) {
-    mainCode += this->_apiEval(R"(  _{threadpool_t} *tp = _{threadpool_init}(4);)" EOL);
-    this->state.cleanUp.add(this->_apiEval("_{threadpool_deinit}(tp);"));
-    this->state.cleanUp.add(this->_apiEval("_{threadpool_wait}(tp);"));
+  if (this->async) {
+    mainCode += this->_apiEval(R"(  _{threadpool_t} *tp = _{threadpool_init}(2);)" EOL);
   }
 
   if (this->throws) {
@@ -207,8 +206,13 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   mainCode += this->_block(nodes, false);
-  auto mainCleanUpCode = this->state.cleanUp.gen(2);
 
+  if (this->async) {
+    this->state.cleanUp.add(this->_apiEval("_{threadpool_deinit}(tp);"));
+    this->state.cleanUp.add(this->_apiEval("_{threadpool_wait}(tp);"));
+  }
+
+  auto mainCleanUpCode = this->state.cleanUp.gen(2);
   auto defineCode = std::string();
   auto enumDeclCode = std::string();
   auto fnDeclCode = std::string();
@@ -1296,6 +1300,12 @@ std::string Codegen::_fnDecl (
   auto contextName = typeName + "X";
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
   auto code = std::string();
+  auto flattenAsyncBody = !fnType.async ? ASTBlock{} : ASTChecker::flattenNode(*body);
+
+  flattenAsyncBody.erase(std::remove_if(flattenAsyncBody.begin(), flattenAsyncBody.end(), [] (const auto &it) -> bool {
+    // todo also fn decl or obj method
+    return !std::holds_alternative<ASTNodeVarDecl>(*it.body);
+  }), flattenAsyncBody.end());
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
     auto initialIndent = this->indent;
@@ -1305,7 +1315,7 @@ std::string Codegen::_fnDecl (
 
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
 
-    if (!stack.empty()) {
+    if (!stack.empty() || !flattenAsyncBody.empty()) {
       contextEntityIdx = this->_apiEntity(contextName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
         decl += "struct " + contextName + ";";
         def += "struct " + contextName + " {" EOL;
@@ -1318,8 +1328,12 @@ std::string Codegen::_fnDecl (
           def += "  " + typeRefCode + contextVarName + ";" EOL;
         }
 
-        if (fnType.async) {
-          // todo list all scope variables
+        for (const auto &node : flattenAsyncBody) {
+          auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
+          auto contextVarName = Codegen::name(nodeVarDecl.var->codeName);
+          auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
+
+          def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
         }
 
         def += "};";
@@ -1333,13 +1347,17 @@ std::string Codegen::_fnDecl (
 
       auto bodyCode = std::string();
 
+      if (!params.empty() || hasSelfParam || this->throws) {
+        bodyCode += "  struct _{" + paramsName + "} *p = pp;" EOL;
+      }
+
       if (this->throws) {
-        bodyCode += R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(", p.line, p.col);)" EOL;
+        bodyCode += R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(", p->line, p->col);)" EOL;
         this->state.cleanUp.add(this->_apiEval("if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);"));
         this->state.cleanUp.add("_{error_stack_pop}(&_{err_state});");
       }
 
-      if (!stack.empty()) {
+      if (!stack.empty() || !flattenAsyncBody.empty()) {
         bodyCode += "  struct _{" + contextName + "} *x = px;" EOL;
 
         for (const auto &contextVar : stack) {
@@ -1351,15 +1369,20 @@ std::string Codegen::_fnDecl (
           this->state.contextVars.insert(contextVarName);
         }
 
-        if (fnType.async) {
-          // todo list all scope variables
+        for (const auto &node : flattenAsyncBody) {
+          auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
+          auto contextVarName = Codegen::name(nodeVarDecl.var->codeName);
+          auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
+
+          bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
+          this->state.contextVars.insert(contextVarName);
         }
       }
 
       if (hasSelfParam) {
         auto selfTypeInfo = this->_typeInfo(fnType.callInfo.selfType);
         bodyCode += "  " + (fnType.callInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst) +
-          Codegen::name(fnType.callInfo.selfCodeName) + " = p.self;" EOL;
+          Codegen::name(fnType.callInfo.selfCodeName) + " = p->self;" EOL;
       }
 
       if (!params.empty()) {
@@ -1373,10 +1396,10 @@ std::string Codegen::_fnDecl (
           bodyCode += "  " + (param.var->mut ? paramTypeInfo.typeCode : paramTypeInfo.typeCodeConst) + paramName + " = ";
 
           if (param.init == std::nullopt) {
-            bodyCode += "p.n" + paramIdxStr;
+            bodyCode += "p->n" + paramIdxStr;
           } else {
             auto initCode = this->_nodeExpr(*param.init, paramTypeInfo.type);
-            bodyCode += "p.o" + paramIdxStr + " == 1 ? p.n" + paramIdxStr + " : " + initCode;
+            bodyCode += "p->o" + paramIdxStr + " == 1 ? p->n" + paramIdxStr + " : " + initCode;
           }
 
           bodyCode += ";" EOL;
@@ -1417,12 +1440,25 @@ std::string Codegen::_fnDecl (
         bodyCode.insert(0, "  unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
       }
 
-      decl += returnTypeInfo.typeCode + typeName + " (void *";
-      def += returnTypeInfo.typeCode + typeName + " (void *px";
+      decl += returnTypeInfo.typeCode + typeName + " (";
+      def += returnTypeInfo.typeCode + typeName + " (";
 
-      if (this->throws || !params.empty() || hasSelfParam) {
-        decl += ", struct _{" + paramsName + "}";
-        def += ", struct _{" + paramsName + "} p";
+      if (fnType.async) {
+        decl += this->_apiEval("_{threadpool_t} *, _{threadpool_job_t} *, ");
+        def += this->_apiEval("_{threadpool_t} *tp, _{threadpool_job_t} *job, ");
+      }
+
+      decl += "void *";
+      def += "void *px";
+
+      if (this->throws || !params.empty() || hasSelfParam || fnType.async) {
+        decl += ", void *";
+        def += ", void *pp";
+      }
+
+      if (fnType.async) {
+        decl += ", int";
+        def += ", int step";
       }
 
       decl += ");";
@@ -1431,7 +1467,7 @@ std::string Codegen::_fnDecl (
       return stack.empty() ? 0 : contextEntityIdx;
     });
 
-    if (!stack.empty()) {
+    if (!stack.empty() || !flattenAsyncBody.empty()) {
       this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
         decl += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + ", struct _{" + contextName + "});";
         def += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + "n, struct _{" + contextName + "} x) {" EOL;
@@ -1458,13 +1494,13 @@ std::string Codegen::_fnDecl (
     code += std::string(this->indent, ' ') + "const " + varTypeInfo.typeCode + fnName;
   }
 
-  if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && stack.empty()) {
+  if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && stack.empty() && flattenAsyncBody.empty()) {
     code += this->_apiEval(" = (" + varTypeInfo.typeCodeTrimmed + ") {&_{" + typeName + "}, _{NULL}, 0};" EOL);
   } else if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
     code += ";" EOL;
   }
 
-  if ((phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) && !stack.empty()) {
+  if ((phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) && (!stack.empty() || !flattenAsyncBody.empty())) {
     code += std::string(this->indent, ' ') + this->_apiEval("_{" + typeName + "_alloc}((" + varTypeInfo.typeRefCode + ") &" + fnName + ", ", 1);
     this->_activateEntity(contextName);
     code += "(struct " + contextName + ") {";
@@ -1988,7 +2024,14 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     }
 
     code = !root ? code : std::string(this->indent, ' ');
-    code += (nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst) + name + " = " + initCode + (root ? ";" EOL : "");
+
+    if (this->state.insideAsync) {
+      code += "*";
+    } else {
+      code += nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst;
+    }
+
+    code += name + " = " + initCode + (root ? ";" EOL : "");
 
     if (typeInfo.type->shouldBeFreed()) {
       this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, name) + ";");
@@ -2527,11 +2570,11 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
       auto hasThrowParams = this->throws && !calleeTypeInfo.realType->builtin;
       auto hasParams = (!fnType.params.empty() || hasSelfParam || hasThrowParams) && !calleeTypeInfo.realType->builtin;
+      auto paramsName = calleeTypeInfo.realTypeName + "P";
       auto paramsCode = std::string();
 
       if (hasParams) {
-        auto paramsName = calleeTypeInfo.realTypeName + "P";
-        paramsCode += this->_apiEval(", (struct _{" + paramsName + "}) {");
+        paramsCode += this->_apiEval(", _{xalloc}(&(struct _{" + paramsName + "}) {");
       }
 
       if (hasThrowParams) {
@@ -2609,7 +2652,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
       }
 
       if (hasParams) {
-        paramsCode += "}";
+        paramsCode += this->_apiEval("}, sizeof(struct _{" + paramsName + "}))");
       }
 
       auto fnName = std::string();
@@ -2632,7 +2675,8 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, b
 
       if (fnType.async) {
         paramsCode = paramsCode.empty() ? this->_apiEval("_{NULL}") : paramsCode;
-        code = this->_apiEval("_{threadpool_add}(tp, ") + fnName + ".f, " + fnName + ".x, " + paramsCode + this->_apiEval(", _{NULL})");
+        code = this->_apiEval("_{threadpool_add}(tp, " + fnName + ".f");
+        code += this->_apiEval(", _{xalloc}(" + fnName + ".x, " + fnName + ".l)") + paramsCode + this->_apiEval(", _{NULL})");
       } else {
         if (fnName.starts_with("*")) {
           fnName = "(" + fnName + ")";
@@ -3338,8 +3382,8 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += "  _{size_t} l = 0;" EOL;
     def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(self.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
     def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
-    def += "    if (n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) ";
-    def += "{line, col, " + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + "})) {" EOL;
+    def += "    if (n1.f(n1.x, _{xalloc}(&(struct _{" + param1TypeInfo.typeName + "P}) ";
+    def += "{line, col, " + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + "}, sizeof(struct _{" + param1TypeInfo.typeName + "P})))) {" EOL;
     def += "      d[l++] = " + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + ";" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
@@ -3378,8 +3422,8 @@ std::string Codegen::_typeNameArray (Type *type) {
     decl += "void " + typeName + "_forEach (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ", int, int);";
     def += "void " + typeName + "_forEach (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1, int line, int col) {" EOL;
     def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
-    def += "    n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) ";
-    def += "{line, col, " + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + ", i});" EOL;
+    def += "    n1.f(n1.x, _{xalloc}(&(struct _{" + param1TypeInfo.typeName + "P}) ";
+    def += "{line, col, " + this->_genCopyFn(elementTypeInfo.type, "self.d[i]") + ", i}, sizeof(struct _{" + param1TypeInfo.typeName + "P})));" EOL;
     def += "  }" EOL;
     def += "  " + this->_genFreeFn(param1TypeInfo.type, "n1") + ";" EOL;
     def += "  " + this->_genFreeFn(type, "self") + ";" EOL;
@@ -3608,9 +3652,9 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += "    while (1) {" EOL;
     def += "      unsigned char b = 0;" EOL;
     def += "      for (_{size_t} i = 1; i < self->l; i++) {" EOL;
-    def += "        _{int32_t} c = n1.f(n1.x, (struct _{" + param1TypeInfo.typeName + "P}) {line, col, ";
+    def += "        _{int32_t} c = n1.f(n1.x, _{xalloc}(&(struct _{" + param1TypeInfo.typeName + "P}) {line, col, ";
     def += this->_genCopyFn(elementTypeInfo.type, "self->d[i - 1]") + ", ";
-    def += this->_genCopyFn(elementTypeInfo.type, "self->d[i]") + "});" EOL;
+    def += this->_genCopyFn(elementTypeInfo.type, "self->d[i]") + "}, sizeof(struct _{" + param1TypeInfo.typeName + "P})));" EOL;
     def += "        if (c > 0) {" EOL;
     def += "          b = 1;" EOL;
     def += "          " + elementTypeInfo.typeCode + "t = self->d[i];" EOL;
@@ -3671,10 +3715,34 @@ std::string Codegen::_typeNameFn (Type *type) {
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
   auto hasParams = this->throws || !fnType.params.empty() || hasSelfParam;
   auto paramsName = typeName + "P";
-  auto paramsEntityIdx = 0;
+
+  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    auto returnTypeInfo = this->_typeInfo(fnType.returnType);
+
+    decl += "struct " + typeName + ";";
+    def += "struct " + typeName + " {" EOL;
+    def += "  " + returnTypeInfo.typeCode + "(*f) (";
+
+    if (fnType.async) {
+      def += "_{threadpool_t} *, _{threadpool_job_t} *, ";
+    }
+
+    def += "void *" + std::string(hasParams || fnType.async ? ", void *" : "");
+
+    if (fnType.async) {
+      def += ", int";
+    }
+
+    def += ");" EOL;
+    def += "  void *x;" EOL;
+    def += "  _{size_t} l;" EOL;
+    def += "};";
+
+    return 0;
+  });
 
   if (hasParams) {
-    paramsEntityIdx = this->_apiEntity(paramsName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
+    this->_apiEntity(paramsName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
       auto paramsCode = std::string();
       auto paramIdx = static_cast<std::size_t>(0);
 
@@ -3708,19 +3776,6 @@ std::string Codegen::_typeNameFn (Type *type) {
       return 0;
     });
   }
-
-  this->_apiEntity(typeName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
-    auto returnTypeInfo = this->_typeInfo(fnType.returnType);
-
-    decl += "struct " + typeName + ";";
-    def += "struct " + typeName + " {" EOL;
-    def += "  " + returnTypeInfo.typeCode + "(*f) (void *" + (hasParams ? ", struct _{" + paramsName + "}" : "") + ");" EOL;
-    def += "  void *x;" EOL;
-    def += "  _{size_t} l;" EOL;
-    def += "};";
-
-    return hasParams ? 0 : paramsEntityIdx;
-  });
 
   this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
