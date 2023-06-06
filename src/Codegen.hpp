@@ -208,6 +208,7 @@ class Codegen {
     const std::vector<std::shared_ptr<Var>> &,
     const std::vector<ASTFnDeclParam> &,
     const std::optional<ASTBlock> &,
+    const ASTNode *,
     CodegenPhase
   );
   std::string _genCopyFn (Type *, const std::string &);

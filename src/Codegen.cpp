@@ -991,7 +991,7 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp, const std:
         auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->throws, this->async);
         auto asyncMainVar = std::make_shared<Var>(Var{"async_main", "async_main", asyncMainType, false, false, true, false, 0});
 
-        code += this->_fnDecl(asyncMainVar, nodeMain.stack, {}, nodeMain.body, CODEGEN_PHASE_FULL);
+        code += this->_fnDecl(asyncMainVar, nodeMain.stack, {}, nodeMain.body, node.parent, CODEGEN_PHASE_FULL);
         code += std::string(this->indent, ' ') + this->_apiEval("_{threadpool_add}(tp, async_main.f, async_main.x, _{NULL}, _{NULL});" EOL);
       } else {
         this->indent = 0;
@@ -1301,6 +1301,7 @@ std::string Codegen::_fnDecl (
   const std::vector<std::shared_ptr<Var>> &stack,
   const std::vector<ASTFnDeclParam> &params,
   const std::optional<ASTBlock> &body,
+  const ASTNode *parent,
   CodegenPhase phase
 ) {
   if (body == std::nullopt) {
@@ -1353,28 +1354,23 @@ std::string Codegen::_fnDecl (
             auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
             auto contextVarName = Codegen::name(nodeFnDecl.var->codeName);
             auto typeInfo = this->_typeInfo(nodeFnDecl.var->type);
-            auto typeRefCode = nodeFnDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst;
 
-            def += "  " + typeRefCode + contextVarName + ";" EOL;
+            def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
           } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
             auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
             for (const auto &method : nodeObjDecl.methods) {
               auto contextVarName = Codegen::name(method.var->codeName);
               auto typeInfo = this->_typeInfo(method.var->type);
-              auto typeRefCode = method.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst;
 
-              def += "  " + typeRefCode + contextVarName + ";" EOL;
+              def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
             }
           } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
             auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
             auto contextVarName = Codegen::name(nodeVarDecl.var->codeName);
             auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
-            auto typeRefCode = !typeInfo.type->shouldBeFreed()
-              ? typeInfo.typeCode
-              : nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst;
 
-            def += "  " + typeRefCode + contextVarName + ";" EOL;
+            def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
           }
         }
 
@@ -1416,9 +1412,8 @@ std::string Codegen::_fnDecl (
             auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
             auto contextVarName = Codegen::name(nodeFnDecl.var->codeName);
             auto typeInfo = this->_typeInfo(nodeFnDecl.var->type);
-            auto typeRefCode = nodeFnDecl.var->mut ? typeInfo.typeRefCode : typeInfo.typeRefCodeConst;
 
-            bodyCode += "  " + typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
+            bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
             this->state.contextVars.insert(contextVarName);
           } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
             auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
@@ -1426,20 +1421,16 @@ std::string Codegen::_fnDecl (
             for (const auto &method : nodeObjDecl.methods) {
               auto contextVarName = Codegen::name(method.var->codeName);
               auto typeInfo = this->_typeInfo(method.var->type);
-              auto typeRefCode = method.var->mut ? typeInfo.typeRefCode : typeInfo.typeRefCodeConst;
 
-              bodyCode += "  " + typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
+              bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
               this->state.contextVars.insert(contextVarName);
             }
           } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
             auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
             auto contextVarName = Codegen::name(nodeVarDecl.var->codeName);
             auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
-            auto typeRefCode = !typeInfo.type->shouldBeFreed()
-              ? typeInfo.typeRefCode
-              : nodeVarDecl.var->mut ? typeInfo.typeRefCode : typeInfo.typeRefCodeConst;
 
-            bodyCode += "  " + typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
+            bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
             this->state.contextVars.insert(contextVarName);
           }
         }
@@ -1492,27 +1483,15 @@ std::string Codegen::_fnDecl (
       this->state.returnType = returnTypeInfo.type;
       this->state.insideAsync = fnType.async;
       this->state.asyncCounter = 0;
-
-      if (this->state.insideAsync) {
-        this->indent = 4;
-      } else {
-        this->indent = 0;
-      }
-
+      this->indent = this->state.insideAsync ? 4 : 0;
       bodyCode += this->_block(*body, false);
-      this->indent = 2;
       this->varMap.restore();
-
-      if (fnType.async) {
-        bodyCode += "    }" EOL;
-        bodyCode += "  }" EOL;
-      }
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
         bodyCode.insert(0, "  " + returnTypeInfo.typeCode + "v;" EOL);
-        bodyCode += this->state.cleanUp.gen(this->indent);
+        bodyCode += this->state.cleanUp.gen(this->state.insideAsync ? 6 : 2);
       } else {
-        bodyCode += this->state.cleanUp.gen(this->indent);
+        bodyCode += this->state.cleanUp.gen(this->state.insideAsync ? 6 : 2);
       }
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
@@ -1521,6 +1500,11 @@ std::string Codegen::_fnDecl (
 
       if (this->state.cleanUp.returnVarUsed) {
         bodyCode.insert(0, "  unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
+      }
+
+      if (fnType.async) {
+        bodyCode += "    }" EOL;
+        bodyCode += "  }" EOL;
       }
 
       decl += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
@@ -1604,7 +1588,7 @@ std::string Codegen::_fnDecl (
     code += "});" EOL;
 
     if (varTypeInfo.type->shouldBeFreed()) {
-      this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, (this->async ? "*" : "") + fnName) + ";");
+      this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, (this->async && parent != nullptr ? "*" : "") + fnName) + ";");
     }
   }
 
@@ -1858,6 +1842,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
       nodeFnDecl.stack,
       nodeFnDecl.params,
       nodeFnDecl.body,
+      node.parent,
       phase
     );
 
@@ -1984,6 +1969,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
           nodeObjDeclMethod.stack,
           nodeObjDeclMethod.params,
           nodeObjDeclMethod.body,
+          node.parent,
           CODEGEN_PHASE_ALLOC
         );
       }
@@ -1996,6 +1982,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
           nodeObjDeclMethod.stack,
           nodeObjDeclMethod.params,
           nodeObjDeclMethod.body,
+          node.parent,
           phase
         );
       }
@@ -2119,7 +2106,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     code += name + " = " + initCode + (root ? ";" EOL : "");
 
     if (typeInfo.type->shouldBeFreed()) {
-      this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, name) + ";");
+      this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, (this->state.insideAsync ? "*" : "") + name) + ";");
     }
 
     return this->_wrapNode(node, code);
