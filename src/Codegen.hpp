@@ -107,6 +107,7 @@ struct CodegenState {
   Type *returnType = nullptr;
   bool insideAsync = false;
   std::map<std::string, Type *> typeCasts = {};
+  std::size_t asyncCounter = 0;
 };
 
 struct CodegenTypeInfo {

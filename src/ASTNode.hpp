@@ -112,6 +112,7 @@ struct ASTNodeLoop {
 };
 
 struct ASTNodeMain {
+  std::vector<std::shared_ptr<Var>> stack;
   ASTBlock body;
 };
 

@@ -616,16 +616,21 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     return this->_wrapNode(stmt, nodeLoop);
   } else if (std::holds_alternative<ParserStmtMain>(*stmt.body)) {
     auto stmtMain = std::get<ParserStmtMain>(*stmt.body);
+    auto nodeMainVarStack = this->varMap.varStack();
 
     this->typeMap.stack.emplace_back("main");
     this->varMap.save();
 
-    auto nodeMainBody = this->_block(stmtMain.body, varStack);
+    auto nodeMainBody = this->_block(stmtMain.body, nodeMainVarStack);
 
     this->varMap.restore();
     this->typeMap.stack.pop_back();
 
-    auto nodeMain = ASTNodeMain{nodeMainBody};
+    // todo test
+    auto nodeMainStack = nodeMainVarStack.snapshot();
+    varStack.mark(nodeMainStack);
+
+    auto nodeMain = ASTNodeMain{nodeMainStack, nodeMainBody};
     return this->_wrapNode(stmt, nodeMain);
   } else if (std::holds_alternative<ParserStmtObjDecl>(*stmt.body)) {
     auto stmtObjDecl = std::get<ParserStmtObjDecl>(*stmt.body);
