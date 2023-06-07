@@ -1666,3 +1666,5 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
   "throw-node-try-inside-loop-with-continue",
   "throw-node-try-inside-loop-with-return"
 ));
+
+// todo throws outside of current scope inside fn or obj

@@ -71,12 +71,13 @@ const std::vector<std::string> codegenThread = {
   R"(  _{free}(self);)" EOL
   R"(})" EOL,
 
-  R"(void threadpool_add (_{threadpool_t} *self, _{threadpool_func_t} func, void *ctx, void *params, _{threadpool_job_t} *parent) {)" EOL
+  R"(void threadpool_add (_{threadpool_t} *self, _{threadpool_func_t} func, void *ctx, void *params, void *ret, _{threadpool_job_t} *parent) {)" EOL
   R"(  _{threadpool_job_t} *job = _{alloc}(sizeof(_{threadpool_job_t}));)" EOL
   R"(  job->parent = parent;)" EOL
   R"(  job->func = func;)" EOL
   R"(  job->ctx = ctx;)" EOL
   R"(  job->params = params;)" EOL
+  R"(  job->ret = ret;)" EOL
   R"(  job->step = 0;)" EOL
   R"(  job->referenced = _{false};)" EOL
   R"(  job->next = _{NULL};)" EOL
@@ -113,7 +114,7 @@ const std::vector<std::string> codegenThread = {
   R"(    if (job != _{NULL}) {)" EOL
   R"(      int step = job->step;)" EOL
   R"(      job->step++;)" EOL
-  R"(      job->func(self, job, job->ctx, job->params, step);)" EOL
+  R"(      job->func(self, job, job->ctx, job->params, job->ret, step);)" EOL
   R"(      if (job->parent != _{NULL} && !job->referenced) _{threadpool_insert}(self, job->parent);)" EOL
   R"(      _{threadpool_job_deinit}(job);)" EOL
   R"(    })" EOL
@@ -140,6 +141,7 @@ const std::vector<std::string> codegenThread = {
   R"(  r->func = self->func;)" EOL
   R"(  r->ctx = self->ctx;)" EOL
   R"(  r->params = self->params;)" EOL
+  R"(  r->ret = self->ret;)" EOL
   R"(  r->step = self->step;)" EOL
   R"(  r->referenced = self->referenced;)" EOL
   R"(  r->next = _{NULL};)" EOL

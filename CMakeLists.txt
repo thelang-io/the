@@ -143,3 +143,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     ENVIRONMENT "TEST_CODEGEN_PLATFORM=${TEST_CODEGEN_PLATFORM}"
   )
 endif ()
+
+add_executable(test2134 coverage/test2134.c)
+target_include_directories(test2134 PRIVATE "$ENV{DEPS_DIR}/include")
+target_link_directories(test2134 PRIVATE "$ENV{DEPS_DIR}/lib")
+target_link_libraries(test2134 PRIVATE ssl crypto)

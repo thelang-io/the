@@ -145,6 +145,7 @@ struct ASTExprAssign {
 
 struct ASTExprAwait {
   ASTNodeExpr arg;
+  std::size_t id;
 };
 
 struct ASTExprBinary {
