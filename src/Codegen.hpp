@@ -198,9 +198,9 @@ class Codegen {
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true, const std::string & = "");
-  std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
+  std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &, const ASTNode &);
   std::string _exprCallDefaultArg (const CodegenTypeInfo &);
-  std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &);
+  std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &, const ASTNode &);
   std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
   std::string _exprObjDefaultField (const CodegenTypeInfo &);
   std::string _fnDecl (
@@ -208,7 +208,7 @@ class Codegen {
     const std::vector<std::shared_ptr<Var>> &,
     const std::vector<ASTFnDeclParam> &,
     const std::optional<ASTBlock> &,
-    const ASTNode *,
+    const ASTNode &,
     CodegenPhase
   );
   std::string _genCopyFn (Type *, const std::string &);
@@ -217,7 +217,7 @@ class Codegen {
   std::string _genReallocFn (Type *, const std::string &, const std::string &);
   std::string _genStrFn (Type *, const std::string &, bool = true, bool = true);
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
-  std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
+  std::string _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, bool = false);
   std::string _nodeVarDeclInit (const CodegenTypeInfo &);
   void _restoreStateBuiltinsEntities ();
   void _saveStateBuiltinsEntities ();

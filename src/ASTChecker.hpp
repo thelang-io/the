@@ -323,6 +323,35 @@ class ASTChecker {
     return this->_isLastNode(this->_nodes);
   }
 
+  // todo test
+  template <typename T>
+  bool parentIs () const {
+    this->_checkNode();
+
+    if (this->_nodes.empty()) {
+      return false;
+    }
+
+    auto p = this->_nodes[0].parent;
+
+    while (p != nullptr) {
+      if (std::holds_alternative<T>(*p->body)) {
+        return true;
+      } else if (
+        std::holds_alternative<ASTNodeEnumDecl>(*p->body) ||
+        std::holds_alternative<ASTNodeFnDecl>(*p->body) ||
+        std::holds_alternative<ASTNodeMain>(*p->body) ||
+        std::holds_alternative<ASTNodeObjDecl>(*p->body)
+      ) {
+        return false;
+      }
+
+      p = p->parent;
+    }
+
+    return false;
+  }
+
   bool throws () const {
     if (!this->_exprs.empty()) {
       return this->_throwsExpr(this->_exprs);
