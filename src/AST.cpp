@@ -647,7 +647,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto nodeMainStack = nodeMainVarStack.snapshot();
     varStack.mark(nodeMainStack);
 
-    auto nodeMain = ASTNodeMain{nodeMainStack, nodeMainBody, ASTChecker(nodeMainBody).async()};
+    auto nodeMain = ASTNodeMain{nodeMainStack, nodeMainBody, ASTChecker(nodeMainBody).hasExpr<ASTExprAwait>()};
     // todo test
     populateExprAwaitId(nodeMain.body);
 
