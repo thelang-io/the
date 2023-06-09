@@ -109,14 +109,19 @@ const std::vector<std::string> codegenThread = {
   R"(    })" EOL
   R"(    _{threadpool_job_t} *job = self->jobs;)" EOL
   R"(    self->jobs = self->jobs->next;)" EOL
+  R"(    job->next = _{NULL};)" EOL
   R"(    self->working_threads++;)" EOL
   R"(    _{pthread_mutex_unlock}(&self->lock);)" EOL
   R"(    if (job != _{NULL}) {)" EOL
-  R"(      int step = job->step;)" EOL
-  R"(      job->step++;)" EOL
-  R"(      job->func(self, job, job->ctx, job->params, job->ret, step);)" EOL
-  R"(      if (job->parent != _{NULL} && !job->referenced) _{threadpool_insert}(self, job->parent);)" EOL
-  R"(      _{threadpool_job_deinit}(job);)" EOL
+  R"(      job->referenced = _{false};)" EOL
+  R"(      int step = job->func(self, job, job->ctx, job->params, job->ret, job->step);)" EOL
+  R"(      if (step == -1) {)" EOL
+  R"(        if (job->parent != _{NULL} && !job->referenced) _{threadpool_insert}(self, job->parent);)" EOL
+  R"(        _{threadpool_job_deinit}(job);)" EOL
+  R"(      } else {)" EOL
+  R"(        job->step = step;)" EOL
+  R"(        if (!job->referenced) _{threadpool_insert}(self, job);)" EOL
+  R"(      })" EOL
   R"(    })" EOL
   R"(    _{pthread_mutex_lock}(&self->lock);)" EOL
   R"(    self->working_threads--;)" EOL
@@ -136,17 +141,8 @@ const std::vector<std::string> codegenThread = {
   R"(})" EOL,
 
   R"(_{threadpool_job_t} *threadpool_job_ref (_{threadpool_job_t} *self) {)" EOL
-  R"(  _{threadpool_job_t} *r = _{alloc}(sizeof(_{threadpool_job_t}));)" EOL
-  R"(  r->parent = self->parent;)" EOL
-  R"(  r->func = self->func;)" EOL
-  R"(  r->ctx = self->ctx;)" EOL
-  R"(  r->params = self->params;)" EOL
-  R"(  r->ret = self->ret;)" EOL
-  R"(  r->step = self->step;)" EOL
-  R"(  r->referenced = self->referenced;)" EOL
-  R"(  r->next = _{NULL};)" EOL
   R"(  self->referenced = _{true};)" EOL
-  R"(  return r;)" EOL
+  R"(  return self;)" EOL
   R"(})" EOL,
 
   R"(_{threadpool_thread_t} *threadpool_thread_init (_{threadpool_t} *tp, _{threadpool_thread_t} *next) {)" EOL

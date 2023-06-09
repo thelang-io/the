@@ -338,14 +338,14 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.typeThreadpoolFunc) {
-    builtinStructDefCode += "typedef void (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);" EOL;
+    builtinStructDefCode += "typedef int (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);" EOL;
   }
 
   if (this->builtins.typeThreadpoolJob) {
     builtinStructDeclCode += "struct threadpool_job;" EOL;
     builtinStructDefCode += "typedef struct threadpool_job {" EOL;
     builtinStructDefCode += "  struct threadpool_job *parent;" EOL;
-    builtinStructDefCode += "  void (*func) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);" EOL;
+    builtinStructDefCode += "  int (*func) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);" EOL;
     builtinStructDefCode += "  void *ctx;" EOL;
     builtinStructDefCode += "  void *params;" EOL;
     builtinStructDefCode += "  void *ret;" EOL;
@@ -1529,10 +1529,11 @@ std::string Codegen::_fnDecl (
       if (fnType.async) {
         bodyCode += "    }" EOL;
         bodyCode += "  }" EOL;
+        bodyCode += "  return -1;" EOL;
       }
 
-      decl += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
-      def += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
+      decl += (this->state.insideAsync ? "int " : returnTypeInfo.typeCode) + typeName + " (";
+      def += (this->state.insideAsync ? "int " : returnTypeInfo.typeCode) + typeName + " (";
 
       if (fnType.async) {
         decl += this->_apiEval("_{threadpool_t} *, _{threadpool_job_t} *, ");
@@ -1874,38 +1875,62 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
     return this->_wrapNode(node, code);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     auto nodeIf = std::get<ASTNodeIf>(*node.body);
+    auto initialIndent = this->indent;
     auto initialStateTypeCasts = this->state.typeCasts;
     auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
+    auto nodeIfCondCode = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, decl);
 
-    code = std::string(this->indent, ' ') + "if (" + this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, decl) + ") {" EOL;
+    if (ASTChecker(node).hasExpr<ASTExprAwait>()) {
+      nodeIfCondCode = "!(" + nodeIfCondCode + ")";
+      this->indent -= 2;
 
-    bodyTypeCasts.merge(this->state.typeCasts);
-    bodyTypeCasts.swap(this->state.typeCasts);
-    this->varMap.save();
-    code += this->_block(nodeIf.body);
-    this->varMap.restore();
-    this->state.typeCasts = initialStateTypeCasts;
-
-    if (nodeIf.alt != std::nullopt) {
-      code += std::string(this->indent, ' ') + "} else ";
-      altTypeCasts.merge(this->state.typeCasts);
-      altTypeCasts.swap(this->state.typeCasts);
-
-      if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
-        this->varMap.save();
-        code += "{" EOL + this->_block(std::get<ASTBlock>(*nodeIf.alt));
-        code += std::string(this->indent, ' ') + "}" EOL;
-        this->varMap.restore();
-      } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-        auto elseIfCode = this->_node(std::get<ASTNode>(*nodeIf.alt));
-        code += elseIfCode.substr(elseIfCode.find_first_not_of(' '));
-      }
-
+      // todo this part is the same as sync
+      bodyTypeCasts.merge(this->state.typeCasts);
+      bodyTypeCasts.swap(this->state.typeCasts);
+      this->varMap.save();
+      code += this->_block(nodeIf.body);
+      this->varMap.restore();
       this->state.typeCasts = initialStateTypeCasts;
+
+      auto currentAsyncCounter = std::to_string(this->state.asyncCounter);
+      auto codeHead = std::string();
+
+      codeHead = std::string(this->indent + 2, ' ') + "if (" + nodeIfCondCode + ") {" EOL;
+      codeHead += std::string(this->indent + 4, ' ') + "return " + currentAsyncCounter + ";" EOL;
+      codeHead += std::string(this->indent + 2, ' ') + "}" EOL;
+      code = codeHead + code;
     } else {
-      code += std::string(this->indent, ' ') + "}" EOL;
+      code = std::string(this->indent, ' ') + "if (" + nodeIfCondCode + ") {" EOL;
+
+      bodyTypeCasts.merge(this->state.typeCasts);
+      bodyTypeCasts.swap(this->state.typeCasts);
+      this->varMap.save();
+      code += this->_block(nodeIf.body);
+      this->varMap.restore();
+      this->state.typeCasts = initialStateTypeCasts;
+
+      if (nodeIf.alt != std::nullopt) {
+        code += std::string(this->indent, ' ') + "} else ";
+        altTypeCasts.merge(this->state.typeCasts);
+        altTypeCasts.swap(this->state.typeCasts);
+
+        if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
+          this->varMap.save();
+          code += "{" EOL + this->_block(std::get<ASTBlock>(*nodeIf.alt));
+          code += std::string(this->indent, ' ') + "}" EOL;
+          this->varMap.restore();
+        } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
+          auto elseIfCode = this->_node(std::get<ASTNode>(*nodeIf.alt));
+          code += elseIfCode.substr(elseIfCode.find_first_not_of(' '));
+        }
+
+        this->state.typeCasts = initialStateTypeCasts;
+      } else {
+        code += std::string(this->indent, ' ') + "}" EOL;
+      }
     }
 
+    this->indent = initialIndent;
     return this->_wrapNode(node, decl + code);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
     auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
@@ -2442,7 +2467,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, c
     }
 
     decl += std::string(this->indent, ' ') + this->_nodeExpr(exprAwait.arg, exprAwait.arg.type, parent, decl, false, exprAwait.id) + ";" EOL;
-    decl += std::string(this->indent, ' ') + "break;" EOL;
+    decl += std::string(this->indent, ' ') + "return " + std::to_string(this->state.asyncCounter + 1) + ";" EOL;
     decl += std::string(this->indent - 2, ' ') + "}" EOL;
     decl += std::string(this->indent - 2, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
 
@@ -2795,6 +2820,7 @@ std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, c
       }
 
       if (fnType.async) {
+        // todo if not awaited then no parent job
         auto parentIsSyncMain = ASTChecker(parent).parentIs<ASTNodeMain>() && !std::get<ASTNodeMain>(*parent.parent->body).async;
 
         paramsCode = paramsCode.empty() ? this->_apiEval(", _{NULL}") : paramsCode;
@@ -3843,7 +3869,7 @@ std::string Codegen::_typeNameFn (Type *type) {
 
     decl += "struct " + typeName + ";";
     def += "struct " + typeName + " {" EOL;
-    def += "  " + (fnType.async ? "void " : returnTypeInfo.typeCode) + "(*f) (";
+    def += "  " + (fnType.async ? "int " : returnTypeInfo.typeCode) + "(*f) (";
     def += fnType.async ? "_{threadpool_t} *, _{threadpool_job_t} *, " : "";
     def += "void *" + std::string(hasParams || fnType.async ? ", void *" : "");
     def += fnType.async ? ", void *, int" : "";
