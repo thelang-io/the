@@ -303,6 +303,24 @@ class ASTChecker {
   }
 
   // todo test
+  bool hoistingFriendly () {
+    this->_checkNode();
+
+    for (const auto &node : this->_nodes) {
+      auto result = std::holds_alternative<ASTNodeEnumDecl>(*node.body) ||
+        std::holds_alternative<ASTNodeFnDecl>(*node.body) ||
+        std::holds_alternative<ASTNodeObjDecl>(*node.body) ||
+        std::holds_alternative<ASTNodeTypeDecl>(*node.body);
+
+      if (!result) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  // todo test
   template <typename T>
   bool hasExpr () const {
     if (!this->_exprs.empty()) {

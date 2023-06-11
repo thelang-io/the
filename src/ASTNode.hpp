@@ -21,15 +21,15 @@
 
 struct ASTCatchClause;
 struct ASTFnDeclParam;
-struct ASTNodeBreak;
-struct ASTNodeContinue;
+struct ASTNodeBreak; // todo async
+struct ASTNodeContinue; // todo async
 struct ASTNodeEnumDecl;
 struct ASTNodeFnDecl;
 struct ASTNodeIf;
-struct ASTNodeLoop;
+struct ASTNodeLoop; // todo async
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
-struct ASTNodeReturn;
+struct ASTNodeReturn; // todo async
 struct ASTNodeThrow;
 struct ASTNodeTry;
 struct ASTNodeTypeDecl;

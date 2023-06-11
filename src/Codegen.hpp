@@ -18,7 +18,7 @@
 #define SRC_CODEGEN_HPP
 
 #include "AST.hpp"
-#include "codegen-api.hpp"
+#include "CodegenAPIItem.hpp"
 #include "CodegenCleanUp.hpp"
 
 enum CodegenEntityType {
@@ -165,12 +165,7 @@ class Codegen {
   bool async = false;
   bool throws = false;
 
-  static void compile (
-    const std::string &,
-    const std::tuple<std::string, std::vector<std::string>> &,
-    const std::string &,
-    bool = false
-  );
+  static void compile (const std::string &, const std::tuple<std::string, std::vector<std::string>> &, const std::string &, bool = false);
   static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);
   static std::string stringifyFlags (const std::vector<std::string> &);
@@ -184,40 +179,50 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
-  int _apiEntity (
-    const std::string &,
-    CodegenEntityType,
-    const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt
-  );
-  std::string _apiEval (
-    const std::string &,
-    int = 0,
-    const std::string & = "",
-    const std::optional<std::set<std::string> *> & = std::nullopt
-  );
+  int _apiEntity (const std::string &, CodegenEntityType, const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt);
+  std::string _apiEval (const std::string &, int = 0, const std::string & = "", const std::optional<std::set<std::string> *> & = std::nullopt);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   std::string _block (const ASTBlock &, bool = true, const std::string & = "");
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &, const ASTNode &);
+  std::string _exprAccess (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprArray (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprAssign (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprAwait (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprBinary (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprCall (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool, std::size_t);
   std::string _exprCallDefaultArg (const CodegenTypeInfo &);
   std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &, const ASTNode &, std::string &);
   std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
+  std::string _exprCond (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprIs (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprLit (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprMap (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprObj (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
   std::string _exprObjDefaultField (const CodegenTypeInfo &);
-  std::string _fnDecl (
-    std::shared_ptr<Var>,
-    const std::vector<std::shared_ptr<Var>> &,
-    const std::vector<ASTFnDeclParam> &,
-    const std::optional<ASTBlock> &,
-    const ASTNode &,
-    CodegenPhase
-  );
+  std::string _exprRef (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
+  std::string _fnDecl (std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
   std::string _genCopyFn (Type *, const std::string &);
   std::string _genEqFn (Type *, const std::string &, const std::string &, bool = false);
   std::string _genFreeFn (Type *, const std::string &);
   std::string _genReallocFn (Type *, const std::string &, const std::string &);
   std::string _genStrFn (Type *, const std::string &, bool = true, bool = true);
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
+  std::string _nodeBreak (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeContinue (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeEnumDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeExprDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool = false, std::size_t = 0);
+  std::string _nodeFnDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeIf (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeLoop (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeMain (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeObjDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeReturn (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeThrow (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeTry (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeVarDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeVarDeclInit (const CodegenTypeInfo &);
   void _restoreStateBuiltinsEntities ();
   void _saveStateBuiltinsEntities ();
@@ -234,7 +239,7 @@ class Codegen {
   std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {});
   std::string _typeNameOpt (Type *);
   std::string _typeNameUnion (Type *);
-  std::string _wrapNode (const ASTNode &, const std::string &);
+  std::string _wrapNode (const ASTNode &, bool, CodegenPhase, const std::string &);
   std::string _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::string &);
 };
 

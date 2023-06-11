@@ -38,13 +38,50 @@ endif ()
 set(
   sources
 
+  src/codegen/block.cpp
+  src/codegen/expr-access.cpp
+  src/codegen/expr-array.cpp
+  src/codegen/expr-assign.cpp
+  src/codegen/expr-await.cpp
+  src/codegen/expr-binary.cpp
+  src/codegen/expr-call.cpp
+  src/codegen/expr-cond.cpp
+  src/codegen/expr-is.cpp
+  src/codegen/expr-lit.cpp
+  src/codegen/expr-map.cpp
+  src/codegen/expr-obj.cpp
+  src/codegen/expr-ref.cpp
+  src/codegen/expr-unary.cpp
+  src/codegen/fn-decl.cpp
+  src/codegen/helpers.cpp
+  src/codegen/node-break.cpp
+  src/codegen/node-continue.cpp
+  src/codegen/node-enum-decl.cpp
+  src/codegen/node-expr.cpp
+  src/codegen/node-fn-decl.cpp
+  src/codegen/node-if.cpp
+  src/codegen/node-loop.cpp
+  src/codegen/node-main.cpp
+  src/codegen/node-obj-decl.cpp
+  src/codegen/node-return.cpp
+  src/codegen/node-throw.cpp
+  src/codegen/node-try.cpp
+  src/codegen/node-var-decl.cpp
+  src/codegen/type.cpp
+  src/codegen/type-any.cpp
+  src/codegen/type-array.cpp
+  src/codegen/type-fn.cpp
+  src/codegen/type-map.cpp
+  src/codegen/type-obj.cpp
+  src/codegen/type-opt.cpp
+  src/codegen/type-union.cpp
+
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
   src/ASTExpr.cpp src/ASTExpr.hpp
   src/ASTNode.cpp src/ASTNode.hpp
   src/Codegen.cpp src/Codegen.hpp
-  src/codegen-api.hpp
-  src/codegen-metadata.hpp
+  src/CodegenAPIItem.hpp
   src/CodegenCleanUp.cpp src/CodegenCleanUp.hpp
   src/CParser.cpp src/CParser.hpp
   src/Error.cpp src/Error.hpp
@@ -61,6 +98,8 @@ set(
   src/Var.cpp src/Var.hpp
   src/VarMap.cpp src/VarMap.hpp
   src/VarStack.cpp src/VarStack.hpp
+  src/codegen-api.hpp
+  src/codegen-metadata.hpp
   src/config.hpp
   src/utils.hpp
 )
