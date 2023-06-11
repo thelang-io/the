@@ -89,7 +89,7 @@ const ENTITIES_TRANSFORMER := {
 }
 
 const SRC_DIR := fs_realpathSync(process_cwd() + path_SEP + "src")
-const CODEGEN_DIR := SRC_DIR + path_SEP + "codegen"
+const CODEGEN_DIR := SRC_DIR + path_SEP + "codegen-api"
 
 fn filterStrEmpty (it: str) bool {
   return !it.empty
