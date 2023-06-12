@@ -36,79 +36,15 @@ async function exec (command, options) {
 
 const appBinaryPath = 'build/the'
 const appDepsDir = process.env.DEPS_DIR
+const buildTime = Date.now()
 const doctypeHTML = '<!doctype html>'
 const homeHTML = doctypeHTML + `<html lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <link rel="icon" href="https://docs.thelang.io/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.min.css" integrity="sha512-/hTKJ6YcK7JBJmV7HzjxM7LDShlTlamVMPdB0CaQRV5NeVS+ZVx8MogcT8Rw0DMRVGT7rNE+mDSc2QEVuJNdNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>The Playground</title>
-    <style>
-      body, html {
-        height: 100%;
-        width: 100%;
-      }
-      body {
-        margin: 0;
-        padding: 0;
-      }
-      *, *::after, *::before {
-        box-sizing: border-box;
-      }
-      .app {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-      }
-      .header {
-        border-bottom: solid 1px #EAEAEA;
-        display: flex;
-        justify-content: flex-end;
-        padding: 16px 32px;
-      }
-      .header__icon {
-        align-items: center;
-        appearance: none;
-        background: #1473E6;
-        border: none;
-        border-radius: 16px;
-        color: #FFFFFF;
-        column-gap: 8px;
-        cursor: pointer;
-        display: inline-flex;
-        font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 700;
-        letter-spacing: normal;
-        line-height: 1.3;
-        min-width: 80px;
-        padding: 7px 16px;
-        transition: background 130ms ease;
-      }
-      .header__icon:hover {
-        background: #0D66D0;
-      }
-      .header__icon > svg {
-        height: 16px;
-        width: 16px;
-      }
-      .editors {
-        display: flex;
-        flex-grow: 1;
-      }
-      .editor {
-        height: 100%;
-      }
-      .separator {
-        background: #AAAAAA;
-        cursor: col-resize;
-        height: 100%;
-        user-select: none;
-        width: 6px;
-      }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.min.css" integrity="sha512-/hTKJ6YcK7JBJmV7HzjxM7LDShlTlamVMPdB0CaQRV5NeVS+ZVx8MogcT8Rw0DMRVGT7rNE+mDSc2QEVuJNdNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/style.css?t=${buildTime}" />
   </head>
   <body>
     <div class="app">
@@ -126,204 +62,356 @@ const homeHTML = doctypeHTML + `<html lang="en">
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js" integrity="sha512-A+6SvPGkIN9Rf0mUXmW4xh7rDvALXf/f0VtOUiHlDUSPknu2kcfz1KzLpOJyL2pO+nZS13hhIjLqVgiQExLJrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-      var editorsEl = document.getElementById('editors');
-      var editor1El = document.getElementById('editor-the');
-      var editor2El = document.getElementById('editor-c');
-      var separatorEl = document.getElementById('separator');
-      var editor1;
-      var editor2;
-      function initSeparator () {
-        var surfaceWidth = editorsEl.offsetWidth;
-        var halfSeparator = separatorEl.offsetWidth / 2;
-        var initialClientX;
-        var initialEditor1Width;
-        var initialEditor2Width;
-        function separate (at) {
-          localStorage.setItem('separator', at);
-          editor1El.style.width = 'calc(' + at + '% - ' + halfSeparator + 'px)';
-          editor2El.style.width = 'calc(' + (100 - at) + '% - ' + halfSeparator + 'px)';
-          editor1.layout();
-          editor2.layout();
-        }
-        function handleMouseMove (e) {
-          var deltaX = Math.min(Math.max(e.clientX - initialClientX, -initialEditor1Width), initialEditor2Width);
-          separate(Math.round((initialEditor1Width + deltaX) * 100 / surfaceWidth));
-        }
-        var throttledMouseMoveHandler = _.throttle(handleMouseMove, 15);
-        function handleMouseUp () {
-          document.removeEventListener('mousemove', throttledMouseMoveHandler);
-          document.removeEventListener('mouseup', handleMouseUp);
-        }
-        function handleMouseDown (e) {
-          initialClientX = e.clientX;
-          initialEditor1Width = editor1El.offsetWidth;
-          initialEditor2Width = editor2El.offsetWidth;
-          document.addEventListener('mousemove', throttledMouseMoveHandler);
-          document.addEventListener('mouseup', handleMouseUp);
-        }
-        separatorEl.addEventListener('mousedown', handleMouseDown);
-        separate(parseInt(localStorage.getItem('separator')) || 50);
-      }
-      function render () {
-        var code = editor1.getModel().getValue();
-        localStorage.setItem('code', code);
-        fetch('/codegen', {
-          method: 'POST',
-          headers: {
-            'content-type': 'text/plain'
-          },
-          body: code
-        }).then(function (response) {
-          return response.text();
-        }).then(function (data) {
-          editor2.getModel().setValue(data);
-        });
-      }
-      var debouncedRender = _.debounce(render, 1000);
-      require.config({
-        paths: {
-          vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs'
-        }
-      });
-      require(['vs/editor/editor.main'], function () {
-        monaco.languages.register({ id: 'the' });
-        monaco.languages.setMonarchTokensProvider('the', {
-          defaultToken: 'invalid',
-          tokenPostfix: '.the',
-          keywords: [
-            'any',    'continue',
-            'bool',   'elif',
-            'byte',   'else',
-            'char',   'enum',
-            'float',  'export',
-            'f32',    'false',
-            'f64',    'finally',
-            'int',    'fn',
-            'i8',     'from',
-            'i16',    'if',
-            'i32',    'import',
-            'i64',    'is',
-            'str',    'loop',
-            'u8',     'main',
-            'u16',    'mut',
-            'u32',    'nil',
-            'u64',    'obj',
-            'void',   'ref',
-            'as',     'return',
-            'async',  'throw',
-            'await',  'true',
-            'break',  'try',
-            'catch',  'type',
-            'const'
-          ],
-          operators: [
-            '<=', '>=', '==', '!=', '=>',
-            '+', '-', '*', '/', '%',
-            '++', '--', '<<', '>>',
-            '&', '|', '^', '!', '~',
-            '&&', '||', '?', ':',
-            '=', '+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '&=', '|=', '^='
-          ],
-          escapes: /\\\\[0fnrtv"'\\\\]/,
-          digits: /\\d+/,
-          tokenizer: {
-            root: [
-              [/[{}]/, 'delimiter.bracket'],
-              { include: 'common' }
-            ],
-            common: [
-              [/[A-Za-z_]\\w*/, {
-                cases: {
-                  '@keywords': 'keyword',
-                  '@default': 'identifier'
-                }
-              }],
-              { include: '@whitespace' },
-              [/[()[\\]]/, '@brackets'],
-              [/!(?=([^=]|$))/, 'delimiter'],
-              [/[=><!~?:&|+\\-*/^%]+/, {
-                cases: {
-                  '@operators': 'delimiter',
-                  '@default': ''
-                }
-              }],
-              [/[;,.]/, 'delimiter'],
-              [/(@digits)[eE]([-+]?(@digits))?/, 'number.float'],
-              [/(@digits)\\.(@digits)([eE][-+]?(@digits))?/, 'number.float'],
-              [/0[xX]([[0-9a-fA-F]+)/, 'number.hex'],
-              [/0[oO]([0-7]+)/, 'number.octal'],
-              [/0[bB]([0-1]+)/, 'number.binary'],
-              [/@digits/, 'number'],
-              [/'([^'\\\\]|\\\\.)*$/, 'string.invalid'],
-              [/"/, 'string', '@stringDouble'],
-              [/'/, 'string', '@stringSingle']
-            ],
-            whitespace: [
-              [/[ \\t\\r\\n]+/, ''],
-              [/\\/\\*/, 'comment', '@comment'],
-              [/\\/\\/.*$/, 'comment']
-            ],
-            comment: [
-              [/[^/*]+/, 'comment'],
-              [/\\*\\//, 'comment', '@pop'],
-              [/[/*]/, 'comment']
-            ],
-            stringDouble: [
-              [/[^\\\\"]+/, 'string'],
-              [/@escapes/, 'string.escape'],
-              [/\\\\./, 'string.escape.invalid'],
-              [/"/, 'string', '@pop']
-            ],
-            stringSingle: [
-              [/[^\\\\']+/, 'string'],
-              [/@escapes/, 'string.escape'],
-              [/\\\\./, 'string.escape.invalid'],
-              [/'/, 'string', '@pop']
-            ],
-            bracketCounting: [
-              [/\\{/, 'delimiter.bracket', '@bracketCounting'],
-              [/}/, 'delimiter.bracket', '@pop'],
-              { include: 'common' }
-            ]
-          }
-        });
-        var editorOptions = {
-          minimap: {
-            enabled: false
-          },
-          scrollBeyondLastLine: false,
-          contextmenu: false,
-          codeLens: false,
-          tabSize: 2,
-          overviewRulerLanes: 0
-        };
-        editor1 = monaco.editor.create(editor1El, Object.assign(editorOptions, {
-          value: localStorage.getItem('code') || 'fn test () {\\n}\\n\\nmain {\\n  test()\\n}',
-          language: 'the'
-        }));
-        editor2 = monaco.editor.create(editor2El, Object.assign(editorOptions, {
-          value: '',
-          language: 'c',
-          readOnly: true,
-          domReadOnly: true
-        }));
-        editor1.onDidChangeModelContent(debouncedRender);
-        initSeparator();
-        render();
-        document.getElementById('render').addEventListener('click', debouncedRender);
-      });
-    </script>
+    <script src="/common.js?t=${buildTime}"></script>
   </body>
 </html>`
 
-function handleHome (req, res) {
+const styleCSS = `body, html {
+  height: 100%;
+  width: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+*, *::after, *::before {
+  box-sizing: border-box;
+}
+.monaco-editor .monaco-scrollable-element .scrollbar .slider {
+  background: #C9C9C9;
+  border-radius: 4px;
+}
+.monaco-editor .monaco-scrollable-element .scrollbar.horizontal .slider {
+  height: 7px !important;
+  top: 3.5px !important;
+}
+.monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider {
+  left: 3.5px !important;
+  width: 7px !important;
+}
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.header {
+  border-bottom: solid 1px #EBECF0;
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 32px;
+}
+.header__icon {
+  align-items: center;
+  appearance: none;
+  background: #1473E6;
+  border: none;
+  border-radius: 16px;
+  color: #FFFFFF;
+  column-gap: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: normal;
+  line-height: 1.3;
+  min-width: 80px;
+  padding: 7px 16px;
+  transition: background 130ms ease;
+}
+.header__icon:hover {
+  background: #0D66D0;
+}
+.header__icon > svg {
+  height: 16px;
+  width: 16px;
+}
+.editors {
+  display: flex;
+  flex-grow: 1;
+}
+.editor {
+  height: 100%;
+}
+.separator {
+  cursor: col-resize;
+  height: 100%;
+  position: relative;
+  user-select: none;
+  width: 6px;
+}
+.separator::after {
+  background: #EBECF0;
+  content: '';
+  height: 100%;
+  left: 2.5px;
+  position: absolute;
+  top: 0;
+  user-select: none;
+  width: 1px;
+}`
+
+const commonJS = `var editorsEl = document.getElementById('editors');
+var editor1El = document.getElementById('editor-the');
+var editor2El = document.getElementById('editor-c');
+var separatorEl = document.getElementById('separator');
+var editor1Ref = { current: null };
+var editor2Ref = { current: null };
+var initialEditor1State = localStorage.getItem('state1') !== null ? JSON.parse(localStorage.getItem('state1')) : {
+  focus: false,
+  scroll: 0,
+  viewState: null
+}
+var initialEditor2State = localStorage.getItem('state2') !== null ? JSON.parse(localStorage.getItem('state2')) : {
+  focus: false,
+  scroll: 0,
+  viewState: null
+}
+function applyEditorState (editorRef, state) {
+  if (state.focus) {
+    editorRef.current.focus();
+  }
+  editorRef.current.setScrollTop(state.scroll);
+  editorRef.current.restoreViewState(state.viewState);
+}
+function initSeparator () {
+  var surfaceWidth = editorsEl.offsetWidth;
+  var halfSeparator = separatorEl.offsetWidth / 2;
+  var initialClientX;
+  var initialEditor1Width;
+  var initialEditor2Width;
+  function separate (at) {
+    localStorage.setItem('separator', at);
+    editor1El.style.width = 'calc(' + at + '% - ' + halfSeparator + 'px)';
+    editor2El.style.width = 'calc(' + (100 - at) + '% - ' + halfSeparator + 'px)';
+    editor1Ref.current.layout();
+    editor2Ref.current.layout();
+  }
+  function handleMouseMove (e) {
+    var deltaX = Math.min(Math.max(e.clientX - initialClientX, -initialEditor1Width), initialEditor2Width);
+    separate(Math.round((initialEditor1Width + deltaX) * 100 / surfaceWidth));
+  }
+  var throttledMouseMoveHandler = _.throttle(handleMouseMove, 15);
+  function handleMouseUp () {
+    document.removeEventListener('mousemove', throttledMouseMoveHandler);
+    document.removeEventListener('mouseup', handleMouseUp);
+  }
+  function handleMouseDown (e) {
+    initialClientX = e.clientX;
+    initialEditor1Width = editor1El.offsetWidth;
+    initialEditor2Width = editor2El.offsetWidth;
+    document.addEventListener('mousemove', throttledMouseMoveHandler);
+    document.addEventListener('mouseup', handleMouseUp);
+  }
+  separatorEl.addEventListener('mousedown', handleMouseDown);
+  separate(parseInt(localStorage.getItem('separator')) || 50);
+}
+function handleChangeStateFactory (id, editorRef) {
+  return function handleChangeState () {
+    console.log('state' + id);
+    localStorage.setItem('state' + id, JSON.stringify({
+      focus: editorRef.current.hasTextFocus(),
+      scroll: editorRef.current.getScrollTop(),
+      viewState: editorRef.current.saveViewState()
+    }));
+  }
+}
+function registerEditorHandlers (editorRef, handler) {
+  editorRef.current.onDidBlurEditorText(handler);
+  editorRef.current.onDidChangeCursorPosition(handler);
+  editorRef.current.onDidChangeCursorSelection(handler);
+  editorRef.current.onDidFocusEditorText(handler);
+  editorRef.current.onDidScrollChange(handler);
+}
+function render (initialRender) {
+  initialRender = initialRender === true;
+  var code = editor1Ref.current.getModel().getValue();
+  localStorage.setItem('code', code);
+  fetch('/codegen', {
+    method: 'POST',
+    headers: {
+      'content-type': 'text/plain'
+    },
+    body: code
+  }).then(function (response) {
+    return response.text();
+  }).then(function (data) {
+    editor2Ref.current.getModel().setValue(data);
+    if (initialRender) {
+      editor2Ref.current.setScrollTop(initialEditor2State.scroll);
+      editor2Ref.current.restoreViewState(initialEditor2State.viewState);
+    }
+  });
+}
+var debouncedEditor1StateChangeHandler = _.debounce(handleChangeStateFactory(1, editor1Ref), 100);
+var debouncedEditor2StateChangeHandler = _.debounce(handleChangeStateFactory(2, editor2Ref), 100);
+var debouncedRender = _.debounce(render, 1000);
+require.config({
+  paths: {
+    vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs'
+  }
+});
+require(['vs/editor/editor.main'], function () {
+  monaco.languages.register({ id: 'the' });
+  monaco.languages.setMonarchTokensProvider('the', {
+    defaultToken: 'invalid',
+    tokenPostfix: '.the',
+    keywords: [
+      'any',    'continue',
+      'bool',   'elif',
+      'byte',   'else',
+      'char',   'enum',
+      'float',  'export',
+      'f32',    'false',
+      'f64',    'finally',
+      'int',    'fn',
+      'i8',     'from',
+      'i16',    'if',
+      'i32',    'import',
+      'i64',    'is',
+      'str',    'loop',
+      'u8',     'main',
+      'u16',    'mut',
+      'u32',    'nil',
+      'u64',    'obj',
+      'void',   'ref',
+      'as',     'return',
+      'async',  'throw',
+      'await',  'true',
+      'break',  'try',
+      'catch',  'type',
+      'const'
+    ],
+    operators: [
+      '<=', '>=', '==', '!=', '=>',
+      '+', '-', '*', '/', '%',
+      '++', '--', '<<', '>>',
+      '&', '|', '^', '!', '~',
+      '&&', '||', '?', ':',
+      '=', '+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '&=', '|=', '^='
+    ],
+    escapes: /\\\\[0fnrtv"'\\\\]/,
+    digits: /\\d+/,
+    tokenizer: {
+      root: [
+        [/[{}]/, 'delimiter.bracket'],
+        { include: 'common' }
+      ],
+      common: [
+        [/[A-Za-z_]\\w*/, {
+          cases: {
+            '@keywords': 'keyword',
+            '@default': 'identifier'
+          }
+        }],
+        { include: '@whitespace' },
+        [/[()[\\]]/, '@brackets'],
+        [/!(?=([^=]|$))/, 'delimiter'],
+        [/[=><!~?:&|+\\-*/^%]+/, {
+          cases: {
+            '@operators': 'delimiter',
+            '@default': ''
+          }
+        }],
+        [/[;,.]/, 'delimiter'],
+        [/(@digits)[eE]([-+]?(@digits))?/, 'number.float'],
+        [/(@digits)\\.(@digits)([eE][-+]?(@digits))?/, 'number.float'],
+        [/0[xX]([[0-9a-fA-F]+)/, 'number.hex'],
+        [/0[oO]([0-7]+)/, 'number.octal'],
+        [/0[bB]([0-1]+)/, 'number.binary'],
+        [/@digits/, 'number'],
+        [/'([^'\\\\]|\\\\.)*$/, 'string.invalid'],
+        [/"/, 'string', '@stringDouble'],
+        [/'/, 'string', '@stringSingle']
+      ],
+      whitespace: [
+        [/[ \\t\\r\\n]+/, ''],
+        [/\\/\\*/, 'comment', '@comment'],
+        [/\\/\\/.*$/, 'comment']
+      ],
+      comment: [
+        [/[^/*]+/, 'comment'],
+        [/\\*\\//, 'comment', '@pop'],
+        [/[/*]/, 'comment']
+      ],
+      stringDouble: [
+        [/[^\\\\"]+/, 'string'],
+        [/@escapes/, 'string.escape'],
+        [/\\\\./, 'string.escape.invalid'],
+        [/"/, 'string', '@pop']
+      ],
+      stringSingle: [
+        [/[^\\\\']+/, 'string'],
+        [/@escapes/, 'string.escape'],
+        [/\\\\./, 'string.escape.invalid'],
+        [/'/, 'string', '@pop']
+      ],
+      bracketCounting: [
+        [/\\{/, 'delimiter.bracket', '@bracketCounting'],
+        [/}/, 'delimiter.bracket', '@pop'],
+        { include: 'common' }
+      ]
+    }
+  });
+  var editorOptions = {
+    minimap: {
+      enabled: false
+    },
+    scrollBeyondLastLine: false,
+    contextmenu: false,
+    codeLens: false,
+    tabSize: 2,
+    overviewRulerLanes: 0,
+    scrollbar: {
+      useShadows: false,
+      vertical: 'visible',
+      horizontal: 'auto',
+      verticalScrollbarSize: 14,
+      horizontalScrollbarSize: 14
+    }
+  };
+  editor1Ref.current = monaco.editor.create(editor1El, Object.assign(editorOptions, {
+    value: localStorage.getItem('code') || 'fn test () {\\n}\\n\\nmain {\\n  test()\\n}',
+    language: 'the'
+  }));
+  editor2Ref.current = monaco.editor.create(editor2El, Object.assign(editorOptions, {
+    value: '',
+    language: 'c',
+    readOnly: true,
+    domReadOnly: true
+  }));
+  initSeparator();
+  registerEditorHandlers(editor1Ref, debouncedEditor1StateChangeHandler);
+  editor1Ref.current.onDidChangeModelContent(debouncedRender);
+  registerEditorHandlers(editor2Ref, debouncedEditor2StateChangeHandler);
+  applyEditorState(editor1Ref, initialEditor1State);
+  render(true);
+  document.getElementById('render').addEventListener('click', debouncedRender);
+});`
+
+function handleGetHome (req, res) {
   res.setHeader('content-type', 'text/html')
   res.writeHead(200)
   res.end(homeHTML)
 }
 
-async function handleCodegen (req, res) {
+function handleGetCommonJS (req, res) {
+  res.setHeader('cache-control', 'public, max-age=31536000')
+  res.setHeader('content-type', 'text/javascript')
+  res.writeHead(200)
+  res.end(commonJS)
+}
+
+function handleGetStyleCSS (req, res) {
+  res.setHeader('cache-control', 'public, max-age=31536000')
+  res.setHeader('content-type', 'text/css')
+  res.writeHead(200)
+  res.end(styleCSS)
+}
+
+async function handlePostCodegen (req, res) {
   const buf = await crypto.randomBytes(3)
   const filepath = path.resolve(process.cwd(), `tmp-${buf.readUIntBE(0, 3)}`)
   const outputPath = `${filepath}.out`
@@ -387,9 +475,11 @@ async function enhanceRequest (req) {
 async function router (req, res) {
   await enhanceRequest(req)
 
-  switch (req.url) {
-    case '/': return handleHome(req, res)
-    case '/codegen': return handleCodegen(req, res)
+  switch (`${req.method} ${req.url}`) {
+    case 'GET /': return handleGetHome(req, res)
+    case 'GET /common.js': return handleGetCommonJS(req, res)
+    case 'GET /style.css': return handleGetStyleCSS(req, res)
+    case 'POST /codegen': return handlePostCodegen(req, res)
     default: return handleAll(req, res)
   }
 }
