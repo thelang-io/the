@@ -163,12 +163,12 @@ var initialEditor1State = localStorage.getItem('state1') !== null ? JSON.parse(l
   focus: false,
   scroll: 0,
   viewState: null
-}
+};
 var initialEditor2State = localStorage.getItem('state2') !== null ? JSON.parse(localStorage.getItem('state2')) : {
   focus: false,
   scroll: 0,
   viewState: null
-}
+};
 function applyEditorState (editorRef, state) {
   if (state.focus) {
     editorRef.current.focus();
@@ -210,7 +210,6 @@ function initSeparator () {
 }
 function handleChangeStateFactory (id, editorRef) {
   return function handleChangeState () {
-    console.log('state' + id);
     localStorage.setItem('state' + id, JSON.stringify({
       focus: editorRef.current.hasTextFocus(),
       scroll: editorRef.current.getScrollTop(),
