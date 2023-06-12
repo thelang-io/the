@@ -55,9 +55,48 @@ const homeHTML = doctypeHTML + `<html lang="en">
       *, *::after, *::before {
         box-sizing: border-box;
       }
+      .app {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+      }
+      .header {
+        border-bottom: solid 1px #EAEAEA;
+        display: flex;
+        justify-content: flex-end;
+        padding: 16px 32px;
+      }
+      .header__icon {
+        align-items: center;
+        appearance: none;
+        background: #1473E6;
+        border: none;
+        border-radius: 16px;
+        color: #FFFFFF;
+        column-gap: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 700;
+        letter-spacing: normal;
+        line-height: 1.3;
+        min-width: 80px;
+        padding: 7px 16px;
+        transition: background 130ms ease;
+      }
+      .header__icon:hover {
+        background: #0D66D0;
+      }
+      .header__icon > svg {
+        height: 16px;
+        width: 16px;
+      }
       .editors {
         display: flex;
-        height: 100%;
+        flex-grow: 1;
       }
       .editor {
         height: 100%;
@@ -72,10 +111,18 @@ const homeHTML = doctypeHTML + `<html lang="en">
     </style>
   </head>
   <body>
-    <div class="editors" id="editors">
-      <div class="editor" id="editor-the"></div>
-      <div class="separator" id="separator"></div>
-      <div class="editor" id="editor-c"></div>
+    <div class="app">
+      <div class="header">
+        <button class="header__icon" id="render" type="button">
+          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M463.5 224H472C485.3 224 496 213.3 496 200V72.0001C496 62.3001 490.2 53.5001 481.2 49.8001C472.2 46.1001 461.9 48.1001 455 55.0001L413.4 96.6001C325.8 10.1001 184.7 10.4001 97.6001 97.6001C10.1001 185.1 10.1001 326.9 97.6001 414.4C185.1 501.9 326.9 501.9 414.4 414.4C426.9 401.9 426.9 381.6 414.4 369.1C401.9 356.6 381.6 356.6 369.1 369.1C306.6 431.6 205.3 431.6 142.8 369.1C80.3001 306.6 80.3001 205.3 142.8 142.8C205 80.6001 305.5 80.3001 368.1 141.8L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224H463.5Z" fill="currentColor" /></svg>
+          <span>Refresh</span>
+        </button>
+      </div>
+      <div class="editors" id="editors">
+        <div class="editor" id="editor-the"></div>
+        <div class="separator" id="separator"></div>
+        <div class="editor" id="editor-c"></div>
+      </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js" integrity="sha512-A+6SvPGkIN9Rf0mUXmW4xh7rDvALXf/f0VtOUiHlDUSPknu2kcfz1KzLpOJyL2pO+nZS13hhIjLqVgiQExLJrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -133,6 +180,7 @@ const homeHTML = doctypeHTML + `<html lang="en">
           editor2.getModel().setValue(data);
         });
       }
+      var debouncedRender = _.debounce(render, 1000);
       require.config({
         paths: {
           vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs'
@@ -185,7 +233,7 @@ const homeHTML = doctypeHTML + `<html lang="en">
               { include: 'common' }
             ],
             common: [
-              [/[A-Za-z_$][\\w$]*/, {
+              [/[A-Za-z_]\\w*/, {
                 cases: {
                   '@keywords': 'keyword',
                   '@default': 'identifier'
@@ -260,9 +308,10 @@ const homeHTML = doctypeHTML + `<html lang="en">
           readOnly: true,
           domReadOnly: true
         }));
-        editor1.onDidChangeModelContent(_.debounce(render, 1000));
+        editor1.onDidChangeModelContent(debouncedRender);
         initSeparator();
         render();
+        document.getElementById('render').addEventListener('click', debouncedRender);
       });
     </script>
   </body>
