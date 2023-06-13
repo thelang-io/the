@@ -49,7 +49,7 @@ const homeHTML = doctypeHTML + `<html lang="en">
   <body>
     <div class="app">
       <div class="header">
-        <button class="header__icon" id="render" type="button">
+        <button class="header__action" id="render" type="button">
           <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M463.5 224H472C485.3 224 496 213.3 496 200V72.0001C496 62.3001 490.2 53.5001 481.2 49.8001C472.2 46.1001 461.9 48.1001 455 55.0001L413.4 96.6001C325.8 10.1001 184.7 10.4001 97.6001 97.6001C10.1001 185.1 10.1001 326.9 97.6001 414.4C185.1 501.9 326.9 501.9 414.4 414.4C426.9 401.9 426.9 381.6 414.4 369.1C401.9 356.6 381.6 356.6 369.1 369.1C306.6 431.6 205.3 431.6 142.8 369.1C80.3001 306.6 80.3001 205.3 142.8 142.8C205 80.6001 305.5 80.3001 368.1 141.8L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224H463.5Z" fill="currentColor" /></svg>
           <span>Refresh</span>
         </button>
@@ -101,7 +101,7 @@ body {
   justify-content: flex-end;
   padding: 16px 32px;
 }
-.header__icon {
+.header__action {
   align-items: center;
   appearance: none;
   background: #1473E6;
@@ -109,7 +109,6 @@ body {
   border-radius: 16px;
   color: #FFFFFF;
   column-gap: 8px;
-  cursor: pointer;
   display: inline-flex;
   font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
   font-size: 14px;
@@ -121,10 +120,16 @@ body {
   padding: 7px 16px;
   transition: background 130ms ease;
 }
-.header__icon:hover {
+.header__action:hover {
   background: #0D66D0;
 }
-.header__icon > svg {
+.header__action:disabled {
+  opacity: 0.5;
+}
+.header__action:not(:disabled) {
+  cursor: pointer;
+}
+.header__action > svg {
   height: 16px;
   width: 16px;
 }
@@ -157,6 +162,7 @@ const commonJS = `var editorsEl = document.getElementById('editors');
 var editor1El = document.getElementById('editor-the');
 var editor2El = document.getElementById('editor-c');
 var separatorEl = document.getElementById('separator');
+var renderButtonEl = document.getElementById('render');
 var editor1Ref = { current: null };
 var editor2Ref = { current: null };
 var initialEditor1State = localStorage.getItem('state1') !== null ? JSON.parse(localStorage.getItem('state1')) : {
@@ -169,6 +175,8 @@ var initialEditor2State = localStorage.getItem('state2') !== null ? JSON.parse(l
   scroll: 0,
   viewState: null
 };
+var editor1RenderValue = '';
+renderButtonEl.disabled = true;
 function applyEditorState (editorRef, state) {
   if (state.focus) {
     editorRef.current.focus();
@@ -242,11 +250,23 @@ function render (initialRender) {
       editor2Ref.current.setScrollTop(initialEditor2State.scroll);
       editor2Ref.current.restoreViewState(initialEditor2State.viewState);
     }
+    renderButtonEl.disabled = false;
   });
 }
 var debouncedEditor1StateChangeHandler = _.debounce(handleChangeStateFactory(1, editor1Ref), 100);
 var debouncedEditor2StateChangeHandler = _.debounce(handleChangeStateFactory(2, editor2Ref), 100);
 var debouncedRender = _.debounce(render, 1000);
+function debouncedRenderWrapped (force) {
+  if (!(force === true)) {
+    var code = editor1Ref.current.getModel().getValue();
+    if (editor1RenderValue === code && !renderButtonEl.disabled) {
+      return;
+    }
+    editor1RenderValue = code;
+  }
+  renderButtonEl.disabled = true;
+  return debouncedRender();
+}
 require.config({
   paths: {
     vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs'
@@ -381,13 +401,17 @@ require(['vs/editor/editor.main'], function () {
     readOnly: true,
     domReadOnly: true
   }));
+  renderButtonEl.addEventListener('click', function () {
+    debouncedRenderWrapped(true);
+  });
   initSeparator();
   registerEditorHandlers(editor1Ref, debouncedEditor1StateChangeHandler);
-  editor1Ref.current.onDidChangeModelContent(debouncedRender);
+  editor1Ref.current.onDidChangeModelContent(debouncedRenderWrapped);
+  editor1Ref.current.onDidChangeCursorPosition(debouncedRenderWrapped);
+  editor1Ref.current.onDidChangeCursorSelection(debouncedRenderWrapped);
   registerEditorHandlers(editor2Ref, debouncedEditor2StateChangeHandler);
   applyEditorState(editor1Ref, initialEditor1State);
   render(true);
-  document.getElementById('render').addEventListener('click', debouncedRender);
 });`
 
 function handleGetHome (req, res) {
