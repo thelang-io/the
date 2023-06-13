@@ -60,24 +60,23 @@ std::string Codegen::_nodeIf (const ASTNode &node, bool root, CodegenPhase phase
   if (hasAwait) {
     this->indent = initialIndent - 2;
 
-    if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTBlock>(*nodeIf.alt) && !ASTChecker(node).isLast()) {
-      nodeIfAltCode += std::string(this->indent, ' ') + "}" EOL;
-      nodeIfAltCode += std::string(this->indent, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
-    }
-
     code = std::string(this->indent + 2, ' ') + "if (!(" + nodeIfCondCode + ")) {" EOL;
     code += std::string(this->indent + 4, ' ') + "return ";
-    code += std::to_string(asyncAltCounter == 0 ? this->state.asyncCounter : asyncAltCounter) + ";" EOL;
+    code += std::to_string(nodeIf.alt == std::nullopt ? this->state.asyncCounter + 1 : asyncAltCounter) + ";" EOL;
     code += std::string(this->indent + 2, ' ') + "}" EOL;
     code += nodeIfBodyCode;
 
-    if (asyncAltCounter != 0) {
-      code += std::string(this->indent + 2, ' ') + "return " + std::to_string(this->state.asyncCounter) + ";" EOL;
+    if (nodeIf.alt != std::nullopt) {
+      code += std::string(this->indent + 2, ' ') + "return " + std::to_string(++this->state.asyncCounter) + ";" EOL;
       code += std::string(this->indent, ' ') + "}" EOL;
       code += std::string(this->indent, ' ') + "case " + std::to_string(asyncAltCounter) + ": {" EOL;
+      code += nodeIfAltCode;
+      code += std::string(this->indent, ' ') + "}" EOL;
+      code += std::string(this->indent, ' ') + "case " + std::to_string(this->state.asyncCounter) + ": {" EOL;
+    } else {
+      code += std::string(this->indent, ' ') + "}" EOL;
+      code += std::string(this->indent, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
     }
-
-    code += nodeIfAltCode;
   } else {
     code = std::string(this->indent, ' ') + "if (" + nodeIfCondCode + ") {" EOL;
     code += nodeIfBodyCode;

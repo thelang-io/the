@@ -26,12 +26,12 @@ struct ASTNodeContinue; // todo async
 struct ASTNodeEnumDecl;
 struct ASTNodeFnDecl;
 struct ASTNodeIf;
-struct ASTNodeLoop; // todo async
+struct ASTNodeLoop;
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
 struct ASTNodeReturn; // todo async
-struct ASTNodeThrow;
-struct ASTNodeTry;
+struct ASTNodeThrow; // todo async
+struct ASTNodeTry; // todo async
 struct ASTNodeTypeDecl;
 struct ASTNodeVarDecl;
 
