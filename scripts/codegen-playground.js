@@ -622,8 +622,7 @@ async function handlePostRun (req, res) {
     res.setHeader('content-type', 'text/plain')
     res.writeHead(200)
     res.end(output)
-  } catch (err) {
-  console.error(err)
+  } catch {
     res.setHeader('content-type', 'text/html')
     res.writeHead(500)
     res.end('Internal Server Error')
