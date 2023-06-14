@@ -22,6 +22,10 @@ const fs = require('fs/promises')
 const http = require('http')
 const path = require('path')
 
+const appBinaryPath = 'build/the'
+const appDepsDir = process.env.DEPS_DIR
+const buildTime = Date.now()
+
 async function exec (command, options) {
   return await new Promise((resolve) => {
     childProcess.exec(command, options, (err, stdout, stderr) => {
@@ -34,30 +38,72 @@ async function exec (command, options) {
   })
 }
 
-const appBinaryPath = 'build/the'
-const appDepsDir = process.env.DEPS_DIR
-const buildTime = Date.now()
+async function codegen (body) {
+  const { filePath, outputPath } = await tmpFile(body)
+  let result
+
+  try {
+    result = await exec(`${appBinaryPath} codegen ${filePath} --output=${outputPath}.out`, {
+      env: {
+        DEPS_DIR: appDepsDir,
+        PATH: process.env.PATH
+      },
+      timeout: 3e4
+    })
+  } finally {
+    await fs.rm(filePath)
+  }
+
+  return result
+}
+
+async function tmpFile (body) {
+  const buf = await crypto.randomBytes(3)
+  const filePath = path.resolve(process.cwd(), `tmp-${buf.readUIntBE(0, 3)}`)
+  const outputPath = `${filePath}.out`
+  await fs.writeFile(filePath, body, 'utf8')
+  return { filePath, outputPath }
+}
+
 const doctypeHTML = '<!doctype html>'
 const homeHTML = doctypeHTML + `<html lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <link rel="icon" href="https://docs.thelang.io/favicon.ico" type="image/x-icon" />
     <title>The Playground</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.min.css" integrity="sha512-/hTKJ6YcK7JBJmV7HzjxM7LDShlTlamVMPdB0CaQRV5NeVS+ZVx8MogcT8Rw0DMRVGT7rNE+mDSc2QEVuJNdNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/style.css?t=${buildTime}" />
   </head>
   <body>
     <div class="app">
       <div class="header">
-        <button class="header__action" id="render" type="button">
-          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M463.5 224H472C485.3 224 496 213.3 496 200V72.0001C496 62.3001 490.2 53.5001 481.2 49.8001C472.2 46.1001 461.9 48.1001 455 55.0001L413.4 96.6001C325.8 10.1001 184.7 10.4001 97.6001 97.6001C10.1001 185.1 10.1001 326.9 97.6001 414.4C185.1 501.9 326.9 501.9 414.4 414.4C426.9 401.9 426.9 381.6 414.4 369.1C401.9 356.6 381.6 356.6 369.1 369.1C306.6 431.6 205.3 431.6 142.8 369.1C80.3001 306.6 80.3001 205.3 142.8 142.8C205 80.6001 305.5 80.3001 368.1 141.8L327 183C320.1 189.9 318.1 200.2 321.8 209.2C325.5 218.2 334.3 224 344 224H463.5Z" fill="currentColor" /></svg>
-          <span>Refresh</span>
+        <button class="header__action" id="build" type="button">
+          <i class="fa-solid fa-wrench"></i>
+          <span>Build</span>
+        </button>
+        <button class="header__action header__action--blue" id="run" type="button">
+          <i class="fa-solid fa-play"></i>
+          <span>Run</span>
         </button>
       </div>
       <div class="editors" id="editors">
         <div class="editor" id="editor-the"></div>
         <div class="separator" id="separator"></div>
         <div class="editor" id="editor-c"></div>
+      </div>
+      <div class="output" id="output" style="display: none;">
+        <div class="output__header">
+          <div class="output__header-headline">Output</div>
+          <div class="output__header-actions">
+            <button class="output__header-action" id="output-close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+        <div class="output__content-wrapper">
+          <pre class="output__content" id="output-content"></pre>
+        </div>
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -93,13 +139,18 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
   width: 100%;
 }
 .header {
-  border-bottom: solid 1px #EBECF0;
+  background: #F8F8F8;
+  border: solid 1px #EBECF0;
+  border-radius: 32px;
+  column-gap: 8px;
   display: flex;
   justify-content: flex-end;
-  padding: 16px 32px;
+  margin: 8px;
+  padding: 16px;
 }
 .header__action {
   align-items: center;
@@ -129,9 +180,11 @@ body {
 .header__action:not(:disabled) {
   cursor: pointer;
 }
-.header__action > svg {
-  height: 16px;
-  width: 16px;
+.header__action.header__action--blue {
+  background: #599E5E;
+}
+.header__action.header__action--blue:hover {
+  background: #508E54;
 }
 .editors {
   display: flex;
@@ -156,13 +209,52 @@ body {
   top: 0;
   user-select: none;
   width: 1px;
+}
+.output {
+  background: #F8F8F8;
+  border: solid 1px #EBECF0;
+  border-radius: 32px;
+  bottom: 8px;
+  column-gap: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 40vh;
+  left: 8px;
+  padding: 16px;
+  position: absolute;
+  width: calc(100% - 16px);
+  z-index: 11;
+}
+.output__header {
+  align-items: flex-start;
+  justify-content: space-between;
+  display: flex;
+  width: 100%;
+}
+.output__header-headline {
+  color: #3B3B3B;
+}
+.output__header-actions {
+}
+.output__header-action {
+}
+.output__content-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+.output__content {
+  margin: 0;
 }`
 
 const commonJS = `var editorsEl = document.getElementById('editors');
 var editor1El = document.getElementById('editor-the');
 var editor2El = document.getElementById('editor-c');
 var separatorEl = document.getElementById('separator');
-var renderButtonEl = document.getElementById('render');
+var outputEl = document.getElementById('output');
+var outputCloseEl = document.getElementById('output-close');
+var outputContentEl = document.getElementById('output-content');
+var buildButtonEl = document.getElementById('build');
+var runButtonEl = document.getElementById('run');
 var editor1Ref = { current: null };
 var editor2Ref = { current: null };
 var initialEditor1State = localStorage.getItem('state1') !== null ? JSON.parse(localStorage.getItem('state1')) : {
@@ -175,8 +267,18 @@ var initialEditor2State = localStorage.getItem('state2') !== null ? JSON.parse(l
   scroll: 0,
   viewState: null
 };
-var editor1RenderValue = '';
-renderButtonEl.disabled = true;
+var editor1BuildValue = '';
+function actionsDisabled () {
+  return buildButtonEl.disabled || runButtonEl.disabled;
+}
+function disableActions () {
+  buildButtonEl.disabled = true;
+  runButtonEl.disabled = true;
+}
+function enableActions () {
+  buildButtonEl.disabled = false;
+  runButtonEl.disabled = false;
+}
 function applyEditorState (editorRef, state) {
   if (state.focus) {
     editorRef.current.focus();
@@ -232,11 +334,18 @@ function registerEditorHandlers (editorRef, handler) {
   editorRef.current.onDidFocusEditorText(handler);
   editorRef.current.onDidScrollChange(handler);
 }
-function render (initialRender) {
-  initialRender = initialRender === true;
+function hideOutput () {
+  outputEl.style.display = 'none';
+}
+function showOutput (content) {
+  outputContentEl.innerText = content;
+  outputEl.style.display = '';
+}
+function actionBuild (initialBuild) {
+  initialBuild = initialBuild === true;
   var code = editor1Ref.current.getModel().getValue();
   localStorage.setItem('code', code);
-  fetch('/codegen', {
+  fetch('/build', {
     method: 'POST',
     headers: {
       'content-type': 'text/plain'
@@ -246,27 +355,47 @@ function render (initialRender) {
     return response.text();
   }).then(function (data) {
     editor2Ref.current.getModel().setValue(data);
-    if (initialRender) {
+    if (initialBuild) {
       editor2Ref.current.setScrollTop(initialEditor2State.scroll);
       editor2Ref.current.restoreViewState(initialEditor2State.viewState);
     }
-    renderButtonEl.disabled = false;
+    enableActions();
+  });
+}
+function actionRun () {
+  disableActions();
+  var code = editor1Ref.current.getModel().getValue();
+  fetch('/run', {
+    method: 'POST',
+    headers: {
+      'content-type': 'text/plain'
+    },
+    body: code
+  }).then(function (response) {
+    return response.text();
+  }).then(function (data) {
+    showOutput(data);
+    enableActions();
   });
 }
 var debouncedEditor1StateChangeHandler = _.debounce(handleChangeStateFactory(1, editor1Ref), 100);
 var debouncedEditor2StateChangeHandler = _.debounce(handleChangeStateFactory(2, editor2Ref), 100);
-var debouncedRender = _.debounce(render, 1000);
-function debouncedRenderWrapped (force) {
+var debouncedBuild = _.debounce(actionBuild, 1000);
+function debouncedBuildWrapped (force) {
   if (!(force === true)) {
     var code = editor1Ref.current.getModel().getValue();
-    if (editor1RenderValue === code && !renderButtonEl.disabled) {
+    if (editor1BuildValue === code && !actionsDisabled()) {
       return;
     }
-    editor1RenderValue = code;
+    editor1BuildValue = code;
   }
-  renderButtonEl.disabled = true;
-  return debouncedRender();
+  disableActions();
+  return debouncedBuild();
 }
+disableActions();
+outputCloseEl.addEventListener('click', function () {
+  outputEl.style.display = 'none';
+});
 require.config({
   paths: {
     vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs'
@@ -401,17 +530,18 @@ require(['vs/editor/editor.main'], function () {
     readOnly: true,
     domReadOnly: true
   }));
-  renderButtonEl.addEventListener('click', function () {
-    debouncedRenderWrapped(true);
+  buildButtonEl.addEventListener('click', function () {
+    debouncedBuildWrapped(true);
   });
+  runButtonEl.addEventListener('click', actionRun);
   initSeparator();
   registerEditorHandlers(editor1Ref, debouncedEditor1StateChangeHandler);
-  editor1Ref.current.onDidChangeModelContent(debouncedRenderWrapped);
-  editor1Ref.current.onDidChangeCursorPosition(debouncedRenderWrapped);
-  editor1Ref.current.onDidChangeCursorSelection(debouncedRenderWrapped);
+  editor1Ref.current.onDidChangeModelContent(debouncedBuildWrapped);
+  editor1Ref.current.onDidChangeCursorPosition(debouncedBuildWrapped);
+  editor1Ref.current.onDidChangeCursorSelection(debouncedBuildWrapped);
   registerEditorHandlers(editor2Ref, debouncedEditor2StateChangeHandler);
   applyEditorState(editor1Ref, initialEditor1State);
-  render(true);
+  actionBuild(true);
 });`
 
 function handleGetHome (req, res) {
@@ -434,14 +564,11 @@ function handleGetStyleCSS (req, res) {
   res.end(styleCSS)
 }
 
-async function handlePostCodegen (req, res) {
-  const buf = await crypto.randomBytes(3)
-  const filepath = path.resolve(process.cwd(), `tmp-${buf.readUIntBE(0, 3)}`)
-  const outputPath = `${filepath}.out`
-  await fs.writeFile(filepath, req.body, 'utf8')
+async function handlePostBuild (req, res) {
+  const { filePath } = await tmpFile(req.body)
 
   try {
-    const { stderr, stdout } = await exec(`${appBinaryPath} codegen ${filepath} --output=${outputPath}`, {
+    const { stderr, stdout } = await exec(`${appBinaryPath} codegen ${filePath}`, {
       env: {
         DEPS_DIR: appDepsDir,
         PATH: process.env.PATH
@@ -449,13 +576,7 @@ async function handlePostCodegen (req, res) {
       timeout: 3e4
     })
 
-    let output
-
-    if (stderr !== '') {
-      output = stderr.replaceAll('/' + filepath, '')
-    } else {
-      output = stdout.replaceAll('/' + filepath, '')
-    }
+    const output = (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
 
     res.setHeader('content-type', 'text/plain')
     res.writeHead(200)
@@ -465,7 +586,50 @@ async function handlePostCodegen (req, res) {
     res.writeHead(500)
     res.end('Internal Server Error')
   } finally {
-    await fs.rm(filepath)
+    await fs.rm(filePath)
+  }
+}
+
+async function handlePostRun (req, res) {
+  const { filePath, outputPath } = await tmpFile(req.body)
+
+  try {
+    const { stderr: stderrCompile } = await exec(`${appBinaryPath} ${filePath} --output=${outputPath}`, {
+      env: {
+        DEPS_DIR: appDepsDir,
+        PATH: process.env.PATH
+      },
+      timeout: 3e4
+    })
+
+    if (stderrCompile !== '') {
+      const output = stderrCompile.replaceAll(filePath, '/app')
+      res.setHeader('content-type', 'text/plain')
+      res.writeHead(200)
+      res.end(output)
+      return
+    }
+
+    const { stderr, stdout } = await exec(outputPath, {
+      env: {
+        PATH: process.env.PATH
+      },
+      timeout: 3e4
+    })
+
+    const output = (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
+
+    res.setHeader('content-type', 'text/plain')
+    res.writeHead(200)
+    res.end(output)
+  } catch (err) {
+  console.error(err)
+    res.setHeader('content-type', 'text/html')
+    res.writeHead(500)
+    res.end('Internal Server Error')
+  } finally {
+    await fs.rm(outputPath)
+    await fs.rm(filePath)
   }
 }
 
@@ -502,7 +666,8 @@ async function router (req, res) {
     case 'GET /': return handleGetHome(req, res)
     case 'GET /common.js': return handleGetCommonJS(req, res)
     case 'GET /style.css': return handleGetStyleCSS(req, res)
-    case 'POST /codegen': return handlePostCodegen(req, res)
+    case 'POST /build': return handlePostBuild(req, res)
+    case 'POST /run': return handlePostRun(req, res)
     default: return handleAll(req, res)
   }
 }
