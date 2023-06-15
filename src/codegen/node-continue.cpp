@@ -20,8 +20,12 @@
 
 std::string Codegen::_nodeContinue (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    if (!ASTChecker(node.parent).is<ASTNodeLoop>() || !ASTChecker(node).isLast()) {
-      code = std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+    if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
+      code = std::string(this->indent, ' ') + this->state.cleanUp.currentContinueVar() + " = 1;" EOL;
+    }
+
+    if (!ASTChecker(node).isLast()) {
+      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
     }
   } else {
     code = std::string(this->indent, ' ') + "continue;" EOL;

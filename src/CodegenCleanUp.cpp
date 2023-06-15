@@ -23,6 +23,7 @@ CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p) {
   this->parent = p;
   this->labelIdx = this->parent->labelIdx;
   this->breakVarIdx = this->parent->breakVarIdx;
+  this->continueVarIdx = this->parent->continueVarIdx;
 }
 
 void CodegenCleanUp::add (const std::string &content) {
@@ -51,6 +52,19 @@ std::string CodegenCleanUp::currentBreakVar () {
   }
 
   return this->parent->currentBreakVar();
+}
+
+// todo test
+std::string CodegenCleanUp::currentContinueVar () {
+  this->continueVarUsed = true;
+
+  if (this->type == CODEGEN_CLEANUP_LOOP) {
+    return "c" + std::to_string(this->continueVarIdx);
+  } else if (this->parent == nullptr) {
+    throw Error("tried getting continue var on nullptr in CodegenCleanUp");
+  }
+
+  return this->parent->currentContinueVar();
 }
 
 std::string CodegenCleanUp::currentLabel () {

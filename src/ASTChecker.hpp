@@ -440,78 +440,11 @@ class ASTChecker {
 
   template <typename T>
   bool _hasNode (const std::vector<ASTNode> &nodes) const {
-    for (const auto &node : nodes) {
-      if (std::holds_alternative<T>(*node.body)) {
-        return true;
-      } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-        auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
+    auto flattenNodes = ASTChecker::flattenNode(nodes);
 
-        if (nodeFnDecl.body != std::nullopt && this->_hasNode<T>(*nodeFnDecl.body)) {
-          return true;
-        }
-      } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
-        auto nodeIf = std::get<ASTNodeIf>(*node.body);
-
-        if (this->_hasNode<T>(nodeIf.body)) {
-          return true;
-        }
-
-        if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-          auto nodeIfAlt = std::get<ASTNode>(*nodeIf.alt);
-
-          if (this->_hasNode<T>({ nodeIfAlt })) {
-            return true;
-          }
-        } else if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
-          auto nodeIfAlt = std::get<ASTBlock>(*nodeIf.alt);
-
-          if (this->_hasNode<T>(nodeIfAlt)) {
-            return true;
-          }
-        }
-      } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
-        auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
-
-        if (
-          (nodeLoop.init != std::nullopt && this->_hasNode<T>({ *nodeLoop.init })) ||
-          this->_hasNode<T>(nodeLoop.body)
-        ) {
-          return true;
-        }
-      } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
-        auto nodeMain = std::get<ASTNodeMain>(*node.body);
-
-        if (this->_hasNode<T>(nodeMain.body)) {
-          return true;
-        }
-      } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-        auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
-
-        auto result = std::any_of(nodeObjDecl.methods.begin(), nodeObjDecl.methods.end(), [&] (const auto &it) -> bool {
-          return it.body != std::nullopt && this->_hasNode<T>(*it.body);
-        });
-
-        if (result) {
-          return true;
-        }
-      } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
-        auto nodeTry = std::get<ASTNodeTry>(*node.body);
-
-        if (this->_hasNode<T>(nodeTry.body)) {
-          return true;
-        }
-
-        auto result = std::any_of(nodeTry.handlers.begin(), nodeTry.handlers.end(), [&] (const auto &it) -> bool {
-          return this->_hasNode<T>(it.body);
-        });
-
-        if (result) {
-          return true;
-        }
-      }
-    }
-
-    return false;
+    return std::any_of(flattenNodes.begin(), flattenNodes.end(), [&] (const auto &it) -> bool {
+      return std::holds_alternative<T>(*it.body);
+    });
   }
 
   template <typename T>

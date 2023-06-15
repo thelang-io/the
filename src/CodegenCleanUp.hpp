@@ -39,7 +39,9 @@ class CodegenCleanUp {
   CodegenCleanUp *parent = nullptr;
   std::size_t labelIdx = 0;
   std::size_t breakVarIdx = 0;
+  std::size_t continueVarIdx = 0;
   bool breakVarUsed = false;
+  bool continueVarUsed = false;
   bool jumpUsed = false;
   bool returnVarUsed = false;
   bool valueVarUsed = false;
@@ -49,6 +51,7 @@ class CodegenCleanUp {
 
   void add (const std::string &);
   std::string currentBreakVar ();
+  std::string currentContinueVar ();
   std::string currentLabel ();
   std::string currentReturnVar ();
   std::string currentValueVar ();

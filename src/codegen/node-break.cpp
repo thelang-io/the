@@ -22,7 +22,7 @@ std::string Codegen::_nodeBreak (const ASTNode &node, bool root, CodegenPhase ph
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
     code = std::string(this->indent, ' ') + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
 
-    if (!ASTChecker(node.parent).is<ASTNodeLoop>() || !ASTChecker(node).isLast()) {
+    if (!ASTChecker(node).isLast()) {
       code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
     }
   } else {

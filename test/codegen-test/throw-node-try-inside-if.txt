@@ -325,7 +325,9 @@ int main () {
     switch (setjmp(err_state.buf[err_state.buf_idx++])) {
       case 0: {
         error_assign(&err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 6, 7);
-        longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+        goto L3;
+L3:
+        if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
         err_state.buf_idx--;
         break;
       }
@@ -333,9 +335,9 @@ int main () {
         err_state.buf_idx--;
         error_unset(&err_state);
         const struct __THE_1_TestError_0 *__THE_0_err_0 = (struct __THE_1_TestError_0 *) err_state.ctx;
-        if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
+        if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
         print(stdout, "zzsz", "TestError:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
-L3:
+L4:
         err_state.buf_idx--;
         __THE_1_TestError_0_free((struct __THE_1_TestError_0 *) __THE_0_err_0);
         if (err_state.id != -1) goto L2;

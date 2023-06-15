@@ -22,14 +22,18 @@ std::string Codegen::_nodeTry (const ASTNode &node, bool root, CodegenPhase phas
   auto initialStateCleanUp = this->state.cleanUp;
 
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
-  this->state.cleanUp.jumpUsed = true;
   code += std::string(this->indent, ' ') + this->_apiEval("switch (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++])) {" EOL);
   this->indent += 2;
   code += std::string(this->indent, ' ') + "case 0: {" EOL;
   this->varMap.save();
-  code += this->_block(nodeTry.body);
+
+  auto blockCleanUp = this->_apiEval(
+    "if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);" EOL
+    "_{err_state}.buf_idx--;"
+  );
+
+  code += this->_block(nodeTry.body, true, blockCleanUp, true);
   this->varMap.restore();
-  code += std::string(this->indent + 2, ' ') + this->_apiEval("_{err_state}.buf_idx--;" EOL);
   code += std::string(this->indent + 2, ' ') + "break;" EOL;
   code += std::string(this->indent, ' ') + "}" EOL;
   this->state.cleanUp = initialStateCleanUp;

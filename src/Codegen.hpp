@@ -183,7 +183,7 @@ class Codegen {
   std::string _apiEval (const std::string &, int = 0, const std::string & = "", const std::optional<std::set<std::string> *> & = std::nullopt);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  std::string _block (const ASTBlock &, bool = true, const std::string & = "");
+  std::string _block (const ASTBlock &, bool = true, const std::string & = "", bool = false);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &, const ASTNode &);
   std::string _exprAccess (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
   std::string _exprArray (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);

@@ -27,6 +27,7 @@ std::string Codegen::_nodeLoop (const ASTNode &node, bool root, CodegenPhase pha
   this->varMap.save();
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp);
   this->state.cleanUp.breakVarIdx += 1;
+  this->state.cleanUp.continueVarIdx += 1;
 
   if (hasAwait) {
     auto initCode = nodeLoop.init == std::nullopt ? "" : this->_node(*nodeLoop.init);
@@ -115,7 +116,12 @@ std::string Codegen::_nodeLoop (const ASTNode &node, bool root, CodegenPhase pha
       code += std::string(this->indent + 2, ' ') + "unsigned char " + this->state.cleanUp.currentBreakVar() + " = 0;" EOL;
     }
 
-    code += bodyCode + std::string(this->indent, ' ') + "}" EOL;
+    if (this->state.cleanUp.continueVarUsed) {
+      code += std::string(this->indent + 2, ' ') + "unsigned char " + this->state.cleanUp.currentContinueVar() + " = 0;" EOL;
+    }
+
+    code += bodyCode;
+    code += std::string(this->indent, ' ') + "}" EOL;
 
     if (nodeLoop.init != std::nullopt && !saveCleanUp.empty()) {
       code += saveCleanUp.gen(this->indent);
@@ -124,14 +130,15 @@ std::string Codegen::_nodeLoop (const ASTNode &node, bool root, CodegenPhase pha
         code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
       }
 
-      this->indent = initialIndent;
-      code += std::string(this->indent, ' ') + "}" EOL;
+      code += std::string(this->indent - 2, ' ') + "}" EOL;
     }
   }
 
   this->state.cleanUp.breakVarIdx -= 1;
+  this->state.cleanUp.continueVarIdx -= 1;
   this->state.cleanUp = initialCleanUp;
   this->varMap.restore();
+  this->indent = initialIndent;
 
   return this->_wrapNode(node, root, phase, decl + code);
 }

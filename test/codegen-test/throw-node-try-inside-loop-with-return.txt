@@ -363,25 +363,27 @@ struct str __THE_1_test_0 (void *px, void *pp) {
     switch (setjmp(err_state.buf[err_state.buf_idx++])) {
       case 0: {
         error_assign(&err_state, TYPE_error_Error, (void *) new_error(cstr_concat_str("test", int_str(__THE_0_i_0))), (void (*) (void *)) &error_Error_free, 5, 7);
-        longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+        goto L2;
         r = 1;
         v = str_alloc("1");
-        goto L1;
+L2:
+        if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
         err_state.buf_idx--;
+        if (r == 1) goto L1;
         break;
       }
       case TYPE_TestError_0: {
         err_state.buf_idx--;
         error_unset(&err_state);
         const struct __THE_1_TestError_0 *__THE_0_err_0 = (struct __THE_1_TestError_0 *) err_state.ctx;
-        if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+        if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
         print(stdout, "zzsz", "TestError:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
         if (__THE_0_i_0 > 5) {
           r = 1;
           v = str_alloc("2");
-          goto L2;
+          goto L3;
         }
-L2:
+L3:
         err_state.buf_idx--;
         __THE_1_TestError_0_free((struct __THE_1_TestError_0 *) __THE_0_err_0);
         if (err_state.id != -1) goto L1;
@@ -404,9 +406,9 @@ L1:
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
   print(stdout, "sz", __THE_0_test_0.f(__THE_0_test_0.x, xalloc(&(struct __THE_1_fn$1000P) {20, 9}, sizeof(struct __THE_1_fn$1000P))), THE_EOL);
-L3:
+L4:
   err_state.buf_idx--;
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

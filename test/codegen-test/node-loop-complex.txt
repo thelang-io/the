@@ -198,16 +198,18 @@ int32_t __THE_1_test_0 (void *px) {
     struct str __THE_0_i_0 = str_alloc("");
     for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
       unsigned char b1 = 0;
+      unsigned char c1 = 0;
       const struct str __THE_0_j_0 = cstr_concat_str("b", str_copy(__THE_0_i_0));
       if (str_eq_cstr(str_copy(__THE_0_j_0), "ba")) {
         __THE_0_result_0 = 1;
-        goto L1;
+        c1 = 1;
+        if (c1 == 1) goto L1;
       }
       const struct str __THE_0_k_0 = str_concat_cstr(str_copy(__THE_0_j_0), "a");
       if (str_eq_cstr(str_copy(__THE_0_k_0), "ba")) {
         __THE_0_result_0 = 2;
         b1 = 1;
-        goto L2;
+        if (b1 == 1) goto L2;
       }
       const struct str __THE_0_l_0 = str_concat_cstr(str_copy(__THE_0_k_0), "a");
       if (str_eq_cstr(str_copy(__THE_0_l_0), "ba")) {
