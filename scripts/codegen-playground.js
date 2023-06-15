@@ -30,7 +30,7 @@ async function exec (command, options) {
   return await new Promise((resolve) => {
     childProcess.exec(command, options, (err, stdout, stderr) => {
       resolve({
-        code: err?.code ?? 1,
+        code: err?.code ?? 0,
         stderr,
         stdout
       })
@@ -586,7 +586,7 @@ async function handlePostBuild (req, res) {
     res.writeHead(500)
     res.end('Internal Server Error')
   } finally {
-    await fs.rm(filePath)
+    await fs.rm(filePath, { force: true })
   }
 }
 
@@ -610,14 +610,15 @@ async function handlePostRun (req, res) {
       return
     }
 
-    const { stderr, stdout } = await exec(outputPath, {
+    const { code, stderr, stdout } = await exec(outputPath, {
       env: {
         PATH: process.env.PATH
       },
       timeout: 3e4
     })
 
-    const output = (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
+    let output = (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
+    output += 'Process finished with exit code ' + code
 
     res.setHeader('content-type', 'text/plain')
     res.writeHead(200)
@@ -627,8 +628,11 @@ async function handlePostRun (req, res) {
     res.writeHead(500)
     res.end('Internal Server Error')
   } finally {
-    await fs.rm(outputPath)
-    await fs.rm(filePath)
+    await fs.rm(outputPath + '.dSYM', { recursive: true, force: true })
+    await fs.rm(outputPath + '.ilk', { force: true })
+    await fs.rm(outputPath + '.pdb', { force: true })
+    await fs.rm(outputPath, { force: true })
+    await fs.rm(filePath, { force: true })
   }
 }
 
