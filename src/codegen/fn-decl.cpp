@@ -77,15 +77,15 @@ std::string Codegen::_fnDecl (
           def += "  " + typeRefCode + contextVarName + ";" EOL;
         }
 
-        for (const auto &node : flattenAsyncBody) {
-          if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-            auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
+        for (const auto &asyncNode : flattenAsyncBody) {
+          if (std::holds_alternative<ASTNodeFnDecl>(*asyncNode.body)) {
+            auto nodeFnDecl = std::get<ASTNodeFnDecl>(*asyncNode.body);
             auto contextVarName = Codegen::name(nodeFnDecl.var->codeName);
             auto typeInfo = this->_typeInfo(nodeFnDecl.var->type);
 
             def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
-          } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-            auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+          } else if (std::holds_alternative<ASTNodeObjDecl>(*asyncNode.body)) {
+            auto nodeObjDecl = std::get<ASTNodeObjDecl>(*asyncNode.body);
 
             for (const auto &method : nodeObjDecl.methods) {
               auto contextVarName = Codegen::name(method.var->codeName);
@@ -93,8 +93,8 @@ std::string Codegen::_fnDecl (
 
               def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
             }
-          } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-            auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
+          } else if (std::holds_alternative<ASTNodeVarDecl>(*asyncNode.body)) {
+            auto nodeVarDecl = std::get<ASTNodeVarDecl>(*asyncNode.body);
             auto contextVarName = Codegen::name(nodeVarDecl.var->codeName);
             auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
 
