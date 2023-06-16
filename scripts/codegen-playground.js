@@ -77,32 +77,35 @@ const homeHTML = doctypeHTML + `<html lang="en">
   </head>
   <body>
     <div class="app">
-      <div class="header">
-        <button class="header__action" id="build" type="button">
+      <div class="sidebar" id="sidebar">
+        <button class="sidebar__action" id="build" type="button">
           <i class="fa-solid fa-wrench"></i>
-          <span>Build</span>
         </button>
-        <button class="header__action header__action--blue" id="run" type="button">
+        <button class="sidebar__action sidebar__action--blue" id="run" type="button">
           <i class="fa-solid fa-play"></i>
-          <span>Run</span>
         </button>
       </div>
-      <div class="editors" id="editors">
-        <div class="editor" id="editor-the"></div>
-        <div class="separator" id="separator"></div>
-        <div class="editor" id="editor-c"></div>
-      </div>
-      <div class="output" id="output" style="display: none;">
-        <div class="output__header">
-          <div class="output__header-headline">Output</div>
-          <div class="output__header-actions">
-            <button class="output__header-action" id="output-close">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
+      <div class="editors" id="editors" style="opacity: 0;">
+        <div class="editor__wrapper">
+          <div class="editor" id="editor-the"></div>
+          <div class="separator horizontal" id="separator2" style="display: none;"></div>
+          <div class="output" id="output" style="display: none;">
+            <div class="output__header">
+              <div class="output__header-headline">Output</div>
+              <div class="output__header-actions">
+                <button class="output__header-action" id="output-close">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+            <div class="output__content-wrapper">
+              <pre class="output__content" id="output-content"></pre>
+            </div>
           </div>
         </div>
-        <div class="output__content-wrapper">
-          <pre class="output__content" id="output-content"></pre>
+        <div class="separator vertical" id="separator1"></div>
+        <div class="editor__wrapper">
+          <div class="editor" id="editor-c"></div>
         </div>
       </div>
     </div>
@@ -123,133 +126,192 @@ body {
 *, *::after, *::before {
   box-sizing: border-box;
 }
+body.resizing-vertical, body.resizing-vertical *, body.resizing-vertical *::after, body.resizing-vertical *::before {
+  cursor: col-resize !important;
+}
+body.resizing-horizontal, body.resizing-horizontal *, body.resizing-horizontal *::after, body.resizing-horizontal *::before {
+  cursor: row-resize !important;
+}
 .monaco-editor .monaco-scrollable-element .scrollbar .slider {
-  background: #C9C9C9;
-  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 6px;
+  transition: 100ms ease;
+}
+.monaco-editor .monaco-scrollable-element .scrollbar .slider:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 .monaco-editor .monaco-scrollable-element .scrollbar.horizontal .slider {
   height: 7px !important;
   top: 3.5px !important;
 }
+.monaco-editor .monaco-scrollable-element .scrollbar.horizontal .slider:hover {
+  height: 10px !important;
+  top: 2px !important;
+}
 .monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider {
   left: 3.5px !important;
   width: 7px !important;
 }
+.monaco-editor .monaco-scrollable-element .scrollbar.vertical .slider:hover {
+  left: 2px !important;
+  width: 10px !important;
+}
 .app {
   display: flex;
-  flex-direction: column;
   height: 100%;
   position: relative;
   width: 100%;
 }
-.header {
+.sidebar {
   background: #F8F8F8;
-  border: solid 1px #EBECF0;
-  border-radius: 32px;
-  column-gap: 8px;
+  border-right: 1px solid #D0D7DE;
   display: flex;
-  justify-content: flex-end;
-  margin: 8px;
-  padding: 16px;
+  flex-direction: column;
+  padding: 8px 4px 8px 5px;
+  row-gap: 4px;
 }
-.header__action {
+.sidebar__action {
   align-items: center;
   appearance: none;
-  background: #1473E6;
+  background: transparent;
   border: none;
-  border-radius: 16px;
-  color: #FFFFFF;
-  column-gap: 8px;
+  border-radius: 4px;
+  color: #6C707E;
   display: inline-flex;
-  font-family: Source Sans Pro, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 700;
-  letter-spacing: normal;
-  line-height: 1.3;
-  min-width: 80px;
-  padding: 7px 16px;
+  font-size: 16px;
+  justify-content: center;
+  padding: 5px 0;
   transition: background 130ms ease;
+  width: 30px;
 }
-.header__action:hover {
-  background: #0D66D0;
-}
-.header__action:disabled {
+.sidebar__action:disabled {
   opacity: 0.5;
 }
-.header__action:not(:disabled) {
+.sidebar__action:not(:disabled) {
   cursor: pointer;
 }
-.header__action.header__action--blue {
-  background: #599E5E;
+.sidebar__action:not(:disabled):hover {
+  background: rgba(184, 184, 184, 0.3);
 }
-.header__action.header__action--blue:hover {
-  background: #508E54;
+.sidebar__action.sidebar__action--blue {
+  color: #599E5E;
 }
 .editors {
   display: flex;
-  flex-grow: 1;
+  width: calc(100% - 38px);
 }
 .editor {
   height: 100%;
+  width: 100%;
+}
+.editor__wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 4px 0 0;
+  position: relative;
 }
 .separator {
-  cursor: col-resize;
-  height: 100%;
+  background: #D0D7DE;
   position: relative;
   user-select: none;
-  width: 6px;
 }
 .separator::after {
-  background: #EBECF0;
   content: '';
-  height: 100%;
-  left: 2.5px;
   position: absolute;
-  top: 0;
-  user-select: none;
+  transition: 100ms ease;
+  z-index: 11;
+}
+.separator.active::after, .separator:hover::after {
+  background: #0969DA;
+}
+.separator.vertical {
+  cursor: col-resize;
+  height: 100%;
   width: 1px;
+}
+.separator.vertical::after {
+  height: 100%;
+  left: -2.5px;
+  top: 0;
+  width: 6px;
+}
+.separator.horizontal {
+  cursor: row-resize;
+  height: 1px;
+  width: 100%;
+}
+.separator.horizontal::after {
+  height: 6px;
+  left: 0;
+  top: -2.5px;
+  width: 100%;
 }
 .output {
   background: #F8F8F8;
-  border: solid 1px #EBECF0;
-  border-radius: 32px;
-  bottom: 8px;
-  column-gap: 8px;
   display: flex;
   flex-direction: column;
-  height: 40vh;
-  left: 8px;
-  padding: 16px;
-  position: absolute;
-  width: calc(100% - 16px);
-  z-index: 11;
+  padding: 4px 8px 8px 16px;
+  row-gap: 8px;
+  width: 100%;
 }
 .output__header {
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   display: flex;
   width: 100%;
 }
 .output__header-headline {
   color: #3B3B3B;
+  font-family: sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 2.5;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 .output__header-actions {
+  column-gap: 4px;
+  display: inline-flex;
 }
 .output__header-action {
+  appearance: none;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #6C707E;
+  display: inline-flex;
+  font-size: 16px;
+  justify-content: center;
+  padding: 3px 0;
+  transition: background 130ms ease;
+  width: 22px;
+}
+.output__header-action:not(:disabled) {
+  cursor: pointer;
+}
+.output__header-action:not(:disabled):hover {
+  background: rgba(184, 184, 184, 0.3);
 }
 .output__content-wrapper {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow: auto;
 }
 .output__content {
+  font-family: Menlo, Monaco, 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 1.5;
+  letter-spacing: 0;
   margin: 0;
 }`
 
 const commonJS = `var editorsEl = document.getElementById('editors');
 var editor1El = document.getElementById('editor-the');
 var editor2El = document.getElementById('editor-c');
-var separatorEl = document.getElementById('separator');
+var separator1El = document.getElementById('separator1');
+var separator2El = document.getElementById('separator2');
 var outputEl = document.getElementById('output');
 var outputCloseEl = document.getElementById('output-close');
 var outputContentEl = document.getElementById('output-content');
@@ -257,6 +319,8 @@ var buildButtonEl = document.getElementById('build');
 var runButtonEl = document.getElementById('run');
 var editor1Ref = { current: null };
 var editor2Ref = { current: null };
+var separator1Controls = null;
+var separator2Controls = null;
 var initialEditor1State = localStorage.getItem('state1') !== null ? JSON.parse(localStorage.getItem('state1')) : {
   focus: false,
   scroll: 0,
@@ -286,37 +350,59 @@ function applyEditorState (editorRef, state) {
   editorRef.current.setScrollTop(state.scroll);
   editorRef.current.restoreViewState(state.viewState);
 }
-function initSeparator () {
-  var surfaceWidth = editorsEl.offsetWidth;
-  var halfSeparator = separatorEl.offsetWidth / 2;
-  var initialClientX;
-  var initialEditor1Width;
-  var initialEditor2Width;
+function initSeparator (id, direction, separatorEl, firstEl, secondEl) {
+  var isVertical = direction === 'vertical';
+  var parent = firstEl.parentNode;
+  var surfaceSize = isVertical ? parent.offsetWidth : parent.offsetHeight;
+  var initialClientPos;
+  var initialFirstSize;
+  var initialSecondSize;
   function separate (at) {
-    localStorage.setItem('separator', at);
-    editor1El.style.width = 'calc(' + at + '% - ' + halfSeparator + 'px)';
-    editor2El.style.width = 'calc(' + (100 - at) + '% - ' + halfSeparator + 'px)';
+    localStorage.setItem('separator' + id, at);
+    if (isVertical) {
+      firstEl.style.width = 'calc(' + at + '% - 0.5px)';
+      secondEl.style.width = 'calc(' + (100 - at) + '% - 0.5px)';
+    } else {
+      firstEl.style.height = 'calc(' + at + '% - 0.5px)';
+      secondEl.style.height = 'calc(' + (100 - at) + '% - 0.5px)';
+    }
     editor1Ref.current.layout();
     editor2Ref.current.layout();
   }
   function handleMouseMove (e) {
-    var deltaX = Math.min(Math.max(e.clientX - initialClientX, -initialEditor1Width), initialEditor2Width);
-    separate(Math.round((initialEditor1Width + deltaX) * 100 / surfaceWidth));
+    var clientPos = isVertical ? e.clientX : e.clientY;
+    var delta = Math.min(Math.max(clientPos - initialClientPos, -initialFirstSize), initialSecondSize);
+    separate(Math.round((initialFirstSize + delta) * 100 / surfaceSize));
   }
   var throttledMouseMoveHandler = _.throttle(handleMouseMove, 15);
   function handleMouseUp () {
     document.removeEventListener('mousemove', throttledMouseMoveHandler);
     document.removeEventListener('mouseup', handleMouseUp);
+    separatorEl.classList.remove('active');
+    document.body.classList.remove('resizing-' + direction);
   }
   function handleMouseDown (e) {
-    initialClientX = e.clientX;
-    initialEditor1Width = editor1El.offsetWidth;
-    initialEditor2Width = editor2El.offsetWidth;
+    initialClientPos = isVertical ? e.clientX : e.clientY;
+    initialFirstSize = isVertical ? firstEl.offsetWidth : firstEl.offsetHeight;
+    initialSecondSize = isVertical ? secondEl.offsetWidth : secondEl.offsetHeight;
+    separatorEl.classList.add('active');
+    document.body.classList.add('resizing-' + direction);
     document.addEventListener('mousemove', throttledMouseMoveHandler);
     document.addEventListener('mouseup', handleMouseUp);
   }
   separatorEl.addEventListener('mousedown', handleMouseDown);
-  separate(parseInt(localStorage.getItem('separator')) || 50);
+  if (separatorEl.style.display !== 'none') {
+    separate(parseInt(localStorage.getItem('separator' + id)) || 50);
+  }
+  return {
+    hide: function () {
+      separatorEl.style.display = 'none';
+    },
+    show: function () {
+      separatorEl.style.display = '';
+      separate(parseInt(localStorage.getItem('separator' + id)) || 50);
+    }
+  };
 }
 function handleChangeStateFactory (id, editorRef) {
   return function handleChangeState () {
@@ -335,11 +421,15 @@ function registerEditorHandlers (editorRef, handler) {
   editorRef.current.onDidScrollChange(handler);
 }
 function hideOutput () {
+  outputContentEl.innerText = '';
   outputEl.style.display = 'none';
+  separator2Controls.hide();
 }
 function showOutput (content) {
   outputContentEl.innerText = content;
   outputEl.style.display = '';
+  separator2Controls.show();
+  outputContentEl.parentNode.scrollTop = outputContentEl.parentNode.scrollHeight;
 }
 function actionBuild (initialBuild) {
   initialBuild = initialBuild === true;
@@ -358,6 +448,7 @@ function actionBuild (initialBuild) {
     if (initialBuild) {
       editor2Ref.current.setScrollTop(initialEditor2State.scroll);
       editor2Ref.current.restoreViewState(initialEditor2State.viewState);
+      editorsEl.style.opacity = '';
     }
     enableActions();
   });
@@ -393,9 +484,6 @@ function debouncedBuildWrapped (force) {
   return debouncedBuild();
 }
 disableActions();
-outputCloseEl.addEventListener('click', function () {
-  outputEl.style.display = 'none';
-});
 require.config({
   paths: {
     vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs'
@@ -530,11 +618,18 @@ require(['vs/editor/editor.main'], function () {
     readOnly: true,
     domReadOnly: true
   }));
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 's' && (navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? e.metaKey : e.ctrlKey)) {
+      e.preventDefault();
+    }
+  }, false);
   buildButtonEl.addEventListener('click', function () {
     debouncedBuildWrapped(true);
   });
   runButtonEl.addEventListener('click', actionRun);
-  initSeparator();
+  outputCloseEl.addEventListener('click', hideOutput);
+  separator1Controls = initSeparator(1, 'vertical', separator1El, editor1El.parentNode, editor2El.parentNode);
+  separator2Controls = initSeparator(2, 'horizontal', separator2El, editor1El, outputEl);
   registerEditorHandlers(editor1Ref, debouncedEditor1StateChangeHandler);
   editor1Ref.current.onDidChangeModelContent(debouncedBuildWrapped);
   editor1Ref.current.onDidChangeCursorPosition(debouncedBuildWrapped);
