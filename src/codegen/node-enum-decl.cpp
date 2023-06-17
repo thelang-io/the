@@ -18,7 +18,7 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeEnumDecl (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+std::string Codegen::_nodeEnumDecl (const ASTNode &node, bool root, CodegenPhase phase, std::string &topLevelDecl, std::string &code) {
   auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
   auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
   auto enumType = std::get<TypeEnum>(nodeEnumDecl.type->body);
@@ -42,7 +42,7 @@ std::string Codegen::_nodeEnumDecl (const ASTNode &node, bool root, CodegenPhase
           membersCode += "  " + Codegen::name(member->codeName);
 
           if (nodeEnumDeclMember->init != std::nullopt) {
-            membersCode += " = " + this->_nodeExpr(*nodeEnumDeclMember->init, nodeEnumDeclMember->init->type, node, decl, true);
+            membersCode += " = " + this->_nodeExpr(*nodeEnumDeclMember->init, nodeEnumDeclMember->init->type, node, topLevelDecl, true);
           }
 
           membersCode += i == enumType.members.size() - 1 ? EOL : "," EOL;
@@ -72,5 +72,5 @@ std::string Codegen::_nodeEnumDecl (const ASTNode &node, bool root, CodegenPhase
     });
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return this->_wrapNode(node, root, phase, topLevelDecl + code);
 }

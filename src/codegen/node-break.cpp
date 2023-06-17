@@ -19,7 +19,9 @@
 #include "../config.hpp"
 
 std::string Codegen::_nodeBreak (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+  if (this->state.insideAsync) {
+    code += std::string(this->indent, ' ') + "return " + std::to_string(this->state.breakAsyncCounter) + ";" EOL;
+  } else if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
     code = std::string(this->indent, ' ') + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
 
     if (!ASTChecker(node).isLast()) {

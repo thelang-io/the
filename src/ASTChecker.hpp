@@ -303,6 +303,25 @@ class ASTChecker {
   }
 
   // todo test
+  bool hasSyncBreaking () const {
+    this->_checkNode();
+    return this->_hasNode<ASTNodeBreak>(this->_nodes) ||
+      this->_hasNode<ASTNodeContinue>(this->_nodes) ||
+      this->_hasNode<ASTNodeReturn>(this->_nodes) ||
+      this->_hasNode<ASTNodeThrow>(this->_nodes);
+  }
+
+  // todo test
+  template <typename T>
+  bool hasExpr () const {
+    if (!this->_exprs.empty()) {
+      return !this->_getExprOfType<T>(this->_exprs).empty();
+    } else {
+      return !this->_getExprOfTypeFromNodes<T>(this->_nodes).empty();
+    }
+  }
+
+  // todo test
   bool hoistingFriendly () {
     this->_checkNode();
 
@@ -318,16 +337,6 @@ class ASTChecker {
     }
 
     return true;
-  }
-
-  // todo test
-  template <typename T>
-  bool hasExpr () const {
-    if (!this->_exprs.empty()) {
-      return !this->_getExprOfType<T>(this->_exprs).empty();
-    } else {
-      return !this->_getExprOfTypeFromNodes<T>(this->_nodes).empty();
-    }
   }
 
   template <typename T>

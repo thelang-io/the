@@ -108,6 +108,8 @@ struct CodegenState {
   bool insideAsync = false;
   std::map<std::string, Type *> typeCasts = {};
   std::size_t asyncCounter = 0;
+  std::size_t breakAsyncCounter = 0;
+  std::size_t continueAsyncCounter = 0;
 };
 
 struct CodegenTypeInfo {
@@ -216,7 +218,9 @@ class Codegen {
   std::string _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool = false, std::size_t = 0);
   std::string _nodeFnDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeIf (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeIfAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeLoop (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeLoopAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeMain (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeObjDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeReturn (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);

@@ -106,8 +106,14 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp, const std:
   }
 
   if (saveCleanUp) {
-    code += this->state.cleanUp.gen(this->indent);
+    auto cleanUpCode = this->state.cleanUp.gen(this->indent);
 
+    if (this->state.insideAsync && !cleanUpCode.empty()) {
+      code += std::string(this->indent - 2, ' ') + "}" EOL;
+      code += std::string(this->indent - 2, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
+    }
+
+    code += cleanUpCode;
     auto nodesChecker = ASTChecker(nodes);
     auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
 

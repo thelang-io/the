@@ -19,7 +19,9 @@
 #include "../config.hpp"
 
 std::string Codegen::_nodeContinue (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+  if (this->state.insideAsync) {
+    code += std::string(this->indent, ' ') + "return " + std::to_string(this->state.continueAsyncCounter) + ";" EOL;
+  } else if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
     if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
       code = std::string(this->indent, ' ') + this->state.cleanUp.currentContinueVar() + " = 1;" EOL;
     }
