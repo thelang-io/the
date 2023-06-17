@@ -16,9 +16,11 @@
  * limitations under the License.
  */
 
+const EventEmitter = require('events')
 const childProcess = require('child_process')
 const crypto = require('crypto')
-const fs = require('fs/promises')
+const fs = require('fs')
+const fsPromises = require('fs/promises')
 const http = require('http')
 const path = require('path')
 
@@ -38,30 +40,11 @@ async function exec (command, options) {
   })
 }
 
-async function codegen (body) {
-  const { filePath, outputPath } = await tmpFile(body)
-  let result
-
-  try {
-    result = await exec(`${appBinaryPath} codegen ${filePath} --output=${outputPath}.out`, {
-      env: {
-        DEPS_DIR: appDepsDir,
-        PATH: process.env.PATH
-      },
-      timeout: 3e4
-    })
-  } finally {
-    await fs.rm(filePath)
-  }
-
-  return result
-}
-
 async function tmpFile (body) {
   const buf = await crypto.randomBytes(3)
   const filePath = path.resolve(process.cwd(), `tmp-${buf.readUIntBE(0, 3)}`)
   const outputPath = `${filePath}.out`
-  await fs.writeFile(filePath, body, 'utf8')
+  await fsPromises.writeFile(filePath, body, 'utf8')
   return { filePath, outputPath }
 }
 
@@ -307,7 +290,8 @@ body.resizing-horizontal, body.resizing-horizontal *, body.resizing-horizontal *
   margin: 0;
 }`
 
-const commonJS = `var editorsEl = document.getElementById('editors');
+const commonJS = `var ws;
+var editorsEl = document.getElementById('editors');
 var editor1El = document.getElementById('editor-the');
 var editor2El = document.getElementById('editor-c');
 var separator1El = document.getElementById('separator1');
@@ -321,6 +305,7 @@ var editor1Ref = { current: null };
 var editor2Ref = { current: null };
 var separator1Controls = null;
 var separator2Controls = null;
+var initialBuild = true;
 var initialEditor1State = localStorage.getItem('state1') !== null ? JSON.parse(localStorage.getItem('state1')) : {
   focus: false,
   scroll: 0,
@@ -350,6 +335,51 @@ function applyEditorState (editorRef, state) {
   editorRef.current.setScrollTop(state.scroll);
   editorRef.current.restoreViewState(state.viewState);
 }
+function connectWebSocket (initialConnect) {
+  ws = new WebSocket('ws://' + location.host + '/ws');
+  ws.onopen = function () {
+    if (initialConnect !== true) {
+      location.reload();
+    }
+  };
+  ws.onclose = function () {
+    setTimeout(connectWebSocket, 1000);
+  };
+  ws.onerror = function (err) {
+    ws.close();
+  };
+  ws.addEventListener('message', function (e) {
+    var payload;
+    try {
+      payload = JSON.parse(e.data);
+    } catch (err) {
+      return;
+    }
+    switch (payload.action) {
+      case 'build-output': {
+        editor2Ref.current.getModel().setValue(payload.body);
+        if (initialBuild) {
+          editor2Ref.current.setScrollTop(initialEditor2State.scroll);
+          editor2Ref.current.restoreViewState(initialEditor2State.viewState);
+          editorsEl.style.opacity = '';
+          initialBuild = false;
+        }
+        enableActions();
+        break;
+      }
+      case 'rebuild': {
+        debouncedBuildWrapped(true);
+        break;
+      }
+      case 'run-output': {
+        showOutput(payload.body);
+        enableActions();
+        break;
+      }
+    }
+  });
+}
+connectWebSocket(true);
 function initSeparator (id, direction, separatorEl, firstEl, secondEl) {
   var isVertical = direction === 'vertical';
   var parent = firstEl.parentNode;
@@ -397,6 +427,13 @@ function initSeparator (id, direction, separatorEl, firstEl, secondEl) {
   return {
     hide: function () {
       separatorEl.style.display = 'none';
+      if (isVertical) {
+        firstEl.style.width = '';
+      } else {
+        firstEl.style.height = '';
+      }
+      editor1Ref.current.layout();
+      editor2Ref.current.layout();
     },
     show: function () {
       separatorEl.style.display = '';
@@ -431,43 +468,20 @@ function showOutput (content) {
   separator2Controls.show();
   outputContentEl.parentNode.scrollTop = outputContentEl.parentNode.scrollHeight;
 }
-function actionBuild (initialBuild) {
-  initialBuild = initialBuild === true;
+function actionBuild () {
   var code = editor1Ref.current.getModel().getValue();
   localStorage.setItem('code', code);
-  fetch('/build', {
-    method: 'POST',
-    headers: {
-      'content-type': 'text/plain'
-    },
+  ws.send(JSON.stringify({
+    action: 'build',
     body: code
-  }).then(function (response) {
-    return response.text();
-  }).then(function (data) {
-    editor2Ref.current.getModel().setValue(data);
-    if (initialBuild) {
-      editor2Ref.current.setScrollTop(initialEditor2State.scroll);
-      editor2Ref.current.restoreViewState(initialEditor2State.viewState);
-      editorsEl.style.opacity = '';
-    }
-    enableActions();
-  });
+  }));
 }
 function actionRun () {
   disableActions();
-  var code = editor1Ref.current.getModel().getValue();
-  fetch('/run', {
-    method: 'POST',
-    headers: {
-      'content-type': 'text/plain'
-    },
-    body: code
-  }).then(function (response) {
-    return response.text();
-  }).then(function (data) {
-    showOutput(data);
-    enableActions();
-  });
+  ws.send(JSON.stringify({
+    action: 'run',
+    body: editor1Ref.current.getModel().getValue()
+  }));
 }
 var debouncedEditor1StateChangeHandler = _.debounce(handleChangeStateFactory(1, editor1Ref), 100);
 var debouncedEditor2StateChangeHandler = _.debounce(handleChangeStateFactory(2, editor2Ref), 100);
@@ -636,8 +650,136 @@ require(['vs/editor/editor.main'], function () {
   editor1Ref.current.onDidChangeCursorSelection(debouncedBuildWrapped);
   registerEditorHandlers(editor2Ref, debouncedEditor2StateChangeHandler);
   applyEditorState(editor1Ref, initialEditor1State);
-  actionBuild(true);
+  actionBuild();
 });`
+
+class WebSocketServer extends EventEmitter {
+  GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
+  OPCODES = {
+    text: 0x01,
+    close: 0x08
+  }
+
+  clients = new Set()
+
+  constructor (server) {
+    super()
+    server.on('upgrade', this.handleUpgrade.bind(this))
+  }
+
+  broadcast (data) {
+    for (const client of this.clients) {
+      this.send(client, data)
+    }
+  }
+
+  generateAcceptValue (acceptKey) {
+    return crypto.createHash('sha1').update(acceptKey + this.GUID, 'binary').digest('base64')
+  }
+
+  handle (req, res) {
+    res.setHeader('content-type', 'text/plain')
+    res.setHeader('upgrade', 'WebSocket')
+    res.writeHead(426)
+    res.end('Upgrade Required')
+  }
+
+  handleData (socket, buf) {
+    const message = this.parse(socket, buf)
+
+    if (message) {
+      this.emit('message', socket, message)
+    } else if (message === null) {
+      socket.destroy()
+    }
+  }
+
+  handleUpgrade (req, socket) {
+    if (req.headers.upgrade !== 'websocket') {
+      socket.end('HTTP/1.1 400 Bad Request')
+      return
+    }
+
+    const acceptKey = req.headers['sec-websocket-key']
+    const acceptValue = this.generateAcceptValue(acceptKey)
+
+    const responseHeaders = [
+      'HTTP/1.1 101 Switching Protocols',
+      'Upgrade: WebSocket',
+      'Connection: Upgrade',
+      `Sec-WebSocket-Accept: ${acceptValue}`
+    ]
+
+    socket.write(responseHeaders.concat('\r\n').join('\r\n'))
+    socket.on('data', this.handleData.bind(this, socket))
+    this.clients.add(socket)
+
+    socket.on('close', () => {
+      socket.destroy()
+      this.clients.delete(socket)
+    })
+  }
+
+  parse (socket, buf) {
+    const firstByte = buf.readUInt8(0)
+    const opCode = firstByte & 0x0F
+
+    if (opCode === this.OPCODES.close) {
+      socket.emit('close')
+      return null
+    } else if (opCode !== this.OPCODES.text) {
+      return
+    }
+
+    const secondByte = buf.readUInt8(1)
+    const payloadLength = secondByte & 0x7F
+    const offset = payloadLength === 126 ? 4 : payloadLength === 127 ? 10 : 2
+    const isMasked = !!((secondByte >>> 7) & 0x01)
+
+    if (isMasked) {
+      const maskingKey = buf.readUInt32BE(offset)
+      return this.unmask(buf.subarray(offset + 4), maskingKey).toString('utf-8')
+    } else {
+      return buf.subarray(offset).toString('utf-8')
+    }
+  }
+
+  send (socket, data) {
+    if (socket.destroyed) {
+      return
+    }
+
+    const payload = data.toString()
+    const payloadByteLength = Buffer.byteLength(payload)
+    const payloadBytesOffset = payloadByteLength > 0xFFFF ? 10 : payloadByteLength > 125 ? 4 : 2
+    const payloadLength = payloadByteLength > 0xFFFF ? 127 : payloadByteLength > 125 ? 126 : payloadByteLength
+    const buffer = Buffer.alloc(payloadBytesOffset + payloadByteLength)
+
+    buffer.writeUInt8(0x81, 0)
+    buffer[1] = payloadLength
+
+    if (payloadLength === 126) {
+      buffer.writeUInt16BE(payloadByteLength, 2)
+    } else if (payloadByteLength === 127) {
+      buffer.writeBigUInt64BE(BigInt(payloadByteLength), 2)
+    }
+
+    buffer.write(payload, payloadBytesOffset)
+    socket.write(buffer)
+  }
+
+  unmask (payload, maskingKey) {
+    const result = Buffer.alloc(payload.byteLength)
+
+    for (let i = 0, j = 0; i < payload.byteLength; i++, j = i % 4) {
+      const shift = j === 3 ? 0 : (3 - j) << 3
+      const mask = (shift === 0 ? maskingKey : maskingKey >>> shift) & 0xFF
+      result.writeUInt8(mask ^ payload.readUInt8(i), i)
+    }
+
+    return result
+  }
+}
 
 function handleGetHome (req, res) {
   res.setHeader('content-type', 'text/html')
@@ -657,78 +799,6 @@ function handleGetStyleCSS (req, res) {
   res.setHeader('content-type', 'text/css')
   res.writeHead(200)
   res.end(styleCSS)
-}
-
-async function handlePostBuild (req, res) {
-  const { filePath } = await tmpFile(req.body)
-
-  try {
-    const { stderr, stdout } = await exec(`${appBinaryPath} codegen ${filePath}`, {
-      env: {
-        DEPS_DIR: appDepsDir,
-        PATH: process.env.PATH
-      },
-      timeout: 3e4
-    })
-
-    const output = (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
-
-    res.setHeader('content-type', 'text/plain')
-    res.writeHead(200)
-    res.end(output)
-  } catch {
-    res.setHeader('content-type', 'text/html')
-    res.writeHead(500)
-    res.end('Internal Server Error')
-  } finally {
-    await fs.rm(filePath, { force: true })
-  }
-}
-
-async function handlePostRun (req, res) {
-  const { filePath, outputPath } = await tmpFile(req.body)
-
-  try {
-    const { stderr: stderrCompile } = await exec(`${appBinaryPath} ${filePath} --output=${outputPath}`, {
-      env: {
-        DEPS_DIR: appDepsDir,
-        PATH: process.env.PATH
-      },
-      timeout: 3e4
-    })
-
-    if (stderrCompile !== '') {
-      const output = stderrCompile.replaceAll(filePath, '/app')
-      res.setHeader('content-type', 'text/plain')
-      res.writeHead(200)
-      res.end(output)
-      return
-    }
-
-    const { code, stderr, stdout } = await exec(outputPath, {
-      env: {
-        PATH: process.env.PATH
-      },
-      timeout: 3e4
-    })
-
-    let output = (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
-    output += 'Process finished with exit code ' + code
-
-    res.setHeader('content-type', 'text/plain')
-    res.writeHead(200)
-    res.end(output)
-  } catch {
-    res.setHeader('content-type', 'text/html')
-    res.writeHead(500)
-    res.end('Internal Server Error')
-  } finally {
-    await fs.rm(outputPath + '.dSYM', { recursive: true, force: true })
-    await fs.rm(outputPath + '.ilk', { force: true })
-    await fs.rm(outputPath + '.pdb', { force: true })
-    await fs.rm(outputPath, { force: true })
-    await fs.rm(filePath, { force: true })
-  }
 }
 
 function handleAll (req, res) {
@@ -757,6 +827,9 @@ async function enhanceRequest (req) {
   })
 }
 
+const server = http.createServer(router)
+const ws = new WebSocketServer(server)
+
 async function router (req, res) {
   await enhanceRequest(req)
 
@@ -764,11 +837,126 @@ async function router (req, res) {
     case 'GET /': return handleGetHome(req, res)
     case 'GET /common.js': return handleGetCommonJS(req, res)
     case 'GET /style.css': return handleGetStyleCSS(req, res)
-    case 'POST /build': return handlePostBuild(req, res)
-    case 'POST /run': return handlePostRun(req, res)
+    case 'GET /ws': return ws.handle(req, res)
     default: return handleAll(req, res)
   }
 }
 
-const server = http.createServer(router)
-server.listen(8080, 'localhost')
+async function fsWatch (fileName) {
+  return new Promise((resolve) => {
+    const ac = new AbortController()
+
+    fs.watch(fileName, {
+      signal: ac.signal
+    }, (eventType) => {
+      ac.abort()
+      resolve(eventType)
+    })
+  })
+}
+
+server.listen(8080, 'localhost', () => {
+  (async () => {
+    let shouldRebuild = false
+
+    while (true) {
+      try {
+        await fsPromises.access(appBinaryPath)
+      } catch {
+        continue
+      }
+
+      if (shouldRebuild) {
+        ws.broadcast(JSON.stringify({
+          action: 'rebuild'
+        }))
+
+        shouldRebuild = false
+      }
+
+      const result = await fsWatch(appBinaryPath)
+
+      if (result === 'rename') {
+        shouldRebuild = true
+      }
+    }
+  })()
+
+  ws.on('message', async (socket, message) => {
+    let payload
+
+    try {
+      payload = JSON.parse(message)
+    } catch {
+      return
+    }
+
+    switch (payload.action) {
+      case 'build': {
+        const { filePath } = await tmpFile(payload.body)
+
+        try {
+          const { stderr, stdout } = await exec(`${appBinaryPath} codegen ${filePath}`, {
+            env: {
+              DEPS_DIR: appDepsDir,
+              PATH: process.env.PATH
+            },
+            timeout: 3e4
+          })
+
+          ws.send(socket, JSON.stringify({
+            action: 'build-output',
+            body: (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
+          }))
+        } finally {
+          await fsPromises.rm(filePath, { force: true })
+        }
+
+        break
+      }
+      case 'run': {
+        const { filePath, outputPath } = await tmpFile(payload.body)
+
+        try {
+          const { stderr: stderrCompile } = await exec(`${appBinaryPath} ${filePath} --output=${outputPath}`, {
+            env: {
+              DEPS_DIR: appDepsDir,
+              PATH: process.env.PATH
+            },
+            timeout: 3e4
+          })
+
+          if (stderrCompile !== '') {
+            ws.send(socket, JSON.stringify({
+              action: 'run-output',
+              body: stderrCompile.replaceAll(filePath, '/app')
+            }))
+
+            return
+          }
+
+          const { code, stderr, stdout } = await exec(outputPath, {
+            env: {
+              PATH: process.env.PATH
+            },
+            timeout: 3e4
+          })
+
+          ws.send(socket, JSON.stringify({
+            action: 'run-output',
+            body: (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app') +
+              'Process finished with exit code ' + code
+          }))
+        } finally {
+          await fsPromises.rm(outputPath + '.dSYM', { recursive: true, force: true })
+          await fsPromises.rm(outputPath + '.ilk', { force: true })
+          await fsPromises.rm(outputPath + '.pdb', { force: true })
+          await fsPromises.rm(outputPath, { force: true })
+          await fsPromises.rm(filePath, { force: true })
+        }
+
+        break
+      }
+    }
+  })
+})
