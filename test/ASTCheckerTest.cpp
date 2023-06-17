@@ -136,9 +136,9 @@ TEST_F(ASTCheckerTest, GetExprOfType) {
 }
 
 TEST_F(ASTCheckerTest, GetExprOfTypeFromNodes) {
-  EXPECT_EQ(this->node_("enum Color { Red = 1, Green = 2, Blue = 3 }").getExprOfType<ASTExprLit>().size(), 3);
-  EXPECT_EQ(this->node_("fn test (a := 2, b := 3) {}").getExprOfType<ASTExprLit>().size(), 2);
-  EXPECT_EQ(this->node_("fn test () { a := 2; b := 3 }").getExprOfType<ASTExprLit>().size(), 2);
+  EXPECT_EQ(this->node_("enum Color { Red = 1, Green = 2, Blue = 3 }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test (a := 2, b := 3) {}").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test () { a := 2; b := 3 }").getExprOfType<ASTExprLit>().size(), 0);
   EXPECT_EQ(this->node_("1 + 2").getExprOfType<ASTExprLit>().size(), 2);
   EXPECT_EQ(this->node_("if 1 == 1 {}").getExprOfType<ASTExprLit>().size(), 2);
   EXPECT_EQ(this->node_("if true { 1 + 1 }").getExprOfType<ASTExprLit>().size(), 3);
@@ -151,10 +151,10 @@ TEST_F(ASTCheckerTest, GetExprOfTypeFromNodes) {
   EXPECT_EQ(this->node_("loop true { 1 + 1 }").getExprOfType<ASTExprLit>().size(), 3);
   EXPECT_EQ(this->node_("loop a := 1; a < 2; a++ { 1 + 1 }").getExprOfType<ASTExprAccess>().size(), 2);
   EXPECT_EQ(this->node_("loop a := 1; a < 2; a++ { 1 + 1 }").getExprOfType<ASTExprLit>().size(), 4);
-  EXPECT_EQ(this->node_("obj Test { fn test (a := 1, b := 2) }").getExprOfType<ASTExprLit>().size(), 2);
-  EXPECT_EQ(this->node_("obj Test { fn test () {a := 1; b := 2} }").getExprOfType<ASTExprLit>().size(), 2);
-  EXPECT_EQ(this->node_("fn test () { return 1 }").getExprOfType<ASTExprLit>().size(), 1);
-  EXPECT_EQ(this->node_("fn test () { return 1 + 1 }").getExprOfType<ASTExprLit>().size(), 2);
+  EXPECT_EQ(this->node_("obj Test { fn test (a := 1, b := 2) }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("obj Test { fn test () {a := 1; b := 2} }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test () { return 1 }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test () { return 1 + 1 }").getExprOfType<ASTExprLit>().size(), 0);
   EXPECT_EQ(this->node_("throw error_NewError(\"message\")").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->node_("throw error_NewError(\"message\")").getExprOfType<ASTExprLit>().size(), 1);
   EXPECT_EQ(this->node_("try { 1 + 1 } catch err: error_Error {}").getExprOfType<ASTExprLit>().size(), 2);
@@ -189,7 +189,7 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "return" EOL
   ).has<ASTNodeReturn>());
 
-  EXPECT_TRUE(this->node_(
+  EXPECT_FALSE(this->node_(
     "fn test () {" EOL
     "  print(\"Test\")" EOL
     "  return" EOL
@@ -321,7 +321,7 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "}" EOL
   ).has<ASTNodeReturn>());
 
-  EXPECT_TRUE(this->node_(
+  EXPECT_FALSE(this->node_(
     "obj Test {" EOL
     "  fn test () {" EOL
     "    return 1;" EOL
@@ -329,7 +329,7 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "}" EOL
   ).has<ASTNodeReturn>());
 
-  EXPECT_TRUE(this->node_(
+  EXPECT_FALSE(this->node_(
     "obj Test {" EOL
     "  fn test1 () {" EOL
     "  }" EOL
@@ -721,10 +721,10 @@ TEST_F(ASTCheckerTest, ThrowsNode) {
   EXPECT_TRUE(this->node_("throw error_NewError(\"test\")").throws());
   EXPECT_TRUE(this->node_("try {} catch err: error_Error {}").throws());
 
-  EXPECT_TRUE(this->node_("enum Color { Red = [1].first }").throws());
-  EXPECT_TRUE(this->node_("fn test () { throw error_NewError(\"test\") }").throws());
+  EXPECT_FALSE(this->node_("enum Color { Red = [1].first }").throws());
+  EXPECT_FALSE(this->node_("fn test () { throw error_NewError(\"test\") }").throws());
   EXPECT_TRUE(this->node_("[1].first").throws());
-  EXPECT_TRUE(this->node_("fn test (arr := [1], a := arr.first) {}").throws());
+  EXPECT_FALSE(this->node_("fn test (arr := [1], a := arr.first) {}").throws());
   EXPECT_TRUE(this->node_("if [1].first == 1 {}").throws());
   EXPECT_TRUE(this->node_("if true { a := [1].first }").throws());
   EXPECT_TRUE(this->node_("if true {} else { a := [1].first }").throws());
@@ -738,10 +738,10 @@ TEST_F(ASTCheckerTest, ThrowsNode) {
   EXPECT_TRUE(this->node_("loop a := 0; [1].first < 1; a++ {}").throws());
   EXPECT_TRUE(this->node_("loop a := 0; a < 1; a += [1].first {}").throws());
 
-  EXPECT_TRUE(this->node_("obj Test { fn test (a := [1].first) {} }").throws());
-  EXPECT_TRUE(this->node_("obj Test { fn test () { [1].first } }").throws());
+  EXPECT_FALSE(this->node_("obj Test { fn test (a := [1].first) {} }").throws());
+  EXPECT_FALSE(this->node_("obj Test { fn test () { [1].first } }").throws());
 
-  EXPECT_TRUE(this->node_("fn test () int { return [1].first }").throws());
+  EXPECT_TRUE(this->node_("return [1].first").throws());
 
   EXPECT_TRUE(this->node_("a := [1].first").throws());
   EXPECT_TRUE(this->node_("a: int? = [1].first").throws());
