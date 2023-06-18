@@ -181,7 +181,7 @@ body.resizing-horizontal, body.resizing-horizontal *, body.resizing-horizontal *
 }
 .editors {
   display: flex;
-  width: calc(100% - 38px);
+  width: calc(100% - 40px);
 }
 .editor {
   height: 100%;
@@ -195,11 +195,17 @@ body.resizing-horizontal, body.resizing-horizontal *, body.resizing-horizontal *
   position: relative;
 }
 .separator {
-  background: #D0D7DE;
   position: relative;
   user-select: none;
 }
 .separator::after {
+  content: '';
+  position: absolute;
+  transition: 100ms ease;
+  z-index: 12;
+}
+.separator::before {
+  background: #D0D7DE;
   content: '';
   position: absolute;
   transition: 100ms ease;
@@ -211,30 +217,42 @@ body.resizing-horizontal, body.resizing-horizontal *, body.resizing-horizontal *
 .separator.vertical {
   cursor: col-resize;
   height: 100%;
-  width: 1px;
+  width: 0;
 }
 .separator.vertical::after {
   height: 100%;
-  left: -2.5px;
+  left: -3px;
   top: 0;
   width: 6px;
 }
+.separator.vertical::before {
+  height: 100%;
+  left: -0.5px;
+  top: 0;
+  width: 1px;
+}
 .separator.horizontal {
   cursor: row-resize;
-  height: 1px;
+  height: 0;
   width: 100%;
 }
 .separator.horizontal::after {
   height: 6px;
   left: 0;
-  top: -2.5px;
+  top: -3px;
+  width: 100%;
+}
+.separator.horizontal::before {
+  height: 1px;
+  left: 0;
+  top: -0.5px;
   width: 100%;
 }
 .output {
   background: #F8F8F8;
   display: flex;
   flex-direction: column;
-  padding: 4px 8px 8px 16px;
+  padding: 4px 8px 0 16px;
   row-gap: 8px;
   width: 100%;
 }
@@ -280,6 +298,7 @@ body.resizing-horizontal, body.resizing-horizontal *, body.resizing-horizontal *
 .output__content-wrapper {
   flex-grow: 1;
   overflow: auto;
+  padding-bottom: 8px;
 }
 .output__content {
   font-family: Menlo, Monaco, 'Courier New', monospace;
@@ -390,11 +409,11 @@ function initSeparator (id, direction, separatorEl, firstEl, secondEl) {
   function separate (at) {
     localStorage.setItem('separator' + id, at);
     if (isVertical) {
-      firstEl.style.width = 'calc(' + at + '% - 0.5px)';
-      secondEl.style.width = 'calc(' + (100 - at) + '% - 0.5px)';
+      firstEl.style.width = at + '%';
+      secondEl.style.width = (100 - at) + '%';
     } else {
-      firstEl.style.height = 'calc(' + at + '% - 0.5px)';
-      secondEl.style.height = 'calc(' + (100 - at) + '% - 0.5px)';
+      firstEl.style.height = at + '%';
+      secondEl.style.height = (100 - at) + '%';
     }
     editor1Ref.current.layout();
     editor2Ref.current.layout();
