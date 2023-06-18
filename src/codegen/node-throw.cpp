@@ -37,3 +37,7 @@ std::string Codegen::_nodeThrow (const ASTNode &node, bool root, CodegenPhase ph
   code = this->_apiEval(code);
   return this->_wrapNode(node, root, phase, decl + code);
 }
+
+std::string Codegen::_nodeThrowAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+  return this->_nodeThrow(node, root, phase, decl, code);
+}

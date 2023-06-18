@@ -577,6 +577,35 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
   throw Error("tried to generate code for unknown node");
 }
 
+std::string Codegen::_nodeAsync (const ASTNode &node, bool root, CodegenPhase phase) {
+  auto decl = std::string();
+  auto code = std::string();
+
+  if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
+    return this->_nodeBreakAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
+    return this->_nodeContinueAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
+    return this->_nodeExprDeclAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
+    return this->_nodeIfAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
+    return this->_nodeLoopAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
+    return this->_nodeMainAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
+    return this->_nodeReturnAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
+    return this->_nodeThrowAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
+    return this->_nodeTryAsync(node, root, phase, decl, code);
+  } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
+    return this->_nodeVarDeclAsync(node, root, phase, decl, code);
+  }
+
+  return this->_node(node, root, phase);
+}
+
 std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root, std::size_t awaitCallId) {
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
     return this->_exprAccess(nodeExpr, targetType, parent, decl, root);

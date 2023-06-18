@@ -19,9 +19,7 @@
 #include "../config.hpp"
 
 std::string Codegen::_nodeBreak (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  if (this->state.insideAsync) {
-    code += std::string(this->indent, ' ') + "return " + std::to_string(this->state.breakAsyncCounter) + ";" EOL;
-  } else if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
     code = std::string(this->indent, ' ') + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
 
     if (!ASTChecker(node).isLast()) {
@@ -29,6 +27,17 @@ std::string Codegen::_nodeBreak (const ASTNode &node, bool root, CodegenPhase ph
     }
   } else {
     code = std::string(this->indent, ' ') + "break;" EOL;
+  }
+
+  return this->_wrapNode(node, root, phase, decl + code);
+}
+
+std::string Codegen::_nodeBreakAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+  auto asyncBufferPos = this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopBreak);
+  code = std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
+
+  if (asyncBufferPos != this->state.asyncCounter + 1 || !ASTChecker(node).isLast()) {
+    code += std::string(this->indent, ' ') + "return " + std::to_string(asyncBufferPos) + ";" EOL;
   }
 
   return this->_wrapNode(node, root, phase, decl + code);

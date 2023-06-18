@@ -40,7 +40,16 @@ std::string Codegen::_fnDecl (
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
   auto flattenAsyncBody = !fnType.async ? ASTBlock{} : ASTChecker::flattenNode(*body);
   auto flattenAwaitCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
+  auto asyncBreakNodesCount = static_cast<std::size_t>(0);
+  auto asyncContinueNodesCount = static_cast<std::size_t>(0);
   auto code = std::string();
+
+  for (const auto &item : flattenAsyncBody) {
+    if (std::holds_alternative<ASTNodeLoop>(*item.body)) {
+      asyncBreakNodesCount += ASTChecker(item).has<ASTNodeBreak>() ? 1 : 0;
+      asyncContinueNodesCount += ASTChecker(item).has<ASTNodeContinue>() ? 1 : 0;
+    }
+  }
 
   flattenAsyncBody.erase(std::remove_if(flattenAsyncBody.begin(), flattenAsyncBody.end(), [] (const auto &it) -> bool {
     return
@@ -100,6 +109,14 @@ std::string Codegen::_fnDecl (
 
             def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
           }
+        }
+
+        for (auto i = static_cast<std::size_t>(0); i < asyncBreakNodesCount; i++) {
+          def += "  unsigned char b" + std::to_string(i + 1) + ";" EOL;
+        }
+
+        for (auto i = static_cast<std::size_t>(0); i < asyncContinueNodesCount; i++) {
+          def += "  unsigned char c" + std::to_string(i + 1) + ";" EOL;
         }
 
         for (const auto &awaitExpr : flattenAwaitCalls) {
@@ -168,6 +185,16 @@ std::string Codegen::_fnDecl (
             bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
             this->state.contextVars.insert(contextVarName);
           }
+        }
+
+        for (auto i = static_cast<std::size_t>(0); i < asyncBreakNodesCount; i++) {
+          auto idx = std::to_string(i + 1);
+          bodyCode += "  unsigned char *b" + idx + " = &x->b" + idx + ";" EOL;
+        }
+
+        for (auto i = static_cast<std::size_t>(0); i < asyncContinueNodesCount; i++) {
+          auto idx = std::to_string(i + 1);
+          bodyCode += "  unsigned char *c" + idx + " = &x->c" + idx + ";" EOL;
         }
 
         for (const auto &awaitExpr : flattenAwaitCalls) {

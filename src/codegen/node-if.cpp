@@ -19,10 +19,6 @@
 #include "../config.hpp"
 
 std::string Codegen::_nodeIf (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  if (ASTChecker(node).async() || (this->state.insideAsync && ASTChecker(node).hasSyncBreaking())) {
-    return this->_nodeIfAsync(node, root, phase, decl, code);
-  }
-
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
   auto initialIndent = this->indent;
   auto initialStateTypeCasts = this->state.typeCasts;

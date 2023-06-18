@@ -530,6 +530,23 @@ std::string Codegen::_genReallocFn (Type *type, const std::string &leftCode, con
   return result;
 }
 
+std::size_t Codegen::_findClosestAsyncBufferItem (const std::optional<CodegenAsyncBufferItemType> &type) const {
+  if (this->state.asyncBuffer.empty()) {
+    return 0;
+  }
+
+  for (const auto &item : this->state.asyncBuffer) {
+    if (
+      item.id > this->state.asyncCounter &&
+      (type == std::nullopt || item.type == CodegenAsyncBufferItemCleanUp || item.type == *type)
+    ) {
+      return item.id;
+    }
+  }
+
+  return 0;
+}
+
 std::string Codegen::_genStrFn (Type *type, const std::string &code, bool copy, bool escape) {
   auto initialState = this->state;
   auto realType = Type::real(type);

@@ -15,13 +15,29 @@
  */
 
 #include "../Codegen.hpp"
+#include "../config.hpp"
 
 std::string Codegen::_nodeMain (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
+  auto initialIndent = this->indent;
 
+  this->indent = 0;
   this->varMap.save();
   code = this->_block(nodeMain.body);
   this->varMap.restore();
+  this->indent = initialIndent;
+
+  return this->_wrapNode(node, root, phase, decl + code);
+}
+
+std::string Codegen::_nodeMainAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+  auto nodeMain = std::get<ASTNodeMain>(*node.body);
+  auto returnType = this->ast->typeMap.get("void");
+  auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->throws, this->async);
+  auto asyncMainVar = std::make_shared<Var>(Var{"async_main", "async_main", asyncMainType, false, false, true, false, 0});
+
+  code += this->_fnDecl(asyncMainVar, nodeMain.stack, {}, nodeMain.body, node, CODEGEN_PHASE_FULL);
+  code += std::string(this->indent, ' ') + this->_apiEval("_{threadpool_add}(tp, async_main.f, async_main.x, _{NULL}, _{NULL}, _{NULL});" EOL);
 
   return this->_wrapNode(node, root, phase, decl + code);
 }

@@ -19,10 +19,6 @@
 #include "../config.hpp"
 
 std::string Codegen::_nodeLoop (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  if (ASTChecker(node).async()) {
-    return this->_nodeLoopAsync(node, root, phase, decl, code);
-  }
-
   auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
   auto initialCleanUp = this->state.cleanUp;
   auto initialIndent = this->indent;
@@ -96,13 +92,11 @@ std::string Codegen::_nodeLoop (const ASTNode &node, bool root, CodegenPhase pha
 
 std::string Codegen::_nodeLoopAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
   auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
-  auto initialCleanUp = this->state.cleanUp;
-  auto initialStateBreakAsyncCounter = this->state.breakAsyncCounter;
-  auto initialStateContinueAsyncCounter = this->state.continueAsyncCounter;
+  auto initialStateCleanUp = this->state.cleanUp;
   auto initialIndent = this->indent;
 
   this->varMap.save();
-  this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp);
+  this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
   this->state.cleanUp.breakVarIdx += 1;
   this->state.cleanUp.continueVarIdx += 1;
 
@@ -122,14 +116,14 @@ std::string Codegen::_nodeLoopAsync (const ASTNode &node, bool root, CodegenPhas
 
   this->indent -= 2;
   auto saveState = this->state;
-  auto saveCleanUp = this->state.cleanUp;
-  this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveCleanUp);
+  auto saveStateAsyncCounter = this->state.asyncCounter;
+  auto saveStateCleanUp = this->state.cleanUp;
+  this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp);
   this->_block(nodeLoop.body);
-  auto asyncCounterEnd = this->state.asyncCounter;
-  this->state = saveState;
-  this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveCleanUp);
-  this->state.breakAsyncCounter = asyncCounterEnd + 2;
-  this->state.continueAsyncCounter = asyncCounterEnd + 1;
+  this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp);
+  this->state.asyncBuffer.push_back(CodegenAsyncBufferItem{this->state.asyncCounter + 1, CodegenAsyncBufferItemLoopContinue});
+  this->state.asyncBuffer.push_back(CodegenAsyncBufferItem{this->state.asyncCounter + 2, CodegenAsyncBufferItemLoopBreak});
+  this->state.asyncCounter = saveStateAsyncCounter;
   auto bodyCode = this->_block(nodeLoop.body);
   this->indent += 2;
 
@@ -168,11 +162,11 @@ std::string Codegen::_nodeLoopAsync (const ASTNode &node, bool root, CodegenPhas
 
   code = codeHead + code;
 
-  this->state.cleanUp = initialCleanUp;
+  this->state.cleanUp.breakVarIdx -= 1;
+  this->state.cleanUp.continueVarIdx -= 1;
+  this->state.cleanUp = initialStateCleanUp;
   this->varMap.restore();
   this->indent = initialIndent;
-  this->state.breakAsyncCounter = initialStateBreakAsyncCounter;
-  this->state.continueAsyncCounter = initialStateContinueAsyncCounter;
 
   return this->_wrapNode(node, root, phase, decl + code);
 }

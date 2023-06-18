@@ -27,3 +27,7 @@ std::string Codegen::_nodeExprDecl (const ASTNode &node, bool root, CodegenPhase
 
   return this->_wrapNode(node, root, phase, decl + code);
 }
+
+std::string Codegen::_nodeExprDeclAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+  return this->_nodeExprDecl(node, root, phase, decl, code);
+}

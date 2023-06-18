@@ -61,17 +61,32 @@ std::string Codegen::_nodeVarDecl (const ASTNode &node, bool root, CodegenPhase 
   }
 
   code = !root ? code : std::string(this->indent, ' ');
-
-  if (this->state.insideAsync) {
-    code += "*";
-  } else {
-    code += nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst;
-  }
-
+  code += nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst;
   code += name + " = " + initCode + (root ? ";" EOL : "");
 
   if (typeInfo.type->shouldBeFreed()) {
-    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, (this->state.insideAsync ? "*" : "") + name) + ";");
+    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, name) + ";");
+  }
+
+  return this->_wrapNode(node, root, phase, decl + code);
+}
+
+std::string Codegen::_nodeVarDeclAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+  auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
+  auto name = Codegen::name(nodeVarDecl.var->codeName);
+  auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
+  auto initCode = std::string();
+
+  if (nodeVarDecl.init != std::nullopt) {
+    initCode = this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, decl);
+  } else {
+    initCode = this->_nodeVarDeclInit(typeInfo);
+  }
+
+  code = !root ? code : std::string(this->indent, ' ') + "*" + name + " = " + initCode + (root ? ";" EOL : "");
+
+  if (typeInfo.type->shouldBeFreed()) {
+    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, "*" + name) + ";");
   }
 
   return this->_wrapNode(node, root, phase, decl + code);

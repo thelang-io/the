@@ -67,3 +67,7 @@ std::string Codegen::_nodeTry (const ASTNode &node, bool root, CodegenPhase phas
 
   return this->_wrapNode(node, root, phase, decl + code);
 }
+
+std::string Codegen::_nodeTryAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+  return this->_nodeTry(node, root, phase, decl, code);
+}

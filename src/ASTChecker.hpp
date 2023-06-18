@@ -322,21 +322,15 @@ class ASTChecker {
   }
 
   // todo test
-  bool hoistingFriendly () {
+  bool hoistingFriendly () const {
     this->_checkNode();
 
-    for (const auto &node : this->_nodes) {
-      auto result = std::holds_alternative<ASTNodeEnumDecl>(*node.body) ||
-        std::holds_alternative<ASTNodeFnDecl>(*node.body) ||
-        std::holds_alternative<ASTNodeObjDecl>(*node.body) ||
-        std::holds_alternative<ASTNodeTypeDecl>(*node.body);
-
-      if (!result) {
-        return false;
-      }
-    }
-
-    return true;
+    return std::all_of(this->_nodes.begin(), this->_nodes.end(), [] (const auto &it) {
+      return std::holds_alternative<ASTNodeEnumDecl>(*it.body) ||
+        std::holds_alternative<ASTNodeFnDecl>(*it.body) ||
+        std::holds_alternative<ASTNodeObjDecl>(*it.body) ||
+        std::holds_alternative<ASTNodeTypeDecl>(*it.body);
+    });
   }
 
   template <typename T>

@@ -21,8 +21,8 @@
 
 struct ASTCatchClause;
 struct ASTFnDeclParam;
-struct ASTNodeBreak; // todo async
-struct ASTNodeContinue; // todo async
+struct ASTNodeBreak;
+struct ASTNodeContinue;
 struct ASTNodeEnumDecl;
 struct ASTNodeFnDecl;
 struct ASTNodeIf;
