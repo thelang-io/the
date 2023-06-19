@@ -17,7 +17,6 @@
 #include "Codegen.hpp"
 #include <filesystem>
 #include <fstream>
-#include "ASTChecker.hpp"
 #include "codegen-api.hpp"
 #include "config.hpp"
 
@@ -104,24 +103,6 @@ void Codegen::compile (
   }
 }
 
-std::string Codegen::getEnvVar (const std::string &name) {
-  #if defined(OS_WINDOWS)
-    auto buf = static_cast<char *>(nullptr);
-    auto size = static_cast<std::size_t>(0);
-
-    if (_dupenv_s(&buf, &size, name.c_str()) != 0 || buf == nullptr) {
-      return "";
-    }
-
-    auto result = std::string(buf);
-    free(buf);
-    return result;
-  #else
-    const char *result = std::getenv(name.c_str());
-    return result == nullptr ? "" : result;
-  #endif
-}
-
 std::string Codegen::name (const std::string &name) {
   return "__THE_0_" + name;
 }
@@ -182,7 +163,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   auto mainCode = std::string();
 
   if (this->async) {
-    mainCode += this->_apiEval(R"(  _{threadpool_t} *tp = _{threadpool_init}(2);)" EOL);
+    mainCode += this->_apiEval(R"(  _{threadpool_t} *tp = _{threadpool_init}(5);)" EOL);
   }
 
   if (this->throws) {

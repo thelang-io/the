@@ -18,6 +18,7 @@
 #define SRC_CODEGEN_HPP
 
 #include "AST.hpp"
+#include "ASTChecker.hpp"
 #include "CodegenAPIItem.hpp"
 #include "CodegenCleanUp.hpp"
 
@@ -181,6 +182,35 @@ class Codegen {
   bool throws = false;
 
   static void compile (const std::string &, const std::tuple<std::string, std::vector<std::string>> &, const std::string &, bool = false);
+
+  // todo test
+  template <typename T>
+  std::size_t countAsyncLoopDepth (const std::vector<ASTNode> &nodes, std::size_t prevDepth) {
+    auto depth = prevDepth;
+
+    for (const auto &node : nodes) {
+      auto flattenNodes = ASTChecker::flattenNode({ node });
+
+      for (const auto &flattenNode : flattenNodes) {
+        if (std::holds_alternative<ASTNodeLoop>(*flattenNode.body)) {
+          auto nodeLoop = std::get<ASTNodeLoop>(*flattenNode.body);
+
+          if (ASTChecker(nodeLoop.body).has<T>()) {
+            auto newDepth = Codegen::countAsyncLoopDepth<T>(nodeLoop.body, prevDepth + 1);
+
+            if (newDepth > depth) {
+              depth = newDepth;
+            }
+          }
+        }
+      }
+    }
+
+    return depth;
+  }
+
+  // todo test
+  static std::vector<std::shared_ptr<Var>> filterAsyncDeclarations (const std::vector<ASTNode> &);
   static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);
   static std::string stringifyFlags (const std::vector<std::string> &);

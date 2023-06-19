@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "../ASTChecker.hpp"
 #include "../Codegen.hpp"
 
 std::string Codegen::_exprCallDefaultArg (const CodegenTypeInfo &typeInfo) {

@@ -18,6 +18,61 @@
 #include "../Codegen.hpp"
 #include "../codegen-metadata.hpp"
 
+std::vector<std::shared_ptr<Var>> Codegen::filterAsyncDeclarations (const std::vector<ASTNode> &nodes) {
+  auto result = std::vector<std::shared_ptr<Var>>{};
+  auto vals = std::set<std::string>{};
+
+  for (const auto &node : nodes) {
+    if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+      auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
+      auto contextVarName = Codegen::name(nodeFnDecl.var->codeName);
+
+      if (!vals.contains(nodeFnDecl.var->codeName)) {
+        vals.insert(nodeFnDecl.var->codeName);
+        result.push_back(nodeFnDecl.var);
+      }
+    } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
+      auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
+
+      for (const auto &method : nodeObjDecl.methods) {
+        auto contextVarName = Codegen::name(method.var->codeName);
+
+        if (!vals.contains(method.var->codeName)) {
+          vals.insert(method.var->codeName);
+          result.push_back(method.var);
+        }
+      }
+    } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
+      auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
+
+      if (!vals.contains(nodeVarDecl.var->codeName)) {
+        vals.insert(nodeVarDecl.var->codeName);
+        result.push_back(nodeVarDecl.var);
+      }
+    }
+  }
+
+  return result;
+}
+
+std::string Codegen::getEnvVar (const std::string &name) {
+  #if defined(OS_WINDOWS)
+    auto buf = static_cast<char *>(nullptr);
+    auto size = static_cast<std::size_t>(0);
+
+    if (_dupenv_s(&buf, &size, name.c_str()) != 0 || buf == nullptr) {
+      return "";
+    }
+
+    auto result = std::string(buf);
+    free(buf);
+    return result;
+  #else
+    const char *result = std::getenv(name.c_str());
+    return result == nullptr ? "" : result;
+  #endif
+}
+
 void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vector<std::string> *> entityBuiltins) {
   if (entityBuiltins != std::nullopt || this->state.builtins != std::nullopt) {
     auto b = entityBuiltins == std::nullopt ? *this->state.builtins : *entityBuiltins;

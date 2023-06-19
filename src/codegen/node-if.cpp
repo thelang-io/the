@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include "../ASTChecker.hpp"
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
@@ -96,7 +95,7 @@ std::string Codegen::_nodeIfAsync (const ASTNode &node, bool root, CodegenPhase 
       nodeIfAltCode += this->_block(std::get<ASTBlock>(*nodeIf.alt));
       this->varMap.restore();
     } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-      nodeIfAltCode += this->_node(std::get<ASTNode>(*nodeIf.alt));
+      nodeIfAltCode += this->_nodeAsync(std::get<ASTNode>(*nodeIf.alt));
     }
   }
 

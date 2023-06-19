@@ -15,7 +15,6 @@
  */
 
 #include "../Codegen.hpp"
-#include "../ASTChecker.hpp"
 #include "../config.hpp"
 
 std::string Codegen::_nodeLoop (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
@@ -100,7 +99,7 @@ std::string Codegen::_nodeLoopAsync (const ASTNode &node, bool root, CodegenPhas
   this->state.cleanUp.breakVarIdx += 1;
   this->state.cleanUp.continueVarIdx += 1;
 
-  auto initCode = nodeLoop.init == std::nullopt ? "" : this->_node(*nodeLoop.init);
+  auto initCode = nodeLoop.init == std::nullopt ? "" : this->_nodeAsync(*nodeLoop.init);
   auto condCode = nodeLoop.cond == std::nullopt ? "" : this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, decl, true);
   auto updCode = nodeLoop.upd == std::nullopt ? "" : this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, decl, true);
 
@@ -143,8 +142,19 @@ std::string Codegen::_nodeLoopAsync (const ASTNode &node, bool root, CodegenPhas
 
   auto codeHead = std::string();
 
-  if (nodeLoop.init != std::nullopt) {
-    codeHead += initCode;
+  if (nodeLoop.init != std::nullopt || this->state.cleanUp.breakVarUsed || this->state.cleanUp.continueVarUsed) {
+    if (this->state.cleanUp.breakVarUsed) {
+      codeHead += std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentBreakVar() + " = 0;" EOL;
+    }
+
+    if (this->state.cleanUp.continueVarUsed) {
+      codeHead += std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentContinueVar() + " = 0;" EOL;
+    }
+
+    if (nodeLoop.init != std::nullopt) {
+      codeHead += initCode;
+    }
+
     codeHead += std::string(this->indent - 2, ' ') + "}" EOL;
     codeHead += std::string(this->indent - 2, ' ') + "case " + std::to_string(jumpAsyncCounter) + ": {" EOL;
   }

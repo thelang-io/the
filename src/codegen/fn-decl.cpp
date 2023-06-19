@@ -15,7 +15,6 @@
  */
 
 #include <algorithm>
-#include "../ASTChecker.hpp"
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
@@ -38,29 +37,16 @@ std::string Codegen::_fnDecl (
   auto paramsName = varTypeInfo.typeName + "P";
   auto contextName = typeName + "X";
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
-  auto flattenAsyncBody = !fnType.async ? ASTBlock{} : ASTChecker::flattenNode(*body);
-  auto flattenAwaitCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
-  auto asyncBreakNodesCount = static_cast<std::size_t>(0);
-  auto asyncContinueNodesCount = static_cast<std::size_t>(0);
+  auto asyncBreakNodesCount = Codegen::countAsyncLoopDepth<ASTNodeBreak>(fnType.async ? *body : ASTBlock{}, 0);
+  auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
+  auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{});
+  auto awaitExprCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
+  auto hasStack = !stack.empty() || !asyncBodyDeclarations.empty();
   auto code = std::string();
 
-  for (const auto &item : flattenAsyncBody) {
-    if (std::holds_alternative<ASTNodeLoop>(*item.body)) {
-      asyncBreakNodesCount += ASTChecker(item).has<ASTNodeBreak>() ? 1 : 0;
-      asyncContinueNodesCount += ASTChecker(item).has<ASTNodeContinue>() ? 1 : 0;
-    }
-  }
-
-  flattenAsyncBody.erase(std::remove_if(flattenAsyncBody.begin(), flattenAsyncBody.end(), [] (const auto &it) -> bool {
-    return
-      !std::holds_alternative<ASTNodeFnDecl>(*it.body) &&
-      !(std::holds_alternative<ASTNodeObjDecl>(*it.body) && !std::get<ASTNodeObjDecl>(*it.body).methods.empty()) &&
-      !std::holds_alternative<ASTNodeVarDecl>(*it.body);
-  }), flattenAsyncBody.end());
-
-  flattenAwaitCalls.erase(std::remove_if(flattenAwaitCalls.begin(), flattenAwaitCalls.end(), [] (const auto &it) -> bool {
+  awaitExprCalls.erase(std::remove_if(awaitExprCalls.begin(), awaitExprCalls.end(), [] (const auto &it) -> bool {
     return !std::holds_alternative<ASTExprAwait>(*it.body) || it.type->isVoid();
-  }), flattenAwaitCalls.end());
+  }), awaitExprCalls.end());
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
     auto initialIndent = this->indent;
@@ -73,7 +59,7 @@ std::string Codegen::_fnDecl (
 
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
 
-    if (!stack.empty() || !flattenAsyncBody.empty()) {
+    if (hasStack) {
       contextEntityIdx = this->_apiEntity(contextName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
         decl += "struct " + contextName + ";";
         def += "struct " + contextName + " {" EOL;
@@ -86,29 +72,10 @@ std::string Codegen::_fnDecl (
           def += "  " + typeRefCode + contextVarName + ";" EOL;
         }
 
-        for (const auto &asyncNode : flattenAsyncBody) {
-          if (std::holds_alternative<ASTNodeFnDecl>(*asyncNode.body)) {
-            auto nodeFnDecl = std::get<ASTNodeFnDecl>(*asyncNode.body);
-            auto contextVarName = Codegen::name(nodeFnDecl.var->codeName);
-            auto typeInfo = this->_typeInfo(nodeFnDecl.var->type);
-
-            def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
-          } else if (std::holds_alternative<ASTNodeObjDecl>(*asyncNode.body)) {
-            auto nodeObjDecl = std::get<ASTNodeObjDecl>(*asyncNode.body);
-
-            for (const auto &method : nodeObjDecl.methods) {
-              auto contextVarName = Codegen::name(method.var->codeName);
-              auto typeInfo = this->_typeInfo(method.var->type);
-
-              def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
-            }
-          } else if (std::holds_alternative<ASTNodeVarDecl>(*asyncNode.body)) {
-            auto nodeVarDecl = std::get<ASTNodeVarDecl>(*asyncNode.body);
-            auto contextVarName = Codegen::name(nodeVarDecl.var->codeName);
-            auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
-
-            def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
-          }
+        for (const auto &asyncVar : asyncBodyDeclarations) {
+          auto contextVarName = Codegen::name(asyncVar->codeName);
+          auto typeInfo = this->_typeInfo(asyncVar->type);
+          def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
         }
 
         for (auto i = static_cast<std::size_t>(0); i < asyncBreakNodesCount; i++) {
@@ -119,7 +86,7 @@ std::string Codegen::_fnDecl (
           def += "  unsigned char c" + std::to_string(i + 1) + ";" EOL;
         }
 
-        for (const auto &awaitExpr : flattenAwaitCalls) {
+        for (const auto &awaitExpr : awaitExprCalls) {
           auto exprAwait = std::get<ASTExprAwait>(*awaitExpr.body);
           auto typeInfo = this->_typeInfo(awaitExpr.type);
 
@@ -147,7 +114,7 @@ std::string Codegen::_fnDecl (
         this->state.cleanUp.add("_{error_stack_pop}(&_{err_state});");
       }
 
-      if (!stack.empty() || !flattenAsyncBody.empty()) {
+      if (hasStack) {
         bodyCode += "  struct _{" + contextName + "} *x = px;" EOL;
 
         for (const auto &contextVar : stack) {
@@ -159,32 +126,11 @@ std::string Codegen::_fnDecl (
           this->state.contextVars.insert(contextVarName);
         }
 
-        for (const auto &asyncNode : flattenAsyncBody) {
-          if (std::holds_alternative<ASTNodeFnDecl>(*asyncNode.body)) {
-            auto nodeFnDecl = std::get<ASTNodeFnDecl>(*asyncNode.body);
-            auto contextVarName = Codegen::name(nodeFnDecl.var->codeName);
-            auto typeInfo = this->_typeInfo(nodeFnDecl.var->type);
-
-            bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
-            this->state.contextVars.insert(contextVarName);
-          } else if (std::holds_alternative<ASTNodeObjDecl>(*asyncNode.body)) {
-            auto nodeObjDecl = std::get<ASTNodeObjDecl>(*asyncNode.body);
-
-            for (const auto &method : nodeObjDecl.methods) {
-              auto contextVarName = Codegen::name(method.var->codeName);
-              auto typeInfo = this->_typeInfo(method.var->type);
-
-              bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
-              this->state.contextVars.insert(contextVarName);
-            }
-          } else if (std::holds_alternative<ASTNodeVarDecl>(*asyncNode.body)) {
-            auto nodeVarDecl = std::get<ASTNodeVarDecl>(*asyncNode.body);
-            auto contextVarName = Codegen::name(nodeVarDecl.var->codeName);
-            auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
-
-            bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
-            this->state.contextVars.insert(contextVarName);
-          }
+        for (const auto &asyncVar : asyncBodyDeclarations) {
+          auto contextVarName = Codegen::name(asyncVar->codeName);
+          auto typeInfo = this->_typeInfo(asyncVar->type);
+          bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
+          this->state.contextVars.insert(contextVarName);
         }
 
         for (auto i = static_cast<std::size_t>(0); i < asyncBreakNodesCount; i++) {
@@ -197,7 +143,7 @@ std::string Codegen::_fnDecl (
           bodyCode += "  unsigned char *c" + idx + " = &x->c" + idx + ";" EOL;
         }
 
-        for (const auto &awaitExpr : flattenAwaitCalls) {
+        for (const auto &awaitExpr : awaitExprCalls) {
           auto exprAwait = std::get<ASTExprAwait>(*awaitExpr.body);
           auto contextVarName = "t" + std::to_string(exprAwait.id);
           auto typeInfo = this->_typeInfo(awaitExpr.type);
@@ -310,10 +256,10 @@ std::string Codegen::_fnDecl (
       decl += ");";
       def += ") {" EOL + bodyCode + "}";
 
-      return stack.empty() && flattenAsyncBody.empty() ? 0 : contextEntityIdx;
+      return hasStack ? contextEntityIdx : 0;
     });
 
-    if (!stack.empty() || !flattenAsyncBody.empty()) {
+    if (hasStack) {
       this->_apiEntity(typeName + "_alloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
         decl += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + ", struct _{" + contextName + "});";
         def += "void " + typeName + "_alloc (" + varTypeInfo.typeRefCode + "n, struct _{" + contextName + "} x) {" EOL;
@@ -339,7 +285,7 @@ std::string Codegen::_fnDecl (
 
   auto fnName = var->builtin ? codeName : Codegen::name(codeName);
 
-  if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && stack.empty() && flattenAsyncBody.empty()) {
+  if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && !hasStack) {
     code += std::string(this->indent, ' ') + (this->state.insideAsync ? "*" : "const " + varTypeInfo.typeCode) + fnName;
     code += this->_apiEval(" = (" + varTypeInfo.typeCodeTrimmed + ") {&_{" + typeName + "}, _{NULL}, 0};" EOL);
   } else if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && !this->state.insideAsync) {
@@ -347,7 +293,7 @@ std::string Codegen::_fnDecl (
     code += ";" EOL;
   }
 
-  if ((phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) && (!stack.empty() || !flattenAsyncBody.empty())) {
+  if ((phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) && hasStack) {
     code += std::string(this->indent, ' ') + this->_apiEval("_{" + typeName + "_alloc}((" + varTypeInfo.typeRefCode + ") ");
     code += (this->state.insideAsync ? "" : "&") + fnName + ", ";
     this->_activateEntity(contextName);
