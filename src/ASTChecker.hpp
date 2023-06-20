@@ -275,7 +275,7 @@ class ASTChecker {
 
   bool async (bool localScope = true) const {
     if (!this->_exprs.empty()) {
-      return this->_asyncExpr(this->_exprs);
+      return this->_asyncExpr(this->_exprs, localScope);
     } else {
       return this->_asyncNode(this->_nodes, localScope);
     }
@@ -388,13 +388,13 @@ class ASTChecker {
 
   // todo test
   // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-  bool _asyncExpr (const std::vector<ASTNodeExpr> &exprs) const {
+  bool _asyncExpr (const std::vector<ASTNodeExpr> &exprs, bool localScope) const {
     auto result = ASTChecker::flattenExpr(exprs);
 
-    return std::any_of(result.begin(), result.end(), [] (const auto &it) -> bool {
+    return std::any_of(result.begin(), result.end(), [&] (const auto &it) -> bool {
       if (std::holds_alternative<ASTExprAwait>(*it.body)) {
         return true;
-      } else if (std::holds_alternative<ASTExprCall>(*it.body)) {
+      } else if (!localScope && std::holds_alternative<ASTExprCall>(*it.body)) {
         auto exprBody = std::get<ASTExprCall>(*it.body);
         auto calleeRealType = Type::real(exprBody.callee.type);
 
@@ -407,7 +407,7 @@ class ASTChecker {
 
   // todo test
   bool _asyncNode (const std::vector<ASTNode> &nodes, bool localScope) const {
-    return this->_asyncExpr(ASTChecker::flattenNodeExprs(nodes, localScope));
+    return this->_asyncExpr(ASTChecker::flattenNodeExprs(nodes, localScope), localScope);
   }
 
   void _checkNode () const {

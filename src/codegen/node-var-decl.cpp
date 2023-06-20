@@ -49,6 +49,10 @@ std::string Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
 }
 
 std::string Codegen::_nodeVarDecl (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+  if (this->state.insideAsync) {
+    return this->_nodeVarDeclAsync(node, root, phase, decl, code);
+  }
+
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
   auto name = Codegen::name(nodeVarDecl.var->codeName);
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);

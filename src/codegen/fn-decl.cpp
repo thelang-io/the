@@ -41,12 +41,17 @@ std::string Codegen::_fnDecl (
   auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{});
   auto awaitExprCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
-  auto hasStack = !stack.empty() || !asyncBodyDeclarations.empty();
   auto code = std::string();
 
   awaitExprCalls.erase(std::remove_if(awaitExprCalls.begin(), awaitExprCalls.end(), [] (const auto &it) -> bool {
     return !std::holds_alternative<ASTExprAwait>(*it.body) || it.type->isVoid();
   }), awaitExprCalls.end());
+
+  auto hasStack = !stack.empty() ||
+    !asyncBodyDeclarations.empty() ||
+    asyncBreakNodesCount > 0 ||
+    asyncContinueNodesCount > 0 ||
+    !awaitExprCalls.empty();
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
     auto initialIndent = this->indent;
