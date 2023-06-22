@@ -1,0 +1,77 @@
+======= stdin =======
+async fn test1 () {}
+
+main {
+  test1
+  async fn test2 () {}
+  test2
+}
+======= code =======
+#include <stdbool.h>
+#include <stddef.h>
+#ifndef THE_OS_WINDOWS
+  #include <pthread.h>
+#endif
+
+struct threadpool;
+struct threadpool_job;
+struct threadpool_thread;
+
+typedef struct threadpool {
+  bool active;
+  pthread_cond_t cond1;
+  pthread_cond_t cond2;
+  struct threadpool_job *jobs;
+  pthread_mutex_t lock;
+  struct threadpool_thread *threads;
+  int working_threads;
+} threadpool_t;
+typedef struct threadpool_job {
+  struct threadpool_job *parent;
+  int (*func) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);
+  void *ctx;
+  void *params;
+  void *ret;
+  int step;
+  bool referenced;
+  struct threadpool_job *next;
+} threadpool_job_t;
+typedef struct threadpool_thread {
+  pthread_t id;
+  struct threadpool_thread *next;
+} threadpool_thread_t;
+
+struct __THE_1_fn$1000;
+
+struct __THE_1_fn$1000 {
+  int (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+  void *x;
+  size_t l;
+};
+
+int __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+int __THE_1_mainSDtest2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+
+int __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  switch (step) {
+    case 0: {
+    }
+  }
+  return -1;
+}
+int __THE_1_mainSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  switch (step) {
+    case 0: {
+    }
+  }
+  return -1;
+}
+
+int main () {
+  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
+  __THE_0_test1_0;
+  const struct __THE_1_fn$1000 __THE_0_mainSDtest2_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSDtest2_0, NULL, 0};
+  __THE_0_mainSDtest2_0;
+}
+======= flags =======
+======= stdout =======

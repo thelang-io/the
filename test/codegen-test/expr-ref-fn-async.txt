@@ -1,0 +1,63 @@
+======= stdin =======
+async fn job1 (mut a: ref int) ref int {
+  a += 1
+  return a
+}
+
+async fn job2 (mut a: ref int) int {
+  return a
+}
+
+async fn job3 (
+  mut a: ref int,
+  fn1: async (mut a: ref int) -> ref int,
+  fn2: async (mut a: ref int) -> int,
+  fn3: ref (async (mut a: ref int) -> ref int),
+  fn4: ref (async (mut a: ref int) -> int)
+) {
+  v1 := await fn1(a) + await fn2(a)
+  v2 := await fn3(a) > await fn4(a)
+  v3 := await fn1(a) & await fn3(a)
+  v4 := await fn2(a) - await fn4(a)
+  v5 := await fn1(a) == await fn4(a)
+  v6 := await fn2(a) << await fn3(a)
+}
+
+main {
+  mut a := 0
+  refA := ref a
+  refJob1 := ref job1
+  refJob2 := ref job2
+
+  v01 := await job1(ref a)
+  v02 := await job1(refA)
+  v03 := await job2(ref a)
+  v04 := await job2(refA)
+  v05 := await (ref job1)(ref a)
+  v06 := await (ref job1)(refA)
+  v07 := await (ref job2)(ref a)
+  v08 := await (ref job2)(refA)
+  v09 := await refJob1(ref a)
+  v10 := await refJob1(refA)
+  v11 := await refJob2(ref a)
+  v12 := await refJob2(refA)
+  await job3(ref a, job1, job2, ref job1, ref job2)
+  await job3(ref a, ref job1, ref job2, ref job1, ref job2)
+  await job3(refA, job1, job2, refJob1, refJob2)
+  await job3(refA, refJob1, refJob2, refJob1, refJob2)
+
+  async fn jobLocal1 () {
+    v21 := await job1(ref a) + await job2(ref a)
+    v22 := await refJob1(refA) > await refJob2(refA)
+    v23 := await job1(refA) & await refJob1(refA)
+    v24 := await refJob2(ref a) - await job2(ref a)
+    v26 := await (ref job1)(refA) > await (ref job2)(refA)
+    v27 := await job1(ref a) & await (ref job1)(ref a)
+    v28 := await (ref job2)(refA) - await job2(refA)
+  }
+
+  await jobLocal1()
+}
+======= code =======
+======= flags =======
+======= stdout =======

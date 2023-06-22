@@ -1,0 +1,88 @@
+======= stdin =======
+async fn test (a: int) {}
+main {
+  a := 1
+  b := "b"
+  if a == 1 {
+    c := "c"
+    await test(1)
+    d := "d"
+    if a == 2 {
+      e := "e"
+      await test(1)
+      f := "f"
+    }
+    g := "g"
+  }
+  h := "h"
+  if a == 1 {
+    c := "c"
+    await test(1)
+    d := "d"
+  } elif a == 2 {
+    c := "c"
+    await test(2)
+    d := "d"
+    if a == 1 {
+      e := "e"
+      await test(1)
+      f := "f"
+    } elif a == 2 {
+      e := "e"
+      await test(2)
+      f := "f"
+    }
+    g := "g"
+  }
+  t := "t"
+  if a == 1 {
+    c := "c"
+    await test(1)
+    d := "d"
+  } else {
+    c := "c"
+    await test(3)
+    d := "d"
+    if a == 1 {
+      e := "e"
+      await test(1)
+      f := "f"
+    } else {
+      e := "e"
+      await test(3)
+      f := "f"
+    }
+    g := "g"
+  }
+  if a == 1 {
+    c := "c"
+    await test(1)
+    d := "d"
+  } elif a == 2 {
+    c := "c"
+    await test(2)
+    d := "d"
+  } else {
+    c := "c"
+    await test(3)
+    d := "d"
+    if a == 1 {
+      e := "e"
+      await test(1)
+      f := "f"
+    } elif a == 2 {
+      e := "e"
+      await test(2)
+      f := "f"
+    } else {
+      e := "e"
+      await test(3)
+      f := "f"
+    }
+    g := "g"
+  }
+  l := "l"
+}
+======= code =======
+======= flags =======
+======= stdout =======

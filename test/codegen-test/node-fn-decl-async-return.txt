@@ -1,0 +1,15 @@
+======= stdin =======
+async fn test (i: int) {
+  if i == 2 {
+    return
+  }
+  print("inside")
+}
+
+main {
+  await test(0)
+  await test(2)
+}
+======= code =======
+======= flags =======
+======= stdout =======

@@ -1,0 +1,17 @@
+======= stdin =======
+async fn test1 () int { return 1 }
+async fn test2 (i: int) int {
+  if i > 5 {
+    return 5
+  }
+  return 2
+}
+
+main {
+  print(await test1())
+  print(await test2(0))
+  print(await test2(10))
+}
+======= code =======
+======= flags =======
+======= stdout =======

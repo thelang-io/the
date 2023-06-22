@@ -1,0 +1,51 @@
+======= stdin =======
+async fn jobA () str {
+  return "a"
+}
+
+async fn jobA2 () str {
+  return "a2"
+}
+
+async fn jobB () str {
+  return "b"
+}
+
+async fn jobC () str {
+  return "c"
+}
+
+async fn test1 (a: async () -> str, b := jobB, c := jobC) async () -> str {
+  async fn jobTmp () str {
+    return await a() + await b() + await c()
+  }
+
+  return jobTmp
+}
+
+main{
+  await test1(jobA)
+  await test1(jobA, jobB)
+  await test1(jobA, jobB, jobC)
+  await test1(jobA, b: jobB)
+  await test1(jobA, c: jobC)
+  await test1(jobA, b: jobB, c: jobC)
+  await test1(jobA, c: jobC, b: jobB)
+
+  mut a := jobA
+
+  async fn test2 (a2: async () -> str, b := jobB, c := jobC) {
+    a = await test1(a2, b, c)
+  }
+
+  await test2(jobA2)
+  await test2(jobA2, jobB)
+  await test2(jobA2, jobB, jobC)
+  await test2(jobA2, b: jobB)
+  await test2(jobA2, c: jobC)
+  await test2(jobA2, b: jobB, c: jobC)
+  await test2(jobA2, c: jobC, b: jobB)
+}
+======= code =======
+======= flags =======
+======= stdout =======

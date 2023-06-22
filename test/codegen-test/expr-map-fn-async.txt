@@ -1,0 +1,200 @@
+======= stdin =======
+async fn test1 () {}
+async fn test2 () {}
+async fn test3 () {}
+main {
+  a := { "key1": test1, "key2": test2, "key3": test3 }
+  b: (async () -> void)[str] = { "key1": test1, "key2": test2, "key3": test3 }
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifndef THE_OS_WINDOWS
+  #include <pthread.h>
+#endif
+
+struct threadpool;
+struct threadpool_job;
+struct threadpool_thread;
+
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
+struct str {
+  char *d;
+  size_t l;
+};
+typedef struct threadpool {
+  bool active;
+  pthread_cond_t cond1;
+  pthread_cond_t cond2;
+  struct threadpool_job *jobs;
+  pthread_mutex_t lock;
+  struct threadpool_thread *threads;
+  int working_threads;
+} threadpool_t;
+typedef struct threadpool_job {
+  struct threadpool_job *parent;
+  int (*func) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);
+  void *ctx;
+  void *params;
+  void *ret;
+  int step;
+  bool referenced;
+  struct threadpool_job *next;
+} threadpool_job_t;
+typedef struct threadpool_thread {
+  pthread_t id;
+  struct threadpool_thread *next;
+} threadpool_thread_t;
+
+struct __THE_1_fn$1000;
+struct __THE_1_pair_strMSfn$1000ME;
+struct __THE_1_map_strMSfn$1000ME;
+
+struct __THE_1_fn$1000 {
+  int (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+  void *x;
+  size_t l;
+};
+struct __THE_1_pair_strMSfn$1000ME {
+  struct str f;
+  struct __THE_1_fn$1000 s;
+};
+struct __THE_1_map_strMSfn$1000ME {
+  struct __THE_1_pair_strMSfn$1000ME *d;
+  size_t c;
+  size_t l;
+};
+
+err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+
+void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+int __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+int __THE_1_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+int __THE_1_test3_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+struct __THE_1_map_strMSfn$1000ME __THE_1_map_strMSfn$1000ME_alloc (int, ...);
+void __THE_1_map_strMSfn$1000ME_free (struct __THE_1_map_strMSfn$1000ME);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void error_alloc (err_state_t *state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+  if (n.x == NULL) return n;
+  void *x = alloc(n.l);
+  memcpy(x, n.x, n.l);
+  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+}
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+  if (n.x != NULL) free(n.x);
+}
+int __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  switch (step) {
+    case 0: {
+    }
+  }
+  return -1;
+}
+int __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  switch (step) {
+    case 0: {
+    }
+  }
+  return -1;
+}
+int __THE_1_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  switch (step) {
+    case 0: {
+    }
+  }
+  return -1;
+}
+struct __THE_1_map_strMSfn$1000ME __THE_1_map_strMSfn$1000ME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSfn$1000ME *d = alloc(x * sizeof(struct __THE_1_pair_strMSfn$1000ME));
+  va_list args;
+  va_start(args, x);
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSfn$1000ME) {va_arg(args, struct str), va_arg(args, struct __THE_1_fn$1000)};
+  va_end(args);
+  return (struct __THE_1_map_strMSfn$1000ME) {d, x, x};
+}
+void __THE_1_map_strMSfn$1000ME_free (struct __THE_1_map_strMSfn$1000ME n) {
+  for (size_t i = 0; i < n.l; i++) {
+    str_free((struct str) n.d[i].f);
+    __THE_1_fn$1000_free((struct __THE_1_fn$1000) n.d[i].s);
+  }
+  free(n.d);
+}
+
+int main () {
+  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_map_strMSfn$1000ME __THE_0_a_0 = __THE_1_map_strMSfn$1000ME_alloc(3, str_alloc("key1"), __THE_1_fn$1000_copy(__THE_0_test1_0), str_alloc("key2"), __THE_1_fn$1000_copy(__THE_0_test2_0), str_alloc("key3"), __THE_1_fn$1000_copy(__THE_0_test3_0));
+  const struct __THE_1_map_strMSfn$1000ME __THE_0_b_0 = __THE_1_map_strMSfn$1000ME_alloc(3, str_alloc("key1"), __THE_1_fn$1000_copy(__THE_0_test1_0), str_alloc("key2"), __THE_1_fn$1000_copy(__THE_0_test2_0), str_alloc("key3"), __THE_1_fn$1000_copy(__THE_0_test3_0));
+  __THE_1_map_strMSfn$1000ME_free((struct __THE_1_map_strMSfn$1000ME) __THE_0_b_0);
+  __THE_1_map_strMSfn$1000ME_free((struct __THE_1_map_strMSfn$1000ME) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

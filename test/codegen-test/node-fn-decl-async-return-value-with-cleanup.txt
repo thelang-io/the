@@ -1,0 +1,22 @@
+======= stdin =======
+async fn test (i: str) str {
+  a := "a"
+  if i == "2" {
+    b := "b"
+    return i
+  } else {
+    c := "c"
+    return "1"
+  }
+}
+
+main {
+  a := "a"
+  print(await test("0"))
+  b := "b"
+  print(await test("2"))
+  c := "c"
+}
+======= code =======
+======= flags =======
+======= stdout =======

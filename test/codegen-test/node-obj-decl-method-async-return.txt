@@ -1,0 +1,27 @@
+======= stdin =======
+obj Test {
+  async fn test1 () {
+    return
+  }
+  async fn test2 () void {
+    return
+  }
+  async fn test3 (a: int) void {
+    if a == 5 {
+      return
+    }
+    print("here")
+  }
+}
+
+main {
+  test := Test{}
+  await test.test1()
+  await test.test2()
+  await test.test3(0)
+  await test.test3(5)
+}
+======= code =======
+======= flags =======
+======= stdout =======
+here

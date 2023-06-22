@@ -1,0 +1,56 @@
+======= stdin =======
+async fn a () {}
+
+async fn test () {
+  v1 := "test1"
+
+  loop i := 0; i < 10; i++ {
+    v2 := "test2"
+    await a()
+    v3 := "test3"
+    print("1 start", i)
+    await a()
+    v4 := "test4"
+    if i == 5 {
+      v5 := "test5"
+      break
+    }
+    v6 := "test6"
+    await a()
+    print("1 end", i)
+    v7 := "test7"
+    await a()
+  }
+
+  loop i := 0; i < 10; i++ {
+    await a()
+    print("2 start", i)
+    if i == 5 {
+      v2 := "test1"
+      break
+    }
+    print("2 end", i)
+  }
+
+  loop i := 0; i < 10; i++ {
+    v2 := "test1"
+    print("3 start", i)
+    if i == 5 { break }
+    print("3 end", i)
+    await a()
+  }
+
+  loop i := 0; i < 10; i++ {
+    print("4 start", i)
+    if i == 5 { break }
+    print("4 end", i)
+    await a()
+  }
+}
+
+main {
+  await test()
+}
+======= code =======
+======= flags =======
+======= stdout =======

@@ -1,0 +1,48 @@
+======= stdin =======
+async fn test (a: int) {}
+main {
+  a := 1
+  if a == 1 {
+    await test(1)
+    if a == 2 {
+      await test(1)
+    }
+  }
+  if a == 1 {
+    await test(1)
+  } elif a == 2 {
+    await test(2)
+    if a == 1 {
+      await test(1)
+    } elif a == 2 {
+      await test(2)
+    }
+  }
+  if a == 1 {
+    await test(1)
+  } else {
+    await test(3)
+    if a == 1 {
+      await test(1)
+    } else {
+      await test(3)
+    }
+  }
+  if a == 1 {
+    await test(1)
+  } elif a == 2 {
+    await test(2)
+  } else {
+    await test(3)
+    if a == 1 {
+      await test(1)
+    } elif a == 2 {
+      await test(2)
+    } else {
+      await test(3)
+    }
+  }
+}
+======= code =======
+======= flags =======
+======= stdout =======

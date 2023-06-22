@@ -1,0 +1,13 @@
+======= stdin =======
+async fn test1 () {}
+async fn test2 (param1: int, param2: str) {}
+async fn test3 () str { return "0" }
+
+main {
+  test1()
+  test2(1, "1")
+  test3()
+}
+======= code =======
+======= flags =======
+======= stdout =======

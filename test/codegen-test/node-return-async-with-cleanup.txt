@@ -1,0 +1,29 @@
+======= stdin =======
+async fn test1 () {
+  a := "a"
+  return
+}
+
+async fn test2 () void {
+  a := "a"
+  return
+}
+async fn test3 (i: int) {
+  a := "a"
+  if i > 5 {
+    b := "b"
+    return
+  }
+  c := "c"
+  print("test3")
+}
+
+main {
+  await test1()
+  await test2()
+  await test3(0)
+  await test3(10)
+}
+======= code =======
+======= flags =======
+======= stdout =======

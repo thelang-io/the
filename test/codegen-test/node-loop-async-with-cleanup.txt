@@ -1,0 +1,114 @@
+======= stdin =======
+async fn test () {}
+main {
+  mut i := 0
+  mut j := 0
+  mut k := 0
+  loop i = 0; i < 3; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    i *= 2
+    await test()
+    c := "c"
+  }
+  loop i := 0; i < 10; i++ {
+    a := "a"
+    j += i
+    await test()
+    b := "b"
+    if j > 10 {
+      c := "c"
+      await test()
+      d := "d"
+      break
+    }
+  }
+  loop i := 0; i < 10; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    if (j / 2) * 2 != j {
+      c := "c"
+      await test()
+      d := "d"
+      continue
+    }
+    e := "e"
+    await test()
+    f := "f"
+    j += i
+  }
+  loop i := 0; i < 10; {
+    a := "a"
+    await test()
+    i++
+    b := "b"
+    if i % 2 {
+      c := "c"
+      await test()
+      d := "d"
+      continue
+    }
+    e := "e"
+    await test()
+    f := "f"
+    j += i
+  }
+  loop i := 0; i < 3; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    j++
+    await test()
+    c := "c"
+  }
+  loop i := 100; i > 0; i-- {
+    a := "a"
+    await test()
+    b := "b"
+    i := 0
+    j := j * 2 + i
+    await test()
+    c := "c"
+  }
+  loop i = 0; i < 10; i++ {
+    a := "a"
+    k := i
+    await test()
+    b := "b"
+    loop i := k; i < 10; i++ {
+      c := "c"
+      await test()
+      d := "d"
+      j++
+      await test()
+      e := "e"
+    }
+    f := "f"
+  }
+  loop i := 0; i < 10; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    loop j := 0; j < 10; j++ {
+      c := "c"
+      await test()
+      d := "d"
+      if (i / 2) * 2 == i {
+        e := "e"
+        await test()
+        f := "f"
+        break
+      }
+      g := "g"
+      await test()
+      k += i
+      h := "h"
+    }
+    p := "p"
+  }
+}
+======= code =======
+======= flags =======
+======= stdout =======

@@ -1,0 +1,28 @@
+======= stdin =======
+async fn test (prefix: str, i: int) {
+  print(prefix, i, terminator: "")
+}
+
+main {
+  a := "a"
+  loop i := 0; i < 10; i++ {
+    b := "b"
+    await test("outer1", i)
+    print()
+    print("inner", terminator: "")
+    c := "c"
+    loop j := 0; j < 10; j++ {
+      d := "d"
+      await test("", j)
+      e := "e"
+    }
+    f := "f"
+    print()
+    await test("outer2", i)
+    print()
+    g := "g"
+  }
+}
+======= code =======
+======= flags =======
+======= stdout =======
