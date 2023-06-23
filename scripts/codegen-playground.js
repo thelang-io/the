@@ -354,6 +354,32 @@ function applyEditorState (editorRef, state) {
   editorRef.current.setScrollTop(state.scroll);
   editorRef.current.restoreViewState(state.viewState);
 }
+function freezeEditorState (editorRef) {
+  return {
+    focus: editorRef.current.hasTextFocus(),
+    scroll: editorRef.current.getScrollTop(),
+    viewState: editorRef.current.saveViewState()
+  };
+}
+function formatCode (code) {
+  var emptyLines = 0;
+  var lines = code.split('\\n');
+  var result = '';
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    if (line.trim().length === 0) {
+      emptyLines++;
+    } else {
+      emptyLines = 0;
+      result += line.trimEnd();
+    }
+    if (emptyLines <= 1) {
+      result += '\\n';
+    }
+  }
+  result = result.trimEnd();
+  return result.length !== 0 ? result + '\\n' : result;
+}
 function connectWebSocket (initialConnect) {
   ws = new WebSocket('ws://' + location.host + '/ws');
   ws.onopen = function () {
@@ -462,11 +488,7 @@ function initSeparator (id, direction, separatorEl, firstEl, secondEl) {
 }
 function handleChangeStateFactory (id, editorRef) {
   return function handleChangeState () {
-    localStorage.setItem('state' + id, JSON.stringify({
-      focus: editorRef.current.hasTextFocus(),
-      scroll: editorRef.current.getScrollTop(),
-      viewState: editorRef.current.saveViewState()
-    }));
+    localStorage.setItem('state' + id, JSON.stringify(freezeEditorState(editorRef)));
   }
 }
 function registerEditorHandlers (editorRef, handler) {
@@ -654,6 +676,14 @@ require(['vs/editor/editor.main'], function () {
   document.addEventListener('keydown', function (e) {
     if (e.key === 's' && (navigator.platform.toUpperCase().indexOf('MAC') >= 0 ? e.metaKey : e.ctrlKey)) {
       e.preventDefault();
+      var editor1State = freezeEditorState(editor1Ref);
+      var code = editor1Ref.current.getModel().getValue();
+      var formattedCode = formatCode(code);
+      if (formattedCode !== code) {
+        localStorage.setItem('code', formattedCode);
+        editor1Ref.current.getModel().setValue(formattedCode);
+        applyEditorState(editor1Ref, editor1State);
+      }
     }
   }, false);
   buildButtonEl.addEventListener('click', function () {
