@@ -1,0 +1,44 @@
+======= stdin =======
+obj Test { a: int }
+
+main {
+  a: any = Test{}
+  if a is Test { "Test " + a.str(); }
+
+  b: any = 3.14
+  if b is Test { "Test " + b.str(); }
+
+  c: Test | float = Test{}
+  if c is Test { "Test " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: Test | float = 3.14
+  if d is Test { "Test " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = Test{}
+  if (e = Test{}) is Test { "Test " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is Test { "Test " + f.str(); }
+
+  mut g: Test | float = Test{}
+  if (g = Test{}) is Test { "Test " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: Test | float = 3.14
+  if (h = 3.14) is Test { "Test " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is Test) ? "Test " + a.str() : "any";
+  (b is Test) ? "Test " + b.str() : "any";
+  (c is Test) ? "Test " + c.str() : "float " + c.str();
+  (d is Test) ? "Test " + d.str() : "float " + d.str();
+  ((e = Test{}) is Test) ? "Test " + e.str() : "any";
+  ((f = 3.14) is Test) ? "Test " + f.str() : "any";
+  ((g = Test{}) is Test) ? "Test " + g.str() : "float " + g.str();
+  ((h = 3.14) is Test) ? "Test " + h.str() : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

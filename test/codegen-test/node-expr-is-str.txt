@@ -1,0 +1,42 @@
+======= stdin =======
+main {
+  a: any = "test"
+  if a is str { "str " + a }
+
+  b: any = 3.14
+  if b is str { "str " + b; }
+
+  c: str | float = "test"
+  if c is str { "str " + c; }
+  else { "float " + c.str(); }
+
+  d: str | float = 3.14
+  if d is str { "str " + d; }
+  else { "float " + d.str(); }
+
+  mut e: any = "test"
+  if (e = "test") is str { "str " + e; }
+
+  mut f: any = 3.14
+  if (f = 3.14) is str { "str " + f; }
+
+  mut g: str | float = "test"
+  if (g = "test") is str { "str " + g; }
+  else { "float " + g.str(); }
+
+  mut h: str | float = 3.14
+  if (h = 3.14) is str { "str " + h; }
+  else { "float " + h.str(); }
+
+  (a is str) ? "str " + a : "any";
+  (b is str) ? "str " + b : "any";
+  (c is str) ? "str " + c : "float " + c.str();
+  (d is str) ? "str " + d : "float " + d.str();
+  ((e = "test") is str) ? "str " + e : "any";
+  ((f = 3.14) is str) ? "str " + f : "any";
+  ((g = "test") is str) ? "str " + g : "float " + g.str();
+  ((h = 3.14) is str) ? "str " + h : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

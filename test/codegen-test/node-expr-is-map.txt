@@ -1,0 +1,42 @@
+======= stdin =======
+main {
+  a: any = { "key1": 1, "key2": 2, "key3": 3 }
+  if a is int[str] { "int[str] " + a.str(); }
+
+  b: any = 3.14
+  if b is int[str] { "int[str] " + b.str(); }
+
+  c: int[str] | float = { "key1": 1, "key2": 2, "key3": 3 }
+  if c is int[str] { "int[str] " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: int[str] | float = 3.14
+  if d is int[str] { "int[str] " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = { "key1": 1, "key2": 2, "key3": 3 }
+  if (e = { "key1": 1, "key2": 2, "key3": 3 }) is int[str] { "int[str] " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is int[str] { "int[str] " + f.str(); }
+
+  mut g: int[str] | float = { "key1": 1, "key2": 2, "key3": 3 }
+  if (g = { "key1": 1, "key2": 2, "key3": 3 }) is int[str] { "int[str] " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: int[str] | float = 3.14
+  if (h = 3.14) is int[str] { "int[str] " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is int[str]) ? "int[str] " + a.str() : "any";
+  (b is int[str]) ? "int[str] " + b.str() : "any";
+  (c is int[str]) ? "int[str] " + c.str() : "float " + c.str();
+  (d is int[str]) ? "int[str] " + d.str() : "float " + d.str();
+  ((e = { "key1": 1, "key2": 2, "key3": 3 }) is int[str]) ? "int[str] " + e.str() : "any";
+  ((f = 3.14) is int[str]) ? "int[str] " + f.str() : "any";
+  ((g = { "key1": 1, "key2": 2, "key3": 3 }) is int[str]) ? "int[str] " + g.str() : "float " + g.str();
+  ((h = 3.14) is int[str]) ? "int[str] " + h.str() : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

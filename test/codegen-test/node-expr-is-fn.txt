@@ -1,0 +1,44 @@
+======= stdin =======
+fn test () {}
+
+main {
+  a: any = test
+  if a is () -> void { "() -> void " + a.str(); }
+
+  b: any = 3.14
+  if b is () -> void { "() -> void " + b.str(); }
+
+  c: (() -> void) | float = test
+  if c is () -> void { "() -> void " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: (() -> void) | float = 3.14
+  if d is () -> void { "() -> void " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = test
+  if (e = test) is () -> void { "() -> void " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is () -> void { "() -> void " + f.str(); }
+
+  mut g: (() -> void) | float = test
+  if (g = test) is () -> void { "() -> void " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: (() -> void) | float = 3.14
+  if (h = 3.14) is () -> void { "() -> void " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is () -> void) ? "() -> void " + a.str() : "any";
+  (b is () -> void) ? "() -> void " + b.str() : "any";
+  (c is () -> void) ? "() -> void " + c.str() : "float " + c.str();
+  (d is () -> void) ? "() -> void " + d.str() : "float " + d.str();
+  ((e = test) is () -> void) ? "() -> void " + e.str() : "any";
+  ((f = 3.14) is () -> void) ? "() -> void " + f.str() : "any";
+  ((g = test) is () -> void) ? "() -> void " + g.str() : "float " + g.str();
+  ((h = 3.14) is () -> void) ? "() -> void " + h.str() : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

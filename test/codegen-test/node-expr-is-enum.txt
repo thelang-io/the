@@ -1,0 +1,44 @@
+======= stdin =======
+enum Color { Red, Green, Blue }
+
+main {
+  a: any = Color.Red
+  if a is Color { "Color." + a.rawValue; }
+
+  b: any = 3.14
+  if b is Color { "Color." + b.rawValue; }
+
+  c: Color | float = Color.Green
+  if c is Color { "Color." + c.rawValue; }
+  else { "float " + c.str(); }
+
+  d: Color | float = 3.14
+  if d is Color { "Color." + d.rawValue; }
+  else { "float " + d.str(); }
+
+  mut e: any = Color.Blue
+  if (e = Color.Blue) is Color { "Color." + e.rawValue; }
+
+  mut f: any = 3.14
+  if (f = 3.14) is Color { "Color." + f.rawValue; }
+
+  mut g: Color | float = Color.Red
+  if (g = Color.Red) is Color { "Color." + g.rawValue; }
+  else { "float " + g.str(); }
+
+  mut h: Color | float = 3.14
+  if (h = 3.14) is Color { "Color." + h.rawValue; }
+  else { "float " + h.str(); }
+
+  (a is Color) ? "Color." + a.rawValue : "any";
+  (b is Color) ? "Color." + b.rawValue : "any";
+  (c is Color) ? "Color." + c.rawValue : "float " + c.str();
+  (d is Color) ? "Color." + d.rawValue : "float " + d.str();
+  ((e = Color.Green) is Color) ? "Color." + e.rawValue : "any";
+  ((f = 3.14) is Color) ? "Color." + f.rawValue : "any";
+  ((g = Color.Blue) is Color) ? "Color." + g.rawValue : "float " + g.str();
+  ((h = 3.14) is Color) ? "Color." + h.rawValue : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

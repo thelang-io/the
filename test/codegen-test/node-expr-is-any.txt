@@ -1,0 +1,17 @@
+======= stdin =======
+main {
+  testAny: any
+
+  a: any = 1
+  b: any = testAny
+  mut e: any = 1
+  mut f: any = testAny
+
+  (a is any) ? "any" : "any";
+  (b is any) ? "any" : "any";
+  ((e = 1) is any) ? "any" : "any";
+  ((f = testAny) is any) ? "any" : "any";
+}
+======= code =======
+======= flags =======
+======= stdout =======

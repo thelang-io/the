@@ -1,0 +1,45 @@
+======= stdin =======
+main {
+  testInt := 1
+  testRefInt := ref testInt
+
+  a: any = testRefInt
+  if a is ref int { "ref int " + a.str(); }
+
+  b: any = 3.14
+  if b is ref int { "ref int " + b.str(); }
+
+  c: (ref int) | float = testRefInt
+  if c is ref int { "ref int " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: (ref int) | float = 3.14
+  if d is ref int { "ref int " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = testRefInt
+  if (e = testRefInt) is ref int { "ref int " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is ref int { "ref int " + f.str(); }
+
+  mut g: (ref int) | float = testRefInt
+  if (g = testRefInt) is ref int { "ref int " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: (ref int) | float = 3.14
+  if (h = 3.14) is ref int { "ref int " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is ref int) ? "ref int " + a.str() : "any";
+  (b is ref int) ? "ref int " + b.str() : "any";
+  (c is ref int) ? "ref int " + c.str() : "float " + c.str();
+  (d is ref int) ? "ref int " + d.str() : "float " + d.str();
+  ((e = testRefInt) is ref int) ? "ref int " + e.str() : "any";
+  ((f = 3.14) is ref int) ? "ref int " + f.str() : "any";
+  ((g = testRefInt) is ref int) ? "ref int " + g.str() : "float " + g.str();
+  ((h = 3.14) is ref int) ? "ref int " + h.str() : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

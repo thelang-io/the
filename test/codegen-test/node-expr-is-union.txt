@@ -1,0 +1,44 @@
+======= stdin =======
+main {
+  testUnion: char | str = 'a'
+
+  a: any = testUnion
+  if a is (char | str) { "(char | str) " + a.str(); }
+
+  b: any = 3.14
+  if b is (char | str) { "(char | str) " + b.str(); }
+
+  c: (char | str) | float = testUnion
+  if c is (char | str) { "(char | str) " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: (char | str) | float = 3.14
+  if d is (char | str) { "(char | str) " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = testUnion
+  if (e = testUnion) is (char | str) { "(char | str) " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is (char | str) { "(char | str) " + f.str(); }
+
+  mut g: (char | str) | float = testUnion
+  if (g = testUnion) is (char | str) { "(char | str) " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: (char | str) | float = 3.14
+  if (h = 3.14) is (char | str) { "(char | str) " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is (char | str)) ? "(char | str) " + a.str() : "any";
+  (b is (char | str)) ? "(char | str) " + b.str() : "any";
+  (c is (char | str)) ? "(char | str) " + c.str() : "float " + c.str();
+  (d is (char | str)) ? "(char | str) " + d.str() : "float " + d.str();
+  ((e = testUnion) is (char | str)) ? "(char | str) " + e.str() : "any";
+  ((f = 3.14) is (char | str)) ? "(char | str) " + f.str() : "any";
+  ((g = testUnion) is (char | str)) ? "(char | str) " + g.str() : "float " + g.str();
+  ((h = 3.14) is (char | str)) ? "(char | str) " + h.str() : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

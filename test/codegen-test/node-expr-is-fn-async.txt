@@ -1,0 +1,44 @@
+======= stdin =======
+async fn test () {}
+
+main {
+  a: any = test
+  if a is async () -> void { "async () -> void " + a.str(); }
+
+  b: any = 3.14
+  if b is async () -> void { "async () -> void " + b.str(); }
+
+  c: (async () -> void) | float = test
+  if c is async () -> void { "async () -> void " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: (async () -> void) | float = 3.14
+  if d is async () -> void { "async () -> void " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = test
+  if (e = test) is async () -> void { "async () -> void " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is async () -> void { "async () -> void " + f.str(); }
+
+  mut g: (async () -> void) | float = test
+  if (g = test) is async () -> void { "async () -> void " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: (async () -> void) | float = 3.14
+  if (h = 3.14) is async () -> void { "async () -> void " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is async () -> void) ? "async () -> void " + a.str() : "any";
+  (b is async () -> void) ? "async () -> void " + b.str() : "any";
+  (c is async () -> void) ? "async () -> void " + c.str() : "float " + c.str();
+  (d is async () -> void) ? "async () -> void " + d.str() : "float " + d.str();
+  ((e = test) is async () -> void) ? "async () -> void " + e.str() : "any";
+  ((f = 3.14) is async () -> void) ? "async () -> void " + f.str() : "any";
+  ((g = test) is async () -> void) ? "async () -> void " + g.str() : "float " + g.str();
+  ((h = 3.14) is async () -> void) ? "async () -> void " + h.str() : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======

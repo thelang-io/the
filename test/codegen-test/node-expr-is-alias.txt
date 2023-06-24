@@ -1,0 +1,43 @@
+======= stdin =======
+type Alias = int
+main {
+  a: any = 1
+  if a is Alias { "Alias " + a.str(); }
+
+  b: any = 3.14
+  if b is Alias { "Alias " + b.str(); }
+
+  c: Alias | float = 1
+  if c is Alias { "Alias " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: Alias | float = 3.14
+  if d is Alias { "Alias " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = 1
+  if (e = 1) is Alias { "Alias " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is Alias { "Alias " + f.str(); }
+
+  mut g: Alias | float = 1
+  if (g = 1) is Alias { "Alias " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: Alias | float = 3.14
+  if (h = 3.14) is Alias { "Alias " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is Alias) ? "Alias " + a.str() : "any";
+  (b is Alias) ? "Alias " + b.str() : "any";
+  (c is Alias) ? "Alias " + c.str() : "float " + c.str();
+  (d is Alias) ? "Alias " + d.str() : "float " + d.str();
+  ((e = 1) is Alias) ? "Alias " + e.str() : "any";
+  ((f = 3.14) is Alias) ? "Alias " + f.str() : "any";
+  ((g = 1) is Alias) ? "Alias " + g.str() : "float " + g.str();
+  ((h = 3.14) is Alias) ? "Alias " + h.str() : "float " + h.str();
+}
+======= code =======
+======= flags =======
+======= stdout =======
