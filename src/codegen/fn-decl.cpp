@@ -62,7 +62,7 @@ std::string Codegen::_fnDecl (
     auto initialStateAsyncCounter = this->state.asyncCounter;
     auto contextEntityIdx = 0;
 
-    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp, fnType.async);
 
     if (hasStack) {
       contextEntityIdx = this->_apiEntity(contextName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
@@ -215,12 +215,15 @@ std::string Codegen::_fnDecl (
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
         if (this->state.insideAsync) {
           bodyCode.insert(0, "  " + returnTypeInfo.typeRefCode + "v = pv;" EOL);
+          bodyCode += this->state.cleanUp.genAsync(6, this->state.asyncCounter);
         } else {
           bodyCode.insert(0, "  " + returnTypeInfo.typeCode + "v;" EOL);
-          bodyCode += this->state.cleanUp.gen(this->state.insideAsync ? 6 : 2);
+          bodyCode += this->state.cleanUp.gen(2);
         }
+      } else if (this->state.insideAsync) {
+        bodyCode += this->state.cleanUp.genAsync(6, this->state.asyncCounter);
       } else {
-        bodyCode += this->state.cleanUp.gen(this->state.insideAsync ? 6 : 2);
+        bodyCode += this->state.cleanUp.gen(2);
       }
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed && !this->state.insideAsync) {

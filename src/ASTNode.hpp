@@ -76,9 +76,11 @@ struct ASTFnDeclParam {
 };
 
 struct ASTNodeBreak {
+  std::shared_ptr<std::size_t> codegenAsyncLabel;
 };
 
 struct ASTNodeContinue {
+  std::shared_ptr<std::size_t> codegenAsyncLabel;
 };
 
 struct ASTNodeEnumDeclMember {

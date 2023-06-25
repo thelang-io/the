@@ -136,7 +136,7 @@ std::string Codegen::_blockAsync (const ASTBlock &nodes, bool saveCleanUp, const
   auto code = std::string();
 
   if (saveCleanUp) {
-    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp);
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp, true);
 
     if (!cleanupData.empty()) {
       this->state.cleanUp.add(cleanupData);
@@ -175,11 +175,9 @@ std::string Codegen::_blockAsync (const ASTBlock &nodes, bool saveCleanUp, const
   if (saveCleanUp) {
     auto nodesChecker = ASTChecker(nodes);
     auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
-    auto cleanUpCode = this->state.cleanUp.gen(this->indent);
+    auto cleanUpCode = this->state.cleanUp.genAsync(this->indent, this->state.asyncCounter);
 
     if (!cleanUpCode.empty()) {
-      code += std::string(this->indent - 2, ' ') + "}" EOL;
-      code += std::string(this->indent - 2, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
       code += cleanUpCode;
 
       this->state.asyncBuffer.push_back(CodegenAsyncBufferItem{this->state.asyncCounter, CodegenAsyncBufferItemCleanUp});

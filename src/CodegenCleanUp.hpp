@@ -31,6 +31,7 @@ struct CodegenCleanUpItem {
   std::string label;
   std::string content;
   bool labelUsed = false;
+  std::shared_ptr<size_t> asyncCounter = std::make_shared<std::size_t>(0);
 };
 
 class CodegenCleanUp {
@@ -40,6 +41,7 @@ class CodegenCleanUp {
   std::size_t labelIdx = 0;
   std::size_t breakVarIdx = 0;
   std::size_t continueVarIdx = 0;
+  bool async = false;
   bool breakVarUsed = false;
   bool continueVarUsed = false;
   bool jumpUsed = false;
@@ -47,16 +49,18 @@ class CodegenCleanUp {
   bool valueVarUsed = false;
 
   CodegenCleanUp () = default;
-  explicit CodegenCleanUp (CodegenCleanUpType, CodegenCleanUp *);
+  explicit CodegenCleanUp (CodegenCleanUpType, CodegenCleanUp *, bool = false);
 
   void add (const std::string &);
   std::string currentBreakVar ();
   std::string currentContinueVar ();
   std::string currentLabel ();
+  std::shared_ptr<std::size_t> currentLabelAsync ();
   std::string currentReturnVar ();
   std::string currentValueVar ();
   bool empty () const;
   std::string gen (std::size_t) const;
+  std::string genAsync (std::size_t, std::size_t &) const;
   bool hasCleanUp (CodegenCleanUpType) const;
   bool isClosestJump () const;
 
