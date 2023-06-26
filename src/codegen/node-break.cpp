@@ -32,18 +32,9 @@ std::string Codegen::_nodeBreak (const ASTNode &node, bool root, CodegenPhase ph
 }
 
 std::string Codegen::_nodeBreakAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  auto &nodeBreak = std::get<ASTNodeBreak>(*node.body);
-  auto asyncCounter = this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopBreak);
-
-  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    if (nodeBreak.codegenAsyncLabel == nullptr) {
-      nodeBreak.codegenAsyncLabel = this->state.cleanUp.currentLabelAsync();
-    } else {
-      this->state.cleanUp.currentLabelAsync();
-    }
-
-    asyncCounter = *nodeBreak.codegenAsyncLabel;
-  }
+  auto asyncCounter = node.codegenAsyncCounter == nullptr || *node.codegenAsyncCounter == 0
+    ? this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopBreak)
+    : *node.codegenAsyncCounter;
 
   code = std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
 

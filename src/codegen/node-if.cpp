@@ -66,60 +66,56 @@ std::string Codegen::_nodeIf (const ASTNode &node, bool root, CodegenPhase phase
   return this->_wrapNode(node, root, phase, decl + code);
 }
 
-std::string Codegen::_nodeIfAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+std::string Codegen::_nodeIfAsync (ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
   auto initialIndent = this->indent;
   auto initialStateTypeCasts = this->state.typeCasts;
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
-  auto nodeIfCondCode = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, decl);
+  auto condCode = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, decl);
 
   bodyTypeCasts.merge(this->state.typeCasts);
   bodyTypeCasts.swap(this->state.typeCasts);
   this->indent -= 2;
   this->varMap.save();
-  auto nodeIfBodyCode = this->_block(nodeIf.body);
+  auto bodyCode = this->_block(nodeIf.body);
   this->varMap.restore();
   this->state.typeCasts = initialStateTypeCasts;
-  auto asyncAltCounter = static_cast<std::size_t>(0);
-  auto nodeIfAltCode = std::string();
+
+  auto afterBodyCode = std::string();
+  afterBodyCode += std::string(this->indent, ' ') + "}" EOL;
+  afterBodyCode += std::string(this->indent, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
+
+  auto afterBodyAsyncCounter = this->state.asyncCounter;
+  auto altCode = std::string();
 
   if (nodeIf.alt != std::nullopt) {
-    asyncAltCounter = ++this->state.asyncCounter;
-    this->indent = std::holds_alternative<ASTNode>(*nodeIf.alt) ? initialIndent : this->indent;
-
     altTypeCasts.merge(this->state.typeCasts);
     altTypeCasts.swap(this->state.typeCasts);
 
     if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
       this->varMap.save();
-      nodeIfAltCode += this->_block(std::get<ASTBlock>(*nodeIf.alt));
+      altCode += this->_block(std::get<ASTBlock>(*nodeIf.alt));
       this->varMap.restore();
     } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-      nodeIfAltCode += this->_nodeAsync(std::get<ASTNode>(*nodeIf.alt));
+      this->indent = initialIndent;
+      altCode += this->_nodeAsync(std::get<ASTNode>(*nodeIf.alt));
+      this->indent -= 2;
     }
+
+    altCode += std::string(this->indent, ' ') + "}" EOL;
+    altCode += std::string(this->indent, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
   }
 
-  this->indent = initialIndent - 2;
-
-  code = std::string(this->indent + 2, ' ') + "if (!(" + nodeIfCondCode + ")) {" EOL;
-  code += std::string(this->indent + 4, ' ') + "return ";
-  code += std::to_string(nodeIf.alt == std::nullopt ? this->state.asyncCounter + 1 : asyncAltCounter) + ";" EOL;
+  code = std::string(this->indent + 2, ' ') + "if (!(" + condCode + ")) {" EOL;
+  code += std::string(this->indent + 4, ' ') + "return " + std::to_string(afterBodyAsyncCounter) + ";" EOL;
   code += std::string(this->indent + 2, ' ') + "}" EOL;
-  code += nodeIfBodyCode;
+  code += bodyCode;
+  code += std::string(this->indent + 2, ' ') + "return ";
+  code += std::to_string(this->state.asyncCounter) + ";" EOL;
+  code += afterBodyCode;
+  code += altCode;
 
-  if (nodeIf.alt != std::nullopt) {
-    if (!ASTChecker(nodeIf.body).hasSyncBreaking()) {
-      code += std::string(this->indent + 2, ' ') + "return " + std::to_string(++this->state.asyncCounter) + ";" EOL;
-    }
-
-    code += std::string(this->indent, ' ') + "}" EOL;
-    code += std::string(this->indent, ' ') + "case " + std::to_string(asyncAltCounter) + ": {" EOL;
-    code += nodeIfAltCode;
-  } else {
-    code += std::string(this->indent, ' ') + "}" EOL;
-    code += std::string(this->indent, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
-  }
-
+  node.codegenAsyncCounter = std::make_shared<std::size_t>(this->state.asyncCounter);
   this->state.typeCasts = initialStateTypeCasts;
   this->indent = initialIndent;
   return this->_wrapNode(node, root, phase, decl + code);

@@ -256,7 +256,7 @@ class Codegen {
   std::string _genReallocFn (Type *, const std::string &, const std::string &);
   std::string _genStrFn (Type *, const std::string &, bool = true, bool = true);
   std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
-  std::string _nodeAsync (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
+  std::string _nodeAsync (ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   std::string _nodeBreak (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeBreakAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeContinue (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
@@ -267,7 +267,7 @@ class Codegen {
   std::string _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool = false, std::size_t = 0);
   std::string _nodeFnDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeIf (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeIfAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  std::string _nodeIfAsync (ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeLoop (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeLoopAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
   std::string _nodeMain (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);

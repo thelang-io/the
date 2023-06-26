@@ -558,7 +558,7 @@ std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) 
   throw Error("tried to generate code for unknown node");
 }
 
-std::string Codegen::_nodeAsync (const ASTNode &node, bool root, CodegenPhase phase) {
+std::string Codegen::_nodeAsync (ASTNode &node, bool root, CodegenPhase phase) {
   auto decl = std::string();
   auto code = std::string();
 

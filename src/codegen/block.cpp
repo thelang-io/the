@@ -149,6 +149,14 @@ std::string Codegen::_blockAsync (const ASTBlock &nodes, bool saveCleanUp, const
     auto node = nodes[i];
     auto nodeChecker = ASTChecker(node);
 
+    if (!this->state.cleanUp.empty() && nodeChecker.hasSyncBreaking()) {
+      if (node.codegenAsyncCounter == nullptr) {
+        node.codegenAsyncCounter = this->state.cleanUp.currentLabelAsync();
+      } else {
+        this->state.cleanUp.currentLabelAsync();
+      }
+    }
+
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
         code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC);
@@ -167,6 +175,8 @@ std::string Codegen::_blockAsync (const ASTBlock &nodes, bool saveCleanUp, const
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
       code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
       code += this->_node(node, true, CODEGEN_PHASE_INIT);
+    } else if (!nodeChecker.hasSyncBreaking() && !nodeChecker.hasAwait()) {
+      code += this->_node(node);
     } else {
       code += this->_nodeAsync(node);
     }
@@ -178,9 +188,8 @@ std::string Codegen::_blockAsync (const ASTBlock &nodes, bool saveCleanUp, const
     auto cleanUpCode = this->state.cleanUp.genAsync(this->indent, this->state.asyncCounter);
 
     if (!cleanUpCode.empty()) {
-      code += cleanUpCode;
-
       this->state.asyncBuffer.push_back(CodegenAsyncBufferItem{this->state.asyncCounter, CodegenAsyncBufferItemCleanUp});
+      code += cleanUpCode;
 
       if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed) {
         code += std::string(this->indent, ' ') + "if (*" + this->state.cleanUp.currentContinueVar() + " == 1) ";

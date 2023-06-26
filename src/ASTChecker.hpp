@@ -303,6 +303,11 @@ class ASTChecker {
   }
 
   // todo test
+  bool hasAwait () const {
+    return this->hasExpr<ASTExprAwait>();
+  }
+
+  // todo test
   bool hasSyncBreaking () const {
     this->_checkNode();
     return this->_hasNode<ASTNodeBreak>(this->_nodes) ||

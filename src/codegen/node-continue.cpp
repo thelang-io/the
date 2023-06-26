@@ -34,18 +34,9 @@ std::string Codegen::_nodeContinue (const ASTNode &node, bool root, CodegenPhase
 }
 
 std::string Codegen::_nodeContinueAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  auto &nodeContinue = std::get<ASTNodeContinue>(*node.body);
-  auto asyncCounter = this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopContinue);
-
-  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    if (nodeContinue.codegenAsyncLabel == nullptr) {
-      nodeContinue.codegenAsyncLabel = this->state.cleanUp.currentLabelAsync();
-    } else {
-      this->state.cleanUp.currentLabelAsync();
-    }
-
-    asyncCounter = *nodeContinue.codegenAsyncLabel;
-  }
+  auto asyncCounter = node.codegenAsyncCounter == nullptr || *node.codegenAsyncCounter == 0
+    ? this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopContinue)
+    : *node.codegenAsyncCounter;
 
   code = std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentContinueVar() + " = 1;" EOL;
 

@@ -57,6 +57,7 @@ struct ASTNode {
   ASTNode *parent;
   ReaderLocation start;
   ReaderLocation end;
+  std::shared_ptr<std::size_t> codegenAsyncCounter = nullptr;
 
   std::string xml (std::size_t = 0) const;
 };
@@ -76,11 +77,9 @@ struct ASTFnDeclParam {
 };
 
 struct ASTNodeBreak {
-  std::shared_ptr<std::size_t> codegenAsyncLabel;
 };
 
 struct ASTNodeContinue {
-  std::shared_ptr<std::size_t> codegenAsyncLabel;
 };
 
 struct ASTNodeEnumDeclMember {
