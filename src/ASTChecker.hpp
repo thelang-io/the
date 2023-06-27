@@ -287,6 +287,14 @@ class ASTChecker {
     return this->_endsWithNode<T>(this->_nodes);
   }
 
+  // todo test
+  bool endsWithSyncBreaking () const {
+    return this->endsWith<ASTNodeBreak>() ||
+      this->endsWith<ASTNodeContinue>() ||
+      this->endsWith<ASTNodeReturn>() ||
+      this->endsWith<ASTNodeThrow>();
+  }
+
   template <typename T>
   std::vector<ASTNodeExpr> getExprOfType () const {
     if (!this->_exprs.empty()) {
