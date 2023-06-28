@@ -17,30 +17,40 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeBreak (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeBreak (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    code = std::string(this->indent, ' ') + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
+    c.append(
+      CodegenASTExprAssign::create(
+        CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
+        "=",
+        CodegenASTExprLiteral::create(std::to_string(1))
+      ).stmt()
+    );
 
     if (!ASTChecker(node).isLast()) {
-      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+      c.append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
     }
   } else {
-    code = std::string(this->indent, ' ') + "break;" EOL;
+    c.append(CodegenASTStmtBreak::create());
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
 
-std::string Codegen::_nodeBreakAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  auto asyncCounter = node.codegenAsyncCounter == nullptr || *node.codegenAsyncCounter == 0
-    ? this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopBreak)
-    : *node.codegenAsyncCounter;
+CodegenASTStmt &Codegen::_nodeBreakAsync (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
+  c.append(
+    CodegenASTExprAssign::create(
+      CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
+      "=",
+      CodegenASTExprLiteral::create(std::to_string(1))
+    ).stmt()
+  );
 
-  code = std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentBreakVar() + " = 1;" EOL;
-
-  if (asyncCounter != this->state.asyncCounter + 1 || !ASTChecker(node).isLast()) {
-    code += std::string(this->indent, ' ') + "return " + std::to_string(asyncCounter) + ";" EOL;
+  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+    c.append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
+  } else {
+    // todo
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
