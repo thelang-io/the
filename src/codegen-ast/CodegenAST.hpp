@@ -25,6 +25,7 @@
 struct CodegenASTExprAccess;
 struct CodegenASTExprAssign;
 struct CodegenASTExprBinary;
+struct CodegenASTExprCall;
 struct CodegenASTExprLiteral;
 struct CodegenASTExprUnary;
 
@@ -76,6 +77,7 @@ using CodegenASTExprBody = std::variant<
   CodegenASTExprAccess,
   CodegenASTExprAssign,
   CodegenASTExprBinary,
+  CodegenASTExprCall,
   CodegenASTExprLiteral,
   CodegenASTExprUnary
 >;
@@ -90,13 +92,16 @@ struct CodegenASTStmt {
   CodegenASTStmt *nextSibling;
   std::shared_ptr<CodegenASTStmtBody> body;
 
-  CodegenASTStmt &append (CodegenASTStmt);
-  CodegenASTStmt &exit ();
-  CodegenASTStmt &prepend (CodegenASTStmt);
+  CodegenASTStmt &append (const CodegenASTStmt &);
+  CodegenASTStmt &exit () const;
+  CodegenASTStmt &prepend (const CodegenASTStmt &);
 };
 
 struct CodegenASTExpr {
   bool parenthesized;
+  CodegenASTExpr *parent;
+  CodegenASTStmt *parentStmt;
+  std::shared_ptr<CodegenASTExprBody> body;
 
   CodegenASTStmt stmt ();
   CodegenASTExpr wrap ();
@@ -104,6 +109,8 @@ struct CodegenASTExpr {
 
 struct CodegenASTExprAccess {
   static CodegenASTExpr create (const std::string &);
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &);
+  static CodegenASTExpr create (const CodegenASTExpr &, const CodegenASTExpr &);
 };
 
 struct CodegenASTExprAssign {
@@ -114,12 +121,17 @@ struct CodegenASTExprBinary {
   static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, const CodegenASTExpr &);
 };
 
+struct CodegenASTExprCall {
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTExpr> &);
+};
+
 struct CodegenASTExprLiteral {
   static CodegenASTExpr create (const std::string &);
 };
 
 struct CodegenASTExprUnary {
   static CodegenASTExpr create (const std::string &, const CodegenASTExpr &);
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &);
 };
 
 struct CodegenASTStmtBreak {
@@ -127,12 +139,12 @@ struct CodegenASTStmtBreak {
 };
 
 struct CodegenASTStmtCase {
-  static CodegenASTStmt create (const std::string &, std::optional<CodegenASTStmt> = std::nullopt);
+  static CodegenASTStmt create (const std::string &, const std::optional<CodegenASTStmt> & = std::nullopt);
 };
 
 struct CodegenASTStmtCompound {
   static CodegenASTStmt create ();
-  static CodegenASTStmt create (std::vector<CodegenASTStmt>);
+  static CodegenASTStmt create (const std::vector<CodegenASTStmt> &);
 };
 
 struct CodegenASTStmtContinue {
@@ -154,17 +166,17 @@ struct CodegenASTStmtFnParam {
 struct CodegenASTStmtFnDecl {
   std::string name;
   std::vector<CodegenASTStmtFnParam> params;
-  CodegenASTStmtCompound body;
+  CodegenASTStmt body;
 
-  static CodegenASTStmt create (const std::string &, std::vector<CodegenASTStmtFnParam> &, CodegenASTStmtCompound);
+  static CodegenASTStmt create (const std::string &, const std::vector<CodegenASTStmtFnParam> &, const CodegenASTStmt &);
 };
 
 struct CodegenASTStmtFor {
   static CodegenASTStmt create (
-    std::optional<CodegenASTStmt> = std::nullopt,
-    std::optional<CodegenASTExpr> = std::nullopt,
-    std::optional<CodegenASTExpr> = std::nullopt,
-    CodegenASTStmt = CodegenASTStmtCompound::create()
+    const std::optional<CodegenASTStmt> & = std::nullopt,
+    const std::optional<CodegenASTExpr> & = std::nullopt,
+    const std::optional<CodegenASTExpr> & = std::nullopt,
+    const CodegenASTStmt & = CodegenASTStmtCompound::create()
   );
 };
 
@@ -173,7 +185,7 @@ struct CodegenASTStmtGoto {
 };
 
 struct CodegenASTStmtIf {
-  static CodegenASTStmt create (CodegenASTExpr, CodegenASTStmt, std::optional<CodegenASTStmt> = std::nullopt);
+  static CodegenASTStmt create (const CodegenASTExpr &, const CodegenASTStmt &, const std::optional<CodegenASTStmt> & = std::nullopt);
 };
 
 struct CodegenASTStmtLabel {
@@ -189,8 +201,8 @@ struct CodegenASTStmtMacroReplace {
 };
 
 struct CodegenASTStmtReturn {
-  static CodegenASTStmt create (CodegenASTExpr);
-  static CodegenASTStmt create (std::shared_ptr<std::size_t>);
+  static CodegenASTStmt create (const CodegenASTExpr &);
+  static CodegenASTStmt create (const std::shared_ptr<std::size_t> &);
 };
 
 struct CodegenASTStmtStructDecl {
@@ -200,11 +212,11 @@ struct CodegenASTStmtSwitch {
 };
 
 struct CodegenASTStmtVarDecl {
-  static CodegenASTStmt create (CodegenASTType, CodegenASTExpr, std::optional<CodegenASTExpr> = std::nullopt);
+  static CodegenASTStmt create (const CodegenASTType &, const CodegenASTExpr &, const std::optional<CodegenASTExpr> & = std::nullopt);
 };
 
 struct CodegenASTStmtWhile {
-  static CodegenASTStmt create (CodegenASTExpr, std::optional<CodegenASTStmt> = std::nullopt);
+  static CodegenASTStmt create (const CodegenASTExpr &, const std::optional<CodegenASTStmt> & = std::nullopt);
 };
 
 #endif

@@ -210,12 +210,13 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
+  std::string _ (const std::string &);
   int _apiEntity (const std::string &, CodegenEntityType, const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt);
   std::string _apiEval (const std::string &, int = 0, const std::string & = "", const std::optional<std::set<std::string> *> & = std::nullopt);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  CodegenASTStmt &_block (CodegenASTStmt &, ASTBlock &, bool = true, const std::string & = "", bool = false);
-  CodegenASTStmt &_blockAsync (CodegenASTStmt &, ASTBlock &, bool = true, const std::string & = "", bool = false);
+  CodegenASTStmt &_block (CodegenASTStmt &, const ASTBlock &, bool = true, const std::optional<CodegenASTStmt> & = std::nullopt, bool = false);
+  CodegenASTStmt &_blockAsync (CodegenASTStmt &, const ASTBlock &, bool = true, const std::optional<CodegenASTStmt> & = std::nullopt, bool = false);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &, const ASTNode &);
   std::string _exprAccess (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
   std::string _exprArray (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);

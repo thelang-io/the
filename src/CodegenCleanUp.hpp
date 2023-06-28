@@ -52,7 +52,8 @@ class CodegenCleanUp {
   CodegenCleanUp () = default;
   explicit CodegenCleanUp (CodegenCleanUpType, CodegenCleanUp *, bool = false);
 
-  void add (const std::string &);
+  void add ();
+  void add (const CodegenASTStmt &);
   std::string currentBreakVar ();
   std::string currentContinueVar ();
   std::string currentLabel ();

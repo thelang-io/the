@@ -15,23 +15,26 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
-std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp, const std::string &cleanupData, bool errHandled) {
+CodegenASTStmt &Codegen::_block (
+  CodegenASTStmt &c,
+  const ASTBlock &nodes,
+  bool saveCleanUp,
+  const std::optional<CodegenASTStmt> &cleanupData,
+  bool errHandled
+) {
   if (ASTChecker(nodes).async() || (this->state.insideAsync && ASTChecker(nodes).hasSyncBreaking())) {
-    return this->_blockAsync(nodes, saveCleanUp, cleanupData, errHandled);
+    return this->_blockAsync(c, nodes, saveCleanUp, cleanupData, errHandled);
   }
 
-  auto initialIndent = this->indent;
-  auto initialCleanUp = this->state.cleanUp;
+  auto initialStateCleanUp = this->state.cleanUp;
   auto jumpedBefore = false;
-  auto code = std::string();
 
   if (saveCleanUp) {
-    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp);
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
 
-    if (!cleanupData.empty()) {
-      this->state.cleanUp.add(cleanupData);
+    if (cleanupData != std::nullopt) {
+      this->state.cleanUp.add(*cleanupData);
     }
 
     if (
@@ -40,11 +43,9 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp, const std:
       ASTChecker(nodes).has<ASTNodeTry>() &&
       (ASTChecker(nodes).has<ASTNodeBreak>() || ASTChecker(nodes).has<ASTNodeContinue>())
     ) {
-      this->state.cleanUp.add("");
+      this->state.cleanUp.add();
     }
   }
-
-  this->indent += 2;
 
   for (auto i = static_cast<std::size_t>(0); i < nodes.size(); i++) {
     auto node = nodes[i];
@@ -55,159 +56,248 @@ std::string Codegen::_block (const ASTBlock &nodes, bool saveCleanUp, const std:
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC);
+        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC);
       }
 
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC_METHOD);
+        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC_METHOD);
       }
 
       for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
-        code += this->_node(nodes[i], true, CODEGEN_PHASE_INIT);
+        c = this->_node(c, nodes[i], true, CODEGEN_PHASE_INIT);
       }
 
       i--;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
-      code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
-      code += this->_node(node, true, CODEGEN_PHASE_INIT);
+      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC);
+      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC_METHOD);
+      c = this->_node(c, node, true, CODEGEN_PHASE_INIT);
     } else if (this->throws && throwWrapNode) {
+      auto setJumpArg = CodegenASTExprAccess::create(
+        CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+        jumpedBefore
+          ? CodegenASTExprBinary::create(
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+              "-",
+              CodegenASTExprLiteral::create("1")
+            )
+          : CodegenASTExprUnary::create(
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+              "++"
+            )
+      );
+
       if (!jumpedBefore) {
-        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx++]) != 0) ");
-        this->state.cleanUp.add(this->_apiEval("_{err_state}.buf_idx--;"));
-      } else {
-        code += std::string(this->indent, ' ') + this->_apiEval("if (_{setjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1]) != 0) ");
+        this->state.cleanUp.add(
+          CodegenASTExprUnary::create(
+            CodegenASTExprAccess::create(
+              CodegenASTExprAccess::create(this->_("err_state")),
+             "buf_idx"
+            ),
+            "--"
+          ).stmt()
+        );
       }
 
-      code += "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
-      auto saveStateCleanUpJumpUsed = this->state.cleanUp.jumpUsed;
+      c.append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("setjmp")),
+              {setJumpArg}
+            ),
+            "!=",
+            CodegenASTExprLiteral::create("0")
+          ),
+          CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel())
+        )
+      );
 
+      auto saveStateCleanUpJumpUsed = this->state.cleanUp.jumpUsed;
       this->state.cleanUp.jumpUsed = true;
-      code += this->_node(node);
+      c = this->_node(c, node);
       this->state.cleanUp.jumpUsed = saveStateCleanUpJumpUsed;
 
       jumpedBefore = true;
     } else {
-      code += this->_node(node);
+      c = this->_node(c, node);
     }
   }
 
   if (saveCleanUp) {
-    code += this->state.cleanUp.gen(this->indent);
+    c = this->state.cleanUp.gen(c);
     auto nodesChecker = ASTChecker(nodes);
     auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
 
     if (!nodesParentChecker.is<ASTNodeMain>() && this->throws && !this->state.cleanUp.empty() && !errHandled) {
-      code += std::string(this->indent, ' ') + this->_apiEval("if (_{err_state}.id != -1) ");
+      auto cStmtIfBody = initialStateCleanUp.isClosestJump()
+        ? CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("longjmp")),
+            {
+              CodegenASTExprAccess::create(
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+                CodegenASTExprBinary::create(
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+                  "-",
+                  CodegenASTExprLiteral::create("1")
+                )
+              ),
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
+            }
+          ).stmt()
+        : CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel());
 
-      if (initialCleanUp.isClosestJump()) {
-        code += this->_apiEval("_{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);" EOL);
-      } else {
-        code += "goto " + initialCleanUp.currentLabel() + ";" EOL;
-      }
+      c.append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
+            "!=",
+            CodegenASTExprLiteral::create("-1")
+          ),
+          cStmtIfBody
+        )
+      );
     }
 
-    if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed && initialCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-      code += std::string(this->indent, ' ') + "if (" + this->state.cleanUp.currentContinueVar() + " == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
-    } else if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed) {
-      code += std::string(this->indent, ' ') + "if (" + this->state.cleanUp.currentContinueVar() + " == 1) continue;" EOL;
+    if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed) {
+      auto cStmtIfBody = initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)
+        ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+        : CodegenASTStmtContinue::create();
+
+      c.append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
+            "==",
+            CodegenASTExprLiteral::create("1")
+          ),
+          CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+        )
+      );
     }
 
-    if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.breakVarUsed && initialCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-      code += std::string(this->indent, ' ') + "if (" + this->state.cleanUp.currentBreakVar() + " == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
-    } else if (this->state.cleanUp.breakVarUsed) {
-      code += std::string(this->indent, ' ') + "if (" + this->state.cleanUp.currentBreakVar() + " == 1) break;" EOL;
+    if (this->state.cleanUp.breakVarUsed) {
+      auto cStmtIfBody = !nodesParentChecker.is<ASTNodeLoop>() && initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)
+        ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+        : CodegenASTStmtBreak::create();
+
+      c.append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
+            "==",
+            CodegenASTExprLiteral::create("1")
+          ),
+          CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+        )
+      );
     }
 
     if (this->state.cleanUp.returnVarUsed && !this->state.cleanUp.empty()) {
-      code += std::string(this->indent, ' ') + "if (r == 1) goto " + initialCleanUp.currentLabel() + ";" EOL;
+      c.append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprAccess::create("r"),
+            "==",
+            CodegenASTExprLiteral::create("1")
+          ),
+          CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+        )
+      );
     }
 
-    this->state.cleanUp = initialCleanUp;
+    this->state.cleanUp = initialStateCleanUp;
   }
 
-  this->indent = initialIndent;
-  return code;
+  return c;
 }
 
-std::string Codegen::_blockAsync (const ASTBlock &nodes, bool saveCleanUp, const std::string &cleanupData, [[maybe_unused]] bool errHandled) {
-  auto initialIndent = this->indent;
-  auto initialCleanUp = this->state.cleanUp;
+CodegenASTStmt &Codegen::_blockAsync (
+  CodegenASTStmt &c,
+  const ASTBlock &nodes,
+  bool saveCleanUp,
+  const std::optional<CodegenASTStmt> &cleanupData,
+  [[maybe_unused]] bool errHandled
+) {
+  auto initialStateCleanUp = this->state.cleanUp;
   auto code = std::string();
 
   if (saveCleanUp) {
-    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialCleanUp, true);
+    this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp, true);
 
-    if (!cleanupData.empty()) {
-      this->state.cleanUp.add(cleanupData);
+    if (cleanupData != std::nullopt) {
+      this->state.cleanUp.add(*cleanupData);
     }
   }
 
-  this->indent += 2;
-
   for (auto i = static_cast<std::size_t>(0); i < nodes.size(); i++) {
-    auto node = nodes[i];
+    auto &node = nodes[i];
     auto nodeChecker = ASTChecker(node);
-
-    if (!this->state.cleanUp.empty() && nodeChecker.hasSyncBreaking()) {
-      if (node.codegenAsyncCounter == nullptr) {
-        node.codegenAsyncCounter = this->state.cleanUp.currentLabelAsync();
-      } else {
-        this->state.cleanUp.currentLabelAsync();
-      }
-    }
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC);
+        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC);
       }
 
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        code += this->_node(nodes[j], true, CODEGEN_PHASE_ALLOC_METHOD);
+        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC_METHOD);
       }
 
       for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
-        code += this->_node(nodes[i], true, CODEGEN_PHASE_INIT);
+        c = this->_node(c, nodes[i], true, CODEGEN_PHASE_INIT);
       }
 
       i--;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      code += this->_node(node, true, CODEGEN_PHASE_ALLOC);
-      code += this->_node(node, true, CODEGEN_PHASE_ALLOC_METHOD);
-      code += this->_node(node, true, CODEGEN_PHASE_INIT);
+      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC);
+      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC_METHOD);
+      c = this->_node(c, node, true, CODEGEN_PHASE_INIT);
     } else if (!nodeChecker.hasSyncBreaking() && !nodeChecker.hasAwait()) {
-      code += this->_node(node);
+      c = this->_node(c, node);
     } else {
-      code += this->_nodeAsync(node);
+      c = this->_nodeAsync(c, node);
     }
   }
 
   if (saveCleanUp) {
     auto nodesChecker = ASTChecker(nodes);
     auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
-    auto cleanUpCode = this->state.cleanUp.genAsync(this->indent, this->state.asyncCounter);
 
-    if (!cleanUpCode.empty()) {
-      this->state.asyncBuffer.push_back(CodegenAsyncBufferItem{this->state.asyncCounter, CodegenAsyncBufferItemCleanUp});
-      code += cleanUpCode;
+    if (!this->state.cleanUp.empty()) {
+      c = this->state.cleanUp.genAsync(c, this->state.asyncCounter);
 
-      if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed) {
-        code += std::string(this->indent, ' ') + "if (*" + this->state.cleanUp.currentContinueVar() + " == 1) ";
-        code += "return " + std::to_string(this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopContinue)) + ";" EOL;
+      if (this->state.cleanUp.breakVarUsed && initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+        c.append(
+          CodegenASTStmtIf::create(
+            CodegenASTExprBinary::create(
+              CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
+              "==",
+              CodegenASTExprLiteral::create("1")
+            ),
+            CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+          )
+        );
       }
 
-      if (this->state.cleanUp.breakVarUsed) {
-        code += std::string(this->indent, ' ') + "if (*" + this->state.cleanUp.currentBreakVar() + " == 1) ";
-        code += "return " + std::to_string(this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopBreak)) + ";" EOL;
+      if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed) {
+        c.append(
+          CodegenASTStmtIf::create(
+            CodegenASTExprBinary::create(
+              CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar())),
+              "==",
+              CodegenASTExprLiteral::create("1")
+            ),
+            CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+          )
+        );
       }
 
       // todo return
       // todo catch
     }
 
-    this->state.cleanUp = initialCleanUp;
+    this->state.cleanUp = initialStateCleanUp;
   }
 
-  this->indent = initialIndent;
-  return code;
+  return c;
 }
