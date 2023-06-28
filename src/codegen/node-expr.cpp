@@ -17,17 +17,13 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeExprDecl (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeExprDecl (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
-  code = this->_nodeExpr(nodeExpr, nodeExpr.type, node, decl, true);
-
-  if (root && !code.empty()) {
-    code = std::string(this->indent, ' ') + code + ";" EOL;
-  }
-
-  return this->_wrapNode(node, root, phase, decl + code);
+  auto cExpr = this->_nodeExpr(nodeExpr, nodeExpr.type, node, c, true).stmt();
+  c.append(cExpr);
+  return c;
 }
 
-std::string Codegen::_nodeExprDeclAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  return this->_nodeExprDecl(node, root, phase, decl, code);
+CodegenASTStmt &Codegen::_nodeExprDeclAsync (CodegenASTStmt &c, const ASTNode &node) {
+  return this->_nodeExprDecl(c, node);
 }

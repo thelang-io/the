@@ -43,7 +43,7 @@ CodegenASTStmt &Codegen::_nodeLoop (CodegenASTStmt &c, const ASTNode &node) {
       if (!this->state.cleanUp.empty()) {
         c = c.append(cCompound);
       } else {
-        cInit = this->_node(c, *nodeLoop.init, false);
+        cInit = this->_node(c, *nodeLoop.init);
       }
     }
 
