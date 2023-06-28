@@ -15,7 +15,6 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
 CodegenASTStmt &Codegen::_nodeMain (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);

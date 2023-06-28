@@ -15,7 +15,6 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
 CodegenASTStmt &Codegen::_nodeExprDecl (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeExpr = std::get<ASTNodeExpr>(*node.body);

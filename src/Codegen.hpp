@@ -261,12 +261,12 @@ class Codegen {
   CodegenASTStmt &_nodeObjDecl (CodegenASTStmt &, const ASTNode &, CodegenPhase);
   CodegenASTStmt &_nodeReturn (CodegenASTStmt &, const ASTNode &);
   CodegenASTStmt &_nodeReturnAsync (CodegenASTStmt &, const ASTNode &);
-  CodegenASTStmt &_nodeThrow (CodegenASTStmt &, const ASTNode &, CodegenPhase);
-  CodegenASTStmt &_nodeThrowAsync (CodegenASTStmt &, const ASTNode &, CodegenPhase);
-  CodegenASTStmt &_nodeTry (CodegenASTStmt &, const ASTNode &, CodegenPhase);
-  CodegenASTStmt &_nodeTryAsync (CodegenASTStmt &, const ASTNode &, CodegenPhase);
-  CodegenASTStmt &_nodeVarDecl (CodegenASTStmt &, const ASTNode &, CodegenPhase);
-  CodegenASTStmt &_nodeVarDeclAsync (CodegenASTStmt &, const ASTNode &, CodegenPhase);
+  CodegenASTStmt &_nodeThrow (CodegenASTStmt &, const ASTNode &);
+  CodegenASTStmt &_nodeThrowAsync (CodegenASTStmt &, const ASTNode &);
+  CodegenASTStmt &_nodeTry (CodegenASTStmt &, const ASTNode &);
+  CodegenASTStmt &_nodeTryAsync (CodegenASTStmt &, const ASTNode &);
+  CodegenASTStmt &_nodeVarDecl (CodegenASTStmt &, const ASTNode &);
+  CodegenASTStmt &_nodeVarDeclAsync (CodegenASTStmt &, const ASTNode &);
   std::string _nodeVarDeclInit (const CodegenTypeInfo &);
   void _restoreStateBuiltinsEntities ();
   void _saveStateBuiltinsEntities ();

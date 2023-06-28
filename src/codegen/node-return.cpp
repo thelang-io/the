@@ -15,7 +15,6 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
 CodegenASTStmt &Codegen::_nodeReturn (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
