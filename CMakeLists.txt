@@ -76,6 +76,8 @@ set(
   src/codegen/type-opt.cpp
   src/codegen/type-union.cpp
 
+  src/codegen-ast/CodegenAST.hpp
+
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
   src/ASTExpr.cpp src/ASTExpr.hpp

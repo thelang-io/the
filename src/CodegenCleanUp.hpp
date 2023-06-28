@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include "codegen-ast/CodegenAST.hpp"
 
 enum CodegenCleanUpType {
   CODEGEN_CLEANUP_ROOT,
@@ -59,8 +60,8 @@ class CodegenCleanUp {
   std::string currentReturnVar ();
   std::string currentValueVar ();
   bool empty () const;
-  std::string gen (std::size_t) const;
-  std::string genAsync (std::size_t, std::size_t &) const;
+  CodegenASTStmt &gen (CodegenASTStmt &) const;
+  CodegenASTStmt &genAsync (CodegenASTStmt &, std::size_t &) const;
   bool hasCleanUp (CodegenCleanUpType) const;
   bool isClosestJump () const;
 

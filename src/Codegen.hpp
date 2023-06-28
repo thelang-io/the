@@ -17,6 +17,7 @@
 #ifndef SRC_CODEGEN_HPP
 #define SRC_CODEGEN_HPP
 
+#include "codegen-ast/CodegenAST.hpp"
 #include "AST.hpp"
 #include "ASTChecker.hpp"
 #include "CodegenAPIItem.hpp"
@@ -100,18 +101,6 @@ struct CodegenEntity {
   bool active = false;
 };
 
-enum CodegenAsyncBufferItemType {
-  CodegenAsyncBufferItemCatch,
-  CodegenAsyncBufferItemCleanUp,
-  CodegenAsyncBufferItemLoopContinue,
-  CodegenAsyncBufferItemLoopBreak
-};
-
-struct CodegenAsyncBufferItem {
-  std::size_t id;
-  CodegenAsyncBufferItemType type;
-};
-
 struct CodegenState {
   std::optional<std::vector<std::string> *> builtins = std::nullopt;
   std::optional<std::vector<std::string> *> entities = std::nullopt;
@@ -121,9 +110,6 @@ struct CodegenState {
   bool insideAsync = false;
   std::map<std::string, Type *> typeCasts = {};
   std::size_t asyncCounter = 0;
-  std::size_t breakAsyncCounter = 0;
-  std::size_t continueAsyncCounter = 0;
-  std::vector<CodegenAsyncBufferItem> asyncBuffer = {};
 };
 
 struct CodegenTypeInfo {
@@ -228,8 +214,8 @@ class Codegen {
   std::string _apiEval (const std::string &, int = 0, const std::string & = "", const std::optional<std::set<std::string> *> & = std::nullopt);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  std::string _block (const ASTBlock &, bool = true, const std::string & = "", bool = false);
-  std::string _blockAsync (const ASTBlock &, bool = true, const std::string & = "", bool = false);
+  CodegenASTStmt &_block (CodegenASTStmt &, ASTBlock &, bool = true, const std::string & = "", bool = false);
+  CodegenASTStmt &_blockAsync (CodegenASTStmt &, ASTBlock &, bool = true, const std::string & = "", bool = false);
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &, const ASTNode &);
   std::string _exprAccess (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
   std::string _exprArray (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
@@ -248,39 +234,38 @@ class Codegen {
   std::string _exprObjDefaultField (const CodegenTypeInfo &);
   std::string _exprRef (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
   std::string _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
-  std::size_t _findClosestAsyncBufferItem (const std::optional<CodegenAsyncBufferItemType> & = std::nullopt) const;
-  std::string _fnDecl (std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
+  std::string _fnDecl (std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
   std::string _genCopyFn (Type *, const std::string &);
   std::string _genEqFn (Type *, const std::string &, const std::string &, bool = false);
   std::string _genFreeFn (Type *, const std::string &);
   std::string _genReallocFn (Type *, const std::string &, const std::string &);
   std::string _genStrFn (Type *, const std::string &, bool = true, bool = true);
-  std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
-  std::string _nodeAsync (ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
-  std::string _nodeBreak (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeBreakAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeContinue (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeContinueAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeEnumDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeExprDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeExprDeclAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool = false, std::size_t = 0);
-  std::string _nodeFnDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeIf (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeIfAsync (ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeLoop (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeLoopAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeMain (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeMainAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeObjDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeReturn (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeReturnAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeThrow (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeThrowAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeTry (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeTryAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeVarDecl (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
-  std::string _nodeVarDeclAsync (const ASTNode &, bool, CodegenPhase, std::string &, std::string &);
+  CodegenASTStmt &_node (CodegenASTStmt &, const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
+  CodegenASTStmt &_nodeAsync (CodegenASTStmt &, const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
+  CodegenASTStmt &_nodeBreak (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeBreakAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeContinue (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeContinueAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeEnumDecl (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeExprDecl (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeExprDeclAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTExpr _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt &, bool = false, std::size_t = 0);
+  CodegenASTStmt &_nodeFnDecl (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeIf (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeIfAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeLoop (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeLoopAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeMain (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeMainAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeObjDecl (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeReturn (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeReturnAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeThrow (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeThrowAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeTry (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeTryAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeVarDecl (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeVarDeclAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
   std::string _nodeVarDeclInit (const CodegenTypeInfo &);
   void _restoreStateBuiltinsEntities ();
   void _saveStateBuiltinsEntities ();

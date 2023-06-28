@@ -57,7 +57,6 @@ struct ASTNode {
   ASTNode *parent;
   ReaderLocation start;
   ReaderLocation end;
-  std::shared_ptr<std::size_t> codegenAsyncCounter = nullptr;
 
   std::string xml (std::size_t = 0) const;
 };
