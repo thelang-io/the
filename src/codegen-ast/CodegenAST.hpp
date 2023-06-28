@@ -24,6 +24,7 @@
 
 struct CodegenASTExprAccess;
 struct CodegenASTExprAssign;
+struct CodegenASTExprBinary;
 struct CodegenASTExprLiteral;
 struct CodegenASTExprUnary;
 
@@ -74,6 +75,7 @@ using CodegenASTStmtBody = std::variant<
 using CodegenASTExprBody = std::variant<
   CodegenASTExprAccess,
   CodegenASTExprAssign,
+  CodegenASTExprBinary,
   CodegenASTExprLiteral,
   CodegenASTExprUnary
 >;
@@ -89,6 +91,7 @@ struct CodegenASTStmt {
   std::shared_ptr<CodegenASTStmtBody> body;
 
   CodegenASTStmt &append (CodegenASTStmt);
+  CodegenASTStmt &exit ();
   CodegenASTStmt &prepend (CodegenASTStmt);
 };
 
@@ -104,6 +107,10 @@ struct CodegenASTExprAccess {
 };
 
 struct CodegenASTExprAssign {
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, const CodegenASTExpr &);
+};
+
+struct CodegenASTExprBinary {
   static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, const CodegenASTExpr &);
 };
 

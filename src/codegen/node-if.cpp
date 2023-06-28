@@ -82,7 +82,7 @@ CodegenASTStmt &Codegen::_nodeIfAsync (CodegenASTStmt &c, const ASTNode &node, b
     );
   }
 
-  c = c.parent->append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
+  c = c.exit().append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
   *afterBodyAsyncCounter = this->state.asyncCounter;
 
   if (nodeIf.alt != std::nullopt) {
@@ -97,7 +97,7 @@ CodegenASTStmt &Codegen::_nodeIfAsync (CodegenASTStmt &c, const ASTNode &node, b
       c = this->_nodeAsync(c, std::get<ASTNode>(*nodeIf.alt));
     }
 
-    c = c.parent->append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
+    c = c.exit().append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
   }
 
   this->state.typeCasts = initialStateTypeCasts;
