@@ -17,76 +17,73 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeIf (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeIf (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
-  auto initialIndent = this->indent;
   auto initialStateTypeCasts = this->state.typeCasts;
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
-  auto nodeIfCondCode = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, decl);
+  auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
+  auto cBody = CodegenASTStmtCompound::create();
+  auto cAlt = std::optional<CodegenASTStmt>();
 
   bodyTypeCasts.merge(this->state.typeCasts);
   bodyTypeCasts.swap(this->state.typeCasts);
   this->varMap.save();
-  auto nodeIfBodyCode = this->_block(nodeIf.body);
+  this->_block(cBody, nodeIf.body);
   this->varMap.restore();
   this->state.typeCasts = initialStateTypeCasts;
-  auto nodeIfAltCode = std::string();
 
   if (nodeIf.alt != std::nullopt) {
     altTypeCasts.merge(this->state.typeCasts);
     altTypeCasts.swap(this->state.typeCasts);
 
+    cAlt = CodegenASTStmtCompound::create();
+
     if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
       this->varMap.save();
-      nodeIfAltCode += this->_block(std::get<ASTBlock>(*nodeIf.alt));
+      this->_block(*cAlt, std::get<ASTBlock>(*nodeIf.alt));
       this->varMap.restore();
     } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-      nodeIfAltCode += this->_node(std::get<ASTNode>(*nodeIf.alt));
+      this->_node(*cAlt, std::get<ASTNode>(*nodeIf.alt));
     }
   }
 
-  code = std::string(this->indent, ' ') + "if (" + nodeIfCondCode + ") {" EOL;
-  code += nodeIfBodyCode;
-
-  if (nodeIf.alt != std::nullopt) {
-    code += std::string(this->indent, ' ') + "} else ";
-
-    if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
-      code += "{" EOL + nodeIfAltCode;
-      code += std::string(this->indent, ' ') + "}" EOL;
-    } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-      code += nodeIfAltCode.substr(nodeIfAltCode.find_first_not_of(' '));
-    }
-  } else {
-    code += std::string(this->indent, ' ') + "}" EOL;
-  }
-
+  c.append(CodegenASTStmtIf::create(cCond, cBody, cAlt));
   this->state.typeCasts = initialStateTypeCasts;
-  this->indent = initialIndent;
-  return this->_wrapNode(node, root, phase, decl + code);
+
+  return c;
 }
 
-std::string Codegen::_nodeIfAsync (ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeIfAsync (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
-  auto initialIndent = this->indent;
   auto initialStateTypeCasts = this->state.typeCasts;
+  auto afterBodyAsyncCounter = std::make_shared<std::size_t>(0);
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
-  auto condCode = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, decl);
+  auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
+
+  c.append(
+    CodegenASTStmtIf::create(
+      CodegenASTExprUnary::create("!", cCond.wrap()),
+      CodegenASTStmtReturn::create(afterBodyAsyncCounter)
+    )
+  );
 
   bodyTypeCasts.merge(this->state.typeCasts);
   bodyTypeCasts.swap(this->state.typeCasts);
-  this->indent -= 2;
   this->varMap.save();
-  auto bodyCode = this->_block(nodeIf.body);
+  c = this->_block(c, nodeIf.body);
   this->varMap.restore();
   this->state.typeCasts = initialStateTypeCasts;
 
-  auto afterBodyCode = std::string();
-  afterBodyCode += std::string(this->indent, ' ') + "}" EOL;
-  afterBodyCode += std::string(this->indent, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
+  if (!ASTChecker(nodeIf.body).endsWithSyncBreaking()) {
+    c.append(
+      CodegenASTStmtReturn::create(
+        CodegenASTExprLiteral::create(std::to_string(this->state.asyncCounter))
+      )
+    );
+  }
 
-  auto afterBodyAsyncCounter = this->state.asyncCounter;
-  auto altCode = std::string();
+  c = c.parent->append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
+  *afterBodyAsyncCounter = this->state.asyncCounter;
 
   if (nodeIf.alt != std::nullopt) {
     altTypeCasts.merge(this->state.typeCasts);
@@ -94,29 +91,15 @@ std::string Codegen::_nodeIfAsync (ASTNode &node, bool root, CodegenPhase phase,
 
     if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
       this->varMap.save();
-      altCode += this->_block(std::get<ASTBlock>(*nodeIf.alt));
+      c = this->_block(c, std::get<ASTBlock>(*nodeIf.alt));
       this->varMap.restore();
     } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-      this->indent = initialIndent;
-      altCode += this->_nodeAsync(std::get<ASTNode>(*nodeIf.alt));
-      this->indent -= 2;
+      c = this->_nodeAsync(c, std::get<ASTNode>(*nodeIf.alt));
     }
 
-    altCode += std::string(this->indent, ' ') + "}" EOL;
-    altCode += std::string(this->indent, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
+    c = c.parent->append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
   }
 
-  code = std::string(this->indent + 2, ' ') + "if (!(" + condCode + ")) {" EOL;
-  code += std::string(this->indent + 4, ' ') + "return " + std::to_string(afterBodyAsyncCounter) + ";" EOL;
-  code += std::string(this->indent + 2, ' ') + "}" EOL;
-  code += bodyCode;
-  code += std::string(this->indent + 2, ' ') + "return ";
-  code += std::to_string(this->state.asyncCounter) + ";" EOL;
-  code += afterBodyCode;
-  code += altCode;
-
-  node.codegenAsyncCounter = std::make_shared<std::size_t>(this->state.asyncCounter);
   this->state.typeCasts = initialStateTypeCasts;
-  this->indent = initialIndent;
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
