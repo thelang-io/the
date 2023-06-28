@@ -18,59 +18,61 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeEnumDecl (const ASTNode &node, bool root, CodegenPhase phase, std::string &topLevelDecl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeEnumDecl (CodegenASTStmt &c, const ASTNode &node, CodegenPhase phase) {
   auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
+  auto members = nodeEnumDecl.members;
   auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
   auto enumType = std::get<TypeEnum>(nodeEnumDecl.type->body);
 
-  if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
-    this->_apiEntity(typeName, CODEGEN_ENTITY_ENUM, [&] (auto &decl, [[maybe_unused]] auto &def) {
-      auto membersCode = std::string();
-
-      for (auto i = static_cast<std::size_t>(0); i < enumType.members.size(); i++) {
-        auto member = enumType.members[i];
-
-        auto nodeEnumDeclMember = std::find_if(
-          nodeEnumDecl.members.begin(),
-          nodeEnumDecl.members.end(),
-          [&member] (const auto &it) -> bool {
-            return it.id == member->name;
-          }
-        );
-
-        if (nodeEnumDeclMember != nodeEnumDecl.members.end()) {
-          membersCode += "  " + Codegen::name(member->codeName);
-
-          if (nodeEnumDeclMember->init != std::nullopt) {
-            membersCode += " = " + this->_nodeExpr(*nodeEnumDeclMember->init, nodeEnumDeclMember->init->type, node, topLevelDecl, true);
-          }
-
-          membersCode += i == enumType.members.size() - 1 ? EOL : "," EOL;
-        }
-      }
-
-      decl += "enum " + typeName + " {" EOL;
-      decl += membersCode;
-      decl += "};";
-
-      return 0;
-    });
-
-    this->_apiEntity(typeName + "_rawValue", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
-      auto typeInfo = this->_typeInfo(nodeEnumDecl.type);
-
-      decl += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCodeTrimmed + ");";
-      def += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCode + "n) {" EOL;
-
-      for (const auto &member : enumType.members) {
-        def += "  if (n == " + Codegen::name(member->codeName) + ")" R"( return _{str_alloc}(")" + member->name + R"(");)" EOL;
-      }
-
-      def += "}";
-
-      return 0;
-    });
+  if (phase != CODEGEN_PHASE_ALLOC && phase != CODEGEN_PHASE_FULL) {
+    return c;
   }
 
-  return this->_wrapNode(node, root, phase, topLevelDecl + code);
+  auto cDecl = CodegenASTStmtCompound::create();
+
+  this->_apiEntity(typeName, CODEGEN_ENTITY_ENUM, [&] (auto &decl, [[maybe_unused]] auto &def) {
+    auto membersCode = std::string();
+
+    for (auto i = static_cast<std::size_t>(0); i < enumType.members.size(); i++) {
+      auto typeMember = enumType.members[i];
+
+      auto member = std::find_if(members.begin(), members.end(), [&] (const auto &it) -> bool {
+        return it.id == typeMember->name;
+      });
+
+      if (member != members.end()) {
+        membersCode += "  " + Codegen::name(typeMember->codeName);
+
+        if (member->init != std::nullopt) {
+          auto cInit = this->_nodeExpr(*member->init, member->init->type, node, cDecl, true);
+          membersCode += " = " + cInit.str();
+        }
+
+        membersCode += i == enumType.members.size() - 1 ? EOL : "," EOL;
+      }
+    }
+
+    decl += "enum " + typeName + " {" EOL;
+    decl += membersCode;
+    decl += "};";
+
+    return 0;
+  });
+
+  this->_apiEntity(typeName + "_rawValue", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    auto typeInfo = this->_typeInfo(nodeEnumDecl.type);
+
+    decl += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCodeTrimmed + ");";
+    def += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCode + "n) {" EOL;
+
+    for (const auto &member : enumType.members) {
+      def += "  if (n == " + Codegen::name(member->codeName) + ")" R"( return _{str_alloc}(")" + member->name + R"(");)" EOL;
+    }
+
+    def += "}";
+
+    return 0;
+  });
+
+  return c;
 }

@@ -101,7 +101,7 @@ struct CodegenASTStmt {
   CodegenASTStmt &append (const CodegenASTStmt &);
   CodegenASTStmt &exit () const;
   CodegenASTStmt &prepend (const CodegenASTStmt &);
-  std::string str ();
+  std::string str () const;
 };
 
 struct CodegenASTExpr {
@@ -111,6 +111,7 @@ struct CodegenASTExpr {
   std::shared_ptr<CodegenASTExprBody> body;
 
   CodegenASTStmt stmt ();
+  std::string str () const;
   CodegenASTExpr wrap ();
 };
 

@@ -64,7 +64,7 @@ std::string Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, co
 
     auto fieldTypeInfo = this->_typeInfo(typeField.type);
 
-    auto exprObjProp = std::find_if(exprObj.props.begin(), exprObj.props.end(), [&typeField] (const auto &it) -> bool {
+    auto exprObjProp = std::find_if(exprObj.props.begin(), exprObj.props.end(), [&] (const auto &it) -> bool {
       return it.name == typeField.name;
     });
 

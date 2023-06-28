@@ -221,7 +221,7 @@ std::string Codegen::_exprAccess (const ASTNodeExpr &nodeExpr, Type *targetType,
     auto member = std::find_if(
       enumType.members.begin(),
       enumType.members.end(),
-      [&memberName] (const auto &it) -> bool {
+      [&] (const auto &it) -> bool {
         return it->name == memberName;
       }
     );
