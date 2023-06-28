@@ -34,7 +34,7 @@ CodegenASTStmt &Codegen::_block (
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
 
     if (cleanupData != std::nullopt) {
-      this->state.cleanUp.add(*cleanupData);
+      this->state.cleanUp.merge(*cleanupData);
     }
 
     if (
@@ -56,22 +56,22 @@ CodegenASTStmt &Codegen::_block (
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC);
+        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
       }
 
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC_METHOD);
+        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
       }
 
       for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
-        c = this->_node(c, nodes[i], true, CODEGEN_PHASE_INIT);
+        c = this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
       }
 
       i--;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC);
-      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC_METHOD);
-      c = this->_node(c, node, true, CODEGEN_PHASE_INIT);
+      c = this->_node(c, node, CODEGEN_PHASE_ALLOC);
+      c = this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
+      c = this->_node(c, node, CODEGEN_PHASE_INIT);
     } else if (this->throws && throwWrapNode) {
       auto setJumpArg = CodegenASTExprAccess::create(
         CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
@@ -226,7 +226,7 @@ CodegenASTStmt &Codegen::_blockAsync (
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp, true);
 
     if (cleanupData != std::nullopt) {
-      this->state.cleanUp.add(*cleanupData);
+      this->state.cleanUp.merge(*cleanupData);
     }
   }
 
@@ -236,22 +236,22 @@ CodegenASTStmt &Codegen::_blockAsync (
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC);
+        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
       }
 
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], true, CODEGEN_PHASE_ALLOC_METHOD);
+        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
       }
 
       for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
-        c = this->_node(c, nodes[i], true, CODEGEN_PHASE_INIT);
+        c = this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
       }
 
       i--;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC);
-      c = this->_node(c, node, true, CODEGEN_PHASE_ALLOC_METHOD);
-      c = this->_node(c, node, true, CODEGEN_PHASE_INIT);
+      c = this->_node(c, node, CODEGEN_PHASE_ALLOC);
+      c = this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
+      c = this->_node(c, node, CODEGEN_PHASE_INIT);
     } else if (!nodeChecker.hasSyncBreaking() && !nodeChecker.hasAwait()) {
       c = this->_node(c, node);
     } else {

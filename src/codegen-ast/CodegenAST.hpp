@@ -172,6 +172,7 @@ struct CodegenASTStmtContinue {
 };
 
 struct CodegenASTStmtDefault {
+  static CodegenASTStmt create ();
 };
 
 struct CodegenASTStmtEnumDecl {

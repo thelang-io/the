@@ -65,6 +65,7 @@ class CodegenCleanUp {
   CodegenASTStmt &genAsync (CodegenASTStmt &, std::size_t &) const;
   bool hasCleanUp (CodegenCleanUpType) const;
   bool isClosestJump () const;
+  void merge (const CodegenASTStmt &);
 
  private:
   std::vector<CodegenCleanUpItem> _data;
