@@ -76,7 +76,7 @@ std::string Codegen::_typeNameUnion (Type *type) {
       }
 
       def += "  if (n.t == _{" + this->_typeDef(subType) + "}) ";
-      def += this->_genFreeFn(subType, "n.v" + this->_typeDefIdx(subType)) + ";" EOL;
+      def += this->_genFreeFn(subType, "n.v" + this->_typeDefIdx(subType)).str() + ";" EOL;
     }
 
     def += "}";
@@ -93,7 +93,7 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto subTypeProp = "v" + this->_typeDefIdx(subType);
 
       def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r." + subTypeProp + " = ";
-      def += this->_genCopyFn(subType, "n." + subTypeProp) + ";" EOL;
+      def += this->_genCopyFn(subType, "n." + subTypeProp).str() + ";" EOL;
     }
 
     def += "  return r;" EOL;
@@ -112,12 +112,12 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto subTypeProp = "v" + this->_typeDefIdx(subType);
 
       def += "    if (n1.t == _{" + this->_typeDef(subType) + "}) ";
-      def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp) + ";" EOL;
+      def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp).str() + ";" EOL;
     }
 
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -134,12 +134,12 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto subTypeProp = "v" + this->_typeDefIdx(subType);
 
       def += "    if (n1.t == _{" + this->_typeDef(subType) + "}) ";
-      def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp, true) + ";" EOL;
+      def += "r = " + this->_genEqFn(subType, "n1." + subTypeProp, "n2." + subTypeProp, true).str() + ";" EOL;
     }
 
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -149,7 +149,7 @@ std::string Codegen::_typeNameUnion (Type *type) {
   this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
     def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
     def += "  return n2;" EOL;
     def += "}";
 
@@ -165,10 +165,10 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto subTypeProp = "v" + this->_typeDefIdx(subType);
 
       def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r = ";
-      def += this->_genStrFn(subType, "n." + subTypeProp, true, false) + ";" EOL;
+      def += this->_genStrFn(subType, "n." + subTypeProp, true, false).str() + ";" EOL;
     }
 
-    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n").str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 

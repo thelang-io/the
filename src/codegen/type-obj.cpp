@@ -104,7 +104,7 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
         if (!field.builtin && !field.type->isMethod()) {
           auto fieldName = Codegen::name(field.name);
 
-          entity.def += (fieldIdx == 0 ? "" : ", ") + this->_genCopyFn(field.type, "n->" + fieldName);
+          entity.def += (fieldIdx == 0 ? "" : ", ") + this->_genCopyFn(field.type, "n->" + fieldName).str();
           fieldIdx++;
         }
       }
@@ -128,14 +128,14 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
         if (!field.builtin && !field.type->isMethod()) {
           auto fieldName = Codegen::name(field.name);
 
-          entity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, "n1->" + fieldName, "n2->" + fieldName);
+          entity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, "n1->" + fieldName, "n2->" + fieldName).str();
           fieldIdx++;
         }
       }
 
       entity.def += ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
       entity.def += "  return r;" EOL;
       entity.def += "}";
       entity.decl = this->_apiEval(entity.decl);
@@ -150,7 +150,7 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.type->isMethod() && field.type->shouldBeFreed()) {
           auto fieldName = Codegen::name(field.name);
-          entity.def += "  " + this->_genFreeFn(field.type, "n->" + fieldName) + ";" EOL;
+          entity.def += "  " + this->_genFreeFn(field.type, "n->" + fieldName).str() + ";" EOL;
         }
       }
 
@@ -171,14 +171,14 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.type->isMethod()) {
           auto fieldName = Codegen::name(field.name);
-          entity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, "n1->" + fieldName, "n2->" + fieldName, true);
+          entity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, "n1->" + fieldName, "n2->" + fieldName, true).str();
           fieldIdx++;
         }
       }
 
       entity.def += ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
       entity.def += "  return r;" EOL;
       entity.def += "}";
       entity.decl = this->_apiEval(entity.decl);
@@ -191,7 +191,7 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
       entity.decl += "(struct _{" + typeName + "} *, struct _{" + typeName + "} *);";
       entity.def += "struct _{" + typeName + "} *" + typeName + "_realloc ";
       entity.def += "(struct _{" + typeName + "} *n1, struct _{" + typeName + "} *n2) {" EOL;
-      entity.def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
       entity.def += "  return n2;" EOL;
       entity.def += "}";
       entity.decl = this->_apiEval(entity.decl);
@@ -213,18 +213,18 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
 
           if (field.type->isStr()) {
             entity.def += R"(  r = _{str_concat_cstr}(r, ")" + strCodeDelimiter + field.name + R"(: \"");)" EOL;
-            entity.def += "  r = _{str_concat_str}(r, " + this->_genStrFn(field.type, fieldCode) + ");" EOL;
+            entity.def += "  r = _{str_concat_str}(r, " + this->_genStrFn(field.type, fieldCode).str() + ");" EOL;
             entity.def += R"(  r = _{str_concat_cstr}(r, "\"");)" EOL;
           } else {
             entity.def += R"(  r = _{str_concat_cstr}(r, ")" + strCodeDelimiter + field.name + R"(: ");)" EOL;
-            entity.def += "  r = _{str_concat_str}(r, " + this->_genStrFn(field.type, fieldCode) + ");" EOL;
+            entity.def += "  r = _{str_concat_str}(r, " + this->_genStrFn(field.type, fieldCode).str() + ");" EOL;
           }
 
           fieldIdx++;
         }
       }
 
-      entity.def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+      entity.def += "  " + this->_genFreeFn(type, "n").str() + ";" EOL;
       entity.def += R"(  return _{str_concat_cstr}(r, "}");)" EOL;
       entity.def += "}";
       entity.decl = this->_apiEval(entity.decl);

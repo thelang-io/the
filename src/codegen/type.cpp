@@ -17,7 +17,7 @@
 #include "../Codegen.hpp"
 
 std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen::_evalTypeCasts (const ASTNodeExpr &nodeExpr, const ASTNode &parent) {
-  auto decl = std::string();
+  auto cDecl = CodegenASTStmtCompound::create();
   auto initialTypeCasts = this->state.typeCasts;
   auto bodyTypeCasts = std::map<std::string, Type *>{};
   auto altTypeCasts = std::map<std::string, Type *>{};
@@ -64,7 +64,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
         auto exprBinaryRightLit = std::get<ASTExprLit>(*exprBinaryRight.body);
 
         if (exprBinaryLeft.type->isOpt() && exprBinaryRightLit.type == AST_EXPR_LIT_NIL) {
-          auto exprBinaryLeftAccessCode = this->_nodeExpr(exprBinaryLeft, exprBinaryLeft.type, parent, decl, true);
+          auto exprBinaryLeftAccessCode = this->_nodeExpr(exprBinaryLeft, exprBinaryLeft.type, parent, cDecl, true).str();
           auto exprBinaryLeftAccessTypeOpt = std::get<TypeOptional>(exprBinaryLeft.type->body);
 
           if (exprBinary.op == AST_EXPR_BINARY_EQ) {
@@ -83,7 +83,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
         auto exprBinaryRightLit = std::get<ASTExprLit>(*exprBinaryRight.body);
 
         if (exprBinaryLeft.type->isOpt() && exprBinaryRightLit.type == AST_EXPR_LIT_NIL) {
-          auto exprBinaryLeftAccessCode = this->_nodeExpr(exprBinaryLeftAssign.left, exprBinaryLeftAssign.left.type, parent, decl, true);
+          auto exprBinaryLeftAccessCode = this->_nodeExpr(exprBinaryLeftAssign.left, exprBinaryLeftAssign.left.type, parent, cDecl, true).str();
           auto exprBinaryLeftAccessTypeOpt = std::get<TypeOptional>(exprBinaryLeftAssign.left.type->body);
 
           if (exprBinary.op == AST_EXPR_BINARY_EQ) {
@@ -102,7 +102,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
       auto exprRealType = Type::real(exprAccess.type);
 
       if (exprRealType->isAny() || exprRealType->isOpt() || exprRealType->isUnion()) {
-        auto exprBinaryLeftAccessCode = this->_nodeExpr(exprAccess, exprRealType, parent, decl, true);
+        auto exprBinaryLeftAccessCode = this->_nodeExpr(exprAccess, exprRealType, parent, cDecl, true).str();
         bodyTypeCasts[exprBinaryLeftAccessCode] = exprIs.type;
 
         if (exprRealType->isUnion()) {
@@ -117,7 +117,7 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
       auto exprRealType = Type::real(exprAccess.type);
 
       if (exprRealType->isAny() || exprRealType->isOpt() || exprRealType->isUnion()) {
-        auto exprBinaryLeftAccessCode = this->_nodeExpr(exprAccess, exprRealType, parent, decl, true);
+        auto exprBinaryLeftAccessCode = this->_nodeExpr(exprAccess, exprRealType, parent, cDecl, true).str();
         bodyTypeCasts[exprBinaryLeftAccessCode] = exprIs.type;
 
         if (exprRealType->isUnion()) {

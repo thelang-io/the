@@ -48,7 +48,7 @@ std::string Codegen::_typeNameOpt (Type *type) {
     def += "  if (n == _{NULL}) return;" EOL;
 
     if (underlyingTypeInfo.type->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(underlyingTypeInfo.type, "*n") + ";" EOL;
+      def += "  " + this->_genFreeFn(underlyingTypeInfo.type, "*n").str() + ";" EOL;
     }
 
     def += "  _{free}(n);" EOL;
@@ -64,7 +64,7 @@ std::string Codegen::_typeNameOpt (Type *type) {
     def += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + "n) {" EOL;
     def += "  if (n == _{NULL}) return _{NULL};" EOL;
     def += "  " + underlyingTypeInfo.typeRefCode + "r = _{alloc}(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
-    def += "  *r = " + this->_genCopyFn(underlyingTypeInfo.type, "*n") + ";" EOL;
+    def += "  *r = " + this->_genCopyFn(underlyingTypeInfo.type, "*n").str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -77,9 +77,9 @@ std::string Codegen::_typeNameOpt (Type *type) {
     decl += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
     def += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 == _{NULL} && n2 == _{NULL} ";
-    def += ": " + this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2") + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += ": " + this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2").str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -92,9 +92,9 @@ std::string Codegen::_typeNameOpt (Type *type) {
     decl += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
     def += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 != _{NULL} || n2 != _{NULL} : ";
-    def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", true) + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n2") + ";" EOL;
+    def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", true).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -108,7 +108,7 @@ std::string Codegen::_typeNameOpt (Type *type) {
     decl += ", " + underlyingTypeInfo.typeRefCode + ");";
     def += underlyingTypeInfo.typeRefCode + typeName + "_realloc (" + underlyingTypeInfo.typeRefCode + "n1";
     def += ", " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
     def += "  return n2;" EOL;
     def += "}";
 
@@ -124,13 +124,13 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
     if (underlyingTypeInfo.realType->isStr()) {
       def += R"(  _{struct str} r = _{str_alloc}("\"");)" EOL;
-      def += "  r = _{str_concat_str}(r, " + this->_genStrFn(underlyingTypeInfo.realType, "*n") + ");" EOL;
+      def += "  r = _{str_concat_str}(r, " + this->_genStrFn(underlyingTypeInfo.realType, "*n").str() + ");" EOL;
       def += R"(  r = _{str_concat_cstr}(r, "\"");)" EOL;
     } else {
-      def += "  _{struct str} r = " + this->_genStrFn(underlyingTypeInfo.realType, "*n") + ";" EOL;
+      def += "  _{struct str} r = " + this->_genStrFn(underlyingTypeInfo.realType, "*n").str() + ";" EOL;
     }
 
-    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n").str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 

@@ -289,7 +289,7 @@ CodegenASTStmt &Codegen::_fnDecl (
           );
 
           if (paramTypeInfo.type->shouldBeFreed()) {
-            this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName));
+            this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName).stmt());
           }
 
           paramIdx++;
@@ -297,7 +297,7 @@ CodegenASTStmt &Codegen::_fnDecl (
       }
 
       if (hasSelfParam && fnType.callInfo.selfType->shouldBeFreed()) {
-        this->state.cleanUp.add(this->_genFreeFn(fnType.callInfo.selfType, Codegen::name(fnType.callInfo.selfCodeName)));
+        this->state.cleanUp.add(this->_genFreeFn(fnType.callInfo.selfType, Codegen::name(fnType.callInfo.selfCodeName)).stmt());
       }
 
       if (fnType.async) {
@@ -483,7 +483,7 @@ CodegenASTStmt &Codegen::_fnDecl (
     );
 
     if (varTypeInfo.type->shouldBeFreed()) {
-      this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, (this->async && node.parent != nullptr ? "*" : "") + fnName));
+      this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, (this->async && node.parent != nullptr ? "*" : "") + fnName).stmt());
     }
   }
 

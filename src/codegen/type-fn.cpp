@@ -108,7 +108,7 @@ std::string Codegen::_typeNameFn (Type *type) {
   this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
     def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-    def += "  " + this->_genFreeFn(type, "n1") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
     def += "  return n2;" EOL;
     def += "}";
 
@@ -118,7 +118,7 @@ std::string Codegen::_typeNameFn (Type *type) {
   this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
     def += "_{struct str} " + typeName + "_str (struct _{" + typeName + "} n) {" EOL;
-    def += "  " + this->_genFreeFn(type, "n") + ";" EOL;
+    def += "  " + this->_genFreeFn(type, "n").str() + ";" EOL;
     def += R"(  return _{str_alloc}("[Function]");)" EOL;
     def += "}";
 

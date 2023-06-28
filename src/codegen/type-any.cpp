@@ -48,7 +48,7 @@ std::string Codegen::_typeNameAny (Type *type) {
     def += "_{struct any} " + typeName + "_copy (const _{struct any} n) {" EOL;
     def += "  struct _{" + typeName + "} *o = n.d;" EOL;
     def += "  struct _{" + typeName + "} *r = _{alloc}(n.l);" EOL;
-    def += "  r->d = " + this->_genCopyFn(typeInfo.type, "o->d") + ";" EOL;
+    def += "  r->d = " + this->_genCopyFn(typeInfo.type, "o->d").str() + ";" EOL;
     def += "  return (_{struct any}) {n.t, r, n.l, n._copy, n._free};" EOL;
     def += "}";
 
@@ -63,7 +63,7 @@ std::string Codegen::_typeNameAny (Type *type) {
     def += "  struct _{" + typeName + "} *n = _n.d;" EOL;
 
     if (typeInfo.type->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(typeInfo.type, "n->d") + ";" EOL;
+      def += "  " + this->_genFreeFn(typeInfo.type, "n->d").str() + ";" EOL;
     }
 
     def += "  _{free}(n);" EOL;

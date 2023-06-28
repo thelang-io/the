@@ -15,7 +15,6 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
 CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeTry = std::get<ASTNodeTry>(*node.body);
@@ -110,7 +109,7 @@ CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
     );
 
     this->varMap.save();
-    c = this->_block(c, handler.body, true, this->_genFreeFn(handlerTypeInfo.type, handleCodeName));
+    c = this->_block(c, handler.body, true, this->_genFreeFn(handlerTypeInfo.type, handleCodeName).stmt());
     c.append(CodegenASTStmtBreak::create());
     c = c.exit();
     this->varMap.restore();

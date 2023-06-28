@@ -15,7 +15,6 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
 CodegenASTExpr Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
