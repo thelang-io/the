@@ -256,8 +256,8 @@ class Codegen {
   CodegenASTStmt &_nodeIfAsync (CodegenASTStmt &, const ASTNode &);
   CodegenASTStmt &_nodeLoop (CodegenASTStmt &, const ASTNode &);
   CodegenASTStmt &_nodeLoopAsync (CodegenASTStmt &, const ASTNode &);
-  CodegenASTStmt &_nodeMain (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
-  CodegenASTStmt &_nodeMainAsync (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
+  CodegenASTStmt &_nodeMain (CodegenASTStmt &, const ASTNode &);
+  CodegenASTStmt &_nodeMainAsync (CodegenASTStmt &, const ASTNode &);
   CodegenASTStmt &_nodeObjDecl (CodegenASTStmt &, const ASTNode &, bool, CodegenPhase);
   CodegenASTStmt &_nodeReturn (CodegenASTStmt &, const ASTNode &);
   CodegenASTStmt &_nodeReturnAsync (CodegenASTStmt &, const ASTNode &);

@@ -54,7 +54,6 @@ CodegenASTStmt &Codegen::_fnDecl (
     !awaitExprCalls.empty();
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
-    auto initialIndent = this->indent;
     auto initialStateCleanUp = this->state.cleanUp;
     auto initialStateContextVars = this->state.contextVars;
     auto initialStateInsideAsync = this->state.insideAsync;
@@ -105,8 +104,6 @@ CodegenASTStmt &Codegen::_fnDecl (
 
     this->_apiEntity(typeName, CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
       this->varMap.save();
-      this->indent = 2;
-
       auto cBody = CodegenASTStmtCompound::create();
 
       if (!params.empty() || hasSelfParam || this->throws) {
@@ -161,10 +158,7 @@ CodegenASTStmt &Codegen::_fnDecl (
           CodegenASTExprCall::create(
             CodegenASTExprAccess::create(this->_("error_stack_pop")),
             {
-              CodegenASTExprUnary::create(
-                "&",
-                CodegenASTExprAccess::create(this->_("err_state"))
-              )
+              CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))
             }
           ).stmt()
         );
@@ -318,7 +312,6 @@ CodegenASTStmt &Codegen::_fnDecl (
       this->state.returnType = returnTypeInfo.type;
       this->state.insideAsync = fnType.async;
       this->state.asyncCounter = 0;
-      this->indent = this->state.insideAsync ? 4 : 0;
       cBody = this->_block(cBody, *body, false);
       this->varMap.restore();
 
@@ -411,7 +404,6 @@ CodegenASTStmt &Codegen::_fnDecl (
       });
     }
 
-    this->indent = initialIndent;
     this->state.cleanUp = initialStateCleanUp;
     this->state.contextVars = initialStateContextVars;
     this->state.insideAsync = initialStateInsideAsync;

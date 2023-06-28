@@ -18,16 +18,6 @@
 
 CodegenASTStmt &Codegen::_nodeFnDecl (CodegenASTStmt &c, const ASTNode &node, [[maybe_unused]] bool root, CodegenPhase phase) {
   auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
-
-  c = this->_fnDecl(
-    c,
-    nodeFnDecl.var,
-    nodeFnDecl.stack,
-    nodeFnDecl.params,
-    nodeFnDecl.body,
-    node,
-    phase
-  );
-
+  c = this->_fnDecl(c, nodeFnDecl.var, nodeFnDecl.stack, nodeFnDecl.params, nodeFnDecl.body, node, phase);
   return c;
 }

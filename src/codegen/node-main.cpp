@@ -17,27 +17,35 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeMain (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeMain (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
-  auto initialIndent = this->indent;
-
-  this->indent = 0;
   this->varMap.save();
-  code = this->_block(nodeMain.body);
+  c = this->_block(c, nodeMain.body);
   this->varMap.restore();
-  this->indent = initialIndent;
-
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
 
-std::string Codegen::_nodeMainAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeMainAsync (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
   auto returnType = this->ast->typeMap.get("void");
   auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->throws, this->async);
   auto asyncMainVar = std::make_shared<Var>(Var{"async_main", "async_main", asyncMainType, false, false, true, false, 0});
 
-  code += this->_fnDecl(asyncMainVar, nodeMain.stack, {}, nodeMain.body, node, CODEGEN_PHASE_FULL);
-  code += std::string(this->indent, ' ') + this->_apiEval("_{threadpool_add}(tp, async_main.f, async_main.x, _{NULL}, _{NULL}, _{NULL});" EOL);
+  c = this->_fnDecl(c, asyncMainVar, nodeMain.stack, {}, nodeMain.body, node, CODEGEN_PHASE_FULL);
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  c.append(
+    CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("threadpool_add")),
+      {
+        CodegenASTExprAccess::create("tp"),
+        CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "f"),
+        CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "x"),
+        CodegenASTExprAccess::create(this->_("NULL")),
+        CodegenASTExprAccess::create(this->_("NULL")),
+        CodegenASTExprAccess::create(this->_("NULL"))
+      }
+    ).stmt()
+  );
+
+  return c;
 }
