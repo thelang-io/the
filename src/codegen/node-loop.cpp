@@ -119,7 +119,11 @@ CodegenASTStmt &Codegen::_nodeLoopAsync (CodegenASTStmt &c, const ASTNode &node)
   }
 
   auto &cInit = c;
-  c = c.exit().append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
+
+  c = c.exit().append(
+    CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+  );
+
   auto afterInitAsyncCounter = this->state.asyncCounter;
 
   if (nodeLoop.cond != std::nullopt) {
@@ -136,7 +140,10 @@ CodegenASTStmt &Codegen::_nodeLoopAsync (CodegenASTStmt &c, const ASTNode &node)
   auto saveStateCleanUp = this->state.cleanUp;
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp, true);
   c = this->_block(c, nodeLoop.body);
-  c = c.exit().append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
+
+  c = c.exit().append(
+    CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+  );
 
   if (nodeLoop.upd != std::nullopt) {
     auto cUpd = this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, c, true);
@@ -144,7 +151,10 @@ CodegenASTStmt &Codegen::_nodeLoopAsync (CodegenASTStmt &c, const ASTNode &node)
   }
 
   c.append(CodegenASTStmtReturn::create(CodegenASTExprLiteral::create(std::to_string(afterInitAsyncCounter))));
-  c = c.exit().append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
+
+  c = c.exit().append(
+    CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+  );
 
   if (this->state.cleanUp.breakVarUsed) {
     cInit.append(
@@ -168,7 +178,10 @@ CodegenASTStmt &Codegen::_nodeLoopAsync (CodegenASTStmt &c, const ASTNode &node)
 
   if (!saveStateCleanUp.empty()) {
     c = saveStateCleanUp.genAsync(c, this->state.asyncCounter);
-    c = c.exit().append(CodegenASTStmtCase::create(std::to_string(++this->state.asyncCounter)));
+
+    c = c.exit().append(
+      CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+    );
 
     // todo return
     // todo catch

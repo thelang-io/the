@@ -17,55 +17,79 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeReturn (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeReturn (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
 
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) || this->state.cleanUp.returnVarUsed) {
     auto parentNotRoot = this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT;
 
     if (parentNotRoot && this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
-      code += std::string(this->indent, ' ') + this->state.cleanUp.currentReturnVar() + " = 1;" EOL;
+      c.append(
+        CodegenASTExprAssign::create(
+          CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar()),
+          "=",
+          CodegenASTExprLiteral::create("1")
+        ).stmt()
+      );
     }
 
     if (nodeReturn.body != std::nullopt) {
-      code += std::string(this->indent, ' ') + this->state.cleanUp.currentValueVar() + " = ";
-      code += this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, decl) + ";" EOL;
+      c.append(
+        CodegenASTExprAssign::create(
+          CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()),
+          "=",
+          this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c)
+        ).stmt()
+      );
     }
 
     auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
     auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast();
 
     if ((!nodeParentFunction && this->state.cleanUp.empty()) || !nodeIsLast) {
-      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+      c.append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
     }
   } else if (nodeReturn.body != std::nullopt) {
-    code = std::string(this->indent, ' ') + "return " + this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, decl) + ";" EOL;
+    auto cArg = this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c);
+    c.append(CodegenASTStmtReturn::create(cArg));
   } else {
-    code = std::string(this->indent, ' ') + "return;" EOL;
+    c.append(CodegenASTStmtReturn::create());
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
 
-std::string Codegen::_nodeReturnAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeReturnAsync (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
   auto parentNotRoot = this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT;
 
   if (parentNotRoot && this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
-    code += std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentReturnVar() + " = 1;" EOL;
+    c.append(
+      CodegenASTExprAssign::create(
+        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar())),
+        "=",
+        CodegenASTExprLiteral::create("1")
+      ).stmt()
+    );
   }
 
   if (nodeReturn.body != std::nullopt) {
-    code += std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentValueVar() + " = ";
-    code += this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, decl) + ";" EOL;
+    c.append(
+      CodegenASTExprAssign::create(
+        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar())),
+        "=",
+        this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c)
+      ).stmt()
+    );
   }
 
   auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
   auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast();
 
   if ((!nodeParentFunction && this->state.cleanUp.empty()) || !nodeIsLast) {
-    code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+    // todo
+    // c.append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }

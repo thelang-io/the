@@ -220,6 +220,7 @@ struct CodegenASTStmtMacroReplace {
 };
 
 struct CodegenASTStmtReturn {
+  static CodegenASTStmt create ();
   static CodegenASTStmt create (const CodegenASTExpr &);
   static CodegenASTStmt create (const std::shared_ptr<std::size_t> &);
 };
