@@ -15,9 +15,8 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
-CodegenASTStmt &Codegen::_nodeLoop (CodegenASTStmt &c, ASTNode &node, bool root, CodegenPhase phase) {
+CodegenASTStmt &Codegen::_nodeLoop (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
   auto initialStateCleanUp = this->state.cleanUp;
 
@@ -106,7 +105,7 @@ CodegenASTStmt &Codegen::_nodeLoop (CodegenASTStmt &c, ASTNode &node, bool root,
   return c;
 }
 
-CodegenASTStmt &Codegen::_nodeLoopAsync (CodegenASTStmt &c, ASTNode &node, bool root, CodegenPhase phase) {
+CodegenASTStmt &Codegen::_nodeLoopAsync (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
   auto initialStateCleanUp = this->state.cleanUp;
 

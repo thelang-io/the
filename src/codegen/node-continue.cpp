@@ -15,34 +15,45 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
-std::string Codegen::_nodeContinue (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeContinue (CodegenASTStmt &c, const ASTNode &node) {
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
     if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
-      code = std::string(this->indent, ' ') + this->state.cleanUp.currentContinueVar() + " = 1;" EOL;
+      c.append(
+        CodegenASTExprAssign::create(
+          CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
+          "=",
+          CodegenASTExprLiteral::create("1")
+        ).stmt()
+      );
     }
 
     if (!ASTChecker(node).isLast()) {
-      code += std::string(this->indent, ' ') + "goto " + this->state.cleanUp.currentLabel() + ";" EOL;
+      c.append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
     }
   } else {
-    code = std::string(this->indent, ' ') + "continue;" EOL;
+    c.append(CodegenASTStmtContinue::create());
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
 
-std::string Codegen::_nodeContinueAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
-  auto asyncCounter = node.codegenAsyncCounter == nullptr || *node.codegenAsyncCounter == 0
-    ? this->_findClosestAsyncBufferItem(CodegenAsyncBufferItemLoopContinue)
-    : *node.codegenAsyncCounter;
-
-  code = std::string(this->indent, ' ') + "*" + this->state.cleanUp.currentContinueVar() + " = 1;" EOL;
-
-  if (asyncCounter != this->state.asyncCounter + 1 || !ASTChecker(node).isLast()) {
-    code += std::string(this->indent, ' ') + "return " + std::to_string(asyncCounter) + ";" EOL;
+CodegenASTStmt &Codegen::_nodeContinueAsync (CodegenASTStmt &c, [[maybe_unused]] const ASTNode &node) {
+  if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
+    c.append(
+      CodegenASTExprAssign::create(
+        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar())),
+        "=",
+        CodegenASTExprLiteral::create("1")
+      ).stmt()
+    );
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+    c.append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
+  } else {
+    // todo
+  }
+
+  return c;
 }

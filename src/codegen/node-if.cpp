@@ -15,9 +15,8 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
-CodegenASTStmt &Codegen::_nodeIf (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
+CodegenASTStmt &Codegen::_nodeIf (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
@@ -53,7 +52,7 @@ CodegenASTStmt &Codegen::_nodeIf (CodegenASTStmt &c, const ASTNode &node, bool r
   return c;
 }
 
-CodegenASTStmt &Codegen::_nodeIfAsync (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
+CodegenASTStmt &Codegen::_nodeIfAsync (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto afterBodyAsyncCounter = std::make_shared<std::size_t>(0);

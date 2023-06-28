@@ -15,15 +15,14 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
-CodegenASTStmt &Codegen::_nodeBreak (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
+CodegenASTStmt &Codegen::_nodeBreak (CodegenASTStmt &c, const ASTNode &node) {
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
     c.append(
       CodegenASTExprAssign::create(
         CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
         "=",
-        CodegenASTExprLiteral::create(std::to_string(1))
+        CodegenASTExprLiteral::create("1")
       ).stmt()
     );
 
@@ -37,12 +36,12 @@ CodegenASTStmt &Codegen::_nodeBreak (CodegenASTStmt &c, const ASTNode &node, boo
   return c;
 }
 
-CodegenASTStmt &Codegen::_nodeBreakAsync (CodegenASTStmt &c, const ASTNode &node, bool root, CodegenPhase phase) {
+CodegenASTStmt &Codegen::_nodeBreakAsync (CodegenASTStmt &c, [[maybe_unused]] const ASTNode &node) {
   c.append(
     CodegenASTExprAssign::create(
       CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
       "=",
-      CodegenASTExprLiteral::create(std::to_string(1))
+      CodegenASTExprLiteral::create("1")
     ).stmt()
   );
 
