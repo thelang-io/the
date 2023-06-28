@@ -235,12 +235,12 @@ class Codegen {
   std::string _exprObjDefaultField (const CodegenTypeInfo &);
   std::string _exprRef (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
   std::string _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::string &, bool);
-  std::string _fnDecl (std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
-  std::string _genCopyFn (Type *, const std::string &);
-  std::string _genEqFn (Type *, const std::string &, const std::string &, bool = false);
-  std::string _genFreeFn (Type *, const std::string &);
-  std::string _genReallocFn (Type *, const std::string &, const std::string &);
-  std::string _genStrFn (Type *, const std::string &, bool = true, bool = true);
+  CodegenASTStmt &_fnDecl (CodegenASTStmt &, std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
+  CodegenASTStmt &_genCopyFn (Type *, const std::string &);
+  CodegenASTStmt &_genEqFn (Type *, const std::string &, const std::string &, bool = false);
+  CodegenASTStmt &_genFreeFn (Type *, const std::string &);
+  CodegenASTStmt &_genReallocFn (Type *, const std::string &, const std::string &);
+  CodegenASTStmt &_genStrFn (Type *, const std::string &, bool = true, bool = true);
   CodegenASTStmt &_node (CodegenASTStmt &, const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   CodegenASTStmt &_nodeAsync (CodegenASTStmt &, const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
   CodegenASTStmt &_nodeBreak (CodegenASTStmt &, const ASTNode &);

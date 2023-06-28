@@ -18,7 +18,8 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_fnDecl (
+CodegenASTStmt &Codegen::_fnDecl (
+  CodegenASTStmt &c,
   std::shared_ptr<Var> var,
   const std::vector<std::shared_ptr<Var>> &stack,
   const std::vector<ASTFnDeclParam> &params,
@@ -27,7 +28,7 @@ std::string Codegen::_fnDecl (
   CodegenPhase phase
 ) {
   if (body == std::nullopt) {
-    return "";
+    return c;
   }
 
   auto codeName = var->codeName;
@@ -41,7 +42,6 @@ std::string Codegen::_fnDecl (
   auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{});
   auto awaitExprCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
-  auto code = std::string();
 
   awaitExprCalls.erase(std::remove_if(awaitExprCalls.begin(), awaitExprCalls.end(), [] (const auto &it) -> bool {
     return !std::holds_alternative<ASTExprAwait>(*it.body) || it.type->isVoid();
@@ -107,45 +107,137 @@ std::string Codegen::_fnDecl (
       this->varMap.save();
       this->indent = 2;
 
-      auto bodyCode = std::string();
+      auto cBody = CodegenASTStmtCompound::create();
 
       if (!params.empty() || hasSelfParam || this->throws) {
-        bodyCode += "  struct _{" + paramsName + "} *p = pp;" EOL;
+        cBody.append(
+          CodegenASTStmtVarDecl::create(
+            CodegenASTType::create("struct " + this->_(paramsName) + " *"),
+            CodegenASTExprAccess::create("p"),
+            CodegenASTExprAccess::create("pp")
+          )
+        );
       }
 
       if (this->throws) {
-        bodyCode += R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", ")" + var->name + R"(", p->line, p->col);)" EOL;
-        this->state.cleanUp.add(this->_apiEval("if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);"));
-        this->state.cleanUp.add("_{error_stack_pop}(&_{err_state});");
+        cBody.append(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("error_stack_push")),
+            {
+              CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state"))),
+              CodegenASTExprLiteral::create(R"(")" + this->reader->path + R"(")"),
+              CodegenASTExprLiteral::create(R"(")" + var->name + R"(")"),
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "line", true),
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "col", true)
+            }
+          ).stmt()
+        );
+
+        this->state.cleanUp.add(
+          CodegenASTStmtIf::create(
+            CodegenASTExprBinary::create(
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
+              "!=",
+              CodegenASTExprLiteral::create("-1")
+            ),
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("longjmp")),
+              {
+                CodegenASTExprAccess::create(
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+                  CodegenASTExprBinary::create(
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+                    "-",
+                    CodegenASTExprLiteral::create("1")
+                  )
+                ),
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
+              }
+            ).stmt()
+          )
+        );
+
+        this->state.cleanUp.add(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("error_stack_pop")),
+            {
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(this->_("err_state"))
+              )
+            }
+          ).stmt()
+        );
       }
 
       if (hasStack) {
-        bodyCode += "  struct _{" + contextName + "} *x = px;" EOL;
+        cBody.append(
+          CodegenASTStmtVarDecl::create(
+            CodegenASTType::create("struct " + this->_(contextName) + " *"),
+            CodegenASTExprAccess::create("x"),
+            CodegenASTExprAccess::create("px")
+          )
+        );
 
         for (const auto &contextVar : stack) {
           auto contextVarName = Codegen::name(contextVar->codeName);
           auto contextVarTypeInfo = this->_typeInfo(contextVar->type);
-          auto typeRefCode = contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst;
-
-          bodyCode += "  " + typeRefCode + contextVarName + " = x->" + contextVarName + ";" EOL;
           this->state.contextVars.insert(contextVarName);
+
+          cBody.append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(contextVar->mut ? contextVarTypeInfo.typeRefCode : contextVarTypeInfo.typeRefCodeConst),
+              CodegenASTExprAccess::create(contextVarName),
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), contextVarName, true)
+            )
+          );
         }
 
         for (const auto &asyncVar : asyncBodyDeclarations) {
           auto contextVarName = Codegen::name(asyncVar->codeName);
           auto typeInfo = this->_typeInfo(asyncVar->type);
-          bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
           this->state.contextVars.insert(contextVarName);
+
+          cBody.append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(typeInfo.typeRefCode),
+              CodegenASTExprAccess::create(contextVarName),
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), contextVarName, true)
+              )
+            )
+          );
         }
 
         for (auto i = static_cast<std::size_t>(0); i < asyncBreakNodesCount; i++) {
-          auto idx = std::to_string(i + 1);
-          bodyCode += "  unsigned char *b" + idx + " = &x->b" + idx + ";" EOL;
+          auto contextVarName = "b" + std::to_string(i + 1);
+
+          cBody.append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create("unsigned char *"),
+              CodegenASTExprAccess::create(contextVarName),
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), contextVarName, true)
+              )
+            )
+          );
         }
 
         for (auto i = static_cast<std::size_t>(0); i < asyncContinueNodesCount; i++) {
-          auto idx = std::to_string(i + 1);
-          bodyCode += "  unsigned char *c" + idx + " = &x->c" + idx + ";" EOL;
+          auto contextVarName = "c" + std::to_string(i + 1);
+
+          cBody.append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create("unsigned char *"),
+              CodegenASTExprAccess::create(contextVarName),
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), contextVarName, true)
+              )
+            )
+          );
         }
 
         for (const auto &awaitExpr : awaitExprCalls) {
@@ -153,19 +245,32 @@ std::string Codegen::_fnDecl (
           auto contextVarName = "t" + std::to_string(exprAwait.id);
           auto typeInfo = this->_typeInfo(awaitExpr.type);
 
-          bodyCode += "  " + typeInfo.typeRefCode + contextVarName + " = &x->" + contextVarName + ";" EOL;
+          cBody.append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(typeInfo.typeRefCode),
+              CodegenASTExprAccess::create(contextVarName),
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), contextVarName, true)
+              )
+            )
+          );
         }
       }
 
       if (hasSelfParam) {
         auto selfTypeInfo = this->_typeInfo(fnType.callInfo.selfType);
-        bodyCode += "  " + (fnType.callInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst) +
-          Codegen::name(fnType.callInfo.selfCodeName) + " = p->self;" EOL;
+
+        cBody.append(
+          CodegenASTStmtVarDecl::create(
+            CodegenASTType::create(fnType.callInfo.isSelfMut ? selfTypeInfo.typeCode : selfTypeInfo.typeCodeConst),
+            CodegenASTExprAccess::create(Codegen::name(fnType.callInfo.selfCodeName)),
+            CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "self", true)
+          )
+        );
       }
 
       if (!params.empty()) {
-        auto paramsDecl = std::string();
-        auto paramsCode = std::string();
         auto paramIdx = static_cast<std::size_t>(0);
 
         for (const auto &param : params) {
@@ -173,34 +278,39 @@ std::string Codegen::_fnDecl (
           auto paramTypeInfo = this->_typeInfo(param.var->type);
           auto paramIdxStr = std::to_string(paramIdx);
 
-          paramsCode += "  " + (param.var->mut ? paramTypeInfo.typeCode : paramTypeInfo.typeCodeConst) + paramName + " = ";
-
-          if (param.init == std::nullopt) {
-            paramsCode += "p->n" + paramIdxStr;
-          } else {
-            auto initCode = this->_nodeExpr(*param.init, paramTypeInfo.type, node, paramsDecl);
-            paramsCode += "p->o" + paramIdxStr + " == 1 ? p->n" + paramIdxStr + " : " + initCode;
-          }
-
-          paramsCode += ";" EOL;
+          cBody.append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(param.var->mut ? paramTypeInfo.typeCode : paramTypeInfo.typeCodeConst),
+              CodegenASTExprAccess::create(paramName),
+              param.init == std::nullopt
+                ? CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true)
+                : CodegenASTExprCond::create(
+                    CodegenASTExprBinary::create(
+                      CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "o" + paramIdxStr, true),
+                      "==",
+                      CodegenASTExprLiteral::create("1")
+                    ),
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true),
+                    this->_nodeExpr(*param.init, paramTypeInfo.type, node, cBody)
+                  )
+            )
+          );
 
           if (paramTypeInfo.type->shouldBeFreed()) {
-            this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName) + ";");
+            this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName));
           }
 
           paramIdx++;
         }
-
-        bodyCode += paramsDecl + paramsCode;
       }
 
       if (hasSelfParam && fnType.callInfo.selfType->shouldBeFreed()) {
-        this->state.cleanUp.add(this->_genFreeFn(fnType.callInfo.selfType, Codegen::name(fnType.callInfo.selfCodeName)) + ";");
+        this->state.cleanUp.add(this->_genFreeFn(fnType.callInfo.selfType, Codegen::name(fnType.callInfo.selfCodeName)));
       }
 
       if (fnType.async) {
-        bodyCode += "  switch (step) {" EOL;
-        bodyCode += "    case 0: {" EOL;
+        cBody = cBody.append(CodegenASTStmtSwitch::create(CodegenASTExprAccess::create("step")));
+        cBody = cBody.append(CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0")));
       }
 
       auto returnTypeInfo = this->_typeInfo(fnType.returnType);
@@ -209,35 +319,53 @@ std::string Codegen::_fnDecl (
       this->state.insideAsync = fnType.async;
       this->state.asyncCounter = 0;
       this->indent = this->state.insideAsync ? 4 : 0;
-      bodyCode += this->_block(*body, false);
+      cBody = this->_block(cBody, *body, false);
       this->varMap.restore();
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
         if (this->state.insideAsync) {
-          bodyCode.insert(0, "  " + returnTypeInfo.typeRefCode + "v = pv;" EOL);
-          bodyCode += this->state.cleanUp.genAsync(6, this->state.asyncCounter);
+          cBody.prepend(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(returnTypeInfo.typeRefCode),
+              CodegenASTExprAccess::create("v"),
+              CodegenASTExprAccess::create("pv")
+            )
+          );
+
+          cBody = this->state.cleanUp.genAsync(cBody, this->state.asyncCounter);
         } else {
-          bodyCode.insert(0, "  " + returnTypeInfo.typeCode + "v;" EOL);
-          bodyCode += this->state.cleanUp.gen(2);
+          cBody.prepend(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(returnTypeInfo.typeCode),
+              CodegenASTExprAccess::create("v")
+            )
+          );
+
+          cBody = this->state.cleanUp.gen(cBody);
         }
       } else if (this->state.insideAsync) {
-        bodyCode += this->state.cleanUp.genAsync(6, this->state.asyncCounter);
+        cBody = this->state.cleanUp.genAsync(cBody, this->state.asyncCounter);
       } else {
-        bodyCode += this->state.cleanUp.gen(2);
+        cBody = this->state.cleanUp.gen(cBody);
       }
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed && !this->state.insideAsync) {
-        bodyCode += "  return v;" EOL;
+        cBody.append(CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v")));
       }
 
       if (this->state.cleanUp.returnVarUsed) {
-        bodyCode.insert(0, "  unsigned char " + this->state.cleanUp.currentReturnVar() + " = 0;" EOL);
+        cBody.prepend(
+          CodegenASTStmtVarDecl::create(
+            CodegenASTType::create("unsigned char"),
+            CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar()),
+            CodegenASTExprLiteral::create("0")
+          )
+        );
       }
 
       if (fnType.async) {
-        bodyCode += "    }" EOL;
-        bodyCode += "  }" EOL;
-        bodyCode += "  return -1;" EOL;
+        cBody = cBody.exit().exit();
+        cBody.append(CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1")));
       }
 
       decl += (this->state.insideAsync ? "int " : returnTypeInfo.typeCode) + typeName + " (";
@@ -262,7 +390,7 @@ std::string Codegen::_fnDecl (
       }
 
       decl += ");";
-      def += ") {" EOL + bodyCode + "}";
+      def += ") " + cBody.str();
 
       return hasStack ? contextEntityIdx : 0;
     });
@@ -294,36 +422,80 @@ std::string Codegen::_fnDecl (
   auto fnName = var->builtin ? codeName : Codegen::name(codeName);
 
   if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && !hasStack) {
-    code += std::string(this->indent, ' ') + (this->state.insideAsync ? "*" : "const " + varTypeInfo.typeCode) + fnName;
-    code += this->_apiEval(" = (" + varTypeInfo.typeCodeTrimmed + ") {&_{" + typeName + "}, _{NULL}, 0};" EOL);
+    auto cAssignRightSide = CodegenASTExprCast::create(
+      CodegenASTType::create(varTypeInfo.typeCodeTrimmed),
+      CodegenASTExprInitList::create({
+        CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_(typeName))),
+        CodegenASTExprAccess::create(this->_("NULL")),
+        CodegenASTExprLiteral::create("0"),
+      })
+    );
+
+    if (this->state.insideAsync) {
+      c.append(
+        CodegenASTExprAssign::create(
+          CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(fnName)),
+          "=",
+          cAssignRightSide
+        ).stmt()
+      );
+    } else {
+      c.append(
+        CodegenASTStmtVarDecl::create(
+          CodegenASTType::create("const " + varTypeInfo.typeCode),
+          CodegenASTExprAccess::create(fnName),
+          cAssignRightSide
+        )
+      );
+    }
   } else if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && !this->state.insideAsync) {
-    code += std::string(this->indent, ' ') + "const " + varTypeInfo.typeCode + fnName;
-    code += ";" EOL;
+    c.append(
+      CodegenASTStmtVarDecl::create(
+        CodegenASTType::create("const " + varTypeInfo.typeCode),
+        CodegenASTExprAccess::create(fnName)
+      )
+    );
   }
 
   if ((phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) && hasStack) {
-    code += std::string(this->indent, ' ') + this->_apiEval("_{" + typeName + "_alloc}((" + varTypeInfo.typeRefCode + ") ");
-    code += (this->state.insideAsync ? "" : "&") + fnName + ", ";
-    this->_activateEntity(contextName);
-    code += "(struct " + contextName + ") {";
-
-    auto contextVarIdx = static_cast<std::size_t>(0);
+    auto contextVarsInitList = std::vector<CodegenASTExpr>{};
 
     for (const auto &contextVar : stack) {
       auto contextVarName = Codegen::name(contextVar->codeName);
 
-      code += contextVarIdx == 0 ? "" : ", ";
-      code += (this->state.contextVars.contains(contextVarName) ? "" : "&") + contextVarName;
-
-      contextVarIdx++;
+      if (this->state.contextVars.contains(contextVarName)) {
+        contextVarsInitList.push_back(
+          CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(contextVarName))
+        );
+      } else {
+        contextVarsInitList.push_back(
+          CodegenASTExprAccess::create(contextVarName)
+        );
+      }
     }
 
-    code += "});" EOL;
+    c.append(
+      CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_(typeName + "_alloc")),
+        {
+          CodegenASTExprCast::create(
+            CodegenASTType::create(varTypeInfo.typeRefCode),
+            this->state.insideAsync
+              ? CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(fnName))
+              : CodegenASTExprAccess::create(fnName)
+          ),
+          CodegenASTExprCast::create(
+            CodegenASTType::create("struct " + this->_(contextName)),
+            CodegenASTExprInitList::create(contextVarsInitList)
+          )
+        }
+      ).stmt()
+    );
 
     if (varTypeInfo.type->shouldBeFreed()) {
-      this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, (this->async && node.parent != nullptr ? "*" : "") + fnName) + ";");
+      this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, (this->async && node.parent != nullptr ? "*" : "") + fnName));
     }
   }
 
-  return code;
+  return c;
 }

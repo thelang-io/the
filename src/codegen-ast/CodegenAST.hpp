@@ -26,6 +26,9 @@ struct CodegenASTExprAccess;
 struct CodegenASTExprAssign;
 struct CodegenASTExprBinary;
 struct CodegenASTExprCall;
+struct CodegenASTExprCast;
+struct CodegenASTExprCond;
+struct CodegenASTExprInitList;
 struct CodegenASTExprLiteral;
 struct CodegenASTExprUnary;
 
@@ -78,6 +81,9 @@ using CodegenASTExprBody = std::variant<
   CodegenASTExprAssign,
   CodegenASTExprBinary,
   CodegenASTExprCall,
+  CodegenASTExprCast,
+  CodegenASTExprCond,
+  CodegenASTExprInitList,
   CodegenASTExprLiteral,
   CodegenASTExprUnary
 >;
@@ -95,6 +101,7 @@ struct CodegenASTStmt {
   CodegenASTStmt &append (const CodegenASTStmt &);
   CodegenASTStmt &exit () const;
   CodegenASTStmt &prepend (const CodegenASTStmt &);
+  std::string str ();
 };
 
 struct CodegenASTExpr {
@@ -109,7 +116,7 @@ struct CodegenASTExpr {
 
 struct CodegenASTExprAccess {
   static CodegenASTExpr create (const std::string &);
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &);
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, bool = false);
   static CodegenASTExpr create (const CodegenASTExpr &, const CodegenASTExpr &);
 };
 
@@ -123,6 +130,18 @@ struct CodegenASTExprBinary {
 
 struct CodegenASTExprCall {
   static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTExpr> &);
+};
+
+struct CodegenASTExprCast {
+  static CodegenASTExpr create (const CodegenASTType &, const CodegenASTExpr &);
+};
+
+struct CodegenASTExprCond {
+  static CodegenASTExpr create (const CodegenASTExpr &, const CodegenASTExpr &, const CodegenASTExpr &);
+};
+
+struct CodegenASTExprInitList {
+  static CodegenASTExpr create (const std::vector<CodegenASTExpr> &);
 };
 
 struct CodegenASTExprLiteral {
@@ -139,7 +158,7 @@ struct CodegenASTStmtBreak {
 };
 
 struct CodegenASTStmtCase {
-  static CodegenASTStmt create (const std::string &, const std::optional<CodegenASTStmt> & = std::nullopt);
+  static CodegenASTStmt create (const CodegenASTExpr &, const std::optional<CodegenASTStmt> & = std::nullopt);
 };
 
 struct CodegenASTStmtCompound {
@@ -209,6 +228,7 @@ struct CodegenASTStmtStructDecl {
 };
 
 struct CodegenASTStmtSwitch {
+  static CodegenASTStmt create (const CodegenASTExpr &, const CodegenASTStmt & = CodegenASTStmtCompound::create());
 };
 
 struct CodegenASTStmtVarDecl {

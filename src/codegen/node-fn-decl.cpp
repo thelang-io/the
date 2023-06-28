@@ -16,10 +16,11 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_nodeFnDecl (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeFnDecl (CodegenASTStmt &c, const ASTNode &node, [[maybe_unused]] bool root, CodegenPhase phase) {
   auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
 
-  code += this->_fnDecl(
+  c = this->_fnDecl(
+    c,
     nodeFnDecl.var,
     nodeFnDecl.stack,
     nodeFnDecl.params,
@@ -28,5 +29,5 @@ std::string Codegen::_nodeFnDecl (const ASTNode &node, bool root, CodegenPhase p
     phase
   );
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
