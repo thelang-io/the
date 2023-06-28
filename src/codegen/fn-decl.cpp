@@ -157,9 +157,7 @@ CodegenASTStmt &Codegen::_fnDecl (
         this->state.cleanUp.add(
           CodegenASTExprCall::create(
             CodegenASTExprAccess::create(this->_("error_stack_pop")),
-            {
-              CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))
-            }
+            {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
           ).stmt()
         );
       }

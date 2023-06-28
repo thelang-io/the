@@ -17,81 +17,96 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-std::string Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
+CodegenASTExpr Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
-    return this->_apiEval("{0, _{NULL}, 0, _{NULL}, _{NULL}}");
+    return CodegenASTExprInitList::create({
+      CodegenASTExprLiteral::create("0"),
+      CodegenASTExprAccess::create(this->_("NULL")),
+      CodegenASTExprLiteral::create("0"),
+      CodegenASTExprAccess::create(this->_("NULL")),
+      CodegenASTExprAccess::create(this->_("NULL"))
+    });
   } else if (typeInfo.type->isArray() || typeInfo.type->isMap()) {
-    return this->_apiEval("_{" + typeInfo.typeName + "_alloc}(0)", 1);
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_alloc")),
+      {CodegenASTExprLiteral::create("0")}
+    );
   } else if (typeInfo.type->isBool()) {
-    return this->_apiEval("_{false}");
+    return CodegenASTExprAccess::create(this->_("false"));
   } else if (typeInfo.type->isChar()) {
-    return R"('\0')";
+    return CodegenASTExprLiteral::create(R"('\0')");
   } else if (typeInfo.type->isFn() || typeInfo.type->isRef() || typeInfo.type->isUnion()) {
     throw Error("tried node variable declaration of invalid type");
   } else if (typeInfo.type->isObj()) {
-    auto fieldsCode = std::string();
+    auto cArgs = std::vector<CodegenASTExpr>{};
 
     for (const auto &typeField : typeInfo.type->fields) {
       if (!typeField.builtin && !typeField.type->isMethod()) {
-        fieldsCode += ", " + this->_exprObjDefaultField(this->_typeInfo(typeField.type));
+        cArgs.push_back(this->_exprObjDefaultField(this->_typeInfo(typeField.type)));
       }
     }
 
-    auto allocCode = fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2);
-    return this->_apiEval("_{" + typeInfo.typeName + "_alloc}(" + allocCode + ")", 1);
+    return CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_alloc")), cArgs);
   } else if (typeInfo.type->isOpt()) {
-    return this->_apiEval("_{NULL}");
+    return CodegenASTExprAccess::create(this->_("NULL"));
   } else if (typeInfo.type->isStr()) {
-    return this->_apiEval(R"(_{str_alloc}(""))");
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("str_alloc")),
+      {CodegenASTExprLiteral::create(R"("")")}
+    );
   } else {
-    return "0";
+    return CodegenASTExprLiteral::create("0");
   }
 }
 
-std::string Codegen::_nodeVarDecl (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeVarDecl (CodegenASTStmt &c, const ASTNode &node) {
   if (this->state.insideAsync) {
-    return this->_nodeVarDeclAsync(node, root, phase, decl, code);
+    return this->_nodeVarDeclAsync(c, node);
   }
 
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
   auto name = Codegen::name(nodeVarDecl.var->codeName);
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
-  auto initCode = std::string();
 
-  if (nodeVarDecl.init != std::nullopt) {
-    initCode = this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, decl);
-  } else {
-    initCode = this->_nodeVarDeclInit(typeInfo);
-  }
+  auto cInit = nodeVarDecl.init == std::nullopt
+    ? this->_nodeVarDeclInit(typeInfo)
+    : this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, c);
 
-  code = !root ? code : std::string(this->indent, ' ');
-  code += nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst;
-  code += name + " = " + initCode + (root ? ";" EOL : "");
+  c.append(
+    CodegenASTStmtVarDecl::create(
+      CodegenASTType::create(nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst),
+      CodegenASTExprAccess::create(name),
+      cInit
+    )
+  );
 
   if (typeInfo.type->shouldBeFreed()) {
-    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, name) + ";");
+    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, name).stmt());
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }
 
-std::string Codegen::_nodeVarDeclAsync (const ASTNode &node, bool root, CodegenPhase phase, std::string &decl, std::string &code) {
+CodegenASTStmt &Codegen::_nodeVarDeclAsync (CodegenASTStmt &c, const ASTNode &node) {
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
   auto name = Codegen::name(nodeVarDecl.var->codeName);
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
-  auto initCode = std::string();
 
-  if (nodeVarDecl.init != std::nullopt) {
-    initCode = this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, decl);
-  } else {
-    initCode = this->_nodeVarDeclInit(typeInfo);
-  }
+  auto cInit = nodeVarDecl.init == std::nullopt
+    ? this->_nodeVarDeclInit(typeInfo)
+    : this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, c);
 
-  code = !root ? code : std::string(this->indent, ' ') + "*" + name + " = " + initCode + (root ? ";" EOL : "");
+  c.append(
+    CodegenASTExprAssign::create(
+      CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(name)),
+      "=",
+      cInit
+    ).stmt()
+  );
 
   if (typeInfo.type->shouldBeFreed()) {
-    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, "*" + name) + ";");
+    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, "*" + name).stmt());
   }
 
-  return this->_wrapNode(node, root, phase, decl + code);
+  return c;
 }

@@ -94,9 +94,7 @@ CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
     c.append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("error_unset")),
-        {
-          CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))
-        }
+        {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
       ).stmt()
     );
 
