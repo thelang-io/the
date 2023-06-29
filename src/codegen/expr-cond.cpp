@@ -16,19 +16,19 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &decl, bool root) {
   auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(exprCond.cond, parent);
-  auto condCode = this->_nodeExpr(exprCond.cond, this->ast->typeMap.get("bool"), parent, decl);
+  auto cCond = this->_nodeExpr(exprCond.cond, this->ast->typeMap.get("bool"), parent, decl);
 
   bodyTypeCasts.merge(this->state.typeCasts);
   bodyTypeCasts.swap(this->state.typeCasts);
-  auto bodyCode = this->_nodeExpr(exprCond.body, nodeExpr.type, parent, decl);
+  auto cBody = this->_nodeExpr(exprCond.body, nodeExpr.type, parent, decl);
   this->state.typeCasts = initialStateTypeCasts;
   altTypeCasts.merge(this->state.typeCasts);
   altTypeCasts.swap(this->state.typeCasts);
-  auto altCode = this->_nodeExpr(exprCond.alt, nodeExpr.type, parent, decl);
+  auto cAlt = this->_nodeExpr(exprCond.alt, nodeExpr.type, parent, decl);
   this->state.typeCasts = initialStateTypeCasts;
 
   if (
@@ -36,14 +36,14 @@ std::string Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType, c
     !exprCond.alt.parenthesized &&
     !exprCond.alt.type->isSafeForTernaryAlt()
   ) {
-    altCode = "(" + altCode + ")";
+    cAlt = cAlt.wrap();
   }
 
-  auto code = condCode + " ? " + bodyCode + " : " + altCode;
+  auto expr = CodegenASTExprCond::create(cCond, cBody, cAlt);
 
   if (root && nodeExpr.type->shouldBeFreed()) {
-    code = this->_genFreeFn(nodeExpr.type, "(" + code + ")");
+    expr = this->_genFreeFn(nodeExpr.type, expr.wrap());
   }
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }
