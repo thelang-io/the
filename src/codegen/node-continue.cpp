@@ -38,7 +38,7 @@ CodegenASTStmt &Codegen::_nodeContinue (CodegenASTStmt &c, const ASTNode &node) 
   return c;
 }
 
-CodegenASTStmt &Codegen::_nodeContinueAsync (CodegenASTStmt &c, [[maybe_unused]] const ASTNode &node) {
+CodegenASTStmt &Codegen::_nodeContinueAsync (CodegenASTStmt &c, const ASTNode &node) {
   if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
     c.append(
       CodegenASTExprAssign::create(

@@ -16,17 +16,34 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprMap (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprMap (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &decl, bool root) {
   auto exprMap = std::get<ASTExprMap>(*nodeExpr.body);
   auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
   auto mapType = std::get<TypeBodyMap>(nodeTypeInfo.type->body);
-  auto fieldsCode = std::to_string(exprMap.props.size());
+
+  auto cFields = std::vector<CodegenASTExpr>{
+    CodegenASTExprLiteral::create(std::to_string(exprMap.props.size()))
+  };
 
   for (const auto &prop : exprMap.props) {
-    fieldsCode += this->_apiEval(R"(, _{str_alloc}(")" + prop.name + R"("), )" + this->_nodeExpr(prop.init, mapType.valueType, parent, decl), 1);
+    cFields.push_back(
+      CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("str_alloc")),
+        {CodegenASTExprLiteral::create(R"(")" + prop.name + R"(")"),}
+      )
+    );
+
+    cFields.push_back(this->_nodeExpr(prop.init, mapType.valueType, parent, decl));
   }
 
-  auto code = this->_apiEval("_{" + nodeTypeInfo.typeName + "_alloc}(" + fieldsCode + ")", 1);
-  code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  auto expr = CodegenASTExprCall::create(
+    CodegenASTExprAccess::create(this->_(nodeTypeInfo.typeName + "_alloc")),
+    cFields
+  );
+
+  if (root) {
+    expr = this->_genFreeFn(nodeTypeInfo.type, expr);
+  }
+
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }
