@@ -16,14 +16,18 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
   auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
-  auto leftCode = this->_nodeExpr(exprAssign.left, nodeExpr.type, parent, decl, true);
-  auto code = std::string();
+  auto cLeft = this->_nodeExpr(exprAssign.left, nodeExpr.type, parent, c, true);
+  auto expr = CodegenASTExpr{};
 
   if (Type::actual(exprAssign.left.type)->isAny() || Type::actual(exprAssign.right.type)->isAny()) {
-    code = this->_genReallocFn(this->ast->typeMap.get("any"), leftCode, this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, decl));
-    code = root ? code : this->_genCopyFn(this->ast->typeMap.get("any"), code);
+    auto cRight = this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, c);
+    expr = this->_genReallocFn(this->ast->typeMap.get("any"), cLeft, cRight);
+
+    if (!root) {
+      expr = this->_genCopyFn(this->ast->typeMap.get("any"), expr);
+    }
   } else if (
     Type::actual(exprAssign.left.type)->isArray() ||
     Type::actual(exprAssign.left.type)->isFn() ||
@@ -32,49 +36,66 @@ std::string Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetType,
     Type::actual(exprAssign.left.type)->isOpt() ||
     Type::actual(exprAssign.left.type)->isUnion()
   ) {
-    code = this->_genReallocFn(Type::actual(exprAssign.left.type), leftCode, this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, decl));
-    code = root ? code : this->_genCopyFn(Type::actual(exprAssign.left.type), code);
+    auto cRight = this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, c);
+    expr = this->_genReallocFn(Type::actual(exprAssign.left.type), cLeft, cRight);
+
+    if (!root) {
+      expr = this->_genCopyFn(Type::actual(exprAssign.left.type), expr);
+    }
   } else if (Type::actual(exprAssign.left.type)->isStr() || Type::actual(exprAssign.right.type)->isStr()) {
-    auto rightCode = std::string();
+    auto cRight = CodegenASTExpr{};
 
     if (exprAssign.op == AST_EXPR_ASSIGN_ADD) {
       if (exprAssign.right.isLit()) {
-        rightCode = this->_apiEval("_{str_concat_cstr}(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode), 1);
-        rightCode += ", " + exprAssign.right.litBody() + ")";
+        cRight = CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("str_concat_cstr")),
+          {
+            this->_genCopyFn(this->ast->typeMap.get("str"), cLeft),
+            CodegenASTExprLiteral::create(exprAssign.right.litBody())
+          }
+        );
       } else {
-        rightCode = this->_apiEval("_{str_concat_str}(" + this->_genCopyFn(this->ast->typeMap.get("str"), leftCode), 1);
-        rightCode += ", " + this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, decl) + ")";
+        cRight = CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("str_concat_str")),
+          {
+            this->_genCopyFn(this->ast->typeMap.get("str"), cLeft),
+            this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, c)
+          }
+        );
       }
     } else {
-      rightCode = this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, decl);
+      cRight = this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, c);
     }
 
-    code = this->_genReallocFn(this->ast->typeMap.get("str"), leftCode, rightCode);
-    code = root ? code : this->_genCopyFn(this->ast->typeMap.get("str"), code);
+    expr = this->_genReallocFn(this->ast->typeMap.get("str"), cLeft, cRight);
+
+    if (!root) {
+      expr = this->_genCopyFn(this->ast->typeMap.get("str"), expr);
+    }
   } else {
-    auto opCode = std::string(" = ");
-    auto rightCode = this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, decl);
+    auto opCode = std::string("=");
+    auto cRight = this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, c);
 
     if (exprAssign.op == AST_EXPR_ASSIGN_AND) {
-      rightCode = leftCode + " && " + rightCode;
+      cRight = CodegenASTExprBinary::create(cLeft, "&&", cRight);
     } else if (exprAssign.op == AST_EXPR_ASSIGN_OR) {
-      rightCode = leftCode + " || " + rightCode;
+      cRight = CodegenASTExprBinary::create(cLeft, "||", cRight);
     } else {
-      if (exprAssign.op == AST_EXPR_ASSIGN_ADD) opCode = " += ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_AND) opCode = " &= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_OR) opCode = " |= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_XOR) opCode = " ^= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_DIV) opCode = " /= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_EQ) opCode = " = ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_LSHIFT) opCode = " <<= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_MOD) opCode = " %= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_MUL) opCode = " *= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_RSHIFT) opCode = " >>= ";
-      else if (exprAssign.op == AST_EXPR_ASSIGN_SUB) opCode = " -= ";
+      if (exprAssign.op == AST_EXPR_ASSIGN_ADD) opCode = "+=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_AND) opCode = "&=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_OR) opCode = "|=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_BIT_XOR) opCode = "^=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_DIV) opCode = "/=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_EQ) opCode = "=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_LSHIFT) opCode = "<<=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_MOD) opCode = "%=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_MUL) opCode = "*=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_RSHIFT) opCode = ">>=";
+      else if (exprAssign.op == AST_EXPR_ASSIGN_SUB) opCode = "-=";
     }
 
-    code = leftCode + opCode + rightCode;
+    expr = CodegenASTExprAssign::create(cLeft, opCode, cRight);
   }
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }
