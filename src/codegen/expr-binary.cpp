@@ -16,12 +16,13 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprBinary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprBinary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
   auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
-  auto code = std::string();
+  auto direction = std::string(exprBinary.op == AST_EXPR_BINARY_EQ ? "eq" : "ne");
+  auto expr = CodegenASTExpr{};
 
   if (
-    exprBinary.op == AST_EXPR_BINARY_EQ &&
+    (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) &&
     Type::real(exprBinary.left.type)->isObj() &&
     Type::real(exprBinary.right.type)->isObj() &&
     Type::real(exprBinary.left.type)->builtin &&
@@ -29,145 +30,124 @@ std::string Codegen::_exprBinary (const ASTNodeExpr &nodeExpr, Type *targetType,
     Type::real(exprBinary.left.type)->codeName == "@buffer_Buffer" &&
     Type::real(exprBinary.right.type)->codeName == "@buffer_Buffer"
   ) {
-    auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type), parent, decl);
-    auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type), parent, decl);
-    code = this->_apiEval("_{buffer_eq}(" + leftCode + ", " + rightCode + ")", 1);
-  } else if (
-    exprBinary.op == AST_EXPR_BINARY_NE &&
-    Type::real(exprBinary.left.type)->isObj() &&
-    Type::real(exprBinary.right.type)->isObj() &&
-    Type::real(exprBinary.left.type)->builtin &&
-    Type::real(exprBinary.right.type)->builtin &&
-    Type::real(exprBinary.left.type)->codeName == "@buffer_Buffer" &&
-    Type::real(exprBinary.right.type)->codeName == "@buffer_Buffer"
-  ) {
-    auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type), parent, decl);
-    auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type), parent, decl);
-    code = this->_apiEval("_{buffer_ne}(" + leftCode + ", " + rightCode + ")", 1);
-  } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
+    auto cLeft = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type), parent, c);
+    auto cRight = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type), parent, c);
+    expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("buffer_" + direction)), {cLeft, cRight});
+  } else if ((exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) && (
     (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
     (Type::real(exprBinary.left.type)->isMap() && Type::real(exprBinary.right.type)->isMap()) ||
     (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
     (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
   )) {
     auto typeInfo = this->_typeInfo(exprBinary.left.type);
-    auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType, parent, decl);
-    auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType, parent, decl);
+    auto cLeft = this->_nodeExpr(exprBinary.left, typeInfo.realType, parent, c);
+    auto cRight = this->_nodeExpr(exprBinary.right, typeInfo.realType, parent, c);
 
-    this->_activateEntity(typeInfo.realTypeName + "_eq");
-    code = typeInfo.realTypeName + "_eq(" + leftCode + ", " + rightCode + ")";
-  } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
-    (Type::real(exprBinary.left.type)->isArray() && Type::real(exprBinary.right.type)->isArray()) ||
-    (Type::real(exprBinary.left.type)->isMap() && Type::real(exprBinary.right.type)->isMap()) ||
-    (Type::real(exprBinary.left.type)->isObj() && Type::real(exprBinary.right.type)->isObj()) ||
-    (Type::real(exprBinary.left.type)->isOpt() && Type::real(exprBinary.right.type)->isOpt())
-  )) {
-    auto typeInfo = this->_typeInfo(exprBinary.left.type);
-    auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType, parent, decl);
-    auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType, parent, decl);
-
-    this->_activateEntity(typeInfo.realTypeName + "_ne");
-    code = typeInfo.realTypeName + "_ne(" + leftCode + ", " + rightCode + ")";
-  } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
+    expr = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_" + direction)),
+      {cLeft, cRight}
+    );
+  } else if ((exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) && (
     Type::real(exprBinary.left.type)->isStr() &&
     Type::real(exprBinary.right.type)->isStr()
   )) {
     if (exprBinary.left.isLit() && exprBinary.right.isLit()) {
-      code = this->_apiEval("_{cstr_eq_cstr}(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")", 1);
+      auto cLeft = CodegenASTExprLiteral::create(exprBinary.left.litBody());
+      auto cRight = CodegenASTExprLiteral::create(exprBinary.right.litBody());
+
+      expr = CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("cstr_" + direction + "_cstr")),
+        {cLeft, cRight}
+      );
     } else if (exprBinary.left.isLit()) {
-      auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, decl);
-      code = this->_apiEval("_{cstr_eq_str}(" + exprBinary.left.litBody() + ", " + rightCode + ")", 1);
+      auto cLeft = CodegenASTExprLiteral::create(exprBinary.left.litBody());
+      auto cRight = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, c);
+
+      expr = CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("cstr_" + direction + "_str")),
+        {cLeft, cRight}
+      );
     } else if (exprBinary.right.isLit()) {
-      auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, decl);
-      code = this->_apiEval("_{str_eq_cstr}(" + leftCode + ", " + exprBinary.right.litBody() + ")", 1);
+      auto cLeft = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, c);
+      auto cRight = CodegenASTExprLiteral::create(exprBinary.right.litBody());
+
+      expr = CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("str_" + direction + "_cstr")),
+        {cLeft, cRight}
+      );
     } else {
-      auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, decl);
-      auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, decl);
-      code = this->_apiEval("_{str_eq_str}(" + leftCode + ", " + rightCode + ")", 1);
-    }
-  } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
-    Type::real(exprBinary.left.type)->isStr() &&
-    Type::real(exprBinary.right.type)->isStr()
-  )) {
-    if (exprBinary.left.isLit() && exprBinary.right.isLit()) {
-      code = this->_apiEval("_{cstr_ne_cstr}(" + exprBinary.left.litBody() + ", " + exprBinary.right.litBody() + ")", 1);
-    } else if (exprBinary.left.isLit()) {
-      auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, decl);
-      code = this->_apiEval("_{cstr_ne_str}(" + exprBinary.left.litBody() + ", " + rightCode + ")", 1);
-    } else if (exprBinary.right.isLit()) {
-      auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, decl);
-      code = this->_apiEval("_{str_ne_cstr}(" + leftCode + ", " + exprBinary.right.litBody() + ")", 1);
-    } else {
-      auto leftCode = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, decl);
-      auto rightCode = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, decl);
-      code = this->_apiEval("_{str_ne_str}(" + leftCode + ", " + rightCode + ")", 1);
+      auto cLeft = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, c);
+      auto cRight = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, c);
+
+      expr = CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("str_" + direction + "_str")),
+        {cLeft, cRight}
+      );
     }
   } else if (exprBinary.op == AST_EXPR_BINARY_ADD && (
     Type::real(exprBinary.left.type)->isStr() &&
     Type::real(exprBinary.right.type)->isStr()
   )) {
     if (root && nodeExpr.isLit()) {
-      return this->_wrapNodeExpr(nodeExpr, targetType, root, nodeExpr.litBody());
+      expr = CodegenASTExprLiteral::create(nodeExpr.litBody());
     } else if (nodeExpr.isLit()) {
-      code = this->_apiEval("_{str_alloc}(" + nodeExpr.litBody() + ")", 1);
+      auto cArg = CodegenASTExprLiteral::create(nodeExpr.litBody());
+      expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_alloc")), {cArg});
     } else if (exprBinary.left.isLit()) {
-      code = this->_apiEval("_{cstr_concat_str}(" + exprBinary.left.litBody(), 1);
-      code += ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, decl) + ")";
+      auto cLeft = CodegenASTExprLiteral::create(exprBinary.left.litBody());
+      auto cRight = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, c);
+      expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("cstr_concat_str")), {cLeft, cRight});
     } else if (exprBinary.right.isLit()) {
-      code = this->_apiEval("_{str_concat_cstr}(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, decl), 1);
-      code += ", " + exprBinary.right.litBody() + ")";
+      auto cLeft = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, c);
+      auto cRight = CodegenASTExprLiteral::create(exprBinary.right.litBody());
+      expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_concat_cstr")), {cLeft, cRight});
     } else {
-      code = this->_apiEval("_{str_concat_str}(" + this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, decl), 1);
-      code += ", " + this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, decl) + ")";
+      auto cLeft = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, c);
+      auto cRight = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, c);
+      expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_concat_str")), {cLeft, cRight});
     }
 
-    code = !root ? code : this->_genFreeFn(Type::real(exprBinary.left.type), code);
-  } else if (exprBinary.op == AST_EXPR_BINARY_EQ && (
+    if (root && !nodeExpr.isLit()) {
+      expr = this->_genFreeFn(Type::real(exprBinary.left.type), expr);
+    }
+  } else if ((exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) && (
     (Type::real(exprBinary.left.type)->isUnion() || Type::real(exprBinary.right.type)->isUnion())
   )) {
     auto unionType = Type::real(Type::real(exprBinary.left.type)->isUnion() ? exprBinary.left.type : exprBinary.right.type);
     auto typeInfo = this->_typeInfo(unionType);
-    auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType, parent, decl);
-    auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType, parent, decl);
+    auto cLeft = this->_nodeExpr(exprBinary.left, typeInfo.realType, parent, c);
+    auto cRight = this->_nodeExpr(exprBinary.right, typeInfo.realType, parent, c);
 
-    this->_activateEntity(typeInfo.realTypeName + "_eq");
-    code = typeInfo.realTypeName + "_eq(" + leftCode + ", " + rightCode + ")";
-  } else if (exprBinary.op == AST_EXPR_BINARY_NE && (
-    (Type::real(exprBinary.left.type)->isUnion() || Type::real(exprBinary.right.type)->isUnion())
-  )) {
-    auto unionType = Type::real(Type::real(exprBinary.left.type)->isUnion() ? exprBinary.left.type : exprBinary.right.type);
-    auto typeInfo = this->_typeInfo(unionType);
-    auto leftCode = this->_nodeExpr(exprBinary.left, typeInfo.realType, parent, decl);
-    auto rightCode = this->_nodeExpr(exprBinary.right, typeInfo.realType, parent, decl);
-
-    this->_activateEntity(typeInfo.realTypeName + "_ne");
-    code = typeInfo.realTypeName + "_ne(" + leftCode + ", " + rightCode + ")";
+    expr = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_" + direction)),
+      {cLeft, cRight}
+    );
   } else {
-    auto leftCode = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type), parent, decl);
-    auto rightCode = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type), parent, decl);
+    auto cLeft = this->_nodeExpr(exprBinary.left, Type::real(exprBinary.left.type), parent, c);
+    auto cRight = this->_nodeExpr(exprBinary.right, Type::real(exprBinary.right.type), parent, c);
     auto opCode = std::string();
 
-    if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = " + ";
-    else if (exprBinary.op == AST_EXPR_BINARY_AND) opCode = " && ";
-    else if (exprBinary.op == AST_EXPR_BINARY_BIT_AND) opCode = " & ";
-    else if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = " | ";
-    else if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = " ^ ";
-    else if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = " / ";
-    else if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = " == ";
-    else if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = " >= ";
-    else if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = " > ";
-    else if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = " << ";
-    else if (exprBinary.op == AST_EXPR_BINARY_LE) opCode = " <= ";
-    else if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = " < ";
-    else if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = " % ";
-    else if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = " * ";
-    else if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = " != ";
-    else if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = " || ";
-    else if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = " >> ";
-    else if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = " - ";
+    if (exprBinary.op == AST_EXPR_BINARY_ADD) opCode = "+";
+    else if (exprBinary.op == AST_EXPR_BINARY_AND) opCode = "&&";
+    else if (exprBinary.op == AST_EXPR_BINARY_BIT_AND) opCode = "&";
+    else if (exprBinary.op == AST_EXPR_BINARY_BIT_OR) opCode = "|";
+    else if (exprBinary.op == AST_EXPR_BINARY_BIT_XOR) opCode = "^";
+    else if (exprBinary.op == AST_EXPR_BINARY_DIV) opCode = "/";
+    else if (exprBinary.op == AST_EXPR_BINARY_EQ) opCode = "==";
+    else if (exprBinary.op == AST_EXPR_BINARY_GE) opCode = ">=";
+    else if (exprBinary.op == AST_EXPR_BINARY_GT) opCode = ">";
+    else if (exprBinary.op == AST_EXPR_BINARY_LSHIFT) opCode = "<<";
+    else if (exprBinary.op == AST_EXPR_BINARY_LE) opCode = "<=";
+    else if (exprBinary.op == AST_EXPR_BINARY_LT) opCode = "<";
+    else if (exprBinary.op == AST_EXPR_BINARY_MOD) opCode = "%";
+    else if (exprBinary.op == AST_EXPR_BINARY_MUL) opCode = "*";
+    else if (exprBinary.op == AST_EXPR_BINARY_NE) opCode = "!=";
+    else if (exprBinary.op == AST_EXPR_BINARY_OR) opCode = "||";
+    else if (exprBinary.op == AST_EXPR_BINARY_RSHIFT) opCode = ">>";
+    else if (exprBinary.op == AST_EXPR_BINARY_SUB) opCode = "-";
 
-    code = leftCode + opCode + rightCode;
+    expr = CodegenASTExprBinary::create(cLeft, opCode, cRight);
   }
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }
