@@ -17,26 +17,28 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprLit (const ASTNodeExpr &nodeExpr, Type *targetType, [[maybe_unused]] const ASTNode &parent, [[maybe_unused]] std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprLit (const ASTNodeExpr &nodeExpr, Type *targetType, bool root) {
   auto exprLit = std::get<ASTExprLit>(*nodeExpr.body);
-  auto code = exprLit.body;
+  auto expr = CodegenASTExprLiteral::create(exprLit.body);
 
   if (exprLit.type == AST_EXPR_LIT_BOOL) {
-    code = this->_apiEval("_{" + code + "}");
+    expr = CodegenASTExprAccess::create(this->_(exprLit.body));
   } else if (exprLit.type == AST_EXPR_LIT_INT_DEC) {
-    auto val = std::stoull(code);
+    auto val = std::stoull(exprLit.body);
 
     if (val > 9223372036854775807) {
-      code += "U";
+      expr = CodegenASTExprLiteral::create(exprLit.body + "U");
     }
   } else if (exprLit.type == AST_EXPR_LIT_INT_OCT) {
-    code.erase(std::remove(code.begin(), code.end(), 'O'), code.end());
-    code.erase(std::remove(code.begin(), code.end(), 'o'), code.end());
+    auto exprLitBody = exprLit.body;
+    exprLitBody.erase(std::remove(exprLitBody.begin(), exprLitBody.end(), 'O'), exprLitBody.end());
+    exprLitBody.erase(std::remove(exprLitBody.begin(), exprLitBody.end(), 'o'), exprLitBody.end());
+    expr = CodegenASTExprLiteral::create(exprLitBody);
   } else if (exprLit.type == AST_EXPR_LIT_NIL) {
-    code = this->_apiEval("_{NULL}");
+    expr = CodegenASTExprAccess::create(this->_("NULL"));
   } else if (!root && exprLit.type == AST_EXPR_LIT_STR) {
-    code = this->_apiEval("_{str_alloc}(" + code + ")", 1);
+    expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_alloc")), {expr});
   }
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }

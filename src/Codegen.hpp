@@ -229,7 +229,7 @@ class Codegen {
   CodegenASTExpr _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
   CodegenASTExpr _exprCond (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt &, bool);
   CodegenASTExpr _exprIs (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt &, bool);
-  CodegenASTExpr _exprLit (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt &, bool);
+  CodegenASTExpr _exprLit (const ASTNodeExpr &, Type *, bool);
   CodegenASTExpr _exprMap (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt &, bool);
   CodegenASTExpr _exprObj (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt &, bool);
   CodegenASTExpr _exprObjDefaultField (const CodegenTypeInfo &);

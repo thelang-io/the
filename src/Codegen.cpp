@@ -677,7 +677,7 @@ CodegenASTExpr Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType
   } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {
     return this->_exprIs(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprLit>(*nodeExpr.body)) {
-    return this->_exprLit(nodeExpr, targetType, parent, c, root);
+    return this->_exprLit(nodeExpr, targetType, root);
   } else if (std::holds_alternative<ASTExprMap>(*nodeExpr.body)) {
     return this->_exprMap(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
