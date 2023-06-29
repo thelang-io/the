@@ -283,7 +283,7 @@ class Codegen {
   std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {});
   std::string _typeNameOpt (Type *);
   std::string _typeNameUnion (Type *);
-  std::string _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::string &);
+  CodegenASTExpr _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const CodegenASTExpr &);
 };
 
 #endif

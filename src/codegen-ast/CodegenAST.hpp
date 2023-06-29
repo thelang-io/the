@@ -110,9 +110,9 @@ struct CodegenASTExpr {
   CodegenASTStmt *parentStmt;
   std::shared_ptr<CodegenASTExprBody> body;
 
-  CodegenASTStmt stmt ();
+  CodegenASTStmt stmt () const;
   std::string str () const;
-  CodegenASTExpr wrap ();
+  CodegenASTExpr wrap () const;
 };
 
 struct CodegenASTExprAccess {

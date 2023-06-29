@@ -691,32 +691,39 @@ CodegenASTExpr Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType
   throw Error("tried to generate code for unknown expression");
 }
 
-std::string Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const std::string &code) {
+CodegenASTExpr Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const CodegenASTExpr &expr) {
   auto realTargetType = Type::real(targetType);
   auto realNodeExprType = Type::real(nodeExpr.type);
-  auto result = code;
+  auto result = expr;
 
   if (!root && targetType->isAny() && !realNodeExprType->isAny()) {
     auto typeName = this->_typeNameAny(nodeExpr.type);
-    result = this->_apiEval("_{" + typeName + "_alloc}(" + result + ")", 1);
+    result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_(typeName + "_alloc")), {result});
   } else if (!root && realTargetType->isOpt() && (!realNodeExprType->isOpt() || !realTargetType->matchStrict(realNodeExprType))) {
     auto targetTypeInfo = this->_typeInfo(realTargetType);
     auto optionalType = std::get<TypeOptional>(targetTypeInfo.type->body);
 
     if (Type::real(optionalType.type)->isAny() && !realNodeExprType->isAny()) {
       auto typeName = this->_typeNameAny(realNodeExprType);
-      result = this->_apiEval("_{" + typeName + "_alloc}(" + result + ")", 1);
+      result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_(typeName + "_alloc")), {result});
     }
 
-    result = this->_apiEval("_{" + targetTypeInfo.typeName + "_alloc}(" + result + ")", 1);
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(targetTypeInfo.typeName + "_alloc")),
+      {result}
+    );
   } else if (!root && realTargetType->isUnion() && (!realNodeExprType->isUnion() || !realTargetType->matchStrict(realNodeExprType))) {
     auto typeName = this->_typeNameUnion(realTargetType);
     auto defName = this->_typeDef(nodeExpr.type);
-    result = this->_apiEval("_{" + typeName + "_alloc}(_{" + defName + "}, " + result + ")", 2);
+
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeName + "_alloc")),
+      {CodegenASTExprAccess::create(this->_(defName)), result}
+    );
   }
 
   if (nodeExpr.parenthesized) {
-    result = "(" + result + ")";
+    result = result.wrap();
   }
 
   return result;

@@ -599,7 +599,10 @@ CodegenASTExpr Codegen::_genReallocFn (Type *type, const CodegenASTExpr &leftExp
     result = CodegenASTExprAssign::create(
       leftExpr,
       "=",
-      CodegenASTExprCall::create(CodegenASTExprAccess::create(typeInfo.typeName + "_realloc"), {leftExpr, rightExpr})
+      CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_realloc")),
+        {leftExpr, rightExpr}
+      )
     );
   } else if (type->isStr()) {
     result = CodegenASTExprAssign::create(
