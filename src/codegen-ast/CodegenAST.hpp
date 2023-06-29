@@ -143,7 +143,7 @@ struct CodegenASTExprCond {
 };
 
 struct CodegenASTExprInitList {
-  static CodegenASTExpr create (const std::vector<CodegenASTExpr> &);
+  static CodegenASTExpr create (const std::vector<CodegenASTExpr> & = {});
 };
 
 struct CodegenASTExprLiteral {

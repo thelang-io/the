@@ -17,23 +17,38 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
+CodegenASTExpr Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
-    return this->_apiEval("(_{struct any}) {0, _{NULL}, 0, _{NULL}, _{NULL}}");
+    return CodegenASTExprCast::create(
+      CodegenASTType::create(this->_("struct any")),
+      CodegenASTExprInitList::create({
+        CodegenASTExprLiteral::create("0"),
+        CodegenASTExprAccess::create(this->_("NULL")),
+        CodegenASTExprLiteral::create("0"),
+        CodegenASTExprAccess::create(this->_("NULL")),
+        CodegenASTExprAccess::create(this->_("NULL"))
+      })
+    );
   } else if (typeInfo.type->isArray() || typeInfo.type->isMap()) {
-    return this->_apiEval("_{" + typeInfo.typeName + "_alloc}(0)");
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_alloc")),
+      {CodegenASTExprLiteral::create("0")}
+    );
   } else if (typeInfo.type->isBool()) {
-    return this->_apiEval("_{false}");
+    return CodegenASTExprAccess::create(this->_("false"));
   } else if (typeInfo.type->isChar()) {
-    return R"('\0')";
+    return CodegenASTExprLiteral::create(R"('\0')");
   } else if (typeInfo.type->isFn() || typeInfo.type->isRef() || typeInfo.type->isUnion()) {
     throw Error("tried object expression default field on invalid type");
   } else if (typeInfo.type->isOpt()) {
-    return this->_apiEval("_{NULL}");
+    return CodegenASTExprAccess::create(this->_("NULL"));
   } else if (typeInfo.type->isObj() && typeInfo.type->builtin && typeInfo.type->codeName == "@buffer_Buffer") {
-    return this->_apiEval("(_{struct buffer}) {}");
+    return CodegenASTExprCast::create(
+      CodegenASTType::create(this->_("struct buffer")),
+      CodegenASTExprInitList::create()
+    );
   } else if (typeInfo.type->isObj()) {
-    auto fieldsCode = std::string();
+    auto cFields = std::vector<CodegenASTExpr>{};
 
     for (const auto &typeField : typeInfo.type->fields) {
       if (typeField.builtin || typeField.type->isMethod()) {
@@ -41,21 +56,27 @@ std::string Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
       }
 
       auto fieldTypeInfo = this->_typeInfo(typeField.type);
-      fieldsCode += ", " + this->_exprObjDefaultField(fieldTypeInfo);
+      cFields.push_back(this->_exprObjDefaultField(fieldTypeInfo));
     }
 
-    return this->_apiEval("_{" + typeInfo.typeName + "_alloc}(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")", 1);
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_alloc")),
+      cFields
+    );
   } else if (typeInfo.type->isStr()) {
-    return this->_apiEval(R"(_{str_alloc}(""))");
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("str_alloc")),
+      {CodegenASTExprLiteral::create(R"("")")}
+    );
   } else {
-    return "0";
+    return CodegenASTExprLiteral::create("0");
   }
 }
 
-std::string Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
   auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
   auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
-  auto fieldsCode = std::string();
+  auto cFields = std::vector<CodegenASTExpr>{};
 
   for (const auto &typeField : nodeTypeInfo.type->fields) {
     if (typeField.builtin || typeField.type->isMethod()) {
@@ -68,18 +89,21 @@ std::string Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, co
       return it.name == typeField.name;
     });
 
-    fieldsCode += ", ";
-
-    if (exprObjProp != exprObj.props.end()) {
-      fieldsCode += this->_nodeExpr(exprObjProp->init, typeField.type, parent, decl);
-    } else {
-      fieldsCode += this->_exprObjDefaultField(fieldTypeInfo);
-    }
+    cFields.push_back(
+      exprObjProp != exprObj.props.end()
+        ? this->_nodeExpr(exprObjProp->init, typeField.type, parent, c)
+        : this->_exprObjDefaultField(fieldTypeInfo)
+    );
   }
 
-  this->_activateEntity(nodeTypeInfo.typeName + "_alloc");
-  auto code = nodeTypeInfo.typeName + "_alloc(" + (fieldsCode.empty() ? fieldsCode : fieldsCode.substr(2)) + ")";
-  code = !root ? code : this->_genFreeFn(nodeTypeInfo.type, code);
+  auto expr = CodegenASTExprCall::create(
+    CodegenASTExprAccess::create(this->_(nodeTypeInfo.typeName + "_alloc")),
+    cFields
+  );
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  if (root) {
+    expr = this->_genFreeFn(nodeTypeInfo.type, expr);
+  }
+
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }
