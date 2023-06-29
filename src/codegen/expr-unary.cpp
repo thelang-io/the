@@ -16,9 +16,9 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
   auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
-  auto argCode = this->_nodeExpr(exprUnary.arg, nodeExpr.type, parent, decl);
+  auto cArg = this->_nodeExpr(exprUnary.arg, nodeExpr.type, parent, c);
   auto opCode = std::string();
 
   if (exprUnary.op == AST_EXPR_UNARY_BIT_NOT) opCode = "~";
@@ -29,13 +29,17 @@ std::string Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetType, 
   else if (exprUnary.op == AST_EXPR_UNARY_PLUS) opCode = "+";
 
   if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isFloatNumber()) {
-    argCode = this->_apiEval("((_{bool}) " + argCode + ")", 1);
+    cArg = CodegenASTExprCast::create(CodegenASTType::create(this->_("bool")), cArg);
   } else if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isStr()) {
-    argCode = this->_apiEval("_{str_not}(" + argCode + ")", 1);
+    cArg = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_not")), {cArg});
     opCode = "";
-  } else if (argCode.starts_with("*")) {
-    argCode = "(" + argCode + ")";
+  } else if (cArg.isPointer()) {
+    cArg = cArg.wrap();
   }
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, exprUnary.prefix ? opCode + argCode : argCode + opCode);
+  auto expr = exprUnary.prefix
+    ? CodegenASTExprUnary::create(opCode, cArg)
+    : CodegenASTExprUnary::create(cArg, opCode);
+
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }

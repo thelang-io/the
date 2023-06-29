@@ -110,6 +110,7 @@ struct CodegenASTExpr {
   CodegenASTStmt *parentStmt;
   std::shared_ptr<CodegenASTExprBody> body;
 
+  bool isPointer () const;
   CodegenASTStmt stmt () const;
   std::string str () const;
   CodegenASTExpr wrap () const;
