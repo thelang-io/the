@@ -16,19 +16,17 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprRef (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprRef (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
   auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
-  auto code = std::string();
+  auto wrapAsRoot = targetType->isAny() || root;
+  auto expr = CodegenASTExpr{};
 
-  if (targetType->isAny()) {
-    code = this->_nodeExpr(exprRef.expr, targetType, parent, decl, targetType->isRef());
-    return this->_wrapNodeExpr(nodeExpr, targetType, true, code);
-  } else if (targetType->isOpt()) {
+  if (targetType->isOpt()) {
     auto optTargetType = std::get<TypeOptional>(targetType->body).type;
-    code = this->_nodeExpr(exprRef.expr, optTargetType, parent, decl, optTargetType->isRef());
+    expr = this->_nodeExpr(exprRef.expr, optTargetType, parent, c, optTargetType->isRef());
   } else {
-    code = this->_nodeExpr(exprRef.expr, targetType, parent, decl, targetType->isRef());
+    expr = this->_nodeExpr(exprRef.expr, targetType, parent, c, targetType->isRef());
   }
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  return this->_wrapNodeExpr(nodeExpr, targetType, wrapAsRoot, expr);
 }
