@@ -470,16 +470,15 @@ std::string Codegen::_apiEval (
   return result;
 }
 
-std::string Codegen::_genCopyFn (Type *type, const std::string &code) {
-  auto initialState = this->state;
-  auto result = code;
+CodegenASTExpr Codegen::_genCopyFn (Type *type, const CodegenASTExpr &expr) {
+  auto result = expr;
 
   if (type->isAlias()) {
-    result = this->_genCopyFn(std::get<TypeAlias>(type->body).type, code);
+    result = this->_genCopyFn(std::get<TypeAlias>(type->body).type, result);
   } else if (type->isAny()) {
-    result = this->_apiEval("_{any_copy}(" + result + ")", 1);
+    result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("any_copy")), {result});
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    result = this->_apiEval("_{buffer_copy}(" + result + ")", 1);
+    result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("buffer_copy")), {result});
   } else if (
     type->isArray() ||
     type->isFn() ||
@@ -490,23 +489,26 @@ std::string Codegen::_genCopyFn (Type *type, const std::string &code) {
   ) {
     auto typeInfo = this->_typeInfo(type);
 
-    this->_activateEntity(typeInfo.realTypeName + "_copy");
-    result = typeInfo.realTypeName + "_copy(" + result + ")";
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_copy")),
+      {result}
+    );
   } else if (type->isStr()) {
-    result = this->_apiEval("_{str_copy}(" + result + ")", 1);
+    result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_copy")), {result});
   }
 
   return result;
 }
 
-std::string Codegen::_genEqFn (Type *type, const std::string &leftCode, const std::string &rightCode, bool reverse) {
-  auto initialState = this->state;
+CodegenASTExpr Codegen::_genEqFn (Type *type, const CodegenASTExpr &leftExpr, const CodegenASTExpr &rightExpr, bool reverse) {
   auto realType = Type::real(type);
   auto direction = std::string(reverse ? "ne" : "eq");
-  auto code = std::string();
 
   if (realType->isObj() && realType->builtin && realType->codeName == "@buffer_Buffer") {
-    code = this->_apiEval("_{buffer_" + direction + "}(" + this->_genCopyFn(realType, leftCode) + ", " + this->_genCopyFn(realType, rightCode) + ")", 1);
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("buffer_" + direction)),
+      {this->_genCopyFn(realType, leftExpr), this->_genCopyFn(realType, rightExpr)}
+    );
   } else if (
     realType->isArray() ||
     realType->isMap() ||
@@ -516,29 +518,35 @@ std::string Codegen::_genEqFn (Type *type, const std::string &leftCode, const st
   ) {
     auto typeInfo = this->_typeInfo(realType);
 
-    this->_activateEntity(typeInfo.realTypeName + "_" + direction);
-    code = typeInfo.realTypeName + "_" + direction + "(";
-    code += this->_genCopyFn(typeInfo.realType, leftCode) + ", ";
-    code += this->_genCopyFn(typeInfo.realType, rightCode) + ")";
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_" + direction)),
+      {this->_genCopyFn(typeInfo.realType, leftExpr), this->_genCopyFn(typeInfo.realType, rightExpr)}
+    );
   } else if (realType->isStr()) {
-    code = this->_apiEval("_{str_" + direction + "_str}(" + this->_genCopyFn(realType, leftCode) + ", " + this->_genCopyFn(realType, rightCode) + ")", 1);
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("str_" + direction + "_str")),
+      {this->_genCopyFn(realType, leftExpr), this->_genCopyFn(realType, rightExpr)}
+    );
   } else {
-    code = leftCode + " " + (reverse ? "!=" : "==") + " " + rightCode;
+    return CodegenASTExprAssign::create(leftExpr, reverse ? "!=" : "==", rightExpr);
   }
-
-  return code;
 }
 
-std::string Codegen::_genFreeFn (Type *type, const std::string &code) {
-  auto initialState = this->state;
-  auto result = code;
+CodegenASTExpr Codegen::_genFreeFn (Type *type, const CodegenASTExpr &expr) {
+  auto result = expr;
 
   if (type->isAlias()) {
-    result = this->_genFreeFn(std::get<TypeAlias>(type->body).type, code);
+    result = this->_genFreeFn(std::get<TypeAlias>(type->body).type, result);
   } else if (type->isAny()) {
-    result = this->_apiEval("_{any_free}((_{struct any}) " + result + ")", 2);
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("any_free")),
+      {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct any")), result)}
+    );
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    result = this->_apiEval("_{buffer_free}((_{struct buffer}) " + result + ")", 2);
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("buffer_free")),
+      {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct buffer")), result)}
+    );
   } else if (
     type->isArray() ||
     type->isFn() ||
@@ -549,23 +557,35 @@ std::string Codegen::_genFreeFn (Type *type, const std::string &code) {
   ) {
     auto typeInfo = this->_typeInfo(type);
 
-    this->_activateEntity(typeInfo.realTypeName + "_free");
-    result = typeInfo.realTypeName + "_free((" + typeInfo.realTypeCodeTrimmed + ") " + result + ")";
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_free")),
+      {CodegenASTExprCast::create(CodegenASTType::create(typeInfo.realTypeCodeTrimmed), result)}
+    );
   } else if (type->isStr()) {
-    result = this->_apiEval("_{str_free}((_{struct str}) " + result + ")", 2);
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("str_free")),
+      {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct str")), result)}
+    );
   }
 
   return result;
 }
 
-std::string Codegen::_genReallocFn (Type *type, const std::string &leftCode, const std::string &rightCode) {
-  auto initialState = this->state;
-  auto result = std::string();
+CodegenASTExpr Codegen::_genReallocFn (Type *type, const CodegenASTExpr &leftExpr, const CodegenASTExpr &rightExpr) {
+  auto result = CodegenASTExpr{};
 
   if (type->isAny()) {
-    result = this->_apiEval(leftCode + " = _{any_realloc}(" + leftCode + ", " + rightCode + ")", 1);
+    result = CodegenASTExprAssign::create(
+      leftExpr,
+      "=",
+      CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("any_realloc")), {leftExpr, rightExpr})
+    );
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    result = this->_apiEval(leftCode + " = _{buffer_realloc}(" + leftCode + ", " + rightCode + ")", 1);
+    result = CodegenASTExprAssign::create(
+      leftExpr,
+      "=",
+      CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("buffer_realloc")), {leftExpr, rightExpr})
+    );
   } else if (
     type->isArray() ||
     type->isFn() ||
@@ -576,24 +596,36 @@ std::string Codegen::_genReallocFn (Type *type, const std::string &leftCode, con
   ) {
     auto typeInfo = this->_typeInfo(type);
 
-    this->_activateEntity(typeInfo.typeName + "_realloc");
-    result = leftCode + " = " + typeInfo.typeName + "_realloc(" + leftCode + ", " + rightCode + ")";
+    result = CodegenASTExprAssign::create(
+      leftExpr,
+      "=",
+      CodegenASTExprCall::create(CodegenASTExprAccess::create(typeInfo.typeName + "_realloc"), {leftExpr, rightExpr})
+    );
   } else if (type->isStr()) {
-    result = this->_apiEval(leftCode + " = _{str_realloc}(" + leftCode + ", " + rightCode + ")", 1);
+    result = CodegenASTExprAssign::create(
+      leftExpr,
+      "=",
+      CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_realloc")), {leftExpr, rightExpr})
+    );
   }
 
   return result;
 }
 
-std::string Codegen::_genStrFn (Type *type, const std::string &code, bool copy, bool escape) {
-  auto initialState = this->state;
+CodegenASTExpr Codegen::_genStrFn (Type *type, const CodegenASTExpr &expr, bool copy, bool escape) {
   auto realType = Type::real(type);
-  auto result = code;
+  auto result = expr;
 
   if (realType->isAny()) {
-    result = this->_apiEval("_{any_str}(" + (copy ? this->_genCopyFn(realType, result) : result) + ")", 1);
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("any_str")),
+      {copy ? this->_genCopyFn(realType, result) : result}
+    );
   } else if (realType->isObj() && realType->builtin && realType->codeName == "@buffer_Buffer") {
-    result = this->_apiEval("_{buffer_str}(" + (copy ? this->_genCopyFn(realType, result) : result) + ")", 1);
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("buffer_str")),
+      {copy ? this->_genCopyFn(realType, result) : result}
+    );
   } else if (
     realType->isArray() ||
     realType->isFn() ||
@@ -604,17 +636,23 @@ std::string Codegen::_genStrFn (Type *type, const std::string &code, bool copy, 
   ) {
     auto typeInfo = this->_typeInfo(realType);
 
-    this->_activateEntity(typeInfo.realTypeName + "_str");
-    result = typeInfo.realTypeName + "_str(" + (copy ? this->_genCopyFn(realType, result) : result) + ")";
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
+      {copy ? this->_genCopyFn(realType, result) : result}
+    );
   } else if (realType->isEnum()) {
-    result = this->_apiEval("_{enum_str}(" + result + ")", 1);
+    result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("enum_str")), {result});
   } else if (realType->isStr() && escape) {
-    result = this->_apiEval("_{str_escape}(" + result + ")", 1);
+    result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_escape")), {result});
   } else if (realType->isStr()) {
     result = copy ? this->_genCopyFn(realType, result) : result;
   } else {
     auto typeInfo = this->_typeInfo(realType);
-    result = this->_apiEval("_{" + typeInfo.realTypeName + "_str}(" + result + ")", 1);
+
+    result = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
+      {result}
+    );
   }
 
   return result;

@@ -130,35 +130,34 @@ CodegenASTStmt &Codegen::_fnDecl (
           ).stmt()
         );
 
-        this->state.cleanUp.add(
-          CodegenASTStmtIf::create(
-            CodegenASTExprBinary::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
-              "!=",
-              CodegenASTExprLiteral::create("-1")
+        this->state.cleanUp.merge(
+          CodegenASTStmtCompound::create({
+            CodegenASTStmtIf::create(
+              CodegenASTExprBinary::create(
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
+                "!=",
+                CodegenASTExprLiteral::create("-1")
+              ),
+              CodegenASTExprCall::create(
+                CodegenASTExprAccess::create(this->_("longjmp")),
+                {
+                  CodegenASTExprAccess::create(
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+                    CodegenASTExprBinary::create(
+                      CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+                      "-",
+                      CodegenASTExprLiteral::create("1")
+                    )
+                  ),
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
+                }
+              ).stmt()
             ),
             CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("longjmp")),
-              {
-                CodegenASTExprAccess::create(
-                  CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
-                  CodegenASTExprBinary::create(
-                    CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
-                    "-",
-                    CodegenASTExprLiteral::create("1")
-                  )
-                ),
-                CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
-              }
+              CodegenASTExprAccess::create(this->_("error_stack_pop")),
+              {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
             ).stmt()
-          )
-        );
-
-        this->state.cleanUp.add(
-          CodegenASTExprCall::create(
-            CodegenASTExprAccess::create(this->_("error_stack_pop")),
-            {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
-          ).stmt()
+          })
         );
       }
 

@@ -160,32 +160,104 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->_typeNameObjDef(this->ast->typeMap.get("request_Response"));
   this->_typeNameObjDef(this->ast->typeMap.get("url_URL"));
 
-  auto mainCode = std::string();
+  auto cMain = CodegenASTStmtCompound::create();
 
   if (this->async) {
-    mainCode += this->_apiEval(R"(  _{threadpool_t} *tp = _{threadpool_init}(5);)" EOL);
+    cMain.append(
+      CodegenASTStmtVarDecl::create(
+        CodegenASTType::create(this->_("threadpool_t")),
+        CodegenASTExprAccess::create("tp"),
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("threadpool_init")),
+          {CodegenASTExprLiteral::create("5")}
+        )
+      )
+    );
   }
 
   if (this->throws) {
-    mainCode += this->_apiEval(R"(  _{error_stack_push}(&_{err_state}, ")" + this->reader->path +  R"(", "main", 0, 0);)" EOL);
+    cMain.append(
+      CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("error_stack_push")),
+        {
+          CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state"))),
+          CodegenASTExprLiteral::create(R"(")" + this->reader->path + R"(")"),
+          CodegenASTExprLiteral::create(R"("main")"),
+          CodegenASTExprLiteral::create("0"),
+          CodegenASTExprLiteral::create("0")
+        }
+      ).stmt()
+    );
 
-    this->state.cleanUp.add(this->_apiEval(R"(})"));
-    this->state.cleanUp.add(this->_apiEval(R"(  _{exit}(_{EXIT_FAILURE});)"));
-    this->state.cleanUp.add(this->_apiEval(R"(  _{err_state}._free(_{err_state}.ctx);)"));
-    this->state.cleanUp.add(this->_apiEval(R"(  _{fprintf}(_{stderr}, "Uncaught Error: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)"));
-    this->state.cleanUp.add(this->_apiEval(R"(  struct _{error_Error} *err = _{err_state}.ctx;)"));
-    this->state.cleanUp.add(this->_apiEval(R"(if (_{err_state}.id != -1) {)"));
-    this->state.cleanUp.add(this->_apiEval(R"(_{error_stack_pop}(&_{err_state});)"));
+    this->state.cleanUp.merge(
+      CodegenASTStmtCompound::create({
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("error_stack_pop")),
+          {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
+        ).stmt(),
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
+            "!=",
+            CodegenASTExprLiteral::create("-1")
+          ),
+          CodegenASTStmtCompound::create({
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create("struct " + this->_("error_Error") + " *"),
+              CodegenASTExprAccess::create("err"),
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "ctx")
+            ),
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("fprintf")),
+              {
+                CodegenASTExprAccess::create(this->_("stderr")),
+                CodegenASTExprLiteral::create(R"("Uncaught Error: %.*s" )" + this->_("THE_EOL")),
+                CodegenASTExprCast::create(
+                  CodegenASTType::create("int"),
+                  CodegenASTExprAccess::create(
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("err"), "__THE_0_stack", true),
+                    "l"
+                  )
+                ),
+                CodegenASTExprAccess::create(
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("err"), "__THE_0_stack", true),
+                  "d"
+                )
+              }
+            ).stmt(),
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "_free"),
+              {CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "ctx")}
+            ).stmt(),
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("exit")),
+              {CodegenASTExprAccess::create(this->_("EXIT_FAILURE"))}
+            ).stmt()
+          })
+        )
+      })
+    );
   }
 
-  mainCode += this->_block(nodes, false);
+  cMain = this->_block(cMain, nodes, false);
 
   if (this->async) {
-    this->state.cleanUp.add(this->_apiEval("_{threadpool_deinit}(tp);"));
-    this->state.cleanUp.add(this->_apiEval("_{threadpool_wait}(tp);"));
+    this->state.cleanUp.merge(
+      CodegenASTStmtCompound::create({
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("threadpool_wait")),
+          {CodegenASTExprAccess::create("tp")}
+        ).stmt(),
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("threadpool_deinit")),
+          {CodegenASTExprAccess::create("tp")}
+        ).stmt()
+      })
+    );
   }
 
-  auto mainCleanUpCode = this->state.cleanUp.gen(2);
+  cMain = this->state.cleanUp.gen(cMain);
+
   auto defineCode = std::string();
   auto enumDeclCode = std::string();
   auto fnDeclCode = std::string();
@@ -373,6 +445,22 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   if (this->needMainArgs) {
     builtinVarCode += "int argc = 0;" EOL;
     builtinVarCode += "char **argv = (void *) 0;" EOL;
+
+    cMain.prepend(
+      CodegenASTExprAssign::create(
+        CodegenASTExprAccess::create("argc"),
+        "=",
+        CodegenASTExprAccess::create("_argc_")
+      ).stmt()
+    );
+
+    cMain.prepend(
+      CodegenASTExprAssign::create(
+        CodegenASTExprAccess::create("argv"),
+        "=",
+        CodegenASTExprAccess::create("_argv_")
+      ).stmt()
+    );
   }
 
   if (this->builtins.varEnviron) {
@@ -507,121 +595,100 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   output += builtinVarCode;
   output += fnDeclCode;
   output += fnDefCode;
-  output += "int main (" + std::string(this->needMainArgs ? "int _argc_, char *_argv_[]" : "") + ") {" EOL;
-
-  if (this->needMainArgs) {
-    output += "  argc = _argc_;" EOL;
-    output += "  argv = _argv_;" EOL;
-  }
-
-  output += mainCode;
-  output += mainCleanUpCode;
-  output += "}" EOL;
+  output += "int main (" + std::string(this->needMainArgs ? "int _argc_, char *_argv_[]" : "") + ") ";
+  output += cMain.str() + EOL;
 
   return std::make_tuple(output, this->flags);
 }
 
-std::string Codegen::_node (const ASTNode &node, bool root, CodegenPhase phase) {
-  auto decl = std::string();
-  auto code = std::string();
-
+CodegenASTStmt &Codegen::_node (CodegenASTStmt &c, const ASTNode &node, CodegenPhase phase) {
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
-    return this->_nodeBreak(node, root, phase, decl, code);
+    return this->_nodeBreak(c, node);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
-    return this->_nodeContinue(node, root, phase, decl, code);
+    return this->_nodeContinue(c, node);
   } else if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
-    return this->_nodeEnumDecl(node, root, phase, decl, code);
+    return this->_nodeEnumDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
-    return this->_nodeExprDecl(node, root, phase, decl, code);
+    return this->_nodeExprDecl(c, node);
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-    return this->_nodeFnDecl(node, root, phase, decl, code);
+    return this->_nodeFnDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
-    return this->_nodeIf(node, root, phase, decl, code);
+    return this->_nodeIf(c, node);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
-    return this->_nodeLoop(node, root, phase, decl, code);
+    return this->_nodeLoop(c, node);
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
-    return this->_nodeMain(node, root, phase, decl, code);
+    return this->_nodeMain(c, node);
   } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-    return this->_nodeObjDecl(node, root, phase, decl, code);
+    return this->_nodeObjDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
-    return this->_nodeReturn(node, root, phase, decl, code);
+    return this->_nodeReturn(c, node);
   } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
-    return this->_nodeThrow(node, root, phase, decl, code);
+    return this->_nodeThrow(c, node);
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
-    return this->_nodeTry(node, root, phase, decl, code);
-  } else if (std::holds_alternative<ASTNodeTypeDecl>(*node.body)) {
-    return this->_wrapNode(node, root, phase, code);
+    return this->_nodeTry(c, node);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-    return this->_nodeVarDecl(node, root, phase, decl, code);
+    return this->_nodeVarDecl(c, node);
   }
 
-  throw Error("tried to generate code for unknown node");
+  return c;
 }
 
-std::string Codegen::_nodeAsync (ASTNode &node, bool root, CodegenPhase phase) {
-  auto decl = std::string();
-  auto code = std::string();
-
+CodegenASTStmt &Codegen::_nodeAsync (CodegenASTStmt &c, const ASTNode &node, CodegenPhase phase) {
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
-    return this->_nodeBreakAsync(node, root, phase, decl, code);
+    return this->_nodeBreakAsync(c, node);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
-    return this->_nodeContinueAsync(node, root, phase, decl, code);
+    return this->_nodeContinueAsync(c, node);
   } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
-    return this->_nodeExprDeclAsync(node, root, phase, decl, code);
+    return this->_nodeExprDeclAsync(c, node);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
-    return this->_nodeIfAsync(node, root, phase, decl, code);
+    return this->_nodeIfAsync(c, node);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
-    return this->_nodeLoopAsync(node, root, phase, decl, code);
+    return this->_nodeLoopAsync(c, node);
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
-    return this->_nodeMainAsync(node, root, phase, decl, code);
+    return this->_nodeMainAsync(c, node);
   } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
-    return this->_nodeReturnAsync(node, root, phase, decl, code);
+    return this->_nodeReturnAsync(c, node);
   } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
-    return this->_nodeThrowAsync(node, root, phase, decl, code);
+    return this->_nodeThrowAsync(c, node);
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
-    return this->_nodeTryAsync(node, root, phase, decl, code);
+    return this->_nodeTryAsync(c, node);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-    return this->_nodeVarDeclAsync(node, root, phase, decl, code);
+    return this->_nodeVarDeclAsync(c, node);
   }
 
-  return this->_node(node, root, phase);
+  return this->_node(c, node, phase);
 }
 
-std::string Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root, std::size_t awaitCallId) {
+CodegenASTExpr Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root, std::size_t awaitCallId) {
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
-    return this->_exprAccess(nodeExpr, targetType, parent, decl, root);
+    return this->_exprAccess(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
-    return this->_exprArray(nodeExpr, targetType, parent, decl, root);
+    return this->_exprArray(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
-    return this->_exprAssign(nodeExpr, targetType, parent, decl, root);
+    return this->_exprAssign(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprAwait>(*nodeExpr.body)) {
-    return this->_exprAwait(nodeExpr, targetType, parent, decl, root);
+    return this->_exprAwait(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprBinary>(*nodeExpr.body)) {
-    return this->_exprBinary(nodeExpr, targetType, parent, decl, root);
+    return this->_exprBinary(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
-    return this->_exprCall(nodeExpr, targetType, parent, decl, root, awaitCallId);
+    return this->_exprCall(nodeExpr, targetType, parent, c, root, awaitCallId);
   } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
-    return this->_exprCond(nodeExpr, targetType, parent, decl, root);
+    return this->_exprCond(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {
-    return this->_exprIs(nodeExpr, targetType, parent, decl, root);
+    return this->_exprIs(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprLit>(*nodeExpr.body)) {
-    return this->_exprLit(nodeExpr, targetType, parent, decl, root);
+    return this->_exprLit(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprMap>(*nodeExpr.body)) {
-    return this->_exprMap(nodeExpr, targetType, parent, decl, root);
+    return this->_exprMap(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprObj>(*nodeExpr.body)) {
-    return this->_exprObj(nodeExpr, targetType, parent, decl, root);
+    return this->_exprObj(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprRef>(*nodeExpr.body)) {
-    return this->_exprRef(nodeExpr, targetType, parent, decl, root);
+    return this->_exprRef(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprUnary>(*nodeExpr.body)) {
-    return this->_exprUnary(nodeExpr, targetType, parent, decl, root);
+    return this->_exprUnary(nodeExpr, targetType, parent, c, root);
   }
 
   throw Error("tried to generate code for unknown expression");
-}
-
-// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-std::string Codegen::_wrapNode ([[maybe_unused]] const ASTNode &node, [[maybe_unused]] bool root, [[maybe_unused]] CodegenPhase phase, const std::string &code) {
-  return code;
 }
 
 std::string Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const std::string &code) {
