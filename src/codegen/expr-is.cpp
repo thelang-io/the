@@ -16,12 +16,16 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprIs (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprIs (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
   auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
-  auto exprIsExprCode = this->_nodeExpr(exprIs.expr, exprIs.expr.type, parent, decl, true);
+  auto exprIsExprCode = this->_nodeExpr(exprIs.expr, exprIs.expr.type, parent, c, true);
   auto exprIsTypeDef = this->_typeDef(exprIs.type);
-  this->_activateEntity(exprIsTypeDef);
-  auto code = exprIsExprCode + ".t == " + exprIsTypeDef;
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  auto expr = CodegenASTExprBinary::create(
+    CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_(exprIsTypeDef)), "t"),
+    "==",
+    CodegenASTExprAccess::create(this->_(exprIsTypeDef))
+  );
+
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }
