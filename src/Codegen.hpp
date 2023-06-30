@@ -225,8 +225,8 @@ class Codegen {
   CodegenASTExpr _exprBinary (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt *, bool);
   CodegenASTExpr _exprCall (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt *, bool, std::size_t);
   CodegenASTExpr _exprCallDefaultArg (const CodegenTypeInfo &);
-  CodegenASTExpr _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &, const ASTNode &, std::string &);
-  CodegenASTExpr _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
+  CodegenASTExpr _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &, const ASTNode &, CodegenASTStmt *);
+  std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
   CodegenASTExpr _exprCond (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt *, bool);
   CodegenASTExpr _exprIs (const ASTNodeExpr &, Type *, const ASTNode &, CodegenASTStmt *, bool);
   CodegenASTExpr _exprLit (const ASTNodeExpr &, Type *, bool);

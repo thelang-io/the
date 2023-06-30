@@ -16,35 +16,46 @@
 
 #include "../Codegen.hpp"
 
-std::string Codegen::_exprCallDefaultArg (const CodegenTypeInfo &typeInfo) {
+CodegenASTExpr Codegen::_exprCallDefaultArg (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
-    return this->_apiEval("(_{struct any}) {}");
+    return CodegenASTExprCast::create(
+      CodegenASTType::create(this->_("struct any")),
+      CodegenASTExprInitList::create()
+    );
   } else if (
     typeInfo.type->isArray() ||
     typeInfo.type->isMap() ||
     typeInfo.type->isFn() ||
     typeInfo.type->isUnion()
   ) {
-    this->_activateEntity(typeInfo.typeName);
-    return "(struct " + typeInfo.typeName + ") {}";
+    return CodegenASTExprCast::create(
+      CodegenASTType::create("struct " + this->_(typeInfo.typeName)),
+      CodegenASTExprInitList::create()
+    );
   } else if (typeInfo.type->isBool()) {
-    return this->_apiEval("_{false}");
+    return CodegenASTExprAccess::create(this->_("false"));
   } else if (typeInfo.type->isChar()) {
-    return R"('\0')";
+    return CodegenASTExprLiteral::create(R"('\0')");
   } else if (typeInfo.type->isObj() && typeInfo.type->builtin && typeInfo.type->codeName == "@buffer_Buffer") {
-    return this->_apiEval("(_{struct buffer}) {}");
+    return CodegenASTExprCast::create(
+      CodegenASTType::create(this->_("struct buffer")),
+      CodegenASTExprInitList::create()
+    );
   } else if (typeInfo.type->isObj() || typeInfo.type->isOpt()) {
-    return this->_apiEval("_{NULL}");
+    return CodegenASTExprAccess::create(this->_("NULL"));
   } else if (typeInfo.type->isStr()) {
-    return this->_apiEval("(_{struct str}) {}");
+    return CodegenASTExprCast::create(
+      CodegenASTType::create(this->_("struct str")),
+      CodegenASTExprInitList::create()
+    );
   } else {
-    return "0";
+    return CodegenASTExprLiteral::create("0");
   }
 }
 
-std::string Codegen::_exprCallPrintArg (const CodegenTypeInfo &typeInfo, const ASTNodeExpr &nodeExpr, const ASTNode &parent, std::string &decl) {
+CodegenASTExpr Codegen::_exprCallPrintArg (const CodegenTypeInfo &typeInfo, const ASTNodeExpr &nodeExpr, const ASTNode &parent, CodegenASTStmt *c) {
   if (typeInfo.type->isStr() && nodeExpr.isLit()) {
-    return nodeExpr.litBody();
+    return CodegenASTExprLiteral::create(nodeExpr.litBody());
   } else if (
     typeInfo.type->isAny() ||
     typeInfo.type->isArray() ||
@@ -56,10 +67,10 @@ std::string Codegen::_exprCallPrintArg (const CodegenTypeInfo &typeInfo, const A
     typeInfo.type->isStr() ||
     typeInfo.type->isUnion()
   ) {
-    return this->_genStrFn(typeInfo.type, this->_nodeExpr(nodeExpr, typeInfo.type, parent, decl), false, false);
+    return this->_genStrFn(typeInfo.type, this->_nodeExpr(nodeExpr, typeInfo.type, parent, c), false, false);
   }
 
-  return this->_nodeExpr(nodeExpr, typeInfo.type, parent, decl);
+  return this->_nodeExpr(nodeExpr, typeInfo.type, parent, c);
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
@@ -101,11 +112,11 @@ std::string Codegen::_exprCallPrintArgSign (const CodegenTypeInfo &typeInfo, con
   throw Error("tried print unknown entity type");
 }
 
-std::string Codegen::_exprCall (
+CodegenASTExpr Codegen::_exprCall (
   const ASTNodeExpr &nodeExpr,
   Type *targetType,
   const ASTNode &parent,
-  std::string &decl,
+  CodegenASTStmt *c,
   bool root,
   std::size_t awaitCallId
 ) {
@@ -114,44 +125,39 @@ std::string Codegen::_exprCall (
   auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
   auto calleeTypeInfo = this->_typeInfo(exprCall.callee.type);
   auto fnType = std::get<TypeFn>(calleeTypeInfo.realType->body);
-  auto code = std::string();
+  auto expr = CodegenASTExpr{};
 
   if (calleeTypeInfo.realType->builtin && calleeTypeInfo.realType->codeName == "@print") {
-    auto separator = std::string(R"(" ")");
-    auto isSeparatorLit = true;
-    auto terminator = this->_apiEval("_{THE_EOL}");
-    auto isTerminatorLit = true;
-    auto to = this->_apiEval("_{stdout}");
+    auto separator = CodegenASTExprLiteral::create(R"(" ")");
+    auto terminator = CodegenASTExprAccess::create(this->_("THE_EOL"));
+    auto to = CodegenASTExprAccess::create(this->_("stdout"));
 
     for (const auto &exprCallArg : exprCall.args) {
       if (exprCallArg.id != std::nullopt && exprCallArg.id == "separator") {
-        if (exprCallArg.expr.isLit()) {
-          separator = exprCallArg.expr.litBody();
-        } else {
-          separator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, decl);
-          isSeparatorLit = false;
-        }
+        separator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, c);
       } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "terminator") {
-        if (exprCallArg.expr.isLit()) {
-          terminator = exprCallArg.expr.litBody();
-        } else {
-          terminator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, decl);
-          isTerminatorLit = false;
-        }
+        terminator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, c);
       } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "to") {
         if (exprCallArg.expr.isLit()) {
-          to = this->_apiEval(exprCallArg.expr.litBody() == R"("stderr")" ? "_{stderr}" : "_{stdout}");
+          auto toLitBody = exprCallArg.expr.litBody();
+          to = CodegenASTExprAccess::create(this->_(toLitBody == R"("stderr")" ? "stderr" : "stdout"));
         } else {
-          to = this->_apiEval(R"(_{cstr_eq_str}("stderr")");
-          to += ", " + this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, decl) + ") ? ";
-          to += this->_apiEval("_{stderr} : _{stdout}");
+          auto cTo = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, c);
+
+          to = CodegenASTExprCond::create(
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("cstr_eq_str")),
+              {CodegenASTExprLiteral::create(this->_("stderr")), cTo}
+            ),
+            CodegenASTExprAccess::create(this->_("stderr")),
+            CodegenASTExprAccess::create(this->_("stdout"))
+          );
         }
       }
     }
 
-    code = "_{print}(" + to + R"(, ")";
-
-    auto argsCode = std::string();
+    auto cArgs = std::vector<CodegenASTExpr>{to};
+    auto fmtString = std::string("");
     auto argIdx = static_cast<std::size_t>(0);
 
     for (const auto &exprCallArg : exprCall.args) {
@@ -160,25 +166,25 @@ std::string Codegen::_exprCall (
       }
 
       auto argTypeInfo = this->_typeInfo(exprCallArg.expr.type);
+      auto cArg = this->_exprCallPrintArg(argTypeInfo, exprCallArg.expr, parent, c);
 
-      if (argIdx != 0 && separator != R"("")") {
-        code += isSeparatorLit ? "z" : "s";
-        argsCode += separator + ", ";
+      if (argIdx != 0 && !separator.isEmptyString()) {
+        fmtString += separator.isLiteral() ? "z" : "s";
+        cArgs.push_back(separator);
       }
 
-      code += this->_exprCallPrintArgSign(argTypeInfo, exprCallArg.expr);
-      argsCode += this->_exprCallPrintArg(argTypeInfo, exprCallArg.expr, parent, decl) + ", ";
+      fmtString += this->_exprCallPrintArgSign(argTypeInfo, exprCallArg.expr);
+      cArgs.push_back(cArg);
       argIdx++;
     }
 
-    if (terminator == R"("")") {
-      code += R"(", )" + argsCode.substr(0, argsCode.size() - 2);
-    } else {
-      code += std::string(isTerminatorLit ? "z" : "s") + R"(", )" + argsCode + terminator;
+    if (!terminator.isEmptyString()) {
+      fmtString += terminator.isLiteral() ? "z" : "s";
+      cArgs.push_back(terminator);
     }
 
-    code += ")";
-    code = this->_apiEval(code, 1);
+    cArgs.insert(cArgs.begin() + 1, CodegenASTExprLiteral::create(R"(")" + fmtString + R"(")"));
+    expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("print")), cArgs);
   } else if (calleeTypeInfo.realType->builtin && calleeTypeInfo.realType->codeName == "@utils_swap") {
     auto argTypeInfo = this->_typeInfo(exprCall.args[0].expr.type);
     auto argRealTypeInfo = argTypeInfo;
@@ -187,36 +193,44 @@ std::string Codegen::_exprCall (
       argRealTypeInfo = this->_typeInfo(std::get<TypeRef>(argTypeInfo.type->body).refType);
     }
 
-    code = this->_apiEval(
-      "_{utils_swap}(" + this->_nodeExpr(exprCall.args[0].expr, argTypeInfo.type, parent, decl) +
-      ", " + this->_nodeExpr(exprCall.args[1].expr, argTypeInfo.type, parent, decl) + ", sizeof(" + argRealTypeInfo.typeCodeTrimmed + "))",
-      1
+    expr = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("utils_swap")),
+      {
+        this->_nodeExpr(exprCall.args[0].expr, argTypeInfo.type, parent, c),
+        this->_nodeExpr(exprCall.args[1].expr, argTypeInfo.type, parent, c),
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create("sizeof"),
+          {CodegenASTType::create(argRealTypeInfo.typeCodeTrimmed)}
+        )
+      }
     );
   } else {
     auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
     auto hasThrowParams = this->throws && !calleeTypeInfo.realType->builtin;
     auto hasParams = (!fnType.params.empty() || hasSelfParam || hasThrowParams) && !calleeTypeInfo.realType->builtin;
     auto paramsName = calleeTypeInfo.realTypeName + "P";
-    auto paramsCode = std::string();
-
-    if (hasParams) {
-      paramsCode += this->_apiEval(", _{xalloc}(&(struct _{" + paramsName + "}) {");
-    }
+    auto cParamsArgs = std::vector<CodegenASTExpr>{};
 
     if (hasThrowParams) {
-      paramsCode += line + ", " + col;
+      cParamsArgs.push_back(CodegenASTExprLiteral::create(line));
+      cParamsArgs.push_back(CodegenASTExprLiteral::create(col));
     }
 
     if (hasSelfParam) {
       auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
       auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
 
-      paramsCode += !hasThrowParams ? "" : ", ";
-
       if (calleeTypeInfo.realType->builtin) {
-        paramsCode += this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, parent, decl, fnType.callInfo.isSelfMut);
+        cParamsArgs.push_back(
+          this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, parent, c, fnType.callInfo.isSelfMut)
+        );
       } else {
-        paramsCode += this->_genCopyFn(fnType.callInfo.selfType, this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, parent, decl, true));
+        cParamsArgs.push_back(
+          this->_genCopyFn(
+            fnType.callInfo.selfType,
+            this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, parent, c, true)
+          )
+        );
       }
     }
 
@@ -240,10 +254,8 @@ std::string Codegen::_exprCall (
       }
 
       if (!param.required && !param.variadic) {
-        paramsCode += std::string(i == 0 && !hasThrowParams && !hasSelfParam ? "" : ", ") + (foundArg == std::nullopt ? "0" : "1");
+        cParamsArgs.push_back(CodegenASTExprLiteral::create(foundArg == std::nullopt ? "0" : "1"));
       }
-
-      paramsCode += i == 0 && (param.required || param.variadic) && !hasThrowParams && !hasSelfParam ? "" : ", ";
 
       if (param.variadic) {
         auto paramTypeElementType = std::get<TypeArray>(param.type->body).elementType;
@@ -263,44 +275,63 @@ std::string Codegen::_exprCall (
           }
         }
 
-        paramsCode += this->_apiEval("_{" + paramTypeInfo.typeName + "_alloc}(") + std::to_string(variadicArgs.size());
+        auto cVariadicArgs = std::vector<CodegenASTExpr>{
+          CodegenASTExprLiteral::create(std::to_string(variadicArgs.size()))
+        };
 
         for (const auto &variadicArg : variadicArgs) {
-          paramsCode += ", " + this->_nodeExpr(variadicArg.expr, paramTypeElementType, parent, decl);
+          cVariadicArgs.push_back(this->_nodeExpr(variadicArg.expr, paramTypeElementType, parent, c));
         }
 
-        paramsCode += ")";
+        cParamsArgs.push_back(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_(paramTypeInfo.typeName + "_alloc")),
+            cVariadicArgs
+          )
+        );
       } else if (foundArg != std::nullopt) {
-        paramsCode += this->_nodeExpr(foundArg->expr, paramTypeInfo.type, parent, decl);
+        cParamsArgs.push_back(this->_nodeExpr(foundArg->expr, paramTypeInfo.type, parent, c));
       } else {
-        paramsCode += this->_exprCallDefaultArg(paramTypeInfo);
+        cParamsArgs.push_back(this->_exprCallDefaultArg(paramTypeInfo));
       }
     }
 
+    auto cParams = std::optional<CodegenASTExpr>{};
+
     if (hasParams) {
-      paramsCode += this->_apiEval("}, sizeof(struct _{" + paramsName + "}))");
+      cParams = CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("xalloc")),
+        {
+          CodegenASTExprUnary::create("&", CodegenASTExprCast::create(
+            CodegenASTType::create("struct " + this->_(paramsName)),
+            CodegenASTExprInitList::create(cParamsArgs)
+          )),
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create("sizeof"),
+            {CodegenASTType::create("struct " + this->_(paramsName))}
+          )
+        }
+      );
     }
 
-    auto fnName = std::string();
+    auto fnName = CodegenASTExprAccess::create(Codegen::name(fnType.callInfo.codeName));
 
     if (calleeTypeInfo.realType->builtin && !fnType.callInfo.empty()) {
-      fnName = this->_apiEval("_{" + fnType.callInfo.codeName + "}");
+      fnName = CodegenASTExprAccess::create(this->_(fnType.callInfo.codeName));
     } else if (fnType.callInfo.empty()) {
-      fnName = this->_nodeExpr(exprCall.callee, calleeTypeInfo.realType, parent, decl, true);
-    } else {
-      fnName = Codegen::name(fnType.callInfo.codeName);
+      fnName = this->_nodeExpr(exprCall.callee, calleeTypeInfo.realType, parent, c, true);
     }
 
     if (
       fnType.isMethod &&
-      this->state.contextVars.contains(fnName) &&
+      this->state.contextVars.contains(fnName.str()) &&
       (nodeExpr.type->isRef() || !targetType->isRef())
     ) {
-      fnName = "*" + fnName;
+      fnName = CodegenASTExprUnary::create("*", fnName);
     }
 
-    if (fnName.starts_with("*")) {
-      fnName = "(" + fnName + ")";
+    if (fnName.isPointer()) {
+      fnName = fnName.wrap();
     }
 
     if (fnType.async) {
@@ -308,30 +339,60 @@ std::string Codegen::_exprCall (
       // todo if not awaited, return value incorrect
       auto parentIsSyncMain = ASTChecker(parent.parent).is<ASTNodeMain>() && !std::get<ASTNodeMain>(*parent.parent->body).async;
 
-      paramsCode = paramsCode.empty() ? this->_apiEval(", _{NULL}") : paramsCode;
-      code = this->_apiEval("_{threadpool_add}(tp, " + fnName + ".f");
-      code += this->_apiEval(", _{xalloc}(" + fnName + ".x, " + fnName + ".l)") + paramsCode;
-      code += ", " + (fnType.returnType->isVoid() ? this->_apiEval("_{NULL}") : "t" + std::to_string(awaitCallId)) + ", ";
-      code += this->_apiEval(parentIsSyncMain ? "_{NULL}" : "_{threadpool_job_ref}(job)");
-      code += ")";
+      expr = CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("threadpool_add")),
+        {
+          CodegenASTExprAccess::create("tp"),
+          CodegenASTExprAccess::create(fnName, "f"),
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("xalloc")),
+            {CodegenASTExprAccess::create(fnName, "x"), CodegenASTExprAccess::create(fnName, "l")}
+          ),
+          cParams != std::nullopt ? *cParams : CodegenASTExprAccess::create(this->_("NULL")),
+          CodegenASTExprAccess::create(
+            root || fnType.returnType->isVoid()
+              ? this->_("NULL")
+              : "t" + std::to_string(awaitCallId)
+          ),
+          parentIsSyncMain
+            ? CodegenASTExprAccess::create(this->_("NULL"))
+            : CodegenASTExprCall::create(
+                CodegenASTExprAccess::create(this->_("threadpool_job_ref")),
+                {CodegenASTExprAccess::create("job")}
+              )
+        }
+      );
     } else {
-      code = fnName;
-      code += (!calleeTypeInfo.realType->builtin || fnType.callInfo.empty()) ? ".f(" + code + ".x" : "(";
-      code += paramsCode;
+      auto isBuiltin = !calleeTypeInfo.realType->builtin || fnType.callInfo.empty();
+      auto cArgs = std::vector<CodegenASTExpr>{};
 
-      if (this->throws && calleeTypeInfo.realType->builtin && fnType.callInfo.throws) {
-        code += paramsCode.empty() ? "" : ", ";
-        code += line + ", " + col;
+      if (isBuiltin) {
+        cArgs.push_back(CodegenASTExprAccess::create(fnName, "x"));
       }
 
-      code += ")";
+      if (cParams != std::nullopt) {
+        cArgs.push_back(*cParams);
+      }
+
+      if (this->throws && calleeTypeInfo.realType->builtin && fnType.callInfo.throws) {
+        cArgs.push_back(CodegenASTExprLiteral::create(line));
+        cArgs.push_back(CodegenASTExprLiteral::create(col));
+      }
+
+      expr = CodegenASTExprCall::create(
+        isBuiltin ? CodegenASTExprAccess::create(fnName, "f") : fnName,
+        cArgs
+      );
     }
   }
 
   if (!root && nodeExpr.type->isRef() && !targetType->isRef()) {
-    code = this->_genCopyFn(targetType, "*" + code);
+    expr = this->_genCopyFn(targetType, CodegenASTExprUnary::create("*", expr));
   }
 
-  code = !root ? code : this->_genFreeFn(nodeExpr.type, code);
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  if (root) {
+    expr = this->_genFreeFn(nodeExpr.type, expr);
+  }
+
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }

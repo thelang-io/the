@@ -110,6 +110,8 @@ struct CodegenASTExpr {
   CodegenASTStmt *parentStmt;
   std::shared_ptr<CodegenASTExprBody> body;
 
+  bool isEmptyString () const;
+  bool isLiteral () const;
   bool isPointer () const;
   CodegenASTStmt stmt () const;
   std::string str () const;
@@ -132,6 +134,7 @@ struct CodegenASTExprBinary {
 
 struct CodegenASTExprCall {
   static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTExpr> & = {});
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTType> & = {});
 };
 
 struct CodegenASTExprCast {
