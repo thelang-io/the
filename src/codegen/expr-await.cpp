@@ -15,20 +15,24 @@
  */
 
 #include "../Codegen.hpp"
-#include "../config.hpp"
 
-std::string Codegen::_exprAwait (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::string &decl, bool root) {
+CodegenASTExpr Codegen::_exprAwait (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
   auto exprAwait = std::get<ASTExprAwait>(*nodeExpr.body);
-  auto code = std::string();
+  c->append(this->_nodeExpr(exprAwait.arg, exprAwait.arg.type, parent, c, false, exprAwait.id).stmt());
 
-  if (!nodeExpr.type->isVoid() && !root) {
-    code += "*t" + std::to_string(exprAwait.id);
-  }
+  c->append(
+    CodegenASTStmtReturn::create(
+      CodegenASTExprLiteral::create(std::to_string(this->state.asyncCounter + 1))
+    )
+  );
 
-  decl += std::string(this->indent, ' ') + this->_nodeExpr(exprAwait.arg, exprAwait.arg.type, parent, decl, false, exprAwait.id) + ";" EOL;
-  decl += std::string(this->indent, ' ') + "return " + std::to_string(this->state.asyncCounter + 1) + ";" EOL;
-  decl += std::string(this->indent - 2, ' ') + "}" EOL;
-  decl += std::string(this->indent - 2, ' ') + "case " + std::to_string(++this->state.asyncCounter) + ": {" EOL;
+  *c = c->exit().append(
+    CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+  );
 
-  return this->_wrapNodeExpr(nodeExpr, targetType, root, code);
+  auto expr = nodeExpr.type->isVoid() || root
+    ? CodegenASTExprLiteral::create("")
+    : CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("t" + std::to_string(exprAwait.id)));
+
+  return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }
