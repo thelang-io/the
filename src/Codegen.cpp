@@ -165,7 +165,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   if (this->async) {
     cMain.append(
       CodegenASTStmtVarDecl::create(
-        CodegenASTType::create(this->_("threadpool_t")),
+        CodegenASTType::create(this->_("threadpool_t") + " *"),
         CodegenASTExprAccess::create("tp"),
         CodegenASTExprCall::create(
           CodegenASTExprAccess::create(this->_("threadpool_init")),
@@ -239,7 +239,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     );
   }
 
-  cMain = this->_block(cMain, nodes, false);
+  this->_block(&cMain, nodes, false);
 
   if (this->async) {
     this->state.cleanUp.merge(
@@ -256,7 +256,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     );
   }
 
-  cMain = this->state.cleanUp.gen(cMain);
+  this->state.cleanUp.gen(&cMain);
 
   auto defineCode = std::string();
   auto enumDeclCode = std::string();
@@ -601,7 +601,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   return std::make_tuple(output, this->flags);
 }
 
-CodegenASTStmt &Codegen::_node (CodegenASTStmt &c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_node (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
     return this->_nodeBreak(c, node);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
@@ -629,11 +629,9 @@ CodegenASTStmt &Codegen::_node (CodegenASTStmt &c, const ASTNode &node, CodegenP
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
     return this->_nodeVarDecl(c, node);
   }
-
-  return c;
 }
 
-CodegenASTStmt &Codegen::_nodeAsync (CodegenASTStmt &c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_nodeAsync (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
     return this->_nodeBreakAsync(c, node);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
@@ -654,12 +652,12 @@ CodegenASTStmt &Codegen::_nodeAsync (CodegenASTStmt &c, const ASTNode &node, Cod
     return this->_nodeTryAsync(c, node);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
     return this->_nodeVarDeclAsync(c, node);
+  } else {
+    return this->_node(c, node, phase);
   }
-
-  return this->_node(c, node, phase);
 }
 
-CodegenASTExpr Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root, std::size_t awaitCallId) {
+CodegenASTExpr Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root, std::size_t awaitCallId) {
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
     return this->_exprAccess(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {

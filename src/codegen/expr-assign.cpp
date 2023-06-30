@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
+CodegenASTExpr Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
   auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
   auto cLeft = this->_nodeExpr(exprAssign.left, nodeExpr.type, parent, c, true);
   auto expr = CodegenASTExpr{};

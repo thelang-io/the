@@ -133,8 +133,9 @@ struct CodegenASTExprBinary {
 };
 
 struct CodegenASTExprCall {
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTExpr> & = {});
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTType> & = {});
+  static CodegenASTExpr create (const CodegenASTExpr &);
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTExpr> &);
+  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTType> &);
 };
 
 struct CodegenASTExprCast {

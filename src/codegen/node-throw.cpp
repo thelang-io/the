@@ -16,13 +16,13 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTStmt &Codegen::_nodeThrow (CodegenASTStmt &c, const ASTNode &node) {
+void Codegen::_nodeThrow (CodegenASTStmt *c, const ASTNode &node) {
   auto nodeThrow = std::get<ASTNodeThrow>(*node.body);
   auto argTypeInfo = this->_typeInfo(nodeThrow.arg.type);
   auto cArg = this->_nodeExpr(nodeThrow.arg, argTypeInfo.type, node, c);
   auto argNodeExprDef = this->_typeDef(argTypeInfo.type);
 
-  c.append(
+  c->append(
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("error_assign")),
       {
@@ -40,7 +40,7 @@ CodegenASTStmt &Codegen::_nodeThrow (CodegenASTStmt &c, const ASTNode &node) {
   );
 
   if (this->state.cleanUp.isClosestJump()) {
-    c.append(
+    c->append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("longjmp")),
         {
@@ -57,12 +57,10 @@ CodegenASTStmt &Codegen::_nodeThrow (CodegenASTStmt &c, const ASTNode &node) {
       ).stmt()
     );
   } else {
-    c.append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+    c->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
   }
-
-  return c;
 }
 
-CodegenASTStmt &Codegen::_nodeThrowAsync (CodegenASTStmt &c, const ASTNode &node) {
-  return this->_nodeThrow(c, node);
+void Codegen::_nodeThrowAsync (CodegenASTStmt *c, const ASTNode &node) {
+  this->_nodeThrow(c, node);
 }

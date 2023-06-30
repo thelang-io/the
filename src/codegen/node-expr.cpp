@@ -16,13 +16,12 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTStmt &Codegen::_nodeExprDecl (CodegenASTStmt &c, const ASTNode &node) {
+void Codegen::_nodeExprDecl (CodegenASTStmt *c, const ASTNode &node) {
   auto nodeExpr = std::get<ASTNodeExpr>(*node.body);
   auto cExpr = this->_nodeExpr(nodeExpr, nodeExpr.type, node, c, true).stmt();
-  c.append(cExpr);
-  return c;
+  c->append(cExpr);
 }
 
-CodegenASTStmt &Codegen::_nodeExprDeclAsync (CodegenASTStmt &c, const ASTNode &node) {
-  return this->_nodeExprDecl(c, node);
+void Codegen::_nodeExprDeclAsync (CodegenASTStmt *c, const ASTNode &node) {
+  this->_nodeExprDecl(c, node);
 }

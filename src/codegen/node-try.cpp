@@ -16,12 +16,12 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
+void Codegen::_nodeTry (CodegenASTStmt *c, const ASTNode &node) {
   auto nodeTry = std::get<ASTNodeTry>(*node.body);
   auto initialStateCleanUp = this->state.cleanUp;
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
 
-  c = c.append(
+  *c = c->append(
     CodegenASTStmtSwitch::create(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("setjmp")),
@@ -38,7 +38,7 @@ CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
     )
   );
 
-  c = c.append(CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0")));
+  *c = c->append(CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0")));
   this->varMap.save();
 
   auto blockCleanUp = CodegenASTStmtCompound::create({
@@ -69,9 +69,9 @@ CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
     ).stmt()
   });
 
-  c = this->_block(c, nodeTry.body, true, blockCleanUp, true);
-  c.append(CodegenASTStmtBreak::create());
-  c = c.exit();
+  this->_block(c, nodeTry.body, true, blockCleanUp, true);
+  c->append(CodegenASTStmtBreak::create());
+  *c = c->exit();
   this->varMap.restore();
   this->state.cleanUp = initialStateCleanUp;
 
@@ -81,23 +81,23 @@ CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
     auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
     auto handleCodeName = Codegen::name(handlerVarDecl.var->codeName);
 
-    c = c.append(CodegenASTStmtCase::create(CodegenASTExprAccess::create(this->_(handlerDef))));
+    *c = c->append(CodegenASTStmtCase::create(CodegenASTExprAccess::create(this->_(handlerDef))));
 
-    c.append(
+    c->append(
       CodegenASTExprUnary::create(
         CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
         "--"
       ).stmt()
     );
 
-    c.append(
+    c->append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("error_unset")),
         {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
       ).stmt()
     );
 
-    c.append(
+    c->append(
       CodegenASTStmtVarDecl::create(
         CodegenASTType::create(handlerTypeInfo.typeCodeConst),
         CodegenASTExprAccess::create(handleCodeName),
@@ -109,27 +109,32 @@ CodegenASTStmt &Codegen::_nodeTry (CodegenASTStmt &c, const ASTNode &node) {
     );
 
     this->varMap.save();
-    c = this->_block(c, handler.body, true, this->_genFreeFn(handlerTypeInfo.type, handleCodeName).stmt());
-    c.append(CodegenASTStmtBreak::create());
-    c = c.exit();
+
+    this->_block(
+      c,
+      handler.body,
+      true,
+      this->_genFreeFn(handlerTypeInfo.type, CodegenASTExprAccess::create(handleCodeName)).stmt()
+    );
+
+    c->append(CodegenASTStmtBreak::create());
+    *c = c->exit();
     this->varMap.restore();
   }
 
-  c = c.append(CodegenASTStmtDefault::create());
+  *c = c->append(CodegenASTStmtDefault::create());
 
-  c.append(
+  c->append(
     CodegenASTExprUnary::create(
       CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
       "--"
     ).stmt()
   );
 
-  c.append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-  c = c.exit().exit();
-
-  return c;
+  c->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+  *c = c->exit().exit();
 }
 
-CodegenASTStmt &Codegen::_nodeTryAsync (CodegenASTStmt &c, const ASTNode &node) {
-  return this->_nodeTry(c, node);
+void Codegen::_nodeTryAsync (CodegenASTStmt *c, const ASTNode &node) {
+  this->_nodeTry(c, node);
 }

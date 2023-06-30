@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprArray (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
+CodegenASTExpr Codegen::_exprArray (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
   auto exprArray = std::get<ASTExprArray>(*nodeExpr.body);
   auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
   auto arrayType = std::get<TypeArray>(nodeTypeInfo.type->body);

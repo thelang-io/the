@@ -16,8 +16,8 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTStmt &Codegen::_block (
-  CodegenASTStmt &c,
+void Codegen::_block (
+  CodegenASTStmt *c,
   const ASTBlock &nodes,
   bool saveCleanUp,
   const std::optional<CodegenASTStmt> &cleanupData,
@@ -56,22 +56,22 @@ CodegenASTStmt &Codegen::_block (
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
+        this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
       }
 
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
+        this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
       }
 
       for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
-        c = this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
+        this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
       }
 
       i--;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      c = this->_node(c, node, CODEGEN_PHASE_ALLOC);
-      c = this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
-      c = this->_node(c, node, CODEGEN_PHASE_INIT);
+      this->_node(c, node, CODEGEN_PHASE_ALLOC);
+      this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
+      this->_node(c, node, CODEGEN_PHASE_INIT);
     } else if (this->throws && throwWrapNode) {
       auto setJumpArg = CodegenASTExprAccess::create(
         CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
@@ -99,7 +99,7 @@ CodegenASTStmt &Codegen::_block (
         );
       }
 
-      c.append(
+      c->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprCall::create(
@@ -115,17 +115,17 @@ CodegenASTStmt &Codegen::_block (
 
       auto saveStateCleanUpJumpUsed = this->state.cleanUp.jumpUsed;
       this->state.cleanUp.jumpUsed = true;
-      c = this->_node(c, node);
+      this->_node(c, node);
       this->state.cleanUp.jumpUsed = saveStateCleanUpJumpUsed;
 
       jumpedBefore = true;
     } else {
-      c = this->_node(c, node);
+      this->_node(c, node);
     }
   }
 
   if (saveCleanUp) {
-    c = this->state.cleanUp.gen(c);
+    this->state.cleanUp.gen(c);
     auto nodesChecker = ASTChecker(nodes);
     auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
 
@@ -147,7 +147,7 @@ CodegenASTStmt &Codegen::_block (
           ).stmt()
         : CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel());
 
-      c.append(
+      c->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
@@ -164,7 +164,7 @@ CodegenASTStmt &Codegen::_block (
         ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
         : CodegenASTStmtContinue::create();
 
-      c.append(
+      c->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
@@ -181,7 +181,7 @@ CodegenASTStmt &Codegen::_block (
         ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
         : CodegenASTStmtBreak::create();
 
-      c.append(
+      c->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
@@ -194,7 +194,7 @@ CodegenASTStmt &Codegen::_block (
     }
 
     if (this->state.cleanUp.returnVarUsed && !this->state.cleanUp.empty()) {
-      c.append(
+      c->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create("r"),
@@ -208,12 +208,10 @@ CodegenASTStmt &Codegen::_block (
 
     this->state.cleanUp = initialStateCleanUp;
   }
-
-  return c;
 }
 
-CodegenASTStmt &Codegen::_blockAsync (
-  CodegenASTStmt &c,
+void Codegen::_blockAsync (
+  CodegenASTStmt *c,
   const ASTBlock &nodes,
   bool saveCleanUp,
   const std::optional<CodegenASTStmt> &cleanupData,
@@ -236,26 +234,26 @@ CodegenASTStmt &Codegen::_blockAsync (
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
+        this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
       }
 
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        c = this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
+        this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
       }
 
       for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
-        c = this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
+        this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
       }
 
       i--;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      c = this->_node(c, node, CODEGEN_PHASE_ALLOC);
-      c = this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
-      c = this->_node(c, node, CODEGEN_PHASE_INIT);
+      this->_node(c, node, CODEGEN_PHASE_ALLOC);
+      this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
+      this->_node(c, node, CODEGEN_PHASE_INIT);
     } else if (!nodeChecker.hasSyncBreaking() && !nodeChecker.hasAwait()) {
-      c = this->_node(c, node);
+      this->_node(c, node);
     } else {
-      c = this->_nodeAsync(c, node);
+      this->_nodeAsync(c, node);
     }
   }
 
@@ -264,10 +262,10 @@ CodegenASTStmt &Codegen::_blockAsync (
     auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
 
     if (!this->state.cleanUp.empty()) {
-      c = this->state.cleanUp.genAsync(c, this->state.asyncCounter);
+      this->state.cleanUp.genAsync(c, this->state.asyncCounter);
 
       if (this->state.cleanUp.breakVarUsed && initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-        c.append(
+        c->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(
               CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
@@ -280,7 +278,7 @@ CodegenASTStmt &Codegen::_blockAsync (
       }
 
       if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed) {
-        c.append(
+        c->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(
               CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar())),
@@ -298,6 +296,4 @@ CodegenASTStmt &Codegen::_blockAsync (
 
     this->state.cleanUp = initialStateCleanUp;
   }
-
-  return c;
 }

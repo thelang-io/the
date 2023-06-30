@@ -61,8 +61,8 @@ class CodegenCleanUp {
   std::string currentReturnVar ();
   std::string currentValueVar ();
   bool empty () const;
-  CodegenASTStmt &gen (CodegenASTStmt &) const;
-  CodegenASTStmt &genAsync (CodegenASTStmt &, std::size_t &) const;
+  void gen (CodegenASTStmt *) const;
+  void genAsync (CodegenASTStmt *, std::size_t &) const;
   bool hasCleanUp (CodegenCleanUpType) const;
   bool isClosestJump () const;
   void merge (const CodegenASTStmt &);

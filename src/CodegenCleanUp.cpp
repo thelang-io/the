@@ -41,26 +41,26 @@ CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool as
   this->async = async;
 }
 
-void CodegenCleanUp::add (const std::string &content) {
-  if (this->empty() || this->_data.back().labelUsed) {
-    if (this->async) {
-      // todo test
-      this->_data.push_back({"", content, false, std::make_shared<std::size_t>(0)});
-    } else {
-      this->_data.push_back({"L" + std::to_string(this->labelIdx), content});
-      this->labelIdx += 1;
-
-      auto p = this->parent;
-
-      while (p != nullptr) {
-        p->labelIdx = this->labelIdx;
-        p = p->parent;
-      }
-    }
-  } else {
-    this->_data.back().content.insert(0, content + EOL);
-  }
-}
+//void CodegenCleanUp::add (const std::string &content) {
+//  if (this->empty() || this->_data.back().labelUsed) {
+//    if (this->async) {
+//      // todo test
+//      this->_data.push_back({"", content, false, std::make_shared<std::size_t>(0)});
+//    } else {
+//      this->_data.push_back({"L" + std::to_string(this->labelIdx), content});
+//      this->labelIdx += 1;
+//
+//      auto p = this->parent;
+//
+//      while (p != nullptr) {
+//        p->labelIdx = this->labelIdx;
+//        p = p->parent;
+//      }
+//    }
+//  } else {
+//    this->_data.back().content.insert(0, content + EOL);
+//  }
+//}
 
 std::string CodegenCleanUp::currentBreakVar () {
   this->breakVarUsed = true;
@@ -91,7 +91,7 @@ std::string CodegenCleanUp::currentLabel () {
   this->valueVarUsed = true;
 
   if (this->type == CODEGEN_CLEANUP_FN && this->empty()) {
-    this->add("");
+    this->add();
   }
 
   if (!this->empty()) {
@@ -109,7 +109,7 @@ std::shared_ptr<std::size_t> CodegenCleanUp::currentLabelAsync () {
   this->valueVarUsed = true;
 
   if (this->type == CODEGEN_CLEANUP_FN && this->empty()) {
-    this->add("");
+    this->add();
   }
 
   if (!this->empty()) {
@@ -150,60 +150,60 @@ bool CodegenCleanUp::empty () const {
   return this->_data.empty();
 }
 
-std::string CodegenCleanUp::gen (std::size_t indent) const {
-  if (this->_data.empty()) {
-    return "";
-  }
-
-  auto result = std::string();
-
-  for (auto idx = this->_data.size() - 1;; idx--) {
-    auto item = this->_data[idx];
-
-    if (item.labelUsed) {
-      result += item.label + ":" EOL;
-    }
-
-    if (!item.content.empty()) {
-      result += indentContent(item.content, indent);
-    }
-
-    if (idx == 0) {
-      break;
-    }
-  }
-
-  return result;
-}
-
-// todo test
-std::string CodegenCleanUp::genAsync (std::size_t indent, std::size_t &counter) const {
-  if (this->_data.empty()) {
-    return "";
-  }
-
-  auto result = std::string();
-
-  for (auto idx = this->_data.size() - 1;; idx--) {
-    auto item = this->_data[idx];
-
-    if (item.labelUsed) {
-      result += std::string(indent - 2, ' ') + "}" EOL;
-      result += std::string(indent - 2, ' ') + "case " + std::to_string(++counter) + ": {" EOL;
-      *item.asyncCounter = counter;
-    }
-
-    if (!item.content.empty()) {
-      result += indentContent(item.content, indent);
-    }
-
-    if (idx == 0) {
-      break;
-    }
-  }
-
-  return result;
-}
+//std::string CodegenCleanUp::gen (std::size_t indent) const {
+//  if (this->_data.empty()) {
+//    return "";
+//  }
+//
+//  auto result = std::string();
+//
+//  for (auto idx = this->_data.size() - 1;; idx--) {
+//    auto item = this->_data[idx];
+//
+//    if (item.labelUsed) {
+//      result += item.label + ":" EOL;
+//    }
+//
+//    if (!item.content.empty()) {
+//      result += indentContent(item.content, indent);
+//    }
+//
+//    if (idx == 0) {
+//      break;
+//    }
+//  }
+//
+//  return result;
+//}
+//
+//// todo test
+//std::string CodegenCleanUp::genAsync (std::size_t indent, std::size_t &counter) const {
+//  if (this->_data.empty()) {
+//    return "";
+//  }
+//
+//  auto result = std::string();
+//
+//  for (auto idx = this->_data.size() - 1;; idx--) {
+//    auto item = this->_data[idx];
+//
+//    if (item.labelUsed) {
+//      result += std::string(indent - 2, ' ') + "}" EOL;
+//      result += std::string(indent - 2, ' ') + "case " + std::to_string(++counter) + ": {" EOL;
+//      *item.asyncCounter = counter;
+//    }
+//
+//    if (!item.content.empty()) {
+//      result += indentContent(item.content, indent);
+//    }
+//
+//    if (idx == 0) {
+//      break;
+//    }
+//  }
+//
+//  return result;
+//}
 
 bool CodegenCleanUp::hasCleanUp (CodegenCleanUpType t) const {
   return !this->empty() || (this->type != t && this->parent != nullptr && this->parent->hasCleanUp(t));

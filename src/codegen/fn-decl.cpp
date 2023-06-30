@@ -18,8 +18,8 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-CodegenASTStmt &Codegen::_fnDecl (
-  CodegenASTStmt &c,
+void Codegen::_fnDecl (
+  CodegenASTStmt *c,
   std::shared_ptr<Var> var,
   const std::vector<std::shared_ptr<Var>> &stack,
   const std::vector<ASTFnDeclParam> &params,
@@ -28,7 +28,7 @@ CodegenASTStmt &Codegen::_fnDecl (
   CodegenPhase phase
 ) {
   if (body == std::nullopt) {
-    return c;
+    return;
   }
 
   auto codeName = var->codeName;
@@ -282,13 +282,15 @@ CodegenASTStmt &Codegen::_fnDecl (
                       CodegenASTExprLiteral::create("1")
                     ),
                     CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true),
-                    this->_nodeExpr(*param.init, paramTypeInfo.type, node, cBody)
+                    this->_nodeExpr(*param.init, paramTypeInfo.type, node, &cBody)
                   )
             )
           );
 
           if (paramTypeInfo.type->shouldBeFreed()) {
-            this->state.cleanUp.add(this->_genFreeFn(paramTypeInfo.type, paramName).stmt());
+            this->state.cleanUp.add(
+              this->_genFreeFn(paramTypeInfo.type, CodegenASTExprAccess::create(paramName)).stmt()
+            );
           }
 
           paramIdx++;
@@ -296,7 +298,12 @@ CodegenASTStmt &Codegen::_fnDecl (
       }
 
       if (hasSelfParam && fnType.callInfo.selfType->shouldBeFreed()) {
-        this->state.cleanUp.add(this->_genFreeFn(fnType.callInfo.selfType, Codegen::name(fnType.callInfo.selfCodeName)).stmt());
+        this->state.cleanUp.add(
+          this->_genFreeFn(
+            fnType.callInfo.selfType,
+            CodegenASTExprAccess::create(Codegen::name(fnType.callInfo.selfCodeName))
+          ).stmt()
+        );
       }
 
       if (fnType.async) {
@@ -309,7 +316,7 @@ CodegenASTStmt &Codegen::_fnDecl (
       this->state.returnType = returnTypeInfo.type;
       this->state.insideAsync = fnType.async;
       this->state.asyncCounter = 0;
-      cBody = this->_block(cBody, *body, false);
+      this->_block(&cBody, *body, false);
       this->varMap.restore();
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
@@ -322,7 +329,7 @@ CodegenASTStmt &Codegen::_fnDecl (
             )
           );
 
-          cBody = this->state.cleanUp.genAsync(cBody, this->state.asyncCounter);
+          this->state.cleanUp.genAsync(&cBody, this->state.asyncCounter);
         } else {
           cBody.prepend(
             CodegenASTStmtVarDecl::create(
@@ -331,12 +338,12 @@ CodegenASTStmt &Codegen::_fnDecl (
             )
           );
 
-          cBody = this->state.cleanUp.gen(cBody);
+          this->state.cleanUp.gen(&cBody);
         }
       } else if (this->state.insideAsync) {
-        cBody = this->state.cleanUp.genAsync(cBody, this->state.asyncCounter);
+        this->state.cleanUp.genAsync(&cBody, this->state.asyncCounter);
       } else {
-        cBody = this->state.cleanUp.gen(cBody);
+        this->state.cleanUp.gen(&cBody);
       }
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed && !this->state.insideAsync) {
@@ -421,7 +428,7 @@ CodegenASTStmt &Codegen::_fnDecl (
     );
 
     if (this->state.insideAsync) {
-      c.append(
+      c->append(
         CodegenASTExprAssign::create(
           CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(fnName)),
           "=",
@@ -429,7 +436,7 @@ CodegenASTStmt &Codegen::_fnDecl (
         ).stmt()
       );
     } else {
-      c.append(
+      c->append(
         CodegenASTStmtVarDecl::create(
           CodegenASTType::create("const " + varTypeInfo.typeCode),
           CodegenASTExprAccess::create(fnName),
@@ -438,7 +445,7 @@ CodegenASTStmt &Codegen::_fnDecl (
       );
     }
   } else if ((phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) && !this->state.insideAsync) {
-    c.append(
+    c->append(
       CodegenASTStmtVarDecl::create(
         CodegenASTType::create("const " + varTypeInfo.typeCode),
         CodegenASTExprAccess::create(fnName)
@@ -463,7 +470,7 @@ CodegenASTStmt &Codegen::_fnDecl (
       }
     }
 
-    c.append(
+    c->append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_(typeName + "_alloc")),
         {
@@ -482,9 +489,14 @@ CodegenASTStmt &Codegen::_fnDecl (
     );
 
     if (varTypeInfo.type->shouldBeFreed()) {
-      this->state.cleanUp.add(this->_genFreeFn(varTypeInfo.type, (this->async && node.parent != nullptr ? "*" : "") + fnName).stmt());
+      this->state.cleanUp.add(
+        this->_genFreeFn(
+          varTypeInfo.type,
+          (this->async && node.parent != nullptr)
+            ? CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(fnName))
+            : CodegenASTExprAccess::create(fnName)
+        ).stmt()
+      );
     }
   }
-
-  return c;
 }

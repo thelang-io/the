@@ -16,23 +16,22 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTStmt &Codegen::_nodeMain (CodegenASTStmt &c, const ASTNode &node) {
+void Codegen::_nodeMain (CodegenASTStmt *c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
   this->varMap.save();
-  c = this->_block(c, nodeMain.body);
+  this->_block(c, nodeMain.body);
   this->varMap.restore();
-  return c;
 }
 
-CodegenASTStmt &Codegen::_nodeMainAsync (CodegenASTStmt &c, const ASTNode &node) {
+void Codegen::_nodeMainAsync (CodegenASTStmt *c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
   auto returnType = this->ast->typeMap.get("void");
   auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->throws, this->async);
   auto asyncMainVar = std::make_shared<Var>(Var{"async_main", "async_main", asyncMainType, false, false, true, false, 0});
 
-  c = this->_fnDecl(c, asyncMainVar, nodeMain.stack, {}, nodeMain.body, node, CODEGEN_PHASE_FULL);
+  this->_fnDecl(c, asyncMainVar, nodeMain.stack, {}, nodeMain.body, node, CODEGEN_PHASE_FULL);
 
-  c.append(
+  c->append(
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("threadpool_add")),
       {
@@ -45,6 +44,4 @@ CodegenASTStmt &Codegen::_nodeMainAsync (CodegenASTStmt &c, const ASTNode &node)
       }
     ).stmt()
   );
-
-  return c;
 }

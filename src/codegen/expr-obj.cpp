@@ -73,7 +73,7 @@ CodegenASTExpr Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
   }
 }
 
-CodegenASTExpr Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
+CodegenASTExpr Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
   auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
   auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
   auto cFields = std::vector<CodegenASTExpr>{};

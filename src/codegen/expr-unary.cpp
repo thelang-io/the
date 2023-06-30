@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
+CodegenASTExpr Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
   auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
   auto cArg = this->_nodeExpr(exprUnary.arg, nodeExpr.type, parent, c);
   auto opCode = std::string();

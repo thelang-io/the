@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTStmt &Codegen::_nodeObjDecl (CodegenASTStmt &c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_nodeObjDecl (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
   auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
@@ -26,7 +26,7 @@ CodegenASTStmt &Codegen::_nodeObjDecl (CodegenASTStmt &c, const ASTNode &node, C
 
   if (phase == CODEGEN_PHASE_ALLOC_METHOD || phase == CODEGEN_PHASE_FULL) {
     for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
-      c = this->_fnDecl(
+      this->_fnDecl(
         c,
         nodeObjDeclMethod.var,
         nodeObjDeclMethod.stack,
@@ -40,7 +40,7 @@ CodegenASTStmt &Codegen::_nodeObjDecl (CodegenASTStmt &c, const ASTNode &node, C
 
   if (phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) {
     for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
-      c = this->_fnDecl(
+      this->_fnDecl(
         c,
         nodeObjDeclMethod.var,
         nodeObjDeclMethod.stack,
@@ -51,6 +51,4 @@ CodegenASTStmt &Codegen::_nodeObjDecl (CodegenASTStmt &c, const ASTNode &node, C
       );
     }
   }
-
-  return c;
 }

@@ -18,14 +18,14 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-CodegenASTStmt &Codegen::_nodeEnumDecl (CodegenASTStmt &c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_nodeEnumDecl ([[maybe_unused]] CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
   auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
   auto members = nodeEnumDecl.members;
   auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
   auto enumType = std::get<TypeEnum>(nodeEnumDecl.type->body);
 
   if (phase != CODEGEN_PHASE_ALLOC && phase != CODEGEN_PHASE_FULL) {
-    return c;
+    return;
   }
 
   auto cDecl = CodegenASTStmtCompound::create();
@@ -44,7 +44,7 @@ CodegenASTStmt &Codegen::_nodeEnumDecl (CodegenASTStmt &c, const ASTNode &node, 
         membersCode += "  " + Codegen::name(typeMember->codeName);
 
         if (member->init != std::nullopt) {
-          auto cInit = this->_nodeExpr(*member->init, member->init->type, node, cDecl, true);
+          auto cInit = this->_nodeExpr(*member->init, member->init->type, node, &cDecl, true);
           membersCode += " = " + cInit.str();
         }
 
@@ -73,6 +73,4 @@ CodegenASTStmt &Codegen::_nodeEnumDecl (CodegenASTStmt &c, const ASTNode &node, 
 
     return 0;
   });
-
-  return c;
 }

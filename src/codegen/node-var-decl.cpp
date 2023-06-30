@@ -58,9 +58,10 @@ CodegenASTExpr Codegen::_nodeVarDeclInit (const CodegenTypeInfo &typeInfo) {
   }
 }
 
-CodegenASTStmt &Codegen::_nodeVarDecl (CodegenASTStmt &c, const ASTNode &node) {
+void Codegen::_nodeVarDecl (CodegenASTStmt *c, const ASTNode &node) {
   if (this->state.insideAsync) {
-    return this->_nodeVarDeclAsync(c, node);
+    this->_nodeVarDeclAsync(c, node);
+    return;
   }
 
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
@@ -71,7 +72,7 @@ CodegenASTStmt &Codegen::_nodeVarDecl (CodegenASTStmt &c, const ASTNode &node) {
     ? this->_nodeVarDeclInit(typeInfo)
     : this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, c);
 
-  c.append(
+  c->append(
     CodegenASTStmtVarDecl::create(
       CodegenASTType::create(nodeVarDecl.var->mut ? typeInfo.typeCode : typeInfo.typeCodeConst),
       CodegenASTExprAccess::create(name),
@@ -80,13 +81,11 @@ CodegenASTStmt &Codegen::_nodeVarDecl (CodegenASTStmt &c, const ASTNode &node) {
   );
 
   if (typeInfo.type->shouldBeFreed()) {
-    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, name).stmt());
+    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, CodegenASTExprAccess::create(name)).stmt());
   }
-
-  return c;
 }
 
-CodegenASTStmt &Codegen::_nodeVarDeclAsync (CodegenASTStmt &c, const ASTNode &node) {
+void Codegen::_nodeVarDeclAsync (CodegenASTStmt *c, const ASTNode &node) {
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
   auto name = Codegen::name(nodeVarDecl.var->codeName);
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
@@ -95,7 +94,7 @@ CodegenASTStmt &Codegen::_nodeVarDeclAsync (CodegenASTStmt &c, const ASTNode &no
     ? this->_nodeVarDeclInit(typeInfo)
     : this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, c);
 
-  c.append(
+  c->append(
     CodegenASTExprAssign::create(
       CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(name)),
       "=",
@@ -104,8 +103,8 @@ CodegenASTStmt &Codegen::_nodeVarDeclAsync (CodegenASTStmt &c, const ASTNode &no
   );
 
   if (typeInfo.type->shouldBeFreed()) {
-    this->state.cleanUp.add(this->_genFreeFn(typeInfo.type, "*" + name).stmt());
+    this->state.cleanUp.add(
+      this->_genFreeFn(typeInfo.type, CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(name))).stmt()
+    );
   }
-
-  return c;
 }

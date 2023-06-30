@@ -16,19 +16,19 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &decl, bool root) {
+CodegenASTExpr Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
   auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(exprCond.cond, parent);
-  auto cCond = this->_nodeExpr(exprCond.cond, this->ast->typeMap.get("bool"), parent, decl);
+  auto cCond = this->_nodeExpr(exprCond.cond, this->ast->typeMap.get("bool"), parent, c);
 
   bodyTypeCasts.merge(this->state.typeCasts);
   bodyTypeCasts.swap(this->state.typeCasts);
-  auto cBody = this->_nodeExpr(exprCond.body, nodeExpr.type, parent, decl);
+  auto cBody = this->_nodeExpr(exprCond.body, nodeExpr.type, parent, c);
   this->state.typeCasts = initialStateTypeCasts;
   altTypeCasts.merge(this->state.typeCasts);
   altTypeCasts.swap(this->state.typeCasts);
-  auto cAlt = this->_nodeExpr(exprCond.alt, nodeExpr.type, parent, decl);
+  auto cAlt = this->_nodeExpr(exprCond.alt, nodeExpr.type, parent, c);
   this->state.typeCasts = initialStateTypeCasts;
 
   if (

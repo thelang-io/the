@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprRef (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt &c, bool root) {
+CodegenASTExpr Codegen::_exprRef (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
   auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
   auto wrapAsRoot = targetType->isAny() || root;
   auto expr = CodegenASTExpr{};
