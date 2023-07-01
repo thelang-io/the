@@ -42,13 +42,14 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
   auto freeFnEntityIdx = this->_apiEntity(typeName + "_free", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+    auto cFree = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n"));
 
     decl += "void " + typeName + "_free (" + underlyingTypeInfo.typeRefCode + ");";
     def += "void " + typeName + "_free (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
     def += "  if (n == _{NULL}) return;" EOL;
 
     if (underlyingTypeInfo.type->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(underlyingTypeInfo.type, "*n").str() + ";" EOL;
+      def += "  " + this->_genFreeFn(underlyingTypeInfo.type, cFree).str() + ";" EOL;
     }
 
     def += "  _{free}(n);" EOL;
@@ -59,12 +60,13 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
   auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+    auto cCopy = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n"));
 
     decl += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + ");";
     def += underlyingTypeInfo.typeRefCode + typeName + "_copy (const " + underlyingTypeInfo.typeRefCode + "n) {" EOL;
     def += "  if (n == _{NULL}) return _{NULL};" EOL;
     def += "  " + underlyingTypeInfo.typeRefCode + "r = _{alloc}(sizeof(" + underlyingTypeInfo.typeCodeTrimmed + "));" EOL;
-    def += "  *r = " + this->_genCopyFn(underlyingTypeInfo.type, "*n").str() + ";" EOL;
+    def += "  *r = " + this->_genCopyFn(underlyingTypeInfo.type, cCopy).str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -73,13 +75,15 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
   this->_apiEntity(typeName + "_eq", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+    auto cEq1 = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n1"));
+    auto cEq2 = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n2"));
 
     decl += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
     def += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 == _{NULL} && n2 == _{NULL} ";
-    def += ": " + this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2").str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
+    def += ": " + this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2")).str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -88,13 +92,15 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
   this->_apiEntity(typeName + "_ne", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+    auto cEq1 = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n1"));
+    auto cEq2 = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n2"));
 
     decl += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
     def += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 != _{NULL} || n2 != _{NULL} : ";
-    def += this->_genEqFn(underlyingTypeInfo.type, "*n1", "*n2", true).str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, "n2").str() + ";" EOL;
+    def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2, true).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2")).str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -108,7 +114,7 @@ std::string Codegen::_typeNameOpt (Type *type) {
     decl += ", " + underlyingTypeInfo.typeRefCode + ");";
     def += underlyingTypeInfo.typeRefCode + typeName + "_realloc (" + underlyingTypeInfo.typeRefCode + "n1";
     def += ", " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-    def += "  " + this->_genFreeFn(type, "n1").str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
     def += "  return n2;" EOL;
     def += "}";
 
@@ -117,6 +123,7 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
   this->_apiEntity(typeName + "_str", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto underlyingTypeInfo = this->_typeInfo(std::get<TypeOptional>(type->body).type);
+    auto cStr = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n"));
 
     decl += "_{struct str} " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + ");";
     def += "_{struct str} " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
@@ -124,13 +131,13 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
     if (underlyingTypeInfo.realType->isStr()) {
       def += R"(  _{struct str} r = _{str_alloc}("\"");)" EOL;
-      def += "  r = _{str_concat_str}(r, " + this->_genStrFn(underlyingTypeInfo.realType, "*n").str() + ");" EOL;
+      def += "  r = _{str_concat_str}(r, " + this->_genStrFn(underlyingTypeInfo.realType, cStr).str() + ");" EOL;
       def += R"(  r = _{str_concat_cstr}(r, "\"");)" EOL;
     } else {
-      def += "  _{struct str} r = " + this->_genStrFn(underlyingTypeInfo.realType, "*n").str() + ";" EOL;
+      def += "  _{struct str} r = " + this->_genStrFn(underlyingTypeInfo.realType, cStr).str() + ";" EOL;
     }
 
-    def += "  " + this->_genFreeFn(type, "n").str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 

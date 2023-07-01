@@ -44,11 +44,16 @@ std::string Codegen::_typeNameAny (Type *type) {
   auto copyFnEntityIdx = this->_apiEntity(typeName + "_copy", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto typeInfo = this->_typeInfo(type);
 
+    auto cCopy = this->_genCopyFn(
+      typeInfo.type,
+      CodegenASTExprAccess::create(CodegenASTExprAccess::create("o"), "d", true)
+    );
+
     decl += "_{struct any} " + typeName + "_copy (const _{struct any});";
     def += "_{struct any} " + typeName + "_copy (const _{struct any} n) {" EOL;
     def += "  struct _{" + typeName + "} *o = n.d;" EOL;
     def += "  struct _{" + typeName + "} *r = _{alloc}(n.l);" EOL;
-    def += "  r->d = " + this->_genCopyFn(typeInfo.type, "o->d").str() + ";" EOL;
+    def += "  r->d = " + cCopy.str() + ";" EOL;
     def += "  return (_{struct any}) {n.t, r, n.l, n._copy, n._free};" EOL;
     def += "}";
 
@@ -63,7 +68,12 @@ std::string Codegen::_typeNameAny (Type *type) {
     def += "  struct _{" + typeName + "} *n = _n.d;" EOL;
 
     if (typeInfo.type->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(typeInfo.type, "n->d").str() + ";" EOL;
+      auto cFree = this->_genFreeFn(
+        typeInfo.type,
+        CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true)
+      );
+
+      def += "  " + cFree.str() + ";" EOL;
     }
 
     def += "  _{free}(n);" EOL;
