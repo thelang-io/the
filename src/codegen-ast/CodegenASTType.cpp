@@ -15,3 +15,11 @@
  */
 
 #include "CodegenAST.hpp"
+
+CodegenASTType CodegenASTType::create (const std::string &val) {
+  return CodegenASTType{val};
+}
+
+std::string CodegenASTType::str () const {
+  return this->val;
+}
