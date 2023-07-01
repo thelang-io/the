@@ -14,23 +14,9 @@
  * limitations under the License.
  */
 
+#include <ranges>
 #include "CodegenCleanUp.hpp"
 #include "Error.hpp"
-#include "config.hpp"
-
-std::string indentContent (const std::string &content, std::size_t indent) {
-  auto result = std::string();
-  auto next = static_cast<std::size_t>(0);
-  auto last = static_cast<std::size_t>(0);
-
-  while ((next = content.find(EOL, last)) != std::string::npos) {
-    result += std::string(indent, ' ') + content.substr(last, next - last) + EOL;
-    last = next + std::string(EOL).size();
-  }
-
-  result += std::string(indent, ' ') + content.substr(last) + EOL;
-  return result;
-}
 
 CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool async) {
   this->type = t;
@@ -41,26 +27,28 @@ CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool as
   this->async = async;
 }
 
-//void CodegenCleanUp::add (const std::string &content) {
-//  if (this->empty() || this->_data.back().labelUsed) {
-//    if (this->async) {
-//      // todo test
-//      this->_data.push_back({"", content, false, std::make_shared<std::size_t>(0)});
-//    } else {
-//      this->_data.push_back({"L" + std::to_string(this->labelIdx), content});
-//      this->labelIdx += 1;
-//
-//      auto p = this->parent;
-//
-//      while (p != nullptr) {
-//        p->labelIdx = this->labelIdx;
-//        p = p->parent;
-//      }
-//    }
-//  } else {
-//    this->_data.back().content.insert(0, content + EOL);
-//  }
-//}
+// todo test
+void CodegenCleanUp::add (const CodegenASTStmt &stmt) {
+  if (this->empty() || this->_data.back().labelUsed) {
+    if (this->async) {
+      this->_data.push_back({"", {}, false, std::make_shared<std::size_t>(1)});
+    } else {
+      this->_data.push_back({"L" + std::to_string(this->labelIdx)});
+      this->labelIdx += 1;
+
+      auto p = this->parent;
+
+      while (p != nullptr) {
+        p->labelIdx = this->labelIdx;
+        p = p->parent;
+      }
+    }
+  }
+
+  if (!stmt.isNull()) {
+    this->_data.back().content.insert(this->_data.back().content.begin(), stmt);
+  }
+}
 
 std::string CodegenCleanUp::currentBreakVar () {
   this->breakVarUsed = true;
@@ -150,60 +138,54 @@ bool CodegenCleanUp::empty () const {
   return this->_data.empty();
 }
 
-//std::string CodegenCleanUp::gen (std::size_t indent) const {
-//  if (this->_data.empty()) {
-//    return "";
-//  }
-//
-//  auto result = std::string();
-//
-//  for (auto idx = this->_data.size() - 1;; idx--) {
-//    auto item = this->_data[idx];
-//
-//    if (item.labelUsed) {
-//      result += item.label + ":" EOL;
-//    }
-//
-//    if (!item.content.empty()) {
-//      result += indentContent(item.content, indent);
-//    }
-//
-//    if (idx == 0) {
-//      break;
-//    }
-//  }
-//
-//  return result;
-//}
-//
-//// todo test
-//std::string CodegenCleanUp::genAsync (std::size_t indent, std::size_t &counter) const {
-//  if (this->_data.empty()) {
-//    return "";
-//  }
-//
-//  auto result = std::string();
-//
-//  for (auto idx = this->_data.size() - 1;; idx--) {
-//    auto item = this->_data[idx];
-//
-//    if (item.labelUsed) {
-//      result += std::string(indent - 2, ' ') + "}" EOL;
-//      result += std::string(indent - 2, ' ') + "case " + std::to_string(++counter) + ": {" EOL;
-//      *item.asyncCounter = counter;
-//    }
-//
-//    if (!item.content.empty()) {
-//      result += indentContent(item.content, indent);
-//    }
-//
-//    if (idx == 0) {
-//      break;
-//    }
-//  }
-//
-//  return result;
-//}
+void CodegenCleanUp::gen (CodegenASTStmt *c) const {
+  if (this->_data.empty()) {
+    return;
+  }
+
+  for (auto idx = this->_data.size() - 1;; idx--) {
+    auto item = this->_data[idx];
+
+    if (item.labelUsed) {
+      c->append(CodegenASTStmtLabel::create(item.label));
+    }
+
+    if (!item.content.empty()) {
+      c->merge(item.content);
+    }
+
+    if (idx == 0) {
+      break;
+    }
+  }
+}
+
+// todo test
+void CodegenCleanUp::genAsync (CodegenASTStmt *c, std::size_t &counter) const {
+  if (this->_data.empty()) {
+    return;
+  }
+
+  for (auto idx = this->_data.size() - 1;; idx--) {
+    auto item = this->_data[idx];
+
+    if (item.labelUsed) {
+      *c = c->exit().append(
+        CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++counter)))
+      );
+
+      *item.asyncCounter = counter;
+    }
+
+    if (!item.content.empty()) {
+      c->merge(item.content);
+    }
+
+    if (idx == 0) {
+      break;
+    }
+  }
+}
 
 bool CodegenCleanUp::hasCleanUp (CodegenCleanUpType t) const {
   return !this->empty() || (this->type != t && this->parent != nullptr && this->parent->hasCleanUp(t));
@@ -214,4 +196,14 @@ bool CodegenCleanUp::isClosestJump () const {
     return false;
   }
   return this->jumpUsed || (this->parent != nullptr && this->parent->isClosestJump());
+}
+
+// todo test
+void CodegenCleanUp::merge (const CodegenASTStmt &stmt) {
+  auto stmtCompound = stmt.asCompound();
+  auto items = stmtCompound.items;
+
+  for (const auto &item : std::ranges::reverse_view(items)) {
+    this->add(item);
+  }
 }

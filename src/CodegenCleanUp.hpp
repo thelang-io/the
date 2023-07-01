@@ -30,7 +30,7 @@ enum CodegenCleanUpType {
 
 struct CodegenCleanUpItem {
   std::string label;
-  std::string content;
+  std::vector<CodegenASTStmt> content = {};
   bool labelUsed = false;
   std::shared_ptr<size_t> asyncCounter = std::make_shared<std::size_t>(0);
 };
@@ -52,8 +52,7 @@ class CodegenCleanUp {
   CodegenCleanUp () = default;
   explicit CodegenCleanUp (CodegenCleanUpType, CodegenCleanUp *, bool = false);
 
-  void add ();
-  void add (const CodegenASTStmt &);
+  void add (const CodegenASTStmt & = CodegenASTStmtNull::create());
   std::string currentBreakVar ();
   std::string currentContinueVar ();
   std::string currentLabel ();

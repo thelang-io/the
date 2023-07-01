@@ -475,10 +475,6 @@ std::string Codegen::_typeNameArray (Type *type) {
   });
 
   this->_apiEntity(typeName + "_remove", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
-    auto field = std::find_if(type->fields.begin(), type->fields.end(), [] (const auto &it) -> bool {
-      return it.name == "remove";
-    });
-
     auto elementTypeInfo = this->_typeInfo(elementType);
 
     auto cFree = CodegenASTExprAccess::create(

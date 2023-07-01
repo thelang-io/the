@@ -47,6 +47,7 @@ struct CodegenASTStmtLabel;
 struct CodegenASTStmtMacroCondition;
 struct CodegenASTStmtMacroInclude;
 struct CodegenASTStmtMacroReplace;
+struct CodegenASTStmtNull;
 struct CodegenASTStmtReturn;
 struct CodegenASTStmtStructDecl;
 struct CodegenASTStmtSwitch;
@@ -69,6 +70,7 @@ using CodegenASTStmtBody = std::variant<
   CodegenASTStmtMacroCondition,
   CodegenASTStmtMacroInclude,
   CodegenASTStmtMacroReplace,
+  CodegenASTStmtNull,
   CodegenASTStmtReturn,
   CodegenASTStmtStructDecl,
   CodegenASTStmtSwitch,
@@ -99,7 +101,10 @@ struct CodegenASTStmt {
   std::shared_ptr<CodegenASTStmtBody> body;
 
   CodegenASTStmt &append (const CodegenASTStmt &);
+  const CodegenASTStmtCompound &asCompound () const;
   CodegenASTStmt &exit () const;
+  bool isNull () const;
+  void merge (const std::vector<CodegenASTStmt> &);
   CodegenASTStmt &prepend (const CodegenASTStmt &);
   std::string str () const;
 };
@@ -168,6 +173,8 @@ struct CodegenASTStmtCase {
 };
 
 struct CodegenASTStmtCompound {
+  std::vector<CodegenASTStmt> items;
+
   static CodegenASTStmt create ();
   static CodegenASTStmt create (const std::vector<CodegenASTStmt> &);
 };
@@ -215,6 +222,7 @@ struct CodegenASTStmtIf {
 };
 
 struct CodegenASTStmtLabel {
+  static CodegenASTStmt create (const std::string &);
 };
 
 struct CodegenASTStmtMacroCondition {
@@ -224,6 +232,10 @@ struct CodegenASTStmtMacroInclude {
 };
 
 struct CodegenASTStmtMacroReplace {
+};
+
+struct CodegenASTStmtNull {
+  static CodegenASTStmt create ();
 };
 
 struct CodegenASTStmtReturn {
