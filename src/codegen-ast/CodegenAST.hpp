@@ -91,7 +91,10 @@ using CodegenASTExprBody = std::variant<
 >;
 
 struct CodegenASTType {
+  std::string val;
+
   static CodegenASTType create (const std::string &);
+  std::string str () const;
 };
 
 struct CodegenASTStmt {
@@ -110,58 +113,126 @@ struct CodegenASTStmt {
 };
 
 struct CodegenASTExpr {
-  bool parenthesized;
-  CodegenASTExpr *parent;
-  CodegenASTStmt *parentStmt;
   std::shared_ptr<CodegenASTExprBody> body;
+  bool parenthesized = false;
+  CodegenASTExpr *parent = nullptr;
+  CodegenASTStmt *parentStmt = nullptr;
 
+  CodegenASTExprAccess &asAccess ();
+  const CodegenASTExprAccess &asAccess () const;
+  CodegenASTExprAssign &asAssign ();
+  const CodegenASTExprAssign &asAssign () const;
+  CodegenASTExprBinary &asBinary ();
+  const CodegenASTExprBinary &asBinary () const;
+  CodegenASTExprCall &asCall ();
+  const CodegenASTExprCall &asCall () const;
+  CodegenASTExprCast &asCast ();
+  const CodegenASTExprCast &asCast () const;
+  CodegenASTExprCond &asCond ();
+  const CodegenASTExprCond &asCond () const;
+  CodegenASTExprInitList &asInitList ();
+  const CodegenASTExprInitList &asInitList () const;
+  CodegenASTExprLiteral &asLiteral ();
+  const CodegenASTExprLiteral &asLiteral () const;
+  CodegenASTExprUnary &asUnary ();
+  const CodegenASTExprUnary &asUnary () const;
+  bool isAccess () const;
+  bool isAssign () const;
+  bool isBinary () const;
+  bool isCall () const;
+  bool isCast () const;
+  bool isCond () const;
   bool isEmptyString () const;
+  bool isInitList () const;
   bool isLiteral () const;
   bool isPointer () const;
+  bool isUnary () const;
+  void link (CodegenASTExpr *);
   CodegenASTStmt stmt () const;
   std::string str () const;
   CodegenASTExpr wrap () const;
 };
 
 struct CodegenASTExprAccess {
+  std::variant<CodegenASTExpr, std::string> obj;
+  std::optional<std::string> prop = std::nullopt;
+  std::optional<CodegenASTExpr> elem = std::nullopt;
+  bool pointed = false;
+
   static CodegenASTExpr create (const std::string &);
   static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, bool = false);
   static CodegenASTExpr create (const CodegenASTExpr &, const CodegenASTExpr &);
+  std::string str () const;
 };
 
 struct CodegenASTExprAssign {
+  CodegenASTExpr left;
+  std::string op;
+  CodegenASTExpr right;
+
   static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, const CodegenASTExpr &);
+  std::string str () const;
 };
 
 struct CodegenASTExprBinary {
+  CodegenASTExpr left;
+  std::string op;
+  CodegenASTExpr right;
+
   static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, const CodegenASTExpr &);
+  std::string str () const;
 };
 
 struct CodegenASTExprCall {
+  CodegenASTExpr callee;
+  std::vector<CodegenASTExpr> exprArgs = {};
+  std::vector<CodegenASTType> typeArgs = {};
+
   static CodegenASTExpr create (const CodegenASTExpr &);
   static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTExpr> &);
   static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTType> &);
+  std::string str () const;
 };
 
 struct CodegenASTExprCast {
+  CodegenASTType type;
+  CodegenASTExpr arg;
+
   static CodegenASTExpr create (const CodegenASTType &, const CodegenASTExpr &);
+  std::string str () const;
 };
 
 struct CodegenASTExprCond {
+  CodegenASTExpr cond;
+  CodegenASTExpr body;
+  CodegenASTExpr alt;
+
   static CodegenASTExpr create (const CodegenASTExpr &, const CodegenASTExpr &, const CodegenASTExpr &);
+  std::string str () const;
 };
 
 struct CodegenASTExprInitList {
+  std::vector<CodegenASTExpr> items;
+
   static CodegenASTExpr create (const std::vector<CodegenASTExpr> & = {});
+  std::string str () const;
 };
 
 struct CodegenASTExprLiteral {
+  std::string val;
+
   static CodegenASTExpr create (const std::string &);
+  std::string str () const;
 };
 
 struct CodegenASTExprUnary {
+  CodegenASTExpr arg;
+  std::string op;
+  bool prefix = false;
+
   static CodegenASTExpr create (const std::string &, const CodegenASTExpr &);
   static CodegenASTExpr create (const CodegenASTExpr &, const std::string &);
+  std::string str () const;
 };
 
 struct CodegenASTStmtBreak {
@@ -191,6 +262,7 @@ struct CodegenASTStmtEnumDecl {
 };
 
 struct CodegenASTStmtExpr {
+  static CodegenASTStmt create (const CodegenASTExpr &);
 };
 
 struct CodegenASTStmtFnParam {
