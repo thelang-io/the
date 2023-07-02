@@ -133,27 +133,23 @@ std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> Codegen
 
 std::string Codegen::_type (Type *type) {
   if (type->isAny()) {
-    this->_activateBuiltin("typeAny");
-    return "struct any ";
+    return this->_("struct any") + " ";
   } else if (type->isArray()) {
     auto typeName = this->_typeNameArray(type);
-    this->_activateEntity(typeName);
-    return "struct " + typeName + " ";
+    return "struct " + this->_(typeName) + " ";
   } else if (type->isByte()) {
     return "unsigned char ";
   } else if (type->isChar()) {
     return "char ";
   } else if (type->isEnum()) {
     auto typeName = Codegen::typeName(type->codeName);
-    this->_activateEntity(typeName);
-    return "enum " + typeName + " ";
+    return "enum " + this->_(typeName) + " ";
   } else if (type->isF32()) {
     return "float ";
   } else if (type->isF64() || type->isFloat()) {
     return "double ";
   } else if (type->isBool()) {
-    this->_activateBuiltin("libStdbool");
-    return "bool ";
+    return this->_("bool") + " ";
   } else if (type->isFn()) {
     if (type->builtin) {
       return type->name;
@@ -162,28 +158,21 @@ std::string Codegen::_type (Type *type) {
     auto typeName = this->_typeNameFn(type);
     return this->_apiEval("struct _{" + typeName + "} ", 1);
   } else if (type->isI8()) {
-    this->_activateBuiltin("libStdint");
-    return "int8_t ";
+    return this->_("int8_t") + " ";
   } else if (type->isI16()) {
-    this->_activateBuiltin("libStdint");
-    return "int16_t ";
+    return this->_("int16_t") + " ";
   } else if (type->isI32() || type->isInt()) {
-    this->_activateBuiltin("libStdint");
-    return "int32_t ";
+    return this->_("int32_t") + " ";
   } else if (type->isI64()) {
-    this->_activateBuiltin("libStdint");
-    return "int64_t ";
+    return this->_("int64_t") + " ";
   } else if (type->isMap()) {
     auto typeName = this->_typeNameMap(type);
-    this->_activateEntity(typeName);
-    return "struct " + typeName + " ";
+    return "struct " + this->_(typeName) + " ";
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    this->_activateBuiltin("typeBuffer");
-    return "struct buffer ";
+    return this->_("struct buffer") + " ";
   } else if (type->isObj()) {
     auto typeName = type->builtin ? type->name : Codegen::typeName(type->codeName);
-    this->_activateEntity(typeName);
-    return "struct " + typeName + " *";
+    return "struct " + this->_(typeName) + " *";
   } else if (type->isOpt()) {
     this->_typeNameOpt(type);
     auto optType = std::get<TypeOptional>(type->body);
@@ -192,24 +181,18 @@ std::string Codegen::_type (Type *type) {
     auto refType = std::get<TypeRef>(type->body);
     return this->_type(refType.refType) + "*";
   } else if (type->isStr()) {
-    this->_activateBuiltin("typeStr");
-    return "struct str ";
+    return this->_("struct str") + " ";
   } else if (type->isU8()) {
-    this->_activateBuiltin("libStdint");
-    return "uint8_t ";
+    return this->_("uint8_t") + " ";
   } else if (type->isU16()) {
-    this->_activateBuiltin("libStdint");
-    return "uint16_t ";
+    return this->_("uint16_t") + " ";
   } else if (type->isU32()) {
-    this->_activateBuiltin("libStdint");
-    return "uint32_t ";
+    return this->_("uint32_t") + " ";
   } else if (type->isU64()) {
-    this->_activateBuiltin("libStdint");
-    return "uint64_t ";
+    return this->_("uint64_t") + " ";
   } else if (type->isUnion()) {
     auto typeName = this->_typeNameUnion(type);
-    this->_activateEntity(typeName);
-    return "struct " + typeName + " ";
+    return "struct " + this->_(typeName) + " ";
   } else if (type->isVoid()) {
     return "void ";
   }

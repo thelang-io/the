@@ -73,6 +73,84 @@ std::string Codegen::getEnvVar (const std::string &name) {
   #endif
 }
 
+std::string Codegen::_ (const std::string &name, const std::optional<std::set<std::string> *> &dependencies) {
+  auto result = name;
+
+  if (codegenMetadata.contains(name)) {
+    for (const auto &dependency : codegenMetadata.at(name)) {
+      if (dependencies == std::nullopt) {
+        this->_activateBuiltin(dependency);
+      } else if (!(*dependencies)->contains(dependency)) {
+        (*dependencies)->emplace(dependency);
+      }
+    }
+  } else if (this->api.contains(name)) {
+    if (dependencies == std::nullopt) {
+      this->_activateBuiltin(name);
+    } else if (!(*dependencies)->contains(name)) {
+      (*dependencies)->emplace(name);
+    }
+  } else if (name.starts_with("TYPE_") && this->ast->typeMap.has(name.substr(5))) {
+    result = this->_typeDef(this->ast->typeMap.get(name.substr(5)));
+
+    if (dependencies == std::nullopt) {
+      this->_activateEntity(name);
+    } else if (!(*dependencies)->contains(name)) {
+      (*dependencies)->emplace(name);
+    }
+  } else if (name.starts_with("array_")) {
+    if (name.ends_with("_free")) {
+      result = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6, name.size() - 11)))) + "_free";
+    } else {
+      result = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6))));
+    }
+
+    if (dependencies == std::nullopt) {
+      this->_activateEntity(name);
+    } else if (!(*dependencies)->contains(name)) {
+      (*dependencies)->emplace(name);
+    }
+  } else if (name.starts_with("map_") || name.starts_with("pair_")) {
+    auto isPair = name.starts_with("pair_");
+    auto nameSliced = isPair ? name.substr(5) : name.substr(4);
+    auto keyType = this->ast->typeMap.get(nameSliced.substr(0, nameSliced.find('_')));
+    auto valueType = this->ast->typeMap.get(nameSliced.substr(nameSliced.find('_') + 1));
+
+    result = this->_typeNameMap(this->ast->typeMap.createMap(keyType, valueType));
+
+    if (isPair) {
+      result = Codegen::typeName("pair_" + name.substr(Codegen::typeName("map_").size()));
+    }
+
+    if (dependencies == std::nullopt) {
+      this->_activateEntity(name);
+    } else if (!(*dependencies)->contains(name)) {
+      (*dependencies)->emplace(name);
+    }
+  } else {
+    auto existsInEntities = false;
+
+    for (const auto &entity : this->entities) {
+      if (entity.name == name) {
+        existsInEntities = true;
+        break;
+      }
+    }
+
+    if (!existsInEntities) {
+      throw Error("can't find code generator entity `" + name + "`");
+    }
+
+    if (dependencies == std::nullopt) {
+      this->_activateEntity(name);
+    } else if (!(*dependencies)->contains(name)) {
+      (*dependencies)->emplace(name);
+    }
+  }
+
+  return result;
+}
+
 void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vector<std::string> *> entityBuiltins) {
   if (entityBuiltins != std::nullopt || this->state.builtins != std::nullopt) {
     auto b = entityBuiltins == std::nullopt ? *this->state.builtins : *entityBuiltins;
@@ -382,78 +460,8 @@ std::string Codegen::_apiEval (
       isName = true;
       i += 1;
     } else if (isName && ch == '}') {
-      auto sameAsSelfName = selfName == name;
-
-      if (!sameAsSelfName && codegenMetadata.contains(name)) {
-        for (const auto &dependency : codegenMetadata.at(name)) {
-          if (dependencies == std::nullopt) {
-            this->_activateBuiltin(dependency);
-          } else if (!(*dependencies)->contains(dependency)) {
-            (*dependencies)->emplace(dependency);
-          }
-        }
-      } else if (!sameAsSelfName && this->api.contains(name)) {
-        if (dependencies == std::nullopt) {
-          this->_activateBuiltin(name);
-        } else if (!(*dependencies)->contains(name)) {
-          (*dependencies)->emplace(name);
-        }
-      } else if (!sameAsSelfName && name.starts_with("TYPE_") && this->ast->typeMap.has(name.substr(5))) {
-        name = this->_typeDef(this->ast->typeMap.get(name.substr(5)));
-
-        if (dependencies == std::nullopt) {
-          this->_activateEntity(name);
-        } else if (!(*dependencies)->contains(name)) {
-          (*dependencies)->emplace(name);
-        }
-      } else if (!sameAsSelfName && name.starts_with("array_")) {
-        if (name.ends_with("_free")) {
-          name = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6, name.size() - 11)))) + "_free";
-        } else {
-          name = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6))));
-        }
-
-        if (dependencies == std::nullopt) {
-          this->_activateEntity(name);
-        } else if (!(*dependencies)->contains(name)) {
-          (*dependencies)->emplace(name);
-        }
-      } else if (!sameAsSelfName && (name.starts_with("map_") || name.starts_with("pair_"))) {
-        auto isPair = name.starts_with("pair_");
-        auto nameSliced = isPair ? name.substr(5) : name.substr(4);
-        auto keyType = this->ast->typeMap.get(nameSliced.substr(0, nameSliced.find('_')));
-        auto valueType = this->ast->typeMap.get(nameSliced.substr(nameSliced.find('_') + 1));
-
-        name = this->_typeNameMap(this->ast->typeMap.createMap(keyType, valueType));
-
-        if (isPair) {
-          name = Codegen::typeName("pair_" + name.substr(Codegen::typeName("map_").size()));
-        }
-
-        if (dependencies == std::nullopt) {
-          this->_activateEntity(name);
-        } else if (!(*dependencies)->contains(name)) {
-          (*dependencies)->emplace(name);
-        }
-      } else if (!sameAsSelfName) {
-        auto existsInEntities = false;
-
-        for (const auto &entity : this->entities) {
-          if (entity.name == name) {
-            existsInEntities = true;
-            break;
-          }
-        }
-
-        if (!existsInEntities) {
-          throw Error("can't find code generator entity `" + name + "`");
-        }
-
-        if (dependencies == std::nullopt) {
-          this->_activateEntity(name);
-        } else if (!(*dependencies)->contains(name)) {
-          (*dependencies)->emplace(name);
-        }
+      if (selfName != name) {
+        this->_(name, dependencies);
       }
 
       result += name;

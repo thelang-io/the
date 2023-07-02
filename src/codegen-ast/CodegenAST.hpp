@@ -82,8 +82,8 @@ using CodegenASTExprBody = std::variant<
   CodegenASTExprUnary
 >;
 
-std::string notImplementedStr ([[maybe_unused]] std::size_t indent, [[maybe_unused]] bool root) {
-  return "undefined;";
+inline std::string notImplementedStr ([[maybe_unused]] std::size_t indent, [[maybe_unused]] bool root) {
+  return "undefined";
 }
 
 struct CodegenASTType {
