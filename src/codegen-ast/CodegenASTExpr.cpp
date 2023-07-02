@@ -17,6 +17,43 @@
 #include "CodegenAST.hpp"
 #include "../utils.hpp"
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprAccess &CodegenASTExpr::asAccess () { return std::get<CodegenASTExprAccess>(*this->body); }
+const CodegenASTExprAccess &CodegenASTExpr::asAccess () const { return std::get<CodegenASTExprAccess>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprAssign &CodegenASTExpr::asAssign () { return std::get<CodegenASTExprAssign>(*this->body); }
+const CodegenASTExprAssign &CodegenASTExpr::asAssign () const { return std::get<CodegenASTExprAssign>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprBinary &CodegenASTExpr::asBinary () { return std::get<CodegenASTExprBinary>(*this->body); }
+const CodegenASTExprBinary &CodegenASTExpr::asBinary () const { return std::get<CodegenASTExprBinary>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprCall &CodegenASTExpr::asCall () { return std::get<CodegenASTExprCall>(*this->body); }
+const CodegenASTExprCall &CodegenASTExpr::asCall () const { return std::get<CodegenASTExprCall>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprCast &CodegenASTExpr::asCast () { return std::get<CodegenASTExprCast>(*this->body); }
+const CodegenASTExprCast &CodegenASTExpr::asCast () const { return std::get<CodegenASTExprCast>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprCond &CodegenASTExpr::asCond () { return std::get<CodegenASTExprCond>(*this->body); }
+const CodegenASTExprCond &CodegenASTExpr::asCond () const { return std::get<CodegenASTExprCond>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprInitList &CodegenASTExpr::asInitList () { return std::get<CodegenASTExprInitList>(*this->body); }
+const CodegenASTExprInitList &CodegenASTExpr::asInitList () const { return std::get<CodegenASTExprInitList>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprLiteral &CodegenASTExpr::asLiteral () { return std::get<CodegenASTExprLiteral>(*this->body); }
+const CodegenASTExprLiteral &CodegenASTExpr::asLiteral () const { return std::get<CodegenASTExprLiteral>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprUnary &CodegenASTExpr::asUnary () { return std::get<CodegenASTExprUnary>(*this->body); }
+const CodegenASTExprUnary &CodegenASTExpr::asUnary () const { return std::get<CodegenASTExprUnary>(*this->body); }
+bool CodegenASTExpr::isAccess () const { return std::holds_alternative<CodegenASTExprAccess>(*this->body); }
+bool CodegenASTExpr::isAssign () const { return std::holds_alternative<CodegenASTExprAssign>(*this->body); }
+bool CodegenASTExpr::isBinary () const { return std::holds_alternative<CodegenASTExprBinary>(*this->body); }
+bool CodegenASTExpr::isCall () const { return std::holds_alternative<CodegenASTExprCall>(*this->body); }
+bool CodegenASTExpr::isCast () const { return std::holds_alternative<CodegenASTExprCast>(*this->body); }
+bool CodegenASTExpr::isCond () const { return std::holds_alternative<CodegenASTExprCond>(*this->body); }
+bool CodegenASTExpr::isInitList () const { return std::holds_alternative<CodegenASTExprInitList>(*this->body); }
+bool CodegenASTExpr::isLiteral () const { return std::holds_alternative<CodegenASTExprLiteral>(*this->body); }
+bool CodegenASTExpr::isUnary () const { return std::holds_alternative<CodegenASTExprUnary>(*this->body); }
+
 void exprVectorParent (std::vector<CodegenASTExpr> &items, CodegenASTExpr *parent) {
   for (auto &item : items) {
     item.parent = parent;
@@ -56,34 +93,6 @@ CodegenASTExpr exprInit (const CodegenASTExprBody &body) {
 
   return result;
 }
-
-CodegenASTExprAccess &CodegenASTExpr::asAccess () { return std::get<CodegenASTExprAccess>(*this->body); }
-const CodegenASTExprAccess &CodegenASTExpr::asAccess () const { return std::get<CodegenASTExprAccess>(*this->body); }
-CodegenASTExprAssign &CodegenASTExpr::asAssign () { return std::get<CodegenASTExprAssign>(*this->body); }
-const CodegenASTExprAssign &CodegenASTExpr::asAssign () const { return std::get<CodegenASTExprAssign>(*this->body); }
-CodegenASTExprBinary &CodegenASTExpr::asBinary () { return std::get<CodegenASTExprBinary>(*this->body); }
-const CodegenASTExprBinary &CodegenASTExpr::asBinary () const { return std::get<CodegenASTExprBinary>(*this->body); }
-CodegenASTExprCall &CodegenASTExpr::asCall () { return std::get<CodegenASTExprCall>(*this->body); }
-const CodegenASTExprCall &CodegenASTExpr::asCall () const { return std::get<CodegenASTExprCall>(*this->body); }
-CodegenASTExprCast &CodegenASTExpr::asCast () { return std::get<CodegenASTExprCast>(*this->body); }
-const CodegenASTExprCast &CodegenASTExpr::asCast () const { return std::get<CodegenASTExprCast>(*this->body); }
-CodegenASTExprCond &CodegenASTExpr::asCond () { return std::get<CodegenASTExprCond>(*this->body); }
-const CodegenASTExprCond &CodegenASTExpr::asCond () const { return std::get<CodegenASTExprCond>(*this->body); }
-CodegenASTExprInitList &CodegenASTExpr::asInitList () { return std::get<CodegenASTExprInitList>(*this->body); }
-const CodegenASTExprInitList &CodegenASTExpr::asInitList () const { return std::get<CodegenASTExprInitList>(*this->body); }
-CodegenASTExprLiteral &CodegenASTExpr::asLiteral () { return std::get<CodegenASTExprLiteral>(*this->body); }
-const CodegenASTExprLiteral &CodegenASTExpr::asLiteral () const { return std::get<CodegenASTExprLiteral>(*this->body); }
-CodegenASTExprUnary &CodegenASTExpr::asUnary () { return std::get<CodegenASTExprUnary>(*this->body); }
-const CodegenASTExprUnary &CodegenASTExpr::asUnary () const { return std::get<CodegenASTExprUnary>(*this->body); }
-bool CodegenASTExpr::isAccess () const { return std::holds_alternative<CodegenASTExprAccess>(*this->body); }
-bool CodegenASTExpr::isAssign () const { return std::holds_alternative<CodegenASTExprAssign>(*this->body); }
-bool CodegenASTExpr::isBinary () const { return std::holds_alternative<CodegenASTExprBinary>(*this->body); }
-bool CodegenASTExpr::isCall () const { return std::holds_alternative<CodegenASTExprCall>(*this->body); }
-bool CodegenASTExpr::isCast () const { return std::holds_alternative<CodegenASTExprCast>(*this->body); }
-bool CodegenASTExpr::isCond () const { return std::holds_alternative<CodegenASTExprCond>(*this->body); }
-bool CodegenASTExpr::isInitList () const { return std::holds_alternative<CodegenASTExprInitList>(*this->body); }
-bool CodegenASTExpr::isLiteral () const { return std::holds_alternative<CodegenASTExprLiteral>(*this->body); }
-bool CodegenASTExpr::isUnary () const { return std::holds_alternative<CodegenASTExprUnary>(*this->body); }
 
 bool CodegenASTExpr::isEmptyString () const {
   return this->isLiteral() && this->asLiteral().val == R"("")";

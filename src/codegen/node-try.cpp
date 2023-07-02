@@ -122,7 +122,7 @@ void Codegen::_nodeTry (CodegenASTStmt *c, const ASTNode &node) {
     this->varMap.restore();
   }
 
-  *c = c->append(CodegenASTStmtDefault::create());
+  *c = c->append(CodegenASTStmtCase::create());
 
   c->append(
     CodegenASTExprUnary::create(

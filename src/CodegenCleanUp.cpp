@@ -201,9 +201,8 @@ bool CodegenCleanUp::isClosestJump () const {
 // todo test
 void CodegenCleanUp::merge (const CodegenASTStmt &stmt) {
   auto stmtCompound = stmt.asCompound();
-  auto items = stmtCompound.items;
 
-  for (const auto &item : std::ranges::reverse_view(items)) {
+  for (const auto &item : std::ranges::reverse_view(stmtCompound.body)) {
     this->add(item);
   }
 }

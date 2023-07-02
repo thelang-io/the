@@ -36,7 +36,6 @@ struct CodegenASTStmtBreak;
 struct CodegenASTStmtCase;
 struct CodegenASTStmtCompound;
 struct CodegenASTStmtContinue;
-struct CodegenASTStmtDefault;
 struct CodegenASTStmtEnumDecl;
 struct CodegenASTStmtExpr;
 struct CodegenASTStmtFnDecl;
@@ -44,9 +43,6 @@ struct CodegenASTStmtFor;
 struct CodegenASTStmtGoto;
 struct CodegenASTStmtIf;
 struct CodegenASTStmtLabel;
-struct CodegenASTStmtMacroCondition;
-struct CodegenASTStmtMacroInclude;
-struct CodegenASTStmtMacroReplace;
 struct CodegenASTStmtNull;
 struct CodegenASTStmtReturn;
 struct CodegenASTStmtStructDecl;
@@ -59,7 +55,6 @@ using CodegenASTStmtBody = std::variant<
   CodegenASTStmtCase,
   CodegenASTStmtCompound,
   CodegenASTStmtContinue,
-  CodegenASTStmtDefault,
   CodegenASTStmtEnumDecl,
   CodegenASTStmtExpr,
   CodegenASTStmtFnDecl,
@@ -67,9 +62,6 @@ using CodegenASTStmtBody = std::variant<
   CodegenASTStmtGoto,
   CodegenASTStmtIf,
   CodegenASTStmtLabel,
-  CodegenASTStmtMacroCondition,
-  CodegenASTStmtMacroInclude,
-  CodegenASTStmtMacroReplace,
   CodegenASTStmtNull,
   CodegenASTStmtReturn,
   CodegenASTStmtStructDecl,
@@ -90,6 +82,10 @@ using CodegenASTExprBody = std::variant<
   CodegenASTExprUnary
 >;
 
+std::string notImplementedStr ([[maybe_unused]] std::size_t indent, [[maybe_unused]] bool root) {
+  return "undefined;";
+}
+
 struct CodegenASTType {
   std::string val;
 
@@ -98,18 +94,67 @@ struct CodegenASTType {
 };
 
 struct CodegenASTStmt {
-  CodegenASTStmt *parent;
-  CodegenASTStmt *prevSibling;
-  CodegenASTStmt *nextSibling;
   std::shared_ptr<CodegenASTStmtBody> body;
+  CodegenASTStmt *parent = nullptr;
+  CodegenASTStmt *prevSibling = nullptr;
+  CodegenASTStmt *nextSibling = nullptr;
 
   CodegenASTStmt &append (const CodegenASTStmt &);
+  CodegenASTStmtBreak &asBreak ();
+  const CodegenASTStmtBreak &asBreak () const;
+  CodegenASTStmtCase &asCase ();
+  const CodegenASTStmtCase &asCase () const;
+  CodegenASTStmtCompound &asCompound ();
   const CodegenASTStmtCompound &asCompound () const;
+  CodegenASTStmtContinue &asContinue ();
+  const CodegenASTStmtContinue &asContinue () const;
+  CodegenASTStmtEnumDecl &asEnumDecl ();
+  const CodegenASTStmtEnumDecl &asEnumDecl () const;
+  CodegenASTStmtExpr &asExpr ();
+  const CodegenASTStmtExpr &asExpr () const;
+  CodegenASTStmtFnDecl &asFnDecl ();
+  const CodegenASTStmtFnDecl &asFnDecl () const;
+  CodegenASTStmtFor &asFor ();
+  const CodegenASTStmtFor &asFor () const;
+  CodegenASTStmtGoto &asGoto ();
+  const CodegenASTStmtGoto &asGoto () const;
+  CodegenASTStmtIf &asIf ();
+  const CodegenASTStmtIf &asIf () const;
+  CodegenASTStmtLabel &asLabel ();
+  const CodegenASTStmtLabel &asLabel () const;
+  CodegenASTStmtNull &asNull ();
+  const CodegenASTStmtNull &asNull () const;
+  CodegenASTStmtReturn &asReturn ();
+  const CodegenASTStmtReturn &asReturn () const;
+  CodegenASTStmtStructDecl &asStructDecl ();
+  const CodegenASTStmtStructDecl &asStructDecl () const;
+  CodegenASTStmtSwitch &asSwitch ();
+  const CodegenASTStmtSwitch &asSwitch () const;
+  CodegenASTStmtVarDecl &asVarDecl ();
+  const CodegenASTStmtVarDecl &asVarDecl () const;
+  CodegenASTStmtWhile &asWhile ();
+  const CodegenASTStmtWhile &asWhile () const;
   CodegenASTStmt &exit () const;
+  bool isBreak () const;
+  bool isCase () const;
+  bool isCompound () const;
+  bool isContinue () const;
+  bool isEnumDecl () const;
+  bool isExpr () const;
+  bool isFnDecl () const;
+  bool isFor () const;
+  bool isGoto () const;
+  bool isIf () const;
+  bool isLabel () const;
   bool isNull () const;
+  bool isReturn () const;
+  bool isStructDecl () const;
+  bool isSwitch () const;
+  bool isVarDecl () const;
+  bool isWhile () const;
   void merge (const std::vector<CodegenASTStmt> &);
   CodegenASTStmt &prepend (const CodegenASTStmt &);
-  std::string str () const;
+  std::string str (std::size_t = 0, bool = true) const;
 };
 
 struct CodegenASTExpr {
@@ -147,7 +192,6 @@ struct CodegenASTExpr {
   bool isLiteral () const;
   bool isPointer () const;
   bool isUnary () const;
-  void link (CodegenASTExpr *);
   CodegenASTStmt stmt () const;
   std::string str () const;
   CodegenASTExpr wrap () const;
@@ -235,100 +279,133 @@ struct CodegenASTExprUnary {
   std::string str () const;
 };
 
-struct CodegenASTStmtBreak {
-  static CodegenASTStmt create ();
-};
-
-struct CodegenASTStmtCase {
-  static CodegenASTStmt create (const CodegenASTExpr &, const std::optional<CodegenASTStmt> & = std::nullopt);
-};
-
 struct CodegenASTStmtCompound {
-  std::vector<CodegenASTStmt> items;
+  std::vector<CodegenASTStmt> body;
 
   static CodegenASTStmt create ();
   static CodegenASTStmt create (const std::vector<CodegenASTStmt> &);
+  std::string str (std::size_t, bool) const;
+};
+
+struct CodegenASTStmtBreak {
+  static CodegenASTStmt create ();
+  std::string str (std::size_t, bool) const;
+};
+
+struct CodegenASTStmtCase {
+  std::optional<CodegenASTExpr> test;
+  CodegenASTStmt body;
+
+  static CodegenASTStmt create (
+    const std::optional<CodegenASTExpr> & = std::nullopt,
+    const CodegenASTStmt & = CodegenASTStmtCompound::create()
+  );
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtContinue {
   static CodegenASTStmt create ();
-};
-
-struct CodegenASTStmtDefault {
-  static CodegenASTStmt create ();
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtEnumDecl {
+  // NOLINTNEXTLINE(readability-make-member-function-const)
+  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
 };
 
 struct CodegenASTStmtExpr {
-  static CodegenASTStmt create (const CodegenASTExpr &);
-};
+  CodegenASTExpr expr;
 
-struct CodegenASTStmtFnParam {
+  static CodegenASTStmt create (const CodegenASTExpr &);
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtFnDecl {
-  std::string name;
-  std::vector<CodegenASTStmtFnParam> params;
-  CodegenASTStmt body;
-
-  static CodegenASTStmt create (const std::string &, const std::vector<CodegenASTStmtFnParam> &, const CodegenASTStmt &);
+  // NOLINTNEXTLINE(readability-make-member-function-const)
+  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
 };
 
 struct CodegenASTStmtFor {
+  std::optional<CodegenASTStmt> init;
+  std::optional<CodegenASTExpr> cond;
+  std::optional<CodegenASTExpr> upd;
+  std::optional<CodegenASTStmt> body;
+
   static CodegenASTStmt create (
     const std::optional<CodegenASTStmt> & = std::nullopt,
     const std::optional<CodegenASTExpr> & = std::nullopt,
     const std::optional<CodegenASTExpr> & = std::nullopt,
-    const CodegenASTStmt & = CodegenASTStmtCompound::create()
+    const std::optional<CodegenASTStmt> & = CodegenASTStmtCompound::create()
   );
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtGoto {
+  std::string label;
+
   static CodegenASTStmt create (const std::string &);
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtIf {
+  CodegenASTExpr cond;
+  CodegenASTStmt body;
+  std::optional<CodegenASTStmt> alt;
+
   static CodegenASTStmt create (const CodegenASTExpr &, const CodegenASTStmt &, const std::optional<CodegenASTStmt> & = std::nullopt);
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtLabel {
+  std::string name;
+
   static CodegenASTStmt create (const std::string &);
-};
-
-struct CodegenASTStmtMacroCondition {
-};
-
-struct CodegenASTStmtMacroInclude {
-};
-
-struct CodegenASTStmtMacroReplace {
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtNull {
   static CodegenASTStmt create ();
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtReturn {
+  std::optional<CodegenASTExpr> arg = std::nullopt;
+  std::optional<std::shared_ptr<std::size_t>> asyncPtr = std::nullopt;
+
   static CodegenASTStmt create ();
   static CodegenASTStmt create (const CodegenASTExpr &);
   static CodegenASTStmt create (const std::shared_ptr<std::size_t> &);
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtStructDecl {
+  // NOLINTNEXTLINE(readability-make-member-function-const)
+  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
 };
 
 struct CodegenASTStmtSwitch {
-  static CodegenASTStmt create (const CodegenASTExpr &, const CodegenASTStmt & = CodegenASTStmtCompound::create());
+  CodegenASTExpr discriminant;
+  std::vector<CodegenASTStmt> body;
+
+  static CodegenASTStmt create (const CodegenASTExpr &, const std::vector<CodegenASTStmt> & = {});
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtVarDecl {
+  CodegenASTType type;
+  CodegenASTExpr id;
+  std::optional<CodegenASTExpr> init;
+
   static CodegenASTStmt create (const CodegenASTType &, const CodegenASTExpr &, const std::optional<CodegenASTExpr> & = std::nullopt);
+  std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtWhile {
+  CodegenASTExpr cond;
+  std::optional<CodegenASTStmt> body;
+
   static CodegenASTStmt create (const CodegenASTExpr &, const std::optional<CodegenASTStmt> & = std::nullopt);
+  std::string str (std::size_t, bool) const;
 };
 
 #endif
