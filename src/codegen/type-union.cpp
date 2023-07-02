@@ -78,7 +78,7 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto cFree = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "v" + this->_typeDefIdx(subType));
 
       def += "  if (n.t == _{" + this->_typeDef(subType) + "}) ";
-      def += this->_genFreeFn(subType, cFree).str() + ";" EOL;
+      def += this->_genFreeFn(subType, cFree)->str() + ";" EOL;
     }
 
     def += "}";
@@ -96,7 +96,7 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto cCopy = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), subTypeProp);
 
       def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r." + subTypeProp + " = ";
-      def += this->_genCopyFn(subType, cCopy).str() + ";" EOL;
+      def += this->_genCopyFn(subType, cCopy)->str() + ";" EOL;
     }
 
     def += "  return r;" EOL;
@@ -117,12 +117,12 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto cEq2 = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), subTypeProp);
 
       def += "    if (n1.t == _{" + this->_typeDef(subType) + "}) ";
-      def += "r = " + this->_genEqFn(subType, cEq1, cEq2).str() + ";" EOL;
+      def += "r = " + this->_genEqFn(subType, cEq1, cEq2)->str() + ";" EOL;
     }
 
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -141,12 +141,12 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto cEq2 = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), subTypeProp);
 
       def += "    if (n1.t == _{" + this->_typeDef(subType) + "}) ";
-      def += "r = " + this->_genEqFn(subType, cEq1, cEq2, true).str() + ";" EOL;
+      def += "r = " + this->_genEqFn(subType, cEq1, cEq2, true)->str() + ";" EOL;
     }
 
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -156,7 +156,7 @@ std::string Codegen::_typeNameUnion (Type *type) {
   this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
     def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
     def += "  return n2;" EOL;
     def += "}";
 
@@ -173,10 +173,10 @@ std::string Codegen::_typeNameUnion (Type *type) {
       auto cStr = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), subTypeProp);
 
       def += "  if (n.t == _{" + this->_typeDef(subType) + "}) r = ";
-      def += this->_genStrFn(subType, cStr, true, false).str() + ";" EOL;
+      def += this->_genStrFn(subType, cStr, true, false)->str() + ";" EOL;
     }
 
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 

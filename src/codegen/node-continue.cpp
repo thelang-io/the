@@ -16,39 +16,39 @@
 
 #include "../Codegen.hpp"
 
-void Codegen::_nodeContinue (CodegenASTStmt *c, const ASTNode &node) {
+void Codegen::_nodeContinue (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
     if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
-      c->append(
+      (*c)->append(
         CodegenASTExprAssign::create(
           CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
           "=",
           CodegenASTExprLiteral::create("1")
-        ).stmt()
+        )->stmt()
       );
     }
 
     if (!ASTChecker(node).isLast()) {
-      c->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+      (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
     }
   } else {
-    c->append(CodegenASTStmtContinue::create());
+    (*c)->append(CodegenASTStmtContinue::create());
   }
 }
 
-void Codegen::_nodeContinueAsync (CodegenASTStmt *c, const ASTNode &node) {
+void Codegen::_nodeContinueAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
-    c->append(
+    (*c)->append(
       CodegenASTExprAssign::create(
         CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar())),
         "=",
         CodegenASTExprLiteral::create("1")
-      ).stmt()
+      )->stmt()
     );
   }
 
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    c->append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
+    (*c)->append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
   } else {
     // todo
   }

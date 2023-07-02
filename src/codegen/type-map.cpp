@@ -95,11 +95,11 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "    " + this->_genFreeFn(mapType.keyType, cFree1).str() + ";" EOL;
+      def += "    " + this->_genFreeFn(mapType.keyType, cFree1)->str() + ";" EOL;
     }
 
     if (mapType.valueType->shouldBeFreed()) {
-      def += "    " + this->_genFreeFn(mapType.valueType, cFree2).str() + ";" EOL;
+      def += "    " + this->_genFreeFn(mapType.valueType, cFree2)->str() + ";" EOL;
     }
 
     def += "  }" EOL;
@@ -113,7 +113,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += "_{size_t} " + typeName + "_cap (struct _{" + typeName + "});";
     def += "_{size_t} " + typeName + "_cap (struct _{" + typeName + "} n) {" EOL;
     def += "  _{size_t} c = n.c;" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
     def += "  return c;" EOL;
     def += "}";
 
@@ -125,7 +125,7 @@ std::string Codegen::_typeNameMap (Type *type) {
 
     decl += "struct _{" + typeName + "} *" + typeName + "_clear (struct _{" + typeName + "} *);";
     def += "struct _{" + typeName + "} *" + typeName + "_clear (struct _{" + typeName + "} *n) {" EOL;
-    def += "  " + this->_genFreeFn(type, cFree).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, cFree)->str() + ";" EOL;
     def += "  n->d = _{NULL};" EOL;
     def += "  n->l = 0;" EOL;
     def += "  return n;" EOL;
@@ -155,7 +155,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "} n) {" EOL;
     def += "  struct _{" + pairTypeName + "} *d = _{alloc}(n.c * sizeof(struct _{" + pairTypeName + "}));" EOL;
     def += "  for (_{size_t} i = 0; i < n.l; i++) d[i] = (struct _{" + pairTypeName + "}) ";
-    def += "{" + this->_genCopyFn(mapType.keyType, cCopy1).str() + ", " + this->_genCopyFn(mapType.valueType, cCopy2).str() + "};" EOL;
+    def += "{" + this->_genCopyFn(mapType.keyType, cCopy1)->str() + ", " + this->_genCopyFn(mapType.valueType, cCopy2)->str() + "};" EOL;
     def += "  return (struct _{" + typeName + "}) {d, n.c, n.l};" EOL;
     def += "}";
 
@@ -166,7 +166,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += "_{bool} " + typeName + "_empty (struct _{" + typeName + "});";
     def += "_{bool} " + typeName + "_empty (struct _{" + typeName + "} n) {" EOL;
     def += "  _{bool} r = n.l == 0;" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -211,15 +211,15 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "  _{bool} r = n1.l == n2.l;" EOL;
     def += "  if (r) {" EOL;
     def += "    for (_{size_t} i = 0; i < n1.l; i++) {" EOL;
-    def += "      if (" + this->_genEqFn(mapType.keyType, cEq1, cEq3, true).str() + " || ";
-    def += this->_genEqFn(mapType.valueType, cEq2, cEq4, true).str() + ") {" EOL;
+    def += "      if (" + this->_genEqFn(mapType.keyType, cEq1, cEq3, true)->str() + " || ";
+    def += this->_genEqFn(mapType.valueType, cEq2, cEq4, true)->str() + ") {" EOL;
     def += "        r = _{false};" EOL;
     def += "        break;" EOL;
     def += "      }" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -251,21 +251,21 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += valueTypeInfo.typeCode + typeName + "_get (struct _{" + typeName + "}, " + keyTypeInfo.typeCodeTrimmed + ", int, int);";
     def += valueTypeInfo.typeCode + typeName + "_get (struct _{" + typeName + "} n, " + keyTypeInfo.typeCode + "k, int line, int col) {" EOL;
     def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
-    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2).str() + ") {" EOL;
-    def += "      " + valueTypeInfo.typeCode + "r = " + this->_genCopyFn(mapType.valueType, cCopy).str() + ";" EOL;
-    def += "      " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2)->str() + ") {" EOL;
+    def += "      " + valueTypeInfo.typeCode + "r = " + this->_genCopyFn(mapType.valueType, cCopy)->str() + ";" EOL;
+    def += "      " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "      " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k")).str() + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
     def += R"(      return r;)" EOL;
     def += R"(    })" EOL;
     def += R"(  })" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k")).str() + ";" EOL;
+      def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
     def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
@@ -292,15 +292,15 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "_{bool} " + typeName + "_has (struct _{" + typeName + "} n, " + keyTypeInfo.typeCode + "k) {" EOL;
     def += "  _{bool} r = _{false};" EOL;
     def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
-    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2).str() + ") {" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2)->str() + ") {" EOL;
     def += "      r = _{true};" EOL;
     def += "      break;" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k")).str() + ";" EOL;
+      def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
     def += "  return r;" EOL;
@@ -324,8 +324,8 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += keysTypeInfo.typeCode + typeName + "_keys (struct _{" + typeName + "});";
     def += keysTypeInfo.typeCode + typeName + "_keys (struct _{" + typeName + "} n) {" EOL;
     def += "  " + keyTypeInfo.typeCode + "*r = _{alloc}(n.l * sizeof(" + keyTypeInfo.typeCodeTrimmed + "));" EOL;
-    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.keyType, cCopy).str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.keyType, cCopy)->str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
     def += "  return (" + keysTypeInfo.typeCodeTrimmed + ") {r, n.l};" EOL;
     def += "}";
 
@@ -336,7 +336,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += "_{size_t} " + typeName + "_len (struct _{" + typeName + "});";
     def += "_{size_t} " + typeName + "_len (struct _{" + typeName + "} n) {" EOL;
     def += "  _{size_t} l = n.l;" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
     def += "  return l;" EOL;
     def += "}";
 
@@ -397,21 +397,21 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "  if (n->l + m.l > n->c) n->d = _{re_alloc}(n->d, (n->c = n->l + m.l) * sizeof(struct _{" + pairTypeName + "}));" EOL;
     def += "  for (_{size_t} i = 0; i < m.l; i++) {" EOL;
     def += "    for (_{size_t} j = 0; j < n->l; j++) {" EOL;
-    def += "      if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2).str() + ") {" EOL;
+    def += "      if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2)->str() + ") {" EOL;
 
     if (mapType.valueType->shouldBeFreed()) {
-      def += "        " + this->_genFreeFn(mapType.valueType, cFree).str() + ";" EOL;
+      def += "        " + this->_genFreeFn(mapType.valueType, cFree)->str() + ";" EOL;
     }
 
-    def += "        n->d[j].s = " + this->_genCopyFn(mapType.valueType, cCopy1).str() + ";" EOL;
+    def += "        n->d[j].s = " + this->_genCopyFn(mapType.valueType, cCopy1)->str() + ";" EOL;
     def += "        goto " + typeName + "_merge_next;" EOL;
     def += "      }" EOL;
     def += "    }" EOL;
     def += "    n->d[n->l++] = (struct _{" + pairTypeName + "}) ";
-    def += "{" + this->_genCopyFn(mapType.keyType, cCopy2).str() + ", " + this->_genCopyFn(mapType.valueType, cCopy3).str() + "};" EOL;
+    def += "{" + this->_genCopyFn(mapType.keyType, cCopy2)->str() + ", " + this->_genCopyFn(mapType.valueType, cCopy3)->str() + "};" EOL;
     def += typeName + "_merge_next:;" EOL;
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("m")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("m"))->str() + ";" EOL;
     def += "  return n;" EOL;
     def += "}";
 
@@ -456,15 +456,15 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "  _{bool} r = n1.l != n2.l;" EOL;
     def += "  if (!r) {" EOL;
     def += "    for (_{size_t} i = 0; i < n1.l; i++) {" EOL;
-    def += "      if (" + this->_genEqFn(mapType.keyType, cEq1, cEq3, true).str() + " || ";
-    def += this->_genEqFn(mapType.valueType, cEq2, cEq4, true).str() + ") {" EOL;
+    def += "      if (" + this->_genEqFn(mapType.keyType, cEq1, cEq3, true)->str() + " || ";
+    def += this->_genEqFn(mapType.valueType, cEq2, cEq4, true)->str() + ") {" EOL;
     def += "        r = _{true};" EOL;
     def += "        break;" EOL;
     def += "      }" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
     def += "  return r;" EOL;
     def += "}";
 
@@ -474,7 +474,7 @@ std::string Codegen::_typeNameMap (Type *type) {
   this->_apiEntity(typeName + "_realloc", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     decl += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "}, struct _{" + typeName + "});";
     def += "struct _{" + typeName + "} " + typeName + "_realloc (struct _{" + typeName + "} n1, struct _{" + typeName + "} n2) {" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
     def += "  return n2;" EOL;
     def += "}";
 
@@ -513,18 +513,18 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *, " + keyTypeInfo.typeCodeTrimmed + ", int, int);";
     def += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *n, " + keyTypeInfo.typeCode + "k, int line, int col) {" EOL;
     def += "  for (_{size_t} i = 0; i < n->l; i++) {" EOL;
-    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2).str() + ") {" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2)->str() + ") {" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "      " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k")).str() + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "      " + this->_genFreeFn(mapType.keyType, cFree1).str() + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.keyType, cFree1)->str() + ";" EOL;
     }
 
     if (mapType.valueType->shouldBeFreed()) {
-      def += "      " + this->_genFreeFn(mapType.valueType, cFree2).str() + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.valueType, cFree2)->str() + ";" EOL;
     }
 
     def += "      _{memmove}(&n->d[i], &n->d[i + 1], (--n->l - i) * sizeof(struct _{" + pairTypeName + "}));" EOL;
@@ -533,7 +533,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += R"(  })" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k")).str() + ";" EOL;
+      def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
     def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
@@ -580,14 +580,14 @@ std::string Codegen::_typeNameMap (Type *type) {
     def += "struct _{" + typeName + "} *" + typeName + "_set (struct _{" + typeName + "} *n";
     def += ", " + keyTypeInfo.typeCode + "k, " + valueTypeInfo.typeCode + "v) {" EOL;
     def += "  for (_{size_t} i = 0; i < n->l; i++) {" EOL;
-    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2).str() + ") {" EOL;
+    def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2)->str() + ") {" EOL;
 
     if (mapType.keyType->shouldBeFreed()) {
-      def += "      " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k")).str() + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
     if (mapType.valueType->shouldBeFreed()) {
-      def += "      " + this->_genFreeFn(mapType.valueType, cFree).str() + ";" EOL;
+      def += "      " + this->_genFreeFn(mapType.valueType, cFree)->str() + ";" EOL;
     }
 
     def += "      n->d[i].s = v;" EOL;
@@ -648,7 +648,7 @@ std::string Codegen::_typeNameMap (Type *type) {
       def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
     }
 
-    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(mapType.keyType, cStr1).str() + ");" EOL;
+    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(mapType.keyType, cStr1)->str() + ");" EOL;
 
     if (mapType.keyType->isStr()) {
       def += R"(    r = _{str_concat_cstr}(r, "\": ");)" EOL;
@@ -660,14 +660,14 @@ std::string Codegen::_typeNameMap (Type *type) {
       def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
     }
 
-    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(mapType.valueType, cStr2).str() + ");" EOL;
+    def += "    r = _{str_concat_str}(r, " + this->_genStrFn(mapType.valueType, cStr2)->str() + ");" EOL;
 
     if (mapType.valueType->isStr()) {
       def += R"(    r = _{str_concat_cstr}(r, "\"");)" EOL;
     }
 
     def += "  }" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
     def += R"(  return _{str_concat_cstr}(r, "}");)" EOL;
     def += "}";
 
@@ -689,8 +689,8 @@ std::string Codegen::_typeNameMap (Type *type) {
     decl += valuesTypeInfo.typeCode + typeName + "_values (struct _{" + typeName + "});";
     def += valuesTypeInfo.typeCode + typeName + "_values (struct _{" + typeName + "} n) {" EOL;
     def += "  " + valueTypeInfo.typeCode + "*r = _{alloc}(n.l * sizeof(" + valueTypeInfo.typeCodeTrimmed + "));" EOL;
-    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.valueType, cCopy).str() + ";" EOL;
-    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n")).str() + ";" EOL;
+    def += "  for (_{size_t} i = 0; i < n.l; i++) r[i] = " + this->_genCopyFn(mapType.valueType, cCopy)->str() + ";" EOL;
+    def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;
     def += "  return (" + valuesTypeInfo.typeCodeTrimmed + ") {r, n.l};" EOL;
     def += "}";
 

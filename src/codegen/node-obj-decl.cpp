@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-void Codegen::_nodeObjDecl (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_nodeObjDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
   auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {

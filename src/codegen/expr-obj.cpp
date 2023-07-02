@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
     return CodegenASTExprCast::create(
       CodegenASTType::create(this->_("struct any")),
@@ -48,7 +48,7 @@ CodegenASTExpr Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
       CodegenASTExprInitList::create()
     );
   } else if (typeInfo.type->isObj()) {
-    auto cFields = std::vector<CodegenASTExpr>{};
+    auto cFields = std::vector<std::shared_ptr<CodegenASTExpr>>{};
 
     for (const auto &typeField : typeInfo.type->fields) {
       if (typeField.builtin || typeField.type->isMethod()) {
@@ -73,10 +73,10 @@ CodegenASTExpr Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
   }
 }
 
-CodegenASTExpr Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprObj (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprObj = std::get<ASTExprObj>(*nodeExpr.body);
   auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
-  auto cFields = std::vector<CodegenASTExpr>{};
+  auto cFields = std::vector<std::shared_ptr<CodegenASTExpr>>{};
 
   for (const auto &typeField : nodeTypeInfo.type->fields) {
     if (typeField.builtin || typeField.type->isMethod()) {

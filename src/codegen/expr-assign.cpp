@@ -16,10 +16,10 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprAssign = std::get<ASTExprAssign>(*nodeExpr.body);
   auto cLeft = this->_nodeExpr(exprAssign.left, nodeExpr.type, parent, c, true);
-  auto expr = CodegenASTExpr{};
+  auto expr = std::shared_ptr<CodegenASTExpr>{};
 
   if (Type::actual(exprAssign.left.type)->isAny() || Type::actual(exprAssign.right.type)->isAny()) {
     auto cRight = this->_nodeExpr(exprAssign.right, nodeExpr.type, parent, c);
@@ -43,7 +43,7 @@ CodegenASTExpr Codegen::_exprAssign (const ASTNodeExpr &nodeExpr, Type *targetTy
       expr = this->_genCopyFn(Type::actual(exprAssign.left.type), expr);
     }
   } else if (Type::actual(exprAssign.left.type)->isStr() || Type::actual(exprAssign.right.type)->isStr()) {
-    auto cRight = CodegenASTExpr{};
+    auto cRight = std::shared_ptr<CodegenASTExpr>{};
 
     if (exprAssign.op == AST_EXPR_ASSIGN_ADD) {
       if (exprAssign.right.isLit()) {

@@ -16,35 +16,35 @@
 
 #include "../Codegen.hpp"
 
-void Codegen::_nodeBreak (CodegenASTStmt *c, const ASTNode &node) {
+void Codegen::_nodeBreak (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    c->append(
+    (*c)->append(
       CodegenASTExprAssign::create(
         CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
         "=",
         CodegenASTExprLiteral::create("1")
-      ).stmt()
+      )->stmt()
     );
 
     if (!ASTChecker(node).isLast()) {
-      c->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+      (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
     }
   } else {
-    c->append(CodegenASTStmtBreak::create());
+    (*c)->append(CodegenASTStmtBreak::create());
   }
 }
 
-void Codegen::_nodeBreakAsync (CodegenASTStmt *c, [[maybe_unused]] const ASTNode &node) {
-  c->append(
+void Codegen::_nodeBreakAsync (std::shared_ptr<CodegenASTStmt> *c, [[maybe_unused]] const ASTNode &node) {
+  (*c)->append(
     CodegenASTExprAssign::create(
       CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
       "=",
       CodegenASTExprLiteral::create("1")
-    ).stmt()
+    )->stmt()
   );
 
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    c->append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
+    (*c)->append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
   } else {
     // todo
   }

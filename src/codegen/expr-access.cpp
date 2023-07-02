@@ -17,11 +17,11 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprAccess (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto line = std::to_string(nodeExpr.start.line);
   auto col = std::to_string(nodeExpr.start.col + 1);
   auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
-  auto expr = CodegenASTExpr{};
+  auto expr = std::shared_ptr<CodegenASTExpr>{};
 
   if (exprAccess.expr != std::nullopt && std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
     auto objVar = std::get<std::shared_ptr<Var>>(*exprAccess.expr);
@@ -127,7 +127,7 @@ CodegenASTExpr Codegen::_exprAccess (const ASTNodeExpr &nodeExpr, Type *targetTy
           CodegenASTExprCast::create(
             CodegenASTType::create("struct " + this->_(typeName) + " *"),
             CodegenASTExprAccess::create(expr, "d")
-          ).wrap(),
+          )->wrap(),
           "d",
           true
         );
@@ -176,7 +176,7 @@ CodegenASTExpr Codegen::_exprAccess (const ASTNodeExpr &nodeExpr, Type *targetTy
       !objTypeInfo.realType->getField(*exprAccess.prop).callInfo.empty()
     ) {
       auto typeField = objTypeInfo.realType->getField(*exprAccess.prop);
-      auto cArgs = std::vector<CodegenASTExpr>{};
+      auto cArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
 
       if (typeField.callInfo.isSelfFirst) {
         cArgs.push_back(
@@ -208,8 +208,8 @@ CodegenASTExpr Codegen::_exprAccess (const ASTNodeExpr &nodeExpr, Type *targetTy
     } else if (exprAccess.prop != std::nullopt) {
       auto cObj = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, parent, c, true);
 
-      if (cObj.isPointer()) {
-        cObj = cObj.wrap();
+      if (cObj->isPointer()) {
+        cObj = cObj->wrap();
       }
 
       expr = CodegenASTExprAccess::create(cObj, Codegen::name(*exprAccess.prop), true);
@@ -231,7 +231,7 @@ CodegenASTExpr Codegen::_exprAccess (const ASTNodeExpr &nodeExpr, Type *targetTy
       );
     }
 
-    auto exprText = expr.str();
+    auto exprText = expr->str();
 
     auto objMemberType = this->state.typeCasts.contains(exprText)
       ? this->state.typeCasts[exprText]

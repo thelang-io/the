@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprCond = std::get<ASTExprCond>(*nodeExpr.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(exprCond.cond, parent);
@@ -36,13 +36,13 @@ CodegenASTExpr Codegen::_exprCond (const ASTNodeExpr &nodeExpr, Type *targetType
     !exprCond.alt.parenthesized &&
     !exprCond.alt.type->isSafeForTernaryAlt()
   ) {
-    cAlt = cAlt.wrap();
+    cAlt = cAlt->wrap();
   }
 
   auto expr = CodegenASTExprCond::create(cCond, cBody, cAlt);
 
   if (root && nodeExpr.type->shouldBeFreed()) {
-    expr = this->_genFreeFn(nodeExpr.type, expr.wrap());
+    expr = this->_genFreeFn(nodeExpr.type, expr->wrap());
   }
 
   return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);

@@ -53,7 +53,7 @@ std::string Codegen::_typeNameAny (Type *type) {
     def += "_{struct any} " + typeName + "_copy (const _{struct any} n) {" EOL;
     def += "  struct _{" + typeName + "} *o = n.d;" EOL;
     def += "  struct _{" + typeName + "} *r = _{alloc}(n.l);" EOL;
-    def += "  r->d = " + cCopy.str() + ";" EOL;
+    def += "  r->d = " + cCopy->str() + ";" EOL;
     def += "  return (_{struct any}) {n.t, r, n.l, n._copy, n._free};" EOL;
     def += "}";
 
@@ -73,7 +73,7 @@ std::string Codegen::_typeNameAny (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true)
       );
 
-      def += "  " + cFree.str() + ";" EOL;
+      def += "  " + cFree->str() + ";" EOL;
     }
 
     def += "  _{free}(n);" EOL;

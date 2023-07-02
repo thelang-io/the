@@ -18,7 +18,7 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
-void Codegen::_nodeEnumDecl ([[maybe_unused]] CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_nodeEnumDecl ([[maybe_unused]] std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
   auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
   auto members = nodeEnumDecl.members;
   auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
@@ -45,7 +45,7 @@ void Codegen::_nodeEnumDecl ([[maybe_unused]] CodegenASTStmt *c, const ASTNode &
 
         if (member->init != std::nullopt) {
           auto cInit = this->_nodeExpr(*member->init, member->init->type, node, &cDecl, true);
-          membersCode += " = " + cInit.str();
+          membersCode += " = " + cInit->str();
         }
 
         membersCode += i == enumType.members.size() - 1 ? EOL : "," EOL;

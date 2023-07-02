@@ -17,10 +17,10 @@
 #include "../Codegen.hpp"
 
 void Codegen::_block (
-  CodegenASTStmt *c,
+  std::shared_ptr<CodegenASTStmt> *c,
   const ASTBlock &nodes,
   bool saveCleanUp,
-  const std::optional<CodegenASTStmt> &cleanupData,
+  const std::shared_ptr<CodegenASTStmt> &cleanupData,
   bool errHandled
 ) {
   if (ASTChecker(nodes).async() || (this->state.insideAsync && ASTChecker(nodes).hasSyncBreaking())) {
@@ -33,8 +33,8 @@ void Codegen::_block (
   if (saveCleanUp) {
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
 
-    if (cleanupData != std::nullopt) {
-      this->state.cleanUp.merge(*cleanupData);
+    if (cleanupData != nullptr) {
+      this->state.cleanUp.merge(cleanupData);
     }
 
     if (
@@ -95,11 +95,11 @@ void Codegen::_block (
              "buf_idx"
             ),
             "--"
-          ).stmt()
+          )->stmt()
         );
       }
 
-      c->append(
+      (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprCall::create(
@@ -144,10 +144,10 @@ void Codegen::_block (
               ),
               CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
             }
-          ).stmt()
+          )->stmt()
         : CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel());
 
-      c->append(
+      (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
@@ -164,7 +164,7 @@ void Codegen::_block (
         ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
         : CodegenASTStmtContinue::create();
 
-      c->append(
+      (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
@@ -181,7 +181,7 @@ void Codegen::_block (
         ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
         : CodegenASTStmtBreak::create();
 
-      c->append(
+      (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
@@ -194,7 +194,7 @@ void Codegen::_block (
     }
 
     if (this->state.cleanUp.returnVarUsed && !this->state.cleanUp.empty()) {
-      c->append(
+      (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create("r"),
@@ -211,10 +211,10 @@ void Codegen::_block (
 }
 
 void Codegen::_blockAsync (
-  CodegenASTStmt *c,
+  std::shared_ptr<CodegenASTStmt> *c,
   const ASTBlock &nodes,
   bool saveCleanUp,
-  const std::optional<CodegenASTStmt> &cleanupData,
+  const std::shared_ptr<CodegenASTStmt> &cleanupData,
   [[maybe_unused]] bool errHandled
 ) {
   auto initialStateCleanUp = this->state.cleanUp;
@@ -223,8 +223,8 @@ void Codegen::_blockAsync (
   if (saveCleanUp) {
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp, true);
 
-    if (cleanupData != std::nullopt) {
-      this->state.cleanUp.merge(*cleanupData);
+    if (cleanupData != nullptr) {
+      this->state.cleanUp.merge(cleanupData);
     }
   }
 
@@ -265,7 +265,7 @@ void Codegen::_blockAsync (
       this->state.cleanUp.genAsync(c, this->state.asyncCounter);
 
       if (this->state.cleanUp.breakVarUsed && initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-        c->append(
+        (*c)->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(
               CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
@@ -278,7 +278,7 @@ void Codegen::_blockAsync (
       }
 
       if (!nodesParentChecker.is<ASTNodeLoop>() && this->state.cleanUp.continueVarUsed) {
-        c->append(
+        (*c)->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(
               CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar())),

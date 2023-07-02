@@ -16,18 +16,21 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprAwait (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprAwait = std::get<ASTExprAwait>(*nodeExpr.body);
-  c->append(this->_nodeExpr(exprAwait.arg, exprAwait.arg.type, parent, c, false, exprAwait.id).stmt());
+  (*c)->append(this->_nodeExpr(exprAwait.arg, exprAwait.arg.type, parent, c, false, exprAwait.id)->stmt());
 
-  c->append(
+  (*c)->append(
     CodegenASTStmtReturn::create(
       CodegenASTExprLiteral::create(std::to_string(this->state.asyncCounter + 1))
     )
   );
 
-  *c = c->exit().append(
-    CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+  *c = (*c)->exit()->append(
+    CodegenASTStmtCase::create(
+      CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
+      CodegenASTStmtCompound::create()
+    )
   );
 
   auto expr = nodeExpr.type->isVoid() || root

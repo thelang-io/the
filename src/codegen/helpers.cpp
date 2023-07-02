@@ -478,7 +478,7 @@ std::string Codegen::_apiEval (
   return result;
 }
 
-CodegenASTExpr Codegen::_genCopyFn (Type *type, const CodegenASTExpr &expr) {
+std::shared_ptr<CodegenASTExpr> Codegen::_genCopyFn (Type *type, const std::shared_ptr<CodegenASTExpr> &expr) {
   auto result = expr;
 
   if (type->isAlias()) {
@@ -508,7 +508,7 @@ CodegenASTExpr Codegen::_genCopyFn (Type *type, const CodegenASTExpr &expr) {
   return result;
 }
 
-CodegenASTExpr Codegen::_genEqFn (Type *type, const CodegenASTExpr &leftExpr, const CodegenASTExpr &rightExpr, bool reverse) {
+std::shared_ptr<CodegenASTExpr> Codegen::_genEqFn (Type *type, const std::shared_ptr<CodegenASTExpr> &leftExpr, const std::shared_ptr<CodegenASTExpr> &rightExpr, bool reverse) {
   auto realType = Type::real(type);
   auto direction = std::string(reverse ? "ne" : "eq");
 
@@ -540,7 +540,7 @@ CodegenASTExpr Codegen::_genEqFn (Type *type, const CodegenASTExpr &leftExpr, co
   }
 }
 
-CodegenASTExpr Codegen::_genFreeFn (Type *type, const CodegenASTExpr &expr) {
+std::shared_ptr<CodegenASTExpr> Codegen::_genFreeFn (Type *type, const std::shared_ptr<CodegenASTExpr> &expr) {
   auto result = expr;
 
   if (type->isAlias()) {
@@ -579,8 +579,8 @@ CodegenASTExpr Codegen::_genFreeFn (Type *type, const CodegenASTExpr &expr) {
   return result;
 }
 
-CodegenASTExpr Codegen::_genReallocFn (Type *type, const CodegenASTExpr &leftExpr, const CodegenASTExpr &rightExpr) {
-  auto result = CodegenASTExpr{};
+std::shared_ptr<CodegenASTExpr> Codegen::_genReallocFn (Type *type, const std::shared_ptr<CodegenASTExpr> &leftExpr, const std::shared_ptr<CodegenASTExpr> &rightExpr) {
+  auto result = std::shared_ptr<CodegenASTExpr>{};
 
   if (type->isAny()) {
     result = CodegenASTExprAssign::create(
@@ -623,7 +623,7 @@ CodegenASTExpr Codegen::_genReallocFn (Type *type, const CodegenASTExpr &leftExp
   return result;
 }
 
-CodegenASTExpr Codegen::_genStrFn (Type *type, const CodegenASTExpr &expr, bool copy, bool escape) {
+std::shared_ptr<CodegenASTExpr> Codegen::_genStrFn (Type *type, const std::shared_ptr<CodegenASTExpr> &expr, bool copy, bool escape) {
   auto realType = Type::real(type);
   auto result = expr;
 

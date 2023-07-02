@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprUnary = std::get<ASTExprUnary>(*nodeExpr.body);
   auto cArg = this->_nodeExpr(exprUnary.arg, nodeExpr.type, parent, c);
   auto opCode = std::string();
@@ -33,8 +33,8 @@ CodegenASTExpr Codegen::_exprUnary (const ASTNodeExpr &nodeExpr, Type *targetTyp
   } else if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isStr()) {
     cArg = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_not")), {cArg});
     opCode = "";
-  } else if (cArg.isPointer()) {
-    cArg = cArg.wrap();
+  } else if (cArg->isPointer()) {
+    cArg = cArg->wrap();
   }
 
   auto expr = exprUnary.prefix

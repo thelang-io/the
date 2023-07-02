@@ -16,7 +16,7 @@
 
 #include "../Codegen.hpp"
 
-void Codegen::_nodeFnDecl (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_nodeFnDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
   auto nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
   this->_fnDecl(c, nodeFnDecl.var, nodeFnDecl.stack, nodeFnDecl.params, nodeFnDecl.body, node, phase);
 }

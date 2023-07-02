@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprLit (const ASTNodeExpr &nodeExpr, Type *targetType, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprLit (const ASTNodeExpr &nodeExpr, Type *targetType, bool root) {
   auto exprLit = std::get<ASTExprLit>(*nodeExpr.body);
   auto expr = CodegenASTExprLiteral::create(exprLit.body);
 

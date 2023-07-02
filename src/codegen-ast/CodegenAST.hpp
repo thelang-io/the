@@ -93,13 +93,14 @@ struct CodegenASTType {
   std::string str () const;
 };
 
-struct CodegenASTStmt {
+struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
   std::shared_ptr<CodegenASTStmtBody> body;
-  CodegenASTStmt *parent = nullptr;
-  CodegenASTStmt *prevSibling = nullptr;
-  CodegenASTStmt *nextSibling = nullptr;
+  std::shared_ptr<CodegenASTStmt> parent = nullptr;
+  std::shared_ptr<CodegenASTStmt> prevSibling = nullptr;
+  std::shared_ptr<CodegenASTStmt> nextSibling = nullptr;
 
-  CodegenASTStmt &append (const CodegenASTStmt &);
+  static std::shared_ptr<CodegenASTStmt> create (const CodegenASTStmtBody &);
+  std::shared_ptr<CodegenASTStmt> append (const std::shared_ptr<CodegenASTStmt> &);
   CodegenASTStmtBreak &asBreak ();
   const CodegenASTStmtBreak &asBreak () const;
   CodegenASTStmtCase &asCase ();
@@ -134,7 +135,8 @@ struct CodegenASTStmt {
   const CodegenASTStmtVarDecl &asVarDecl () const;
   CodegenASTStmtWhile &asWhile ();
   const CodegenASTStmtWhile &asWhile () const;
-  CodegenASTStmt &exit () const;
+  std::shared_ptr<CodegenASTStmt> exit () const;
+  std::shared_ptr<CodegenASTStmt> getptr ();
   bool isBreak () const;
   bool isCase () const;
   bool isCompound () const;
@@ -152,17 +154,21 @@ struct CodegenASTStmt {
   bool isSwitch () const;
   bool isVarDecl () const;
   bool isWhile () const;
-  void merge (const std::vector<CodegenASTStmt> &);
-  CodegenASTStmt &prepend (const CodegenASTStmt &);
+  void merge (const std::vector<std::shared_ptr<CodegenASTStmt>> &);
+  std::shared_ptr<CodegenASTStmt> prepend (const std::shared_ptr<CodegenASTStmt> &);
   std::string str (std::size_t = 0, bool = true) const;
+
+ private:
+  CodegenASTStmt () = default;
 };
 
-struct CodegenASTExpr {
+struct CodegenASTExpr : public std::enable_shared_from_this<CodegenASTExpr> {
   std::shared_ptr<CodegenASTExprBody> body;
   bool parenthesized = false;
-  CodegenASTExpr *parent = nullptr;
-  CodegenASTStmt *parentStmt = nullptr;
+  std::shared_ptr<CodegenASTExpr> parent = nullptr;
+  std::shared_ptr<CodegenASTStmt> parentStmt = nullptr;
 
+  static std::shared_ptr<CodegenASTExpr> create (const CodegenASTExprBody &, bool = false);
   CodegenASTExprAccess &asAccess ();
   const CodegenASTExprAccess &asAccess () const;
   CodegenASTExprAssign &asAssign ();
@@ -181,6 +187,7 @@ struct CodegenASTExpr {
   const CodegenASTExprLiteral &asLiteral () const;
   CodegenASTExprUnary &asUnary ();
   const CodegenASTExprUnary &asUnary () const;
+  std::shared_ptr<CodegenASTExpr> getptr ();
   bool isAccess () const;
   bool isAssign () const;
   bool isBinary () const;
@@ -192,219 +199,215 @@ struct CodegenASTExpr {
   bool isLiteral () const;
   bool isPointer () const;
   bool isUnary () const;
-  CodegenASTStmt stmt () const;
+  std::shared_ptr<CodegenASTStmt> stmt ();
   std::string str () const;
-  CodegenASTExpr wrap () const;
+  std::shared_ptr<CodegenASTExpr> wrap () const;
+
+ private:
+  CodegenASTExpr () = default;
 };
 
 struct CodegenASTExprAccess {
-  std::variant<CodegenASTExpr, std::string> obj;
+  std::optional<std::string> objId;
+  std::shared_ptr<CodegenASTExpr> objExpr = nullptr;
   std::optional<std::string> prop = std::nullopt;
-  std::optional<CodegenASTExpr> elem = std::nullopt;
+  std::shared_ptr<CodegenASTExpr> elem = nullptr;
   bool pointed = false;
 
-  static CodegenASTExpr create (const std::string &);
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, bool = false);
-  static CodegenASTExpr create (const CodegenASTExpr &, const CodegenASTExpr &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::string &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::string &, bool = false);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &);
   std::string str () const;
 };
 
 struct CodegenASTExprAssign {
-  CodegenASTExpr left;
+  std::shared_ptr<CodegenASTExpr> left;
   std::string op;
-  CodegenASTExpr right;
+  std::shared_ptr<CodegenASTExpr> right;
 
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, const CodegenASTExpr &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::string &, const std::shared_ptr<CodegenASTExpr> &);
   std::string str () const;
 };
 
 struct CodegenASTExprBinary {
-  CodegenASTExpr left;
+  std::shared_ptr<CodegenASTExpr> left;
   std::string op;
-  CodegenASTExpr right;
+  std::shared_ptr<CodegenASTExpr> right;
 
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &, const CodegenASTExpr &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::string &, const std::shared_ptr<CodegenASTExpr> &);
   std::string str () const;
 };
 
 struct CodegenASTExprCall {
-  CodegenASTExpr callee;
-  std::vector<CodegenASTExpr> exprArgs = {};
+  std::shared_ptr<CodegenASTExpr> callee;
+  std::vector<std::shared_ptr<CodegenASTExpr>> exprArgs = {};
   std::vector<CodegenASTType> typeArgs = {};
 
-  static CodegenASTExpr create (const CodegenASTExpr &);
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTExpr> &);
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::vector<CodegenASTType> &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::vector<std::shared_ptr<CodegenASTExpr>> &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::vector<CodegenASTType> &);
   std::string str () const;
 };
 
 struct CodegenASTExprCast {
   CodegenASTType type;
-  CodegenASTExpr arg;
+  std::shared_ptr<CodegenASTExpr> arg;
 
-  static CodegenASTExpr create (const CodegenASTType &, const CodegenASTExpr &);
+  static std::shared_ptr<CodegenASTExpr> create (const CodegenASTType &, const std::shared_ptr<CodegenASTExpr> &);
   std::string str () const;
 };
 
 struct CodegenASTExprCond {
-  CodegenASTExpr cond;
-  CodegenASTExpr body;
-  CodegenASTExpr alt;
+  std::shared_ptr<CodegenASTExpr> cond;
+  std::shared_ptr<CodegenASTExpr> body;
+  std::shared_ptr<CodegenASTExpr> alt;
 
-  static CodegenASTExpr create (const CodegenASTExpr &, const CodegenASTExpr &, const CodegenASTExpr &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &);
   std::string str () const;
 };
 
 struct CodegenASTExprInitList {
-  std::vector<CodegenASTExpr> items;
+  std::vector<std::shared_ptr<CodegenASTExpr>> items;
 
-  static CodegenASTExpr create (const std::vector<CodegenASTExpr> & = {});
+  static std::shared_ptr<CodegenASTExpr> create (const std::vector<std::shared_ptr<CodegenASTExpr>> & = {});
   std::string str () const;
 };
 
 struct CodegenASTExprLiteral {
   std::string val;
 
-  static CodegenASTExpr create (const std::string &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::string &);
   std::string str () const;
 };
 
 struct CodegenASTExprUnary {
-  CodegenASTExpr arg;
+  std::shared_ptr<CodegenASTExpr> arg;
   std::string op;
   bool prefix = false;
 
-  static CodegenASTExpr create (const std::string &, const CodegenASTExpr &);
-  static CodegenASTExpr create (const CodegenASTExpr &, const std::string &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::string &, const std::shared_ptr<CodegenASTExpr> &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<CodegenASTExpr> &, const std::string &);
   std::string str () const;
 };
 
-struct CodegenASTStmtCompound {
-  std::vector<CodegenASTStmt> body;
-
-  static CodegenASTStmt create ();
-  static CodegenASTStmt create (const std::vector<CodegenASTStmt> &);
-  std::string str (std::size_t, bool) const;
-};
-
 struct CodegenASTStmtBreak {
-  static CodegenASTStmt create ();
+  static std::shared_ptr<CodegenASTStmt> create ();
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtCase {
-  std::optional<CodegenASTExpr> test;
-  CodegenASTStmt body;
+  std::shared_ptr<CodegenASTExpr> test;
+  std::shared_ptr<CodegenASTStmt> body;
 
-  static CodegenASTStmt create (
-    const std::optional<CodegenASTExpr> & = std::nullopt,
-    const CodegenASTStmt & = CodegenASTStmtCompound::create()
-  );
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> & = nullptr, const std::shared_ptr<CodegenASTStmt> & = nullptr);
+  std::string str (std::size_t, bool) const;
+};
+
+struct CodegenASTStmtCompound {
+  std::vector<std::shared_ptr<CodegenASTStmt>> body;
+
+  static std::shared_ptr<CodegenASTStmt> create ();
+  static std::shared_ptr<CodegenASTStmt> create (const std::vector<std::shared_ptr<CodegenASTStmt>> &);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtContinue {
-  static CodegenASTStmt create ();
+  static std::shared_ptr<CodegenASTStmt> create ();
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtEnumDecl {
-  // NOLINTNEXTLINE(readability-make-member-function-const)
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static, readability-make-member-function-const)
   inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
 };
 
 struct CodegenASTStmtExpr {
-  CodegenASTExpr expr;
+  std::shared_ptr<CodegenASTExpr> expr;
 
-  static CodegenASTStmt create (const CodegenASTExpr &);
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtFnDecl {
-  // NOLINTNEXTLINE(readability-make-member-function-const)
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static, readability-make-member-function-const)
   inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
 };
 
 struct CodegenASTStmtFor {
-  std::optional<CodegenASTStmt> init;
-  std::optional<CodegenASTExpr> cond;
-  std::optional<CodegenASTExpr> upd;
-  std::optional<CodegenASTStmt> body;
+  std::shared_ptr<CodegenASTStmt> init;
+  std::shared_ptr<CodegenASTExpr> cond;
+  std::shared_ptr<CodegenASTExpr> upd;
+  std::shared_ptr<CodegenASTStmt> body;
 
-  static CodegenASTStmt create (
-    const std::optional<CodegenASTStmt> & = std::nullopt,
-    const std::optional<CodegenASTExpr> & = std::nullopt,
-    const std::optional<CodegenASTExpr> & = std::nullopt,
-    const std::optional<CodegenASTStmt> & = CodegenASTStmtCompound::create()
-  );
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTStmt> & = nullptr, const std::shared_ptr<CodegenASTExpr> & = nullptr, const std::shared_ptr<CodegenASTExpr> & = nullptr, const std::shared_ptr<CodegenASTStmt> & = nullptr);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtGoto {
   std::string label;
 
-  static CodegenASTStmt create (const std::string &);
+  static std::shared_ptr<CodegenASTStmt> create (const std::string &);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtIf {
-  CodegenASTExpr cond;
-  CodegenASTStmt body;
-  std::optional<CodegenASTStmt> alt;
+  std::shared_ptr<CodegenASTExpr> cond;
+  std::shared_ptr<CodegenASTStmt> body;
+  std::shared_ptr<CodegenASTStmt> alt;
 
-  static CodegenASTStmt create (const CodegenASTExpr &, const CodegenASTStmt &, const std::optional<CodegenASTStmt> & = std::nullopt);
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTStmt> &, const std::shared_ptr<CodegenASTStmt> & = nullptr);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtLabel {
   std::string name;
 
-  static CodegenASTStmt create (const std::string &);
+  static std::shared_ptr<CodegenASTStmt> create (const std::string &);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtNull {
-  static CodegenASTStmt create ();
+  static std::shared_ptr<CodegenASTStmt> create ();
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtReturn {
-  std::optional<CodegenASTExpr> arg = std::nullopt;
+  std::shared_ptr<CodegenASTExpr> arg = nullptr;
   std::optional<std::shared_ptr<std::size_t>> asyncPtr = std::nullopt;
 
-  static CodegenASTStmt create ();
-  static CodegenASTStmt create (const CodegenASTExpr &);
-  static CodegenASTStmt create (const std::shared_ptr<std::size_t> &);
+  static std::shared_ptr<CodegenASTStmt> create ();
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &);
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<std::size_t> &);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtStructDecl {
-  // NOLINTNEXTLINE(readability-make-member-function-const)
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static, readability-make-member-function-const)
   inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
 };
 
 struct CodegenASTStmtSwitch {
-  CodegenASTExpr discriminant;
-  std::vector<CodegenASTStmt> body;
+  std::shared_ptr<CodegenASTExpr> discriminant;
+  std::vector<std::shared_ptr<CodegenASTStmt>> body;
 
-  static CodegenASTStmt create (const CodegenASTExpr &, const std::vector<CodegenASTStmt> & = {});
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &, const std::vector<std::shared_ptr<CodegenASTStmt>> & = {});
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtVarDecl {
   CodegenASTType type;
-  CodegenASTExpr id;
-  std::optional<CodegenASTExpr> init;
+  std::shared_ptr<CodegenASTExpr> id;
+  std::shared_ptr<CodegenASTExpr> init;
 
-  static CodegenASTStmt create (const CodegenASTType &, const CodegenASTExpr &, const std::optional<CodegenASTExpr> & = std::nullopt);
+  static std::shared_ptr<CodegenASTStmt> create (const CodegenASTType &, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> & = nullptr);
   std::string str (std::size_t, bool) const;
 };
 
 struct CodegenASTStmtWhile {
-  CodegenASTExpr cond;
-  std::optional<CodegenASTStmt> body;
+  std::shared_ptr<CodegenASTExpr> cond;
+  std::shared_ptr<CodegenASTStmt> body;
 
-  static CodegenASTStmt create (const CodegenASTExpr &, const std::optional<CodegenASTStmt> & = std::nullopt);
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTStmt> & = nullptr);
   std::string str (std::size_t, bool) const;
 };
 

@@ -16,10 +16,10 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprBinary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprBinary (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprBinary = std::get<ASTExprBinary>(*nodeExpr.body);
   auto direction = std::string(exprBinary.op == AST_EXPR_BINARY_EQ ? "eq" : "ne");
-  auto expr = CodegenASTExpr{};
+  auto expr = std::shared_ptr<CodegenASTExpr>{};
 
   if (
     (exprBinary.op == AST_EXPR_BINARY_EQ || exprBinary.op == AST_EXPR_BINARY_NE) &&

@@ -16,13 +16,13 @@
 
 #include "../Codegen.hpp"
 
-void Codegen::_nodeIf (CodegenASTStmt *c, const ASTNode &node) {
+void Codegen::_nodeIf (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
   auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
   auto cBody = CodegenASTStmtCompound::create();
-  auto cAlt = std::optional<CodegenASTStmt>();
+  auto cAlt = std::shared_ptr<CodegenASTStmt>{};
 
   bodyTypeCasts.merge(this->state.typeCasts);
   bodyTypeCasts.swap(this->state.typeCasts);
@@ -39,27 +39,27 @@ void Codegen::_nodeIf (CodegenASTStmt *c, const ASTNode &node) {
 
     if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
       this->varMap.save();
-      this->_block(&*cAlt, std::get<ASTBlock>(*nodeIf.alt));
+      this->_block(&cAlt, std::get<ASTBlock>(*nodeIf.alt));
       this->varMap.restore();
     } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
-      this->_node(&*cAlt, std::get<ASTNode>(*nodeIf.alt));
+      this->_node(&cAlt, std::get<ASTNode>(*nodeIf.alt));
     }
   }
 
-  c->append(CodegenASTStmtIf::create(cCond, cBody, cAlt));
+  (*c)->append(CodegenASTStmtIf::create(cCond, cBody, cAlt));
   this->state.typeCasts = initialStateTypeCasts;
 }
 
-void Codegen::_nodeIfAsync (CodegenASTStmt *c, const ASTNode &node) {
+void Codegen::_nodeIfAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto afterBodyAsyncCounter = std::make_shared<std::size_t>(0);
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
   auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
 
-  c->append(
+  (*c)->append(
     CodegenASTStmtIf::create(
-      CodegenASTExprUnary::create("!", cCond.wrap()),
+      CodegenASTExprUnary::create("!", cCond->wrap()),
       CodegenASTStmtReturn::create(afterBodyAsyncCounter)
     )
   );
@@ -72,15 +72,18 @@ void Codegen::_nodeIfAsync (CodegenASTStmt *c, const ASTNode &node) {
   this->state.typeCasts = initialStateTypeCasts;
 
   if (!ASTChecker(nodeIf.body).endsWithSyncBreaking()) {
-    c->append(
+    (*c)->append(
       CodegenASTStmtReturn::create(
         CodegenASTExprLiteral::create(std::to_string(this->state.asyncCounter))
       )
     );
   }
 
-  *c = c->exit().append(
-    CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+  *c = (*c)->exit()->append(
+    CodegenASTStmtCase::create(
+      CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
+      CodegenASTStmtCompound::create()
+    )
   );
 
   *afterBodyAsyncCounter = this->state.asyncCounter;
@@ -97,8 +100,11 @@ void Codegen::_nodeIfAsync (CodegenASTStmt *c, const ASTNode &node) {
       this->_nodeAsync(c, std::get<ASTNode>(*nodeIf.alt));
     }
 
-    *c = c->exit().append(
-      CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)))
+    *c = (*c)->exit()->append(
+      CodegenASTStmtCase::create(
+        CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
+        CodegenASTStmtCompound::create()
+      )
     );
   }
 

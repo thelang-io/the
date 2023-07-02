@@ -16,14 +16,14 @@
 
 #include "../Codegen.hpp"
 
-void Codegen::_nodeMain (CodegenASTStmt *c, const ASTNode &node) {
+void Codegen::_nodeMain (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
   this->varMap.save();
   this->_block(c, nodeMain.body);
   this->varMap.restore();
 }
 
-void Codegen::_nodeMainAsync (CodegenASTStmt *c, const ASTNode &node) {
+void Codegen::_nodeMainAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
   auto returnType = this->ast->typeMap.get("void");
   auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->throws, this->async);
@@ -31,7 +31,7 @@ void Codegen::_nodeMainAsync (CodegenASTStmt *c, const ASTNode &node) {
 
   this->_fnDecl(c, asyncMainVar, nodeMain.stack, {}, nodeMain.body, node, CODEGEN_PHASE_FULL);
 
-  c->append(
+  (*c)->append(
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("threadpool_add")),
       {
@@ -42,6 +42,6 @@ void Codegen::_nodeMainAsync (CodegenASTStmt *c, const ASTNode &node) {
         CodegenASTExprAccess::create(this->_("NULL")),
         CodegenASTExprAccess::create(this->_("NULL"))
       }
-    ).stmt()
+    )->stmt()
   );
 }

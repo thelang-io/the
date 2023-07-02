@@ -28,7 +28,7 @@ CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool as
 }
 
 // todo test
-void CodegenCleanUp::add (const CodegenASTStmt &stmt) {
+void CodegenCleanUp::add (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (this->empty() || this->_data.back().labelUsed) {
     if (this->async) {
       this->_data.push_back({"", {}, false, std::make_shared<std::size_t>(1)});
@@ -45,7 +45,7 @@ void CodegenCleanUp::add (const CodegenASTStmt &stmt) {
     }
   }
 
-  if (!stmt.isNull()) {
+  if (!stmt->isNull()) {
     this->_data.back().content.insert(this->_data.back().content.begin(), stmt);
   }
 }
@@ -138,7 +138,7 @@ bool CodegenCleanUp::empty () const {
   return this->_data.empty();
 }
 
-void CodegenCleanUp::gen (CodegenASTStmt *c) const {
+void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {
   if (this->_data.empty()) {
     return;
   }
@@ -147,11 +147,11 @@ void CodegenCleanUp::gen (CodegenASTStmt *c) const {
     auto item = this->_data[idx];
 
     if (item.labelUsed) {
-      c->append(CodegenASTStmtLabel::create(item.label));
+      (*c)->append(CodegenASTStmtLabel::create(item.label));
     }
 
     if (!item.content.empty()) {
-      c->merge(item.content);
+      (*c)->merge(item.content);
     }
 
     if (idx == 0) {
@@ -161,7 +161,7 @@ void CodegenCleanUp::gen (CodegenASTStmt *c) const {
 }
 
 // todo test
-void CodegenCleanUp::genAsync (CodegenASTStmt *c, std::size_t &counter) const {
+void CodegenCleanUp::genAsync (std::shared_ptr<CodegenASTStmt> *c, std::size_t &counter) const {
   if (this->_data.empty()) {
     return;
   }
@@ -170,15 +170,18 @@ void CodegenCleanUp::genAsync (CodegenASTStmt *c, std::size_t &counter) const {
     auto item = this->_data[idx];
 
     if (item.labelUsed) {
-      *c = c->exit().append(
-        CodegenASTStmtCase::create(CodegenASTExprLiteral::create(std::to_string(++counter)))
+      *c = (*c)->exit()->append(
+        CodegenASTStmtCase::create(
+          CodegenASTExprLiteral::create(std::to_string(++counter)),
+          CodegenASTStmtCompound::create()
+        )
       );
 
       *item.asyncCounter = counter;
     }
 
     if (!item.content.empty()) {
-      c->merge(item.content);
+      (*c)->merge(item.content);
     }
 
     if (idx == 0) {
@@ -199,8 +202,8 @@ bool CodegenCleanUp::isClosestJump () const {
 }
 
 // todo test
-void CodegenCleanUp::merge (const CodegenASTStmt &stmt) {
-  auto stmtCompound = stmt.asCompound();
+void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
+  auto stmtCompound = stmt->asCompound();
 
   for (const auto &item : std::ranges::reverse_view(stmtCompound.body)) {
     this->add(item);

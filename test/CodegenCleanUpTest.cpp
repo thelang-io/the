@@ -35,7 +35,7 @@ TEST(CodegenCleanUpTest, InitialSetValues) {
 
 TEST(CodegenCleanUpTest, AddsEmpty) {
   auto n = CodegenCleanUp();
-  n.add("");
+  n.add();
   EXPECT_EQ(n.gen(0), "");
 }
 

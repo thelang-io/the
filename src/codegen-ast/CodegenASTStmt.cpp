@@ -87,137 +87,143 @@ bool CodegenASTStmt::isSwitch () const { return std::holds_alternative<CodegenAS
 bool CodegenASTStmt::isVarDecl () const { return std::holds_alternative<CodegenASTStmtVarDecl>(*this->body); }
 bool CodegenASTStmt::isWhile () const { return std::holds_alternative<CodegenASTStmtWhile>(*this->body); }
 
-void stmtVectorParent (std::vector<CodegenASTStmt> &items, CodegenASTStmt *parent, bool withSiblings = true) {
+void stmtVectorParent (
+  std::vector<std::shared_ptr<CodegenASTStmt>> &items,
+  const std::shared_ptr<CodegenASTStmt> &parent
+) {
   for (auto i = static_cast<std::size_t>(0); i < items.size(); i++) {
-    items[i].parent = parent;
-    if (withSiblings) {
-      items[i].nextSibling = i + 1 < items.size() ? &items[i + 1] : nullptr;
-      items[i].prevSibling = i != 0 ? &items[i - 1] : nullptr;
-    }
+    items[i]->parent = parent;
+    items[i]->nextSibling = i + 1 < items.size() ? items[i + 1] : nullptr;
+    items[i]->prevSibling = i != 0 ? items[i - 1] : nullptr;
   }
 }
 
-CodegenASTStmt stmtInit (const CodegenASTStmtBody &body) {
-  auto result = CodegenASTStmt{std::make_shared<CodegenASTStmtBody>(body)};
+std::shared_ptr<CodegenASTStmt> CodegenASTStmt::create (const CodegenASTStmtBody &b) {
+  auto result = std::shared_ptr<CodegenASTStmt>(new CodegenASTStmt());
+  result->body = std::make_shared<CodegenASTStmtBody>(b);
 
-   if (result.isCase()) {
-     if (result.asCase().test != std::nullopt) {
-       result.asCase().test->parentStmt = &result;
-     }
-     result.asCase().body.parent = &result;
-   } else if (result.isCompound()) {
-     stmtVectorParent(result.asCompound().body, &result, false);
-   } else if (result.isExpr()) {
-     result.asExpr().expr.parentStmt = &result;
-   } else if (result.isFor()) {
-     if (result.asFor().init != std::nullopt) {
-       result.asFor().init->parent = &result;
-     }
-     if (result.asFor().cond != std::nullopt) {
-       result.asFor().cond->parentStmt = &result;
-     }
-     if (result.asFor().upd != std::nullopt) {
-       result.asFor().upd->parentStmt = &result;
-     }
-     if (result.asFor().body != std::nullopt) {
-       result.asFor().body->parent = &result;
-     }
-   } else if (result.isIf()) {
-     result.asIf().cond.parentStmt = &result;
-     result.asIf().body.parent = &result;
-     if (result.asIf().alt != std::nullopt) {
-       result.asIf().alt->parent = &result;
-     }
-   } else if (result.isReturn()) {
-     if (result.asReturn().arg != std::nullopt) {
-       result.asReturn().arg->parentStmt = &result;
-     }
-   } else if (result.isSwitch()) {
-     result.asSwitch().discriminant.parentStmt = &result;
-     stmtVectorParent(result.asSwitch().body, &result, false);
-   } else if (result.isVarDecl()) {
-     result.asVarDecl().id.parentStmt = &result;
-     if (result.asVarDecl().init != std::nullopt) {
-       result.asVarDecl().init->parentStmt = &result;
-     }
-   } else if (result.isWhile()) {
-     result.asWhile().cond.parentStmt = &result;
-     if (result.asWhile().body != std::nullopt) {
-       result.asWhile().body->parent = &result;
-     }
-   }
+  if (result->isCase()) {
+    if (result->asCase().test != nullptr) {
+      result->asCase().test->parentStmt = result;
+    }
+    result->asCase().body->parent = result;
+  } else if (result->isCompound()) {
+    stmtVectorParent(result->asCompound().body, result);
+  } else if (result->isExpr()) {
+    result->asExpr().expr->parentStmt = result;
+  } else if (result->isFor()) {
+    if (result->asFor().init != nullptr) {
+      result->asFor().init->parent = result;
+    }
+    if (result->asFor().cond != nullptr) {
+      result->asFor().cond->parentStmt = result;
+    }
+    if (result->asFor().upd != nullptr) {
+      result->asFor().upd->parentStmt = result;
+    }
+    if (result->asFor().body != nullptr) {
+      result->asFor().body->parent = result;
+    }
+  } else if (result->isIf()) {
+    result->asIf().cond->parentStmt = result;
+    result->asIf().body->parent = result;
+    if (result->asIf().alt != nullptr) {
+      result->asIf().alt->parent = result;
+    }
+  } else if (result->isReturn()) {
+    if (result->asReturn().arg != nullptr) {
+      result->asReturn().arg->parentStmt = result;
+    }
+  } else if (result->isSwitch()) {
+    result->asSwitch().discriminant->parentStmt = result;
+    stmtVectorParent(result->asSwitch().body, result);
+  } else if (result->isVarDecl()) {
+    result->asVarDecl().id->parentStmt = result;
+    if (result->asVarDecl().init != nullptr) {
+      result->asVarDecl().init->parentStmt = result;
+    }
+  } else if (result->isWhile()) {
+    result->asWhile().cond->parentStmt = result;
+    if (result->asWhile().body != nullptr) {
+      result->asWhile().body->parent = result;
+    }
+  }
 
   return result;
 }
 
-CodegenASTStmt &CodegenASTStmt::append (const CodegenASTStmt &stmt) {
-  if (this->isCase() && this->asCase().body.isCompound()) {
-    this->asCase().body.asCompound().body.push_back(stmt);
-    stmtVectorParent(this->asCase().body.asCompound().body, &this->asCase().body);
-    return this->asCase().body.asCompound().body.back();
+std::shared_ptr<CodegenASTStmt> CodegenASTStmt::append (const std::shared_ptr<CodegenASTStmt> &stmt) {
+  if (this->isCase() && this->asCase().body->isCompound()) {
+    this->asCase().body->asCompound().body.push_back(stmt);
+    stmtVectorParent(this->asCase().body->asCompound().body, this->asCase().body);
+    return this->asCase().body->asCompound().body.back();
   } else if (this->isCompound()) {
     this->asCompound().body.push_back(stmt);
-    stmtVectorParent(this->asCompound().body, this);
+    stmtVectorParent(this->asCompound().body, this->getptr());
     return this->asCompound().body.back();
-  } else if (this->isFor() && this->asFor().body != std::nullopt && this->asFor().body->isCompound()) {
+  } else if (this->isFor() && this->asFor().body != nullptr && this->asFor().body->isCompound()) {
     this->asFor().body->asCompound().body.push_back(stmt);
-    stmtVectorParent(this->asFor().body->asCompound().body, &*this->asFor().body);
+    stmtVectorParent(this->asFor().body->asCompound().body, this->asFor().body);
     return this->asFor().body->asCompound().body.back();
-  } else if (this->isIf() && this->asIf().body.isCompound()) {
-    this->asIf().body.asCompound().body.push_back(stmt);
-    stmtVectorParent(this->asIf().body.asCompound().body, &this->asIf().body);
-    return this->asIf().body.asCompound().body.back();
+  } else if (this->isIf() && this->asIf().body->isCompound()) {
+    this->asIf().body->asCompound().body.push_back(stmt);
+    stmtVectorParent(this->asIf().body->asCompound().body, this->asIf().body);
+    return this->asIf().body->asCompound().body.back();
   } else if (this->isSwitch()) {
     this->asSwitch().body.push_back(stmt);
-    stmtVectorParent(this->asSwitch().body, this);
+    stmtVectorParent(this->asSwitch().body, this->getptr());
     return this->asSwitch().body.back();
-  } else if (this->isWhile() && this->asWhile().body != std::nullopt && this->asWhile().body->isCompound()) {
+  } else if (this->isWhile() && this->asWhile().body != nullptr && this->asWhile().body->isCompound()) {
     this->asWhile().body->asCompound().body.push_back(stmt);
-    stmtVectorParent(this->asWhile().body->asCompound().body, &*this->asWhile().body);
+    stmtVectorParent(this->asWhile().body->asCompound().body, this->asWhile().body);
     return this->asWhile().body->asCompound().body.back();
   }
 
-  return *this;
+  return this->getptr();
 }
 
-CodegenASTStmt &CodegenASTStmt::exit () const {
-  return *this->parent;
+std::shared_ptr<CodegenASTStmt> CodegenASTStmt::exit () const {
+  return this->parent;
 }
 
-void CodegenASTStmt::merge (const std::vector<CodegenASTStmt> &items) {
+std::shared_ptr<CodegenASTStmt> CodegenASTStmt::getptr () {
+  return this->shared_from_this();
+}
+
+void CodegenASTStmt::merge (const std::vector<std::shared_ptr<CodegenASTStmt>> &items) {
   for (const auto &item : items) {
     this->append(item);
   }
 }
 
-CodegenASTStmt &CodegenASTStmt::prepend (const CodegenASTStmt &stmt) {
-  if (this->isCase() && this->asCase().body.isCompound()) {
-    this->asCase().body.asCompound().body.insert(this->asCase().body.asCompound().body.begin(), stmt);
-    stmtVectorParent(this->asCase().body.asCompound().body, &this->asCase().body);
-    return this->asCase().body.asCompound().body.front();
+std::shared_ptr<CodegenASTStmt> CodegenASTStmt::prepend (const std::shared_ptr<CodegenASTStmt> &stmt) {
+  if (this->isCase() && this->asCase().body->isCompound()) {
+    this->asCase().body->asCompound().body.insert(this->asCase().body->asCompound().body.begin(), stmt);
+    stmtVectorParent(this->asCase().body->asCompound().body, this->asCase().body);
+    return this->asCase().body->asCompound().body.front();
   } else if (this->isCompound()) {
     this->asCompound().body.insert(this->asCompound().body.begin(), stmt);
-    stmtVectorParent(this->asCompound().body, this);
+    stmtVectorParent(this->asCompound().body, this->getptr());
     return this->asCompound().body.front();
-  } else if (this->isFor() && this->asFor().body != std::nullopt && this->asFor().body->isCompound()) {
+  } else if (this->isFor() && this->asFor().body != nullptr && this->asFor().body->isCompound()) {
     this->asFor().body->asCompound().body.insert(this->asFor().body->asCompound().body.begin(), stmt);
-    stmtVectorParent(this->asFor().body->asCompound().body, &*this->asFor().body);
+    stmtVectorParent(this->asFor().body->asCompound().body, this->asFor().body);
     return this->asFor().body->asCompound().body.front();
-  } else if (this->isIf() && this->asIf().body.isCompound()) {
-    this->asIf().body.asCompound().body.insert(this->asIf().body.asCompound().body.begin(), stmt);
-    stmtVectorParent(this->asIf().body.asCompound().body, &this->asIf().body);
-    return this->asIf().body.asCompound().body.front();
+  } else if (this->isIf() && this->asIf().body->isCompound()) {
+    this->asIf().body->asCompound().body.insert(this->asIf().body->asCompound().body.begin(), stmt);
+    stmtVectorParent(this->asIf().body->asCompound().body, this->asIf().body);
+    return this->asIf().body->asCompound().body.front();
   } else if (this->isSwitch()) {
     this->asSwitch().body.insert(this->asSwitch().body.begin(), stmt);
-    stmtVectorParent(this->asSwitch().body, this);
+    stmtVectorParent(this->asSwitch().body, this->getptr());
     return this->asSwitch().body.front();
-  } else if (this->isWhile() && this->asWhile().body != std::nullopt && this->asWhile().body->isCompound()) {
+  } else if (this->isWhile() && this->asWhile().body != nullptr && this->asWhile().body->isCompound()) {
     this->asWhile().body->asCompound().body.insert(this->asWhile().body->asCompound().body.begin(), stmt);
-    stmtVectorParent(this->asWhile().body->asCompound().body, &*this->asWhile().body);
+    stmtVectorParent(this->asWhile().body->asCompound().body, this->asWhile().body);
     return this->asWhile().body->asCompound().body.front();
   }
 
-  return *this;
+  return this->getptr();
 }
 
 std::string CodegenASTStmt::str (std::size_t indent, bool root) const {
@@ -242,8 +248,8 @@ std::string CodegenASTStmt::str (std::size_t indent, bool root) const {
   unreachable();
 }
 
-CodegenASTStmt CodegenASTStmtBreak::create () {
-  return stmtInit(CodegenASTStmtBreak{});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtBreak::create () {
+  return CodegenASTStmt::create(CodegenASTStmtBreak{});
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
@@ -251,39 +257,44 @@ std::string CodegenASTStmtBreak::str (std::size_t indent, bool root) const {
   return (root ? std::string(indent, ' ') : "") + "break;" + (root ? EOL : "");
 }
 
-CodegenASTStmt CodegenASTStmtCase::create (const std::optional<CodegenASTExpr> &test, const CodegenASTStmt &body) {
-  return stmtInit(CodegenASTStmtCase{test, body});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtCase::create (
+  const std::shared_ptr<CodegenASTExpr> &test,
+  const std::shared_ptr<CodegenASTStmt> &body
+) {
+  return CodegenASTStmt::create(CodegenASTStmtCase{test, body});
 }
 
 std::string CodegenASTStmtCase::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += this->test == std::nullopt ? "default" : "case " + this->test->str();
-  result += ": " + this->body.str(indent, false);
+  result += this->test == nullptr ? "default" : "case " + this->test->str();
+  result += ": " + this->body->str(indent, false);
   result += root ? EOL : "";
   return result;
 }
 
-CodegenASTStmt CodegenASTStmtCompound::create () {
-  return stmtInit(CodegenASTStmtCompound{});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtCompound::create () {
+  return CodegenASTStmt::create(CodegenASTStmtCompound{});
 }
 
-CodegenASTStmt CodegenASTStmtCompound::create (const std::vector<CodegenASTStmt> &body) {
-  return stmtInit(CodegenASTStmtCompound{body});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtCompound::create (
+  const std::vector<std::shared_ptr<CodegenASTStmt>> &body
+) {
+  return CodegenASTStmt::create(CodegenASTStmtCompound{body});
 }
 
 std::string CodegenASTStmtCompound::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += "{";
+  result += "{" EOL;
   for (const auto &it : this->body) {
-    result += it.str(indent + 2);
+    result += it->str(indent + 2);
   }
-  result += "}";
+  result += std::string(indent, ' ') + "}";
   result += root ? EOL : "";
   return result;
 }
 
-CodegenASTStmt CodegenASTStmtContinue::create () {
-  return stmtInit(CodegenASTStmtContinue{});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtContinue::create () {
+  return CodegenASTStmt::create(CodegenASTStmtContinue{});
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
@@ -291,40 +302,40 @@ std::string CodegenASTStmtContinue::str (std::size_t indent, bool root) const {
   return (root ? std::string(indent, ' ') : "") + "continue;" + (root ? EOL : "");
 }
 
-CodegenASTStmt CodegenASTStmtExpr::create (const CodegenASTExpr &expr) {
-  return stmtInit(CodegenASTStmtExpr{expr});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtExpr::create (const std::shared_ptr<CodegenASTExpr> &expr) {
+  return CodegenASTStmt::create(CodegenASTStmtExpr{expr});
 }
 
 std::string CodegenASTStmtExpr::str (std::size_t indent, bool root) const {
-  return (root ? std::string(indent, ' ') : "") + this->expr.str() + ";" + (root ? EOL : "");
+  return (root ? std::string(indent, ' ') : "") + this->expr->str() + ";" + (root ? EOL : "");
 }
 
-CodegenASTStmt CodegenASTStmtFor::create (
-  const std::optional<CodegenASTStmt> &init,
-  const std::optional<CodegenASTExpr> &cond,
-  const std::optional<CodegenASTExpr> &upd,
-  const std::optional<CodegenASTStmt> &body
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtFor::create (
+  const std::shared_ptr<CodegenASTStmt> &init,
+  const std::shared_ptr<CodegenASTExpr> &cond,
+  const std::shared_ptr<CodegenASTExpr> &upd,
+  const std::shared_ptr<CodegenASTStmt> &body
 ) {
-  return stmtInit(CodegenASTStmtFor{init, cond, upd, body});
+  return CodegenASTStmt::create(CodegenASTStmtFor{init, cond, upd, body});
 }
 
 std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "for (";
-  if (this->init != std::nullopt) {
+  if (this->init != nullptr) {
     result += this->init->str(indent, false);
   } else {
     result += ";";
   }
-  if (this->cond != std::nullopt) {
+  if (this->cond != nullptr) {
     result += this->cond->str();
   }
   result += ";";
-  if (this->upd != std::nullopt) {
+  if (this->upd != nullptr) {
     result += this->upd->str();
   }
   result += ")";
-  if (this->body != std::nullopt) {
+  if (this->body != nullptr) {
     result += " ";
     result += this->body->str(indent, false);
   } else {
@@ -334,65 +345,65 @@ std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
   return result;
 }
 
-CodegenASTStmt CodegenASTStmtGoto::create (const std::string &label) {
-  return stmtInit(CodegenASTStmtGoto{label});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtGoto::create (const std::string &label) {
+  return CodegenASTStmt::create(CodegenASTStmtGoto{label});
 }
 
 std::string CodegenASTStmtGoto::str (std::size_t indent, bool root) const {
   return (root ? std::string(indent, ' ') : "") + "goto " + this->label + ";" + (root ? EOL : "");
 }
 
-CodegenASTStmt CodegenASTStmtIf::create (
-  const CodegenASTExpr &cond,
-  const CodegenASTStmt &body,
-  const std::optional<CodegenASTStmt> &alt
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtIf::create (
+  const std::shared_ptr<CodegenASTExpr> &cond,
+  const std::shared_ptr<CodegenASTStmt> &body,
+  const std::shared_ptr<CodegenASTStmt> &alt
 ) {
-  return stmtInit(CodegenASTStmtIf{cond, body, alt});
+  return CodegenASTStmt::create(CodegenASTStmtIf{cond, body, alt});
 }
 
 std::string CodegenASTStmtIf::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += "if (" + this->cond.str() + ") " + this->body.str(indent, false);
-  if (this->alt != std::nullopt) {
+  result += "if (" + this->cond->str() + ") " + this->body->str(indent, false);
+  if (this->alt != nullptr) {
     result += " else " + this->alt->str(indent, false);
   }
   result += root ? EOL : "";
   return result;
 }
 
-CodegenASTStmt CodegenASTStmtLabel::create (const std::string &name) {
-  return stmtInit(CodegenASTStmtLabel{name});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtLabel::create (const std::string &name) {
+  return CodegenASTStmt::create(CodegenASTStmtLabel{name});
 }
 
 std::string CodegenASTStmtLabel::str ([[maybe_unused]] std::size_t indent, bool root) const {
   return this->name + ":" + (root ? EOL : "");
 }
 
-CodegenASTStmt CodegenASTStmtNull::create () {
-  return stmtInit(CodegenASTStmtNull{});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtNull::create () {
+  return CodegenASTStmt::create(CodegenASTStmtNull{});
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
-std::string CodegenASTStmtNull::str (std::size_t indent, bool root) const {
-  return (root ? std::string(indent, ' ') : "") + ";" + (root ? EOL : "");
+std::string CodegenASTStmtNull::str ([[maybe_unused]] std::size_t indent, [[maybe_unused]] bool root) const {
+  return "";
 }
 
-CodegenASTStmt CodegenASTStmtReturn::create () {
-  return stmtInit(CodegenASTStmtReturn{});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtReturn::create () {
+  return CodegenASTStmt::create(CodegenASTStmtReturn{});
 }
 
-CodegenASTStmt CodegenASTStmtReturn::create (const CodegenASTExpr &arg) {
-  return stmtInit(CodegenASTStmtReturn{arg});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtReturn::create (const std::shared_ptr<CodegenASTExpr> &arg) {
+  return CodegenASTStmt::create(CodegenASTStmtReturn{arg});
 }
 
-CodegenASTStmt CodegenASTStmtReturn::create (const std::shared_ptr<std::size_t> &asyncPtr) {
-  return stmtInit(CodegenASTStmtReturn{std::nullopt, asyncPtr});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtReturn::create (const std::shared_ptr<std::size_t> &asyncPtr) {
+  return CodegenASTStmt::create(CodegenASTStmtReturn{nullptr, asyncPtr});
 }
 
 std::string CodegenASTStmtReturn::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "return";
-  if (this->arg != std::nullopt) {
+  if (this->arg != nullptr) {
     result += " " + this->arg->str();
   } else if (this->asyncPtr != std::nullopt) {
     result += " " + std::to_string(**this->asyncPtr);
@@ -402,51 +413,54 @@ std::string CodegenASTStmtReturn::str (std::size_t indent, bool root) const {
   return result;
 }
 
-CodegenASTStmt CodegenASTStmtSwitch::create (
-  const CodegenASTExpr &discriminant,
-  const std::vector<CodegenASTStmt> &body
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtSwitch::create (
+  const std::shared_ptr<CodegenASTExpr> &discriminant,
+  const std::vector<std::shared_ptr<CodegenASTStmt>> &body
 ) {
-  return stmtInit(CodegenASTStmtSwitch{discriminant, body});
+  return CodegenASTStmt::create(CodegenASTStmtSwitch{discriminant, body});
 }
 
 std::string CodegenASTStmtSwitch::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += "switch (" + this->discriminant.str() + ") {";
+  result += "switch (" + this->discriminant->str() + ") {" EOL;
   for (const auto &it : this->body) {
-    result += it.str(indent + 2);
+    result += it->str(indent + 2);
   }
-  result += "}";
+  result += std::string(indent, ' ') + "}";
   result += root ? EOL : "";
   return result;
 }
 
-CodegenASTStmt CodegenASTStmtVarDecl::create (
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtVarDecl::create (
   const CodegenASTType &type,
-  const CodegenASTExpr &id,
-  const std::optional<CodegenASTExpr> &init
+  const std::shared_ptr<CodegenASTExpr> &id,
+  const std::shared_ptr<CodegenASTExpr> &init
 ) {
-  return stmtInit(CodegenASTStmtVarDecl{type, id, init});
+  return CodegenASTStmt::create(CodegenASTStmtVarDecl{type, id, init});
 }
 
 std::string CodegenASTStmtVarDecl::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += this->type.str() + this->id.str();
-  if (this->init != std::nullopt) {
-    result += this->init->str();
+  result += this->type.str() + this->id->str();
+  if (this->init != nullptr) {
+    result += " = " + this->init->str();
   }
   result += ";";
   result += root ? EOL : "";
   return result;
 }
 
-CodegenASTStmt CodegenASTStmtWhile::create (const CodegenASTExpr &cond, const std::optional<CodegenASTStmt> &body) {
-  return stmtInit(CodegenASTStmtWhile{cond, body});
+std::shared_ptr<CodegenASTStmt> CodegenASTStmtWhile::create (
+  const std::shared_ptr<CodegenASTExpr> &cond,
+  const std::shared_ptr<CodegenASTStmt> &body
+) {
+  return CodegenASTStmt::create(CodegenASTStmtWhile{cond, body});
 }
 
 std::string CodegenASTStmtWhile::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += "while (" + this->cond.str() + ")";
-  if (this->body != std::nullopt) {
+  result += "while (" + this->cond->str() + ")";
+  if (this->body != nullptr) {
     result += this->body->str(indent, false);
   } else {
     result += ";";

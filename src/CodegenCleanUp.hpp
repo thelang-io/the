@@ -30,7 +30,7 @@ enum CodegenCleanUpType {
 
 struct CodegenCleanUpItem {
   std::string label;
-  std::vector<CodegenASTStmt> content = {};
+  std::vector<std::shared_ptr<CodegenASTStmt>> content = {};
   bool labelUsed = false;
   std::shared_ptr<size_t> asyncCounter = std::make_shared<std::size_t>(0);
 };
@@ -52,7 +52,7 @@ class CodegenCleanUp {
   CodegenCleanUp () = default;
   explicit CodegenCleanUp (CodegenCleanUpType, CodegenCleanUp *, bool = false);
 
-  void add (const CodegenASTStmt & = CodegenASTStmtNull::create());
+  void add (const std::shared_ptr<CodegenASTStmt> & = CodegenASTStmtNull::create());
   std::string currentBreakVar ();
   std::string currentContinueVar ();
   std::string currentLabel ();
@@ -60,11 +60,11 @@ class CodegenCleanUp {
   std::string currentReturnVar ();
   std::string currentValueVar ();
   bool empty () const;
-  void gen (CodegenASTStmt *) const;
-  void genAsync (CodegenASTStmt *, std::size_t &) const;
+  void gen (std::shared_ptr<CodegenASTStmt> *) const;
+  void genAsync (std::shared_ptr<CodegenASTStmt> *, std::size_t &) const;
   bool hasCleanUp (CodegenCleanUpType) const;
   bool isClosestJump () const;
-  void merge (const CodegenASTStmt &);
+  void merge (const std::shared_ptr<CodegenASTStmt> &);
 
  private:
   std::vector<CodegenCleanUpItem> _data;

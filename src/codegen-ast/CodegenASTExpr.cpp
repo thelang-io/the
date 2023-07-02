@@ -54,44 +54,53 @@ bool CodegenASTExpr::isInitList () const { return std::holds_alternative<Codegen
 bool CodegenASTExpr::isLiteral () const { return std::holds_alternative<CodegenASTExprLiteral>(*this->body); }
 bool CodegenASTExpr::isUnary () const { return std::holds_alternative<CodegenASTExprUnary>(*this->body); }
 
-void exprVectorParent (std::vector<CodegenASTExpr> &items, CodegenASTExpr *parent) {
+void exprVectorParent (
+  std::vector<std::shared_ptr<CodegenASTExpr>> &items,
+  const std::shared_ptr<CodegenASTExpr> &parent
+) {
   for (auto &item : items) {
-    item.parent = parent;
+    item->parent = parent;
   }
 }
 
-CodegenASTExpr exprInit (const CodegenASTExprBody &body) {
-  auto result = CodegenASTExpr{std::make_shared<CodegenASTExprBody>(body)};
+std::shared_ptr<CodegenASTExpr> CodegenASTExpr::create (const CodegenASTExprBody &b, bool parenthesized) {
+  auto result = std::shared_ptr<CodegenASTExpr>(new CodegenASTExpr());
+  result->body = std::make_shared<CodegenASTExprBody>(b);
+  result->parenthesized = parenthesized;
 
-  if (result.isAccess()) {
-    if (std::holds_alternative<CodegenASTExpr>(result.asAccess().obj)) {
-      std::get<CodegenASTExpr>(result.asAccess().obj).parent = &result;
+  if (result->isAccess()) {
+    if (result->asAccess().objExpr != nullptr) {
+      result->asAccess().objExpr->parent = result;
     }
-    if (result.asAccess().elem != std::nullopt) {
-      result.asAccess().elem->parent = &result;
+    if (result->asAccess().elem != nullptr) {
+      result->asAccess().elem->parent = result;
     }
-  } else if (result.isAssign()) {
-    result.asAssign().left.parent = &result;
-    result.asAssign().right.parent = &result;
-  } else if (result.isBinary()) {
-    result.asBinary().left.parent = &result;
-    result.asBinary().right.parent = &result;
-  } else if (result.isCall()) {
-    result.asCall().callee.parent = &result;
-    exprVectorParent(result.asCall().exprArgs, &result);
-  } else if (result.isCast()) {
-    result.asCast().arg.parent = &result;
-  } else if (result.isCond()) {
-    result.asCond().cond.parent = &result;
-    result.asCond().body.parent = &result;
-    result.asCond().alt.parent = &result;
-  } else if (result.isInitList()) {
-    exprVectorParent(result.asInitList().items, &result);
-  } else if (result.isUnary()) {
-    result.asUnary().arg.parent = &result;
+  } else if (result->isAssign()) {
+    result->asAssign().left->parent = result;
+    result->asAssign().right->parent = result;
+  } else if (result->isBinary()) {
+    result->asBinary().left->parent = result;
+    result->asBinary().right->parent = result;
+  } else if (result->isCall()) {
+    result->asCall().callee->parent = result;
+    exprVectorParent(result->asCall().exprArgs, result);
+  } else if (result->isCast()) {
+    result->asCast().arg->parent = result;
+  } else if (result->isCond()) {
+    result->asCond().cond->parent = result;
+    result->asCond().body->parent = result;
+    result->asCond().alt->parent = result;
+  } else if (result->isInitList()) {
+    exprVectorParent(result->asInitList().items, result);
+  } else if (result->isUnary()) {
+    result->asUnary().arg->parent = result;
   }
 
   return result;
+}
+
+std::shared_ptr<CodegenASTExpr> CodegenASTExpr::getptr () {
+  return this->shared_from_this();
 }
 
 bool CodegenASTExpr::isEmptyString () const {
@@ -102,8 +111,8 @@ bool CodegenASTExpr::isPointer () const {
   return this->isUnary() && this->asUnary().prefix && this->asUnary().op == "*";
 }
 
-CodegenASTStmt CodegenASTExpr::stmt () const {
-  return CodegenASTStmtExpr::create(*this);
+std::shared_ptr<CodegenASTStmt> CodegenASTExpr::stmt () {
+  return CodegenASTStmtExpr::create(this->getptr());
 }
 
 std::string CodegenASTExpr::str () const {
@@ -130,125 +139,155 @@ std::string CodegenASTExpr::str () const {
   unreachable();
 }
 
-CodegenASTExpr CodegenASTExpr::wrap () const {
-  auto copy = *this;
-  copy.parenthesized = true;
-  return copy;
+std::shared_ptr<CodegenASTExpr> CodegenASTExpr::wrap () const {
+  return CodegenASTExpr::create(*this->body, true);
 }
 
-CodegenASTExpr CodegenASTExprAccess::create (const std::string &obj) {
-  return exprInit(CodegenASTExprAccess{obj});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprAccess::create (const std::string &objId) {
+  return CodegenASTExpr::create(CodegenASTExprAccess{objId});
 }
 
-CodegenASTExpr CodegenASTExprAccess::create (const CodegenASTExpr &obj, const std::string &prop, bool pointed) {
-  return exprInit(CodegenASTExprAccess{obj, prop, std::nullopt, pointed});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprAccess::create (
+  const std::shared_ptr<CodegenASTExpr> &objExpr,
+  const std::string &prop,
+  bool pointed
+) {
+  return CodegenASTExpr::create(CodegenASTExprAccess{std::nullopt, objExpr, prop, nullptr, pointed});
 }
 
-CodegenASTExpr CodegenASTExprAccess::create (const CodegenASTExpr &obj, const CodegenASTExpr &elem) {
-  return exprInit(CodegenASTExprAccess{obj, std::nullopt, elem});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprAccess::create (
+  const std::shared_ptr<CodegenASTExpr> &objExpr,
+  const std::shared_ptr<CodegenASTExpr> &elem
+) {
+  return CodegenASTExpr::create(CodegenASTExprAccess{std::nullopt, objExpr, std::nullopt, elem});
 }
 
 std::string CodegenASTExprAccess::str () const {
-  if (std::holds_alternative<std::string>(this->obj)) {
-    return std::get<std::string>(this->obj);
-  }
-
-  auto objExpr = std::get<CodegenASTExpr>(this->obj);
-
-  if (this->prop != std::nullopt && this->pointed) {
-    return objExpr.str() + "->" + *this->prop;
+  if (this->objId != std::nullopt) {
+    return *this->objId;
+  } else if (this->prop != std::nullopt && this->pointed) {
+    return this->objExpr->str() + "->" + *this->prop;
   } else if (this->prop != std::nullopt) {
-    return objExpr.str() + "." + *this->prop;
+    return this->objExpr->str() + "." + *this->prop;
   } else {
-    return objExpr.str() + "[" + this->elem->str() + "]";
+    return this->objExpr->str() + "[" + this->elem->str() + "]";
   }
 }
 
-CodegenASTExpr CodegenASTExprAssign::create (const CodegenASTExpr &left, const std::string &op, const CodegenASTExpr &right) {
-  return exprInit(CodegenASTExprAssign{left, op, right});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprAssign::create (
+  const std::shared_ptr<CodegenASTExpr> &left,
+  const std::string &op,
+  const std::shared_ptr<CodegenASTExpr> &right
+) {
+  return CodegenASTExpr::create(CodegenASTExprAssign{left, op, right});
 }
 
 std::string CodegenASTExprAssign::str () const {
-  return this->left.str() + " " + this->op + " " + this->right.str();
+  return this->left->str() + " " + this->op + " " + this->right->str();
 }
 
-CodegenASTExpr CodegenASTExprBinary::create (const CodegenASTExpr &left, const std::string &op, const CodegenASTExpr &right) {
-  return exprInit(CodegenASTExprBinary{left, op, right});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprBinary::create (
+  const std::shared_ptr<CodegenASTExpr> &left,
+  const std::string &op,
+  const std::shared_ptr<CodegenASTExpr> &right
+) {
+  return CodegenASTExpr::create(CodegenASTExprBinary{left, op, right});
 }
 
 std::string CodegenASTExprBinary::str () const {
-  return this->left.str() + " " + this->op + " " + this->right.str();
+  return this->left->str() + " " + this->op + " " + this->right->str();
 }
 
-CodegenASTExpr CodegenASTExprCall::create (const CodegenASTExpr &callee) {
-  return exprInit(CodegenASTExprCall{callee});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprCall::create (const std::shared_ptr<CodegenASTExpr> &callee) {
+  return CodegenASTExpr::create(CodegenASTExprCall{callee});
 }
 
-CodegenASTExpr CodegenASTExprCall::create (const CodegenASTExpr &callee, const std::vector<CodegenASTExpr> &exprArgs) {
-  return exprInit(CodegenASTExprCall{callee, exprArgs});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprCall::create (
+  const std::shared_ptr<CodegenASTExpr> &callee,
+  const std::vector<std::shared_ptr<CodegenASTExpr>> &exprArgs
+) {
+  return CodegenASTExpr::create(CodegenASTExprCall{callee, exprArgs});
 }
 
-CodegenASTExpr CodegenASTExprCall::create (const CodegenASTExpr &callee, const std::vector<CodegenASTType> &typeArgs) {
-  return exprInit(CodegenASTExprCall{callee, {}, typeArgs});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprCall::create (
+  const std::shared_ptr<CodegenASTExpr> &callee,
+  const std::vector<CodegenASTType> &typeArgs
+) {
+  return CodegenASTExpr::create(CodegenASTExprCall{callee, {}, typeArgs});
 }
 
 std::string CodegenASTExprCall::str () const {
   auto argsStr = std::string();
   for (const auto &arg : this->exprArgs) {
-    argsStr = ", " + arg.str();
+    argsStr = ", " + arg->str();
   }
   for (const auto &arg : this->typeArgs) {
     argsStr = ", " + arg.str();
   }
   argsStr = argsStr.empty() ? argsStr : argsStr.substr(2);
-  return this->callee.str() + "(" + argsStr + ")";
+  return this->callee->str() + "(" + argsStr + ")";
 }
 
-CodegenASTExpr CodegenASTExprCast::create (const CodegenASTType &type, const CodegenASTExpr &arg) {
-  return exprInit(CodegenASTExprCast{type, arg});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprCast::create (
+  const CodegenASTType &type,
+  const std::shared_ptr<CodegenASTExpr> &arg
+) {
+  return CodegenASTExpr::create(CodegenASTExprCast{type, arg});
 }
 
 std::string CodegenASTExprCast::str () const {
-  return "(" + this->type.str() + ") " + this->arg.str();
+  return "(" + this->type.str() + ") " + this->arg->str();
 }
 
-CodegenASTExpr CodegenASTExprCond::create (const CodegenASTExpr &cond, const CodegenASTExpr &body, const CodegenASTExpr &alt) {
-  return exprInit(CodegenASTExprCond{cond, body, alt});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprCond::create (
+  const std::shared_ptr<CodegenASTExpr> &cond,
+  const std::shared_ptr<CodegenASTExpr> &body,
+  const std::shared_ptr<CodegenASTExpr> &alt
+) {
+  return CodegenASTExpr::create(CodegenASTExprCond{cond, body, alt});
 }
 
 std::string CodegenASTExprCond::str () const {
-  return this->cond.str() + " ? " + this->body.str() + " : " + this->alt.str();
+  return this->cond->str() + " ? " + this->body->str() + " : " + this->alt->str();
 }
 
-CodegenASTExpr CodegenASTExprInitList::create (const std::vector<CodegenASTExpr> &items) {
-  return exprInit(CodegenASTExprInitList{items});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprInitList::create (
+  const std::vector<std::shared_ptr<CodegenASTExpr>> &items
+) {
+  return CodegenASTExpr::create(CodegenASTExprInitList{items});
 }
 
 std::string CodegenASTExprInitList::str () const {
   auto itemsStr = std::string();
   for (const auto &item : this->items) {
-    itemsStr = ", " + item.str();
+    itemsStr = ", " + item->str();
   }
   itemsStr = itemsStr.empty() ? itemsStr : itemsStr.substr(2);
   return "{" + itemsStr + "}";
 }
 
-CodegenASTExpr CodegenASTExprLiteral::create (const std::string &val) {
-  return exprInit(CodegenASTExprLiteral{val});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprLiteral::create (const std::string &val) {
+  return CodegenASTExpr::create(CodegenASTExprLiteral{val});
 }
 
 std::string CodegenASTExprLiteral::str () const {
   return this->val;
 }
 
-CodegenASTExpr CodegenASTExprUnary::create (const std::string &op, const CodegenASTExpr &arg) {
-  return exprInit(CodegenASTExprUnary{arg, op, true});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprUnary::create (
+  const std::string &op,
+  const std::shared_ptr<CodegenASTExpr> &arg
+) {
+  return CodegenASTExpr::create(CodegenASTExprUnary{arg, op, true});
 }
 
-CodegenASTExpr CodegenASTExprUnary::create (const CodegenASTExpr &arg, const std::string &op) {
-  return exprInit(CodegenASTExprUnary{arg, op});
+std::shared_ptr<CodegenASTExpr> CodegenASTExprUnary::create (
+  const std::shared_ptr<CodegenASTExpr> &arg,
+  const std::string &op
+) {
+  return CodegenASTExpr::create(CodegenASTExprUnary{arg, op});
 }
 
 std::string CodegenASTExprUnary::str () const {
-  return (this->prefix ? this->op : "") + this->arg.str() + (this->prefix ? "" : this->op);
+  return (this->prefix ? this->op : "") + this->arg->str() + (this->prefix ? "" : this->op);
 }

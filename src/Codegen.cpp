@@ -163,7 +163,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   auto cMain = CodegenASTStmtCompound::create();
 
   if (this->async) {
-    cMain.append(
+    cMain->append(
       CodegenASTStmtVarDecl::create(
         CodegenASTType::create(this->_("threadpool_t") + " *"),
         CodegenASTExprAccess::create("tp"),
@@ -176,7 +176,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->throws) {
-    cMain.append(
+    cMain->append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("error_stack_push")),
         {
@@ -186,7 +186,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
           CodegenASTExprLiteral::create("0"),
           CodegenASTExprLiteral::create("0")
         }
-      ).stmt()
+      )->stmt()
     );
 
     this->state.cleanUp.merge(
@@ -194,7 +194,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
         CodegenASTExprCall::create(
           CodegenASTExprAccess::create(this->_("error_stack_pop")),
           {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
-        ).stmt(),
+        )->stmt(),
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
             CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
@@ -224,15 +224,15 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
                   "d"
                 )
               }
-            ).stmt(),
+            )->stmt(),
             CodegenASTExprCall::create(
               CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "_free"),
               {CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "ctx")}
-            ).stmt(),
+            )->stmt(),
             CodegenASTExprCall::create(
               CodegenASTExprAccess::create(this->_("exit")),
               {CodegenASTExprAccess::create(this->_("EXIT_FAILURE"))}
-            ).stmt()
+            )->stmt()
           })
         )
       })
@@ -247,11 +247,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
         CodegenASTExprCall::create(
           CodegenASTExprAccess::create(this->_("threadpool_wait")),
           {CodegenASTExprAccess::create("tp")}
-        ).stmt(),
+        )->stmt(),
         CodegenASTExprCall::create(
           CodegenASTExprAccess::create(this->_("threadpool_deinit")),
           {CodegenASTExprAccess::create("tp")}
-        ).stmt()
+        )->stmt()
       })
     );
   }
@@ -446,20 +446,20 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinVarCode += "int argc = 0;" EOL;
     builtinVarCode += "char **argv = (void *) 0;" EOL;
 
-    cMain.prepend(
+    cMain->prepend(
       CodegenASTExprAssign::create(
         CodegenASTExprAccess::create("argc"),
         "=",
         CodegenASTExprAccess::create("_argc_")
-      ).stmt()
+      )->stmt()
     );
 
-    cMain.prepend(
+    cMain->prepend(
       CodegenASTExprAssign::create(
         CodegenASTExprAccess::create("argv"),
         "=",
         CodegenASTExprAccess::create("_argv_")
-      ).stmt()
+      )->stmt()
     );
   }
 
@@ -596,12 +596,12 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   output += fnDeclCode;
   output += fnDefCode;
   output += "int main (" + std::string(this->needMainArgs ? "int _argc_, char *_argv_[]" : "") + ") ";
-  output += cMain.str() + EOL;
+  output += cMain->str() + EOL;
 
   return std::make_tuple(output, this->flags);
 }
 
-void Codegen::_node (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_node (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
     return this->_nodeBreak(c, node);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
@@ -631,7 +631,7 @@ void Codegen::_node (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase)
   }
 }
 
-void Codegen::_nodeAsync (CodegenASTStmt *c, const ASTNode &node, CodegenPhase phase) {
+void Codegen::_nodeAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
   if (std::holds_alternative<ASTNodeBreak>(*node.body)) {
     return this->_nodeBreakAsync(c, node);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
@@ -657,7 +657,7 @@ void Codegen::_nodeAsync (CodegenASTStmt *c, const ASTNode &node, CodegenPhase p
   }
 }
 
-CodegenASTExpr Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root, std::size_t awaitCallId) {
+std::shared_ptr<CodegenASTExpr> Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root, std::size_t awaitCallId) {
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
     return this->_exprAccess(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
@@ -689,7 +689,7 @@ CodegenASTExpr Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType
   throw Error("tried to generate code for unknown expression");
 }
 
-CodegenASTExpr Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const CodegenASTExpr &expr) {
+std::shared_ptr<CodegenASTExpr> Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const std::shared_ptr<CodegenASTExpr> &expr) {
   auto realTargetType = Type::real(targetType);
   auto realNodeExprType = Type::real(nodeExpr.type);
   auto result = expr;
@@ -721,7 +721,7 @@ CodegenASTExpr Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *target
   }
 
   if (nodeExpr.parenthesized) {
-    result = result.wrap();
+    result = result->wrap();
   }
 
   return result;

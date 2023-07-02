@@ -16,12 +16,12 @@
 
 #include "../Codegen.hpp"
 
-CodegenASTExpr Codegen::_exprMap (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, CodegenASTStmt *c, bool root) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprMap (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprMap = std::get<ASTExprMap>(*nodeExpr.body);
   auto nodeTypeInfo = this->_typeInfo(nodeExpr.type);
   auto mapType = std::get<TypeBodyMap>(nodeTypeInfo.type->body);
 
-  auto cFields = std::vector<CodegenASTExpr>{
+  auto cFields = std::vector<std::shared_ptr<CodegenASTExpr>>{
     CodegenASTExprLiteral::create(std::to_string(exprMap.props.size()))
   };
 
