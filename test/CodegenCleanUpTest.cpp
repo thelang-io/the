@@ -19,6 +19,16 @@
 #include "../src/config.hpp"
 #include "utils.hpp"
 
+std::string testCodegenCleanUpGen (const CodegenCleanUp &n) {
+  auto c = CodegenASTStmtCompound::create();
+  n.gen(&c);
+  if (c->asCompound().body.empty()) {
+    return "";
+  }
+  auto s = c->str(0, false);
+  return s.substr(1 + std::string(EOL).size(), s.size() - 2 - std::string(EOL).size());
+}
+
 TEST(CodegenCleanUpTest, InitialSetValues) {
   auto n0 = CodegenCleanUp();
   EXPECT_EQ(n0.labelIdx, 0);
@@ -36,52 +46,52 @@ TEST(CodegenCleanUpTest, InitialSetValues) {
 TEST(CodegenCleanUpTest, AddsEmpty) {
   auto n = CodegenCleanUp();
   n.add();
-  EXPECT_EQ(n.gen(0), "");
+  EXPECT_EQ(testCodegenCleanUpGen(n), "");
 }
 
 TEST(CodegenCleanUpTest, Adds) {
   auto n = CodegenCleanUp();
-  n.add("test;");
-  EXPECT_EQ(n.gen(0), "test;" EOL);
+  n.add(CodegenASTExprAccess::create("test")->stmt());
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  test;" EOL);
 }
 
 TEST(CodegenCleanUpTest, AddsToNonLabeled) {
   auto n = CodegenCleanUp();
-  n.add("test1;");
-  n.add("test2;");
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
 
-  EXPECT_EQ(n.gen(0), "test2;" EOL "test1;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  test2;" EOL "  test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, AddsAfterLabelling) {
   auto n = CodegenCleanUp();
-  n.add("test1;");
-  n.add("test2;");
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
   auto l = n.currentLabel();
-  n.add("test3;");
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
 
-  EXPECT_EQ(n.gen(0), "test3;" EOL + l + ":" EOL "test2;" EOL "test1;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  test3;" EOL + l + ":" EOL "  test2;" EOL "  test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, AddsAfterLabellingToNonLabeled) {
   auto n = CodegenCleanUp();
-  n.add("test1;");
-  n.add("test2;");
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
   auto l = n.currentLabel();
-  n.add("test3;");
-  n.add("test4;");
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
+  n.add(CodegenASTExprAccess::create("test4")->stmt());
 
-  EXPECT_EQ(n.gen(0), "test4;" EOL "test3;" EOL + l + ":" EOL "test2;" EOL "test1;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  test4;" EOL "  test3;" EOL + l + ":" EOL "  test2;" EOL "  test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, AddsToParent) {
   auto n0 = CodegenCleanUp();
   auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
-  n1.add("test1;");
-  n1.add("test2;");
+  n1.add(CodegenASTExprAccess::create("test1")->stmt());
+  n1.add(CodegenASTExprAccess::create("test2")->stmt());
   auto l = n1.currentLabel();
-  n1.add("test3;");
-  n1.add("test4;");
+  n1.add(CodegenASTExprAccess::create("test3")->stmt());
+  n1.add(CodegenASTExprAccess::create("test4")->stmt());
 
   EXPECT_EQ(n0.labelIdx, 2);
   EXPECT_EQ(n1.labelIdx, 2);
@@ -111,31 +121,31 @@ TEST(CodegenCleanUpTest, ThrowsOnCurrentBreakVarRoot) {
 
 TEST(CodegenCleanUpTest, LabelsOnOneStatement) {
   auto n = CodegenCleanUp();
-  n.add("test;");
+  n.add(CodegenASTExprAccess::create("test")->stmt());
   auto l = n.currentLabel();
 
   EXPECT_EQ(n.labelIdx, 1);
-  EXPECT_EQ(n.gen(0), l + ":" EOL "test;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n), l + ":" EOL "  test;" EOL);
 }
 
 TEST(CodegenCleanUpTest, LabelsOnMultipleStatements) {
   auto n = CodegenCleanUp();
-  n.add("test1;");
-  n.add("test2;");
-  n.add("test3;");
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
   auto l = n.currentLabel();
 
   EXPECT_EQ(n.labelIdx, 1);
-  EXPECT_EQ(n.gen(0), l + ":" EOL "test3;" EOL "test2;" EOL "test1;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n), l + ":" EOL "  test3;" EOL "  test2;" EOL "  test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, LabelsParent) {
   auto n0 = CodegenCleanUp();
   auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
-  n0.add("test;");
+  n0.add(CodegenASTExprAccess::create("test")->stmt());
   auto l = n1.currentLabel();
 
-  EXPECT_EQ(n0.gen(0), l + ":" EOL "test;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n0), l + ":" EOL "  test;" EOL);
 }
 
 TEST(CodegenCleanUpTest, LabellingAddsValueToFunction) {
@@ -144,7 +154,7 @@ TEST(CodegenCleanUpTest, LabellingAddsValueToFunction) {
   auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
 
   EXPECT_EQ(n2.currentLabel(), "L0");
-  EXPECT_EQ(n1.gen(0), "L0:" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n1), "L0:" EOL);
 }
 
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {
@@ -208,8 +218,8 @@ TEST(CodegenCleanUpTest, NonEmpty) {
   auto n1 = CodegenCleanUp();
   auto n2 = CodegenCleanUp();
 
-  n1.add("test;");
-  n2.add("test;");
+  n1.add(CodegenASTExprAccess::create("test")->stmt());
+  n2.add(CodegenASTExprAccess::create("test")->stmt());
   n2.currentLabel();
 
   EXPECT_FALSE(n1.empty());
@@ -217,55 +227,51 @@ TEST(CodegenCleanUpTest, NonEmpty) {
 }
 
 TEST(CodegenCleanUpTest, GeneratesOnEmpty) {
-  EXPECT_EQ(CodegenCleanUp().gen(0), "");
-}
-
-TEST(CodegenCleanUpTest, GeneratesOnEmptyWithIndent) {
-  EXPECT_EQ(CodegenCleanUp().gen(2), "");
+  EXPECT_EQ(testCodegenCleanUpGen(CodegenCleanUp()), "");
 }
 
 TEST(CodegenCleanUpTest, GeneratesOnNonEmpty) {
   auto n = CodegenCleanUp();
-  n.add("test;");
-  EXPECT_EQ(n.gen(0), "test;" EOL);
+  n.add(CodegenASTExprAccess::create("test")->stmt());
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  test;" EOL);
 }
 
 TEST(CodegenCleanUpTest, GeneratesOnNonEmptyWithIndent) {
   auto n = CodegenCleanUp();
-  n.add("test1;");
-  n.add("test2;");
-  n.add("test3;");
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
 
-  EXPECT_EQ(n.gen(2), "  test3;" EOL"  test2;" EOL"  test1;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  test3;" EOL"  test2;" EOL"  test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, GeneratesOnNonEmptyWithOneLabel) {
   auto n = CodegenCleanUp();
-  n.add("test1;");
-  n.add("test2;");
-  n.add("test3;");
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
   auto l = n.currentLabel();
 
-  EXPECT_EQ(n.gen(2), l + ":" EOL "  test3;" EOL "  test2;" EOL "  test1;" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n), l + ":" EOL "  test3;" EOL "  test2;" EOL "  test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, GeneratesOnNonEmptyWithMultipleLabels) {
   auto n = CodegenCleanUp();
-  n.add("test1;");
-  n.add("test2;");
-  n.add("test3;");
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
   auto l1 = n.currentLabel();
-  n.add("test4;");
-  n.add("test5;");
-  n.add("test6;");
+  n.add(CodegenASTExprAccess::create("test4")->stmt());
+  n.add(CodegenASTExprAccess::create("test5")->stmt());
+  n.add(CodegenASTExprAccess::create("test6")->stmt());
   auto l2 = n.currentLabel();
-  n.add("test7;");
-  n.add("test8;");
-  n.add("test9;");
+  n.add(CodegenASTExprAccess::create("test7")->stmt());
+  n.add(CodegenASTExprAccess::create("test8")->stmt());
+  n.add(CodegenASTExprAccess::create("test9")->stmt());
   auto l3 = n.currentLabel();
 
   EXPECT_EQ(
-    n.gen(2),
+    testCodegenCleanUpGen(n),
     l3 + ":" EOL "  test9;" EOL "  test8;" EOL "  test7;" EOL +
     l2 + ":" EOL "  test6;" EOL "  test5;" EOL "  test4;" EOL +
     l1 + ":" EOL "  test3;" EOL "  test2;" EOL "  test1;" EOL
@@ -275,7 +281,7 @@ TEST(CodegenCleanUpTest, GeneratesOnNonEmptyWithMultipleLabels) {
 TEST(CodegenCleanUpTest, HasCleanUpOnEmpty) {
   auto n0 = CodegenCleanUp();
   auto n1 = CodegenCleanUp();
-  n1.add("test;");
+  n1.add(CodegenASTExprAccess::create("test")->stmt());
 
   EXPECT_FALSE(n0.hasCleanUp(CODEGEN_CLEANUP_BLOCK));
   EXPECT_TRUE(n1.hasCleanUp(CODEGEN_CLEANUP_BLOCK));
@@ -284,7 +290,7 @@ TEST(CodegenCleanUpTest, HasCleanUpOnEmpty) {
 TEST(CodegenCleanUpTest, HasCleanUpOnType) {
   auto n0 = CodegenCleanUp();
   auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &n0);
-  n1.add("test;");
+  n1.add(CodegenASTExprAccess::create("test")->stmt());
   auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n1);
 
   EXPECT_FALSE(n0.hasCleanUp(CODEGEN_CLEANUP_BLOCK));
@@ -306,13 +312,13 @@ TEST(CodegenCleanUpTest, IsClosestJumpOnEmptyDataJumpUsed) {
 
 TEST(CodegenCleanUpTest, IsClosestJumpOnNonEmptyDataJumpUnused) {
   auto n0 = CodegenCleanUp();
-  n0.add("test;");
+  n0.add(CodegenASTExprAccess::create("test")->stmt());
   EXPECT_FALSE(n0.isClosestJump());
 }
 
 TEST(CodegenCleanUpTest, IsClosestJumpOnNonEmptyDataJumpUsed) {
   auto n0 = CodegenCleanUp();
-  n0.add("test;");
+  n0.add(CodegenASTExprAccess::create("test")->stmt());
   n0.jumpUsed = true;
   EXPECT_FALSE(n0.isClosestJump());
 }
@@ -320,7 +326,7 @@ TEST(CodegenCleanUpTest, IsClosestJumpOnNonEmptyDataJumpUsed) {
 TEST(CodegenCleanUpTest, IsClosestJumpOnParentOnNonEmpty) {
   auto n0 = CodegenCleanUp();
   n0.jumpUsed = true;
-  n0.add("test;");
+  n0.add(CodegenASTExprAccess::create("test")->stmt());
   auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
   EXPECT_FALSE(n1.isClosestJump());
 }
