@@ -264,7 +264,7 @@ void Codegen::_blockAsync (
     if (!this->state.cleanUp.empty()) {
       this->state.cleanUp.genAsync(c, this->state.asyncCounter);
 
-      if (this->state.cleanUp.breakVarUsed && initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+      if (this->state.cleanUp.breakVarUsed) {
         (*c)->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(

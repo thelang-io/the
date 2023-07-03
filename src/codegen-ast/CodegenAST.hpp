@@ -138,6 +138,9 @@ struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
   const CodegenASTStmtWhile &asWhile () const;
   std::shared_ptr<CodegenASTStmt> exit () const;
   std::shared_ptr<CodegenASTStmt> getptr ();
+  std::shared_ptr<CodegenASTStmt> getBody ();
+  bool hasBody () const;
+  std::shared_ptr<CodegenASTStmt> increaseAsyncCounter (std::size_t &);
   bool isBreak () const;
   bool isCase () const;
   bool isCompound () const;

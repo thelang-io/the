@@ -170,13 +170,7 @@ void CodegenCleanUp::genAsync (std::shared_ptr<CodegenASTStmt> *c, std::size_t &
     auto item = this->_data[idx];
 
     if (item.labelUsed) {
-      *c = (*c)->exit()->append(
-        CodegenASTStmtCase::create(
-          CodegenASTExprLiteral::create(std::to_string(++counter)),
-          CodegenASTStmtCompound::create()
-        )
-      );
-
+      *c = (*c)->increaseAsyncCounter(counter);
       *item.asyncCounter = counter;
     }
 

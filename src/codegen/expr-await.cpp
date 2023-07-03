@@ -26,12 +26,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
     )
   );
 
-  *c = (*c)->exit()->append(
-    CodegenASTStmtCase::create(
-      CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
-      CodegenASTStmtCompound::create()
-    )
-  );
+  *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
   auto expr = nodeExpr.type->isVoid() || root
     ? CodegenASTExprLiteral::create("")

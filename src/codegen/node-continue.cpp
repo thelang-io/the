@@ -47,9 +47,10 @@ void Codegen::_nodeContinueAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTN
     );
   }
 
-  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+  if (
+    this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP) &&
+    !(!this->state.cleanUp.empty() && ASTChecker(node).isLast())
+  ) {
     (*c)->append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
-  } else {
-    // todo
   }
 }

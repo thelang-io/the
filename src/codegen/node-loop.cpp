@@ -112,6 +112,7 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
 void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
   auto initialStateCleanUp = this->state.cleanUp;
+  auto afterBodyAsyncCounter = std::make_shared<std::size_t>(0);
 
   this->varMap.save();
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp, true);
@@ -122,15 +123,8 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
     this->_nodeAsync(c, *nodeLoop.init);
   }
 
-  auto &cInit = *c;
-
-  *c = (*c)->exit()->append(
-    CodegenASTStmtCase::create(
-      CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
-      CodegenASTStmtCompound::create()
-    )
-  );
-
+  *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
+  auto cAfterInit = *c;
   auto afterInitAsyncCounter = this->state.asyncCounter;
 
   if (nodeLoop.cond != std::nullopt) {
@@ -139,7 +133,7 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
     (*c)->append(
       CodegenASTStmtIf::create(
         CodegenASTExprUnary::create("!", cCond->wrap()),
-        CodegenASTStmtReturn::create(CodegenASTExprLiteral::create(std::to_string(this->state.asyncCounter)))
+        CodegenASTStmtReturn::create(afterBodyAsyncCounter)
       )
     );
   }
@@ -148,12 +142,7 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp, true);
   this->_block(c, nodeLoop.body);
 
-  *c = (*c)->exit()->append(
-    CodegenASTStmtCase::create(
-      CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
-      CodegenASTStmtCompound::create()
-    )
-  );
+  *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
   if (nodeLoop.upd != std::nullopt) {
     auto cUpd = this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, c, true);
@@ -161,26 +150,10 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
   }
 
   (*c)->append(CodegenASTStmtReturn::create(CodegenASTExprLiteral::create(std::to_string(afterInitAsyncCounter))));
-
-  *c = (*c)->exit()->append(
-    CodegenASTStmtCase::create(
-      CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
-      CodegenASTStmtCompound::create()
-    )
-  );
-
-  if (this->state.cleanUp.breakVarUsed) {
-    cInit->append(
-      CodegenASTExprAssign::create(
-        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
-        "=",
-        CodegenASTExprLiteral::create("0")
-      )->stmt()
-    );
-  }
+  *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
   if (this->state.cleanUp.continueVarUsed) {
-    cInit->append(
+    cAfterInit->prepend(
       CodegenASTExprAssign::create(
         CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar())),
         "=",
@@ -189,15 +162,21 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
     );
   }
 
+  if (this->state.cleanUp.breakVarUsed) {
+    cAfterInit->prepend(
+      CodegenASTExprAssign::create(
+        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
+        "=",
+        CodegenASTExprLiteral::create("0")
+      )->stmt()
+    );
+  }
+
+  *afterBodyAsyncCounter = this->state.asyncCounter;
+
   if (!saveStateCleanUp.empty()) {
     saveStateCleanUp.genAsync(c, this->state.asyncCounter);
-
-    *c = (*c)->exit()->append(
-      CodegenASTStmtCase::create(
-        CodegenASTExprLiteral::create(std::to_string(++this->state.asyncCounter)),
-        CodegenASTStmtCompound::create()
-      )
-    );
+    *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
     // todo return
     // todo catch

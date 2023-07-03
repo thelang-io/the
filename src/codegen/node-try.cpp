@@ -38,9 +38,13 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     )
   );
 
-  auto cFirstCaseBody = CodegenASTStmtCompound::create();
-  (*c)->append(CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), cFirstCaseBody));
-  *c = cFirstCaseBody;
+  *c = (*c)->append(
+    CodegenASTStmtCase::create(
+      CodegenASTExprLiteral::create("0"),
+      CodegenASTStmtCompound::create()
+    )
+  );
+
   this->varMap.save();
 
   auto blockCleanUp = CodegenASTStmtCompound::create({
@@ -82,10 +86,13 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     auto handlerTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
     auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
     auto handleCodeName = Codegen::name(handlerVarDecl.var->codeName);
-    auto cHandleBody = CodegenASTStmtCompound::create();
 
-    (*c)->append(CodegenASTStmtCase::create(CodegenASTExprAccess::create(this->_(handlerDef)), cHandleBody));
-    *c = cHandleBody;
+    *c = (*c)->append(
+      CodegenASTStmtCase::create(
+        CodegenASTExprAccess::create(this->_(handlerDef)),
+        CodegenASTStmtCompound::create()
+      )
+    );
 
     (*c)->append(
       CodegenASTExprUnary::create(
@@ -126,9 +133,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     this->varMap.restore();
   }
 
-  auto cDefaultBody = CodegenASTStmtCompound::create();
-  (*c)->append(CodegenASTStmtCase::create(nullptr, cDefaultBody));
-  *c = cDefaultBody;
+  *c = (*c)->append(CodegenASTStmtCase::create(nullptr, CodegenASTStmtCompound::create()));
 
   (*c)->append(
     CodegenASTExprUnary::create(

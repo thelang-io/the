@@ -34,7 +34,7 @@ void Codegen::_nodeBreak (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
   }
 }
 
-void Codegen::_nodeBreakAsync (std::shared_ptr<CodegenASTStmt> *c, [[maybe_unused]] const ASTNode &node) {
+void Codegen::_nodeBreakAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   (*c)->append(
     CodegenASTExprAssign::create(
       CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar())),
@@ -43,9 +43,10 @@ void Codegen::_nodeBreakAsync (std::shared_ptr<CodegenASTStmt> *c, [[maybe_unuse
     )->stmt()
   );
 
-  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+  if (
+    this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP) &&
+    !(!this->state.cleanUp.empty() && ASTChecker(node).isLast())
+  ) {
     (*c)->append(CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync()));
-  } else {
-    // todo
   }
 }

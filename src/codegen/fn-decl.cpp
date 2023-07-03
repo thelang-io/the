@@ -306,7 +306,7 @@ void Codegen::_fnDecl (
         );
       }
 
-      if (fnType.async) {
+      if (fnType.async && !body->empty()) {
         cBody = cBody->append(CodegenASTStmtSwitch::create(CodegenASTExprAccess::create("step")));
         cBody = cBody->append(CodegenASTStmtCase::create(
           CodegenASTExprLiteral::create("0"),
@@ -324,7 +324,7 @@ void Codegen::_fnDecl (
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
         if (this->state.insideAsync) {
-          cBody->exit()->exit()->prepend(
+          cBody->exit()->exit()->exit()->prepend(
             CodegenASTStmtVarDecl::create(
               CodegenASTType::create(returnTypeInfo.typeRefCode),
               CodegenASTExprAccess::create("v"),
@@ -361,14 +361,16 @@ void Codegen::_fnDecl (
         );
 
         if (this->state.insideAsync) {
-          cBody->exit()->exit()->prepend(returnVarDecl);
+          cBody->exit()->exit()->exit()->prepend(returnVarDecl);
         } else {
           cBody->prepend(returnVarDecl);
         }
       }
 
+      if (fnType.async && !body->empty()) {
+        cBody = cBody->exit()->exit()->exit();
+      }
       if (fnType.async) {
-        cBody = cBody->exit()->exit();
         cBody->append(CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1")));
       }
 

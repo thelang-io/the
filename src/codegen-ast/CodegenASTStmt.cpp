@@ -160,34 +160,69 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmt::append (const std::shared_ptr<Co
   } else if (this->isCompound()) {
     this->asCompound().body.push_back(stmt);
     stmtVectorParent(this->asCompound().body, this->getptr());
-    return this->asCompound().body.back();
+    return stmt->hasBody() ? stmt->getBody() : this->asCompound().body.back();
   } else if (this->isFor() && this->asFor().body != nullptr && this->asFor().body->isCompound()) {
     this->asFor().body->asCompound().body.push_back(stmt);
     stmtVectorParent(this->asFor().body->asCompound().body, this->asFor().body);
-    return this->asFor().body->asCompound().body.back();
+    return stmt->hasBody() ? stmt->getBody() : this->asFor().body->asCompound().body.back();
   } else if (this->isIf() && this->asIf().body->isCompound()) {
     this->asIf().body->asCompound().body.push_back(stmt);
     stmtVectorParent(this->asIf().body->asCompound().body, this->asIf().body);
-    return this->asIf().body->asCompound().body.back();
+    return stmt->hasBody() ? stmt->getBody() : this->asIf().body->asCompound().body.back();
   } else if (this->isSwitch()) {
     this->asSwitch().body.push_back(stmt);
     stmtVectorParent(this->asSwitch().body, this->getptr());
-    return this->asSwitch().body.back();
+    return stmt->hasBody() ? stmt->getBody() : this->asSwitch().body.back();
   } else if (this->isWhile() && this->asWhile().body != nullptr && this->asWhile().body->isCompound()) {
     this->asWhile().body->asCompound().body.push_back(stmt);
     stmtVectorParent(this->asWhile().body->asCompound().body, this->asWhile().body);
-    return this->asWhile().body->asCompound().body.back();
+    return stmt->hasBody() ? stmt->getBody() : this->asWhile().body->asCompound().body.back();
   }
 
-  return this->getptr();
+  return stmt->hasBody() ? stmt->getBody() : this->getptr();
 }
 
 std::shared_ptr<CodegenASTStmt> CodegenASTStmt::exit () const {
   return this->parent;
 }
 
+bool CodegenASTStmt::hasBody () const {
+  return
+    (this->isCase() && this->asCase().body->isCompound()) ||
+    (this->isFor() && this->asFor().body != nullptr && this->asFor().body->isCompound()) ||
+    (this->isIf() && this->asIf().body->isCompound()) ||
+    (this->isWhile() && this->asWhile().body != nullptr && this->asWhile().body->isCompound());
+}
+
+std::shared_ptr<CodegenASTStmt> CodegenASTStmt::increaseAsyncCounter (std::size_t &counter) {
+  if (!this->asCompound().body.empty()) {
+    return this->exit()->exit()->append(
+      CodegenASTStmtCase::create(
+        CodegenASTExprLiteral::create(std::to_string(++counter)),
+        CodegenASTStmtCompound::create()
+      )
+    );
+  }
+
+  return this->getptr();
+}
+
 std::shared_ptr<CodegenASTStmt> CodegenASTStmt::getptr () {
   return this->shared_from_this();
+}
+
+std::shared_ptr<CodegenASTStmt> CodegenASTStmt::getBody () {
+  if (this->isCase() && this->asCase().body->isCompound()) {
+    return this->asCase().body;
+  } else if (this->isFor() && this->asFor().body != nullptr && this->asFor().body->isCompound()) {
+    return this->asFor().body;
+  } else if (this->isIf() && this->asIf().body->isCompound()) {
+    return this->asIf().body;
+  } else if (this->isWhile() && this->asWhile().body != nullptr && this->asWhile().body->isCompound()) {
+    return this->asWhile().body;
+  }
+
+  return this->getptr();
 }
 
 void CodegenASTStmt::merge (const std::vector<std::shared_ptr<CodegenASTStmt>> &items) {
@@ -200,30 +235,30 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmt::prepend (const std::shared_ptr<C
   if (this->isCase() && this->asCase().body->isCompound()) {
     this->asCase().body->asCompound().body.insert(this->asCase().body->asCompound().body.begin(), stmt);
     stmtVectorParent(this->asCase().body->asCompound().body, this->asCase().body);
-    return this->asCase().body->asCompound().body.front();
+    return stmt->hasBody() ? stmt->getBody() : this->asCase().body->asCompound().body.front();
   } else if (this->isCompound()) {
     this->asCompound().body.insert(this->asCompound().body.begin(), stmt);
     stmtVectorParent(this->asCompound().body, this->getptr());
-    return this->asCompound().body.front();
+    return stmt->hasBody() ? stmt->getBody() : this->asCompound().body.front();
   } else if (this->isFor() && this->asFor().body != nullptr && this->asFor().body->isCompound()) {
     this->asFor().body->asCompound().body.insert(this->asFor().body->asCompound().body.begin(), stmt);
     stmtVectorParent(this->asFor().body->asCompound().body, this->asFor().body);
-    return this->asFor().body->asCompound().body.front();
+    return stmt->hasBody() ? stmt->getBody() : this->asFor().body->asCompound().body.front();
   } else if (this->isIf() && this->asIf().body->isCompound()) {
     this->asIf().body->asCompound().body.insert(this->asIf().body->asCompound().body.begin(), stmt);
     stmtVectorParent(this->asIf().body->asCompound().body, this->asIf().body);
-    return this->asIf().body->asCompound().body.front();
+    return stmt->hasBody() ? stmt->getBody() : this->asIf().body->asCompound().body.front();
   } else if (this->isSwitch()) {
     this->asSwitch().body.insert(this->asSwitch().body.begin(), stmt);
     stmtVectorParent(this->asSwitch().body, this->getptr());
-    return this->asSwitch().body.front();
+    return stmt->hasBody() ? stmt->getBody() : this->asSwitch().body.front();
   } else if (this->isWhile() && this->asWhile().body != nullptr && this->asWhile().body->isCompound()) {
     this->asWhile().body->asCompound().body.insert(this->asWhile().body->asCompound().body.begin(), stmt);
     stmtVectorParent(this->asWhile().body->asCompound().body, this->asWhile().body);
-    return this->asWhile().body->asCompound().body.front();
+    return stmt->hasBody() ? stmt->getBody() : this->asWhile().body->asCompound().body.front();
   }
 
-  return this->getptr();
+  return stmt->hasBody() ? stmt->getBody() : this->getptr();
 }
 
 void CodegenASTStmt::setIfAlt (const std::shared_ptr<CodegenASTStmt> &a) {
