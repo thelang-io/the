@@ -30,10 +30,10 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprLit (const ASTNodeExpr &nodeExpr, 
       expr = CodegenASTExprLiteral::create(exprLit.body + "U");
     }
   } else if (exprLit.type == AST_EXPR_LIT_INT_OCT) {
-    auto exprLitBody = exprLit.body;
-    exprLitBody.erase(std::remove(exprLitBody.begin(), exprLitBody.end(), 'O'), exprLitBody.end());
-    exprLitBody.erase(std::remove(exprLitBody.begin(), exprLitBody.end(), 'o'), exprLitBody.end());
-    expr = CodegenASTExprLiteral::create(exprLitBody);
+    auto val = exprLit.body;
+    val.erase(std::remove(val.begin(), val.end(), 'O'), val.end());
+    val.erase(std::remove(val.begin(), val.end(), 'o'), val.end());
+    expr = CodegenASTExprLiteral::create(val);
   } else if (exprLit.type == AST_EXPR_LIT_NIL) {
     expr = CodegenASTExprAccess::create(this->_("NULL"));
   } else if (!root && exprLit.type == AST_EXPR_LIT_STR) {

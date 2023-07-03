@@ -448,17 +448,17 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
     cMain->prepend(
       CodegenASTExprAssign::create(
-        CodegenASTExprAccess::create("argc"),
+        CodegenASTExprAccess::create("argv"),
         "=",
-        CodegenASTExprAccess::create("_argc_")
+        CodegenASTExprAccess::create("_argv_")
       )->stmt()
     );
 
     cMain->prepend(
       CodegenASTExprAssign::create(
-        CodegenASTExprAccess::create("argv"),
+        CodegenASTExprAccess::create("argc"),
         "=",
-        CodegenASTExprAccess::create("_argv_")
+        CodegenASTExprAccess::create("_argc_")
       )->stmt()
     );
   }
@@ -596,7 +596,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   output += fnDeclCode;
   output += fnDefCode;
   output += "int main (" + std::string(this->needMainArgs ? "int _argc_, char *_argv_[]" : "") + ") ";
-  output += cMain->str() + EOL;
+  output += cMain->str();
 
   return std::make_tuple(output, this->flags);
 }

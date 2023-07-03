@@ -38,7 +38,9 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     )
   );
 
-  *c = (*c)->append(CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), CodegenASTStmtCompound::create()));
+  auto cFirstCaseBody = CodegenASTStmtCompound::create();
+  (*c)->append(CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), cFirstCaseBody));
+  *c = cFirstCaseBody;
   this->varMap.save();
 
   auto blockCleanUp = CodegenASTStmtCompound::create({
@@ -71,7 +73,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
 
   this->_block(c, nodeTry.body, true, blockCleanUp, true);
   (*c)->append(CodegenASTStmtBreak::create());
-  *c = (*c)->exit();
+  *c = (*c)->exit()->exit();
   this->varMap.restore();
   this->state.cleanUp = initialStateCleanUp;
 
@@ -80,11 +82,10 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     auto handlerTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
     auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
     auto handleCodeName = Codegen::name(handlerVarDecl.var->codeName);
+    auto cHandleBody = CodegenASTStmtCompound::create();
 
-    *c = (*c)->append(CodegenASTStmtCase::create(
-      CodegenASTExprAccess::create(this->_(handlerDef)),
-      CodegenASTStmtCompound::create()
-    ));
+    (*c)->append(CodegenASTStmtCase::create(CodegenASTExprAccess::create(this->_(handlerDef)), cHandleBody));
+    *c = cHandleBody;
 
     (*c)->append(
       CodegenASTExprUnary::create(
@@ -121,11 +122,13 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     );
 
     (*c)->append(CodegenASTStmtBreak::create());
-    *c = (*c)->exit();
+    *c = (*c)->exit()->exit();
     this->varMap.restore();
   }
 
-  *c = (*c)->append(CodegenASTStmtCase::create(nullptr, CodegenASTStmtCompound::create()));
+  auto cDefaultBody = CodegenASTStmtCompound::create();
+  (*c)->append(CodegenASTStmtCase::create(nullptr, cDefaultBody));
+  *c = cDefaultBody;
 
   (*c)->append(
     CodegenASTExprUnary::create(
@@ -135,7 +138,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
   );
 
   (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-  *c = (*c)->exit()->exit();
+  *c = (*c)->exit()->exit()->exit();
 }
 
 void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {

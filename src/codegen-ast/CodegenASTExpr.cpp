@@ -103,6 +103,12 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExpr::getptr () {
   return this->shared_from_this();
 }
 
+bool CodegenASTExpr::isBuiltinLiteral () const {
+  return this->isAccess() &&
+    this->asAccess().objId != std::nullopt &&
+    (*this->asAccess().objId == "THE_EOL" || *this->asAccess().objId == "THE_PATH_SEP");
+}
+
 bool CodegenASTExpr::isEmptyString () const {
   return this->isLiteral() && this->asLiteral().val == R"("")";
 }
@@ -116,27 +122,33 @@ std::shared_ptr<CodegenASTStmt> CodegenASTExpr::stmt () {
 }
 
 std::string CodegenASTExpr::str () const {
+  auto result = std::string();
+
   if (this->isAccess()) {
-    return this->asAccess().str();
+    result = this->asAccess().str();
   } else if (this->isAssign()) {
-    return this->asAssign().str();
+    result = this->asAssign().str();
   } else if (this->isBinary()) {
-    return this->asBinary().str();
+    result = this->asBinary().str();
   } else if (this->isCall()) {
-    return this->asCall().str();
+    result = this->asCall().str();
   } else if (this->isCast()) {
-    return this->asCast().str();
+    result = this->asCast().str();
   } else if (this->isCond()) {
-    return this->asCond().str();
+    result = this->asCond().str();
   } else if (this->isInitList()) {
-    return this->asInitList().str();
+    result = this->asInitList().str();
   } else if (this->isLiteral()) {
-    return this->asLiteral().str();
+    result = this->asLiteral().str();
   } else if (this->isUnary()) {
-    return this->asUnary().str();
+    result = this->asUnary().str();
   }
 
-  unreachable();
+  if (this->parenthesized) {
+    result = "(" + result + ")";
+  }
+
+  return result;
 }
 
 std::shared_ptr<CodegenASTExpr> CodegenASTExpr::wrap () const {
@@ -219,10 +231,10 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExprCall::create (
 std::string CodegenASTExprCall::str () const {
   auto argsStr = std::string();
   for (const auto &arg : this->exprArgs) {
-    argsStr = ", " + arg->str();
+    argsStr += ", " + arg->str();
   }
   for (const auto &arg : this->typeArgs) {
-    argsStr = ", " + arg.str();
+    argsStr += ", " + arg.strDef();
   }
   argsStr = argsStr.empty() ? argsStr : argsStr.substr(2);
   return this->callee->str() + "(" + argsStr + ")";
@@ -236,7 +248,7 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExprCast::create (
 }
 
 std::string CodegenASTExprCast::str () const {
-  return "(" + this->type.str() + ") " + this->arg->str();
+  return "(" + this->type.strDef() + ") " + this->arg->str();
 }
 
 std::shared_ptr<CodegenASTExpr> CodegenASTExprCond::create (
@@ -260,7 +272,7 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExprInitList::create (
 std::string CodegenASTExprInitList::str () const {
   auto itemsStr = std::string();
   for (const auto &item : this->items) {
-    itemsStr = ", " + item->str();
+    itemsStr += ", " + item->str();
   }
   itemsStr = itemsStr.empty() ? itemsStr : itemsStr.substr(2);
   return "{" + itemsStr + "}";

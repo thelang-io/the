@@ -20,6 +20,10 @@ CodegenASTType CodegenASTType::create (const std::string &val) {
   return CodegenASTType{val};
 }
 
-std::string CodegenASTType::str () const {
-  return this->val;
+std::string CodegenASTType::strDecl () const {
+  return this->val + (this->val.ends_with(" ") || this->val.ends_with("*") ? "" : " ");
+}
+
+std::string CodegenASTType::strDef () const {
+  return this->val.substr(0, this->val.find_last_not_of(' ') + 1);
 }

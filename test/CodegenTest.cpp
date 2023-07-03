@@ -1289,6 +1289,7 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeMain, CodegenPassTest, testing::Values(
+  "node-main-sync",
   "node-main-async"
 ));
 

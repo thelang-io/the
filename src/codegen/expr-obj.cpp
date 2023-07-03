@@ -85,13 +85,13 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprObj (const ASTNodeExpr &nodeExpr, 
 
     auto fieldTypeInfo = this->_typeInfo(typeField.type);
 
-    auto exprObjProp = std::find_if(exprObj.props.begin(), exprObj.props.end(), [&] (const auto &it) -> bool {
+    auto prop = std::find_if(exprObj.props.begin(), exprObj.props.end(), [&] (const auto &it) -> bool {
       return it.name == typeField.name;
     });
 
     cFields.push_back(
-      exprObjProp != exprObj.props.end()
-        ? this->_nodeExpr(exprObjProp->init, typeField.type, parent, c)
+      prop != exprObj.props.end()
+        ? this->_nodeExpr(prop->init, typeField.type, parent, c)
         : this->_exprObjDefaultField(fieldTypeInfo)
     );
   }

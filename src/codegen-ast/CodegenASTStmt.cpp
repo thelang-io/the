@@ -226,6 +226,11 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmt::prepend (const std::shared_ptr<C
   return this->getptr();
 }
 
+void CodegenASTStmt::setIfAlt (const std::shared_ptr<CodegenASTStmt> &a) {
+  this->asIf().alt = a;
+  this->asIf().alt->parent = this->getptr();
+}
+
 std::string CodegenASTStmt::str (std::size_t indent, bool root) const {
   if (this->isBreak()) { return this->asBreak().str(indent, root); }
   else if (this->isCase()) { return this->asCase().str(indent, root); }
@@ -307,7 +312,13 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtExpr::create (const std::shared_pt
 }
 
 std::string CodegenASTStmtExpr::str (std::size_t indent, bool root) const {
-  return (root ? std::string(indent, ' ') : "") + this->expr->str() + ";" + (root ? EOL : "");
+  auto code = this->expr->str();
+
+  if (code.empty()) {
+    return "";
+  }
+
+  return (root ? std::string(indent, ' ') : "") + code + ";" + (root ? EOL : "");
 }
 
 std::shared_ptr<CodegenASTStmt> CodegenASTStmtFor::create (
@@ -328,16 +339,15 @@ std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
     result += ";";
   }
   if (this->cond != nullptr) {
-    result += this->cond->str();
+    result += " " + this->cond->str();
   }
   result += ";";
   if (this->upd != nullptr) {
-    result += this->upd->str();
+    result += " " + this->upd->str();
   }
   result += ")";
   if (this->body != nullptr) {
-    result += " ";
-    result += this->body->str(indent, false);
+    result += " " + this->body->str(indent, false);
   } else {
     result += ";";
   }
@@ -441,7 +451,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtVarDecl::create (
 
 std::string CodegenASTStmtVarDecl::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += this->type.str() + this->id->str();
+  result += this->type.strDecl() + this->id->str();
   if (this->init != nullptr) {
     result += " = " + this->init->str();
   }
@@ -461,7 +471,7 @@ std::string CodegenASTStmtWhile::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "while (" + this->cond->str() + ")";
   if (this->body != nullptr) {
-    result += this->body->str(indent, false);
+    result += " " + this->body->str(indent, false);
   } else {
     result += ";";
   }

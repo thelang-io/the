@@ -29,7 +29,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprUnary (const ASTNodeExpr &nodeExpr
   else if (exprUnary.op == AST_EXPR_UNARY_PLUS) opCode = "+";
 
   if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isFloatNumber()) {
-    cArg = CodegenASTExprCast::create(CodegenASTType::create(this->_("bool")), cArg);
+    cArg = CodegenASTExprCast::create(CodegenASTType::create(this->_("bool")), cArg)->wrap();
   } else if (exprUnary.op == AST_EXPR_UNARY_NOT && exprUnary.arg.type->isStr()) {
     cArg = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_not")), {cArg});
     opCode = "";

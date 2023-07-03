@@ -22,12 +22,14 @@ void Codegen::_nodeIf (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) 
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
   auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
   auto cBody = CodegenASTStmtCompound::create();
-  auto cAlt = std::shared_ptr<CodegenASTStmt>{};
+
+  (*c)->append(CodegenASTStmtIf::create(cCond, cBody));
+  *c = cBody;
 
   bodyTypeCasts.merge(this->state.typeCasts);
   bodyTypeCasts.swap(this->state.typeCasts);
   this->varMap.save();
-  this->_block(&cBody, nodeIf.body);
+  this->_block(c, nodeIf.body);
   this->varMap.restore();
   this->state.typeCasts = initialStateTypeCasts;
 
@@ -35,18 +37,21 @@ void Codegen::_nodeIf (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) 
     altTypeCasts.merge(this->state.typeCasts);
     altTypeCasts.swap(this->state.typeCasts);
 
-    cAlt = CodegenASTStmtCompound::create();
+    auto cAlt = CodegenASTStmtCompound::create();
 
     if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
       this->varMap.save();
       this->_block(&cAlt, std::get<ASTBlock>(*nodeIf.alt));
       this->varMap.restore();
-    } else if (std::holds_alternative<ASTNode>(*nodeIf.alt)) {
+    } else {
       this->_node(&cAlt, std::get<ASTNode>(*nodeIf.alt));
+      cAlt = cAlt->asCompound().body[0];
     }
+
+    (*c)->exit()->setIfAlt(cAlt);
   }
 
-  (*c)->append(CodegenASTStmtIf::create(cCond, cBody, cAlt));
+  *c = (*c)->exit()->exit();
   this->state.typeCasts = initialStateTypeCasts;
 }
 

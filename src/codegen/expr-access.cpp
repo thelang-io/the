@@ -226,7 +226,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       auto fnName = objTypeInfo.realType->isArray() ? objTypeInfo.realTypeName + "_at" : "str_at";
 
       expr = CodegenASTExprCall::create(
-        CodegenASTExprAccess::create(fnName),
+        CodegenASTExprAccess::create(this->_(fnName)),
         {cObj, cObjElem, CodegenASTExprLiteral::create(line), CodegenASTExprLiteral::create(col)}
       );
     }
@@ -247,10 +247,10 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       expr = CodegenASTExprUnary::create("*", expr);
     }
 
-    auto isExprAccessEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
-    auto isExprAccessRef = nodeExpr.type->isRef() && targetType->isRef();
+    auto isEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
+    auto isRef = nodeExpr.type->isRef() && targetType->isRef();
 
-    if (!root && !isExprAccessEnumField && !isExprAccessRef && !(fieldTypeHasCallInfo && !fieldType->isRef())) {
+    if (!root && !isEnumField && !isRef && !(fieldTypeHasCallInfo && !fieldType->isRef())) {
       expr = this->_genCopyFn(Type::real(nodeExpr.type), expr);
     }
 

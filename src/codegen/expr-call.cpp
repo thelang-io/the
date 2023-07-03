@@ -132,22 +132,31 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     auto terminator = CodegenASTExprAccess::create(this->_("THE_EOL"));
     auto to = CodegenASTExprAccess::create(this->_("stdout"));
 
-    for (const auto &exprCallArg : exprCall.args) {
-      if (exprCallArg.id != std::nullopt && exprCallArg.id == "separator") {
-        separator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, c);
-      } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "terminator") {
-        terminator = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, c);
-      } else if (exprCallArg.id != std::nullopt && exprCallArg.id == "to") {
-        if (exprCallArg.expr.isLit()) {
-          auto toLitBody = exprCallArg.expr.litBody();
+    for (const auto &arg : exprCall.args) {
+      if (arg.id != std::nullopt && arg.id == "separator") {
+        if (arg.expr.isLit()) {
+          separator = CodegenASTExprLiteral::create(arg.expr.litBody());
+        } else {
+          separator = this->_nodeExpr(arg.expr, this->ast->typeMap.get("str"), parent, c);
+        }
+      } else if (arg.id != std::nullopt && arg.id == "terminator") {
+        if (arg.expr.isLit()) {
+          terminator = CodegenASTExprLiteral::create(arg.expr.litBody());
+        } else {
+          terminator = this->_nodeExpr(arg.expr, this->ast->typeMap.get("str"), parent, c);
+        }
+
+      } else if (arg.id != std::nullopt && arg.id == "to") {
+        if (arg.expr.isLit()) {
+          auto toLitBody = arg.expr.litBody();
           to = CodegenASTExprAccess::create(this->_(toLitBody == R"("stderr")" ? "stderr" : "stdout"));
         } else {
-          auto cTo = this->_nodeExpr(exprCallArg.expr, this->ast->typeMap.get("str"), parent, c);
+          auto cTo = this->_nodeExpr(arg.expr, this->ast->typeMap.get("str"), parent, c);
 
           to = CodegenASTExprCond::create(
             CodegenASTExprCall::create(
               CodegenASTExprAccess::create(this->_("cstr_eq_str")),
-              {CodegenASTExprLiteral::create(this->_("stderr")), cTo}
+              {CodegenASTExprLiteral::create(R"("stderr")"), cTo}
             ),
             CodegenASTExprAccess::create(this->_("stderr")),
             CodegenASTExprAccess::create(this->_("stdout"))
@@ -160,26 +169,26 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     auto fmtString = std::string("");
     auto argIdx = static_cast<std::size_t>(0);
 
-    for (const auto &exprCallArg : exprCall.args) {
-      if (exprCallArg.id != "items") {
+    for (const auto &arg : exprCall.args) {
+      if (arg.id != "items") {
         continue;
       }
 
-      auto argTypeInfo = this->_typeInfo(exprCallArg.expr.type);
-      auto cArg = this->_exprCallPrintArg(argTypeInfo, exprCallArg.expr, parent, c);
+      auto argTypeInfo = this->_typeInfo(arg.expr.type);
+      auto cArg = this->_exprCallPrintArg(argTypeInfo, arg.expr, parent, c);
 
       if (argIdx != 0 && !separator->isEmptyString()) {
-        fmtString += separator->isLiteral() ? "z" : "s";
+        fmtString += separator->isLiteral() || separator->isBuiltinLiteral() ? "z" : "s";
         cArgs.push_back(separator);
       }
 
-      fmtString += this->_exprCallPrintArgSign(argTypeInfo, exprCallArg.expr);
+      fmtString += this->_exprCallPrintArgSign(argTypeInfo, arg.expr);
       cArgs.push_back(cArg);
       argIdx++;
     }
 
     if (!terminator->isEmptyString()) {
-      fmtString += terminator->isLiteral() ? "z" : "s";
+      fmtString += terminator->isLiteral() || terminator->isBuiltinLiteral() ? "z" : "s";
       cArgs.push_back(terminator);
     }
 
@@ -210,6 +219,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     auto hasParams = (!fnType.params.empty() || hasSelfParam || hasThrowParams) && !calleeTypeInfo.realType->builtin;
     auto paramsName = calleeTypeInfo.realTypeName + "P";
     auto cParamsArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
+    auto cArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
 
     if (hasThrowParams) {
       cParamsArgs.push_back(CodegenASTExprLiteral::create(line));
@@ -221,7 +231,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
       auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
 
       if (calleeTypeInfo.realType->builtin) {
-        cParamsArgs.push_back(
+        cArgs.push_back(
           this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, parent, c, fnType.callInfo.isSelfMut)
         );
       } else {
@@ -265,13 +275,13 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
           variadicArgs.push_back(*foundArg);
 
           for (auto j = foundArgIdx + 1; j < exprCall.args.size(); j++) {
-            auto exprCallArg = exprCall.args[j];
+            auto arg = exprCall.args[j];
 
-            if (exprCallArg.id != std::nullopt && *exprCallArg.id != param.name) {
+            if (arg.id != std::nullopt && *arg.id != param.name) {
               break;
             }
 
-            variadicArgs.push_back(exprCallArg);
+            variadicArgs.push_back(arg);
           }
         }
 
@@ -312,6 +322,8 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
           )
         }
       );
+    } else {
+      cArgs.insert(cArgs.end(), cParamsArgs.begin(), cParamsArgs.end());
     }
 
     auto fnName = CodegenASTExprAccess::create(Codegen::name(fnType.callInfo.codeName));
@@ -363,10 +375,9 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
         }
       );
     } else {
-      auto isBuiltin = !calleeTypeInfo.realType->builtin || fnType.callInfo.empty();
-      auto cArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
+      auto isBuiltin = calleeTypeInfo.realType->builtin && !fnType.callInfo.empty();
 
-      if (isBuiltin) {
+      if (!isBuiltin) {
         cArgs.push_back(CodegenASTExprAccess::create(fnName, "x"));
       }
 
@@ -380,7 +391,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
       }
 
       expr = CodegenASTExprCall::create(
-        isBuiltin ? CodegenASTExprAccess::create(fnName, "f") : fnName,
+        !isBuiltin ? CodegenASTExprAccess::create(fnName, "f") : fnName,
         cArgs
       );
     }

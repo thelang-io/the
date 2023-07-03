@@ -76,75 +76,50 @@ std::string Codegen::getEnvVar (const std::string &name) {
 std::string Codegen::_ (const std::string &name, const std::optional<std::set<std::string> *> &dependencies) {
   auto result = name;
 
-  if (codegenMetadata.contains(name)) {
-    for (const auto &dependency : codegenMetadata.at(name)) {
+  if (codegenMetadata.contains(result)) {
+    for (const auto &dependency : codegenMetadata.at(result)) {
       if (dependencies == std::nullopt) {
         this->_activateBuiltin(dependency);
       } else if (!(*dependencies)->contains(dependency)) {
         (*dependencies)->emplace(dependency);
       }
     }
-  } else if (this->api.contains(name)) {
+  } else if (this->api.contains(result)) {
     if (dependencies == std::nullopt) {
-      this->_activateBuiltin(name);
-    } else if (!(*dependencies)->contains(name)) {
-      (*dependencies)->emplace(name);
-    }
-  } else if (name.starts_with("TYPE_") && this->ast->typeMap.has(name.substr(5))) {
-    result = this->_typeDef(this->ast->typeMap.get(name.substr(5)));
-
-    if (dependencies == std::nullopt) {
-      this->_activateEntity(name);
-    } else if (!(*dependencies)->contains(name)) {
-      (*dependencies)->emplace(name);
-    }
-  } else if (name.starts_with("array_")) {
-    if (name.ends_with("_free")) {
-      result = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6, name.size() - 11)))) + "_free";
-    } else {
-      result = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(name.substr(6))));
-    }
-
-    if (dependencies == std::nullopt) {
-      this->_activateEntity(name);
-    } else if (!(*dependencies)->contains(name)) {
-      (*dependencies)->emplace(name);
-    }
-  } else if (name.starts_with("map_") || name.starts_with("pair_")) {
-    auto isPair = name.starts_with("pair_");
-    auto nameSliced = isPair ? name.substr(5) : name.substr(4);
-    auto keyType = this->ast->typeMap.get(nameSliced.substr(0, nameSliced.find('_')));
-    auto valueType = this->ast->typeMap.get(nameSliced.substr(nameSliced.find('_') + 1));
-
-    result = this->_typeNameMap(this->ast->typeMap.createMap(keyType, valueType));
-
-    if (isPair) {
-      result = Codegen::typeName("pair_" + name.substr(Codegen::typeName("map_").size()));
-    }
-
-    if (dependencies == std::nullopt) {
-      this->_activateEntity(name);
-    } else if (!(*dependencies)->contains(name)) {
-      (*dependencies)->emplace(name);
+      this->_activateBuiltin(result);
+    } else if (!(*dependencies)->contains(result)) {
+      (*dependencies)->emplace(result);
     }
   } else {
-    auto existsInEntities = false;
+    if (result.starts_with("TYPE_") && this->ast->typeMap.has(result.substr(5))) {
+      result = this->_typeDef(this->ast->typeMap.get(result.substr(5)));
+    } else if (result.starts_with("array_")) {
+      if (result.ends_with("_free")) {
+        result = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(result.substr(6, result.size() - 11)))) + "_free";
+      } else {
+        result = this->_typeNameArray(this->ast->typeMap.createArr(this->ast->typeMap.get(result.substr(6))));
+      }
+    } else if (result.starts_with("map_") || result.starts_with("pair_")) {
+      auto isPair = result.starts_with("pair_");
+      auto nameSliced = isPair ? result.substr(5) : result.substr(4);
+      auto keyType = this->ast->typeMap.get(nameSliced.substr(0, nameSliced.find('_')));
+      auto valueType = this->ast->typeMap.get(nameSliced.substr(nameSliced.find('_') + 1));
 
-    for (const auto &entity : this->entities) {
-      if (entity.name == name) {
-        existsInEntities = true;
-        break;
+      result = this->_typeNameMap(this->ast->typeMap.createMap(keyType, valueType));
+
+      if (isPair) {
+        result = Codegen::typeName("pair_" + result.substr(Codegen::typeName("map_").size()));
       }
     }
 
-    if (!existsInEntities) {
-      throw Error("can't find code generator entity `" + name + "`");
-    }
-
     if (dependencies == std::nullopt) {
-      this->_activateEntity(name);
-    } else if (!(*dependencies)->contains(name)) {
-      (*dependencies)->emplace(name);
+      try {
+        this->_activateBuiltin(result);
+      } catch (const Error &err) {
+        this->_activateEntity(result);
+      }
+    } else if (!(*dependencies)->contains(result)) {
+      (*dependencies)->emplace(result);
     }
   }
 
@@ -363,21 +338,8 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (this->api.contains(name)) {
     this->api[name].enabled = true;
 
-    for (const auto &dep : this->api[name].dependencies) {
-      auto existsInEntities = false;
-
-      for (const auto &entity : this->entities) {
-        if (entity.name == dep) {
-          existsInEntities = true;
-          break;
-        }
-      }
-
-      if (existsInEntities) {
-        this->_activateEntity(dep);
-      } else {
-        this->_activateBuiltin(dep);
-      }
+    for (const auto &it : this->api[name].dependencies) {
+      this->_(it);
     }
   } else {
     throw Error("tried activating unknown builtin `" + name + "`");
@@ -403,12 +365,12 @@ void Codegen::_activateEntity (const std::string &name, std::optional<std::vecto
     if (!entity.active) {
       entity.active = true;
 
-      for (const auto &builtin : entity.builtins) {
-        this->_activateBuiltin(builtin);
+      for (const auto &it : entity.builtins) {
+        this->_(it);
       }
 
-      for (const auto &child : entity.entities) {
-        this->_activateEntity(child);
+      for (const auto &it : entity.entities) {
+        this->_(it);
       }
     }
 

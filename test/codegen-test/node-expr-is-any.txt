@@ -1,11 +1,11 @@
 ======= stdin =======
 main {
-  testAny: any
+  testAny: any;
 
-  a: any = 1
-  b: any = testAny
-  mut e: any = 1
-  mut f: any = testAny
+  a: any = 1;
+  b: any = testAny;
+  mut e: any = 1;
+  mut f: any = testAny;
 
   (a is any) ? "any" : "any";
   (b is any) ? "any" : "any";

@@ -25,30 +25,14 @@ void Codegen::_nodeObjDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &n
   }
 
   if (phase == CODEGEN_PHASE_ALLOC_METHOD || phase == CODEGEN_PHASE_FULL) {
-    for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
-      this->_fnDecl(
-        c,
-        nodeObjDeclMethod.var,
-        nodeObjDeclMethod.stack,
-        nodeObjDeclMethod.params,
-        nodeObjDeclMethod.body,
-        node,
-        CODEGEN_PHASE_ALLOC
-      );
+    for (const auto &method : nodeObjDecl.methods) {
+      this->_fnDecl(c, method.var, method.stack, method.params, method.body, node, CODEGEN_PHASE_ALLOC);
     }
   }
 
   if (phase == CODEGEN_PHASE_INIT || phase == CODEGEN_PHASE_FULL) {
-    for (const auto &nodeObjDeclMethod : nodeObjDecl.methods) {
-      this->_fnDecl(
-        c,
-        nodeObjDeclMethod.var,
-        nodeObjDeclMethod.stack,
-        nodeObjDeclMethod.params,
-        nodeObjDeclMethod.body,
-        node,
-        phase
-      );
+    for (const auto &method : nodeObjDecl.methods) {
+      this->_fnDecl(c, method.var, method.stack, method.params, method.body, node, phase);
     }
   }
 }

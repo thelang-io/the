@@ -132,6 +132,10 @@ void Codegen::_fnDecl (
 
         this->state.cleanUp.merge(
           CodegenASTStmtCompound::create({
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("error_stack_pop")),
+              {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
+            )->stmt(),
             CodegenASTStmtIf::create(
               CodegenASTExprBinary::create(
                 CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
@@ -152,11 +156,7 @@ void Codegen::_fnDecl (
                   CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
                 }
               )->stmt()
-            ),
-            CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("error_stack_pop")),
-              {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
-            )->stmt()
+            )
           })
         );
       }
@@ -324,7 +324,7 @@ void Codegen::_fnDecl (
 
       if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed) {
         if (this->state.insideAsync) {
-          cBody->prepend(
+          cBody->exit()->exit()->prepend(
             CodegenASTStmtVarDecl::create(
               CodegenASTType::create(returnTypeInfo.typeRefCode),
               CodegenASTExprAccess::create("v"),
@@ -354,13 +354,17 @@ void Codegen::_fnDecl (
       }
 
       if (this->state.cleanUp.returnVarUsed) {
-        cBody->prepend(
-          CodegenASTStmtVarDecl::create(
-            CodegenASTType::create("unsigned char"),
-            CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar()),
-            CodegenASTExprLiteral::create("0")
-          )
+        auto returnVarDecl = CodegenASTStmtVarDecl::create(
+          CodegenASTType::create("unsigned char"),
+          CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar()),
+          CodegenASTExprLiteral::create("0")
         );
+
+        if (this->state.insideAsync) {
+          cBody->exit()->exit()->prepend(returnVarDecl);
+        } else {
+          cBody->prepend(returnVarDecl);
+        }
       }
 
       if (fnType.async) {
@@ -390,7 +394,7 @@ void Codegen::_fnDecl (
       }
 
       decl += ");";
-      def += ") " + cBody->str();
+      def += ") " + cBody->str(0, false);
 
       return hasStack ? contextEntityIdx : 0;
     });
@@ -464,11 +468,11 @@ void Codegen::_fnDecl (
 
       if (this->state.contextVars.contains(contextVarName)) {
         contextVarsInitList.push_back(
-          CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(contextVarName))
+          CodegenASTExprAccess::create(contextVarName)
         );
       } else {
         contextVarsInitList.push_back(
-          CodegenASTExprAccess::create(contextVarName)
+          CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(contextVarName))
         );
       }
     }
@@ -480,8 +484,8 @@ void Codegen::_fnDecl (
           CodegenASTExprCast::create(
             CodegenASTType::create(varTypeInfo.typeRefCode),
             this->state.insideAsync
-              ? CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(fnName))
-              : CodegenASTExprAccess::create(fnName)
+              ? CodegenASTExprAccess::create(fnName)
+              : CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(fnName))
           ),
           CodegenASTExprCast::create(
             CodegenASTType::create("struct " + this->_(contextName)),

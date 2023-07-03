@@ -25,12 +25,15 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
   this->state.cleanUp.breakVarIdx += 1;
   this->state.cleanUp.continueVarIdx += 1;
 
+  auto cBody = CodegenASTStmtCompound::create();
+
   if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
     auto cCond = nodeLoop.cond == std::nullopt
       ? CodegenASTExprLiteral::create("1")
       : this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, c, true);
 
-    *c = (*c)->append(CodegenASTStmtWhile::create(cCond));
+    (*c)->append(CodegenASTStmtWhile::create(cCond, cBody));
+    *c = cBody;
   } else {
     auto cInit = std::shared_ptr<CodegenASTStmt>{};
     auto cCond = std::shared_ptr<CodegenASTExpr>{};
@@ -43,7 +46,7 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
       if (!this->state.cleanUp.empty()) {
         *c = (*c)->append(cCompound);
       } else {
-        this->_node(c, *nodeLoop.init);
+        cInit = cCompound->asCompound().body[0];
       }
     }
 
@@ -55,22 +58,13 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
       cUpd = this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, c, true);
     }
 
-    *c = (*c)->append(CodegenASTStmtFor::create(cInit, cCond, cUpd, CodegenASTStmtCompound::create()));
+    (*c)->append(CodegenASTStmtFor::create(cInit, cCond, cUpd, cBody));
+    *c = cBody;
   }
 
   auto saveStateCleanUp = this->state.cleanUp;
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp);
   this->_block(c, nodeLoop.body);
-
-  if (this->state.cleanUp.breakVarUsed) {
-    (*c)->prepend(
-      CodegenASTStmtVarDecl::create(
-        CodegenASTType::create("unsigned char"),
-        CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
-        CodegenASTExprLiteral::create("0")
-      )
-    );
-  }
 
   if (this->state.cleanUp.continueVarUsed) {
     (*c)->prepend(
@@ -82,7 +76,19 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
     );
   }
 
-  if (nodeLoop.init != std::nullopt && !saveStateCleanUp.empty()) {
+  if (this->state.cleanUp.breakVarUsed) {
+    (*c)->prepend(
+      CodegenASTStmtVarDecl::create(
+        CodegenASTType::create("unsigned char"),
+        CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
+        CodegenASTExprLiteral::create("0")
+      )
+    );
+  }
+
+  *c = (*c)->exit()->exit();
+
+  if (!saveStateCleanUp.empty()) {
     saveStateCleanUp.gen(c);
 
     if (saveStateCleanUp.returnVarUsed) {

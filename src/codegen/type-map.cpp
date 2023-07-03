@@ -79,7 +79,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cFree2 = CodegenASTExprAccess::create(
@@ -87,7 +87,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "void " + typeName + "_free (struct _{" + typeName + "});";
@@ -140,7 +140,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cCopy2 = CodegenASTExprAccess::create(
@@ -148,7 +148,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "struct _{" + typeName + "} " + typeName + "_copy (const struct _{" + typeName + "});";
@@ -179,7 +179,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n1"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq2 = CodegenASTExprAccess::create(
@@ -187,7 +187,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n1"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     auto cEq3 = CodegenASTExprAccess::create(
@@ -195,7 +195,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq4 = CodegenASTExprAccess::create(
@@ -203,7 +203,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "}, struct _{" + typeName + "});";
@@ -235,7 +235,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq2 = CodegenASTExprAccess::create("k");
@@ -245,7 +245,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += valueTypeInfo.typeCode + typeName + "_get (struct _{" + typeName + "}, " + keyTypeInfo.typeCodeTrimmed + ", int, int);";
@@ -283,7 +283,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq2 = CodegenASTExprAccess::create("k");
@@ -318,7 +318,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     decl += keysTypeInfo.typeCode + typeName + "_keys (struct _{" + typeName + "});";
@@ -349,7 +349,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true),
         CodegenASTExprAccess::create("j")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq2 = CodegenASTExprAccess::create(
@@ -357,7 +357,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("m"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cFree = CodegenASTExprAccess::create(
@@ -365,7 +365,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true),
         CodegenASTExprAccess::create("j")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     auto cCopy1 = CodegenASTExprAccess::create(
@@ -373,7 +373,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("m"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     auto cCopy2 = CodegenASTExprAccess::create(
@@ -381,7 +381,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("m"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cCopy3 = CodegenASTExprAccess::create(
@@ -389,7 +389,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("m"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "struct _{" + typeName + "} *" + typeName + "_merge (struct _{" + typeName + "} *, struct _{" + typeName + "});";
@@ -424,7 +424,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n1"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq2 = CodegenASTExprAccess::create(
@@ -432,7 +432,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n1"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     auto cEq3 = CodegenASTExprAccess::create(
@@ -440,7 +440,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq4 = CodegenASTExprAccess::create(
@@ -448,7 +448,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "}, struct _{" + typeName + "});";
@@ -489,7 +489,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq2 = CodegenASTExprAccess::create("k");
@@ -499,7 +499,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cFree2 = CodegenASTExprAccess::create(
@@ -507,7 +507,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *, " + keyTypeInfo.typeCodeTrimmed + ", int, int);";
@@ -562,7 +562,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cEq2 = CodegenASTExprAccess::create("k");
@@ -572,7 +572,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d", true),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "struct _{" + typeName + "} *" + typeName + "_set (struct _{" + typeName + "} *";
@@ -627,7 +627,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("f")
+      "f"
     );
 
     auto cStr2 = CodegenASTExprAccess::create(
@@ -635,7 +635,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += "_{struct str} " + typeName + "_str (struct _{" + typeName + "});";
@@ -683,7 +683,7 @@ std::string Codegen::_typeNameMap (Type *type) {
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("n"), "d"),
         CodegenASTExprAccess::create("i")
       ),
-      CodegenASTExprAccess::create("s")
+      "s"
     );
 
     decl += valuesTypeInfo.typeCode + typeName + "_values (struct _{" + typeName + "});";

@@ -90,7 +90,8 @@ struct CodegenASTType {
   std::string val;
 
   static CodegenASTType create (const std::string &);
-  std::string str () const;
+  std::string strDecl () const;
+  std::string strDef () const;
 };
 
 struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
@@ -156,6 +157,7 @@ struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
   bool isWhile () const;
   void merge (const std::vector<std::shared_ptr<CodegenASTStmt>> &);
   std::shared_ptr<CodegenASTStmt> prepend (const std::shared_ptr<CodegenASTStmt> &);
+  void setIfAlt (const std::shared_ptr<CodegenASTStmt> &);
   std::string str (std::size_t = 0, bool = true) const;
 
  private:
@@ -191,6 +193,7 @@ struct CodegenASTExpr : public std::enable_shared_from_this<CodegenASTExpr> {
   bool isAccess () const;
   bool isAssign () const;
   bool isBinary () const;
+  bool isBuiltinLiteral () const;
   bool isCall () const;
   bool isCast () const;
   bool isCond () const;

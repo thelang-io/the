@@ -18,13 +18,13 @@
 
 std::shared_ptr<CodegenASTExpr> Codegen::_exprIs (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprIs = std::get<ASTExprIs>(*nodeExpr.body);
-  auto exprIsExprCode = this->_nodeExpr(exprIs.expr, exprIs.expr.type, parent, c, true);
-  auto exprIsTypeDef = this->_typeDef(exprIs.type);
+  auto cExpr = this->_nodeExpr(exprIs.expr, exprIs.expr.type, parent, c, true);
+  auto typeDef = this->_typeDef(exprIs.type);
 
   auto expr = CodegenASTExprBinary::create(
-    CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_(exprIsTypeDef)), "t"),
+    CodegenASTExprAccess::create(cExpr, "t"),
     "==",
-    CodegenASTExprAccess::create(this->_(exprIsTypeDef))
+    CodegenASTExprAccess::create(this->_(typeDef))
   );
 
   return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);

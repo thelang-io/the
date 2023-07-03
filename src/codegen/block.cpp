@@ -171,7 +171,7 @@ void Codegen::_block (
             "==",
             CodegenASTExprLiteral::create("1")
           ),
-          CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+          cStmtIfBody
         )
       );
     }
@@ -188,7 +188,7 @@ void Codegen::_block (
             "==",
             CodegenASTExprLiteral::create("1")
           ),
-          CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+          cStmtIfBody
         )
       );
     }

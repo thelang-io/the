@@ -203,9 +203,13 @@ bool CodegenCleanUp::isClosestJump () const {
 
 // todo test
 void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
-  auto stmtCompound = stmt->asCompound();
+  if (stmt->isCompound()) {
+    auto stmtCompound = stmt->asCompound();
 
-  for (const auto &item : std::ranges::reverse_view(stmtCompound.body)) {
-    this->add(item);
+    for (const auto &item : std::ranges::reverse_view(stmtCompound.body)) {
+      this->add(item);
+    }
+  } else {
+    this->add(stmt);
   }
 }
