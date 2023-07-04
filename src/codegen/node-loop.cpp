@@ -35,9 +35,9 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
     (*c)->append(CodegenASTStmtWhile::create(cCond, cBody));
     *c = cBody;
   } else {
-    auto cInit = std::shared_ptr<CodegenASTStmt>{};
-    auto cCond = std::shared_ptr<CodegenASTExpr>{};
-    auto cUpd = std::shared_ptr<CodegenASTExpr>{};
+    auto cInit = CodegenASTStmtNull::create();
+    auto cCond = CodegenASTExprNull::create();
+    auto cUpd = CodegenASTExprNull::create();
 
     if (nodeLoop.init != std::nullopt) {
       auto cCompound = CodegenASTStmtCompound::create();
@@ -112,12 +112,15 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
 void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
   auto initialStateCleanUp = this->state.cleanUp;
-  auto afterBodyAsyncCounter = std::make_shared<std::size_t>(0);
+  auto initialStateAsyncCounterLoopBreak = this->state.asyncCounterLoopBreak;
+  auto initialStateAsyncCounterLoopContinue = this->state.asyncCounterLoopContinue;
 
   this->varMap.save();
   this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp, true);
   this->state.cleanUp.breakVarIdx += 1;
   this->state.cleanUp.continueVarIdx += 1;
+  this->state.asyncCounterLoopBreak = std::make_shared<std::size_t>(0);
+  this->state.asyncCounterLoopContinue = std::make_shared<std::size_t>(0);
 
   if (nodeLoop.init != std::nullopt) {
     this->_nodeAsync(c, *nodeLoop.init);
@@ -133,7 +136,7 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
     (*c)->append(
       CodegenASTStmtIf::create(
         CodegenASTExprUnary::create("!", cCond->wrap()),
-        CodegenASTStmtReturn::create(afterBodyAsyncCounter)
+        CodegenASTStmtReturn::create(this->state.asyncCounterLoopBreak)
       )
     );
   }
@@ -143,6 +146,7 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
   this->_block(c, nodeLoop.body);
 
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
+  *this->state.asyncCounterLoopContinue = this->state.asyncCounter;
 
   if (nodeLoop.upd != std::nullopt) {
     auto cUpd = this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, c, true);
@@ -172,7 +176,7 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
     );
   }
 
-  *afterBodyAsyncCounter = this->state.asyncCounter;
+  *this->state.asyncCounterLoopBreak = this->state.asyncCounter;
 
   if (!saveStateCleanUp.empty()) {
     saveStateCleanUp.genAsync(c, this->state.asyncCounter);

@@ -195,16 +195,29 @@ bool CodegenASTStmt::hasBody () const {
 }
 
 std::shared_ptr<CodegenASTStmt> CodegenASTStmt::increaseAsyncCounter (std::size_t &counter) {
-  if (!this->asCompound().body.empty()) {
-    return this->exit()->exit()->append(
-      CodegenASTStmtCase::create(
-        CodegenASTExprLiteral::create(std::to_string(++counter)),
-        CodegenASTStmtCompound::create()
-      )
-    );
+  auto isEmpty = true;
+
+  for (const auto &it : this->asCompound().body) {
+    if (!it->isNull() && !it->isExprNull()) {
+      isEmpty = false;
+      break;
+    }
   }
 
-  return this->getptr();
+  if (isEmpty) {
+    return this->getptr();
+  }
+
+  return this->exit()->exit()->append(
+    CodegenASTStmtCase::create(
+      CodegenASTExprLiteral::create(std::to_string(++counter)),
+      CodegenASTStmtCompound::create()
+    )
+  );
+}
+
+bool CodegenASTStmt::isExprNull () const {
+  return this->isExpr() && this->asExpr().expr->isNull();
 }
 
 std::shared_ptr<CodegenASTStmt> CodegenASTStmt::getptr () {
@@ -306,7 +319,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtCase::create (
 
 std::string CodegenASTStmtCase::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
-  result += this->test == nullptr ? "default" : "case " + this->test->str();
+  result += (this->test == nullptr || this->test->isNull()) ? "default" : "case " + this->test->str();
   result += ": " + this->body->str(indent, false);
   result += root ? EOL : "";
   return result;
@@ -347,12 +360,11 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtExpr::create (const std::shared_pt
 }
 
 std::string CodegenASTStmtExpr::str (std::size_t indent, bool root) const {
-  auto code = this->expr->str();
-
-  if (code.empty()) {
+  if (this->expr->isNull()) {
     return "";
   }
 
+  auto code = this->expr->str();
   return (root ? std::string(indent, ' ') : "") + code + ";" + (root ? EOL : "");
 }
 
@@ -368,20 +380,20 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtFor::create (
 std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "for (";
-  if (this->init != nullptr) {
+  if (this->init != nullptr && !this->init->isNull()) {
     result += this->init->str(indent, false);
   } else {
     result += ";";
   }
-  if (this->cond != nullptr) {
+  if (this->cond != nullptr && !this->cond->isNull()) {
     result += " " + this->cond->str();
   }
   result += ";";
-  if (this->upd != nullptr) {
+  if (this->upd != nullptr && !this->upd->isNull()) {
     result += " " + this->upd->str();
   }
   result += ")";
-  if (this->body != nullptr) {
+  if (this->body != nullptr && !this->body->isNull()) {
     result += " " + this->body->str(indent, false);
   } else {
     result += ";";
@@ -409,7 +421,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtIf::create (
 std::string CodegenASTStmtIf::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "if (" + this->cond->str() + ") " + this->body->str(indent, false);
-  if (this->alt != nullptr) {
+  if (this->alt != nullptr && !this->alt->isNull()) {
     result += " else " + this->alt->str(indent, false);
   }
   result += root ? EOL : "";
@@ -448,7 +460,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtReturn::create (const std::shared_
 std::string CodegenASTStmtReturn::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "return";
-  if (this->arg != nullptr) {
+  if (this->arg != nullptr && !this->arg->isNull()) {
     result += " " + this->arg->str();
   } else if (this->asyncPtr != std::nullopt) {
     result += " " + std::to_string(**this->asyncPtr);
@@ -487,7 +499,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtVarDecl::create (
 std::string CodegenASTStmtVarDecl::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += this->type.strDecl() + this->id->str();
-  if (this->init != nullptr) {
+  if (this->init != nullptr && !this->init->isNull()) {
     result += " = " + this->init->str();
   }
   result += ";";
@@ -505,7 +517,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtWhile::create (
 std::string CodegenASTStmtWhile::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "while (" + this->cond->str() + ")";
-  if (this->body != nullptr) {
+  if (this->body != nullptr && !this->body->isNull()) {
     result += " " + this->body->str(indent, false);
   } else {
     result += ";";

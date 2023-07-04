@@ -21,7 +21,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
   auto line = std::to_string(nodeExpr.start.line);
   auto col = std::to_string(nodeExpr.start.col + 1);
   auto exprAccess = std::get<ASTExprAccess>(*nodeExpr.body);
-  auto expr = std::shared_ptr<CodegenASTExpr>{};
+  auto expr = CodegenASTExprNull::create();
 
   if (exprAccess.expr != std::nullopt && std::holds_alternative<std::shared_ptr<Var>>(*exprAccess.expr)) {
     auto objVar = std::get<std::shared_ptr<Var>>(*exprAccess.expr);

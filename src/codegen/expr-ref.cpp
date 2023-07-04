@@ -19,7 +19,7 @@
 std::shared_ptr<CodegenASTExpr> Codegen::_exprRef (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprRef = std::get<ASTExprRef>(*nodeExpr.body);
   auto wrapAsRoot = targetType->isAny() || root;
-  auto expr = std::shared_ptr<CodegenASTExpr>{};
+  auto expr = CodegenASTExprNull::create();
 
   if (targetType->isOpt()) {
     auto optTargetType = std::get<TypeOptional>(targetType->body).type;

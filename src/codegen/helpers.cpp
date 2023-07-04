@@ -542,7 +542,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genFreeFn (Type *type, const std::shar
 }
 
 std::shared_ptr<CodegenASTExpr> Codegen::_genReallocFn (Type *type, const std::shared_ptr<CodegenASTExpr> &leftExpr, const std::shared_ptr<CodegenASTExpr> &rightExpr) {
-  auto result = std::shared_ptr<CodegenASTExpr>{};
+  auto result = CodegenASTExprNull::create();
 
   if (type->isAny()) {
     result = CodegenASTExprAssign::create(

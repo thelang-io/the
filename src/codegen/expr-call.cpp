@@ -125,7 +125,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
   auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
   auto calleeTypeInfo = this->_typeInfo(exprCall.callee.type);
   auto fnType = std::get<TypeFn>(calleeTypeInfo.realType->body);
-  auto expr = std::shared_ptr<CodegenASTExpr>{};
+  auto expr = CodegenASTExprNull::create();
 
   if (calleeTypeInfo.realType->builtin && calleeTypeInfo.realType->codeName == "@print") {
     auto separator = CodegenASTExprLiteral::create(R"(" ")");
@@ -306,7 +306,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
       }
     }
 
-    auto cParams = std::shared_ptr<CodegenASTExpr>{};
+    auto cParams = CodegenASTExprNull::create();
 
     if (hasParams) {
       cParams = CodegenASTExprCall::create(

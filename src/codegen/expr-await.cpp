@@ -29,7 +29,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
   auto expr = nodeExpr.type->isVoid() || root
-    ? CodegenASTExprLiteral::create("")
+    ? CodegenASTExprNull::create()
     : CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("t" + std::to_string(exprAwait.id)));
 
   return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);

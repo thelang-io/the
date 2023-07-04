@@ -110,6 +110,8 @@ struct CodegenState {
   bool insideAsync = false;
   std::map<std::string, Type *> typeCasts = {};
   std::size_t asyncCounter = 0;
+  std::shared_ptr<std::size_t> asyncCounterLoopBreak = nullptr;
+  std::shared_ptr<std::size_t> asyncCounterLoopContinue = nullptr;
 };
 
 struct CodegenTypeInfo {

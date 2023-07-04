@@ -42,6 +42,9 @@ const CodegenASTExprInitList &CodegenASTExpr::asInitList () const { return std::
 CodegenASTExprLiteral &CodegenASTExpr::asLiteral () { return std::get<CodegenASTExprLiteral>(*this->body); }
 const CodegenASTExprLiteral &CodegenASTExpr::asLiteral () const { return std::get<CodegenASTExprLiteral>(*this->body); }
 // NOLINTNEXTLINE(readability-make-member-function-const)
+CodegenASTExprNull &CodegenASTExpr::asNull () { return std::get<CodegenASTExprNull>(*this->body); }
+const CodegenASTExprNull &CodegenASTExpr::asNull () const { return std::get<CodegenASTExprNull>(*this->body); }
+// NOLINTNEXTLINE(readability-make-member-function-const)
 CodegenASTExprUnary &CodegenASTExpr::asUnary () { return std::get<CodegenASTExprUnary>(*this->body); }
 const CodegenASTExprUnary &CodegenASTExpr::asUnary () const { return std::get<CodegenASTExprUnary>(*this->body); }
 bool CodegenASTExpr::isAccess () const { return std::holds_alternative<CodegenASTExprAccess>(*this->body); }
@@ -52,6 +55,7 @@ bool CodegenASTExpr::isCast () const { return std::holds_alternative<CodegenASTE
 bool CodegenASTExpr::isCond () const { return std::holds_alternative<CodegenASTExprCond>(*this->body); }
 bool CodegenASTExpr::isInitList () const { return std::holds_alternative<CodegenASTExprInitList>(*this->body); }
 bool CodegenASTExpr::isLiteral () const { return std::holds_alternative<CodegenASTExprLiteral>(*this->body); }
+bool CodegenASTExpr::isNull () const { return std::holds_alternative<CodegenASTExprNull>(*this->body); }
 bool CodegenASTExpr::isUnary () const { return std::holds_alternative<CodegenASTExprUnary>(*this->body); }
 
 void exprVectorParent (
@@ -140,6 +144,8 @@ std::string CodegenASTExpr::str () const {
     result = this->asInitList().str();
   } else if (this->isLiteral()) {
     result = this->asLiteral().str();
+  } else if (this->isNull()) {
+    result = this->asNull().str();
   } else if (this->isUnary()) {
     result = this->asUnary().str();
   }
@@ -230,11 +236,14 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExprCall::create (
 
 std::string CodegenASTExprCall::str () const {
   auto argsStr = std::string();
-  for (const auto &arg : this->exprArgs) {
-    argsStr += ", " + arg->str();
+  for (const auto &it : this->exprArgs) {
+    if (it->isNull()) {
+      continue;
+    }
+    argsStr += ", " + it->str();
   }
-  for (const auto &arg : this->typeArgs) {
-    argsStr += ", " + arg.strDef();
+  for (const auto &it : this->typeArgs) {
+    argsStr += ", " + it.strDef();
   }
   argsStr = argsStr.empty() ? argsStr : argsStr.substr(2);
   return this->callee->str() + "(" + argsStr + ")";
@@ -271,8 +280,11 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExprInitList::create (
 
 std::string CodegenASTExprInitList::str () const {
   auto itemsStr = std::string();
-  for (const auto &item : this->items) {
-    itemsStr += ", " + item->str();
+  for (const auto &it : this->items) {
+    if (it->isNull()) {
+      continue;
+    }
+    itemsStr += ", " + it->str();
   }
   itemsStr = itemsStr.empty() ? itemsStr : itemsStr.substr(2);
   return "{" + itemsStr + "}";
@@ -284,6 +296,15 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExprLiteral::create (const std::string
 
 std::string CodegenASTExprLiteral::str () const {
   return this->val;
+}
+
+std::shared_ptr<CodegenASTExpr> CodegenASTExprNull::create () {
+  return CodegenASTExpr::create(CodegenASTExprNull{});
+}
+
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+std::string CodegenASTExprNull::str () const {
+  return "";
 }
 
 std::shared_ptr<CodegenASTExpr> CodegenASTExprUnary::create (

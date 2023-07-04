@@ -30,6 +30,7 @@ struct CodegenASTExprCast;
 struct CodegenASTExprCond;
 struct CodegenASTExprInitList;
 struct CodegenASTExprLiteral;
+struct CodegenASTExprNull;
 struct CodegenASTExprUnary;
 
 struct CodegenASTStmtBreak;
@@ -79,6 +80,7 @@ using CodegenASTExprBody = std::variant<
   CodegenASTExprCond,
   CodegenASTExprInitList,
   CodegenASTExprLiteral,
+  CodegenASTExprNull,
   CodegenASTExprUnary
 >;
 
@@ -147,6 +149,7 @@ struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
   bool isContinue () const;
   bool isEnumDecl () const;
   bool isExpr () const;
+  bool isExprNull () const;
   bool isFnDecl () const;
   bool isFor () const;
   bool isGoto () const;
@@ -190,6 +193,8 @@ struct CodegenASTExpr : public std::enable_shared_from_this<CodegenASTExpr> {
   const CodegenASTExprInitList &asInitList () const;
   CodegenASTExprLiteral &asLiteral ();
   const CodegenASTExprLiteral &asLiteral () const;
+  CodegenASTExprNull &asNull ();
+  const CodegenASTExprNull &asNull () const;
   CodegenASTExprUnary &asUnary ();
   const CodegenASTExprUnary &asUnary () const;
   std::shared_ptr<CodegenASTExpr> getptr ();
@@ -203,6 +208,7 @@ struct CodegenASTExpr : public std::enable_shared_from_this<CodegenASTExpr> {
   bool isEmptyString () const;
   bool isInitList () const;
   bool isLiteral () const;
+  bool isNull () const;
   bool isPointer () const;
   bool isUnary () const;
   std::shared_ptr<CodegenASTStmt> stmt ();
@@ -283,6 +289,11 @@ struct CodegenASTExprLiteral {
   std::string val;
 
   static std::shared_ptr<CodegenASTExpr> create (const std::string &);
+  std::string str () const;
+};
+
+struct CodegenASTExprNull {
+  static std::shared_ptr<CodegenASTExpr> create ();
   std::string str () const;
 };
 
