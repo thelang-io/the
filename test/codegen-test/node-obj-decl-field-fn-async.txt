@@ -154,17 +154,9 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct
   return n2;
 }
 int __THE_1_job1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 int __THE_1_job2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 

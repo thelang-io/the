@@ -53,17 +53,9 @@ int __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *,
 int __THE_1_mainSDtest2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 
 int __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 int __THE_1_mainSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 

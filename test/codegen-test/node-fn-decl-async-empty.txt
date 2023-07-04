@@ -232,10 +232,6 @@ void *xalloc (void *n1, size_t n2) {
   return r;
 }
 int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 

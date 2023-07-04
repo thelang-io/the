@@ -455,15 +455,13 @@ int __THE_1_TestSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, vo
   const struct str __THE_0_a_0 = p->n0;
   switch (step) {
     case 0: {
-      if (!(str_eq_cstr(str_copy(__THE_0_a_0), "5"))) {
-        return 1;
-      }
+      if (!(str_eq_cstr(str_copy(__THE_0_a_0), "5"))) return 1;
       *r = 1;
       *v = str_alloc("5");
-      goto L0;
     }
     case 1: {
       *v = str_alloc("1");
+      str_free((struct str) __THE_0_a_0);
     }
   }
   return -1;

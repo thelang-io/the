@@ -360,7 +360,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
             CodegenASTExprAccess::create(this->_("xalloc")),
             {CodegenASTExprAccess::create(fnName, "x"), CodegenASTExprAccess::create(fnName, "l")}
           ),
-          cParams != nullptr ? cParams : CodegenASTExprAccess::create(this->_("NULL")),
+          !cParams->isNull() ? cParams : CodegenASTExprAccess::create(this->_("NULL")),
           CodegenASTExprAccess::create(
             root || fnType.returnType->isVoid()
               ? this->_("NULL")
@@ -381,7 +381,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
         cArgs.push_back(CodegenASTExprAccess::create(fnName, "x"));
       }
 
-      if (cParams != nullptr) {
+      if (!cParams->isNull()) {
         cArgs.push_back(cParams);
       }
 

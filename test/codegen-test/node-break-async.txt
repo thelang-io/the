@@ -406,10 +406,6 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 int __THE_1_a_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
@@ -421,13 +417,11 @@ int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   unsigned char *b1 = &x->b1;
   switch (step) {
     case 0: {
-      *b1 = 0;
       *__THE_0_i_0 = 0;
     }
     case 1: {
-      if (!(*__THE_0_i_0 < 10)) {
-        return 8;
-      }
+      *b1 = 0;
+      if (!(*__THE_0_i_0 < 10)) return 7;
       threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, threadpool_job_ref(job));
       return 2;
     }
@@ -437,11 +431,9 @@ int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
       return 3;
     }
     case 3: {
-      if (!(*__THE_0_i_0 == 5)) {
-        return 4;
-      }
+      if (!(*__THE_0_i_0 == 5)) return 4;
       *b1 = 1;
-      return 8;
+      return 7;
     }
     case 4: {
       threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, threadpool_job_ref(job));
@@ -453,64 +445,52 @@ int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
       return 6;
     }
     case 6: {
-    }
-    case 7: {
       (*__THE_0_i_0)++;
       return 1;
     }
-    case 8: {
-      *b1 = 0;
+    case 7: {
       *__THE_0_j_0 = 0;
     }
-    case 9: {
-      if (!(*__THE_0_j_0 < 10)) {
-        return 13;
-      }
+    case 8: {
+      *b1 = 0;
+      if (!(*__THE_0_j_0 < 10)) return 12;
       threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 10;
+      return 9;
+    }
+    case 9: {
+      print(stdout, "zziz", "2 start", " ", *__THE_0_j_0, THE_EOL);
+      if (!(*__THE_0_j_0 == 5)) return 10;
+      *b1 = 1;
+      return 12;
     }
     case 10: {
-      print(stdout, "zziz", "2 start", " ", *__THE_0_j_0, THE_EOL);
-      if (!(*__THE_0_j_0 == 5)) {
-        return 11;
-      }
-      *b1 = 1;
-      return 13;
-    }
-    case 11: {
       print(stdout, "zziz", "2 end", " ", *__THE_0_j_0, THE_EOL);
     }
-    case 12: {
+    case 11: {
       (*__THE_0_j_0)++;
-      return 9;
+      return 8;
+    }
+    case 12: {
+      *__THE_0_k_0 = 0;
     }
     case 13: {
       *b1 = 0;
-      *__THE_0_k_0 = 0;
-    }
-    case 14: {
-      if (!(*__THE_0_k_0 < 10)) {
-        return 18;
-      }
+      if (!(*__THE_0_k_0 < 10)) return 16;
       print(stdout, "zziz", "3 start", " ", *__THE_0_k_0, THE_EOL);
-      if (!(*__THE_0_k_0 == 5)) {
-        return 15;
-      }
+      if (!(*__THE_0_k_0 == 5)) return 14;
       *b1 = 1;
-      return 18;
-    }
-    case 15: {
-      print(stdout, "zziz", "3 end", " ", *__THE_0_k_0, THE_EOL);
-      threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, threadpool_job_ref(job));
       return 16;
     }
-    case 16: {
+    case 14: {
+      print(stdout, "zziz", "3 end", " ", *__THE_0_k_0, THE_EOL);
+      threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, threadpool_job_ref(job));
+      return 15;
     }
-    case 17: {
+    case 15: {
       (*__THE_0_k_0)++;
-      return 14;
+      return 13;
     }
-    case 18: {
+    case 16: {
     }
   }
   return -1;

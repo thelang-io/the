@@ -138,10 +138,6 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 int __THE_1_testFn_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 struct any __THE_1_any_fn$1000_alloc (struct __THE_1_fn$1000 d) {

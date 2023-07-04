@@ -129,10 +129,6 @@ struct __THE_1_fn$1000 __THE_1_fn$1000_realloc (struct __THE_1_fn$1000 n1, struc
   return n2;
 }
 int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 

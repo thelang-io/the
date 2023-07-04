@@ -414,10 +414,6 @@ struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000 n) {
   return str_alloc("[Function]");
 }
 int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {

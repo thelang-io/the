@@ -271,10 +271,6 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
   free(n);
 }
 int __THE_1_TestSDdo_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
