@@ -324,10 +324,6 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  switch (step) {
-    case 0: {
-    }
-  }
   return -1;
 }
 int __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
@@ -351,9 +347,7 @@ int __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void 
       *__THE_0_i_0 = 0;
     }
     case 1: {
-      if (!(*__THE_0_i_0 < 3)) {
-        return 5;
-      }
+      if (!(*__THE_0_i_0 < 3)) return 4;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
       return 2;
     }
@@ -363,237 +357,197 @@ int __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void 
       return 3;
     }
     case 3: {
-    }
-    case 4: {
       (*__THE_0_i_0)++;
       return 1;
     }
-    case 5: {
-      *b1 = 0;
+    case 4: {
       *__THE_0_i_1 = 0;
     }
-    case 6: {
-      if (!(*__THE_0_i_1 < 10)) {
-        return 11;
-      }
+    case 5: {
+      *b1 = 0;
+      if (!(*__THE_0_i_1 < 10)) return 9;
       *__THE_0_j_0 += *__THE_0_i_1;
+      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
+      return 6;
+    }
+    case 6: {
+      if (!(*__THE_0_j_0 > 10)) return 8;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
       return 7;
     }
     case 7: {
-      if (!(*__THE_0_j_0 > 10)) {
-        return 9;
-      }
-      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 8;
+      *b1 = 1;
+      return 9;
     }
     case 8: {
-      *b1 = 1;
-      return 11;
+      (*__THE_0_i_1)++;
+      return 5;
     }
     case 9: {
-    }
-    case 10: {
-      (*__THE_0_i_1)++;
-      return 6;
-    }
-    case 11: {
-      *c1 = 0;
       *__THE_0_i_1 = 0;
     }
-    case 12: {
-      if (!(*__THE_0_i_1 < 10)) {
-        return 18;
-      }
+    case 10: {
+      *c1 = 0;
+      if (!(*__THE_0_i_1 < 10)) return 16;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 13;
+      return 11;
+    }
+    case 11: {
+      if (!((*__THE_0_j_0 / 2) * 2 != *__THE_0_j_0)) return 13;
+      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
+      return 12;
+    }
+    case 12: {
+      *c1 = 1;
+      return 15;
     }
     case 13: {
-      if (!((*__THE_0_j_0 / 2) * 2 != *__THE_0_j_0)) {
-        return 15;
-      }
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
       return 14;
     }
     case 14: {
-      *c1 = 1;
-      return 17;
-    }
-    case 15: {
-      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 16;
-    }
-    case 16: {
       *__THE_0_j_0 += *__THE_0_i_1;
     }
-    case 17: {
+    case 15: {
       (*__THE_0_i_1)++;
-      return 12;
+      return 10;
     }
-    case 18: {
-      *c1 = 0;
+    case 16: {
       *__THE_0_i_1 = 0;
     }
-    case 19: {
-      if (!(*__THE_0_i_1 < 10)) {
-        return 25;
-      }
+    case 17: {
+      *c1 = 0;
+      if (!(*__THE_0_i_1 < 10)) return 23;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 20;
+      return 18;
+    }
+    case 18: {
+      (*__THE_0_i_1)++;
+      if (!(*__THE_0_i_1 % 2)) return 20;
+      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
+      return 19;
+    }
+    case 19: {
+      *c1 = 1;
+      return 22;
     }
     case 20: {
-      (*__THE_0_i_1)++;
-      if (!(*__THE_0_i_1 % 2)) {
-        return 22;
-      }
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
       return 21;
     }
     case 21: {
-      *c1 = 1;
-      return 24;
-    }
-    case 22: {
-      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 23;
-    }
-    case 23: {
       *__THE_0_j_0 += *__THE_0_i_1;
     }
-    case 24: {
-      return 19;
+    case 22: {
+      return 17;
     }
-    case 25: {
+    case 23: {
       *__THE_0_i_1 = 0;
     }
-    case 26: {
-      if (!(*__THE_0_i_1 < 3)) {
-        return 30;
-      }
+    case 24: {
+      if (!(*__THE_0_i_1 < 3)) return 27;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 27;
+      return 25;
     }
-    case 27: {
+    case 25: {
       (*__THE_0_j_0)++;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 28;
-    }
-    case 28: {
-    }
-    case 29: {
-      (*__THE_0_i_1)++;
       return 26;
     }
-    case 30: {
+    case 26: {
+      (*__THE_0_i_1)++;
+      return 24;
+    }
+    case 27: {
       *__THE_0_i_1 = 100;
     }
-    case 31: {
-      if (!(*__THE_0_i_1 > 0)) {
-        return 35;
-      }
+    case 28: {
+      if (!(*__THE_0_i_1 > 0)) return 31;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 32;
+      return 29;
     }
-    case 32: {
+    case 29: {
       *__THE_0_i_2 = 0;
       *__THE_0_j_1 = *__THE_0_j_0 * 2 + *__THE_0_i_2;
+      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
+      return 30;
+    }
+    case 30: {
+      (*__THE_0_i_1)--;
+      return 28;
+    }
+    case 31: {
+      *__THE_0_i_0 = 0;
+    }
+    case 32: {
+      if (!(*__THE_0_i_0 < 10)) return 38;
+      *__THE_0_k_1 = *__THE_0_i_0;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
       return 33;
     }
     case 33: {
-    }
-    case 34: {
-      (*__THE_0_i_1)--;
-      return 31;
-    }
-    case 35: {
-      *__THE_0_i_0 = 0;
-    }
-    case 36: {
-      if (!(*__THE_0_i_0 < 10)) {
-        return 44;
-      }
-      *__THE_0_k_1 = *__THE_0_i_0;
-      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 37;
-    }
-    case 37: {
       *__THE_0_i_1 = *__THE_0_k_1;
     }
-    case 38: {
-      if (!(*__THE_0_i_1 < 10)) {
-        return 42;
-      }
+    case 34: {
+      if (!(*__THE_0_i_1 < 10)) return 37;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 39;
+      return 35;
+    }
+    case 35: {
+      (*__THE_0_j_0)++;
+      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
+      return 36;
+    }
+    case 36: {
+      (*__THE_0_i_1)++;
+      return 34;
+    }
+    case 37: {
+      (*__THE_0_i_0)++;
+      return 32;
+    }
+    case 38: {
+      *__THE_0_i_1 = 0;
     }
     case 39: {
-      (*__THE_0_j_0)++;
+      if (!(*__THE_0_i_1 < 10)) return 48;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
       return 40;
     }
     case 40: {
-    }
-    case 41: {
-      (*__THE_0_i_1)++;
-      return 38;
-    }
-    case 42: {
-    }
-    case 43: {
-      (*__THE_0_i_0)++;
-      return 36;
-    }
-    case 44: {
-      *__THE_0_i_1 = 0;
-    }
-    case 45: {
-      if (!(*__THE_0_i_1 < 10)) {
-        return 55;
-      }
-      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 46;
-    }
-    case 46: {
-      *b2 = 0;
       *__THE_0_j_1 = 0;
     }
-    case 47: {
-      if (!(*__THE_0_j_1 < 10)) {
-        return 53;
-      }
+    case 41: {
+      *b2 = 0;
+      if (!(*__THE_0_j_1 < 10)) return 47;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 48;
+      return 42;
     }
-    case 48: {
-      if (!((*__THE_0_i_1 / 2) * 2 == *__THE_0_i_1)) {
-        return 50;
-      }
+    case 42: {
+      if (!((*__THE_0_i_1 / 2) * 2 == *__THE_0_i_1)) return 44;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 49;
+      return 43;
     }
-    case 49: {
+    case 43: {
       *b2 = 1;
-      return 53;
-    }
-    case 50: {
-      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
-      return 51;
-    }
-    case 51: {
-      *__THE_0_k_0 += *__THE_0_i_1;
-    }
-    case 52: {
-      (*__THE_0_j_1)++;
       return 47;
     }
-    case 53: {
-    }
-    case 54: {
-      (*__THE_0_i_1)++;
+    case 44: {
+      threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, threadpool_job_ref(job));
       return 45;
     }
-    case 55: {
+    case 45: {
+      *__THE_0_k_0 += *__THE_0_i_1;
+    }
+    case 46: {
+      (*__THE_0_j_1)++;
+      return 41;
+    }
+    case 47: {
+      (*__THE_0_i_1)++;
+      return 39;
+    }
+    case 48: {
     }
   }
   return -1;

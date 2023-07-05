@@ -189,5 +189,7 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
   this->state.cleanUp.breakVarIdx -= 1;
   this->state.cleanUp.continueVarIdx -= 1;
   this->state.cleanUp = initialStateCleanUp;
+  this->state.asyncCounterLoopBreak = initialStateAsyncCounterLoopBreak;
+  this->state.asyncCounterLoopContinue = initialStateAsyncCounterLoopContinue;
   this->varMap.restore();
 }

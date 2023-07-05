@@ -433,9 +433,7 @@ int __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void 
       *__THE_0_i_0 = 0;
     }
     case 1: {
-      if (!(*__THE_0_i_0 < 10)) {
-        return 9;
-      }
+      if (!(*__THE_0_i_0 < 10)) return 8;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn$1000P) {str_alloc("outer1"), *__THE_0_i_0}, sizeof(struct __THE_1_fn$1000P)), NULL, threadpool_job_ref(job));
       return 2;
     }
@@ -445,31 +443,27 @@ int __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void 
       *__THE_0_j_0 = 0;
     }
     case 3: {
-      if (!(*__THE_0_j_0 < 10)) {
-        return 6;
-      }
+      if (!(*__THE_0_j_0 < 10)) return 5;
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn$1000P) {str_alloc(""), *__THE_0_j_0}, sizeof(struct __THE_1_fn$1000P)), NULL, threadpool_job_ref(job));
       return 4;
     }
     case 4: {
-    }
-    case 5: {
       (*__THE_0_j_0)++;
       return 3;
     }
-    case 6: {
+    case 5: {
       print(stdout, "z", THE_EOL);
       threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn$1000P) {str_alloc("outer2"), *__THE_0_i_0}, sizeof(struct __THE_1_fn$1000P)), NULL, threadpool_job_ref(job));
-      return 7;
+      return 6;
     }
-    case 7: {
+    case 6: {
       print(stdout, "z", THE_EOL);
     }
-    case 8: {
+    case 7: {
       (*__THE_0_i_0)++;
       return 1;
     }
-    case 9: {
+    case 8: {
     }
   }
   return -1;

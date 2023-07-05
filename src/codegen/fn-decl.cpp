@@ -40,15 +40,26 @@ void Codegen::_fnDecl (
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
   auto asyncBreakNodesCount = Codegen::countAsyncLoopDepth<ASTNodeBreak>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
-  auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{});
+  auto asyncFlattenBody = fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{};
+  auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(asyncFlattenBody);
   auto awaitExprCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
 
   awaitExprCalls.erase(std::remove_if(awaitExprCalls.begin(), awaitExprCalls.end(), [] (const auto &it) -> bool {
     return !std::holds_alternative<ASTExprAwait>(*it.body) || it.type->isVoid();
   }), awaitExprCalls.end());
 
+  auto hasAsyncReturn = false;
+
+  for (const auto &item : asyncFlattenBody) {
+    if (ASTChecker(item).is<ASTNodeReturn>() && !ASTChecker(item.parent).is<ASTNodeFnDecl>()) {
+      hasAsyncReturn = true;
+      break;
+    }
+  }
+
   auto hasStack = !stack.empty() ||
     !asyncBodyDeclarations.empty() ||
+    hasAsyncReturn ||
     asyncBreakNodesCount > 0 ||
     asyncContinueNodesCount > 0 ||
     !awaitExprCalls.empty();
@@ -80,6 +91,10 @@ void Codegen::_fnDecl (
           auto contextVarName = Codegen::name(asyncVar->codeName);
           auto typeInfo = this->_typeInfo(asyncVar->type);
           def += "  " + typeInfo.typeCode + contextVarName + ";" EOL;
+        }
+
+        if (hasAsyncReturn) {
+          def += "  unsigned char r;" EOL;
         }
 
         for (auto i = static_cast<std::size_t>(0); i < asyncBreakNodesCount; i++) {
@@ -196,6 +211,19 @@ void Codegen::_fnDecl (
               CodegenASTExprUnary::create(
                 "&",
                 CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), contextVarName, true)
+              )
+            )
+          );
+        }
+
+        if (hasAsyncReturn) {
+          cBody->append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create("unsigned char *"),
+              CodegenASTExprAccess::create("r"),
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), "r", true)
               )
             )
           );
@@ -353,18 +381,13 @@ void Codegen::_fnDecl (
         cBody->append(CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v")));
       }
 
-      if (this->state.cleanUp.returnVarUsed) {
+      if (this->state.cleanUp.returnVarUsed && !this->state.insideAsync) {
         auto returnVarDecl = CodegenASTStmtVarDecl::create(
           CodegenASTType::create("unsigned char"),
           CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar()),
           CodegenASTExprLiteral::create("0")
         );
-
-        if (this->state.insideAsync) {
-          cBody->exit()->exit()->exit()->prepend(returnVarDecl);
-        } else {
-          cBody->prepend(returnVarDecl);
-        }
+        cBody->prepend(returnVarDecl);
       }
 
       if (fnType.async && !body->empty()) {
