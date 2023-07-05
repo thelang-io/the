@@ -40,22 +40,13 @@ void Codegen::_fnDecl (
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
   auto asyncBreakNodesCount = Codegen::countAsyncLoopDepth<ASTNodeBreak>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
-  auto asyncFlattenBody = fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{};
-  auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(asyncFlattenBody);
+  auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{});
   auto awaitExprCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
+  auto hasAsyncReturn = fnType.async && ASTChecker(*body).has<ASTNodeReturn>();
 
   awaitExprCalls.erase(std::remove_if(awaitExprCalls.begin(), awaitExprCalls.end(), [] (const auto &it) -> bool {
     return !std::holds_alternative<ASTExprAwait>(*it.body) || it.type->isVoid();
   }), awaitExprCalls.end());
-
-  auto hasAsyncReturn = false;
-
-  for (const auto &item : asyncFlattenBody) {
-    if (ASTChecker(item).is<ASTNodeReturn>() && !ASTChecker(item.parent).is<ASTNodeFnDecl>()) {
-      hasAsyncReturn = true;
-      break;
-    }
-  }
 
   auto hasStack = !stack.empty() ||
     !asyncBodyDeclarations.empty() ||

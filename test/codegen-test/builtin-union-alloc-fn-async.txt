@@ -82,7 +82,9 @@ typedef struct threadpool_thread {
 } threadpool_thread_t;
 
 struct __THE_1_fn$1000;
+struct __THE_1_test1_0X;
 struct __THE_1_fn$1001;
+struct __THE_1_test2_0X;
 struct __THE_1_union_fn$1000USfn$1001UE;
 
 struct __THE_1_fn$1000 {
@@ -90,10 +92,16 @@ struct __THE_1_fn$1000 {
   void *x;
   size_t l;
 };
+struct __THE_1_test1_0X {
+  unsigned char r;
+};
 struct __THE_1_fn$1001 {
   int (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
+};
+struct __THE_1_test2_0X {
+  unsigned char r;
 };
 struct __THE_1_union_fn$1000USfn$1001UE {
   int t;
@@ -110,9 +118,11 @@ void error_alloc (err_state_t *, size_t);
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 int __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test1_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test1_0X);
 struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001);
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
 int __THE_1_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test2_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_test2_0X);
 struct __THE_1_union_fn$1000USfn$1001UE __THE_1_union_fn$1000USfn$1001UE_alloc (int, ...);
 void __THE_1_union_fn$1000USfn$1001UE_free (struct __THE_1_union_fn$1000USfn$1001UE);
 
@@ -147,11 +157,21 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 int __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test1_0X *x = px;
+  unsigned char *r = &x->r;
   switch (step) {
     case 0: {
     }
   }
   return -1;
+}
+void __THE_1_test1_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test1_0X x) {
+  size_t l = sizeof(struct __THE_1_test1_0X);
+  struct __THE_1_test1_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_test1_0;
+  n->x = r;
+  n->l = l;
 }
 struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {
   if (n.x == NULL) return n;
@@ -164,12 +184,22 @@ void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
 }
 int __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   int32_t *v = pv;
+  struct __THE_1_test2_0X *x = px;
+  unsigned char *r = &x->r;
   switch (step) {
     case 0: {
       *v = 1;
     }
   }
   return -1;
+}
+void __THE_1_test2_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_test2_0X x) {
+  size_t l = sizeof(struct __THE_1_test2_0X);
+  struct __THE_1_test2_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_test2_0;
+  n->x = r;
+  n->l = l;
 }
 struct __THE_1_union_fn$1000USfn$1001UE __THE_1_union_fn$1000USfn$1001UE_alloc (int t, ...) {
   struct __THE_1_union_fn$1000USfn$1001UE r = {t};
@@ -186,12 +216,16 @@ void __THE_1_union_fn$1000USfn$1001UE_free (struct __THE_1_union_fn$1000USfn$100
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test1_0;
+  const struct __THE_1_fn$1001 __THE_0_test2_0;
+  __THE_1_test1_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {});
+  __THE_1_test2_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_test2_0, (struct __THE_1_test2_0X) {});
   const struct __THE_1_union_fn$1000USfn$1001UE __THE_0_g1_0 = __THE_1_union_fn$1000USfn$1001UE_alloc(TYPE_fn$1000, __THE_1_fn$1000_copy(__THE_0_test1_0));
   const struct __THE_1_union_fn$1000USfn$1001UE __THE_0_g2_0 = __THE_1_union_fn$1000USfn$1001UE_alloc(TYPE_fn$1001, __THE_1_fn$1001_copy(__THE_0_test2_0));
   __THE_1_union_fn$1000USfn$1001UE_free((struct __THE_1_union_fn$1000USfn$1001UE) __THE_0_g2_0);
   __THE_1_union_fn$1000USfn$1001UE_free((struct __THE_1_union_fn$1000USfn$1001UE) __THE_0_g1_0);
+  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_test2_0);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0);
 }
 ======= flags =======
 ======= stdout =======

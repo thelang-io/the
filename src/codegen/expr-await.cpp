@@ -32,5 +32,9 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
     ? CodegenASTExprNull::create()
     : CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("t" + std::to_string(exprAwait.id)));
 
+  if (!root && nodeExpr.type->isRef() && !targetType->isRef()) {
+    expr = this->_genCopyFn(targetType, CodegenASTExprUnary::create("*", expr));
+  }
+
   return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
 }

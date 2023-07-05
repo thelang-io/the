@@ -102,6 +102,7 @@ struct __THE_1_fn$1001 {
 };
 struct __THE_1_testAnon_0X {
   const struct __THE_1_fn$1000 *__THE_0_test_0;
+  unsigned char r;
 };
 struct __THE_1_async_mainX {
   const struct __THE_1_fn$1001 *__THE_0_testAnon_0;
@@ -433,6 +434,7 @@ int __THE_1_testAnon_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void 
   struct __THE_1_fn$1000 *v = pv;
   struct __THE_1_testAnon_0X *x = px;
   const struct __THE_1_fn$1000 *__THE_0_test_0 = x->__THE_0_test_0;
+  unsigned char *r = &x->r;
   switch (step) {
     case 0: {
       *v = __THE_1_fn$1000_copy(*__THE_0_test_0);

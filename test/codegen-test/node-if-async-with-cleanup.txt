@@ -14,40 +14,40 @@ main {
     await test(1)
     c := "3"
   }
-  if a == 1 {
+  if a == "1" {
     await test(1)
-  } elif a == 2 {
+  } elif a == "2" {
     await test(2)
   }
-  if a == 1 {
+  if a == "1" {
     b := "2"
     await test(1)
-  } elif a == 2 {
+  } elif a == "2" {
     d := "4"
     await test(2)
   }
-  if a == 1 {
+  if a == "1" {
     b := "2"
     await test(1)
     c := "3"
-  } elif a == 2 {
+  } elif a == "2" {
     d := "4"
     await test(2)
     e := "5"
   }
-  if a == 1 {
+  if a == "1" {
     await test(1)
   } else {
     await test(3)
   }
-  if a == 1 {
+  if a == "1" {
     b := "2"
     await test(1)
   } else {
     d := "4"
     await test(3)
   }
-  if a == 1 {
+  if a == "1" {
     b := "2"
     await test(1)
     c := "3"
@@ -56,28 +56,28 @@ main {
     await test(3)
     e := "5"
   }
-  if a == 1 {
+  if a == "1" {
     await test(1)
-  } elif a == 2 {
+  } elif a == "2" {
     await test(2)
   } else {
     await test(3)
   }
-  if a == 1 {
+  if a == "1" {
     b := "2"
     await test(1)
-  } elif a == 2 {
+  } elif a == "2" {
     d := "4"
     await test(2)
   } else {
     f := "6"
     await test(3)
   }
-  if a == 1 {
+  if a == "1" {
     b := "2"
     await test(1)
     c := "3"
-  } elif a == 2 {
+  } elif a == "2" {
     d := "4"
     await test(2)
     e := "5"

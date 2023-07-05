@@ -113,6 +113,10 @@ struct __THE_1_fn$1001;
 struct __THE_1_fn$1001P;
 struct __THE_1_fn$1003P;
 struct __THE_1_doJob_0X;
+struct __THE_1_sum_0X;
+struct __THE_1_div_0X;
+struct __THE_1_sub_0X;
+struct __THE_1_mul_0X;
 struct __THE_1_async_mainX;
 
 struct __THE_1_fn$1000 {
@@ -150,6 +154,18 @@ struct __THE_1_fn$1003P {
 };
 struct __THE_1_doJob_0X {
   int32_t t1;
+};
+struct __THE_1_sum_0X {
+  unsigned char r;
+};
+struct __THE_1_div_0X {
+  unsigned char r;
+};
+struct __THE_1_sub_0X {
+  unsigned char r;
+};
+struct __THE_1_mul_0X {
+  unsigned char r;
 };
 struct __THE_1_async_mainX {
   const struct __THE_1_fn$1001 *__THE_0_mul_0;
@@ -191,9 +207,13 @@ void __THE_1_fn$1003_free (struct __THE_1_fn$1003);
 int __THE_1_doJob_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_doJob_0_alloc (struct __THE_1_fn$1003 *, struct __THE_1_doJob_0X);
 int __THE_1_sum_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_sum_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_sum_0X);
 int __THE_1_div_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_div_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_div_0X);
 int __THE_1_sub_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_sub_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_sub_0X);
 int __THE_1_mul_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_mul_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mul_0X);
 int __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *, struct __THE_1_async_mainX);
 
@@ -542,6 +562,8 @@ void __THE_1_doJob_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_doJob_0X x
 int __THE_1_sum_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   int32_t *v = pv;
   struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_sum_0X *x = px;
+  unsigned char *r = &x->r;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
@@ -551,9 +573,19 @@ int __THE_1_sum_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
   }
   return -1;
 }
+void __THE_1_sum_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_sum_0X x) {
+  size_t l = sizeof(struct __THE_1_sum_0X);
+  struct __THE_1_sum_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_sum_0;
+  n->x = r;
+  n->l = l;
+}
 int __THE_1_div_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   int32_t *v = pv;
   struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_div_0X *x = px;
+  unsigned char *r = &x->r;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
@@ -563,9 +595,19 @@ int __THE_1_div_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
   }
   return -1;
 }
+void __THE_1_div_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_div_0X x) {
+  size_t l = sizeof(struct __THE_1_div_0X);
+  struct __THE_1_div_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_div_0;
+  n->x = r;
+  n->l = l;
+}
 int __THE_1_sub_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   int32_t *v = pv;
   struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_sub_0X *x = px;
+  unsigned char *r = &x->r;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
@@ -575,9 +617,19 @@ int __THE_1_sub_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
   }
   return -1;
 }
+void __THE_1_sub_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_sub_0X x) {
+  size_t l = sizeof(struct __THE_1_sub_0X);
+  struct __THE_1_sub_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_sub_0;
+  n->x = r;
+  n->l = l;
+}
 int __THE_1_mul_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   int32_t *v = pv;
   struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_mul_0X *x = px;
+  unsigned char *r = &x->r;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
@@ -586,6 +638,14 @@ int __THE_1_mul_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
     }
   }
   return -1;
+}
+void __THE_1_mul_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mul_0X x) {
+  size_t l = sizeof(struct __THE_1_mul_0X);
+  struct __THE_1_mul_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_mul_0;
+  n->x = r;
+  n->l = l;
 }
 int __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_async_mainX *x = px;
@@ -638,17 +698,25 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_callback_0 = (struct __THE_1_fn$1000) {&__THE_1_callback_0, NULL, 0};
   const struct __THE_1_fn$1002 __THE_0_test_0 = (struct __THE_1_fn$1002) {&__THE_1_test_0, NULL, 0};
   const struct __THE_1_fn$1003 __THE_0_doJob_0;
-  const struct __THE_1_fn$1001 __THE_0_sum_0 = (struct __THE_1_fn$1001) {&__THE_1_sum_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_div_0 = (struct __THE_1_fn$1001) {&__THE_1_div_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_sub_0 = (struct __THE_1_fn$1001) {&__THE_1_sub_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_mul_0 = (struct __THE_1_fn$1001) {&__THE_1_mul_0, NULL, 0};
+  const struct __THE_1_fn$1001 __THE_0_sum_0;
+  const struct __THE_1_fn$1001 __THE_0_div_0;
+  const struct __THE_1_fn$1001 __THE_0_sub_0;
+  const struct __THE_1_fn$1001 __THE_0_mul_0;
   __THE_1_doJob_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_doJob_0, (struct __THE_1_doJob_0X) {});
+  __THE_1_sum_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_sum_0, (struct __THE_1_sum_0X) {});
+  __THE_1_div_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_div_0, (struct __THE_1_div_0X) {});
+  __THE_1_sub_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_sub_0, (struct __THE_1_sub_0X) {});
+  __THE_1_mul_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mul_0, (struct __THE_1_mul_0X) {});
   const struct __THE_1_fn$1000 async_main;
   __THE_1_async_main_alloc((struct __THE_1_fn$1000 *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_mul_0, &__THE_0_sub_0, &__THE_0_div_0, &__THE_0_sum_0, &__THE_0_doJob_0, &__THE_0_test_0, &__THE_0_callback_0});
   threadpool_add(tp, async_main.f, async_main.x, NULL, NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) async_main);
+  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mul_0);
+  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_sub_0);
+  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_div_0);
+  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_sum_0);
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_doJob_0);
 }
 ======= flags =======
