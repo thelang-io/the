@@ -763,6 +763,11 @@ class WebSocketServer extends EventEmitter {
     socket.on('data', this.handleData.bind(this, socket))
     this.clients.add(socket)
 
+    socket.on('error', () => {
+      socket.destroy()
+      this.clients.delete(socket)
+    })
+
     socket.on('close', () => {
       socket.destroy()
       this.clients.delete(socket)
