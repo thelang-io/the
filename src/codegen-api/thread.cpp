@@ -18,6 +18,7 @@
 #include "../config.hpp"
 
 // todo test thread_id
+// todo for some reason sometimes throws segmentation fault error
 
 const std::vector<std::string> codegenThread = {
   R"(void thread_sleep (_{int32_t} i) {)" EOL

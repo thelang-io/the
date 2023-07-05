@@ -59,6 +59,7 @@ void Codegen::_nodeIfAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &n
   auto nodeIf = std::get<ASTNodeIf>(*node.body);
   auto initialStateTypeCasts = this->state.typeCasts;
   auto afterBodyAsyncCounter = std::make_shared<std::size_t>(0);
+  auto afterAltAsyncCounter = std::make_shared<std::size_t>(0);
   auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
   auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
 
@@ -76,9 +77,11 @@ void Codegen::_nodeIfAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &n
   this->varMap.restore();
   this->state.typeCasts = initialStateTypeCasts;
 
-  auto cBody = *c;
-  *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
+  if (!(*c)->endsWith<CodegenASTStmtReturn>() && nodeIf.alt != std::nullopt) {
+    (*c)->append(CodegenASTStmtReturn::create(afterAltAsyncCounter));
+  }
 
+  *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
   *afterBodyAsyncCounter = this->state.asyncCounter;
 
   if (nodeIf.alt != std::nullopt) {
@@ -96,13 +99,6 @@ void Codegen::_nodeIfAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &n
     *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
   }
 
-  if (!ASTChecker(nodeIf.body).endsWithSyncBreaking() && *afterBodyAsyncCounter != this->state.asyncCounter) {
-    cBody->append(
-      CodegenASTStmtReturn::create(
-        CodegenASTExprLiteral::create(std::to_string(this->state.asyncCounter))
-      )
-    );
-  }
-
+  *afterAltAsyncCounter = this->state.asyncCounter;
   this->state.typeCasts = initialStateTypeCasts;
 }

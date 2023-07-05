@@ -290,7 +290,19 @@ void Codegen::_blockAsync (
         );
       }
 
-      // todo return
+      if (this->state.cleanUp.returnVarUsed) {
+        (*c)->append(
+          CodegenASTStmtIf::create(
+            CodegenASTExprBinary::create(
+              CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("r")),
+              "==",
+              CodegenASTExprLiteral::create("1")
+            ),
+            CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+          )
+        );
+      }
+
       // todo catch
     }
 

@@ -85,9 +85,15 @@ void Codegen::_nodeReturnAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNod
   }
 
   auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
-  auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast();
+  auto nodeIsLast = ASTChecker(node).isLast();
 
-  if ((!nodeParentFunction && this->state.cleanUp.empty()) || !nodeIsLast) {
+  if (this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
+    if (!nodeParentFunction || !nodeIsLast) {
+      (*c)->append(
+        CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
+      );
+    }
+  } else if (!nodeParentFunction || !nodeIsLast) {
     (*c)->append(CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1")));
   }
 }

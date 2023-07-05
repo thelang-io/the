@@ -166,6 +166,9 @@ struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
   void setIfAlt (const std::shared_ptr<CodegenASTStmt> &);
   std::string str (std::size_t = 0, bool = true) const;
 
+  template <typename T>
+  bool endsWith ();
+
  private:
   CodegenASTStmt () = default;
 };
@@ -427,5 +430,18 @@ struct CodegenASTStmtWhile {
   static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTStmt> & = nullptr);
   std::string str (std::size_t, bool) const;
 };
+
+template <typename T>
+bool CodegenASTStmt::endsWith () {
+  if (this->hasBody()) {
+    auto bodyStmt = this->getBody();
+
+    return bodyStmt->isCompound() &&
+      !bodyStmt->asCompound().body.empty() &&
+      std::holds_alternative<T>(*bodyStmt->asCompound().body[0]->body);
+  }
+
+  return false;
+}
 
 #endif

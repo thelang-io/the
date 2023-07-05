@@ -487,10 +487,12 @@ int __THE_1_TestSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, vo
       if (!(str_eq_cstr(str_copy(__THE_0_a_0), "5"))) return 1;
       *r = 1;
       *v = str_alloc("5");
-      return -1;
+      return 2;
     }
     case 1: {
       *v = str_alloc("1");
+    }
+    case 2: {
       str_free((struct str) __THE_0_a_0);
     }
   }
