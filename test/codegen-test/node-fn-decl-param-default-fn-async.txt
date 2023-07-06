@@ -432,6 +432,7 @@ int __THE_1_jobA_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   unsigned char *r = &x->r;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = str_alloc("a");
     }
   }
@@ -451,6 +452,7 @@ int __THE_1_jobA2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   unsigned char *r = &x->r;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = str_alloc("a2");
     }
   }
@@ -470,6 +472,7 @@ int __THE_1_jobB_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   unsigned char *r = &x->r;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = str_alloc("b");
     }
   }
@@ -489,6 +492,7 @@ int __THE_1_jobC_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   unsigned char *r = &x->r;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = str_alloc("c");
     }
   }
@@ -519,6 +523,7 @@ int __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   switch (step) {
     case 0: {
       __THE_1_test1SDjobTmp_0_alloc((struct __THE_1_fn$1000 *) __THE_0_test1SDjobTmp_0, (struct __THE_1_test1SDjobTmp_0X) {&__THE_0_c_0, &__THE_0_b_0, &__THE_0_a_0});
+      *r = 1;
       *v = __THE_1_fn$1000_copy(*__THE_0_test1SDjobTmp_0);
       __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_test1SDjobTmp_0);
       __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_c_0);

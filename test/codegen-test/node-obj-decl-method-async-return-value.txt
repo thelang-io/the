@@ -460,6 +460,7 @@ int __THE_1_TestSDtest1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, vo
   unsigned char *r = &x->r;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = str_alloc("test");
     }
   }
@@ -490,6 +491,7 @@ int __THE_1_TestSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, vo
       return 2;
     }
     case 1: {
+      *r = 1;
       *v = str_alloc("1");
     }
     case 2: {

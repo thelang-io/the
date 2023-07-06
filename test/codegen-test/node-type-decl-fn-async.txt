@@ -568,6 +568,7 @@ int __THE_1_sum_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = __THE_0_a_0 + __THE_0_b_0;
     }
   }
@@ -590,6 +591,7 @@ int __THE_1_div_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = __THE_0_a_0 / __THE_0_b_0;
     }
   }
@@ -612,6 +614,7 @@ int __THE_1_sub_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = __THE_0_a_0 - __THE_0_b_0;
     }
   }
@@ -634,6 +637,7 @@ int __THE_1_mul_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, 
   const int32_t __THE_0_b_0 = p->n1;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = __THE_0_a_0 * __THE_0_b_0;
     }
   }

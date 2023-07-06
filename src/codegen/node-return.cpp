@@ -58,21 +58,18 @@ void Codegen::_nodeReturn (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &no
 
 void Codegen::_nodeReturnAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeReturn = std::get<ASTNodeReturn>(*node.body);
-  auto parentNotRoot = this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT;
 
   auto cExpr = nodeReturn.body != std::nullopt
     ? this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c)
     : CodegenASTExprNull::create();
 
-  if (parentNotRoot && this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
-    (*c)->append(
-      CodegenASTExprAssign::create(
-        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar())),
-        "=",
-        CodegenASTExprLiteral::create("1")
-      )->stmt()
-    );
-  }
+  (*c)->append(
+    CodegenASTExprAssign::create(
+      CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar())),
+      "=",
+      CodegenASTExprLiteral::create("1")
+    )->stmt()
+  );
 
   if (!cExpr->isNull()) {
     (*c)->append(
@@ -87,7 +84,7 @@ void Codegen::_nodeReturnAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNod
   auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
   auto nodeIsLast = ASTChecker(node).isLast();
 
-  if (this->state.cleanUp.parent->hasCleanUp(CODEGEN_CLEANUP_FN)) {
+  if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
     if (!nodeParentFunction || !nodeIsLast) {
       (*c)->append(
         CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())

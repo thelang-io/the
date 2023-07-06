@@ -276,6 +276,7 @@ int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   unsigned char *r = &x->r;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = str_alloc("test");
     }
   }

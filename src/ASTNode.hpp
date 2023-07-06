@@ -29,9 +29,9 @@ struct ASTNodeIf;
 struct ASTNodeLoop;
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
-struct ASTNodeReturn; // todo async
-struct ASTNodeThrow; // todo async
-struct ASTNodeTry; // todo async
+struct ASTNodeReturn;
+struct ASTNodeThrow;
+struct ASTNodeTry;
 struct ASTNodeTypeDecl;
 struct ASTNodeVarDecl;
 

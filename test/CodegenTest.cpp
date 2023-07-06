@@ -1340,10 +1340,16 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return",
   "node-return-scope-cleanup",
+  "node-return-inside-loop",
+  "node-return-inside-loop-top-level",
+  "node-return-inside-loop-with-cleanup",
   "node-return-async",
   "node-return-async-with-value",
   "node-return-async-with-cleanup",
-  "node-return-async-with-cleanup-and-value"
+  "node-return-async-with-cleanup-and-value",
+  "node-return-async-inside-loop",
+  "node-return-async-inside-loop-top-level",
+  "node-return-async-inside-loop-with-cleanup"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenPassTest, testing::Values(

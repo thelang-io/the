@@ -430,6 +430,7 @@ int __THE_1_job1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   switch (step) {
     case 0: {
       *__THE_0_a_0 += 1;
+      *r = 1;
       *v = __THE_0_a_0;
     }
   }
@@ -460,6 +461,7 @@ int __THE_1_job2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   int32_t *__THE_0_a_0 = p->n0;
   switch (step) {
     case 0: {
+      *r = 1;
       *v = *__THE_0_a_0;
     }
   }

@@ -201,7 +201,9 @@ void Codegen::_block (
             "==",
             CodegenASTExprLiteral::create("1")
           ),
-          CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+          initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+            ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+            : CodegenASTStmtReturn::create()
         )
       );
     }
@@ -290,7 +292,7 @@ void Codegen::_blockAsync (
         );
       }
 
-      if (this->state.cleanUp.returnVarUsed) {
+      if (this->state.cleanUp.returnVarUsed && !this->state.cleanUp.empty()) {
         (*c)->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(

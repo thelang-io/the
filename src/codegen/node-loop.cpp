@@ -180,9 +180,23 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
 
   if (!saveStateCleanUp.empty()) {
     saveStateCleanUp.genAsync(c, this->state.asyncCounter);
-    *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
-    // todo return
+    if (saveStateCleanUp.returnVarUsed) {
+      (*c)->append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("r")),
+            "==",
+            CodegenASTExprLiteral::create("1")
+          ),
+          initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+            ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+            : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+        )
+      );
+    }
+
+    *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
     // todo catch
   }
 

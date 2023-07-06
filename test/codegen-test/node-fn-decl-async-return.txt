@@ -399,6 +399,7 @@ int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
   switch (step) {
     case 0: {
       if (!(__THE_0_i_0 == 2)) return 1;
+      *r = 1;
       return -1;
     }
     case 1: {

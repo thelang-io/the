@@ -442,6 +442,7 @@ int __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   switch (step) {
     case 0: {
       *__THE_0_a_0 = str_alloc("a");
+      *r = 1;
       str_free((struct str) *__THE_0_a_0);
     }
   }
@@ -462,6 +463,7 @@ int __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   switch (step) {
     case 0: {
       *__THE_0_a_0 = str_alloc("a");
+      *r = 1;
       str_free((struct str) *__THE_0_a_0);
     }
   }
