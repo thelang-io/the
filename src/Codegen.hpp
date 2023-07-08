@@ -173,7 +173,7 @@ class Codegen {
 
   // todo test
   template <typename T>
-  std::size_t countAsyncLoopDepth (const std::vector<ASTNode> &nodes, std::size_t prevDepth) {
+  static std::size_t countAsyncLoopDepth (const std::vector<ASTNode> &nodes, std::size_t prevDepth) {
     auto depth = prevDepth;
 
     for (const auto &node : nodes) {
