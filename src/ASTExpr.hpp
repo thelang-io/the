@@ -114,6 +114,7 @@ struct ASTNodeExpr {
   bool parenthesized = false;
   ReaderLocation start;
   ReaderLocation end;
+  ASTNodeExpr *parent = nullptr;
 
   bool isLit () const;
   std::string litBody () const;

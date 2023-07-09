@@ -76,14 +76,32 @@ void AST::populateParents (ASTBlock &nodes, ASTNode *parent) {
 void AST::populateParent (ASTNode &node, ASTNode *parent) {
   node.parent = parent;
 
-  if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+  if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
+    auto &nodeExpr = std::get<ASTNodeExpr>(*node.body);
+    AST::populateParentExpr(nodeExpr, nullptr);
+  } else if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
+    auto &nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
+
+    for (auto &member : nodeEnumDecl.members) {
+      if (member.init != std::nullopt) {
+        AST::populateParentExpr(*member.init, nullptr);
+      }
+    }
+  } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     auto &nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
 
     if (nodeFnDecl.body != std::nullopt) {
       AST::populateParents(*nodeFnDecl.body, &node);
     }
+
+    for (auto &param : nodeFnDecl.params) {
+      if (param.init != std::nullopt) {
+        AST::populateParentExpr(*param.init, nullptr);
+      }
+    }
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     auto &nodeIf = std::get<ASTNodeIf>(*node.body);
+    AST::populateParentExpr(nodeIf.cond, nullptr);
     AST::populateParents(nodeIf.body, &node);
 
     if (nodeIf.alt != std::nullopt && std::holds_alternative<ASTNode>(*nodeIf.alt)) {
@@ -98,6 +116,12 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
     if (nodeLoop.init != std::nullopt) {
       nodeLoop.init->parent = &node;
     }
+    if (nodeLoop.cond != std::nullopt) {
+      AST::populateParentExpr(*nodeLoop.cond, nullptr);
+    }
+    if (nodeLoop.upd != std::nullopt) {
+      AST::populateParentExpr(*nodeLoop.upd, nullptr);
+    }
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {
     auto &nodeMain = std::get<ASTNodeMain>(*node.body);
     AST::populateParents(nodeMain.body, &node);
@@ -109,6 +133,15 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
         AST::populateParents(*method.body, &node);
       }
     }
+  } else if (std::holds_alternative<ASTNodeReturn>(*node.body)) {
+    auto &nodeReturn = std::get<ASTNodeReturn>(*node.body);
+
+    if (nodeReturn.body != std::nullopt) {
+      AST::populateParentExpr(*nodeReturn.body, nullptr);
+    }
+  } else if (std::holds_alternative<ASTNodeThrow>(*node.body)) {
+    auto &nodeThrow = std::get<ASTNodeThrow>(*node.body);
+    AST::populateParentExpr(nodeThrow.arg, nullptr);
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
     auto &nodeTry = std::get<ASTNodeTry>(*node.body);
     AST::populateParents(nodeTry.body, &node);
@@ -116,6 +149,73 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
     for (auto &handler : nodeTry.handlers) {
       AST::populateParents(handler.body, &node);
     }
+  } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
+    auto &nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
+
+    if (nodeVarDecl.init != std::nullopt) {
+      AST::populateParentExpr(*nodeVarDecl.init, nullptr);
+    }
+  }
+}
+
+// todo test
+void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent) {
+  expr.parent = parent;
+
+  if (std::holds_alternative<ASTExprAccess>(*expr.body)) {
+    auto &exprAccess = std::get<ASTExprAccess>(*expr.body);
+    if (exprAccess.expr != std::nullopt && std::holds_alternative<ASTNodeExpr>(*exprAccess.expr)) {
+      AST::populateParentExpr(std::get<ASTNodeExpr>(*exprAccess.expr), &expr);
+    }
+    if (exprAccess.elem != std::nullopt) {
+      AST::populateParentExpr(*exprAccess.elem, &expr);
+    }
+  } else if (std::holds_alternative<ASTExprArray>(*expr.body)) {
+    auto &exprArray = std::get<ASTExprArray>(*expr.body);
+    for (auto &elem : exprArray.elements) {
+      AST::populateParentExpr(elem, &expr);
+    }
+  } else if (std::holds_alternative<ASTExprAssign>(*expr.body)) {
+    auto &exprAssign = std::get<ASTExprAssign>(*expr.body);
+    AST::populateParentExpr(exprAssign.left, &expr);
+    AST::populateParentExpr(exprAssign.right, &expr);
+  } else if (std::holds_alternative<ASTExprAwait>(*expr.body)) {
+    auto &exprAwait = std::get<ASTExprAwait>(*expr.body);
+    AST::populateParentExpr(exprAwait.arg, &expr);
+  } else if (std::holds_alternative<ASTExprBinary>(*expr.body)) {
+    auto &exprBinary = std::get<ASTExprBinary>(*expr.body);
+    AST::populateParentExpr(exprBinary.left, &expr);
+    AST::populateParentExpr(exprBinary.right, &expr);
+  } else if (std::holds_alternative<ASTExprCall>(*expr.body)) {
+    auto &exprCall = std::get<ASTExprCall>(*expr.body);
+    AST::populateParentExpr(exprCall.callee, &expr);
+    for (auto &arg : exprCall.args) {
+      AST::populateParentExpr(arg.expr, &expr);
+    }
+  } else if (std::holds_alternative<ASTExprCond>(*expr.body)) {
+    auto &exprCond = std::get<ASTExprCond>(*expr.body);
+    AST::populateParentExpr(exprCond.cond, &expr);
+    AST::populateParentExpr(exprCond.body, &expr);
+    AST::populateParentExpr(exprCond.alt, &expr);
+  } else if (std::holds_alternative<ASTExprIs>(*expr.body)) {
+    auto &exprIs = std::get<ASTExprIs>(*expr.body);
+    AST::populateParentExpr(exprIs.expr, &expr);
+  } else if (std::holds_alternative<ASTExprMap>(*expr.body)) {
+    auto &exprMap = std::get<ASTExprMap>(*expr.body);
+    for (auto &prop : exprMap.props) {
+      AST::populateParentExpr(prop.init, &expr);
+    }
+  } else if (std::holds_alternative<ASTExprObj>(*expr.body)) {
+    auto &exprObj = std::get<ASTExprObj>(*expr.body);
+    for (auto &prop : exprObj.props) {
+      AST::populateParentExpr(prop.init, &expr);
+    }
+  } else if (std::holds_alternative<ASTExprRef>(*expr.body)) {
+    auto &exprRef = std::get<ASTExprRef>(*expr.body);
+    AST::populateParentExpr(exprRef.expr, &expr);
+  } else if (std::holds_alternative<ASTExprUnary>(*expr.body)) {
+    auto &exprUnary = std::get<ASTExprUnary>(*expr.body);
+    AST::populateParentExpr(exprUnary.arg, &expr);
   }
 }
 

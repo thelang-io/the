@@ -43,6 +43,7 @@ class AST {
 
   static void populateExprAwaitId (ASTBlock &);
   static void populateParent (ASTNode &, ASTNode *);
+  static void populateParentExpr (ASTNodeExpr &, ASTNodeExpr *);
   static void populateParents (ASTBlock &, ASTNode * = nullptr);
 
   explicit AST (Parser *);
