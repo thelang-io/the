@@ -51,9 +51,6 @@ void Codegen::_block (
     auto node = nodes[i];
     auto nodeChecker = ASTChecker(node);
 
-    auto throwWrapNode = std::holds_alternative<ASTNodeExpr>(*node.body) ||
-      std::holds_alternative<ASTNodeVarDecl>(*node.body);
-
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
         this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
@@ -72,30 +69,21 @@ void Codegen::_block (
       this->_node(c, node, CODEGEN_PHASE_ALLOC);
       this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
       this->_node(c, node, CODEGEN_PHASE_INIT);
-    } else if (this->throws && throwWrapNode) {
+    } else if (this->throws && nodeChecker.hasPossibleThrow()) {
       auto setJumpArg = CodegenASTExprAccess::create(
-        CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+        this->_genErrState(ASTChecker(node).insideMain(), "buf"),
         jumpedBefore
           ? CodegenASTExprBinary::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+              this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"),
               "-",
               CodegenASTExprLiteral::create("1")
             )
-          : CodegenASTExprUnary::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
-              "++"
-            )
+          : CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "++")
       );
 
       if (!jumpedBefore) {
         this->state.cleanUp.add(
-          CodegenASTExprUnary::create(
-            CodegenASTExprAccess::create(
-              CodegenASTExprAccess::create(this->_("err_state")),
-             "buf_idx"
-            ),
-            "--"
-          )->stmt()
+          CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "--")->stmt()
         );
       }
 
@@ -135,14 +123,14 @@ void Codegen::_block (
             CodegenASTExprAccess::create(this->_("longjmp")),
             {
               CodegenASTExprAccess::create(
-                CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+                this->_genErrState(nodesChecker.insideMain(), "buf"),
                 CodegenASTExprBinary::create(
-                  CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+                  this->_genErrState(nodesChecker.insideMain(), "buf_idx"),
                   "-",
                   CodegenASTExprLiteral::create("1")
                 )
               ),
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
+              this->_genErrState(nodesChecker.insideMain(), "id")
             }
           )->stmt()
         : CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel());
@@ -150,7 +138,7 @@ void Codegen::_block (
       (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
-            CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
+            this->_genErrState(nodesChecker.insideMain(), "id"),
             "!=",
             CodegenASTExprLiteral::create("-1")
           ),
@@ -217,9 +205,10 @@ void Codegen::_blockAsync (
   const ASTBlock &nodes,
   bool saveCleanUp,
   const std::shared_ptr<CodegenASTStmt> &cleanupData,
-  [[maybe_unused]] bool errHandled
+  bool errHandled
 ) {
   auto initialStateCleanUp = this->state.cleanUp;
+  auto jumpedBefore = false;
   auto code = std::string();
 
   if (saveCleanUp) {
@@ -231,7 +220,7 @@ void Codegen::_blockAsync (
   }
 
   for (auto i = static_cast<std::size_t>(0); i < nodes.size(); i++) {
-    auto &node = nodes[i];
+    auto node = nodes[i];
     auto nodeChecker = ASTChecker(node);
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
@@ -252,6 +241,44 @@ void Codegen::_blockAsync (
       this->_node(c, node, CODEGEN_PHASE_ALLOC);
       this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
       this->_node(c, node, CODEGEN_PHASE_INIT);
+    } else if (this->throws && nodeChecker.hasPossibleThrow()) {
+      auto setJumpArg = CodegenASTExprAccess::create(
+        this->_genErrState(ASTChecker(node).insideMain(), "buf"),
+        jumpedBefore
+          ? CodegenASTExprBinary::create(
+              this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"),
+              "-",
+              CodegenASTExprLiteral::create("1")
+            )
+          : CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "++")
+      );
+
+      if (!jumpedBefore) {
+        this->state.cleanUp.add(
+          CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "--")->stmt()
+        );
+      }
+
+      (*c)->append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("setjmp")),
+              {setJumpArg}
+            ),
+            "!=",
+            CodegenASTExprLiteral::create("0")
+          ),
+          CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
+        )
+      );
+
+      auto saveStateCleanUpJumpUsed = this->state.cleanUp.jumpUsed;
+      this->state.cleanUp.jumpUsed = true;
+      this->_nodeAsync(c, node);
+      this->state.cleanUp.jumpUsed = saveStateCleanUpJumpUsed;
+
+      jumpedBefore = true;
     } else if (!nodeChecker.hasSyncBreaking() && !nodeChecker.hasAwait()) {
       this->_node(c, node);
     } else {
@@ -265,6 +292,21 @@ void Codegen::_blockAsync (
 
     if (!this->state.cleanUp.empty()) {
       this->state.cleanUp.genAsync(c, this->state.asyncCounter);
+
+      if (this->throws && !errHandled) {
+        (*c)->append(
+          CodegenASTStmtIf::create(
+            CodegenASTExprBinary::create(
+              this->_genErrState(nodesChecker.insideMain(), "id"),
+              "!=",
+              CodegenASTExprLiteral::create("-1")
+            ),
+            initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+          )
+        );
+      }
 
       if (this->state.cleanUp.breakVarUsed) {
         (*c)->append(
@@ -304,8 +346,6 @@ void Codegen::_blockAsync (
           )
         );
       }
-
-      // todo catch
     }
 
     this->state.cleanUp = initialStateCleanUp;

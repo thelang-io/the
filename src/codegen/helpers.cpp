@@ -502,6 +502,20 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genEqFn (Type *type, const std::shared
   }
 }
 
+std::shared_ptr<CodegenASTExpr> Codegen::_genErrState (bool insideSyncMain, const std::string &prop) {
+  auto cExpr = insideSyncMain
+    ? CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))
+    : CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), this->_("err_state"), true);
+
+  if (!prop.empty() && insideSyncMain) {
+    cExpr = CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), prop);
+  } else if (!prop.empty()) {
+    cExpr = CodegenASTExprAccess::create(cExpr, prop, true);
+  }
+
+  return cExpr;
+}
+
 std::shared_ptr<CodegenASTExpr> Codegen::_genFreeFn (Type *type, const std::shared_ptr<CodegenASTExpr> &expr) {
   auto result = expr;
 

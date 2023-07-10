@@ -18,6 +18,54 @@
 #include "../Codegen.hpp"
 #include "../config.hpp"
 
+void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, const std::string &name) {
+  (*c)->append(
+    CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("error_stack_push")),
+      {
+        this->_genErrState(false),
+        CodegenASTExprLiteral::create(R"(")" + this->reader->path + R"(")"),
+        CodegenASTExprLiteral::create(R"(")" + name + R"(")"),
+        CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "line", true),
+        CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "col", true)
+      }
+    )->stmt()
+  );
+
+  if (!this->state.insideAsync) {
+    this->state.cleanUp.add(
+      CodegenASTStmtIf::create(
+        CodegenASTExprBinary::create(
+          this->_genErrState(false, "id"),
+          "!=",
+          CodegenASTExprLiteral::create("-1")
+        ),
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("longjmp")),
+          {
+            CodegenASTExprAccess::create(
+              this->_genErrState(false, "buf"),
+              CodegenASTExprBinary::create(
+                this->_genErrState(false, "buf_idx"),
+                "-",
+                CodegenASTExprLiteral::create("1")
+              )
+            ),
+            this->_genErrState(false, "id")
+          }
+        )->stmt()
+      )
+    );
+  }
+
+  this->state.cleanUp.add(
+    CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("error_stack_pop")),
+      {this->_genErrState(false)}
+    )->stmt()
+  );
+}
+
 void Codegen::_fnDecl (
   std::shared_ptr<CodegenASTStmt> *c,
   std::shared_ptr<Var> var,
@@ -37,6 +85,7 @@ void Codegen::_fnDecl (
   auto fnType = std::get<TypeFn>(var->type->body);
   auto paramsName = varTypeInfo.typeName + "P";
   auto contextName = typeName + "X";
+  auto isAsyncMain = codeName == "async_main";
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
   auto asyncBreakNodesCount = Codegen::countAsyncLoopDepth<ASTNodeBreak>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
@@ -64,6 +113,7 @@ void Codegen::_fnDecl (
     auto contextEntityIdx = 0;
 
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp, fnType.async);
+    this->state.insideAsync = fnType.async;
 
     if (hasStack) {
       contextEntityIdx = this->_apiEntity(contextName, CODEGEN_ENTITY_OBJ, [&] (auto &decl, auto &def) {
@@ -122,49 +172,8 @@ void Codegen::_fnDecl (
         );
       }
 
-      if (this->throws) {
-        cBody->append(
-          CodegenASTExprCall::create(
-            CodegenASTExprAccess::create(this->_("error_stack_push")),
-            {
-              CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state"))),
-              CodegenASTExprLiteral::create(R"(")" + this->reader->path + R"(")"),
-              CodegenASTExprLiteral::create(R"(")" + var->name + R"(")"),
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "line", true),
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "col", true)
-            }
-          )->stmt()
-        );
-
-        this->state.cleanUp.merge(
-          CodegenASTStmtCompound::create({
-            CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("error_stack_pop")),
-              {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
-            )->stmt(),
-            CodegenASTStmtIf::create(
-              CodegenASTExprBinary::create(
-                CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
-                "!=",
-                CodegenASTExprLiteral::create("-1")
-              ),
-              CodegenASTExprCall::create(
-                CodegenASTExprAccess::create(this->_("longjmp")),
-                {
-                  CodegenASTExprAccess::create(
-                    CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
-                    CodegenASTExprBinary::create(
-                      CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
-                      "-",
-                      CodegenASTExprLiteral::create("1")
-                    )
-                  ),
-                  CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
-                }
-              )->stmt()
-            )
-          })
-        );
+      if (this->throws && !fnType.async) {
+        this->_fnDeclInitErrorHandling(&cBody, var->name);
       }
 
       if (hasStack) {
@@ -333,10 +342,13 @@ void Codegen::_fnDecl (
         ));
       }
 
+      if (this->throws && fnType.async && !isAsyncMain) {
+        this->_fnDeclInitErrorHandling(&cBody, var->name);
+      }
+
       auto returnTypeInfo = this->_typeInfo(fnType.returnType);
 
       this->state.returnType = returnTypeInfo.type;
-      this->state.insideAsync = fnType.async;
       this->state.asyncCounter = 0;
       this->_block(&cBody, *body, false);
       this->varMap.restore();

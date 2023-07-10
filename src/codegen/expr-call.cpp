@@ -222,6 +222,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     auto cArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
 
     if (hasThrowParams) {
+      cParamsArgs.push_back(this->_genErrState(ASTChecker(parent).insideMain()));
       cParamsArgs.push_back(CodegenASTExprLiteral::create(line));
       cParamsArgs.push_back(CodegenASTExprLiteral::create(col));
     }
@@ -386,6 +387,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
       }
 
       if (this->throws && calleeTypeInfo.realType->builtin && fnType.callInfo.throws) {
+        cArgs.push_back(this->_genErrState(ASTChecker(parent).insideMain()));
         cArgs.push_back(CodegenASTExprLiteral::create(line));
         cArgs.push_back(CodegenASTExprLiteral::create(col));
       }

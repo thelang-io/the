@@ -287,14 +287,6 @@ class ASTChecker {
     return this->_endsWithNode<T>(this->_nodes);
   }
 
-  // todo test
-  bool endsWithSyncBreaking () const {
-    return this->endsWith<ASTNodeBreak>() ||
-      this->endsWith<ASTNodeContinue>() ||
-      this->endsWith<ASTNodeReturn>() ||
-      this->endsWith<ASTNodeThrow>();
-  }
-
   template <typename T>
   std::vector<ASTNodeExpr> getExprOfType () const {
     if (!this->_exprs.empty()) {
@@ -316,15 +308,6 @@ class ASTChecker {
   }
 
   // todo test
-  bool hasSyncBreaking () const {
-    this->_checkNode();
-    return this->_hasNode<ASTNodeBreak>(this->_nodes) ||
-      this->_hasNode<ASTNodeContinue>(this->_nodes) ||
-      this->_hasNode<ASTNodeReturn>(this->_nodes) ||
-      this->_hasNode<ASTNodeThrow>(this->_nodes);
-  }
-
-  // todo test
   template <typename T>
   bool hasExpr () const {
     if (!this->_exprs.empty()) {
@@ -332,6 +315,21 @@ class ASTChecker {
     } else {
       return !this->_getExprOfTypeFromNodes<T>(this->_nodes).empty();
     }
+  }
+
+  // todo test
+  bool hasPossibleThrow () const {
+    this->_checkNode();
+    return this->_isNodeMethod<ASTNodeExpr>(this->_nodes) || this->_isNodeMethod<ASTNodeVarDecl>(this->_nodes);
+  }
+
+  // todo test
+  bool hasSyncBreaking () const {
+    this->_checkNode();
+    return this->_hasNode<ASTNodeBreak>(this->_nodes) ||
+      this->_hasNode<ASTNodeContinue>(this->_nodes) ||
+      this->_hasNode<ASTNodeReturn>(this->_nodes) ||
+      this->_hasNode<ASTNodeThrow>(this->_nodes);
   }
 
   // todo test
@@ -344,6 +342,32 @@ class ASTChecker {
         std::holds_alternative<ASTNodeObjDecl>(*it.body) ||
         std::holds_alternative<ASTNodeTypeDecl>(*it.body);
     });
+  }
+
+  bool insideMain () {
+    this->_checkNode();
+
+    if (this->_nodes.empty()) {
+      return false;
+    }
+
+    auto p = this->_nodes[0].parent;
+
+    while (p != nullptr) {
+      if (std::holds_alternative<ASTNodeMain>(*p->body)) {
+        return !std::get<ASTNodeMain>(*p->body).async;
+      } else if (
+        std::holds_alternative<ASTNodeEnumDecl>(*p->body) ||
+        std::holds_alternative<ASTNodeFnDecl>(*p->body) ||
+        std::holds_alternative<ASTNodeObjDecl>(*p->body)
+      ) {
+        return false;
+      }
+
+      p = p->parent;
+    }
+
+    return false;
   }
 
   template <typename T>
@@ -536,10 +560,14 @@ class ASTChecker {
 
         if (exprBody.elem != std::nullopt) {
           return true;
-        } else if (exprBody.expr != std::nullopt && std::holds_alternative<ASTNodeExpr>(*exprBody.expr)) {
+        } else if (
+          exprBody.expr != std::nullopt &&
+          std::holds_alternative<ASTNodeExpr>(*exprBody.expr) &&
+          exprBody.prop != std::nullopt
+        ) {
           auto exprAccessExpr = std::get<ASTNodeExpr>(*exprBody.expr);
 
-          if (!exprAccessExpr.type->isEnum() && exprBody.prop != std::nullopt) {
+          if (!exprAccessExpr.type->isEnum()) {
             auto typeField = exprAccessExpr.type->getField(*exprBody.prop);
             return !typeField.callInfo.empty() && typeField.callInfo.throws;
           }

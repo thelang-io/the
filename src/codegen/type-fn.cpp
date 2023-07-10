@@ -54,6 +54,7 @@ std::string Codegen::_typeNameFn (Type *type) {
       auto paramIdx = static_cast<std::size_t>(0);
 
       if (this->throws) {
+        paramsCode += "  " + this->_("err_state_t") + " *err_state;" EOL;
         paramsCode += "  int line;" EOL;
         paramsCode += "  int col;" EOL;
       }

@@ -238,8 +238,10 @@ class Codegen {
   std::shared_ptr<CodegenASTExpr> _exprRef (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   void _fnDecl (std::shared_ptr<CodegenASTStmt> *, std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
+  void _fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *, const std::string &);
   std::shared_ptr<CodegenASTExpr> _genCopyFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
   std::shared_ptr<CodegenASTExpr> _genEqFn (Type *, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &, bool = false);
+  std::shared_ptr<CodegenASTExpr> _genErrState (bool = false, const std::string & = "");
   std::shared_ptr<CodegenASTExpr> _genFreeFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
   std::shared_ptr<CodegenASTExpr> _genReallocFn (Type *, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &);
   std::shared_ptr<CodegenASTExpr> _genStrFn (Type *, const std::shared_ptr<CodegenASTExpr> &, bool = true, bool = true);

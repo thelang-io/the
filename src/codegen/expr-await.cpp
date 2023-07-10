@@ -28,6 +28,21 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
 
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
+  if (this->throws) {
+    (*c)->append(
+      CodegenASTStmtIf::create(
+        CodegenASTExprBinary::create(
+          this->_genErrState(false, "id"),
+          "!=",
+          CodegenASTExprLiteral::create("-1")
+        ),
+        this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+          ? CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
+          : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+      )
+    );
+  }
+
   auto expr = nodeExpr.type->isVoid() || root
     ? CodegenASTExprNull::create()
     : CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("t" + std::to_string(exprAwait.id)));

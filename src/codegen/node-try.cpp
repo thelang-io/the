@@ -27,11 +27,8 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
         CodegenASTExprAccess::create(this->_("setjmp")),
         {
           CodegenASTExprAccess::create(
-            CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
-            CodegenASTExprUnary::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
-              "++"
-            )
+            this->_genErrState(ASTChecker(node).insideMain(), "buf"),
+            CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "++")
           )
         }
       )
@@ -50,7 +47,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
   auto blockCleanUp = CodegenASTStmtCompound::create({
     CodegenASTStmtIf::create(
       CodegenASTExprBinary::create(
-        CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
+        this->_genErrState(ASTChecker(node).insideMain(), "id"),
         "!=",
         CodegenASTExprLiteral::create("-1")
       ),
@@ -58,21 +55,18 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
         CodegenASTExprAccess::create(this->_("longjmp")),
         {
           CodegenASTExprAccess::create(
-            CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+            this->_genErrState(ASTChecker(node).insideMain(), "buf"),
             CodegenASTExprBinary::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+              this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"),
               "-",
               CodegenASTExprLiteral::create("1")
             )
           ),
-          CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
+          this->_genErrState(ASTChecker(node).insideMain(), "id")
         }
       )->stmt()
     ),
-    CodegenASTExprUnary::create(
-      CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
-      "--"
-    )->stmt()
+    CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "--")->stmt()
   });
 
   this->_block(c, nodeTry.body, true, blockCleanUp, true);
@@ -95,16 +89,13 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     );
 
     (*c)->append(
-      CodegenASTExprUnary::create(
-        CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
-        "--"
-      )->stmt()
+      CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "--")->stmt()
     );
 
     (*c)->append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("error_unset")),
-        {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
+        {this->_genErrState(ASTChecker(node).insideMain(), "buf")}
       )->stmt()
     );
 
@@ -114,7 +105,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
         CodegenASTExprAccess::create(handleCodeName),
         CodegenASTExprCast::create(
           CodegenASTType::create(handlerTypeInfo.typeCodeTrimmed),
-          CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "ctx")
+          this->_genErrState(ASTChecker(node).insideMain(), "ctx")
         )
       )
     );
@@ -136,10 +127,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
   *c = (*c)->append(CodegenASTStmtCase::create(nullptr, CodegenASTStmtCompound::create()));
 
   (*c)->append(
-    CodegenASTExprUnary::create(
-      CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
-      "--"
-    )->stmt()
+    CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "--")->stmt()
   );
 
   (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));

@@ -197,7 +197,6 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
     }
 
     *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
-    // todo catch
   }
 
   this->state.cleanUp.breakVarIdx -= 1;

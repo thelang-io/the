@@ -26,7 +26,7 @@ void Codegen::_nodeThrow (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("error_assign")),
       {
-        CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state"))),
+        this->_genErrState(ASTChecker(node).insideMain()),
         CodegenASTExprAccess::create(this->_(argNodeExprDef)),
         CodegenASTExprCast::create(CodegenASTType::create("void *"), cArg),
         CodegenASTExprCast::create(
@@ -45,14 +45,14 @@ void Codegen::_nodeThrow (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
         CodegenASTExprAccess::create(this->_("longjmp")),
         {
           CodegenASTExprAccess::create(
-            CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf"),
+            this->_genErrState(ASTChecker(node).insideMain(), "buf"),
             CodegenASTExprBinary::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "buf_idx"),
+              this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"),
               "-",
               CodegenASTExprLiteral::create("1")
             )
           ),
-          CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id")
+          this->_genErrState(ASTChecker(node).insideMain(), "id")
         }
       )->stmt()
     );
@@ -62,5 +62,31 @@ void Codegen::_nodeThrow (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
 }
 
 void Codegen::_nodeThrowAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
-  this->_nodeThrow(c, node);
+  auto nodeThrow = std::get<ASTNodeThrow>(*node.body);
+  auto argTypeInfo = this->_typeInfo(nodeThrow.arg.type);
+  auto cArg = this->_nodeExpr(nodeThrow.arg, argTypeInfo.type, node, c);
+  auto argNodeExprDef = this->_typeDef(argTypeInfo.type);
+
+  (*c)->append(
+    CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("error_assign")),
+      {
+        this->_genErrState(ASTChecker(node).insideMain()),
+        CodegenASTExprAccess::create(this->_(argNodeExprDef)),
+        CodegenASTExprCast::create(CodegenASTType::create("void *"), cArg),
+        CodegenASTExprCast::create(
+          CodegenASTType::create("void (*) (void *)"),
+          CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_(argTypeInfo.typeName + "_free")))
+        ),
+        CodegenASTExprLiteral::create(std::to_string(node.start.line)),
+        CodegenASTExprLiteral::create(std::to_string(node.start.col + 1))
+      }
+    )->stmt()
+  );
+
+  (*c)->append(
+    this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+      ? CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
+      : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+  );
 }
