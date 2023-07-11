@@ -187,3 +187,10 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     ENVIRONMENT "TEST_CODEGEN_PLATFORM=${TEST_CODEGEN_PLATFORM}"
   )
 endif ()
+
+if (EXISTS "${PROJECT_SOURCE_DIR}/lab")
+  add_executable(lab lab/lab.c)
+  target_include_directories(lab PRIVATE "$ENV{DEPS_DIR}/include")
+  target_link_directories(lab PRIVATE "$ENV{DEPS_DIR}/lib")
+  target_link_libraries(lab PRIVATE crypto ssl)
+endif ()
