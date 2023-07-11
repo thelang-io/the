@@ -636,8 +636,6 @@ void Codegen::_nodeAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
     return this->_nodeBreakAsync(c, node);
   } else if (std::holds_alternative<ASTNodeContinue>(*node.body)) {
     return this->_nodeContinueAsync(c, node);
-  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
-    return this->_nodeExprDeclAsync(c, node);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     return this->_nodeIfAsync(c, node);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {

@@ -21,7 +21,3 @@ void Codegen::_nodeExprDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
   auto cExpr = this->_nodeExpr(nodeExpr, nodeExpr.type, node, c, true)->stmt();
   (*c)->append(cExpr);
 }
-
-void Codegen::_nodeExprDeclAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
-  this->_nodeExprDecl(c, node);
-}

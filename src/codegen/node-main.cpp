@@ -28,8 +28,36 @@ void Codegen::_nodeMainAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
   auto returnType = this->ast->typeMap.get("void");
   auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->throws, this->async);
   auto asyncMainVar = std::make_shared<Var>(Var{"async_main", "async_main", asyncMainType, false, false, true, false, 0});
+  auto paramsName = Codegen::typeName(asyncMainVar->type->name + "P");
 
   this->_fnDecl(c, asyncMainVar, nodeMain.stack, {}, nodeMain.body, node, CODEGEN_PHASE_FULL);
+
+  auto cParams = this->throws
+    ? CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("xalloc")),
+      {
+        CodegenASTExprUnary::create("&", CodegenASTExprCast::create(
+          CodegenASTType::create("struct " + this->_(paramsName)),
+          CodegenASTExprInitList::create({
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("xalloc")),
+              {
+                this->_genErrState(true),
+                CodegenASTExprCall::create(
+                  CodegenASTExprAccess::create("sizeof"),
+                  {CodegenASTType::create(this->_("err_state_t"))}
+                )
+              }
+            )
+          })
+        )),
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create("sizeof"),
+          {CodegenASTType::create("struct " + this->_(paramsName))}
+        )
+      }
+    )
+    : CodegenASTExprAccess::create(this->_("NULL"));
 
   (*c)->append(
     CodegenASTExprCall::create(
@@ -38,7 +66,7 @@ void Codegen::_nodeMainAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
         CodegenASTExprAccess::create("tp"),
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "f"),
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "x"),
-        CodegenASTExprAccess::create(this->_("NULL")),
+        cParams,
         CodegenASTExprAccess::create(this->_("NULL")),
         CodegenASTExprAccess::create(this->_("NULL"))
       }
