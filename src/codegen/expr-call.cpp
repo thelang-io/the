@@ -370,9 +370,9 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
           parentIsSyncMain
             ? CodegenASTExprAccess::create(this->_("NULL"))
             : CodegenASTExprCall::create(
-                CodegenASTExprAccess::create(this->_("threadpool_job_ref")),
-                {CodegenASTExprAccess::create("job")}
-              )
+              CodegenASTExprAccess::create(this->_("threadpool_job_ref")),
+              {CodegenASTExprAccess::create("job")}
+            )
         }
       );
     } else {

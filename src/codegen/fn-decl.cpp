@@ -304,14 +304,14 @@ void Codegen::_fnDecl (
               param.init == std::nullopt
                 ? CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true)
                 : CodegenASTExprCond::create(
-                    CodegenASTExprBinary::create(
-                      CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "o" + paramIdxStr, true),
-                      "==",
-                      CodegenASTExprLiteral::create("1")
-                    ),
-                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true),
-                    this->_nodeExpr(*param.init, paramTypeInfo.type, node, &cBody)
-                  )
+                  CodegenASTExprBinary::create(
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "o" + paramIdxStr, true),
+                    "==",
+                    CodegenASTExprLiteral::create("1")
+                  ),
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true),
+                  this->_nodeExpr(*param.init, paramTypeInfo.type, node, &cBody)
+                )
             )
           );
 
