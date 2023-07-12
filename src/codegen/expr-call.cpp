@@ -348,8 +348,6 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     }
 
     if (fnType.async) {
-      // todo if not awaited then no parent job
-      // todo if not awaited, return value incorrect
       auto parentIsSyncMain = ASTChecker(parent.parent).is<ASTNodeMain>() && !std::get<ASTNodeMain>(*parent.parent->body).async;
 
       expr = CodegenASTExprCall::create(

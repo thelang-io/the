@@ -36,10 +36,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
   );
 
   *c = (*c)->append(
-    CodegenASTStmtCase::create(
-      CodegenASTExprLiteral::create("0"),
-      CodegenASTStmtCompound::create()
-    )
+    CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), CodegenASTStmtCompound::create())
   );
 
   this->varMap.save();
@@ -95,7 +92,7 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     (*c)->append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("error_unset")),
-        {this->_genErrState(ASTChecker(node).insideMain(), "buf")}
+        {this->_genErrState(ASTChecker(node).insideMain())}
       )->stmt()
     );
 
@@ -135,5 +132,97 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
 }
 
 void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
-  this->_nodeTry(c, node);
+  auto nodeTry = std::get<ASTNodeTry>(*node.body);
+  auto initialStateCleanUp = this->state.cleanUp;
+  auto endAsyncCounter = std::make_shared<std::size_t>(0);
+  auto handlersAsyncCounters = std::vector<std::shared_ptr<std::size_t>>{};
+
+  auto checkCleanUp = std::vector<std::shared_ptr<CodegenASTStmt>>{
+    CodegenASTStmtIf::create(
+      CodegenASTExprBinary::create(
+        this->_genErrState(ASTChecker(node).insideMain(), "id"),
+        "==",
+        CodegenASTExprLiteral::create("-1")
+      ),
+      CodegenASTStmtReturn::create(endAsyncCounter)
+    )
+  };
+
+  for (const auto &handler : nodeTry.handlers) {
+    auto handlerVarDecl = std::get<ASTNodeVarDecl>(*handler.param.body);
+    auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
+
+    handlersAsyncCounters.push_back(std::make_shared<std::size_t>(0));
+
+    checkCleanUp.push_back(
+      CodegenASTStmtIf::create(
+        CodegenASTExprBinary::create(
+          this->_genErrState(ASTChecker(node).insideMain(), "id"),
+          "==",
+          CodegenASTExprAccess::create(this->_(handlerDef))
+        ),
+        CodegenASTStmtReturn::create(handlersAsyncCounters.back())
+      )
+    );
+  }
+
+  this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
+  this->state.cleanUp.merge(CodegenASTStmtCompound::create(checkCleanUp));
+  this->varMap.save();
+  this->_block(c, nodeTry.body, true);
+  this->varMap.restore();
+
+  if (!(*c)->endsWith<CodegenASTStmtReturn>()) {
+    (*c)->append(CodegenASTStmtReturn::create(endAsyncCounter));
+  }
+
+  for (auto idx = static_cast<std::size_t>(0); idx < nodeTry.handlers.size(); idx++) {
+    auto handler = nodeTry.handlers[idx];
+    auto handlerVarDecl = std::get<ASTNodeVarDecl>(*handler.param.body);
+    auto handlerTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
+    auto handlerCodeName = Codegen::name(handlerVarDecl.var->codeName);
+    auto cHandlerFree = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(handlerCodeName));
+
+    *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
+    *handlersAsyncCounters[idx] = this->state.asyncCounter;
+
+    (*c)->append(
+      CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("error_unset")),
+        {this->_genErrState(ASTChecker(node).insideMain())}
+      )->stmt()
+    );
+
+    (*c)->append(
+      CodegenASTExprAssign::create(
+        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(handlerCodeName)),
+        "=",
+        CodegenASTExprCast::create(
+          CodegenASTType::create(handlerTypeInfo.typeCodeTrimmed),
+          this->_genErrState(ASTChecker(node).insideMain(), "ctx")
+        )
+      )->stmt()
+    );
+
+    this->varMap.save();
+    this->_block(c, handler.body, true, this->_genFreeFn(handlerTypeInfo.type, cHandlerFree)->stmt());
+    this->varMap.restore();
+
+    if (!(*c)->endsWith<CodegenASTStmtReturn>()) {
+      (*c)->append(CodegenASTStmtReturn::create(endAsyncCounter));
+    }
+  }
+
+  this->state.cleanUp.genAsync(c, this->state.asyncCounter);
+
+  (*c)->append(
+    initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+      ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+      : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+  );
+
+  *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
+
+  this->state.cleanUp = initialStateCleanUp;
+  *endAsyncCounter = this->state.asyncCounter;
 }

@@ -438,7 +438,7 @@ bool CodegenASTStmt::endsWith () {
 
     return bodyStmt->isCompound() &&
       !bodyStmt->asCompound().body.empty() &&
-      std::holds_alternative<T>(*bodyStmt->asCompound().body[0]->body);
+      std::holds_alternative<T>(*bodyStmt->asCompound().body.back()->body);
   }
 
   return false;

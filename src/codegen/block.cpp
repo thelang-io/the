@@ -23,7 +23,7 @@ void Codegen::_block (
   const std::shared_ptr<CodegenASTStmt> &cleanupData,
   bool errHandled
 ) {
-  if (ASTChecker(nodes).async() || (this->state.insideAsync && ASTChecker(nodes).hasSyncBreaking())) {
+  if (ASTChecker(nodes).async() || this->state.insideAsync) {
     return this->_blockAsync(c, nodes, saveCleanUp, cleanupData, errHandled);
   }
 
@@ -69,7 +69,7 @@ void Codegen::_block (
       this->_node(c, node, CODEGEN_PHASE_ALLOC);
       this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
       this->_node(c, node, CODEGEN_PHASE_INIT);
-    } else if (this->throws && nodeChecker.hasPossibleThrow()) {
+    } else if (this->throws && nodeChecker.throwsPossible()) {
       auto setJumpArg = CodegenASTExprAccess::create(
         this->_genErrState(ASTChecker(node).insideMain(), "buf"),
         jumpedBefore
@@ -225,23 +225,23 @@ void Codegen::_blockAsync (
 
     if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
+        this->_nodeAsync(c, nodes[j], CODEGEN_PHASE_ALLOC);
       }
 
       for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
-        this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
+        this->_nodeAsync(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
       }
 
       for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
-        this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
+        this->_nodeAsync(c, nodes[i], CODEGEN_PHASE_INIT);
       }
 
       i--;
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      this->_node(c, node, CODEGEN_PHASE_ALLOC);
-      this->_node(c, node, CODEGEN_PHASE_ALLOC_METHOD);
-      this->_node(c, node, CODEGEN_PHASE_INIT);
-    } else if (this->throws && nodeChecker.hasPossibleThrow()) {
+      this->_nodeAsync(c, node, CODEGEN_PHASE_ALLOC);
+      this->_nodeAsync(c, node, CODEGEN_PHASE_ALLOC_METHOD);
+      this->_nodeAsync(c, node, CODEGEN_PHASE_INIT);
+    } else if (this->throws && nodeChecker.throwsPossible()) {
       auto setJumpArg = CodegenASTExprAccess::create(
         this->_genErrState(ASTChecker(node).insideMain(), "buf"),
         jumpedBefore
@@ -279,8 +279,6 @@ void Codegen::_blockAsync (
       this->state.cleanUp.jumpUsed = saveStateCleanUpJumpUsed;
 
       jumpedBefore = true;
-    } else if (!nodeChecker.hasSyncBreaking() && !nodeChecker.hasAwait()) {
-      this->_node(c, node);
     } else {
       this->_nodeAsync(c, node);
     }

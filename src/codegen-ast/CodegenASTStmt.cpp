@@ -188,6 +188,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmt::exit () const {
 
 bool CodegenASTStmt::hasBody () const {
   return
+    this->isCompound() ||
     (this->isCase() && this->asCase().body->isCompound()) ||
     (this->isFor() && this->asFor().body != nullptr && this->asFor().body->isCompound()) ||
     (this->isIf() && this->asIf().body->isCompound()) ||

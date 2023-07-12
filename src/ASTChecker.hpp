@@ -318,21 +318,6 @@ class ASTChecker {
   }
 
   // todo test
-  bool hasPossibleThrow () const {
-    this->_checkNode();
-    return this->_isNodeMethod<ASTNodeExpr>(this->_nodes) || this->_isNodeMethod<ASTNodeVarDecl>(this->_nodes);
-  }
-
-  // todo test
-  bool hasSyncBreaking () const {
-    this->_checkNode();
-    return this->_hasNode<ASTNodeBreak>(this->_nodes) ||
-      this->_hasNode<ASTNodeContinue>(this->_nodes) ||
-      this->_hasNode<ASTNodeReturn>(this->_nodes) ||
-      this->_hasNode<ASTNodeThrow>(this->_nodes);
-  }
-
-  // todo test
   bool hoistingFriendly () const {
     this->_checkNode();
 
@@ -415,6 +400,21 @@ class ASTChecker {
       return this->_throwsExpr(this->_exprs);
     } else {
       return this->_throwsNode(this->_nodes, localScope);
+    }
+  }
+
+  // todo check
+  bool throwsPossible () const {
+    if (!this->_exprs.empty()) {
+      return this->_throwsPossibleExpr(this->_exprs);
+    } else {
+      auto result = this->_nodes;
+
+      result.erase(std::remove_if(result.begin(), result.end(), [] (const auto &it) -> bool {
+        return !std::holds_alternative<ASTNodeExpr>(*it.body) && !std::holds_alternative<ASTNodeVarDecl>(*it.body);
+      }), result.end());
+
+      return this->_throwsPossibleExpr(ASTChecker::flattenNodeExprs(result));
     }
   }
 
@@ -554,7 +554,7 @@ class ASTChecker {
   bool _throwsExpr (const std::vector<ASTNodeExpr> &exprs) const {
     auto result = ASTChecker::flattenExpr(exprs);
 
-    return std::any_of(result.begin(), result.end(), [] (const auto &it) -> bool {
+    return std::any_of(result.begin(), result.end(), [&] (const auto &it) -> bool {
       if (std::holds_alternative<ASTExprAccess>(*it.body)) {
         auto exprBody = std::get<ASTExprAccess>(*it.body);
 
@@ -593,6 +593,36 @@ class ASTChecker {
     }
 
     return this->_throwsExpr(ASTChecker::flattenNodeExprs(flattenNodes, localScope));
+  }
+
+  // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
+  bool _throwsPossibleExpr (const std::vector<ASTNodeExpr> &exprs) const {
+    auto result = ASTChecker::flattenExpr(exprs);
+
+    return std::any_of(result.begin(), result.end(), [&] (const auto &it) -> bool {
+      if (std::holds_alternative<ASTExprAccess>(*it.body)) {
+        auto exprBody = std::get<ASTExprAccess>(*it.body);
+
+        if (exprBody.elem != std::nullopt) {
+          return true;
+        } else if (
+          exprBody.expr != std::nullopt &&
+          std::holds_alternative<ASTNodeExpr>(*exprBody.expr) &&
+          exprBody.prop != std::nullopt
+        ) {
+          auto exprAccessExpr = std::get<ASTNodeExpr>(*exprBody.expr);
+
+          if (!exprAccessExpr.type->isEnum()) {
+            auto typeField = exprAccessExpr.type->getField(*exprBody.prop);
+            return !typeField.callInfo.empty() && typeField.callInfo.throws;
+          }
+        }
+      } else if (std::holds_alternative<ASTExprCall>(*it.body)) {
+        return !(it.parent != nullptr && std::holds_alternative<ASTExprAwait>(*it.parent->body));
+      }
+
+      return false;
+    });
   }
 };
 
