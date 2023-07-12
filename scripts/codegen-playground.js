@@ -960,7 +960,7 @@ server.listen(8080, 'localhost', () => {
 
           ws.send(socket, JSON.stringify({
             action: 'build-output',
-            body: (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app')
+            body: (stdout + stderr).replaceAll(filePath, '/app')
           }))
         } finally {
           await fsPromises.rm(filePath, { force: true })
@@ -998,7 +998,7 @@ server.listen(8080, 'localhost', () => {
 
           ws.send(socket, JSON.stringify({
             action: 'run-output',
-            body: (stderr !== '' ? stderr : stdout).replaceAll(filePath, '/app') +
+            body: (stdout + stderr).replaceAll(filePath, '/app') +
               'Process finished with exit code ' + code
           }))
         } finally {
