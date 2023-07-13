@@ -318,7 +318,9 @@ void Codegen::_blockAsync (
               "==",
               CodegenASTExprLiteral::create("1")
             ),
-            CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+            initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
           )
         );
       }
@@ -331,7 +333,9 @@ void Codegen::_blockAsync (
               "==",
               CodegenASTExprLiteral::create("1")
             ),
-            CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+            initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
           )
         );
       }
@@ -344,7 +348,9 @@ void Codegen::_blockAsync (
               "==",
               CodegenASTExprLiteral::create("1")
             ),
-            CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+            initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
           )
         );
       }

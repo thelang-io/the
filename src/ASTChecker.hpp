@@ -618,7 +618,10 @@ class ASTChecker {
           }
         }
       } else if (std::holds_alternative<ASTExprCall>(*it.body)) {
-        return !(it.parent != nullptr && std::holds_alternative<ASTExprAwait>(*it.parent->body));
+        auto exprBody = std::get<ASTExprCall>(*it.body);
+        auto calleeRealType = Type::real(exprBody.callee.type);
+
+        return !std::get<TypeFn>(calleeRealType->body).async;
       }
 
       return false;

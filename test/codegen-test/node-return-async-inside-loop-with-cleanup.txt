@@ -153,7 +153,7 @@ async fn test11 () {
   loop i := "1"; i != "1111111111"; i += "1" {
     v2 := "test1"
     print("3 start", i)
-    if i == 5 { return }
+    if i == "11111" { return }
     print("3 end", i)
     await a()
   }
@@ -162,7 +162,7 @@ async fn test11 () {
 async fn test12 () {
   v1 := "test1"
 
-  loop i := 0; i < 10; i++ {
+  loop i := "1"; i != "1111111111"; i += "1" {
     print("4 start", i)
     if i == "11111" { return }
     print("4 end", i)

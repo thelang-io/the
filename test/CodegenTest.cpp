@@ -1362,7 +1362,17 @@ INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenPassTest, testing::Values(
   "node-throw-inside-obj-decl",
   "node-throw-inside-obj-decl-method",
   "node-throw-inside-try",
-  "node-throw-raw"
+  "node-throw-raw",
+  "node-throw-async",
+  "node-throw-async-custom",
+  "node-throw-async-custom-extended",
+  "node-throw-async-inside-fn-decl",
+  "node-throw-async-inside-if",
+  "node-throw-async-inside-loop",
+  "node-throw-async-inside-obj-decl",
+  "node-throw-async-inside-obj-decl-method",
+  "node-throw-async-inside-try",
+  "node-throw-async-raw"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
@@ -1379,7 +1389,21 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
   "node-try-inside-loop-deep",
   "node-try-inside-loop-with-break",
   "node-try-inside-loop-with-continue",
-  "node-try-inside-loop-with-return"
+  "node-try-inside-loop-with-return",
+  "node-try-async",
+  "node-try-async-nested",
+  "node-try-async-scoped",
+  "node-try-async-scoped-child",
+  "node-try-async-custom",
+  "node-try-async-multiple",
+  "node-try-async-inside-fn-with-return",
+  "node-try-async-inside-if",
+  "node-try-async-inside-if-with-return",
+  "node-try-async-inside-loop",
+  "node-try-async-inside-loop-deep",
+  "node-try-async-inside-loop-with-break",
+  "node-try-async-inside-loop-with-continue",
+  "node-try-async-inside-loop-with-return"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeTypeDecl, CodegenPassTest, testing::Values(
@@ -1737,7 +1761,17 @@ INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenThrowTest, testing::Values(
   "throw-node-throw-inside-obj-decl",
   "throw-node-throw-inside-obj-decl-method",
   "throw-node-throw-inside-try",
-  "throw-node-throw-raw"
+  "throw-node-throw-raw",
+  "throw-node-throw-async",
+  "throw-node-throw-async-custom",
+  "throw-node-throw-async-custom-extended",
+  "throw-node-throw-async-inside-fn-decl",
+  "throw-node-throw-async-inside-if",
+  "throw-node-throw-async-inside-loop",
+  "throw-node-throw-async-inside-obj-decl",
+  "throw-node-throw-async-inside-obj-decl-method",
+  "throw-node-throw-async-inside-try",
+  "throw-node-throw-async-raw"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
@@ -1758,5 +1792,23 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
   "throw-node-try-inside-loop-with-continue",
   "throw-node-try-inside-loop-with-return",
   "throw-node-try-scoped-fn",
-  "throw-node-try-scoped-obj-method"
+  "throw-node-try-scoped-obj-method",
+  "throw-node-try-async",
+  "throw-node-try-async-nested",
+  "throw-node-try-async-nested2",
+  "throw-node-try-async-scoped",
+  "throw-node-try-async-scoped-child",
+  "throw-node-try-async-custom",
+  "throw-node-try-async-multiple",
+  "throw-node-try-async-multiple2",
+  "throw-node-try-async-inside-fn-with-return",
+  "throw-node-try-async-inside-if",
+  "throw-node-try-async-inside-if-with-return",
+  "throw-node-try-async-inside-loop",
+  "throw-node-try-async-inside-loop-deep",
+  "throw-node-try-async-inside-loop-with-break",
+  "throw-node-try-async-inside-loop-with-continue",
+  "throw-node-try-async-inside-loop-with-return",
+  "throw-node-try-async-scoped-fn",
+  "throw-node-try-async-scoped-obj-method"
 ));
