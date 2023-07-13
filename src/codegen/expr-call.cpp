@@ -214,6 +214,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
       }
     );
   } else {
+    auto isBuiltin = calleeTypeInfo.realType->builtin && !fnType.callInfo.empty();
     auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
     auto hasThrowParams = this->throws && !calleeTypeInfo.realType->builtin;
     auto hasParams = (!fnType.params.empty() || hasSelfParam || hasThrowParams) && !calleeTypeInfo.realType->builtin;
@@ -225,6 +226,10 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
       cParamsArgs.push_back(this->_genErrState(ASTChecker(parent).insideMain()));
       cParamsArgs.push_back(CodegenASTExprLiteral::create(line));
       cParamsArgs.push_back(CodegenASTExprLiteral::create(col));
+    } else if (this->throws && isBuiltin && fnType.callInfo.throws) {
+      cArgs.push_back(this->_genErrState(ASTChecker(parent).insideMain()));
+      cArgs.push_back(CodegenASTExprLiteral::create(line));
+      cArgs.push_back(CodegenASTExprLiteral::create(col));
     }
 
     if (hasSelfParam) {
@@ -374,8 +379,6 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
         }
       );
     } else {
-      auto isBuiltin = calleeTypeInfo.realType->builtin && !fnType.callInfo.empty();
-
       if (!isBuiltin) {
         cArgs.push_back(CodegenASTExprAccess::create(fnName, "x"));
       }
@@ -384,16 +387,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
         cArgs.push_back(cParams);
       }
 
-      if (this->throws && calleeTypeInfo.realType->builtin && fnType.callInfo.throws) {
-        cArgs.push_back(this->_genErrState(ASTChecker(parent).insideMain()));
-        cArgs.push_back(CodegenASTExprLiteral::create(line));
-        cArgs.push_back(CodegenASTExprLiteral::create(col));
-      }
-
-      expr = CodegenASTExprCall::create(
-        !isBuiltin ? CodegenASTExprAccess::create(fnName, "f") : fnName,
-        cArgs
-      );
+      expr = CodegenASTExprCall::create(!isBuiltin ? CodegenASTExprAccess::create(fnName, "f") : fnName, cArgs);
     }
   }
 

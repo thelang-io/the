@@ -77,7 +77,11 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
     } else if (objVar->builtin && objVar->codeName == "@os_NAME") {
       expr = CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("os_name")),
-        {CodegenASTExprLiteral::create(line), CodegenASTExprLiteral::create(col)}
+        {
+          this->_genErrState(ASTChecker(parent).insideMain()),
+          CodegenASTExprLiteral::create(line),
+          CodegenASTExprLiteral::create(col)
+        }
       );
 
       if (root) {
@@ -108,7 +112,11 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
     } else if (objVar->builtin && objVar->codeName == "@process_home") {
       expr = CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("process_home")),
-        {CodegenASTExprLiteral::create(line), CodegenASTExprLiteral::create(col)}
+        {
+          this->_genErrState(ASTChecker(parent).insideMain()),
+          CodegenASTExprLiteral::create(line),
+          CodegenASTExprLiteral::create(col)
+        }
       );
 
       if (root) {
@@ -178,15 +186,16 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       auto typeField = objTypeInfo.realType->getField(*exprAccess.prop);
       auto cArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
 
+      if (this->throws && typeField.callInfo.throws) {
+        cArgs.push_back(this->_genErrState(ASTChecker(parent).insideMain()));
+        cArgs.push_back(CodegenASTExprLiteral::create(line));
+        cArgs.push_back(CodegenASTExprLiteral::create(col));
+      }
+
       if (typeField.callInfo.isSelfFirst) {
         cArgs.push_back(
           this->_nodeExpr(objNodeExpr, typeField.callInfo.selfType, parent, c, typeField.callInfo.isSelfMut)
         );
-      }
-
-      if (this->throws && typeField.callInfo.throws) {
-        cArgs.push_back(CodegenASTExprLiteral::create(line));
-        cArgs.push_back(CodegenASTExprLiteral::create(col));
       }
 
       expr = CodegenASTExprCall::create(
@@ -227,7 +236,13 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
 
       expr = CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_(fnName)),
-        {cObj, cObjElem, CodegenASTExprLiteral::create(line), CodegenASTExprLiteral::create(col)}
+        {
+          this->_genErrState(ASTChecker(parent).insideMain()),
+          CodegenASTExprLiteral::create(line),
+          CodegenASTExprLiteral::create(col),
+          cObj,
+          cObjElem
+        }
       );
     }
 

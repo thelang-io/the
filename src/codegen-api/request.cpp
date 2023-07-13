@@ -71,8 +71,8 @@ const std::vector<std::string> codegenRequest = {
   R"(  req->ssl = _{NULL};)" EOL
   R"(})" EOL,
 
-  R"(struct _{request_Request} *request_open (_{struct str} method, _{struct str} u, unsigned char o1, _{struct buffer} data, unsigned char o2, struct _{array_request_Header} headers, int line, int col) {)" EOL
-  R"(  struct _{url_URL} *url = _{url_parse}(u, line, col);)" EOL
+  R"(struct _{request_Request} *request_open (_{err_state_t} *fn_err_state, int line, int col, _{struct str} method, _{struct str} u, unsigned char o1, _{struct buffer} data, unsigned char o2, struct _{array_request_Header} headers) {)" EOL
+  R"(  struct _{url_URL} *url = _{url_parse}(fn_err_state, line, col, u);)" EOL
   R"(  if ()" EOL
   R"(    !(url->__THE_0_protocol.l == 5 && _{memcmp}(url->__THE_0_protocol.d, "http:", 5) == 0) &&)" EOL
   R"(    !(url->__THE_0_protocol.l == 6 && _{memcmp}(url->__THE_0_protocol.d, "https:", 6) == 0))" EOL
@@ -83,7 +83,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, protocol);)" EOL
   R"(    _{free}(protocol);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto request_open_cleanup1;)" EOL
   R"(  } else if (url->__THE_0_port.l >= 6) {)" EOL
   R"(    char *port = _{str_cstr}(url->__THE_0_port);)" EOL
@@ -92,7 +92,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, port);)" EOL
   R"(    _{free}(port);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto request_open_cleanup1;)" EOL
   R"(  })" EOL
   R"(  char port[6];)" EOL
@@ -105,7 +105,7 @@ const std::vector<std::string> codegenRequest = {
   R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, port);)" EOL
   R"(      char *d = _{alloc}(z + 1);)" EOL
   R"(      _{sprintf}(d, fmt, port);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto request_open_cleanup1;)" EOL
   R"(    })" EOL
   R"(  } else {)" EOL
@@ -116,7 +116,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    if (!_{lib_ws2_init}) {)" EOL
   R"(      _{WSADATA} w;)" EOL
   R"(      if (_{WSAStartup}(_{MAKEWORD}(2, 2), &w) != 0) {)" EOL
-  R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to initialize use of Windows Sockets DLL"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(        _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to initialize use of Windows Sockets DLL"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(        goto request_open_cleanup1;)" EOL
   R"(      })" EOL
   R"(      _{lib_ws2_init} = _{true};)" EOL
@@ -130,7 +130,7 @@ const std::vector<std::string> codegenRequest = {
   R"(  hints.ai_socktype = _{SOCK_STREAM};)" EOL
   R"(  hints.ai_protocol = _{IPPROTO_TCP};)" EOL
   R"(  if (_{getaddrinfo}(hostname, port, &hints, &addr) != 0) {)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to resolve hostname address"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to resolve hostname address"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto request_open_cleanup2;)" EOL
   R"(  })" EOL
   R"(  unsigned char req_free = 0;)" EOL
@@ -145,7 +145,7 @@ const std::vector<std::string> codegenRequest = {
   R"(  #endif)" EOL
   R"(  if (!socket_res) {)" EOL
   R"(    req_free = 1;)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create socket"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create socket"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto request_open_cleanup3;)" EOL
   R"(  })" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
@@ -161,7 +161,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{sprintf}(d, fmt, origin);)" EOL
   R"(    _{free}(origin);)" EOL
   R"(    req_free = 1;)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto request_open_cleanup4;)" EOL
   R"(  })" EOL
   R"(  if (_{strcmp}(port, "443") == 0) {)" EOL
@@ -172,7 +172,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    req->ctx = _{SSL_CTX_new}(_{TLS_client_method}());)" EOL
   R"(    if (req->ctx == _{NULL}) {)" EOL
   R"(      req_free = 1;)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create SSL context"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create SSL context"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto request_open_cleanup4;)" EOL
   R"(    })" EOL
   R"(    req->ssl = _{SSL_new}(req->ctx);)" EOL
@@ -180,7 +180,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    _{SSL_set_tlsext_host_name}(req->ssl, hostname);)" EOL
   R"(    if (_{SSL_connect}(req->ssl) != 1) {)" EOL
   R"(      req_free = 1;)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to connect to socket with SSL"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to connect to socket with SSL"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto request_open_cleanup5;)" EOL
   R"(    })" EOL
   R"(  })" EOL
@@ -202,7 +202,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    int z = req->ssl == _{NULL} ? (int) _{send}(req->fd, &request[y], req_len - y, 0) : _{SSL_write}(req->ssl, &request[y], (int) (req_len - y));)" EOL
   R"(    if (z < 0) {)" EOL
   R"(      req_free = 1;)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to write to socket"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to write to socket"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(      goto request_open_cleanup6;)" EOL
   R"(    })" EOL
   R"(    y += (_{size_t}) z;)" EOL
@@ -234,11 +234,11 @@ const std::vector<std::string> codegenRequest = {
   R"(  _{array_request_Header_free}(headers);)" EOL
   R"(  _{buffer_free}(data);)" EOL
   R"(  _{str_free}(method);)" EOL
-  R"(  if (_{err_state}.id != -1) _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  return (struct _{request_Request} *) req;)" EOL
   R"(})" EOL,
 
-  R"(struct _{request_Response} *request_read (struct _{request_Request} **r, int line, int col) {)" EOL
+  R"(struct _{request_Response} *request_read (_{err_state_t} *fn_err_state, int line, int col, struct _{request_Request} **r) {)" EOL
   R"(  _{struct request} *req = (void *) *r;)" EOL
   R"(  unsigned char b[1024];)" EOL
   R"(  _{struct buffer} data = {_{NULL}, 0};)" EOL
@@ -246,8 +246,8 @@ const std::vector<std::string> codegenRequest = {
   R"(    int y = req->ssl == _{NULL} ? (int) _{recv}(req->fd, b, sizeof(b), 0) : _{SSL_read}(req->ssl, b, sizeof(b));)" EOL
   R"(    if (y < 0) {)" EOL
   R"(      _{free}(data.d);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to read from socket"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to read from socket"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(    } else if (y == 0 && data.l != 0) {)" EOL
   R"(      break;)" EOL
   R"(    } else if (y == 0) {)" EOL
@@ -266,15 +266,15 @@ const std::vector<std::string> codegenRequest = {
   R"(    i = 7;)" EOL
   R"(  } else {)" EOL
   R"(    _{free}(data.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid response HTTP version"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid response HTTP version"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{size_t} status_start = i;)" EOL
   R"(  while (i < data.l && _{isdigit}(data.d[i])) i++;)" EOL
   R"(  if (status_start == i) {)" EOL
   R"(    _{free}(data.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid response HTTP status code"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid response HTTP status code"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{size_t} status_len = i - status_start;)" EOL
   R"(  char *status = _{alloc}(status_len + 1);)" EOL

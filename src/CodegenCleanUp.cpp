@@ -134,8 +134,25 @@ std::string CodegenCleanUp::currentValueVar () {
   return this->parent->currentValueVar();
 }
 
+// todo test
 bool CodegenCleanUp::empty () const {
-  return this->_data.empty();
+  if (this->_data.empty()) {
+    return true;
+  }
+
+  for (const auto &it : this->_data) {
+    if (it.content.empty()) {
+      continue;
+    }
+
+    for (const auto &it2 : it.content) {
+      if (!it2->isNull()) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {

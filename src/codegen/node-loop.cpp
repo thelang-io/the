@@ -95,7 +95,13 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
       (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(CodegenASTExprAccess::create("r"), "==", CodegenASTExprLiteral::create("1")),
-          CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+          initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+            ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+            : ASTChecker(node).insideMain()
+              ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))
+              : this->state.returnType->isVoid()
+                ? CodegenASTStmtReturn::create()
+                : CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v"))
         )
       );
     }

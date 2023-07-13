@@ -18,14 +18,14 @@
 #include "../config.hpp"
 
 const std::vector<std::string> codegenOS = {
-  R"(_{struct str} os_name (int line, int col) {)" EOL
+  R"(_{struct str} os_name (_{err_state_t} *fn_err_state, int line, int col) {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    return _{str_alloc}("Windows");)" EOL
   R"(  #else)" EOL
   R"(    _{struct utsname} buf;)" EOL
   R"(    if (_{uname}(&buf) < 0) {)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve uname information"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve uname information"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(    })" EOL
   R"(    if (_{strcmp}(buf.sysname, "Darwin") == 0) return _{str_alloc}("macOS");)" EOL
   R"(    return _{str_alloc}(buf.sysname);)" EOL

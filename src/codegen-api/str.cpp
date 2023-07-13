@@ -56,14 +56,14 @@ const std::vector<std::string> codegenStr = {
   R"(  return (_{struct str}) {d, l};)" EOL
   R"(})" EOL,
 
-  R"(char *str_at (_{struct str} s, _{int32_t} i, int line, int col) {)" EOL
+  R"(char *str_at (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s, _{int32_t} i) {)" EOL
   R"(  if ((i >= 0 && i >= s.l) || (i < 0 && i < -((_{int32_t}) s.l))) {)" EOL
   R"(    const char *fmt = "index %" _{PRId32} " out of string bounds";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, i);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  return i < 0 ? &s.d[s.l + i] : &s.d[i];)" EOL
   R"(})" EOL,
@@ -381,7 +381,7 @@ const std::vector<std::string> codegenStr = {
   R"(  return (_{struct buffer}) {(unsigned char *) s.d, s.l};)" EOL
   R"(})" EOL,
 
-  R"(double str_toFloat (_{struct str} self, int line, int col) {)" EOL
+  R"(double str_toFloat (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self) {)" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
@@ -393,8 +393,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -402,15 +402,15 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL,
 
-  R"(float str_toF32 (_{struct str} self, int line, int col) {)" EOL
+  R"(float str_toF32 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self) {)" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
@@ -422,8 +422,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -431,15 +431,15 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL,
 
-  R"(double str_toF64 (_{struct str} self, int line, int col) {)" EOL
+  R"(double str_toF64 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self) {)" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
   R"(  _{errno} = 0;)" EOL
@@ -451,8 +451,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -460,23 +460,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL,
 
-  R"(_{int32_t} str_toInt (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{int32_t} str_toInt (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -489,8 +489,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -498,23 +498,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{int32_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{int8_t} str_toI8 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{int8_t} str_toI8 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -527,8 +527,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -536,23 +536,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{int8_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{int16_t} str_toI16 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{int16_t} str_toI16 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -565,8 +565,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -574,23 +574,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{int16_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{int32_t} str_toI32 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{int32_t} str_toI32 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -603,8 +603,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -612,23 +612,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{int32_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{int64_t} str_toI64 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{int64_t} str_toI64 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -641,8 +641,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -650,23 +650,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{int64_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{uint8_t} str_toU8 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{uint8_t} str_toU8 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -679,8 +679,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -688,23 +688,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{uint8_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{uint16_t} str_toU16 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{uint16_t} str_toU16 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -717,8 +717,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -726,23 +726,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{uint16_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{uint32_t} str_toU32 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{uint32_t} str_toU32 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -755,8 +755,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -764,23 +764,23 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
   R"(  return (_{uint32_t}) r;)" EOL
   R"(})" EOL,
 
-  R"(_{uint64_t} str_toU64 (_{struct str} self, unsigned char o1, _{int32_t} n1, int line, int col) {)" EOL
+  R"(_{uint64_t} str_toU64 (_{err_state_t} *fn_err_state, int line, int col, _{struct str} self, unsigned char o1, _{int32_t} n1) {)" EOL
   R"(  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {)" EOL
   R"(    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -793,8 +793,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -802,8 +802,8 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, c);)" EOL
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL

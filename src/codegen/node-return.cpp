@@ -52,7 +52,13 @@ void Codegen::_nodeReturn (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &no
     auto cArg = this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c);
     (*c)->append(CodegenASTStmtReturn::create(cArg));
   } else {
-    (*c)->append(CodegenASTStmtReturn::create());
+    (*c)->append(
+      ASTChecker(node).insideMain()
+        ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))
+        : this->state.returnType->isVoid()
+          ? CodegenASTStmtReturn::create()
+          : CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v"))
+    );
   }
 }
 

@@ -191,7 +191,11 @@ void Codegen::_block (
           ),
           initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
             ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
-            : CodegenASTStmtReturn::create()
+            : nodesChecker.insideMain()
+              ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))
+              : this->state.returnType->isVoid()
+                ? CodegenASTStmtReturn::create()
+                : CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v"))
         )
       );
     }

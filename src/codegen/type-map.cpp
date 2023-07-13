@@ -248,8 +248,8 @@ std::string Codegen::_typeNameMap (Type *type) {
       "s"
     );
 
-    decl += valueTypeInfo.typeCode + typeName + "_get (struct _{" + typeName + "}, " + keyTypeInfo.typeCodeTrimmed + ", int, int);";
-    def += valueTypeInfo.typeCode + typeName + "_get (struct _{" + typeName + "} n, " + keyTypeInfo.typeCode + "k, int line, int col) {" EOL;
+    decl += valueTypeInfo.typeCode + typeName + "_get (_{err_state_t} *, int, int, struct _{" + typeName + "}, " + keyTypeInfo.typeCodeTrimmed + ");";
+    def += valueTypeInfo.typeCode + typeName + "_get (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} n, " + keyTypeInfo.typeCode + "k) {" EOL;
     def += "  for (_{size_t} i = 0; i < n.l; i++) {" EOL;
     def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2)->str() + ") {" EOL;
     def += "      " + valueTypeInfo.typeCode + "r = " + this->_genCopyFn(mapType.valueType, cCopy)->str() + ";" EOL;
@@ -268,8 +268,8 @@ std::string Codegen::_typeNameMap (Type *type) {
       def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
-    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(  _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
+    def += R"(  _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
     def += R"(})";
 
     return 0;
@@ -510,8 +510,8 @@ std::string Codegen::_typeNameMap (Type *type) {
       "s"
     );
 
-    decl += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *, " + keyTypeInfo.typeCodeTrimmed + ", int, int);";
-    def += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *n, " + keyTypeInfo.typeCode + "k, int line, int col) {" EOL;
+    decl += "struct _{" + typeName + "} *" + typeName + "_remove (_{err_state_t} *, int, int, struct _{" + typeName + "} *, " + keyTypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} *" + typeName + "_remove (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} *n, " + keyTypeInfo.typeCode + "k) {" EOL;
     def += "  for (_{size_t} i = 0; i < n->l; i++) {" EOL;
     def += "    if (" + this->_genEqFn(mapType.keyType, cEq1, cEq2)->str() + ") {" EOL;
 
@@ -536,8 +536,8 @@ std::string Codegen::_typeNameMap (Type *type) {
       def += "  " + this->_genFreeFn(mapType.keyType, CodegenASTExprAccess::create("k"))->str() + ";" EOL;
     }
 
-    def += R"(  _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(  _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(  _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
+    def += R"(  _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
     def += R"(})";
 
     return 0;

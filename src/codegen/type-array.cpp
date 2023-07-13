@@ -92,15 +92,15 @@ std::string Codegen::_typeNameArray (Type *type) {
   auto atFnEntityIdx = this->_apiEntity(typeName + "_at", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
-    decl += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "}, _{int32_t}, int, int);";
-    def += elementTypeInfo.typeRefCode + typeName + "_at (struct _{" + typeName + "} n, _{int32_t} i, int line, int col) {" EOL;
+    decl += elementTypeInfo.typeRefCode + typeName + "_at (_{err_state_t} *, int, int, struct _{" + typeName + "}, _{int32_t});";
+    def += elementTypeInfo.typeRefCode + typeName + "_at (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} n, _{int32_t} i) {" EOL;
     def += R"(  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((_{int32_t}) n.l))) {)" EOL;
     def += R"(    const char *fmt = "index %" _{PRId32} " out of array bounds";)" EOL;
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, i);)" EOL;
     def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, i);)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return i < 0 ? &n.d[n.l + i] : &n.d[i];)" EOL;
     def += R"(})";
@@ -271,13 +271,13 @@ std::string Codegen::_typeNameArray (Type *type) {
       CodegenASTExprAccess::create("i")
     );
 
-    decl += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ", int, int);";
-    def += "struct _{" + typeName + "} " + typeName + "_filter (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1, int line, int col) {" EOL;
+    decl += "struct _{" + typeName + "} " + typeName + "_filter (_{err_state_t} *, int, int, struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} " + typeName + "_filter (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
     def += "  _{size_t} l = 0;" EOL;
     def += "  " + elementTypeInfo.typeRefCode + "d = _{alloc}(self.l * sizeof(" + elementTypeInfo.typeCodeTrimmed + "));" EOL;
     def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
     def += "    if (n1.f(n1.x, _{xalloc}(&(struct _{" + param1TypeInfo.typeName + "P}) ";
-    def += "{line, col, " + this->_genCopyFn(elementTypeInfo.type, cCopy)->str() + "}, sizeof(struct _{" + param1TypeInfo.typeName + "P})))) {" EOL;
+    def += "{fn_err_state, line, col, " + this->_genCopyFn(elementTypeInfo.type, cCopy)->str() + "}, sizeof(struct _{" + param1TypeInfo.typeName + "P})))) {" EOL;
     def += "      d[l++] = " + this->_genCopyFn(elementTypeInfo.type, cCopy)->str() + ";" EOL;
     def += "    }" EOL;
     def += "  }" EOL;
@@ -292,11 +292,11 @@ std::string Codegen::_typeNameArray (Type *type) {
   this->_apiEntity(typeName + "_first", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
-    decl += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *, int, int);";
-    def += elementTypeInfo.typeRefCode + typeName + "_first (struct _{" + typeName + "} *self, int line, int col) {" EOL;
+    decl += elementTypeInfo.typeRefCode + typeName + "_first (_{err_state_t} *, int, int, struct _{" + typeName + "} *);";
+    def += elementTypeInfo.typeRefCode + typeName + "_first (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} *self) {" EOL;
     def += R"(  if (self->l == 0) {)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return &self->d[0];)" EOL;
     def += R"(})";
@@ -318,11 +318,11 @@ std::string Codegen::_typeNameArray (Type *type) {
       CodegenASTExprAccess::create("i")
     );
 
-    decl += "void " + typeName + "_forEach (struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ", int, int);";
-    def += "void " + typeName + "_forEach (struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1, int line, int col) {" EOL;
+    decl += "void " + typeName + "_forEach (_{err_state_t} *, int, int, struct _{" + typeName + "}, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "void " + typeName + "_forEach (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} self, " + param1TypeInfo.typeCode + "n1) {" EOL;
     def += "  for (_{size_t} i = 0; i < self.l; i++) {" EOL;
     def += "    n1.f(n1.x, _{xalloc}(&(struct _{" + param1TypeInfo.typeName + "P}) ";
-    def += "{line, col, " + this->_genCopyFn(elementTypeInfo.type, cCopy)->str() + ", i}, ";
+    def += "{fn_err_state, line, col, " + this->_genCopyFn(elementTypeInfo.type, cCopy)->str() + ", i}, ";
     def += "sizeof(struct _{" + param1TypeInfo.typeName + "P})));" EOL;
     def += "  }" EOL;
     def += "  " + this->_genFreeFn(param1TypeInfo.type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
@@ -354,11 +354,11 @@ std::string Codegen::_typeNameArray (Type *type) {
   this->_apiEntity(typeName + "_last", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
     auto elementTypeInfo = this->_typeInfo(elementType);
 
-    decl += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *, int, int);";
-    def += elementTypeInfo.typeRefCode + typeName + "_last (struct _{" + typeName + "} *self, int line, int col) {" EOL;
+    decl += elementTypeInfo.typeRefCode + typeName + "_last (_{err_state_t} *, int, int, struct _{" + typeName + "} *);";
+    def += elementTypeInfo.typeRefCode + typeName + "_last (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} *self) {" EOL;
     def += "  if (self->l == 0) {" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
     def += "  }" EOL;
     def += "  return &self->d[self->l - 1];" EOL;
     def += "}";
@@ -482,15 +482,15 @@ std::string Codegen::_typeNameArray (Type *type) {
       CodegenASTExprAccess::create("i")
     );
 
-    decl += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *, _{int32_t}, int, int);";
-    def += "struct _{" + typeName + "} *" + typeName + "_remove (struct _{" + typeName + "} *self, _{int32_t} n1, int line, int col) {" EOL;
+    decl += "struct _{" + typeName + "} *" + typeName + "_remove (_{err_state_t} *, int, int, struct _{" + typeName + "} *, _{int32_t});";
+    def += "struct _{" + typeName + "} *" + typeName + "_remove (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} *self, _{int32_t} n1) {" EOL;
     def += R"(  if ((n1 >= 0 && n1 >= self->l) || (n1 < 0 && n1 < -((_{int32_t}) self->l))) {)" EOL;
     def += R"(    const char *fmt = "index %" _{PRId32} " out of array bounds";)" EOL;
     def += R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);)" EOL;
     def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, n1);)" EOL;
-    def += R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL;
+    def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  _{size_t} i = n1 < 0 ? n1 + self->l : n1;)" EOL;
 
@@ -593,13 +593,13 @@ std::string Codegen::_typeNameArray (Type *type) {
       CodegenASTExprAccess::create("i")
     );
 
-    decl += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *, " + param1TypeInfo.typeCodeTrimmed + ", int, int);";
-    def += "struct _{" + typeName + "} *" + typeName + "_sort (struct _{" + typeName + "} *self, " + param1TypeInfo.typeCode + "n1, int line, int col) {" EOL;
+    decl += "struct _{" + typeName + "} *" + typeName + "_sort (_{err_state_t} *, int, int, struct _{" + typeName + "} *, " + param1TypeInfo.typeCodeTrimmed + ");";
+    def += "struct _{" + typeName + "} *" + typeName + "_sort (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} *self, " + param1TypeInfo.typeCode + "n1) {" EOL;
     def += "  if (self->l > 1) {" EOL;
     def += "    while (1) {" EOL;
     def += "      unsigned char b = 0;" EOL;
     def += "      for (_{size_t} i = 1; i < self->l; i++) {" EOL;
-    def += "        _{int32_t} c = n1.f(n1.x, _{xalloc}(&(struct _{" + param1TypeInfo.typeName + "P}) {line, col, ";
+    def += "        _{int32_t} c = n1.f(n1.x, _{xalloc}(&(struct _{" + param1TypeInfo.typeName + "P}) {fn_err_state, line, col, ";
     def += this->_genCopyFn(elementTypeInfo.type, cCopy1)->str() + ", ";
     def += this->_genCopyFn(elementTypeInfo.type, cCopy2)->str() + "}, sizeof(struct _{" + param1TypeInfo.typeName + "P})));" EOL;
     def += "        if (c > 0) {" EOL;

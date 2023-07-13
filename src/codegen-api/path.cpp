@@ -81,11 +81,11 @@ const std::vector<std::string> codegenPath = {
   R"(  return (_{struct str}) {d, l};)" EOL
   R"(})" EOL,
 
-  R"(char *path_mktemp (unsigned char (*f) (char *), int line, int col) {)" EOL
+  R"(char *path_mktemp (_{err_state_t} *fn_err_state, int line, int col, unsigned char (*f) (char *)) {)" EOL
   R"(  static const char *chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";)" EOL
   R"(  static const _{size_t} chars_len = 62;)" EOL
   R"(  static const _{size_t} x = 6;)" EOL
-  R"(  char *d = _{path_tmpdir}(line, col);)" EOL
+  R"(  char *d = _{path_tmpdir}(fn_err_state, line, col);)" EOL
   R"(  _{size_t} l = _{strlen}(d) + x;)" EOL
   R"(  d = _{re_alloc}(d, l + 1);)" EOL
   R"(  _{memcpy}(&d[l - x], "XXXXXX", x + 1);)" EOL
@@ -95,8 +95,8 @@ const std::vector<std::string> codegenPath = {
   R"(    do {)" EOL
   R"(      if (!_{SystemFunction036}((void *) &v, sizeof(v))) {)" EOL
   R"(        _{free}(d);)" EOL
-  R"(        _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random with `SystemFunction036`"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(        _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(        _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random with `SystemFunction036`"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(        _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(      })" EOL
   R"(      char *p = &d[l - x];)" EOL
   R"(      for (_{size_t} i = 0; i < x; i++) {)" EOL
@@ -116,11 +116,11 @@ const std::vector<std::string> codegenPath = {
   R"(  #endif)" EOL
   R"(})" EOL,
 
-  R"(_{struct str} path_tempDirectory (int line, int col) {)" EOL
-  R"(  char *d = _{path_mktemp}(_{path_tempDirectoryFunctor}, line, col);)" EOL
+  R"(_{struct str} path_tempDirectory (_{err_state_t} *fn_err_state, int line, int col) {)" EOL
+  R"(  char *d = _{path_mktemp}(fn_err_state, line, col, _{path_tempDirectoryFunctor});)" EOL
   R"(  if (d == _{NULL}) {)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create temporary directory"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create temporary directory"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{struct str} r = _{str_alloc}(d);)" EOL
   R"(  _{free}(d);)" EOL
@@ -135,11 +135,11 @@ const std::vector<std::string> codegenPath = {
   R"(  #endif)" EOL
   R"(})" EOL,
 
-  R"(_{struct str} path_tempFile (int line, int col) {)" EOL
-  R"(  char *d = _{path_mktemp}(_{path_tempFileFunctor}, line, col);)" EOL
+  R"(_{struct str} path_tempFile (_{err_state_t} *fn_err_state, int line, int col) {)" EOL
+  R"(  char *d = _{path_mktemp}(fn_err_state, line, col, _{path_tempFileFunctor});)" EOL
   R"(  if (d == _{NULL}) {)" EOL
-  R"(    _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create temporary file"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to create temporary file"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{struct str} r = _{str_alloc}(d);)" EOL
   R"(  _{free}(d);)" EOL
@@ -156,20 +156,20 @@ const std::vector<std::string> codegenPath = {
   R"(  #endif)" EOL
   R"(})" EOL,
 
-  R"(char *path_tmpdir (int line, int col) {)" EOL
+  R"(char *path_tmpdir (_{err_state_t} *fn_err_state, int line, int col) {)" EOL
   R"(  char *d;)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
   R"(    _{size_t} l = _{GetTempPath}(0, _{NULL});)" EOL
   R"(    if (l == 0) {)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get temporary path"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get temporary path"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(    })" EOL
   R"(    l -= 1;)" EOL
   R"(    d = _{alloc}(l + 1);)" EOL
   R"(    if (_{GetTempPath}(l + 1, d) == 0) {)" EOL
   R"(      _{free}(d);)" EOL
-  R"(      _{error_assign}(&_{err_state}, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get temporary path"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(      _{longjmp}(_{err_state}.buf[_{err_state}.buf_idx - 1], _{err_state}.id);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get temporary path"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(      _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
   R"(    })" EOL
   R"(    if (d[l - 1] != '\\' && d[l - 1] != '/') {)" EOL
   R"(      d[l] = '\\';)" EOL
