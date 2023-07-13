@@ -75,11 +75,16 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
+struct error_Error;
 struct __THE_1_fn$1000;
 struct __THE_1_test_0X;
 struct __THE_1_fn$1001;
 struct __THE_1_async_mainX;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_fn$1000 {
   int (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
@@ -128,11 +133,11 @@ void *alloc (size_t n1) {
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -253,7 +258,14 @@ void *threadpool_worker (void *n) {
       job->referenced = false;
       int step = job->func(self, job, job->ctx, job->params, job->ret, job->step);
       if (step == -1) {
-        if (job->parent != NULL && !job->referenced) threadpool_insert(self, job->parent);
+        err_state_t *job_err_state = *((err_state_t **) job->params);
+        if (job->parent != NULL && !job->referenced) {
+          threadpool_insert(self, job->parent);
+        } else if (job_err_state->id != -1) {
+          struct error_Error *err = job_err_state->ctx;
+          fprintf(stderr, "Uncaught AsyncError: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+          job_err_state->_free(job_err_state->ctx);
+        }
         threadpool_job_deinit(job);
       } else {
         job->step = step;

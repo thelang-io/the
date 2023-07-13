@@ -80,7 +80,7 @@ void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_array_char __THE_1_array_char_alloc (size_t, ...);
-char *__THE_1_array_char_at (struct __THE_1_array_char, int32_t, int, int);
+char *__THE_1_array_char_at (err_state_t *, int, int, struct __THE_1_array_char, int32_t);
 struct __THE_1_array_char __THE_1_array_char_copy (const struct __THE_1_array_char);
 void __THE_1_array_char_free (struct __THE_1_array_char);
 size_t __THE_1_array_char_len (struct __THE_1_array_char);
@@ -93,11 +93,11 @@ void *alloc (size_t n1) {
 bool char_isDigit (char c) {
   return isdigit(c);
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -109,34 +109,34 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void error_stack_pop (err_state_t *fn_err_state) {
+  fn_err_state->stack_idx--;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  fn_err_state->stack[fn_err_state->stack_idx].file = file;
+  fn_err_state->stack[fn_err_state->stack_idx].name = name;
+  error_stack_pos(fn_err_state, line, col);
+  fn_err_state->stack_idx++;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -297,14 +297,14 @@ struct __THE_1_array_char __THE_1_array_char_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_char) {d, x};
 }
-char *__THE_1_array_char_at (struct __THE_1_array_char n, int32_t i, int line, int col) {
+char *__THE_1_array_char_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_char n, int32_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     const char *fmt = "index %" PRId32 " out of array bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
     char *d = alloc(z + 1);
     sprintf(d, fmt, i);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
 }
@@ -325,19 +325,16 @@ size_t __THE_1_array_char_len (struct __THE_1_array_char n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_array_char __THE_0_arr_0 = __THE_1_array_char_alloc(3, '\0', '1', 'Z');
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_char_len(__THE_1_array_char_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stdout, "tz", char_isDigit(*__THE_1_array_char_at(__THE_0_arr_0, __THE_0_i_0, 5, 11)), THE_EOL);
-L3:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
-  }
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+    print(stdout, "tz", char_isDigit(*__THE_1_array_char_at(&err_state, 5, 11, __THE_0_arr_0, __THE_0_i_0)), THE_EOL);
 L2:
-  __THE_1_array_char_free((struct __THE_1_array_char) __THE_0_arr_0);
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
+  }
 L1:
-  err_state.buf_idx--;
+  __THE_1_array_char_free((struct __THE_1_array_char) __THE_0_arr_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

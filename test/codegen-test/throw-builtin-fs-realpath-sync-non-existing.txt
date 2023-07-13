@@ -64,7 +64,7 @@ void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void error_stack_str (err_state_t *);
-struct str fs_realpathSync (struct str, int, int);
+struct str fs_realpathSync (err_state_t *, int, int, struct str);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
@@ -87,11 +87,11 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -103,34 +103,34 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void error_stack_pop (err_state_t *fn_err_state) {
+  fn_err_state->stack_idx--;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  fn_err_state->stack[fn_err_state->stack_idx].file = file;
+  fn_err_state->stack[fn_err_state->stack_idx].name = name;
+  error_stack_pos(fn_err_state, line, col);
+  fn_err_state->stack_idx++;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -154,7 +154,7 @@ void error_stack_str (err_state_t *state) {
     stack->l += z;
   }
 }
-struct str fs_realpathSync (struct str s, int line, int col) {
+struct str fs_realpathSync (err_state_t *fn_err_state, int line, int col, struct str s) {
   char *c = str_cstr(s);
   char *d = NULL;
   #ifdef THE_OS_WINDOWS
@@ -164,7 +164,7 @@ struct str fs_realpathSync (struct str s, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_realpathSync_cleanup1;
     }
     size_t l = GetFinalPathNameByHandle(h, NULL, 0, VOLUME_NAME_DOS);
@@ -173,7 +173,7 @@ struct str fs_realpathSync (struct str s, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_realpathSync_cleanup2;
     }
     char *r = alloc(l + 1);
@@ -182,7 +182,7 @@ struct str fs_realpathSync (struct str s, int line, int col) {
       size_t z = snprintf(NULL, 0, fmt, c);
       char *d = alloc(z + 1);
       sprintf(d, fmt, c);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto fs_realpathSync_cleanup3;
     }
     if (memcmp(r, "\\\\?\\UNC\\", 8) == 0) {
@@ -199,7 +199,7 @@ fs_realpathSync_cleanup3:
     free(r);
 fs_realpathSync_cleanup2:
     CloseHandle(h);
-    if (err_state.id != -1) goto fs_realpathSync_cleanup1;
+    if (fn_err_state->id != -1) goto fs_realpathSync_cleanup1;
   #else
     d = realpath(c, NULL);
     size_t l = d == NULL ? 0 : strlen(d);
@@ -209,13 +209,13 @@ fs_realpathSync_cleanup2:
     size_t z = snprintf(NULL, 0, fmt, c);
     char *d = alloc(z + 1);
     sprintf(d, fmt, c);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto fs_realpathSync_cleanup1;
   }
 fs_realpathSync_cleanup1:
   free(c);
   str_free((struct str) s);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   return (struct str) {d, l};
 }
 void *re_alloc (void *n1, size_t n2) {
@@ -270,7 +270,7 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  str_free((struct str) fs_realpathSync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "throw-builtin-fs-realpath-sync-non-existing.txt"), 2, 3));
+  str_free((struct str) fs_realpathSync(&err_state, 2, 3, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "throw-builtin-fs-realpath-sync-non-existing.txt")));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

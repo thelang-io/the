@@ -75,6 +75,7 @@ struct __THE_1_fn$1000 {
   size_t l;
 };
 struct __THE_1_fn$1000P {
+  err_state_t *err_state;
   int line;
   int col;
 };
@@ -107,11 +108,11 @@ void *alloc (size_t n1) {
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -123,34 +124,34 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void error_stack_pop (err_state_t *fn_err_state) {
+  fn_err_state->stack_idx--;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  fn_err_state->stack[fn_err_state->stack_idx].file = file;
+  fn_err_state->stack[fn_err_state->stack_idx].name = name;
+  error_stack_pos(fn_err_state, line, col);
+  fn_err_state->stack_idx++;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -174,9 +175,9 @@ void error_stack_str (err_state_t *state) {
     stack->l += z;
   }
 }
-void error_unset (err_state_t *state) {
-  state->id = -1;
-  state->_free = (void *) 0;
+void error_unset (err_state_t *fn_err_state) {
+  fn_err_state->id = -1;
+  fn_err_state->_free = (void *) 0;
 }
 struct error_Error *new_error (struct str n1) {
   return error_Error_alloc(n1, (struct str) {NULL, 0});
@@ -337,12 +338,12 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
 }
 void __THE_1_TestSDtest_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
-  error_stack_push(&err_state, "/test", "Test.test", p->line, p->col);
-  error_assign(&err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 3, 5);
+  error_stack_push(p->err_state, "/test", "Test.test", p->line, p->col);
+  error_assign(p->err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 3, 5);
   goto L1;
 L1:
-  error_stack_pop(&err_state);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  error_stack_pop(p->err_state);
+  if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
 }
 
 int main () {
@@ -350,14 +351,12 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_TestSDtest_0 = (struct __THE_1_fn$1000) {&__THE_1_TestSDtest_0, NULL, 0};
   switch (setjmp(err_state.buf[err_state.buf_idx++])) {
     case 0: {
-      if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
       const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc();
-      if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
-      __THE_0_TestSDtest_0.f(__THE_0_TestSDtest_0.x, xalloc(&(struct __THE_1_fn$1000P) {10, 5}, sizeof(struct __THE_1_fn$1000P)));
-L3:
-      __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
+      if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+      __THE_0_TestSDtest_0.f(__THE_0_TestSDtest_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 10, 5}, sizeof(struct __THE_1_fn$1000P)));
 L2:
       err_state.buf_idx--;
+      __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
       if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
       err_state.buf_idx--;
       break;
@@ -366,9 +365,9 @@ L2:
       err_state.buf_idx--;
       error_unset(&err_state);
       const struct error_Error *__THE_0_err_0 = (struct error_Error *) err_state.ctx;
-      if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
+      if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
       print(stdout, "zzsz", "Error:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
-L4:
+L3:
       err_state.buf_idx--;
       error_Error_free((struct error_Error *) __THE_0_err_0);
       if (err_state.id != -1) goto L0;

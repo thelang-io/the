@@ -89,7 +89,7 @@ void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void error_stack_str (err_state_t *);
-struct str os_name (int, int);
+struct str os_name (err_state_t *, int, int);
 void print (FILE *, const char *, ...);
 struct __THE_1_map_strMSstrME process_env ();
 void *re_alloc (void *, size_t);
@@ -105,7 +105,7 @@ void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_copy (const struct __THE_1_map_strMSstrME);
 void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME);
-struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME, struct str, int, int);
+struct str __THE_1_map_strMSstrME_get (err_state_t *, int, int, struct __THE_1_map_strMSstrME, struct str);
 struct __THE_1_array_str __THE_1_map_strMSstrME_keys (struct __THE_1_map_strMSstrME);
 struct __THE_1_array_str __THE_1_map_strMSstrME_values (struct __THE_1_map_strMSstrME);
 
@@ -114,11 +114,11 @@ void *alloc (size_t n1) {
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -130,34 +130,34 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void error_stack_pop (err_state_t *fn_err_state) {
+  fn_err_state->stack_idx--;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  fn_err_state->stack[fn_err_state->stack_idx].file = file;
+  fn_err_state->stack[fn_err_state->stack_idx].name = name;
+  error_stack_pos(fn_err_state, line, col);
+  fn_err_state->stack_idx++;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -181,14 +181,14 @@ void error_stack_str (err_state_t *state) {
     stack->l += z;
   }
 }
-struct str os_name (int line, int col) {
+struct str os_name (err_state_t *fn_err_state, int line, int col) {
   #ifdef THE_OS_WINDOWS
     return str_alloc("Windows");
   #else
     struct utsname buf;
     if (uname(&buf) < 0) {
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to retrieve uname information"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to retrieve uname information"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     }
     if (strcmp(buf.sysname, "Darwin") == 0) return str_alloc("macOS");
     return str_alloc(buf.sysname);
@@ -387,7 +387,7 @@ void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME n) {
   }
   free(n.d);
 }
-struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME n, struct str k, int line, int col) {
+struct str __THE_1_map_strMSstrME_get (err_state_t *fn_err_state, int line, int col, struct __THE_1_map_strMSstrME n, struct str k) {
   for (size_t i = 0; i < n.l; i++) {
     if (str_eq_str(str_copy(n.d[i].f), str_copy(k))) {
       struct str r = str_copy(n.d[i].s);
@@ -398,8 +398,8 @@ struct str __THE_1_map_strMSstrME_get (struct __THE_1_map_strMSstrME n, struct s
   }
   __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n);
   str_free((struct str) k);
-  error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get map value"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-  longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get map value"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+  longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
 }
 struct __THE_1_array_str __THE_1_map_strMSstrME_keys (struct __THE_1_map_strMSstrME n) {
   struct str *r = alloc(n.l * sizeof(struct str));
@@ -416,18 +416,16 @@ struct __THE_1_array_str __THE_1_map_strMSstrME_values (struct __THE_1_map_strMS
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_map_strMSstrME __THE_0_env_0 = process_env();
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   print(stdout, "iziz", __THE_1_array_str_len(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), " ", __THE_1_array_str_len(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
   print(stdout, "tz", __THE_1_array_str_len(__THE_1_map_strMSstrME_keys(__THE_1_map_strMSstrME_copy(__THE_0_env_0))) == __THE_1_array_str_len(__THE_1_map_strMSstrME_values(__THE_1_map_strMSstrME_copy(__THE_0_env_0))), THE_EOL);
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  print(stdout, "sz", __THE_1_map_strMSstrME_get(process_env(), str_eq_cstr(os_name(6, 25), "Windows") ? str_alloc("USERNAME") : str_alloc("USER"), 6, 9), THE_EOL);
-L2:
-  __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_env_0);
+  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L1;
+  print(stdout, "sz", __THE_1_map_strMSstrME_get(&err_state, 6, 9, process_env(), str_eq_cstr(os_name(&err_state, 6, 25), "Windows") ? str_alloc("USERNAME") : str_alloc("USER")), THE_EOL);
 L1:
   err_state.buf_idx--;
+  __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) __THE_0_env_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
