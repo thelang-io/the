@@ -387,13 +387,17 @@ void *threadpool_worker (void *n) {
       job->referenced = false;
       int step = job->func(self, job, job->ctx, job->params, job->ret, job->step);
       if (step == -1) {
-        err_state_t *job_err_state = job->params == NULL ? NULL : *((err_state_t **) job->params);
         if (job->parent != NULL && !job->referenced) {
           threadpool_insert(self, job->parent);
-        } else if (job_err_state != NULL && job_err_state->id != -1) {
-          struct error_Error *err = job_err_state->ctx;
-          fprintf(stderr, "Uncaught AsyncError: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-          job_err_state->_free(job_err_state->ctx);
+        } else {
+          #ifdef THE_THROWS
+            err_state_t *job_err_state = *((err_state_t **) job->params);
+            if (job_err_state->id != -1) {
+              struct error_Error *err = job_err_state->ctx;
+              fprintf(stderr, "Uncaught AsyncError: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+              job_err_state->_free(job_err_state->ctx);
+            }
+          #endif
         }
         threadpool_job_deinit(job);
       } else {
@@ -450,7 +454,8 @@ int __THE_1_testAnon_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void 
   switch (step) {
     case 0: {
       *r = 1;
-      *v = __THE_1_fn$1000_copy(*__THE_0_test_0);
+      struct __THE_1_fn$1000 _v = __THE_1_fn$1000_copy(*__THE_0_test_0);
+      v == NULL ? __THE_1_fn$1000_free((struct __THE_1_fn$1000) _v) : (*v = _v);
     }
   }
   return -1;

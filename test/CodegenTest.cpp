@@ -946,7 +946,8 @@ INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenPassTest, testing::Values(
   "expr-call",
   "expr-call-obj-prop",
-  "expr-call-args"
+  "expr-call-args",
+  "expr-call-non-awaited"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(

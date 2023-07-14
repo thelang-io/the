@@ -28,6 +28,7 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
+#define THE_THROWS
 
 #include <inttypes.h>
 #include <setjmp.h>
@@ -456,13 +457,17 @@ void *threadpool_worker (void *n) {
       job->referenced = false;
       int step = job->func(self, job, job->ctx, job->params, job->ret, job->step);
       if (step == -1) {
-        err_state_t *job_err_state = job->params == NULL ? NULL : *((err_state_t **) job->params);
         if (job->parent != NULL && !job->referenced) {
           threadpool_insert(self, job->parent);
-        } else if (job_err_state != NULL && job_err_state->id != -1) {
-          struct error_Error *err = job_err_state->ctx;
-          fprintf(stderr, "Uncaught AsyncError: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-          job_err_state->_free(job_err_state->ctx);
+        } else {
+          #ifdef THE_THROWS
+            err_state_t *job_err_state = *((err_state_t **) job->params);
+            if (job_err_state->id != -1) {
+              struct error_Error *err = job_err_state->ctx;
+              fprintf(stderr, "Uncaught AsyncError: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+              job_err_state->_free(job_err_state->ctx);
+            }
+          #endif
         }
         threadpool_job_deinit(job);
       } else {
@@ -515,7 +520,7 @@ int __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void 
   struct error_Error **__THE_0_err_0 = &x->__THE_0_err_0;
   switch (step) {
     case 0: {
-      threadpool_add(tp, (*__THE_0_t_0).f, xalloc((*__THE_0_t_0).x, (*__THE_0_t_0).l), xalloc(&(struct __THE_1_fn$1000P) {p->err_state, 6, 13}, sizeof(struct __THE_1_fn$1000P)), NULL, threadpool_job_ref(job));
+      threadpool_add(tp, (*__THE_0_t_0).f, xalloc((*__THE_0_t_0).x, (*__THE_0_t_0).l), xalloc(&(struct __THE_1_fn$1000P) {xalloc(p->err_state, sizeof(err_state_t)), 6, 13}, sizeof(struct __THE_1_fn$1000P)), NULL, threadpool_job_ref(job));
       return 1;
     }
     case 1: {

@@ -412,13 +412,17 @@ void *threadpool_worker (void *n) {
       job->referenced = false;
       int step = job->func(self, job, job->ctx, job->params, job->ret, job->step);
       if (step == -1) {
-        err_state_t *job_err_state = job->params == NULL ? NULL : *((err_state_t **) job->params);
         if (job->parent != NULL && !job->referenced) {
           threadpool_insert(self, job->parent);
-        } else if (job_err_state != NULL && job_err_state->id != -1) {
-          struct error_Error *err = job_err_state->ctx;
-          fprintf(stderr, "Uncaught AsyncError: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
-          job_err_state->_free(job_err_state->ctx);
+        } else {
+          #ifdef THE_THROWS
+            err_state_t *job_err_state = *((err_state_t **) job->params);
+            if (job_err_state->id != -1) {
+              struct error_Error *err = job_err_state->ctx;
+              fprintf(stderr, "Uncaught AsyncError: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+              job_err_state->_free(job_err_state->ctx);
+            }
+          #endif
         }
         threadpool_job_deinit(job);
       } else {
@@ -456,7 +460,8 @@ int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
       if (!(str_eq_cstr(str_copy(__THE_0_i_0), "2"))) return 2;
       *__THE_0_b_0 = str_alloc("b");
       *r = 1;
-      *v = str_copy(__THE_0_i_0);
+      struct str _v = str_copy(__THE_0_i_0);
+      v == NULL ? str_free((struct str) _v) : (*v = _v);
       return 1;
     }
     case 1: {
@@ -467,7 +472,8 @@ int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp,
     case 2: {
       *__THE_0_c_0 = str_alloc("c");
       *r = 1;
-      *v = str_alloc("1");
+      struct str _v = str_alloc("1");
+      v == NULL ? str_free((struct str) _v) : (*v = _v);
       return 3;
     }
     case 3: {

@@ -19,6 +19,7 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
+#define THE_THROWS
 
 #include <setjmp.h>
 #include <stdbool.h>

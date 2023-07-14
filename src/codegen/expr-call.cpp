@@ -353,8 +353,6 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     }
 
     if (fnType.async) {
-      auto parentIsSyncMain = ASTChecker(parent.parent).is<ASTNodeMain>() && !std::get<ASTNodeMain>(*parent.parent->body).async;
-
       expr = CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("threadpool_add")),
         {
@@ -370,12 +368,12 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
               ? this->_("NULL")
               : "t" + std::to_string(awaitCallId)
           ),
-          parentIsSyncMain
-            ? CodegenASTExprAccess::create(this->_("NULL"))
-            : CodegenASTExprCall::create(
+          nodeExpr.parent != nullptr && std::holds_alternative<ASTExprAwait>(*nodeExpr.parent->body)
+            ? CodegenASTExprCall::create(
               CodegenASTExprAccess::create(this->_("threadpool_job_ref")),
               {CodegenASTExprAccess::create("job")}
             )
+            : CodegenASTExprAccess::create(this->_("NULL"))
         }
       );
     } else {
@@ -395,7 +393,9 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     expr = this->_genCopyFn(targetType, CodegenASTExprUnary::create("*", expr));
   }
 
-  if (root) {
+  auto parentIsAwait = nodeExpr.parent != nullptr && std::holds_alternative<ASTExprAwait>(*nodeExpr.parent->body);
+
+  if (root && !(fnType.async && !parentIsAwait)) {
     expr = this->_genFreeFn(nodeExpr.type, expr);
   }
 

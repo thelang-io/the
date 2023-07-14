@@ -78,13 +78,48 @@ void Codegen::_nodeReturnAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNod
   );
 
   if (!cExpr->isNull()) {
+    auto returnTypeInfo = this->_typeInfo(this->state.returnType);
+
     (*c)->append(
-      CodegenASTExprAssign::create(
-        CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar())),
-        "=",
+      CodegenASTStmtVarDecl::create(
+        CodegenASTType::create(returnTypeInfo.typeCode),
+        CodegenASTExprAccess::create("_v"),
         cExpr
-      )->stmt()
+      )
     );
+
+    if (this->state.returnType->shouldBeFreed()) {
+      (*c)->append(
+        CodegenASTExprCond::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()),
+            "==",
+            CodegenASTExprAccess::create(this->_("NULL"))
+          ),
+          this->_genFreeFn(this->state.returnType, CodegenASTExprAccess::create("_v")),
+          CodegenASTExprAssign::create(
+            CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar())),
+            "=",
+            CodegenASTExprAccess::create("_v")
+          )->wrap()
+        )->stmt()
+      );
+    } else {
+      (*c)->append(
+        CodegenASTStmtIf::create(
+          CodegenASTExprBinary::create(
+            CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()),
+            "!=",
+            CodegenASTExprAccess::create(this->_("NULL"))
+          ),
+          CodegenASTExprAssign::create(
+            CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar())),
+            "=",
+            CodegenASTExprAccess::create("_v")
+          )->stmt()
+        )
+      );
+    }
   }
 
   auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
