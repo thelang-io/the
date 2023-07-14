@@ -115,10 +115,10 @@ const std::vector<std::string> codegenThread = {
   R"(      job->referenced = _{false};)" EOL
   R"(      int step = job->func(self, job, job->ctx, job->params, job->ret, job->step);)" EOL
   R"(      if (step == -1) {)" EOL
-  R"(        _{err_state_t} *job_err_state = *((_{err_state_t} **) job->params);)" EOL
+  R"(        _{err_state_t} *job_err_state = job->params == _{NULL} ? _{NULL} : *((_{err_state_t} **) job->params);)" EOL
   R"(        if (job->parent != _{NULL} && !job->referenced) {)" EOL
   R"(          _{threadpool_insert}(self, job->parent);)" EOL
-  R"(        } else if (job_err_state->id != -1) {)" EOL
+  R"(        } else if (job_err_state != _{NULL} && job_err_state->id != -1) {)" EOL
   R"(          struct _{error_Error} *err = job_err_state->ctx;)" EOL
   R"(          _{fprintf}(_{stderr}, "Uncaught AsyncError: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL
   R"(          job_err_state->_free(job_err_state->ctx);)" EOL
