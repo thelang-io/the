@@ -241,7 +241,7 @@ class Codegen {
   void _fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *, const std::string &);
   std::shared_ptr<CodegenASTExpr> _genCopyFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
   std::shared_ptr<CodegenASTExpr> _genEqFn (Type *, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &, bool = false);
-  std::shared_ptr<CodegenASTExpr> _genErrState (bool = false, const std::string & = "");
+  std::shared_ptr<CodegenASTExpr> _genErrState (bool, bool, const std::string & = "");
   std::shared_ptr<CodegenASTExpr> _genFreeFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
   std::shared_ptr<CodegenASTExpr> _genReallocFn (Type *, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &);
   std::shared_ptr<CodegenASTExpr> _genStrFn (Type *, const std::shared_ptr<CodegenASTExpr> &, bool = true, bool = true);

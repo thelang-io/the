@@ -32,7 +32,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
     (*c)->append(
       CodegenASTStmtIf::create(
         CodegenASTExprBinary::create(
-          this->_genErrState(false, "id"),
+          this->_genErrState(false, false, "id"),
           "!=",
           CodegenASTExprLiteral::create("-1")
         ),

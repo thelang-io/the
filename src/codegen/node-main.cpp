@@ -38,18 +38,7 @@ void Codegen::_nodeMainAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
       {
         CodegenASTExprUnary::create("&", CodegenASTExprCast::create(
           CodegenASTType::create("struct " + this->_(paramsName)),
-          CodegenASTExprInitList::create({
-            CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("xalloc")),
-              {
-                this->_genErrState(true),
-                CodegenASTExprCall::create(
-                  CodegenASTExprAccess::create("sizeof"),
-                  {CodegenASTType::create(this->_("err_state_t"))}
-                )
-              }
-            )
-          })
+          CodegenASTExprInitList::create({this->_genErrState(true, true)})
         )),
         CodegenASTExprCall::create(
           CodegenASTExprAccess::create("sizeof"),

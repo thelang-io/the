@@ -308,6 +308,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinDefineCode += "#endif" EOL;
   }
 
+  if (this->throws) {
+    builtinDefineCode += "#define THE_THROWS" EOL;
+  }
+
   if (this->builtins.externSystemFunction036) {
     builtinWinExternCode += "  extern unsigned char NTAPI SystemFunction036 (void *, unsigned long);" EOL;
   }

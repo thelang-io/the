@@ -26,7 +26,7 @@ void Codegen::_nodeThrow (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("error_assign")),
       {
-        this->_genErrState(ASTChecker(node).insideMain()),
+        this->_genErrState(ASTChecker(node).insideMain(), false),
         CodegenASTExprAccess::create(this->_(argNodeExprDef)),
         CodegenASTExprCast::create(CodegenASTType::create("void *"), cArg),
         CodegenASTExprCast::create(
@@ -45,14 +45,14 @@ void Codegen::_nodeThrow (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
         CodegenASTExprAccess::create(this->_("longjmp")),
         {
           CodegenASTExprAccess::create(
-            this->_genErrState(ASTChecker(node).insideMain(), "buf"),
+            this->_genErrState(ASTChecker(node).insideMain(), false, "buf"),
             CodegenASTExprBinary::create(
-              this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"),
+              this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"),
               "-",
               CodegenASTExprLiteral::create("1")
             )
           ),
-          this->_genErrState(ASTChecker(node).insideMain(), "id")
+          this->_genErrState(ASTChecker(node).insideMain(), false, "id")
         }
       )->stmt()
     );
@@ -71,7 +71,7 @@ void Codegen::_nodeThrowAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("error_assign")),
       {
-        this->_genErrState(ASTChecker(node).insideMain()),
+        this->_genErrState(ASTChecker(node).insideMain(), false),
         CodegenASTExprAccess::create(this->_(argNodeExprDef)),
         CodegenASTExprCast::create(CodegenASTType::create("void *"), cArg),
         CodegenASTExprCast::create(

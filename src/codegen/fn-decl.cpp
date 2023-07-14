@@ -23,7 +23,7 @@ void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, cons
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("error_stack_push")),
       {
-        this->_genErrState(false),
+        this->_genErrState(false, false),
         CodegenASTExprLiteral::create(R"(")" + this->reader->path + R"(")"),
         CodegenASTExprLiteral::create(R"(")" + name + R"(")"),
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "line", true),
@@ -36,7 +36,7 @@ void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, cons
     this->state.cleanUp.add(
       CodegenASTStmtIf::create(
         CodegenASTExprBinary::create(
-          this->_genErrState(false, "id"),
+          this->_genErrState(false, false, "id"),
           "!=",
           CodegenASTExprLiteral::create("-1")
         ),
@@ -44,14 +44,14 @@ void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, cons
           CodegenASTExprAccess::create(this->_("longjmp")),
           {
             CodegenASTExprAccess::create(
-              this->_genErrState(false, "buf"),
+              this->_genErrState(false, false, "buf"),
               CodegenASTExprBinary::create(
-                this->_genErrState(false, "buf_idx"),
+                this->_genErrState(false, false, "buf_idx"),
                 "-",
                 CodegenASTExprLiteral::create("1")
               )
             ),
-            this->_genErrState(false, "id")
+            this->_genErrState(false, false, "id")
           }
         )->stmt()
       )
@@ -61,7 +61,7 @@ void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, cons
   this->state.cleanUp.add(
     CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("error_stack_pop")),
-      {this->_genErrState(false)}
+      {this->_genErrState(false, false)}
     )->stmt()
   );
 }

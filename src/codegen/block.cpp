@@ -71,19 +71,19 @@ void Codegen::_block (
       this->_node(c, node, CODEGEN_PHASE_INIT);
     } else if (this->throws && nodeChecker.throwsPossible()) {
       auto setJumpArg = CodegenASTExprAccess::create(
-        this->_genErrState(ASTChecker(node).insideMain(), "buf"),
+        this->_genErrState(ASTChecker(node).insideMain(), false, "buf"),
         jumpedBefore
           ? CodegenASTExprBinary::create(
-            this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"),
+            this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"),
             "-",
             CodegenASTExprLiteral::create("1")
           )
-          : CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "++")
+          : CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "++")
       );
 
       if (!jumpedBefore) {
         this->state.cleanUp.add(
-          CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "--")->stmt()
+          CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "--")->stmt()
         );
       }
 
@@ -123,14 +123,14 @@ void Codegen::_block (
           CodegenASTExprAccess::create(this->_("longjmp")),
           {
             CodegenASTExprAccess::create(
-              this->_genErrState(nodesChecker.insideMain(), "buf"),
+              this->_genErrState(nodesChecker.insideMain(), false, "buf"),
               CodegenASTExprBinary::create(
-                this->_genErrState(nodesChecker.insideMain(), "buf_idx"),
+                this->_genErrState(nodesChecker.insideMain(), false, "buf_idx"),
                 "-",
                 CodegenASTExprLiteral::create("1")
               )
             ),
-            this->_genErrState(nodesChecker.insideMain(), "id")
+            this->_genErrState(nodesChecker.insideMain(), false, "id")
           }
         )->stmt()
         : CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel());
@@ -138,7 +138,7 @@ void Codegen::_block (
       (*c)->append(
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
-            this->_genErrState(nodesChecker.insideMain(), "id"),
+            this->_genErrState(nodesChecker.insideMain(), false, "id"),
             "!=",
             CodegenASTExprLiteral::create("-1")
           ),
@@ -247,19 +247,19 @@ void Codegen::_blockAsync (
       this->_nodeAsync(c, node, CODEGEN_PHASE_INIT);
     } else if (this->throws && nodeChecker.throwsPossible()) {
       auto setJumpArg = CodegenASTExprAccess::create(
-        this->_genErrState(ASTChecker(node).insideMain(), "buf"),
+        this->_genErrState(ASTChecker(node).insideMain(), false, "buf"),
         jumpedBefore
           ? CodegenASTExprBinary::create(
-            this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"),
+            this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"),
             "-",
             CodegenASTExprLiteral::create("1")
           )
-          : CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "++")
+          : CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "++")
       );
 
       if (!jumpedBefore) {
         this->state.cleanUp.add(
-          CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), "buf_idx"), "--")->stmt()
+          CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "--")->stmt()
         );
       }
 
@@ -299,7 +299,7 @@ void Codegen::_blockAsync (
         (*c)->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(
-              this->_genErrState(nodesChecker.insideMain(), "id"),
+              this->_genErrState(nodesChecker.insideMain(), false, "id"),
               "!=",
               CodegenASTExprLiteral::create("-1")
             ),

@@ -502,7 +502,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genEqFn (Type *type, const std::shared
   }
 }
 
-std::shared_ptr<CodegenASTExpr> Codegen::_genErrState (bool insideSyncMain, const std::string &prop) {
+std::shared_ptr<CodegenASTExpr> Codegen::_genErrState (bool insideSyncMain, bool shouldCopy, const std::string &prop) {
   auto cExpr = insideSyncMain
     ? CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))
     : CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), this->_("err_state"), true);
@@ -511,6 +511,17 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genErrState (bool insideSyncMain, cons
     cExpr = CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), prop);
   } else if (!prop.empty()) {
     cExpr = CodegenASTExprAccess::create(cExpr, prop, true);
+  } else if (shouldCopy) {
+    cExpr = CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("xalloc")),
+      {
+        cExpr,
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create("sizeof"),
+          {CodegenASTType::create(this->_("err_state_t"))}
+        )
+      }
+    );
   }
 
   return cExpr;
