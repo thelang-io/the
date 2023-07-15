@@ -148,13 +148,12 @@ TEST(CodegenCleanUpTest, LabelsParent) {
   EXPECT_EQ(testCodegenCleanUpGen(n0), l + ":" EOL "  test;" EOL);
 }
 
-TEST(CodegenCleanUpTest, LabellingAddsValueToFunction) {
+TEST(CodegenCleanUpTest, LabellingDoesNotAddValueToFunction) {
   auto n0 = CodegenCleanUp();
   auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
   auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
 
-  EXPECT_EQ(n2.currentLabel(), "L0");
-  EXPECT_EQ(testCodegenCleanUpGen(n1), "L0:" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n1), "" EOL);
 }
 
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {
