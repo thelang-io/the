@@ -273,7 +273,7 @@ void Codegen::_blockAsync (
             "!=",
             CodegenASTExprLiteral::create("0")
           ),
-          CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
+          this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync())
         )
       );
 
@@ -304,8 +304,8 @@ void Codegen::_blockAsync (
               CodegenASTExprLiteral::create("-1")
             ),
             initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+              ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtBreak::create()
           )
         );
       }
@@ -319,8 +319,8 @@ void Codegen::_blockAsync (
               CodegenASTExprLiteral::create("1")
             ),
             initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+              ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtBreak::create()
           )
         );
       }
@@ -334,8 +334,8 @@ void Codegen::_blockAsync (
               CodegenASTExprLiteral::create("1")
             ),
             initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+              ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtBreak::create()
           )
         );
       }
@@ -349,8 +349,8 @@ void Codegen::_blockAsync (
               CodegenASTExprLiteral::create("1")
             ),
             initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-              ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+              ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
+              : CodegenASTStmtBreak::create()
           )
         );
       }

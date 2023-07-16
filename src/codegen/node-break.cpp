@@ -44,7 +44,7 @@ void Codegen::_nodeBreakAsync (std::shared_ptr<CodegenASTStmt> *c, [[maybe_unuse
   );
 
   (*c)->append(
-    CodegenASTStmtReturn::create(
+    this->_genAsyncReturn(
       this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)
         ? this->state.cleanUp.currentLabelAsync()
         : this->state.asyncCounterLoopBreak

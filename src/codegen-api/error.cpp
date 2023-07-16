@@ -91,6 +91,12 @@ const std::vector<std::string> codegenError = {
   R"~(  })~" EOL
   R"~(})~" EOL,
 
+  R"(void error_uncaught (_{err_state_t} *fn_err_state, char *name) {)" EOL
+  R"(  struct _{error_Error} *err = fn_err_state->ctx;)" EOL
+  R"(  _{fprintf}(_{stderr}, "Uncaught %s: %.*s" _{THE_EOL}, name, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL
+  R"(  fn_err_state->_free(fn_err_state->ctx);)" EOL
+  R"(})" EOL,
+
   R"(void error_unset (_{err_state_t} *fn_err_state) {)" EOL
   R"(  fn_err_state->id = -1;)" EOL
   R"(  fn_err_state->_free = (void *) 0;)" EOL

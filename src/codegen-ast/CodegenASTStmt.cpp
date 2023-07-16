@@ -423,7 +423,8 @@ std::string CodegenASTStmtIf::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "if (" + this->cond->str() + ") " + this->body->str(indent, false);
   if (this->alt != nullptr && !this->alt->isNull()) {
-    result += " else " + this->alt->str(indent, false);
+    result += this->body->isCompound() ? " " : EOL + std::string(indent, ' ');
+    result += "else " + this->alt->str(indent, false);
   }
   result += root ? EOL : "";
   return result;
@@ -454,17 +455,11 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtReturn::create (const std::shared_
   return CodegenASTStmt::create(CodegenASTStmtReturn{arg});
 }
 
-std::shared_ptr<CodegenASTStmt> CodegenASTStmtReturn::create (const std::shared_ptr<std::size_t> &asyncPtr) {
-  return CodegenASTStmt::create(CodegenASTStmtReturn{nullptr, asyncPtr});
-}
-
 std::string CodegenASTStmtReturn::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "return";
   if (this->arg != nullptr && !this->arg->isNull()) {
     result += " " + this->arg->str();
-  } else if (this->asyncPtr != std::nullopt) {
-    result += " " + std::to_string(**this->asyncPtr);
   }
   result += ";";
   result += root ? EOL : "";

@@ -369,10 +369,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
               : "t" + std::to_string(awaitCallId)
           ),
           nodeExpr.parent != nullptr && std::holds_alternative<ASTExprAwait>(*nodeExpr.parent->body)
-            ? CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("threadpool_job_ref")),
-              {CodegenASTExprAccess::create("job")}
-            )
+            ? CodegenASTExprAccess::create("job")
             : CodegenASTExprAccess::create(this->_("NULL"))
         }
       );

@@ -66,7 +66,7 @@ void Codegen::_nodeIfAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &n
   (*c)->append(
     CodegenASTStmtIf::create(
       CodegenASTExprUnary::create("!", cCond->wrap()),
-      CodegenASTStmtReturn::create(afterBodyAsyncCounter)
+      this->_genAsyncReturn(afterBodyAsyncCounter)
     )
   );
 
@@ -78,7 +78,7 @@ void Codegen::_nodeIfAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &n
   this->state.typeCasts = initialStateTypeCasts;
 
   if (!(*c)->endsWith<CodegenASTStmtReturn>() && nodeIf.alt != std::nullopt) {
-    (*c)->append(CodegenASTStmtReturn::create(afterAltAsyncCounter));
+    (*c)->append(this->_genAsyncReturn(afterAltAsyncCounter));
   }
 
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);

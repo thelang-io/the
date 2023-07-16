@@ -18,12 +18,17 @@
 
 std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root) {
   auto exprAwait = std::get<ASTExprAwait>(*nodeExpr.body);
-  (*c)->append(this->_nodeExpr(exprAwait.arg, exprAwait.arg.type, parent, c, false, exprAwait.id)->stmt());
 
   (*c)->append(
-    CodegenASTStmtReturn::create(
+    CodegenASTExprAssign::create(
+      CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "step", true),
+      "=",
       CodegenASTExprLiteral::create(std::to_string(this->state.asyncCounter + 1))
-    )
+    )->stmt()
+  );
+
+  (*c)->append(
+    CodegenASTStmtReturn::create(this->_nodeExpr(exprAwait.arg, exprAwait.arg.type, parent, c, false, exprAwait.id))
   );
 
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
@@ -37,8 +42,8 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
           CodegenASTExprLiteral::create("-1")
         ),
         this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-          ? CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
-          : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+          ? this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync())
+          : CodegenASTStmtBreak::create()
       )
     );
   }

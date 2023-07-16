@@ -239,6 +239,7 @@ class Codegen {
   std::shared_ptr<CodegenASTExpr> _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   void _fnDecl (std::shared_ptr<CodegenASTStmt> *, std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
   void _fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *, const std::string &);
+  std::shared_ptr<CodegenASTStmt> _genAsyncReturn (const std::shared_ptr<std::size_t> &);
   std::shared_ptr<CodegenASTExpr> _genCopyFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
   std::shared_ptr<CodegenASTExpr> _genEqFn (Type *, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &, bool = false);
   std::shared_ptr<CodegenASTExpr> _genErrState (bool, bool, const std::string & = "");

@@ -144,7 +144,7 @@ void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
         "==",
         CodegenASTExprLiteral::create("-1")
       ),
-      CodegenASTStmtReturn::create(endAsyncCounter)
+      this->_genAsyncReturn(endAsyncCounter)
     )
   };
 
@@ -161,7 +161,7 @@ void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
           "==",
           CodegenASTExprAccess::create(this->_(handlerDef))
         ),
-        CodegenASTStmtReturn::create(handlersAsyncCounters.back())
+        this->_genAsyncReturn(handlersAsyncCounters.back())
       )
     );
   }
@@ -173,7 +173,7 @@ void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
   this->varMap.restore();
 
   if (!(*c)->endsWith<CodegenASTStmtReturn>()) {
-    (*c)->append(CodegenASTStmtReturn::create(endAsyncCounter));
+    (*c)->append(this->_genAsyncReturn(endAsyncCounter));
   }
 
   for (auto idx = static_cast<std::size_t>(0); idx < nodeTry.handlers.size(); idx++) {
@@ -209,7 +209,7 @@ void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
     this->varMap.restore();
 
     if (!(*c)->endsWith<CodegenASTStmtReturn>()) {
-      (*c)->append(CodegenASTStmtReturn::create(endAsyncCounter));
+      (*c)->append(this->_genAsyncReturn(endAsyncCounter));
     }
   }
 
@@ -217,8 +217,8 @@ void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
 
   (*c)->append(
     initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-      ? CodegenASTStmtReturn::create(initialStateCleanUp.currentLabelAsync())
-      : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+      ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
+      : CodegenASTStmtBreak::create()
   );
 
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);

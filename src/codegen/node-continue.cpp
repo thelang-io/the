@@ -48,7 +48,7 @@ void Codegen::_nodeContinueAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTN
   }
 
   (*c)->append(
-    CodegenASTStmtReturn::create(
+    this->_genAsyncReturn(
       this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)
         ? this->state.cleanUp.currentLabelAsync()
         : this->state.asyncCounterLoopContinue

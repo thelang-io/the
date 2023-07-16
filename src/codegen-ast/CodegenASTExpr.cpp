@@ -294,8 +294,12 @@ std::shared_ptr<CodegenASTExpr> CodegenASTExprLiteral::create (const std::string
   return CodegenASTExpr::create(CodegenASTExprLiteral{val});
 }
 
+std::shared_ptr<CodegenASTExpr> CodegenASTExprLiteral::create (const std::shared_ptr<std::size_t> &asyncVal) {
+  return CodegenASTExpr::create(CodegenASTExprLiteral{"", asyncVal});
+}
+
 std::string CodegenASTExprLiteral::str () const {
-  return this->val;
+  return this->asyncVal == nullptr ? this->val : std::to_string(*this->asyncVal);
 }
 
 std::shared_ptr<CodegenASTExpr> CodegenASTExprNull::create () {

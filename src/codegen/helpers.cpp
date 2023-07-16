@@ -440,6 +440,24 @@ std::string Codegen::_apiEval (
   return result;
 }
 
+std::shared_ptr<CodegenASTStmt> Codegen::_genAsyncReturn (const std::shared_ptr<std::size_t> &counter) {
+  return CodegenASTStmtReturn::create(
+    CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("threadpool_insert")),
+      {
+        CodegenASTExprAccess::create("tp"),
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("threadpool_job_step")),
+          {
+            CodegenASTExprAccess::create("job"),
+            CodegenASTExprLiteral::create(counter)
+          }
+        )
+      }
+    )
+  );
+}
+
 std::shared_ptr<CodegenASTExpr> Codegen::_genCopyFn (Type *type, const std::shared_ptr<CodegenASTExpr> &expr) {
   auto result = expr;
 

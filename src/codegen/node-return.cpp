@@ -128,10 +128,10 @@ void Codegen::_nodeReturnAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNod
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
     if (!nodeParentFunction || !nodeIsLast) {
       (*c)->append(
-        CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
+        this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync())
       );
     }
   } else if (!nodeParentFunction || !nodeIsLast) {
-    (*c)->append(CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1")));
+    (*c)->append(CodegenASTStmtBreak::create());
   }
 }

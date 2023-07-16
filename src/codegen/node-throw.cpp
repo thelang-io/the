@@ -86,7 +86,7 @@ void Codegen::_nodeThrowAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode
 
   (*c)->append(
     this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-      ? CodegenASTStmtReturn::create(this->state.cleanUp.currentLabelAsync())
-      : CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1"))
+      ? this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync())
+      : CodegenASTStmtBreak::create()
   );
 }

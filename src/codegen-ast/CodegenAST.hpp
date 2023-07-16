@@ -290,8 +290,10 @@ struct CodegenASTExprInitList {
 
 struct CodegenASTExprLiteral {
   std::string val;
+  std::shared_ptr<std::size_t> asyncVal = nullptr;
 
   static std::shared_ptr<CodegenASTExpr> create (const std::string &);
+  static std::shared_ptr<CodegenASTExpr> create (const std::shared_ptr<std::size_t> &);
   std::string str () const;
 };
 
@@ -393,11 +395,9 @@ struct CodegenASTStmtNull {
 
 struct CodegenASTStmtReturn {
   std::shared_ptr<CodegenASTExpr> arg = nullptr;
-  std::optional<std::shared_ptr<std::size_t>> asyncPtr = std::nullopt;
 
   static std::shared_ptr<CodegenASTStmt> create ();
   static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &);
-  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<std::size_t> &);
   std::string str (std::size_t, bool) const;
 };
 

@@ -395,13 +395,50 @@ void Codegen::_fnDecl (
 
       if (fnType.async && !body->empty()) {
         cBody = cBody->exit()->exit()->exit();
-      }
-      if (fnType.async) {
-        cBody->append(CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("-1")));
+
+        cBody->append(
+          CodegenASTStmtIf::create(
+            CodegenASTExprBinary::create(
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
+              "!=",
+              CodegenASTExprAccess::create(this->_("NULL"))
+            ),
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("threadpool_insert")),
+              {
+                CodegenASTExprAccess::create("tp"),
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true)
+              }
+            )->stmt(),
+            this->throws
+              ? CodegenASTStmtIf::create(
+                CodegenASTExprBinary::create(
+                  this->_genErrState(false, false, "id"),
+                  "!=",
+                  CodegenASTExprLiteral::create("-1")
+                ),
+                CodegenASTExprCall::create(
+                  CodegenASTExprAccess::create(this->_("error_uncaught")),
+                  {
+                    this->_genErrState(false, false),
+                    CodegenASTExprLiteral::create(R"("AsyncError")")
+                  }
+                )->stmt()
+              )
+            : CodegenASTStmtNull::create()
+          )
+        );
+
+        cBody->append(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("threadpool_job_deinit")),
+            {CodegenASTExprAccess::create("job")}
+          )->stmt()
+        );
       }
 
-      decl += (this->state.insideAsync ? "int " : returnTypeInfo.typeCode) + typeName + " (";
-      def += (this->state.insideAsync ? "int " : returnTypeInfo.typeCode) + typeName + " (";
+      decl += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
+      def += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
 
       if (fnType.async) {
         decl += this->_apiEval("_{threadpool_t} *, _{threadpool_job_t} *, ");

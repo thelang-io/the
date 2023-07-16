@@ -17,7 +17,6 @@
 #include "thread.hpp"
 #include "../config.hpp"
 
-
 const std::vector<std::string> codegenThread = {
   R"(void thread_sleep (_{int32_t} i) {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
@@ -36,37 +35,48 @@ const std::vector<std::string> codegenThread = {
   R"(_{threadpool_t} *threadpool_init (int count) {)" EOL
   R"(  _{threadpool_t} *self = _{alloc}(sizeof(_{threadpool_t}));)" EOL
   R"(  self->active = _{true};)" EOL
+  R"(  self->jobs = _{NULL};)" EOL
+  R"(  self->jobs_tail = _{NULL};)" EOL
+  R"(  self->working_threads = 0;)" EOL
+  R"(  self->alive_threads = 0;)" EOL
   R"(  _{pthread_cond_init}(&self->cond1, _{NULL});)" EOL
   R"(  _{pthread_cond_init}(&self->cond2, _{NULL});)" EOL
-  R"(  self->jobs = _{NULL};)" EOL
-  R"(  _{pthread_mutex_init}(&self->lock, _{NULL});)" EOL
+  R"(  _{pthread_mutex_init}(&self->lock1, _{NULL});)" EOL
+  R"(  _{pthread_mutex_init}(&self->lock2, _{NULL});)" EOL
+  R"(  _{pthread_mutex_init}(&self->lock3, _{NULL});)" EOL
   R"(  self->threads = _{NULL};)" EOL
-  R"(  self->working_threads = 0;)" EOL
   R"(  for (int i = 0; i < count; i++) self->threads = _{threadpool_thread_init}(self, self->threads);)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
+  R"(  while (self->alive_threads != count) _{pthread_cond_wait}(&self->cond1, &self->lock1);)" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
   R"(  return self;)" EOL
   R"(})" EOL,
 
   R"(void threadpool_deinit (_{threadpool_t} *self) {)" EOL
-  R"(  _{pthread_mutex_lock}(&self->lock);)" EOL
-  R"(  _{threadpool_job_t} *it1 = self->jobs;)" EOL
-  R"(  while (it1 != _{NULL}) {)" EOL
-  R"(    _{threadpool_job_t} *tmp = it1->next;)" EOL
-  R"(    _{threadpool_job_deinit}(it1);)" EOL
-  R"(    it1 = tmp;)" EOL
-  R"(  })" EOL
   R"(  self->active = _{false};)" EOL
-  R"(  _{pthread_cond_broadcast}(&self->cond1);)" EOL
-  R"(  _{pthread_mutex_unlock}(&self->lock);)" EOL
-  R"(  _{threadpool_wait}(self);)" EOL
-  R"(  _{threadpool_thread_t} *it2 = self->threads;)" EOL
-  R"(  while (it2 != _{NULL}) {)" EOL
-  R"(    _{threadpool_thread_t} *tmp = it2->next;)" EOL
-  R"(    _{threadpool_thread_deinit}(it2);)" EOL
-  R"(    it2 = tmp;)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
+  R"(  while (self->alive_threads != 0) {)" EOL
+  R"(    _{pthread_mutex_lock}(&self->lock3);)" EOL
+  R"(    _{pthread_cond_signal}(&self->cond2);)" EOL
+  R"(    _{pthread_mutex_unlock}(&self->lock3);)" EOL
+  R"(    _{pthread_cond_wait}(&self->cond1, &self->lock1);)" EOL
+  R"(  })" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
+  R"(  while (self->jobs != _{NULL}) {)" EOL
+  R"(    _{threadpool_job_t} *next = self->jobs->next;)" EOL
+  R"(    _{threadpool_job_deinit}(self->jobs);)" EOL
+  R"(    self->jobs = next;)" EOL
+  R"(  })" EOL
+  R"(  while (self->threads != _{NULL}) {)" EOL
+  R"(    _{threadpool_thread_t} *next = self->threads->next;)" EOL
+  R"(    _{threadpool_thread_deinit}(self->threads);)" EOL
+  R"(    self->threads = next;)" EOL
   R"(  })" EOL
   R"(  _{pthread_cond_destroy}(&self->cond1);)" EOL
   R"(  _{pthread_cond_destroy}(&self->cond2);)" EOL
-  R"(  _{pthread_mutex_destroy}(&self->lock);)" EOL
+  R"(  _{pthread_mutex_destroy}(&self->lock1);)" EOL
+  R"(  _{pthread_mutex_destroy}(&self->lock2);)" EOL
+  R"(  _{pthread_mutex_destroy}(&self->lock3);)" EOL
   R"(  _{free}(self);)" EOL
   R"(})" EOL,
 
@@ -78,85 +88,89 @@ const std::vector<std::string> codegenThread = {
   R"(  job->params = params;)" EOL
   R"(  job->ret = ret;)" EOL
   R"(  job->step = 0;)" EOL
-  R"(  job->referenced = _{false};)" EOL
   R"(  job->next = _{NULL};)" EOL
   R"(  _{threadpool_insert}(self, job);)" EOL
   R"(})" EOL,
 
+  R"(_{threadpool_job_t} *threadpool_get (_{threadpool_t} *self) {)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock2);)" EOL
+  R"(  _{threadpool_job_t} *job = self->jobs;)" EOL
+  R"(  if (job != _{NULL}) {)" EOL
+  R"(    self->jobs = self->jobs->next;)" EOL
+  R"(    job->next = _{NULL};)" EOL
+  R"(    if (self->jobs != _{NULL}) {)" EOL
+  R"(      self->jobs_tail = _{NULL};)" EOL
+  R"(    } else {)" EOL
+  R"(      _{pthread_mutex_lock}(&self->lock3);)" EOL
+  R"(      _{pthread_cond_signal}(&self->cond2);)" EOL
+  R"(      _{pthread_mutex_unlock}(&self->lock3);)" EOL
+  R"(    })" EOL
+  R"(  })" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock2);)" EOL
+  R"(  return job;)" EOL
+  R"(})" EOL,
+
   R"(void threadpool_insert (_{threadpool_t} *self, _{threadpool_job_t} *job) {)" EOL
-  R"(  _{pthread_mutex_lock}(&self->lock);)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock2);)" EOL
   R"(  if (self->jobs == _{NULL}) {)" EOL
   R"(    self->jobs = job;)" EOL
+  R"(    self->jobs_tail = job;)" EOL
   R"(  } else {)" EOL
-  R"(    _{threadpool_job_t} *tail = self->jobs;)" EOL
-  R"(    while (tail->next != _{NULL}) tail = tail->next;)" EOL
-  R"(    tail->next = job;)" EOL
+  R"(    self->jobs_tail->next = job;)" EOL
+  R"(    self->jobs_tail = self->jobs_tail->next;)" EOL
   R"(  })" EOL
-  R"(  _{pthread_cond_broadcast}(&self->cond1);)" EOL
-  R"(  _{pthread_mutex_unlock}(&self->lock);)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock3);)" EOL
+  R"(  _{pthread_cond_signal}(&self->cond2);)" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock3);)" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock2);)" EOL
   R"(})" EOL,
 
   R"(void *threadpool_worker (void *n) {)" EOL
   R"(  _{threadpool_t} *self = n;)" EOL
-  R"(  while (1) {)" EOL
-  R"(    _{pthread_mutex_lock}(&self->lock);)" EOL
-  R"(    while (self->active && self->jobs == _{NULL}) _{pthread_cond_wait}(&self->cond1, &self->lock);)" EOL
-  R"(    if (!self->active) {)" EOL
-  R"(      _{pthread_cond_signal}(&self->cond2);)" EOL
-  R"(      _{pthread_mutex_unlock}(&self->lock);)" EOL
-  R"(      _{pthread_exit}(_{NULL});)" EOL
-  R"(    })" EOL
-  R"(    _{threadpool_job_t} *job = self->jobs;)" EOL
-  R"(    self->jobs = self->jobs->next;)" EOL
-  R"(    job->next = _{NULL};)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
+  R"(  self->alive_threads++;)" EOL
+  R"(  _{pthread_cond_signal}(&self->cond1);)" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
+  R"(  while (self->active) {)" EOL
+  R"(    _{pthread_mutex_lock}(&self->lock3);)" EOL
+  R"(    while (self->active && self->jobs == _{NULL}) _{pthread_cond_wait}(&self->cond2, &self->lock3);)" EOL
+  R"(    _{pthread_mutex_unlock}(&self->lock3);)" EOL
+  R"(    if (!self->active) break;)" EOL
+  R"(    _{pthread_mutex_lock}(&self->lock1);)" EOL
   R"(    self->working_threads++;)" EOL
-  R"(    _{pthread_mutex_unlock}(&self->lock);)" EOL
-  R"(    if (job != _{NULL}) {)" EOL
-  R"(      job->referenced = _{false};)" EOL
-  R"(      int step = job->func(self, job, job->ctx, job->params, job->ret, job->step);)" EOL
-  R"(      if (step == -1) {)" EOL
-  R"(        if (job->parent != _{NULL} && !job->referenced) {)" EOL
-  R"(          _{threadpool_insert}(self, job->parent);)" EOL
-  R"(        } else {)" EOL
-  R"(          #ifdef THE_THROWS)" EOL
-  R"(            _{err_state_t} *job_err_state = *((_{err_state_t} **) job->params);)" EOL
-  R"(            if (job_err_state->id != -1) {)" EOL
-  R"(              struct _{error_Error} *err = job_err_state->ctx;)" EOL
-  R"(              _{fprintf}(_{stderr}, "Uncaught AsyncError: %.*s" _{THE_EOL}, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);)" EOL
-  R"(              job_err_state->_free(job_err_state->ctx);)" EOL
-  R"(            })" EOL
-  R"(          #endif)" EOL
-  R"(        })" EOL
-  R"(        _{threadpool_job_deinit}(job);)" EOL
-  R"(      } else {)" EOL
-  R"(        job->step = step;)" EOL
-  R"(        if (!job->referenced) _{threadpool_insert}(self, job);)" EOL
-  R"(      })" EOL
-  R"(    })" EOL
-  R"(    _{pthread_mutex_lock}(&self->lock);)" EOL
+  R"(    _{pthread_mutex_unlock}(&self->lock1);)" EOL
+  R"(    _{threadpool_job_t} *job = _{threadpool_get}(self);)" EOL
+  R"(    if (job != _{NULL}) job->func(self, job, job->ctx, job->params, job->ret, job->step);)" EOL
+  R"(    _{pthread_mutex_lock}(&self->lock1);)" EOL
   R"(    self->working_threads--;)" EOL
-  R"(    if (self->active && self->jobs == _{NULL}) _{pthread_cond_signal}(&self->cond2);)" EOL
-  R"(    _{pthread_mutex_unlock}(&self->lock);)" EOL
+  R"(    if (self->working_threads == 0 && self->jobs == _{NULL}) _{pthread_cond_signal}(&self->cond1);)" EOL
+  R"(    _{pthread_mutex_unlock}(&self->lock1);)" EOL
   R"(  })" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
+  R"(  self->alive_threads--;)" EOL
+  R"(  _{pthread_cond_signal}(&self->cond1);)" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
+  R"(  return _{NULL};)" EOL
   R"(})" EOL,
 
   R"(void threadpool_wait (_{threadpool_t} *self) {)" EOL
-  R"(  _{pthread_mutex_lock}(&self->lock);)" EOL
-  R"(  while (self->working_threads != 0 || self->jobs != _{NULL}) _{pthread_cond_wait}(&self->cond2, &self->lock);)" EOL
-  R"(  _{pthread_mutex_unlock}(&self->lock);)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
+  R"(  while (self->working_threads != 0 || self->jobs != _{NULL}) _{pthread_cond_wait}(&self->cond1, &self->lock1);)" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
   R"(})" EOL,
 
   R"(void threadpool_job_deinit (_{threadpool_job_t} *self) {)" EOL
   R"(  _{free}(self);)" EOL
   R"(})" EOL,
 
-  R"(_{threadpool_job_t} *threadpool_job_ref (_{threadpool_job_t} *self) {)" EOL
-  R"(  self->referenced = _{true};)" EOL
+  R"(_{threadpool_job_t} *threadpool_job_step (_{threadpool_job_t} *self, int step) {)" EOL
+  R"(  self->step = step;)" EOL
   R"(  return self;)" EOL
   R"(})" EOL,
 
   R"(_{threadpool_thread_t} *threadpool_thread_init (_{threadpool_t} *tp, _{threadpool_thread_t} *next) {)" EOL
   R"(  _{threadpool_thread_t} *self = _{alloc}(sizeof(_{threadpool_thread_t}));)" EOL
+  R"(  self->tp = tp;)" EOL
   R"(  _{pthread_create}(&self->id, _{NULL}, _{threadpool_worker}, tp);)" EOL
   R"(  _{pthread_detach}(self->id);)" EOL
   R"(  self->next = next;)" EOL

@@ -36,7 +36,7 @@ std::string Codegen::_typeNameFn (Type *type) {
 
     decl += "struct " + typeName + ";";
     def += "struct " + typeName + " {" EOL;
-    def += "  " + (fnType.async ? "int " : returnTypeInfo.typeCode) + "(*f) (";
+    def += "  " + (fnType.async ? "void " : returnTypeInfo.typeCode) + "(*f) (";
     def += fnType.async ? "_{threadpool_t} *, _{threadpool_job_t} *, " : "";
     def += "void *" + std::string(hasParams || fnType.async ? ", void *" : "");
     def += fnType.async ? ", void *, int" : "";

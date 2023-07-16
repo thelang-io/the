@@ -180,7 +180,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("error_stack_push")),
         {
-          CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state"))),
+          this->_genErrState(true, false),
           CodegenASTExprLiteral::create(R"(")" + this->reader->path + R"(")"),
           CodegenASTExprLiteral::create(R"("main")"),
           CodegenASTExprLiteral::create("0"),
@@ -193,41 +193,21 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
       CodegenASTStmtCompound::create({
         CodegenASTExprCall::create(
           CodegenASTExprAccess::create(this->_("error_stack_pop")),
-          {CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_("err_state")))}
+          {this->_genErrState(true, false)}
         )->stmt(),
         CodegenASTStmtIf::create(
           CodegenASTExprBinary::create(
-            CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "id"),
+            this->_genErrState(true, false, "id"),
             "!=",
             CodegenASTExprLiteral::create("-1")
           ),
           CodegenASTStmtCompound::create({
-            CodegenASTStmtVarDecl::create(
-              CodegenASTType::create("struct " + this->_("error_Error") + " *"),
-              CodegenASTExprAccess::create("err"),
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "ctx")
-            ),
             CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("fprintf")),
+              CodegenASTExprAccess::create(this->_("error_uncaught")),
               {
-                CodegenASTExprAccess::create(this->_("stderr")),
-                CodegenASTExprLiteral::create(R"("Uncaught Error: %.*s" )" + this->_("THE_EOL")),
-                CodegenASTExprCast::create(
-                  CodegenASTType::create("int"),
-                  CodegenASTExprAccess::create(
-                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("err"), "__THE_0_stack", true),
-                    "l"
-                  )
-                ),
-                CodegenASTExprAccess::create(
-                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("err"), "__THE_0_stack", true),
-                  "d"
-                )
+                this->_genErrState(true, false),
+                CodegenASTExprLiteral::create(R"("Error")")
               }
-            )->stmt(),
-            CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "_free"),
-              {CodegenASTExprAccess::create(CodegenASTExprAccess::create(this->_("err_state")), "ctx")}
             )->stmt(),
             CodegenASTExprCall::create(
               CodegenASTExprAccess::create(this->_("exit")),
@@ -380,26 +360,29 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "  pthread_cond_t cond1;" EOL;
     builtinStructDefCode += "  pthread_cond_t cond2;" EOL;
     builtinStructDefCode += "  struct threadpool_job *jobs;" EOL;
-    builtinStructDefCode += "  pthread_mutex_t lock;" EOL;
+    builtinStructDefCode += "  struct threadpool_job *jobs_tail;" EOL;
+    builtinStructDefCode += "  pthread_mutex_t lock1;" EOL;
+    builtinStructDefCode += "  pthread_mutex_t lock2;" EOL;
+    builtinStructDefCode += "  pthread_mutex_t lock3;" EOL;
     builtinStructDefCode += "  struct threadpool_thread *threads;" EOL;
     builtinStructDefCode += "  int working_threads;" EOL;
+    builtinStructDefCode += "  int alive_threads;" EOL;
     builtinStructDefCode += "} threadpool_t;" EOL;
   }
 
   if (this->builtins.typeThreadpoolFunc) {
-    builtinStructDefCode += "typedef int (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);" EOL;
+    builtinStructDefCode += "typedef void (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);" EOL;
   }
 
   if (this->builtins.typeThreadpoolJob) {
     builtinStructDeclCode += "struct threadpool_job;" EOL;
     builtinStructDefCode += "typedef struct threadpool_job {" EOL;
     builtinStructDefCode += "  struct threadpool_job *parent;" EOL;
-    builtinStructDefCode += "  int (*func) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);" EOL;
+    builtinStructDefCode += "  threadpool_func_t func;" EOL;
     builtinStructDefCode += "  void *ctx;" EOL;
     builtinStructDefCode += "  void *params;" EOL;
     builtinStructDefCode += "  void *ret;" EOL;
     builtinStructDefCode += "  int step;" EOL;
-    builtinStructDefCode += "  bool referenced;" EOL;
     builtinStructDefCode += "  struct threadpool_job *next;" EOL;
     builtinStructDefCode += "} threadpool_job_t;" EOL;
   }
@@ -408,6 +391,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDeclCode += "struct threadpool_thread;" EOL;
     builtinStructDefCode += "typedef struct threadpool_thread {" EOL;
     builtinStructDefCode += "  pthread_t id;" EOL;
+    builtinStructDefCode += "  struct threadpool *tp;" EOL;
     builtinStructDefCode += "  struct threadpool_thread *next;" EOL;
     builtinStructDefCode += "} threadpool_thread_t;" EOL;
   }
