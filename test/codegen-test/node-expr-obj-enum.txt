@@ -63,7 +63,7 @@ struct __THE_1_Test1_0 {
   const enum __THE_1_Test2_0 __THE_0_b;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);

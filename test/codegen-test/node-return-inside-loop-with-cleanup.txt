@@ -260,7 +260,7 @@ struct __THE_1_fn$1000 {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);

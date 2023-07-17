@@ -202,12 +202,32 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
             CodegenASTExprLiteral::create("-1")
           ),
           CodegenASTStmtCompound::create({
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create("struct " + this->_("error_Error") + " *"),
+              CodegenASTExprAccess::create("err"),
+              this->_genErrState(true, false, "ctx")
+            ),
             CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("error_uncaught")),
+              CodegenASTExprAccess::create(this->_("fprintf")),
               {
-                this->_genErrState(true, false),
-                CodegenASTExprLiteral::create(R"("Error")")
+                CodegenASTExprAccess::create(this->_("stderr")),
+                CodegenASTExprLiteral::create(R"("Uncaught Error: %.*s" )" + this->_("THE_EOL")),
+                CodegenASTExprCast::create(
+                  CodegenASTType::create("int"),
+                  CodegenASTExprAccess::create(
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("err"), Codegen::name("stack"), true),
+                    "l"
+                  )
+                ),
+                CodegenASTExprAccess::create(
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("err"), Codegen::name("stack"), true),
+                  "d"
+                )
               }
+            )->stmt(),
+            CodegenASTExprCall::create(
+              this->_genErrState(true, false, "_free"),
+              {this->_genErrState(true, false, "ctx")}
             )->stmt(),
             CodegenASTExprCall::create(
               CodegenASTExprAccess::create(this->_("exit")),
@@ -286,10 +306,6 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinDefineCode += R"(  #define THE_EOL "\n")" EOL;
     builtinDefineCode += R"(  #define THE_PATH_SEP "/")" EOL;
     builtinDefineCode += "#endif" EOL;
-  }
-
-  if (this->throws) {
-    builtinDefineCode += "#define THE_THROWS" EOL;
   }
 
   if (this->builtins.externSystemFunction036) {
@@ -431,8 +447,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->needMainArgs) {
-    builtinVarCode += "int argc = 0;" EOL;
-    builtinVarCode += "char **argv = (void *) 0;" EOL;
+    builtinVarCode += "int argc;" EOL;
+    builtinVarCode += "char **argv;" EOL;
 
     cMain->prepend(
       CodegenASTExprAssign::create(
@@ -456,7 +472,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.varErrState) {
-    builtinVarCode += "err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};" EOL;
+    builtinVarCode += "err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};" EOL;
   }
 
   if (this->builtins.varLibOpensslInit) {

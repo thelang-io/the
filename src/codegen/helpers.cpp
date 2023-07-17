@@ -138,8 +138,10 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   }
 
   if (name == "definitions") {
+    if (this->builtins.definitions) return;
     this->builtins.definitions = true;
   } else if (name == "externSystemFunction036") {
+    if (this->builtins.externSystemFunction036) return;
     this->builtins.externSystemFunction036 = true;
     this->_activateBuiltin("definitions");
 
@@ -147,31 +149,42 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
       this->flags.emplace_back("W:-ladvapi32");
     }
   } else if (name == "libArpaInet") {
+    if (this->builtins.libArpaInet) return;
     this->builtins.libArpaInet = true;
   } else if (name == "libCtype") {
+    if (this->builtins.libCtype) return;
     this->builtins.libCtype = true;
   } else if (name == "libDirent") {
+    if (this->builtins.libDirent) return;
     this->builtins.libDirent = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libErrno") {
+    if (this->builtins.libErrno) return;
     this->builtins.libErrno = true;
   } else if (name == "libFcntl") {
+    if (this->builtins.libFcntl) return;
     this->builtins.libFcntl = true;
   } else if (name == "libFloat") {
+    if (this->builtins.libFloat) return;
     this->builtins.libFloat = true;
   } else if (name == "libInttypes") {
+    if (this->builtins.libInttypes) return;
     this->builtins.libInttypes = true;
   } else if (name == "libMath") {
+    if (this->builtins.libMath) return;
     this->builtins.libMath = true;
 
     if (std::find(this->flags.begin(), this->flags.end(), "U:-lm") == this->flags.end()) {
       this->flags.emplace_back("U:-lm");
     }
   } else if (name == "libNetdb") {
+    if (this->builtins.libNetdb) return;
     this->builtins.libNetdb = true;
   } else if (name == "libNetinetIn") {
+    if (this->builtins.libNetinetIn) return;
     this->builtins.libNetinetIn = true;
   } else if (name == "libOpensslRand") {
+    if (this->builtins.libOpensslRand) return;
     this->builtins.libOpensslRand = true;
 
     if (std::find(this->flags.begin(), this->flags.end(), "A:-lssl") == this->flags.end()) {
@@ -202,6 +215,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
       this->flags.emplace_back("W:-luser32");
     }
   } else if (name == "libOpensslSsl") {
+    if (this->builtins.libOpensslSsl) return;
     this->builtins.libOpensslSsl = true;
 
     if (std::find(this->flags.begin(), this->flags.end(), "A:-lssl") == this->flags.end()) {
@@ -232,107 +246,146 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
       this->flags.emplace_back("W:-luser32");
     }
   } else if (name == "libPthread") {
+    if (this->builtins.libPthread) return;
     this->builtins.libPthread = true;
   } else if (name == "libPwd") {
+    if (this->builtins.libPwd) return;
     this->builtins.libPwd = true;
   } else if (name == "libSetJmp") {
+    if (this->builtins.libSetJmp) return;
     this->builtins.libSetJmp = true;
   } else if (name == "libStdNoReturn") {
+    if (this->builtins.libStdNoReturn) return;
     this->builtins.libStdNoReturn = true;
   } else if (name == "libStdarg") {
+    if (this->builtins.libStdarg) return;
     this->builtins.libStdarg = true;
   } else if (name == "libStdbool") {
+    if (this->builtins.libStdbool) return;
     this->builtins.libStdbool = true;
   } else if (name == "libStddef") {
+    if (this->builtins.libStddef) return;
     this->builtins.libStddef = true;
   } else if (name == "libStdint") {
+    if (this->builtins.libStdint) return;
     this->builtins.libStdint = true;
   } else if (name == "libStdio") {
+    if (this->builtins.libStdio) return;
     this->builtins.libStdio = true;
   } else if (name == "libStdlib") {
+    if (this->builtins.libStdlib) return;
     this->builtins.libStdlib = true;
   } else if (name == "libString") {
+    if (this->builtins.libString) return;
     this->builtins.libString = true;
   } else if (name == "libSysSocket") {
+    if (this->builtins.libSysSocket) return;
     this->builtins.libSysSocket = true;
   } else if (name == "libSysStat") {
+    if (this->builtins.libSysStat) return;
     this->builtins.libSysStat = true;
   } else if (name == "libSysTypes") {
+    if (this->builtins.libSysTypes) return;
     this->builtins.libSysTypes = true;
   } else if (name == "libSysUtsname") {
+    if (this->builtins.libSysUtsname) return;
     this->builtins.libSysUtsname = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libTime") {
+    if (this->builtins.libTime) return;
     this->builtins.libTime = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libUnistd") {
+    if (this->builtins.libUnistd) return;
     this->builtins.libUnistd = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libWinDirect") {
+    if (this->builtins.libWinDirect) return;
     this->builtins.libWinDirect = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libWinIo") {
+    if (this->builtins.libWinIo) return;
     this->builtins.libWinIo = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libWinWs2tcpip") {
+    if (this->builtins.libWinWs2tcpip) return;
     this->builtins.libWinWs2tcpip = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libWindows") {
+    if (this->builtins.libWindows) return;
     this->builtins.libWindows = true;
     this->_activateBuiltin("definitions");
   } else if (name == "libWinsock2") {
+    if (this->builtins.libWinsock2) return;
     this->builtins.libWinsock2 = true;
     this->_activateBuiltin("definitions");
   } else if (name == "typeAny") {
+    if (this->builtins.typeAny) return;
     this->builtins.typeAny = true;
     this->_activateBuiltin("libStdlib");
   } else if (name == "typeBuffer") {
+    if (this->builtins.typeBuffer) return;
     this->builtins.typeBuffer = true;
     this->_activateBuiltin("libStdlib");
   } else if (name == "typeErrStack") {
+    if (this->builtins.typeErrStack) return;
     this->builtins.typeErrStack = true;
   } else if (name == "typeErrState") {
+    if (this->builtins.typeErrState) return;
     this->builtins.typeErrState = true;
     this->_activateBuiltin("libSetJmp");
     this->_activateBuiltin("typeErrStack");
   } else if (name == "typeRequest") {
+    if (this->builtins.typeRequest) return;
     this->builtins.typeRequest = true;
     this->_activateBuiltin("definitions");
     this->_activateBuiltin("libOpensslSsl");
     this->_activateBuiltin("libWinsock2");
   } else if (name == "typeStr") {
+    if (this->builtins.typeStr) return;
     this->builtins.typeStr = true;
     this->_activateBuiltin("libStdlib");
   } else if (name == "typeThreadpool") {
+    if (this->builtins.typeThreadpool) return;
     this->builtins.typeThreadpool = true;
     this->_activateBuiltin("libPthread");
     this->_activateBuiltin("libStdbool");
-    this->_activateBuiltin("typeThreadpoolJob");
-    this->_activateBuiltin("typeThreadpoolThread");
+    this->_("threadpool_job_t");
+    this->_("threadpool_thread_t");
   } else if (name == "typeThreadpoolFunc") {
+    if (this->builtins.typeThreadpoolFunc) return;
     this->builtins.typeThreadpoolFunc = true;
-    this->_activateBuiltin("typeThreadpool");
-    this->_activateBuiltin("typeThreadpoolJob");
+    this->_("threadpool_t");
+    this->_("threadpool_job_t");
   } else if (name == "typeThreadpoolJob") {
+    if (this->builtins.typeThreadpoolJob) return;
     this->builtins.typeThreadpoolJob = true;
-    this->_activateBuiltin("libStdbool");
+    this->_("threadpool_func_t");
   } else if (name == "typeThreadpoolThread") {
+    if (this->builtins.typeThreadpoolThread) return;
     this->builtins.typeThreadpoolThread = true;
     this->_activateBuiltin("libPthread");
+    this->_("threadpool_t");
   } else if (name == "typeWinReparseDataBuffer") {
+    if (this->builtins.typeWinReparseDataBuffer) return;
     this->builtins.typeWinReparseDataBuffer = true;
     this->_activateBuiltin("definitions");
     this->_activateBuiltin("libWindows");
   } else if (name == "varEnviron") {
+    if (this->builtins.varEnviron) return;
     this->builtins.varEnviron = true;
     this->_activateBuiltin("libUnistd");
   } else if (name == "varErrState") {
+    if (this->builtins.varErrState) return;
     this->builtins.varErrState = true;
+    this->_activateBuiltin("libStdlib");
     this->_activateBuiltin("typeErrState");
   } else if (name == "varLibOpensslInit") {
+    if (this->builtins.varLibOpensslInit) return;
     this->builtins.varLibOpensslInit = true;
     this->_activateBuiltin("libStdbool");
   } else if (name == "varLibWs2Init") {
+    if (this->builtins.varLibWs2Init) return;
     this->builtins.varLibWs2Init = true;
     this->_activateBuiltin("libStdbool");
   } else if (this->api.contains(name)) {

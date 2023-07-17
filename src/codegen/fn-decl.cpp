@@ -395,7 +395,9 @@ void Codegen::_fnDecl (
 
       if (fnType.async && !body->empty()) {
         cBody = cBody->exit()->exit()->exit();
+      }
 
+      if (fnType.async) {
         cBody->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(
@@ -418,10 +420,10 @@ void Codegen::_fnDecl (
                   CodegenASTExprLiteral::create("-1")
                 ),
                 CodegenASTExprCall::create(
-                  CodegenASTExprAccess::create(this->_("error_uncaught")),
+                  CodegenASTExprAccess::create(this->_("threadpool_error_assign")),
                   {
-                    this->_genErrState(false, false),
-                    CodegenASTExprLiteral::create(R"("AsyncError")")
+                    CodegenASTExprAccess::create("tp"),
+                    this->_genErrState(false, false)
                   }
                 )->stmt()
               )

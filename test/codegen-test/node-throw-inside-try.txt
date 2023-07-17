@@ -25,7 +25,6 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
-#define THE_THROWS
 
 #include <inttypes.h>
 #include <setjmp.h>
@@ -63,7 +62,7 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -157,7 +156,7 @@ void error_stack_str (err_state_t *fn_err_state) {
 }
 void error_unset (err_state_t *fn_err_state) {
   fn_err_state->id = -1;
-  fn_err_state->_free = (void *) 0;
+  fn_err_state->_free = NULL;
 }
 struct error_Error *new_error (struct str n1) {
   return error_Error_alloc(n1, (struct str) {NULL, 0});

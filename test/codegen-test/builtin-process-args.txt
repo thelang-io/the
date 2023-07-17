@@ -52,9 +52,9 @@ struct __THE_1_array_str {
   size_t l;
 };
 
-int argc = 0;
-char **argv = (void *) 0;
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+int argc;
+char **argv;
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);

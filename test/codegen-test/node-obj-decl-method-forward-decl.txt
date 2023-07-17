@@ -82,7 +82,7 @@ struct __THE_1_fn$1001 {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -252,7 +252,7 @@ struct str str_concat_cstr (struct str s, const char *r) {
 }
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc () {
   struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  struct __THE_1_Test1_0 s = {(void *) 0};
+  struct __THE_1_Test1_0 s = {NULL};
   memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
   return r;
 }
@@ -272,7 +272,7 @@ struct str __THE_1_Test1_0_str (struct __THE_1_Test1_0 *n) {
 }
 struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc () {
   struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
-  struct __THE_1_Test2_0 s = {(void *) 0};
+  struct __THE_1_Test2_0 s = {NULL};
   memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
   return r;
 }

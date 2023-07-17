@@ -50,7 +50,6 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
-#define THE_THROWS
 
 #include <inttypes.h>
 #include <setjmp.h>
@@ -103,7 +102,7 @@ struct __THE_1_Human_0 {
   struct __THE_1_array_Animal __THE_0_pets;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);

@@ -34,7 +34,6 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
-#define THE_THROWS
 
 #include <inttypes.h>
 #include <setjmp.h>
@@ -90,7 +89,7 @@ struct __THE_1_fn$1000P {
   int col;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
@@ -196,7 +195,7 @@ void error_stack_str (err_state_t *fn_err_state) {
 }
 void error_unset (err_state_t *fn_err_state) {
   fn_err_state->id = -1;
-  fn_err_state->_free = (void *) 0;
+  fn_err_state->_free = NULL;
 }
 struct str int_str (int32_t d) {
   char buf[24];

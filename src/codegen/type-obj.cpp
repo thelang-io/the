@@ -79,7 +79,7 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
 
       allocFnParamTypes = allocFnParamTypes.empty() ? allocFnParamTypes : allocFnParamTypes.substr(2);
       allocFnParams = allocFnParams.empty() ? allocFnParams : allocFnParams.substr(2);
-      allocFnCode = allocFnCode.empty() ? "(void *) 0" : allocFnCode.substr(2);
+      allocFnCode = allocFnCode.empty() ? "_{NULL}" : allocFnCode.substr(2);
 
       entity.decl += "struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParamTypes + ");";
       entity.def += "struct _{" + typeName + "} *" + typeName + "_alloc (" + allocFnParams + ") {" EOL;

@@ -109,7 +109,6 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
-#define THE_THROWS
 
 #include <ctype.h>
 #include <inttypes.h>
@@ -249,7 +248,7 @@ struct __THE_1_requestWithPrint_0X {
   const struct __THE_1_fn$0 *__THE_0_ignoredHeadersIncludes_0;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 bool lib_openssl_init = false;
 bool lib_ws2_init = false;
 

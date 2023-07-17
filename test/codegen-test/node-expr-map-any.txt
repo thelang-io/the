@@ -78,7 +78,7 @@ struct __THE_1_map_strMSanyME {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 struct any any_copy (const struct any);

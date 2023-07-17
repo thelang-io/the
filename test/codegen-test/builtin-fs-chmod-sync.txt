@@ -31,7 +31,6 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
-#define THE_THROWS
 
 #include <inttypes.h>
 #include <setjmp.h>
@@ -99,7 +98,7 @@ struct fs_Stats {
   const int64_t __THE_0_blockSize;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void buffer_free (struct buffer);

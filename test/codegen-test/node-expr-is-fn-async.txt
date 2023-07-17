@@ -102,22 +102,27 @@ typedef struct threadpool {
   pthread_cond_t cond1;
   pthread_cond_t cond2;
   struct threadpool_job *jobs;
-  pthread_mutex_t lock;
+  struct threadpool_job *jobs_tail;
+  pthread_mutex_t lock1;
+  pthread_mutex_t lock2;
+  pthread_mutex_t lock3;
   struct threadpool_thread *threads;
   int working_threads;
+  int alive_threads;
 } threadpool_t;
+typedef void (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);
 typedef struct threadpool_job {
   struct threadpool_job *parent;
-  int (*func) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);
+  threadpool_func_t func;
   void *ctx;
   void *params;
   void *ret;
   int step;
-  bool referenced;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
   pthread_t id;
+  struct threadpool *tp;
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
@@ -127,7 +132,7 @@ struct __THE_1_any_float;
 struct __THE_1_union_fn$1000USfloatUE;
 
 struct __THE_1_fn$1000 {
-  int (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+  void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
@@ -145,7 +150,7 @@ struct __THE_1_union_fn$1000USfloatUE {
   };
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void any_free (struct any);
@@ -155,10 +160,12 @@ void error_alloc (err_state_t *, size_t);
 struct str float_str (double);
 struct str str_alloc (const char *);
 void str_free (struct str);
+void threadpool_insert (threadpool_t *, threadpool_job_t *);
+void threadpool_job_deinit (threadpool_job_t *);
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000);
-int __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 struct any __THE_1_any_fn$1000_alloc (struct __THE_1_fn$1000);
 struct any __THE_1_any_fn$1000_copy (const struct any);
 void __THE_1_any_fn$1000_free (struct any);
@@ -219,6 +226,23 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
+void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
+  pthread_mutex_lock(&self->lock2);
+  if (self->jobs == NULL) {
+    self->jobs = job;
+    self->jobs_tail = job;
+  } else {
+    self->jobs_tail->next = job;
+    self->jobs_tail = self->jobs_tail->next;
+  }
+  pthread_mutex_lock(&self->lock3);
+  pthread_cond_signal(&self->cond2);
+  pthread_mutex_unlock(&self->lock3);
+  pthread_mutex_unlock(&self->lock2);
+}
+void threadpool_job_deinit (threadpool_job_t *self) {
+  free(self);
+}
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
@@ -232,8 +256,9 @@ struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000 n) {
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) n);
   return str_alloc("[Function]");
 }
-int __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  return -1;
+void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  if (job->parent != NULL) threadpool_insert(tp, job->parent);
+  threadpool_job_deinit(job);
 }
 struct any __THE_1_any_fn$1000_alloc (struct __THE_1_fn$1000 d) {
   size_t l = sizeof(struct __THE_1_any_fn$1000);

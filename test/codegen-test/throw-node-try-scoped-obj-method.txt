@@ -33,7 +33,6 @@ main {
   #define THE_EOL "\n"
   #define THE_PATH_SEP "/"
 #endif
-#define THE_THROWS
 
 #include <inttypes.h>
 #include <setjmp.h>
@@ -109,7 +108,7 @@ struct __THE_1_test2_0X {
   const struct __THE_1_fn$1000 *__THE_0_TestSDtest1_0;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -210,7 +209,7 @@ void error_stack_str (err_state_t *fn_err_state) {
 }
 void error_unset (err_state_t *fn_err_state) {
   fn_err_state->id = -1;
-  fn_err_state->_free = (void *) 0;
+  fn_err_state->_free = NULL;
 }
 struct error_Error *new_error (struct str n1) {
   return error_Error_alloc(n1, (struct str) {NULL, 0});
@@ -367,7 +366,7 @@ void __THE_1_TestError_0_free (struct __THE_1_TestError_0 *n) {
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc () {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {(void *) 0};
+  struct __THE_1_Test_0 s = {NULL};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }

@@ -236,7 +236,7 @@ struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X {
   const struct __THE_1_fn$1002 *__THE_0_CounterSDget_0;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -412,7 +412,7 @@ void *xalloc (void *n1, size_t n2) {
 }
 struct __THE_1_StaticTest_0 *__THE_1_StaticTest_0_alloc () {
   struct __THE_1_StaticTest_0 *r = alloc(sizeof(struct __THE_1_StaticTest_0));
-  struct __THE_1_StaticTest_0 s = {(void *) 0};
+  struct __THE_1_StaticTest_0 s = {NULL};
   memcpy(r, &s, sizeof(struct __THE_1_StaticTest_0));
   return r;
 }

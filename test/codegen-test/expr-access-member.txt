@@ -66,7 +66,7 @@ struct __THE_1_fn$1000P {
   enum __THE_1_Color_0 n0;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void error_alloc (err_state_t *, size_t);
 void *xalloc (void *, size_t);

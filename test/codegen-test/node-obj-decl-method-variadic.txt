@@ -112,7 +112,7 @@ struct __THE_1_fn$1005P {
   int32_t n2;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -304,7 +304,7 @@ void *xalloc (void *n1, size_t n2) {
 }
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc () {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {(void *) 0};
+  struct __THE_1_Test_0 s = {NULL};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }

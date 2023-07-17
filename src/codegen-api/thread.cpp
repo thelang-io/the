@@ -92,6 +92,12 @@ const std::vector<std::string> codegenThread = {
   R"(  _{threadpool_insert}(self, job);)" EOL
   R"(})" EOL,
 
+  R"(void threadpool_error_assign (_{threadpool_t} *self, _{err_state_t} *fn_err_state) {)" EOL
+  R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
+  R"(  _{memcpy}(&_{err_state}, fn_err_state, sizeof(_{err_state_t}));)" EOL
+  R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
+  R"(})" EOL,
+
   R"(_{threadpool_job_t} *threadpool_get (_{threadpool_t} *self) {)" EOL
   R"(  _{pthread_mutex_lock}(&self->lock2);)" EOL
   R"(  _{threadpool_job_t} *job = self->jobs;)" EOL
@@ -126,7 +132,8 @@ const std::vector<std::string> codegenThread = {
   R"(})" EOL,
 
   R"(void *threadpool_worker (void *n) {)" EOL
-  R"(  _{threadpool_t} *self = n;)" EOL
+  R"(  _{threadpool_thread_t} *thread = n;)" EOL
+  R"(  _{threadpool_t} *self = thread->tp;)" EOL
   R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
   R"(  self->alive_threads++;)" EOL
   R"(  _{pthread_cond_signal}(&self->cond1);)" EOL
@@ -143,7 +150,7 @@ const std::vector<std::string> codegenThread = {
   R"(    if (job != _{NULL}) job->func(self, job, job->ctx, job->params, job->ret, job->step);)" EOL
   R"(    _{pthread_mutex_lock}(&self->lock1);)" EOL
   R"(    self->working_threads--;)" EOL
-  R"(    if (self->working_threads == 0 && self->jobs == _{NULL}) _{pthread_cond_signal}(&self->cond1);)" EOL
+  R"(    if ((self->working_threads == 0 && self->jobs == _{NULL}) || _{err_state}.id != -1) _{pthread_cond_signal}(&self->cond1);)" EOL
   R"(    _{pthread_mutex_unlock}(&self->lock1);)" EOL
   R"(  })" EOL
   R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
@@ -155,7 +162,7 @@ const std::vector<std::string> codegenThread = {
 
   R"(void threadpool_wait (_{threadpool_t} *self) {)" EOL
   R"(  _{pthread_mutex_lock}(&self->lock1);)" EOL
-  R"(  while (self->working_threads != 0 || self->jobs != _{NULL}) _{pthread_cond_wait}(&self->cond1, &self->lock1);)" EOL
+  R"(  while ((self->working_threads != 0 || self->jobs != _{NULL}) && _{err_state}.id == -1) _{pthread_cond_wait}(&self->cond1, &self->lock1);)" EOL
   R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
   R"(})" EOL,
 
@@ -171,7 +178,7 @@ const std::vector<std::string> codegenThread = {
   R"(_{threadpool_thread_t} *threadpool_thread_init (_{threadpool_t} *tp, _{threadpool_thread_t} *next) {)" EOL
   R"(  _{threadpool_thread_t} *self = _{alloc}(sizeof(_{threadpool_thread_t}));)" EOL
   R"(  self->tp = tp;)" EOL
-  R"(  _{pthread_create}(&self->id, _{NULL}, _{threadpool_worker}, tp);)" EOL
+  R"(  _{pthread_create}(&self->id, _{NULL}, _{threadpool_worker}, self);)" EOL
   R"(  _{pthread_detach}(self->id);)" EOL
   R"(  self->next = next;)" EOL
   R"(  return self;)" EOL
