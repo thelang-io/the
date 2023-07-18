@@ -103,6 +103,8 @@ struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
   std::shared_ptr<CodegenASTStmt> nextSibling = nullptr;
 
   static std::shared_ptr<CodegenASTStmt> create (const CodegenASTStmtBody &);
+  static bool emptyVector (const std::vector<std::shared_ptr<CodegenASTStmt>> &);
+
   std::shared_ptr<CodegenASTStmt> append (const std::shared_ptr<CodegenASTStmt> &);
   CodegenASTStmtBreak &asBreak ();
   const CodegenASTStmtBreak &asBreak () const;
@@ -156,6 +158,7 @@ struct CodegenASTStmt : public std::enable_shared_from_this<CodegenASTStmt> {
   bool isIf () const;
   bool isLabel () const;
   bool isNull () const;
+  bool isNullable () const;
   bool isReturn () const;
   bool isStructDecl () const;
   bool isSwitch () const;

@@ -20,7 +20,7 @@ main {
   f := "f"
   print(await test2("0"))
   g := "g"
-  print(await test2("10"))
+  print(await test2("5"))
   h := "h"
 }
 ======= code =======
@@ -379,7 +379,7 @@ threadpool_job_t *threadpool_get (threadpool_t *self) {
   if (job != NULL) {
     self->jobs = self->jobs->next;
     job->next = NULL;
-    if (self->jobs != NULL) {
+    if (self->jobs == NULL) {
       self->jobs_tail = NULL;
     } else {
       pthread_mutex_lock(&self->lock3);
@@ -587,7 +587,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
       print(stdout, "sz", *t2, THE_EOL);
       *__THE_0_g_0 = str_alloc("g");
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_test2_0).f, xalloc((*__THE_0_test2_0).x, (*__THE_0_test2_0).l), xalloc(&(struct __THE_1_fn$1001P) {str_alloc("10")}, sizeof(struct __THE_1_fn$1001P)), t3, job);
+      return threadpool_add(tp, (*__THE_0_test2_0).f, xalloc((*__THE_0_test2_0).x, (*__THE_0_test2_0).l), xalloc(&(struct __THE_1_fn$1001P) {str_alloc("5")}, sizeof(struct __THE_1_fn$1001P)), t3, job);
     }
     case 3: {
       print(stdout, "sz", *t3, THE_EOL);
@@ -627,3 +627,6 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
+1
+2
+5

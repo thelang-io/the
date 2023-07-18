@@ -398,6 +398,34 @@ void Codegen::_fnDecl (
       }
 
       if (fnType.async) {
+        if (this->throws) {
+          cBody->append(
+            CodegenASTStmtIf::create(
+              CodegenASTExprBinary::create(
+                CodegenASTExprBinary::create(
+                  this->_genErrState(false, false, "id"),
+                  "!=",
+                  CodegenASTExprLiteral::create("-1")
+                ),
+                "&&",
+                CodegenASTExprBinary::create(
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
+                  "!=",
+                  CodegenASTExprAccess::create(this->_("NULL"))
+                )
+              ),
+              CodegenASTExprCall::create(
+                CodegenASTExprAccess::create(this->_("threadpool_error_assign_parent")),
+                {
+                  CodegenASTExprAccess::create("tp"),
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
+                  this->_genErrState(false, false)
+                }
+              )->stmt()
+            )
+          );
+        }
+
         cBody->append(
           CodegenASTStmtIf::create(
             CodegenASTExprBinary::create(

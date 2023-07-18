@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <ranges>
 #include "CodegenCleanUp.hpp"
 #include "Error.hpp"
 
@@ -45,9 +44,7 @@ void CodegenCleanUp::add (const std::shared_ptr<CodegenASTStmt> &stmt) {
     }
   }
 
-  if (!stmt->isNull()) {
-    this->_data.back().content.insert(this->_data.back().content.begin(), stmt);
-  }
+  this->_data.back().content.insert(this->_data.back().content.begin(), stmt);
 }
 
 std::string CodegenCleanUp::currentBreakVar () {
@@ -140,19 +137,9 @@ bool CodegenCleanUp::empty () const {
     return true;
   }
 
-  for (const auto &it : this->_data) {
-    if (it.content.empty()) {
-      continue;
-    }
-
-    for (const auto &it2 : it.content) {
-      if (!it2->isNull()) {
-        return false;
-      }
-    }
-  }
-
-  return true;
+  return std::all_of(this->_data.begin(), this->_data.end(), [&] (const auto &it) -> bool {
+    return CodegenASTStmt::emptyVector(it.content);
+  });
 }
 
 void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {
@@ -217,8 +204,8 @@ void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (stmt->isCompound()) {
     auto stmtCompound = stmt->asCompound();
 
-    for (const auto &item : std::ranges::reverse_view(stmtCompound.body)) {
-      this->add(item);
+    for (auto it = stmtCompound.body.rbegin(); it != stmtCompound.body.rend(); it++) {
+      this->add(*it);
     }
   } else {
     this->add(stmt);

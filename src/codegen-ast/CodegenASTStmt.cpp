@@ -152,6 +152,16 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmt::create (const CodegenASTStmtBody
   return result;
 }
 
+bool CodegenASTStmt::emptyVector (const std::vector<std::shared_ptr<CodegenASTStmt>> &vec) {
+  if (vec.empty()) {
+    return true;
+  }
+
+  return std::all_of(vec.begin(), vec.end(), [&] (const auto &it) -> bool {
+    return it->isNullable();
+  });
+}
+
 std::shared_ptr<CodegenASTStmt> CodegenASTStmt::append (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (this->isCase() && this->asCase().body->isCompound()) {
     this->asCase().body->asCompound().body.push_back(stmt);
@@ -196,16 +206,7 @@ bool CodegenASTStmt::hasBody () const {
 }
 
 std::shared_ptr<CodegenASTStmt> CodegenASTStmt::increaseAsyncCounter (std::size_t &counter) {
-  auto isEmpty = true;
-
-  for (const auto &it : this->asCompound().body) {
-    if (!it->isNull() && !it->isExprNull()) {
-      isEmpty = false;
-      break;
-    }
-  }
-
-  if (isEmpty) {
+  if (CodegenASTStmt::emptyVector(this->asCompound().body)) {
     return this->getptr();
   }
 
@@ -219,6 +220,10 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmt::increaseAsyncCounter (std::size_
 
 bool CodegenASTStmt::isExprNull () const {
   return this->isExpr() && this->asExpr().expr->isNull();
+}
+
+bool CodegenASTStmt::isNullable () const {
+  return this->isNull() || this->isExprNull();
 }
 
 std::shared_ptr<CodegenASTStmt> CodegenASTStmt::getptr () {
@@ -381,7 +386,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtFor::create (
 std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "for (";
-  if (this->init != nullptr && !this->init->isNull()) {
+  if (this->init != nullptr && !this->init->isNullable()) {
     result += this->init->str(indent, false);
   } else {
     result += ";";
@@ -394,7 +399,7 @@ std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
     result += " " + this->upd->str();
   }
   result += ")";
-  if (this->body != nullptr && !this->body->isNull()) {
+  if (this->body != nullptr && !this->body->isNullable()) {
     result += " " + this->body->str(indent, false);
   } else {
     result += ";";
@@ -422,7 +427,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtIf::create (
 std::string CodegenASTStmtIf::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "if (" + this->cond->str() + ") " + this->body->str(indent, false);
-  if (this->alt != nullptr && !this->alt->isNull()) {
+  if (this->alt != nullptr && !this->alt->isNullable()) {
     result += this->body->isCompound() ? " " : EOL + std::string(indent, ' ');
     result += "else " + this->alt->str(indent, false);
   }
@@ -513,7 +518,7 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtWhile::create (
 std::string CodegenASTStmtWhile::str (std::size_t indent, bool root) const {
   auto result = root ? std::string(indent, ' ') : "";
   result += "while (" + this->cond->str() + ")";
-  if (this->body != nullptr && !this->body->isNull()) {
+  if (this->body != nullptr && !this->body->isNullable()) {
     result += " " + this->body->str(indent, false);
   } else {
     result += ";";

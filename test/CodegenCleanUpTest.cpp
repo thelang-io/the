@@ -22,9 +22,6 @@
 std::string testCodegenCleanUpGen (const CodegenCleanUp &n) {
   auto c = CodegenASTStmtCompound::create();
   n.gen(&c);
-  if (c->asCompound().body.empty()) {
-    return "";
-  }
   auto s = c->str(0, false);
   return s.substr(1 + std::string(EOL).size(), s.size() - 2 - std::string(EOL).size());
 }
@@ -153,7 +150,7 @@ TEST(CodegenCleanUpTest, LabellingDoesNotAddValueToFunction) {
   auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
   auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
 
-  EXPECT_EQ(testCodegenCleanUpGen(n1), "" EOL);
+  EXPECT_EQ(testCodegenCleanUpGen(n1), "");
 }
 
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {

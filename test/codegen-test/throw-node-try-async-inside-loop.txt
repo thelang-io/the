@@ -148,6 +148,7 @@ void str_free (struct str);
 void threadpool_add (threadpool_t *, threadpool_func_t, void *, void *, void *, threadpool_job_t *);
 void threadpool_deinit (threadpool_t *);
 void threadpool_error_assign (threadpool_t *, err_state_t *);
+void threadpool_error_assign_parent (threadpool_t *, threadpool_job_t *, err_state_t *);
 threadpool_job_t *threadpool_get (threadpool_t *);
 threadpool_t *threadpool_init (int);
 void threadpool_insert (threadpool_t *, threadpool_job_t *);
@@ -429,13 +430,16 @@ void threadpool_error_assign (threadpool_t *self, err_state_t *fn_err_state) {
   memcpy(&err_state, fn_err_state, sizeof(err_state_t));
   pthread_mutex_unlock(&self->lock1);
 }
+void threadpool_error_assign_parent (threadpool_t *self, threadpool_job_t *job, err_state_t *fn_err_state) {
+  memcpy(*((void **) job->params), fn_err_state, sizeof(err_state_t));
+}
 threadpool_job_t *threadpool_get (threadpool_t *self) {
   pthread_mutex_lock(&self->lock2);
   threadpool_job_t *job = self->jobs;
   if (job != NULL) {
     self->jobs = self->jobs->next;
     job->next = NULL;
-    if (self->jobs != NULL) {
+    if (self->jobs == NULL) {
       self->jobs_tail = NULL;
     } else {
       pthread_mutex_lock(&self->lock3);
@@ -554,6 +558,7 @@ void __THE_1_t_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, v
   struct __THE_1_fn$1000P *p = pp;
   error_stack_push(p->err_state, "/test", "t", p->line, p->col);
   error_stack_pop(p->err_state);
+  if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
   threadpool_job_deinit(job);
@@ -610,6 +615,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     case 8: {
     }
   }
+  if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
   threadpool_job_deinit(job);
@@ -643,3 +649,5 @@ int main () {
 }
 ======= flags =======
 ======= stderr =======
+Uncaught Error: test0
+  at main (/test:12:7)

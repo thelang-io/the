@@ -318,9 +318,11 @@ void Codegen::_blockAsync (
               "==",
               CodegenASTExprLiteral::create("1")
             ),
-            initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-              ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtBreak::create()
+            this->_genAsyncReturn(
+              initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)
+                ? initialStateCleanUp.currentLabelAsync()
+                : this->state.asyncCounterLoopBreak
+            )
           )
         );
       }
@@ -333,9 +335,11 @@ void Codegen::_blockAsync (
               "==",
               CodegenASTExprLiteral::create("1")
             ),
-            initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-              ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtBreak::create()
+            this->_genAsyncReturn(
+              initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)
+                ? initialStateCleanUp.currentLabelAsync()
+                : this->state.asyncCounterLoopContinue
+            )
           )
         );
       }

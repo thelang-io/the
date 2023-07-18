@@ -318,7 +318,7 @@ threadpool_job_t *threadpool_get (threadpool_t *self) {
   if (job != NULL) {
     self->jobs = self->jobs->next;
     job->next = NULL;
-    if (self->jobs != NULL) {
+    if (self->jobs == NULL) {
       self->jobs_tail = NULL;
     } else {
       pthread_mutex_lock(&self->lock3);
@@ -492,3 +492,4 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
+inside

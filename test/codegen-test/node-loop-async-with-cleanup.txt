@@ -314,7 +314,7 @@ threadpool_job_t *threadpool_get (threadpool_t *self) {
   if (job != NULL) {
     self->jobs = self->jobs->next;
     job->next = NULL;
-    if (self->jobs != NULL) {
+    if (self->jobs == NULL) {
       self->jobs_tail = NULL;
     } else {
       pthread_mutex_lock(&self->lock3);
@@ -504,7 +504,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     case 10: {
       str_free((struct str) *__THE_0_b_0);
       str_free((struct str) *__THE_0_a_0);
-      if (*b1 == 1) break;
+      if (*b1 == 1) return threadpool_insert(tp, threadpool_job_step(job, 12));
     }
     case 11: {
       (*__THE_0_i_1)++;
@@ -703,7 +703,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
       *__THE_0_i_1 = 0;
     }
     case 50: {
-      if (!(*__THE_0_i_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 63));
+      if (!(*__THE_0_i_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 62));
       *__THE_0_a_0 = str_alloc("a");
       job->step = 51;
       return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
@@ -750,7 +750,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     case 58: {
       str_free((struct str) *__THE_0_d_0);
       str_free((struct str) *__THE_0_c_0);
-      if (*b2 == 1) return threadpool_insert(tp, threadpool_job_step(job, 61));
+      if (*b2 == 1) return threadpool_insert(tp, threadpool_job_step(job, 60));
     }
     case 59: {
       (*__THE_0_j_1)++;
@@ -759,16 +759,14 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     case 60: {
       *__THE_0_p_0 = str_alloc("p");
       str_free((struct str) *__THE_0_p_0);
-    }
-    case 61: {
       str_free((struct str) *__THE_0_b_0);
       str_free((struct str) *__THE_0_a_0);
     }
-    case 62: {
+    case 61: {
       (*__THE_0_i_1)++;
       return threadpool_insert(tp, threadpool_job_step(job, 50));
     }
-    case 63: {
+    case 62: {
     }
   }
   if (job->parent != NULL) threadpool_insert(tp, job->parent);

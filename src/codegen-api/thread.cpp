@@ -98,13 +98,17 @@ const std::vector<std::string> codegenThread = {
   R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
   R"(})" EOL,
 
+  R"(void threadpool_error_assign_parent (_{threadpool_t} *self, _{threadpool_job_t} *job, _{err_state_t} *fn_err_state) {)" EOL
+  R"(  _{memcpy}(*((void **) job->params), fn_err_state, sizeof(_{err_state_t}));)" EOL
+  R"(})" EOL,
+
   R"(_{threadpool_job_t} *threadpool_get (_{threadpool_t} *self) {)" EOL
   R"(  _{pthread_mutex_lock}(&self->lock2);)" EOL
   R"(  _{threadpool_job_t} *job = self->jobs;)" EOL
   R"(  if (job != _{NULL}) {)" EOL
   R"(    self->jobs = self->jobs->next;)" EOL
   R"(    job->next = _{NULL};)" EOL
-  R"(    if (self->jobs != _{NULL}) {)" EOL
+  R"(    if (self->jobs == _{NULL}) {)" EOL
   R"(      self->jobs_tail = _{NULL};)" EOL
   R"(    } else {)" EOL
   R"(      _{pthread_mutex_lock}(&self->lock3);)" EOL

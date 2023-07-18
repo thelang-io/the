@@ -1,17 +1,17 @@
 ======= stdin =======
-async fn t () {}
+async fn test2 () {
+  throw error_NewError("test")
+}
+
+async fn test1 () {
+  await test2()
+}
 
 main {
   try {
-    try {
-      await t()
-      throw error_NewError("test")
-    } catch err: error_Error {
-      print("Error2:", err.stack)
-      throw error_NewError("test")
-    }
+    await test1()
   } catch err: error_Error {
-    print("Error1:", err.stack)
+    print("Error:", err.stack)
   }
 }
 ======= code =======
@@ -97,6 +97,7 @@ typedef struct threadpool_thread {
 struct error_Error;
 struct __THE_1_fn$1000;
 struct __THE_1_fn$1000P;
+struct __THE_1_test1_0X;
 struct __THE_1_async_mainX;
 
 struct error_Error {
@@ -113,8 +114,11 @@ struct __THE_1_fn$1000P {
   int line;
   int col;
 };
+struct __THE_1_test1_0X {
+  const struct __THE_1_fn$1000 *__THE_0_test2_0;
+};
 struct __THE_1_async_mainX {
-  const struct __THE_1_fn$1000 *__THE_0_t_0;
+  const struct __THE_1_fn$1000 *__THE_0_test1_0;
   struct error_Error *__THE_0_err_0;
 };
 
@@ -151,7 +155,9 @@ void *xalloc (void *, size_t);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_t_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test1_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test1_0X);
 void __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *, struct __THE_1_async_mainX);
 
@@ -529,73 +535,85 @@ void error_Error_free (struct error_Error *n) {
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_t_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_fn$1000P *p = pp;
-  error_stack_push(p->err_state, "/test", "t", p->line, p->col);
-  error_stack_pop(p->err_state);
+  switch (step) {
+    case 0: {
+      error_stack_push(p->err_state, "/test", "test2", p->line, p->col);
+      error_assign(p->err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 2, 3);
+      return threadpool_insert(tp, threadpool_job_step(job, 1));
+    }
+    case 1: {
+      error_stack_pop(p->err_state);
+    }
+  }
   if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
   threadpool_job_deinit(job);
 }
+void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_test1_0X *x = px;
+  const struct __THE_1_fn$1000 *__THE_0_test2_0 = x->__THE_0_test2_0;
+  switch (step) {
+    case 0: {
+      error_stack_push(p->err_state, "/test", "test1", p->line, p->col);
+      job->step = 1;
+      return threadpool_add(tp, (*__THE_0_test2_0).f, xalloc((*__THE_0_test2_0).x, (*__THE_0_test2_0).l), xalloc(&(struct __THE_1_fn$1000P) {xalloc(p->err_state, sizeof(err_state_t)), 6, 9}, sizeof(struct __THE_1_fn$1000P)), NULL, job);
+    }
+    case 1: {
+      if (p->err_state->id != -1) return threadpool_insert(tp, threadpool_job_step(job, 2));
+    }
+    case 2: {
+      error_stack_pop(p->err_state);
+    }
+  }
+  if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
+  if (job->parent != NULL) threadpool_insert(tp, job->parent);
+  else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
+  threadpool_job_deinit(job);
+}
+void __THE_1_test1_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test1_0X x) {
+  size_t l = sizeof(struct __THE_1_test1_0X);
+  struct __THE_1_test1_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_test1_0;
+  n->x = r;
+  n->l = l;
+}
 void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_fn$1000P *p = pp;
   struct __THE_1_async_mainX *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_t_0 = x->__THE_0_t_0;
+  const struct __THE_1_fn$1000 *__THE_0_test1_0 = x->__THE_0_test1_0;
   struct error_Error **__THE_0_err_0 = &x->__THE_0_err_0;
   switch (step) {
     case 0: {
       job->step = 1;
-      return threadpool_add(tp, (*__THE_0_t_0).f, xalloc((*__THE_0_t_0).x, (*__THE_0_t_0).l), xalloc(&(struct __THE_1_fn$1000P) {xalloc(p->err_state, sizeof(err_state_t)), 6, 13}, sizeof(struct __THE_1_fn$1000P)), NULL, job);
+      return threadpool_add(tp, (*__THE_0_test1_0).f, xalloc((*__THE_0_test1_0).x, (*__THE_0_test1_0).l), xalloc(&(struct __THE_1_fn$1000P) {xalloc(p->err_state, sizeof(err_state_t)), 11, 11}, sizeof(struct __THE_1_fn$1000P)), NULL, job);
     }
     case 1: {
-      if (p->err_state->id != -1) return threadpool_insert(tp, threadpool_job_step(job, 3));
-      error_assign(p->err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 7, 7);
-      return threadpool_insert(tp, threadpool_job_step(job, 3));
-    }
-    case 2: {
-      return threadpool_insert(tp, threadpool_job_step(job, 6));
-    }
-    case 3: {
-      if (p->err_state->id == -1) return threadpool_insert(tp, threadpool_job_step(job, 6));
-      if (p->err_state->id == TYPE_error_Error) return threadpool_insert(tp, threadpool_job_step(job, 4));
-      return threadpool_insert(tp, threadpool_job_step(job, 7));
-    }
-    case 4: {
-      error_unset(p->err_state);
-      *__THE_0_err_0 = (struct error_Error *) p->err_state->ctx;
-      if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) return threadpool_insert(tp, threadpool_job_step(job, 5));
-      print(stdout, "zzsz", "Error2:", " ", str_copy((*__THE_0_err_0)->__THE_0_stack), THE_EOL);
-      error_assign(p->err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 10, 7);
+      if (p->err_state->id != -1) return threadpool_insert(tp, threadpool_job_step(job, 2));
       return threadpool_insert(tp, threadpool_job_step(job, 5));
     }
-    case 5: {
-      p->err_state->buf_idx--;
-      error_Error_free((struct error_Error *) *__THE_0_err_0);
-      if (p->err_state->id != -1) return threadpool_insert(tp, threadpool_job_step(job, 7));
-      return threadpool_insert(tp, threadpool_job_step(job, 6));
-    }
-    case 6: {
-      return threadpool_insert(tp, threadpool_job_step(job, 10));
-    }
-    case 7: {
-      if (p->err_state->id == -1) return threadpool_insert(tp, threadpool_job_step(job, 10));
-      if (p->err_state->id == TYPE_error_Error) return threadpool_insert(tp, threadpool_job_step(job, 8));
+    case 2: {
+      if (p->err_state->id == -1) return threadpool_insert(tp, threadpool_job_step(job, 5));
+      if (p->err_state->id == TYPE_error_Error) return threadpool_insert(tp, threadpool_job_step(job, 3));
       break;
     }
-    case 8: {
+    case 3: {
       error_unset(p->err_state);
       *__THE_0_err_0 = (struct error_Error *) p->err_state->ctx;
-      if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) return threadpool_insert(tp, threadpool_job_step(job, 9));
-      print(stdout, "zzsz", "Error1:", " ", str_copy((*__THE_0_err_0)->__THE_0_stack), THE_EOL);
+      if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) return threadpool_insert(tp, threadpool_job_step(job, 4));
+      print(stdout, "zzsz", "Error:", " ", str_copy((*__THE_0_err_0)->__THE_0_stack), THE_EOL);
     }
-    case 9: {
+    case 4: {
       p->err_state->buf_idx--;
       error_Error_free((struct error_Error *) *__THE_0_err_0);
       if (p->err_state->id != -1) break;
-      return threadpool_insert(tp, threadpool_job_step(job, 10));
+      return threadpool_insert(tp, threadpool_job_step(job, 5));
     }
-    case 10: {
+    case 5: {
     }
   }
   if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
@@ -615,13 +633,16 @@ void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_async_m
 int main () {
   threadpool_t *tp = threadpool_init(5);
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn$1000 __THE_0_t_0 = (struct __THE_1_fn$1000) {&__THE_1_t_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn$1000 __THE_0_test1_0;
+  __THE_1_test1_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_test2_0});
   const struct __THE_1_fn$1000 async_main;
-  __THE_1_async_main_alloc((struct __THE_1_fn$1000 *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_t_0});
+  __THE_1_async_main_alloc((struct __THE_1_fn$1000 *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test1_0});
   threadpool_add(tp, async_main.f, async_main.x, xalloc(&(struct __THE_1_fn$1000P) {xalloc(&err_state, sizeof(err_state_t))}, sizeof(struct __THE_1_fn$1000P)), NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) async_main);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
@@ -632,7 +653,7 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
-Error2: test
-  at main (/test:7:7)
-Error1: test
-  at main (/test:10:7)
+Error: test
+  at test2 (/test:2:3)
+  at test1 (/test:6:9)
+  at main (/test:11:11)
