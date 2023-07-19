@@ -17,13 +17,13 @@
 #include "CodegenCleanUp.hpp"
 #include "Error.hpp"
 
-CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool async) {
+CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool isAsync) {
   this->type = t;
   this->parent = p;
   this->labelIdx = this->parent->labelIdx;
   this->breakVarIdx = this->parent->breakVarIdx;
   this->continueVarIdx = this->parent->continueVarIdx;
-  this->async = async;
+  this->async = isAsync;
 }
 
 // todo test
