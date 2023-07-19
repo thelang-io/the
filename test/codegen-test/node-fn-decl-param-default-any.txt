@@ -252,8 +252,8 @@ struct any __THE_1_test1_0 (void *px, void *pp) {
   any_free((struct any) __THE_0_c_0);
   any_free((struct any) __THE_0_b_0);
   any_free((struct any) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 struct any __THE_1_any_str_alloc (struct str d) {
   size_t l = sizeof(struct __THE_1_any_str);

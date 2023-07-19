@@ -200,11 +200,13 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
   if (n.x != NULL) free(n.x);
 }
 int32_t *__THE_1_job1_0 (void *px, void *pp) {
+  int32_t *v;
   struct __THE_1_fn$1000P *p = pp;
   int32_t *__THE_0_a_0 = p->n0;
   *__THE_0_a_0 += 1;
-  return __THE_0_a_0;
+  v = __THE_0_a_0;
   free(pp);
+  return v;
 }
 struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {
   if (n.x == NULL) return n;
@@ -216,10 +218,12 @@ void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
 }
 int32_t __THE_1_job2_0 (void *px, void *pp) {
+  int32_t v;
   struct __THE_1_fn$1001P *p = pp;
   int32_t *__THE_0_a_0 = p->n0;
-  return *__THE_0_a_0;
+  v = *__THE_0_a_0;
   free(pp);
+  return v;
 }
 void __THE_1_job3_0 (void *px, void *pp) {
   struct __THE_1_fn$1002P *p = pp;

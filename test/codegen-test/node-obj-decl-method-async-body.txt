@@ -403,7 +403,7 @@ void *threadpool_worker (void *n) {
   self->alive_threads--;
   pthread_cond_signal(&self->cond1);
   pthread_mutex_unlock(&self->lock1);
-  return NULL;
+  pthread_exit(NULL);
 }
 void *xalloc (void *n1, size_t n2) {
   void *r = malloc(n2);
@@ -424,10 +424,10 @@ void __THE_1_TestSDdo_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void
   switch (step) {
     case 0: {
       print(stdout, "zz", "Hello", THE_EOL);
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
     }
   }
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  threadpool_job_deinit(job);
 }
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
@@ -444,10 +444,10 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     }
     case 1: {
       __THE_1_Test_0_free((struct __THE_1_Test_0 *) *__THE_0_test_0);
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
     }
   }
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  threadpool_job_deinit(job);
 }
 void __THE_1_async_main_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_async_mainX x) {
   size_t l = sizeof(struct __THE_1_async_mainX);

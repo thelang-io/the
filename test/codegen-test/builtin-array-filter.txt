@@ -381,8 +381,8 @@ bool __THE_1_filterOne_0 (void *px, void *pp) {
   str_free((struct str) __THE_0_it_0);
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
-  return v;
   free(pp);
+  return v;
 }
 bool __THE_1_filterTwo_0 (void *px, void *pp) {
   bool v;
@@ -393,8 +393,8 @@ bool __THE_1_filterTwo_0 (void *px, void *pp) {
   str_free((struct str) __THE_0_it_0);
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
-  return v;
   free(pp);
+  return v;
 }
 bool __THE_1_filterTwoOrOne_0 (void *px, void *pp) {
   bool v;
@@ -405,8 +405,8 @@ bool __THE_1_filterTwoOrOne_0 (void *px, void *pp) {
   str_free((struct str) __THE_0_it_0);
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
-  return v;
   free(pp);
+  return v;
 }
 
 int main () {

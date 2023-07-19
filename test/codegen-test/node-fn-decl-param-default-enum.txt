@@ -147,12 +147,14 @@ void *xalloc (void *n1, size_t n2) {
   return r;
 }
 enum __THE_1_Test_0 __THE_1_test1_0 (void *px, void *pp) {
+  enum __THE_1_Test_0 v;
   struct __THE_1_fn$1000P *p = pp;
   const enum __THE_1_Test_0 __THE_0_a_0 = p->n0;
   const enum __THE_1_Test_0 __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_0_TestSDRed_0;
   const enum __THE_1_Test_0 __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_0_TestSDBlue_0;
-  return __THE_0_a_0 == __THE_0_b_0 ? __THE_0_c_0 == __THE_0_TestSDRed_0 ? __THE_0_c_0 : __THE_0_b_0 : __THE_0_a_0;
+  v = __THE_0_a_0 == __THE_0_b_0 ? __THE_0_c_0 == __THE_0_TestSDRed_0 ? __THE_0_c_0 : __THE_0_b_0 : __THE_0_a_0;
   free(pp);
+  return v;
 }
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);

@@ -126,6 +126,7 @@ threadpool_job_t *threadpool_get (threadpool_t *);
 threadpool_t *threadpool_init (int);
 void threadpool_insert (threadpool_t *, threadpool_job_t *);
 void threadpool_job_deinit (threadpool_job_t *);
+threadpool_job_t *threadpool_job_step (threadpool_job_t *, int);
 void threadpool_thread_deinit (threadpool_thread_t *);
 threadpool_thread_t *threadpool_thread_init (threadpool_t *, threadpool_thread_t *);
 void threadpool_wait (threadpool_t *);
@@ -324,6 +325,10 @@ void threadpool_job_deinit (threadpool_job_t *self) {
   if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
+threadpool_job_t *threadpool_job_step (threadpool_job_t *self, int step) {
+  self->step = step;
+  return self;
+}
 void threadpool_thread_deinit (threadpool_thread_t *self) {
   free(self);
 }
@@ -366,7 +371,7 @@ void *threadpool_worker (void *n) {
   self->alive_threads--;
   pthread_cond_signal(&self->cond1);
   pthread_mutex_unlock(&self->lock1);
-  return NULL;
+  pthread_exit(NULL);
 }
 void *xalloc (void *n1, size_t n2) {
   void *r = malloc(n2);
@@ -409,17 +414,19 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
       return threadpool_add(tp, (*__THE_0_t_0).f, xalloc((*__THE_0_t_0).x, (*__THE_0_t_0).l), xalloc(&(struct __THE_1_fn$1000P) {xalloc(p->err_state, sizeof(err_state_t)), 4, 9}, sizeof(struct __THE_1_fn$1000P)), NULL, job);
     }
     case 1: {
-      if (p->err_state->id != -1) break;
+      if (p->err_state->id != -1) return threadpool_insert(tp, threadpool_job_step(job, 2));
       error_assign(p->err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("test"), str_alloc("")), (void (*) (void *)) &error_Error_free, 5, 3);
-      break;
+      return threadpool_insert(tp, threadpool_job_step(job, 2));
+    }
+    case 2: {
+      if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
+      threadpool_job_deinit(job);
+      free(p->err_state);
+      free(pp);
     }
   }
-  if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
-  threadpool_job_deinit(job);
-  free(p->err_state);
-  free(pp);
 }
 void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_async_mainX x) {
   size_t l = sizeof(struct __THE_1_async_mainX);

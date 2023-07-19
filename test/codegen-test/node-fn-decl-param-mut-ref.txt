@@ -104,20 +104,24 @@ void *xalloc (void *n1, size_t n2) {
   return r;
 }
 int32_t *__THE_1_test1_0 (void *px, void *pp) {
+  int32_t *v;
   struct __THE_1_fn$1000P *p = pp;
   int32_t *__THE_0_a_0 = p->n0;
   *__THE_0_a_0 = 2;
-  return __THE_0_a_0;
+  v = __THE_0_a_0;
   free(pp);
+  return v;
 }
 int32_t *__THE_1_test2_0 (void *px, void *pp) {
+  int32_t *v;
   struct __THE_1_fn$1001P *p = pp;
   int32_t *__THE_0_a_0 = p->n0;
   int32_t *__THE_0_b_0 = p->n1;
   __THE_0_b_0 = __THE_0_a_0;
   __THE_0_a_0 = __THE_0_b_0;
-  return __THE_0_a_0;
+  v = __THE_0_a_0;
   free(pp);
+  return v;
 }
 
 int main () {

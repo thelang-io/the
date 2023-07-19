@@ -538,7 +538,7 @@ void *threadpool_worker (void *n) {
   self->alive_threads--;
   pthread_cond_signal(&self->cond1);
   pthread_mutex_unlock(&self->lock1);
-  return NULL;
+  pthread_exit(NULL);
 }
 void *xalloc (void *n1, size_t n2) {
   void *r = malloc(n2);
@@ -612,14 +612,14 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
     case 6: {
       str_free((struct str) *__THE_0_a_0);
       error_stack_pop(p->err_state);
+      if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
+      threadpool_job_deinit(job);
+      free(p->err_state);
+      free(pp);
     }
   }
-  if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
-  threadpool_job_deinit(job);
-  free(p->err_state);
-  free(pp);
 }
 void __THE_1_test_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test_0X x) {
   size_t l = sizeof(struct __THE_1_test_0X);
@@ -649,14 +649,14 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     }
     case 2: {
       p->err_state->buf_idx--;
+      if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
+      threadpool_job_deinit(job);
+      free(p->err_state);
+      free(pp);
     }
   }
-  if (p->err_state->id != -1 && job->parent != NULL) threadpool_error_assign_parent(tp, job->parent, p->err_state);
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
-  threadpool_job_deinit(job);
-  free(p->err_state);
-  free(pp);
 }
 void __THE_1_async_main_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_async_mainX x) {
   size_t l = sizeof(struct __THE_1_async_mainX);

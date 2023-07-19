@@ -168,8 +168,8 @@ struct __THE_1_array_int __THE_1_test1_0 (void *px, void *pp) {
   __THE_1_array_int_push(&__THE_0_a_0, __THE_1_array_int_alloc(1, 2));
   v = __THE_1_array_int_copy(__THE_0_a_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 struct __THE_1_array_int __THE_1_test2_0 (void *px, void *pp) {
   struct __THE_1_array_int v;
@@ -181,8 +181,8 @@ struct __THE_1_array_int __THE_1_test2_0 (void *px, void *pp) {
   v = __THE_1_array_int_copy(__THE_0_a_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 
 int main () {

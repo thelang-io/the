@@ -345,32 +345,40 @@ void __THE_1_doJob_0 (void *px, void *pp) {
   free(pp);
 }
 int32_t __THE_1_sum_0 (void *px, void *pp) {
+  int32_t v;
   struct __THE_1_fn$1001P *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
-  return __THE_0_a_0 + __THE_0_b_0;
+  v = __THE_0_a_0 + __THE_0_b_0;
   free(pp);
+  return v;
 }
 int32_t __THE_1_div_0 (void *px, void *pp) {
+  int32_t v;
   struct __THE_1_fn$1001P *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
-  return __THE_0_a_0 / __THE_0_b_0;
+  v = __THE_0_a_0 / __THE_0_b_0;
   free(pp);
+  return v;
 }
 int32_t __THE_1_sub_0 (void *px, void *pp) {
+  int32_t v;
   struct __THE_1_fn$1001P *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
-  return __THE_0_a_0 - __THE_0_b_0;
+  v = __THE_0_a_0 - __THE_0_b_0;
   free(pp);
+  return v;
 }
 int32_t __THE_1_mul_0 (void *px, void *pp) {
+  int32_t v;
   struct __THE_1_fn$1001P *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
-  return __THE_0_a_0 * __THE_0_b_0;
+  v = __THE_0_a_0 * __THE_0_b_0;
   free(pp);
+  return v;
 }
 
 int main () {

@@ -141,8 +141,8 @@ struct str __THE_1_test1_0 (void *px, void *pp) {
   __THE_0_a_0 = str_realloc(__THE_0_a_0, str_alloc("test"));
   v = str_copy(__THE_0_a_0);
   str_free((struct str) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 struct str __THE_1_test2_0 (void *px, void *pp) {
   struct str v;
@@ -154,8 +154,8 @@ struct str __THE_1_test2_0 (void *px, void *pp) {
   v = str_copy(__THE_0_a_0);
   str_free((struct str) __THE_0_b_0);
   str_free((struct str) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 
 int main () {

@@ -173,6 +173,94 @@ void Codegen::_fnDecl (
         );
       }
 
+      if (hasParams) {
+        this->state.cleanUp.add(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("free")),
+            {CodegenASTExprAccess::create("pp")}
+          )->stmt()
+        );
+      }
+
+      if (this->throws && fnType.async) {
+        this->state.cleanUp.add(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("free")),
+            {this->_genErrState(false, false)}
+          )->stmt()
+        );
+      }
+
+      if (fnType.async) {
+        this->state.cleanUp.add(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("threadpool_job_deinit")),
+            {CodegenASTExprAccess::create("job")}
+          )->stmt()
+        );
+
+        this->state.cleanUp.add(
+          CodegenASTStmtIf::create(
+            CodegenASTExprBinary::create(
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
+              "!=",
+              CodegenASTExprAccess::create(this->_("NULL"))
+            ),
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("threadpool_insert")),
+              {
+                CodegenASTExprAccess::create("tp"),
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true)
+              }
+            )->stmt(),
+            this->throws
+              ? CodegenASTStmtIf::create(
+                CodegenASTExprBinary::create(
+                  this->_genErrState(false, false, "id"),
+                  "!=",
+                  CodegenASTExprLiteral::create("-1")
+                ),
+                CodegenASTExprCall::create(
+                  CodegenASTExprAccess::create(this->_("threadpool_error_assign")),
+                  {
+                    CodegenASTExprAccess::create("tp"),
+                    this->_genErrState(false, false)
+                  }
+                )->stmt()
+              )
+              : CodegenASTStmtNull::create()
+          )
+        );
+
+        if (this->throws) {
+          this->state.cleanUp.add(
+            CodegenASTStmtIf::create(
+              CodegenASTExprBinary::create(
+                CodegenASTExprBinary::create(
+                  this->_genErrState(false, false, "id"),
+                  "!=",
+                  CodegenASTExprLiteral::create("-1")
+                ),
+                "&&",
+                CodegenASTExprBinary::create(
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
+                  "!=",
+                  CodegenASTExprAccess::create(this->_("NULL"))
+                )
+              ),
+              CodegenASTExprCall::create(
+                CodegenASTExprAccess::create(this->_("threadpool_error_assign_parent")),
+                {
+                  CodegenASTExprAccess::create("tp"),
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
+                  this->_genErrState(false, false)
+                }
+              )->stmt()
+            )
+          );
+        }
+      }
+
       if (this->throws && !fnType.async) {
         this->_fnDeclInitErrorHandling(&cBody, var->name);
       }
@@ -396,94 +484,6 @@ void Codegen::_fnDecl (
 
       if (fnType.async && !body->empty()) {
         cBody = cBody->exit()->exit()->exit();
-      }
-
-      if (fnType.async) {
-        if (this->throws) {
-          cBody->append(
-            CodegenASTStmtIf::create(
-              CodegenASTExprBinary::create(
-                CodegenASTExprBinary::create(
-                  this->_genErrState(false, false, "id"),
-                  "!=",
-                  CodegenASTExprLiteral::create("-1")
-                ),
-                "&&",
-                CodegenASTExprBinary::create(
-                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
-                  "!=",
-                  CodegenASTExprAccess::create(this->_("NULL"))
-                )
-              ),
-              CodegenASTExprCall::create(
-                CodegenASTExprAccess::create(this->_("threadpool_error_assign_parent")),
-                {
-                  CodegenASTExprAccess::create("tp"),
-                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
-                  this->_genErrState(false, false)
-                }
-              )->stmt()
-            )
-          );
-        }
-
-        cBody->append(
-          CodegenASTStmtIf::create(
-            CodegenASTExprBinary::create(
-              CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true),
-              "!=",
-              CodegenASTExprAccess::create(this->_("NULL"))
-            ),
-            CodegenASTExprCall::create(
-              CodegenASTExprAccess::create(this->_("threadpool_insert")),
-              {
-                CodegenASTExprAccess::create("tp"),
-                CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "parent", true)
-              }
-            )->stmt(),
-            this->throws
-              ? CodegenASTStmtIf::create(
-                CodegenASTExprBinary::create(
-                  this->_genErrState(false, false, "id"),
-                  "!=",
-                  CodegenASTExprLiteral::create("-1")
-                ),
-                CodegenASTExprCall::create(
-                  CodegenASTExprAccess::create(this->_("threadpool_error_assign")),
-                  {
-                    CodegenASTExprAccess::create("tp"),
-                    this->_genErrState(false, false)
-                  }
-                )->stmt()
-              )
-            : CodegenASTStmtNull::create()
-          )
-        );
-
-        cBody->append(
-          CodegenASTExprCall::create(
-            CodegenASTExprAccess::create(this->_("threadpool_job_deinit")),
-            {CodegenASTExprAccess::create("job")}
-          )->stmt()
-        );
-      }
-
-      if (this->throws && fnType.async) {
-        cBody->append(
-          CodegenASTExprCall::create(
-            CodegenASTExprAccess::create(this->_("free")),
-            {this->_genErrState(false, false)}
-          )->stmt()
-        );
-      }
-
-      if (hasParams) {
-        cBody->append(
-          CodegenASTExprCall::create(
-            CodegenASTExprAccess::create(this->_("free")),
-            {CodegenASTExprAccess::create("pp")}
-          )->stmt()
-        );
       }
 
       decl += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";

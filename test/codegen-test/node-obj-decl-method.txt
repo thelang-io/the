@@ -420,11 +420,13 @@ void __THE_1_StaticTest_0_free (struct __THE_1_StaticTest_0 *n) {
   free(n);
 }
 int32_t __THE_1_sub_0 (void *px, void *pp) {
+  int32_t v;
   struct __THE_1_fn$1001P *p = pp;
   const int32_t __THE_0_i_0 = p->n0;
   const int32_t __THE_0_amount_0 = p->o1 == 1 ? p->n1 : 1;
-  return __THE_0_i_0 - __THE_0_amount_0;
+  v = __THE_0_i_0 - __THE_0_amount_0;
   free(pp);
+  return v;
 }
 struct __THE_1_Counter_0 *__THE_1_Counter_0_alloc (int32_t __THE_0__i) {
   struct __THE_1_Counter_0 *r = alloc(sizeof(struct __THE_1_Counter_0));
@@ -442,11 +444,13 @@ void __THE_1_Counter_0_free (struct __THE_1_Counter_0 *n) {
   free(n);
 }
 int32_t __THE_1_add_0 (void *px, void *pp) {
+  int32_t v;
   struct __THE_1_fn$1001P *p = pp;
   const int32_t __THE_0_i_0 = p->n0;
   const int32_t __THE_0_amount_0 = p->o1 == 1 ? p->n1 : 1;
-  return __THE_0_i_0 + __THE_0_amount_0;
+  v = __THE_0_i_0 + __THE_0_amount_0;
   free(pp);
+  return v;
 }
 void __THE_1_StaticTestSDstaticMethod_0 (void *px) {
   print(stdout, "zz", "Static method", THE_EOL);
@@ -457,21 +461,23 @@ int32_t __THE_1_CounterSDget_0 (void *px, void *pp) {
   const struct __THE_1_Counter_0 *__THE_0_self_0 = p->self;
   v = __THE_0_self_0->__THE_0__i;
   __THE_1_Counter_0_free((struct __THE_1_Counter_0 *) __THE_0_self_0);
-  return v;
   free(pp);
+  return v;
 }
 void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
   if (n.x != NULL) free(n.x);
 }
 struct __THE_1_Counter_0 **__THE_1_CounterSDdecrease_0 (void *px, void *pp) {
+  struct __THE_1_Counter_0 **v;
   struct __THE_1_fn$1003P *p = pp;
   struct __THE_1_CounterSDdecrease_0X *x = px;
   const struct __THE_1_fn$1001 *__THE_0_sub_0 = x->__THE_0_sub_0;
   struct __THE_1_Counter_0 **__THE_0_self_0 = p->self;
   const int32_t __THE_0_by_0 = p->o0 == 1 ? p->n0 : 1;
   (*__THE_0_self_0)->__THE_0__i = (*__THE_0_sub_0).f((*__THE_0_sub_0).x, xalloc(&(struct __THE_1_fn$1001P) {(*__THE_0_self_0)->__THE_0__i, 1, __THE_0_by_0}, sizeof(struct __THE_1_fn$1001P)));
-  return __THE_0_self_0;
+  v = __THE_0_self_0;
   free(pp);
+  return v;
 }
 void __THE_1_CounterSDdecrease_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_CounterSDdecrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDdecrease_0X);
@@ -482,14 +488,16 @@ void __THE_1_CounterSDdecrease_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_
   n->l = l;
 }
 struct __THE_1_Counter_0 **__THE_1_CounterSDincrease_0 (void *px, void *pp) {
+  struct __THE_1_Counter_0 **v;
   struct __THE_1_fn$1003P *p = pp;
   struct __THE_1_CounterSDincrease_0X *x = px;
   const struct __THE_1_fn$1001 *__THE_0_add_0 = x->__THE_0_add_0;
   struct __THE_1_Counter_0 **__THE_0_self_0 = p->self;
   const int32_t __THE_0_by_0 = p->o0 == 1 ? p->n0 : 1;
   (*__THE_0_self_0)->__THE_0__i = (*__THE_0_add_0).f((*__THE_0_add_0).x, xalloc(&(struct __THE_1_fn$1001P) {(*__THE_0_self_0)->__THE_0__i, 1, __THE_0_by_0}, sizeof(struct __THE_1_fn$1001P)));
-  return __THE_0_self_0;
+  v = __THE_0_self_0;
   free(pp);
+  return v;
 }
 void __THE_1_CounterSDincrease_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_CounterSDincrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDincrease_0X);
@@ -584,10 +592,14 @@ void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_
   n->l = l;
 }
 int32_t __THE_1_CounterSDridiculousStuffSDCounter2SDget_0 (void *px, void *pp) {
+  unsigned char r = 0;
+  int32_t v;
   struct __THE_1_fn$1006P *p = pp;
   const struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1 = p->self;
-  return (*__THE_0_self_1)->__THE_0__i;
+  r = 1;
+  v = (*__THE_0_self_1)->__THE_0__i;
   free(pp);
+  return v;
 }
 void __THE_1_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn$1004 *n, struct __THE_1_CounterSDridiculousStuff_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDridiculousStuff_0X);

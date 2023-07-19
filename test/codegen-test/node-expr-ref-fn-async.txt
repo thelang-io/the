@@ -431,7 +431,7 @@ void *threadpool_worker (void *n) {
   self->alive_threads--;
   pthread_cond_signal(&self->cond1);
   pthread_mutex_unlock(&self->lock1);
-  return NULL;
+  pthread_exit(NULL);
 }
 void *xalloc (void *n1, size_t n2) {
   void *r = malloc(n2);
@@ -460,11 +460,11 @@ void __THE_1_job1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
       *r = 1;
       int32_t *_v = __THE_0_a_0;
       if (v != NULL) *v = _v;
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
+      free(pp);
     }
   }
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  threadpool_job_deinit(job);
-  free(pp);
 }
 void __THE_1_job1_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_job1_0X x) {
   size_t l = sizeof(struct __THE_1_job1_0X);
@@ -494,11 +494,11 @@ void __THE_1_job2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
       *r = 1;
       int32_t _v = *__THE_0_a_0;
       if (v != NULL) *v = _v;
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
+      free(pp);
     }
   }
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  threadpool_job_deinit(job);
-  free(pp);
 }
 void __THE_1_job2_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_job2_0X x) {
   size_t l = sizeof(struct __THE_1_job2_0X);
@@ -589,11 +589,11 @@ void __THE_1_job3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
       *t11 << **t12;
       __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_fn2_0);
       __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_fn1_0);
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
+      free(pp);
     }
   }
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  threadpool_job_deinit(job);
-  free(pp);
 }
 void __THE_1_job3_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_job3_0X x) {
   size_t l = sizeof(struct __THE_1_job3_0X);
@@ -706,10 +706,10 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     }
     case 17: {
       __THE_1_fn$1003_free((struct __THE_1_fn$1003) *__THE_0_mainSDjobLocal1_0);
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
     }
   }
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  threadpool_job_deinit(job);
 }
 void __THE_1_mainSDjobLocal1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_mainSDjobLocal1_0X *x = px;
@@ -798,10 +798,10 @@ void __THE_1_mainSDjobLocal1_0 (threadpool_t *tp, threadpool_job_t *job, void *p
     }
     case 14: {
       *t13 - *t14;
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
     }
   }
-  if (job->parent != NULL) threadpool_insert(tp, job->parent);
-  threadpool_job_deinit(job);
 }
 void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_mainSDjobLocal1_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDjobLocal1_0X);

@@ -264,10 +264,12 @@ void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
   free(n);
 }
 int32_t *__THE_1_job1_0 (void *px, void *pp) {
+  int32_t *v;
   struct __THE_1_fn$1000P *p = pp;
   const int32_t *__THE_0_a_0 = p->n0;
-  return __THE_0_a_0;
+  v = __THE_0_a_0;
   free(pp);
+  return v;
 }
 int32_t __THE_1_job2_0 (void *px) {
   return 2;

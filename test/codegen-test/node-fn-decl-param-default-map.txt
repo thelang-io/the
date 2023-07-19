@@ -237,8 +237,8 @@ struct __THE_1_map_strMSintME __THE_1_test1_0 (void *px, void *pp) {
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_c_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_b_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 void __THE_1_fn$1004_free (struct __THE_1_fn$1004 n) {
   if (n.x != NULL) free(n.x);

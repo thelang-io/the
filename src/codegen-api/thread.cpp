@@ -161,7 +161,7 @@ const std::vector<std::string> codegenThread = {
   R"(  self->alive_threads--;)" EOL
   R"(  _{pthread_cond_signal}(&self->cond1);)" EOL
   R"(  _{pthread_mutex_unlock}(&self->lock1);)" EOL
-  R"(  return _{NULL};)" EOL
+  R"(  _{pthread_exit}(_{NULL});)" EOL
   R"(})" EOL,
 
   R"(void threadpool_wait (_{threadpool_t} *self) {)" EOL

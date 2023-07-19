@@ -341,8 +341,8 @@ L1:
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
-  return v;
   free(pp);
+  return v;
 }
 void __THE_1_fn$1004_free (struct __THE_1_fn$1004 n) {
   if (n.x != NULL) free(n.x);

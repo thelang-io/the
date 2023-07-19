@@ -163,8 +163,8 @@ int32_t __THE_1_test1_0 (void *px, void *pp) {
   __THE_0_a_0 = __THE_1_fn$1000_realloc(__THE_0_a_0, __THE_1_fn$1000_copy(*__THE_0_job2_0));
   v = __THE_0_a_0.f(__THE_0_a_0.x);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 void __THE_1_test1_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_test1_0X x) {
   size_t l = sizeof(struct __THE_1_test1_0X);
@@ -188,8 +188,8 @@ int32_t __THE_1_test2_0 (void *px, void *pp) {
   v = __THE_0_a_0.f(__THE_0_a_0.x) + __THE_0_b_0.f(__THE_0_b_0.x);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
-  return v;
   free(pp);
+  return v;
 }
 void __THE_1_test2_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_test2_0X x) {
   size_t l = sizeof(struct __THE_1_test2_0X);
