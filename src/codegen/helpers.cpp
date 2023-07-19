@@ -17,6 +17,7 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 #include "../codegen-metadata.hpp"
+#include "../config.hpp"
 
 std::vector<std::shared_ptr<Var>> Codegen::filterAsyncDeclarations (const std::vector<ASTNode> &nodes) {
   auto result = std::vector<std::shared_ptr<Var>>{};
@@ -115,7 +116,7 @@ std::string Codegen::_ (const std::string &name, const std::optional<std::set<st
     if (dependencies == std::nullopt) {
       try {
         this->_activateBuiltin(result);
-      } catch (const Error &err) {
+      } catch (const Error &) {
         this->_activateEntity(result);
       }
     } else if (!(*dependencies)->contains(result)) {
