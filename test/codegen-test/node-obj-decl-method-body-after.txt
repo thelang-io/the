@@ -252,6 +252,7 @@ void __THE_1_HumanSDwalk_0 (void *px, void *pp) {
   struct __THE_1_fn$1001P *p = pp;
   struct __THE_1_Human_0 **__THE_0_self_0 = p->self;
   (*__THE_0_self_0)->__THE_0_distance += 1;
+  free(pp);
 }
 
 int main () {

@@ -74,6 +74,7 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
   pthread_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
 void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {

@@ -234,6 +234,7 @@ int32_t __THE_1_test2_0 (void *px, void *pp) {
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   return __THE_0_a_0 + __THE_0_b_0 + 2;
+  free(pp);
 }
 
 int main () {

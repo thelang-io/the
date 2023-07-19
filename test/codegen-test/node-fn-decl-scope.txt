@@ -120,11 +120,13 @@ void *xalloc (void *n1, size_t n2) {
 void __THE_1_mainSDx_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
+  free(pp);
 }
 void __THE_1_mainSDx_1 (void *px, void *pp) {
   struct __THE_1_fn$1001P *p = pp;
   const struct str __THE_0_b_0 = p->n0;
   str_free((struct str) __THE_0_b_0);
+  free(pp);
 }
 
 int main () {

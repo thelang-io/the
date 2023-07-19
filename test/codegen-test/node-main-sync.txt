@@ -256,6 +256,7 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
   pthread_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
 void threadpool_thread_deinit (threadpool_thread_t *self) {
@@ -319,6 +320,7 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   str_free((struct str) __THE_0_param2_0);
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
+  free(pp);
 }
 void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
   if (n.x != NULL) free(n.x);
@@ -358,6 +360,7 @@ int main () {
   threadpool_wait(tp);
   threadpool_deinit(tp);
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_test3_0);
+  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

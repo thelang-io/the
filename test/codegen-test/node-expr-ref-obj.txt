@@ -267,6 +267,7 @@ int32_t *__THE_1_job1_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
   const int32_t *__THE_0_a_0 = p->n0;
   return __THE_0_a_0;
+  free(pp);
 }
 int32_t __THE_1_job2_0 (void *px) {
   return 2;

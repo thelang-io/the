@@ -54,7 +54,13 @@ void Codegen::_nodeMainAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
       {
         CodegenASTExprAccess::create("tp"),
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "f"),
-        CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "x"),
+        CodegenASTExprCall::create(
+          CodegenASTExprAccess::create(this->_("xalloc")),
+          {
+            CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "x"),
+            CodegenASTExprAccess::create(CodegenASTExprAccess::create("async_main"), "l")
+          }
+        ),
         cParams,
         CodegenASTExprAccess::create(this->_("NULL")),
         CodegenASTExprAccess::create(this->_("NULL"))

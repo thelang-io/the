@@ -343,6 +343,7 @@ void __THE_1_TestSDtest1_0 (void *px, void *pp) {
   const struct __THE_1_array_int __THE_0_a_0 = p->n0;
   print(stdout, "sz", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_a_0)), THE_EOL);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
+  free(pp);
 }
 void __THE_1_TestSDtest2_0 (void *px, void *pp) {
   struct __THE_1_fn$1004P *p = pp;
@@ -350,6 +351,7 @@ void __THE_1_TestSDtest2_0 (void *px, void *pp) {
   const struct __THE_1_array_int __THE_0_b_0 = p->n1;
   print(stdout, "izsz", __THE_0_a_0, " ", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_b_0)), THE_EOL);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
+  free(pp);
 }
 void __THE_1_TestSDtest3_0 (void *px, void *pp) {
   struct __THE_1_fn$1005P *p = pp;
@@ -358,6 +360,7 @@ void __THE_1_TestSDtest3_0 (void *px, void *pp) {
   const int32_t __THE_0_c_0 = p->o2 == 1 ? p->n2 : 0;
   print(stdout, "izsziz", __THE_0_a_0, " ", __THE_1_array_int_str(__THE_1_array_int_copy(__THE_0_b_0)), " ", __THE_0_c_0, THE_EOL);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
+  free(pp);
 }
 
 int main () {

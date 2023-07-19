@@ -424,6 +424,7 @@ int32_t __THE_1_sub_0 (void *px, void *pp) {
   const int32_t __THE_0_i_0 = p->n0;
   const int32_t __THE_0_amount_0 = p->o1 == 1 ? p->n1 : 1;
   return __THE_0_i_0 - __THE_0_amount_0;
+  free(pp);
 }
 struct __THE_1_Counter_0 *__THE_1_Counter_0_alloc (int32_t __THE_0__i) {
   struct __THE_1_Counter_0 *r = alloc(sizeof(struct __THE_1_Counter_0));
@@ -445,6 +446,7 @@ int32_t __THE_1_add_0 (void *px, void *pp) {
   const int32_t __THE_0_i_0 = p->n0;
   const int32_t __THE_0_amount_0 = p->o1 == 1 ? p->n1 : 1;
   return __THE_0_i_0 + __THE_0_amount_0;
+  free(pp);
 }
 void __THE_1_StaticTestSDstaticMethod_0 (void *px) {
   print(stdout, "zz", "Static method", THE_EOL);
@@ -456,6 +458,7 @@ int32_t __THE_1_CounterSDget_0 (void *px, void *pp) {
   v = __THE_0_self_0->__THE_0__i;
   __THE_1_Counter_0_free((struct __THE_1_Counter_0 *) __THE_0_self_0);
   return v;
+  free(pp);
 }
 void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
   if (n.x != NULL) free(n.x);
@@ -468,6 +471,7 @@ struct __THE_1_Counter_0 **__THE_1_CounterSDdecrease_0 (void *px, void *pp) {
   const int32_t __THE_0_by_0 = p->o0 == 1 ? p->n0 : 1;
   (*__THE_0_self_0)->__THE_0__i = (*__THE_0_sub_0).f((*__THE_0_sub_0).x, xalloc(&(struct __THE_1_fn$1001P) {(*__THE_0_self_0)->__THE_0__i, 1, __THE_0_by_0}, sizeof(struct __THE_1_fn$1001P)));
   return __THE_0_self_0;
+  free(pp);
 }
 void __THE_1_CounterSDdecrease_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_CounterSDdecrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDdecrease_0X);
@@ -485,6 +489,7 @@ struct __THE_1_Counter_0 **__THE_1_CounterSDincrease_0 (void *px, void *pp) {
   const int32_t __THE_0_by_0 = p->o0 == 1 ? p->n0 : 1;
   (*__THE_0_self_0)->__THE_0__i = (*__THE_0_add_0).f((*__THE_0_add_0).x, xalloc(&(struct __THE_1_fn$1001P) {(*__THE_0_self_0)->__THE_0__i, 1, __THE_0_by_0}, sizeof(struct __THE_1_fn$1001P)));
   return __THE_0_self_0;
+  free(pp);
 }
 void __THE_1_CounterSDincrease_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_CounterSDincrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDincrease_0X);
@@ -522,6 +527,7 @@ void __THE_1_CounterSDridiculousStuff_0 (void *px, void *pp) {
   __THE_1_CounterSDridiculousStuffSDCounter2_0_free((struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *) __THE_0_counter_0);
   __THE_1_fn$1005_free((struct __THE_1_fn$1005) __THE_0_CounterSDridiculousStuffSDCounter2SDincrease_0);
   __THE_1_fn$1005_free((struct __THE_1_fn$1005) __THE_0_CounterSDridiculousStuffSDCounter2SDdecrease_0);
+  free(pp);
 }
 struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *__THE_1_CounterSDridiculousStuffSDCounter2_0_alloc (int32_t __THE_0__i) {
   struct __THE_1_CounterSDridiculousStuffSDCounter2_0 *r = alloc(sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2_0));
@@ -546,6 +552,7 @@ void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0 (void *px, void *pp)
   (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_sub_0).f((*__THE_0_sub_0).x, xalloc(&(struct __THE_1_fn$1001P) {(*__THE_0_self_1)->__THE_0__i, 0, 0}, sizeof(struct __THE_1_fn$1001P)));
   print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, xalloc(&(struct __THE_1_fn$1002P) {__THE_1_Counter_0_copy(**__THE_0_self2_0)}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
   print(stdout, "zziz", "Current scope:", " ", (*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).x, xalloc(&(struct __THE_1_fn$1006P) {__THE_0_self_1}, sizeof(struct __THE_1_fn$1006P))), THE_EOL);
+  free(pp);
 }
 void __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn$1005 *n, struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2SDdecrease_0X);
@@ -566,6 +573,7 @@ void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0 (void *px, void *pp)
   (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_add_0).f((*__THE_0_add_0).x, xalloc(&(struct __THE_1_fn$1001P) {(*__THE_0_self_1)->__THE_0__i, 0, 0}, sizeof(struct __THE_1_fn$1001P)));
   print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_CounterSDget_0).f((*__THE_0_CounterSDget_0).x, xalloc(&(struct __THE_1_fn$1002P) {__THE_1_Counter_0_copy(**__THE_0_self2_0)}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
   print(stdout, "zziz", "Current scope", " ", (*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_CounterSDridiculousStuffSDCounter2SDget_0).x, xalloc(&(struct __THE_1_fn$1006P) {__THE_0_self_1}, sizeof(struct __THE_1_fn$1006P))), THE_EOL);
+  free(pp);
 }
 void __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn$1005 *n, struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDridiculousStuffSDCounter2SDincrease_0X);
@@ -579,6 +587,7 @@ int32_t __THE_1_CounterSDridiculousStuffSDCounter2SDget_0 (void *px, void *pp) {
   struct __THE_1_fn$1006P *p = pp;
   const struct __THE_1_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1 = p->self;
   return (*__THE_0_self_1)->__THE_0__i;
+  free(pp);
 }
 void __THE_1_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn$1004 *n, struct __THE_1_CounterSDridiculousStuff_0X x) {
   size_t l = sizeof(struct __THE_1_CounterSDridiculousStuff_0X);

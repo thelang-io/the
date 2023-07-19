@@ -393,6 +393,7 @@ void __THE_1_test1_0 (void *px, void *pp) {
     print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+  free(pp);
 }
 void __THE_1_test2_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
@@ -404,6 +405,7 @@ void __THE_1_test2_0 (void *px, void *pp) {
     print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+  free(pp);
 }
 void __THE_1_test3_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
@@ -415,6 +417,7 @@ void __THE_1_test3_0 (void *px, void *pp) {
     print(stdout, "zzsz", "test is str?:", " ", __THE_1_opt_str_str(__THE_1_opt_str_copy(__THE_0_test_0)), THE_EOL);
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+  free(pp);
 }
 void __THE_1_test4_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
@@ -426,6 +429,7 @@ void __THE_1_test4_0 (void *px, void *pp) {
     print(stdout, "zzsz", "test is str:", " ", str_copy(*__THE_0_test_0), THE_EOL);
   }
   __THE_1_opt_str_free((struct str *) __THE_0_test_0);
+  free(pp);
 }
 
 int main () {

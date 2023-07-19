@@ -357,6 +357,7 @@ void __THE_1_test2_0 (void *px, void *pp) {
 L1:
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
+  free(pp);
 }
 void __THE_1_test1_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
@@ -369,6 +370,7 @@ L2:
   p->err_state->buf_idx--;
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
+  free(pp);
 }
 void __THE_1_test1_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test1_0X x) {
   size_t l = sizeof(struct __THE_1_test1_0X);

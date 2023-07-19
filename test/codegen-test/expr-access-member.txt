@@ -97,6 +97,7 @@ void *xalloc (void *n1, size_t n2) {
 void __THE_1_testCall_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
   const enum __THE_1_Color_0 __THE_0_t_0 = p->n0;
+  free(pp);
 }
 
 int main () {

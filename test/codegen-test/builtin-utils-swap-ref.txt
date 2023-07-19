@@ -231,6 +231,7 @@ void __THE_1_printRefs_0 (void *px, void *pp) {
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   print(stdout, "iziz", __THE_0_a_0, " ", __THE_0_b_0, THE_EOL);
+  free(pp);
 }
 
 int main () {

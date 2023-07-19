@@ -106,6 +106,7 @@ void __THE_1_mainSDtest_0 (void *px, void *pp) {
   int32_t *__THE_0_a_0 = x->__THE_0_a_0;
   const int32_t __THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = __THE_0_newA_0;
+  free(pp);
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);

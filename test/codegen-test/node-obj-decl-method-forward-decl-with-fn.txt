@@ -274,6 +274,7 @@ void __THE_1_TestSDgo_0 (void *px, void *pp) {
   struct __THE_1_fn$1001P *p = pp;
   struct __THE_1_Test_0 **__THE_0_self_0 = p->self;
   (*__THE_0_self_0)->__THE_0_a += 1;
+  free(pp);
 }
 
 int main () {

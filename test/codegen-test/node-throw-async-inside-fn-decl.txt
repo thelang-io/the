@@ -455,6 +455,7 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
   pthread_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
 threadpool_job_t *threadpool_job_step (threadpool_job_t *self, int step) {
@@ -541,6 +542,7 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
   threadpool_job_deinit(job);
+  free(pp);
 }
 void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_fn$1000P *p = pp;
@@ -580,6 +582,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
   threadpool_job_deinit(job);
+  free(pp);
 }
 void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_async_mainX x) {
   size_t l = sizeof(struct __THE_1_async_mainX);
@@ -596,7 +599,7 @@ int main () {
   const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
   const struct __THE_1_fn$1000 async_main;
   __THE_1_async_main_alloc((struct __THE_1_fn$1000 *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_0});
-  threadpool_add(tp, async_main.f, async_main.x, xalloc(&(struct __THE_1_fn$1000P) {xalloc(&err_state, sizeof(err_state_t))}, sizeof(struct __THE_1_fn$1000P)), NULL, NULL);
+  threadpool_add(tp, async_main.f, xalloc(async_main.x, async_main.l), xalloc(&(struct __THE_1_fn$1000P) {xalloc(&err_state, sizeof(err_state_t))}, sizeof(struct __THE_1_fn$1000P)), NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) async_main);
@@ -607,6 +610,7 @@ int main () {
     err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
+  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

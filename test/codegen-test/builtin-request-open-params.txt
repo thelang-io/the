@@ -1239,6 +1239,7 @@ L1:
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
   return v;
+  free(pp);
 }
 void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_ignoredHeadersIncludes_0X x) {
   size_t l = sizeof(struct __THE_1_ignoredHeadersIncludes_0X);
@@ -1316,6 +1317,7 @@ L2:
   str_free((struct str) __THE_0_method_0);
   error_stack_pop(p->err_state);
   if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
+  free(pp);
 }
 void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_requestWithPrint_0X x) {
   size_t l = sizeof(struct __THE_1_requestWithPrint_0X);

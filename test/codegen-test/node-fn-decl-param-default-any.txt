@@ -253,6 +253,7 @@ struct any __THE_1_test1_0 (void *px, void *pp) {
   any_free((struct any) __THE_0_b_0);
   any_free((struct any) __THE_0_a_0);
   return v;
+  free(pp);
 }
 struct any __THE_1_any_str_alloc (struct str d) {
   size_t l = sizeof(struct __THE_1_any_str);
@@ -302,6 +303,7 @@ void __THE_1_mainSDtest2_0 (void *px, void *pp) {
   any_free((struct any) __THE_0_c_0);
   any_free((struct any) __THE_0_b_0);
   any_free((struct any) __THE_0_a2_0);
+  free(pp);
 }
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtest2_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest2_0X);

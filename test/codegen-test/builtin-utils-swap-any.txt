@@ -329,6 +329,7 @@ void __THE_1_printAny_0 (void *px, void *pp) {
   }
   any_free((struct any) __THE_0_v_0);
   str_free((struct str) __THE_0_prefix_0);
+  free(pp);
 }
 
 int main () {

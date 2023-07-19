@@ -135,6 +135,7 @@ enum __THE_1_Test_0 __THE_1_inc_0 (void *px, void *pp) {
   } else {
     *__THE_0_test_0 = __THE_0_TestSDRed_0;
   }
+  free(pp);
 }
 
 int main () {

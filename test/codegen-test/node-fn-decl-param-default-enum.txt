@@ -152,6 +152,7 @@ enum __THE_1_Test_0 __THE_1_test1_0 (void *px, void *pp) {
   const enum __THE_1_Test_0 __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_0_TestSDRed_0;
   const enum __THE_1_Test_0 __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_0_TestSDBlue_0;
   return __THE_0_a_0 == __THE_0_b_0 ? __THE_0_c_0 == __THE_0_TestSDRed_0 ? __THE_0_c_0 : __THE_0_b_0 : __THE_0_a_0;
+  free(pp);
 }
 void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
   if (n.x != NULL) free(n.x);
@@ -165,6 +166,7 @@ void __THE_1_mainSDtest2_0 (void *px, void *pp) {
   const enum __THE_1_Test_0 __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_0_TestSDRed_0;
   const enum __THE_1_Test_0 __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_0_TestSDGreen_0;
   *__THE_0_a_0 = (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a2_0, 1, __THE_0_b_0, 1, __THE_0_c_0}, sizeof(struct __THE_1_fn$1000P)));
+  free(pp);
 }
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtest2_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest2_0X);

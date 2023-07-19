@@ -356,6 +356,7 @@ void __THE_1_printMap_0 (void *px, void *pp) {
   const struct __THE_1_map_strMSintME __THE_0_m_0 = p->n0;
   print(stdout, "szsz", str_concat_str(str_concat_cstr(int_str(__THE_1_map_strMSintME_cap(__THE_1_map_strMSintME_copy(__THE_0_m_0))), "|"), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_m_0)))), " ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_m_0)), THE_EOL);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_m_0);
+  free(pp);
 }
 
 int main () {

@@ -171,6 +171,7 @@ const std::vector<std::string> codegenThread = {
   R"(})" EOL,
 
   R"(void threadpool_job_deinit (_{threadpool_job_t} *self) {)" EOL
+  R"(  if (self->ctx != _{NULL}) _{free}(self->ctx);)" EOL
   R"(  _{free}(self);)" EOL
   R"(})" EOL,
 

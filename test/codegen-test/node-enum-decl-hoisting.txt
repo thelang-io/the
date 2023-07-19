@@ -342,17 +342,20 @@ void __THE_1_printIncomeType_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
   const enum __THE_1_IncomeType_0 __THE_0_n_0 = p->n0;
   print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0), THE_EOL);
+  free(pp);
 }
 void __THE_1_printColor_0 (void *px, void *pp) {
   struct __THE_1_fn$1001P *p = pp;
   const enum __THE_1_Color_0 __THE_0_n_0 = p->n0;
   print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_Color_0_rawValue(__THE_0_n_0), THE_EOL);
+  free(pp);
 }
 void __THE_1_printHuman_0 (void *px, void *pp) {
   struct __THE_1_fn$1002P *p = pp;
   const struct __THE_1_Human_0 *__THE_0_n_0 = p->n0;
   print(stdout, "zzszzzszzzsz", "Name:", " ", str_copy(__THE_0_n_0->__THE_0_name), " ", "Hair:", " ", __THE_1_Color_0_rawValue(__THE_0_n_0->__THE_0_hairColor), " ", "Income Type:", " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0->__THE_0_incomeType), THE_EOL);
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_n_0);
+  free(pp);
 }
 
 int main () {

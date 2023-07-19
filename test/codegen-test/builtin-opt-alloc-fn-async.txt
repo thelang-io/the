@@ -134,6 +134,7 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
   pthread_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {

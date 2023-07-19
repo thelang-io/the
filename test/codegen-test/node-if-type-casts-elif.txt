@@ -338,6 +338,7 @@ void __THE_1_printTest_0 (void *px, void *pp) {
     print(stdout, "zzsz", "test is bool:", " ", __THE_0_test_0.v5 == false ? str_alloc("false") : str_alloc("true"), THE_EOL);
   }
   __THE_1_union_strUSintUScharUSboolUE_free((struct __THE_1_union_strUSintUScharUSboolUE) __THE_0_test_0);
+  free(pp);
 }
 
 int main () {

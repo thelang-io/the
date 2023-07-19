@@ -87,6 +87,7 @@ void Codegen::_fnDecl (
   auto contextName = typeName + "X";
   auto isAsyncMain = codeName == "async_main";
   auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
+  auto hasParams = !params.empty() || hasSelfParam || this->throws;
   auto asyncBreakNodesCount = Codegen::countAsyncLoopDepth<ASTNodeBreak>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{});
@@ -162,7 +163,7 @@ void Codegen::_fnDecl (
       this->varMap.save();
       auto cBody = CodegenASTStmtCompound::create();
 
-      if (!params.empty() || hasSelfParam || this->throws) {
+      if (hasParams) {
         cBody->append(
           CodegenASTStmtVarDecl::create(
             CodegenASTType::create("struct " + this->_(paramsName) + " *"),
@@ -467,6 +468,15 @@ void Codegen::_fnDecl (
         );
       }
 
+      if (hasParams) {
+        cBody->append(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("free")),
+            {CodegenASTExprAccess::create("pp")}
+          )->stmt()
+        );
+      }
+
       decl += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
       def += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
 
@@ -478,7 +488,7 @@ void Codegen::_fnDecl (
       decl += "void *";
       def += "void *px";
 
-      if (this->throws || !params.empty() || hasSelfParam || fnType.async) {
+      if (hasParams || fnType.async) {
         decl += ", void *";
         def += ", void *pp";
       }

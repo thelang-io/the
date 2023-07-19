@@ -209,6 +209,7 @@ struct __THE_1_map_strMSintME __THE_1_test1_0 (void *px, void *pp) {
   v = __THE_1_map_strMSintME_copy(__THE_0_a_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
   return v;
+  free(pp);
 }
 struct __THE_1_map_strMSintME __THE_1_test2_0 (void *px, void *pp) {
   struct __THE_1_map_strMSintME v;
@@ -221,6 +222,7 @@ struct __THE_1_map_strMSintME __THE_1_test2_0 (void *px, void *pp) {
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_b_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
   return v;
+  free(pp);
 }
 
 int main () {

@@ -157,6 +157,7 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
   pthread_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
 void *xalloc (void *n1, size_t n2) {
@@ -196,6 +197,7 @@ void __THE_1_mainSDtest_0 (void *px, void *pp) {
   const struct __THE_1_fn$1000 __THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = __THE_1_fn$1000_realloc(*__THE_0_a_0, __THE_1_fn$1000_copy(__THE_0_newA_0));
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_newA_0);
+  free(pp);
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);

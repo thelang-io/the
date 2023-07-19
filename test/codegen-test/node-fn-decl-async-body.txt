@@ -223,6 +223,7 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
   pthread_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
 void threadpool_thread_deinit (threadpool_thread_t *self) {
@@ -314,6 +315,7 @@ int main () {
   threadpool_wait(tp);
   threadpool_deinit(tp);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0);
+  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

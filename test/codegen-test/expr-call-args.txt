@@ -297,6 +297,7 @@ void __THE_1_test1_0 (void *px, void *pp) {
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_v2_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_v1_0);
   str_free((struct str) __THE_0_s_0);
+  free(pp);
 }
 void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
   if (n.x != NULL) free(n.x);
@@ -326,6 +327,7 @@ void __THE_1_test2_0 (void *px, void *pp) {
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_v2_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_v1_0);
   str_free((struct str) __THE_0_s_0);
+  free(pp);
 }
 void __THE_1_test2_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_test2_0X x) {
   size_t l = sizeof(struct __THE_1_test2_0X);
