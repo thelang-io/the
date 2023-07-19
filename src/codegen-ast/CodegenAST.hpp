@@ -17,6 +17,7 @@
 #ifndef SRC_CODEGEN_AST_CODEGEN_AST_HPP
 #define SRC_CODEGEN_AST_CODEGEN_AST_HPP
 
+#include <memory>
 #include <optional>
 #include <string>
 #include <variant>
