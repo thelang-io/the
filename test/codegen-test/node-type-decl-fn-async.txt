@@ -762,6 +762,7 @@ int main () {
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_doJob_0);
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 before test callback
 before callback

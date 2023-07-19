@@ -646,6 +646,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 Error: test
   at Test.test (/test:3:5)

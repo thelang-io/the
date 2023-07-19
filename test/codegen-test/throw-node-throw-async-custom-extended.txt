@@ -460,6 +460,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stderr =======
 Uncaught Error: test
   at main (/test:12:3)

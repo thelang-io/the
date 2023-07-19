@@ -610,6 +610,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 MyError: test
   at main (/test:11:5)

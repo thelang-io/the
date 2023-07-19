@@ -171,4 +171,5 @@ int main () {
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(__THE_1_fn$1000_copy(__THE_0_test_0)));
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======

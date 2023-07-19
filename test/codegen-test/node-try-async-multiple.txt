@@ -694,6 +694,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 Error: test
   at main (/test:11:5)

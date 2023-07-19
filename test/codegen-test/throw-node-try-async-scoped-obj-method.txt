@@ -703,6 +703,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stderr =======
 Uncaught Error: test
   at Test.test1 (/test:8:5)

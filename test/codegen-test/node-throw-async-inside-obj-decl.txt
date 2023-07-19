@@ -644,6 +644,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 Error: test
   at t1 (/test:6:3)

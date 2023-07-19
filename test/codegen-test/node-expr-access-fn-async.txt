@@ -92,4 +92,5 @@ int main () {
   __THE_0_mainSDtest2_0;
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======

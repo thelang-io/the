@@ -700,6 +700,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stderr =======
 Uncaught Error: test
   at test (/test:11:7)

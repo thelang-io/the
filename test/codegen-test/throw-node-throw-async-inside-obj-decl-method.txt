@@ -496,6 +496,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stderr =======
 Uncaught Error: test
   at Test.test (/test:3:5)

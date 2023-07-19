@@ -634,6 +634,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 Error: test6
   at main (/test:8:9)

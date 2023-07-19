@@ -310,4 +310,5 @@ int main () {
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) async_main);
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======

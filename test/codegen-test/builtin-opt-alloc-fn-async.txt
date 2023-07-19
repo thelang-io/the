@@ -170,4 +170,5 @@ int main () {
   __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFn_0);
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======

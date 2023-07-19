@@ -212,4 +212,5 @@ int main () {
   __THE_1_map_strMSfn$1000ME_free((struct __THE_1_map_strMSfn$1000ME) __THE_0_a_0);
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======

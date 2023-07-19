@@ -495,6 +495,7 @@ int main () {
   any_free((struct any) __THE_0_a_0);
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 async () -> void [Function]
 any

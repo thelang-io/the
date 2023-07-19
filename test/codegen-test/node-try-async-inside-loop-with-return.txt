@@ -699,6 +699,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 Error: test0
   at test (/test:4:7)

@@ -716,6 +716,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stderr =======
 Uncaught Error: test0
   at test (/test:9:7)

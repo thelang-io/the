@@ -494,6 +494,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stderr =======
 Uncaught Error: test
   at t1 (/test:6:3)

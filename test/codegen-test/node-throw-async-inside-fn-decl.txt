@@ -609,6 +609,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 Error: test
   at test (/test:2:3)

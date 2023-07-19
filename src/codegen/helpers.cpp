@@ -249,6 +249,10 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libPthread") {
     if (this->builtins.libPthread) return;
     this->builtins.libPthread = true;
+
+    if (std::find(this->flags.begin(), this->flags.end(), "U:-pthread") == this->flags.end()) {
+      this->flags.emplace_back("U:-pthread");
+    }
   } else if (name == "libPwd") {
     if (this->builtins.libPwd) return;
     this->builtins.libPwd = true;

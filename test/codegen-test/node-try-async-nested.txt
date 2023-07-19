@@ -631,6 +631,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 Error2: test
   at main (/test:7:7)

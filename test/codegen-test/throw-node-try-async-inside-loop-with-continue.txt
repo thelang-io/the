@@ -658,6 +658,7 @@ int main () {
   }
 }
 ======= flags =======
+U:-pthread
 ======= stderr =======
 Uncaught Error: test0
   at main (/test:12:7)

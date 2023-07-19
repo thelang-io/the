@@ -525,5 +525,6 @@ int main () {
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_test3_0);
 }
 ======= flags =======
+U:-pthread
 ======= stdout =======
 0
