@@ -566,6 +566,7 @@ void __THE_1_t_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, v
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
   threadpool_job_deinit(job);
+  free(p->err_state);
   free(pp);
 }
 void __THE_1_TestError_0_free (struct __THE_1_TestError_0 *n) {
@@ -631,6 +632,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   else if (p->err_state->id != -1) threadpool_error_assign(tp, p->err_state);
   threadpool_job_deinit(job);
+  free(p->err_state);
   free(pp);
 }
 void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_async_mainX x) {

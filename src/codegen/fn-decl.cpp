@@ -468,6 +468,15 @@ void Codegen::_fnDecl (
         );
       }
 
+      if (this->throws && fnType.async) {
+        cBody->append(
+          CodegenASTExprCall::create(
+            CodegenASTExprAccess::create(this->_("free")),
+            {this->_genErrState(false, false)}
+          )->stmt()
+        );
+      }
+
       if (hasParams) {
         cBody->append(
           CodegenASTExprCall::create(
