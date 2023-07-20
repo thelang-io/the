@@ -171,9 +171,21 @@ void Codegen::_fnDecl (
             CodegenASTExprAccess::create("pp")
           )
         );
-      }
 
-      if (hasParams) {
+        if (this->throws) {
+          cBody->append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(this->_("err_state_t") + " *"),
+              CodegenASTExprAccess::create("fn_err_state"),
+              CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "err_state", true)
+            )
+          );
+
+          if (!this->state.insideAsync) {
+            this->_fnDeclInitErrorHandling(&cBody, var->name);
+          }
+        }
+
         this->state.cleanUp.add(
           CodegenASTExprCall::create(
             CodegenASTExprAccess::create(this->_("free")),
@@ -182,16 +194,16 @@ void Codegen::_fnDecl (
         );
       }
 
-      if (this->throws && fnType.async) {
-        this->state.cleanUp.add(
-          CodegenASTExprCall::create(
-            CodegenASTExprAccess::create(this->_("free")),
-            {this->_genErrState(false, false)}
-          )->stmt()
-        );
-      }
+      if (this->state.insideAsync) {
+        if (this->throws) {
+          this->state.cleanUp.add(
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("free")),
+              {this->_genErrState(false, false)}
+            )->stmt()
+          );
+        }
 
-      if (fnType.async) {
         this->state.cleanUp.add(
           CodegenASTExprCall::create(
             CodegenASTExprAccess::create(this->_("threadpool_job_deinit")),
@@ -259,10 +271,6 @@ void Codegen::_fnDecl (
             )
           );
         }
-      }
-
-      if (this->throws && !fnType.async) {
-        this->_fnDeclInitErrorHandling(&cBody, var->name);
       }
 
       if (hasStack) {
@@ -423,7 +431,7 @@ void Codegen::_fnDecl (
         );
       }
 
-      if (fnType.async && !body->empty()) {
+      if (this->state.insideAsync && !body->empty()) {
         cBody = cBody->append(CodegenASTStmtSwitch::create(CodegenASTExprAccess::create("step")));
         cBody = cBody->append(CodegenASTStmtCase::create(
           CodegenASTExprLiteral::create("0"),
@@ -431,7 +439,7 @@ void Codegen::_fnDecl (
         ));
       }
 
-      if (this->throws && fnType.async && !isAsyncMain) {
+      if (this->throws && this->state.insideAsync && !isAsyncMain) {
         this->_fnDeclInitErrorHandling(&cBody, var->name);
       }
 
@@ -482,14 +490,14 @@ void Codegen::_fnDecl (
         cBody->prepend(returnVarDecl);
       }
 
-      if (fnType.async && !body->empty()) {
+      if (this->state.insideAsync && !body->empty()) {
         cBody = cBody->exit()->exit()->exit();
       }
 
       decl += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
       def += (this->state.insideAsync ? "void " : returnTypeInfo.typeCode) + typeName + " (";
 
-      if (fnType.async) {
+      if (this->state.insideAsync) {
         decl += this->_apiEval("_{threadpool_t} *, _{threadpool_job_t} *, ");
         def += this->_apiEval("_{threadpool_t} *tp, _{threadpool_job_t} *job, ");
       }
@@ -497,12 +505,12 @@ void Codegen::_fnDecl (
       decl += "void *";
       def += "void *px";
 
-      if (hasParams || fnType.async) {
+      if (hasParams || this->state.insideAsync) {
         decl += ", void *";
         def += ", void *pp";
       }
 
-      if (fnType.async) {
+      if (this->state.insideAsync) {
         decl += ", void *, int";
         def += ", void *pv, int step";
       }

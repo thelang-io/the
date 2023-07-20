@@ -306,17 +306,18 @@ void __THE_1_array_str_forEach (err_state_t *fn_err_state, int line, int col, st
 }
 void __THE_1_forEachPrint_0 (void *px, void *pp) {
   struct __THE_1_fn$1P *p = pp;
-  error_stack_push(p->err_state, "/test", "forEachPrint", p->line, p->col);
+  err_state_t *fn_err_state = p->err_state;
+  error_stack_push(fn_err_state, "/test", "forEachPrint", p->line, p->col);
   const struct str __THE_0_it_0 = p->n0;
   const int32_t __THE_0_idx_0 = p->n1;
-  if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) goto L1;
+  if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L1;
   print(stdout, "sziz", str_copy(__THE_0_it_0), " ", __THE_0_idx_0, THE_EOL);
 L1:
-  p->err_state->buf_idx--;
+  fn_err_state->buf_idx--;
   str_free((struct str) __THE_0_it_0);
-  error_stack_pop(p->err_state);
-  if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
   free(pp);
+  error_stack_pop(fn_err_state);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
 }
 
 int main () {

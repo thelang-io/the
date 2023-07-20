@@ -299,7 +299,7 @@ void *threadpool_worker (void *n) {
   self->alive_threads--;
   pthread_cond_signal(&self->cond1);
   pthread_mutex_unlock(&self->lock1);
-  pthread_exit(NULL);
+  return NULL;
 }
 void *xalloc (void *n1, size_t n2) {
   void *r = malloc(n2);

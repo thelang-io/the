@@ -352,13 +352,14 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
 }
 void __THE_1_t1_0 (void *px, void *pp) {
   struct __THE_1_fn$1000P *p = pp;
-  error_stack_push(p->err_state, "/test", "t1", p->line, p->col);
-  error_assign(p->err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 6, 3);
+  err_state_t *fn_err_state = p->err_state;
+  error_stack_push(fn_err_state, "/test", "t1", p->line, p->col);
+  error_assign(fn_err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 6, 3);
   goto L1;
 L1:
-  error_stack_pop(p->err_state);
-  if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
   free(pp);
+  error_stack_pop(fn_err_state);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
 }
 
 int main () {

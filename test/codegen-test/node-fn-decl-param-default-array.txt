@@ -307,31 +307,32 @@ struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1,
 struct __THE_1_array_int __THE_1_test1_0 (void *px, void *pp) {
   struct __THE_1_array_int v;
   struct __THE_1_fn$1003P *p = pp;
-  error_stack_push(p->err_state, "/test", "test1", p->line, p->col);
+  err_state_t *fn_err_state = p->err_state;
+  error_stack_push(fn_err_state, "/test", "test1", p->line, p->col);
   const struct __THE_1_array_int __THE_0_a_0 = p->n0;
   const struct __THE_1_array_int __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_array_int_alloc(2, 1, 2);
   const struct __THE_1_array_int __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_array_int_alloc(3, 1, 2, 3);
   struct __THE_1_array_int __THE_0_d_0 = __THE_1_array_int_alloc(0);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)); __THE_0_i_0++) {
-    if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) goto L2;
-    __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(p->err_state, 5, 12, __THE_0_a_0, __THE_0_i_0)));
+    if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L2;
+    __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(fn_err_state, 5, 12, __THE_0_a_0, __THE_0_i_0)));
 L2:
-    p->err_state->buf_idx--;
-    if (p->err_state->id != -1) goto L1;
+    fn_err_state->buf_idx--;
+    if (fn_err_state->id != -1) goto L1;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)); __THE_0_i_0++) {
-    if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) goto L3;
-    __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(p->err_state, 9, 12, __THE_0_b_0, __THE_0_i_0)));
+    if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L3;
+    __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(fn_err_state, 9, 12, __THE_0_b_0, __THE_0_i_0)));
 L3:
-    p->err_state->buf_idx--;
-    if (p->err_state->id != -1) goto L1;
+    fn_err_state->buf_idx--;
+    if (fn_err_state->id != -1) goto L1;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0)); __THE_0_i_0++) {
-    if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) goto L4;
-    __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(p->err_state, 13, 12, __THE_0_c_0, __THE_0_i_0)));
+    if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L4;
+    __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(fn_err_state, 13, 12, __THE_0_c_0, __THE_0_i_0)));
 L4:
-    p->err_state->buf_idx--;
-    if (p->err_state->id != -1) goto L1;
+    fn_err_state->buf_idx--;
+    if (fn_err_state->id != -1) goto L1;
   }
   v = __THE_1_array_int_copy(__THE_0_d_0);
 L1:
@@ -339,9 +340,9 @@ L1:
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_c_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
-  error_stack_pop(p->err_state);
-  if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
   free(pp);
+  error_stack_pop(fn_err_state);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   return v;
 }
 void __THE_1_fn$1004_free (struct __THE_1_fn$1004 n) {
@@ -349,23 +350,24 @@ void __THE_1_fn$1004_free (struct __THE_1_fn$1004 n) {
 }
 void __THE_1_mainSDtest2_0 (void *px, void *pp) {
   struct __THE_1_fn$1004P *p = pp;
-  error_stack_push(p->err_state, "/test", "test2", p->line, p->col);
+  err_state_t *fn_err_state = p->err_state;
+  error_stack_push(fn_err_state, "/test", "test2", p->line, p->col);
   struct __THE_1_mainSDtest2_0X *x = px;
   struct __THE_1_array_int *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$1003 *__THE_0_test1_0 = x->__THE_0_test1_0;
   const struct __THE_1_array_int __THE_0_a2_0 = p->n0;
   const struct __THE_1_array_int __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_array_int_alloc(3, 13, 14, 15);
   const struct __THE_1_array_int __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_array_int_alloc(3, 16, 17, 18);
-  if (setjmp(p->err_state->buf[p->err_state->buf_idx++]) != 0) goto L7;
-  *__THE_0_a_0 = __THE_1_array_int_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn$1003P) {p->err_state, 31, 9, __THE_1_array_int_copy(__THE_0_a2_0), 1, __THE_1_array_int_copy(__THE_0_b_0), 1, __THE_1_array_int_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn$1003P))));
+  if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L7;
+  *__THE_0_a_0 = __THE_1_array_int_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn$1003P) {fn_err_state, 31, 9, __THE_1_array_int_copy(__THE_0_a2_0), 1, __THE_1_array_int_copy(__THE_0_b_0), 1, __THE_1_array_int_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn$1003P))));
 L7:
-  p->err_state->buf_idx--;
+  fn_err_state->buf_idx--;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_c_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a2_0);
-  error_stack_pop(p->err_state);
-  if (p->err_state->id != -1) longjmp(p->err_state->buf[p->err_state->buf_idx - 1], p->err_state->id);
   free(pp);
+  error_stack_pop(fn_err_state);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
 }
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1004 *n, struct __THE_1_mainSDtest2_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
