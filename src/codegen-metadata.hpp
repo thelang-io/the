@@ -122,6 +122,7 @@ extern inline const std::map<std::string, std::set<std::string>> codegenMetadata
   std::pair<std::string, std::set<std::string>>{"pthread_create", {"libPthread"}},
   std::pair<std::string, std::set<std::string>>{"pthread_detach", {"libPthread"}},
   std::pair<std::string, std::set<std::string>>{"pthread_exit", {"libPthread"}},
+  std::pair<std::string, std::set<std::string>>{"pthread_join", {"libPthread"}},
   std::pair<std::string, std::set<std::string>>{"pthread_mutex_destroy", {"libPthread"}},
   std::pair<std::string, std::set<std::string>>{"pthread_mutex_init", {"libPthread"}},
   std::pair<std::string, std::set<std::string>>{"pthread_mutex_lock", {"libPthread"}},

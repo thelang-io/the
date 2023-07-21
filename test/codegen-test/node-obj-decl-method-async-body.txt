@@ -362,13 +362,13 @@ void threadpool_job_deinit (threadpool_job_t *self) {
   free(self);
 }
 void threadpool_thread_deinit (threadpool_thread_t *self) {
+  pthread_join(self->id, NULL);
   free(self);
 }
 threadpool_thread_t *threadpool_thread_init (threadpool_t *tp, threadpool_thread_t *next) {
   threadpool_thread_t *self = alloc(sizeof(threadpool_thread_t));
   self->tp = tp;
   pthread_create(&self->id, NULL, threadpool_worker, self);
-  pthread_detach(self->id);
   self->next = next;
   return self;
 }

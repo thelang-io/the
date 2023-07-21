@@ -184,12 +184,12 @@ const std::vector<std::string> codegenThread = {
   R"(  _{threadpool_thread_t} *self = _{alloc}(sizeof(_{threadpool_thread_t}));)" EOL
   R"(  self->tp = tp;)" EOL
   R"(  _{pthread_create}(&self->id, _{NULL}, _{threadpool_worker}, self);)" EOL
-  R"(  _{pthread_detach}(self->id);)" EOL
   R"(  self->next = next;)" EOL
   R"(  return self;)" EOL
   R"(})" EOL,
 
   R"(void threadpool_thread_deinit (_{threadpool_thread_t} *self) {)" EOL
+  R"(  _{pthread_join}(self->id, _{NULL});)" EOL
   R"(  _{free}(self);)" EOL
   R"(})" EOL
 };
