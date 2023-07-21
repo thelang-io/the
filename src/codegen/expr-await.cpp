@@ -48,12 +48,18 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
     );
   }
 
-  auto expr = nodeExpr.type->isVoid() || root
-    ? CodegenASTExprNull::create()
-    : CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("t" + std::to_string(exprAwait.id)));
+  auto isRootAndShouldFree = root && nodeExpr.type->shouldBeFreed();
+
+  auto expr = (!root && !nodeExpr.type->isVoid()) || isRootAndShouldFree
+    ? CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("t" + std::to_string(exprAwait.id)))
+    : CodegenASTExprNull::create();
 
   if (!root && nodeExpr.type->isRef() && !targetType->isRef()) {
     expr = this->_genCopyFn(targetType, CodegenASTExprUnary::create("*", expr));
+  }
+
+  if (isRootAndShouldFree) {
+    expr = this->_genFreeFn(nodeExpr.type, expr);
   }
 
   return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);
