@@ -123,6 +123,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -328,6 +329,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -476,12 +478,13 @@ void __THE_1_job1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   struct __THE_1_fn$1000P *p = pp;
   struct __THE_1_job1_0X *x = px;
   unsigned char *r = &x->r;
-  int32_t *__THE_0_a_0 = p->n0;
+  int32_t **__THE_0_a_0 = &p->n0;
+  job->init = 1;
   switch (step) {
     case 0: {
-      *__THE_0_a_0 += 1;
+      **__THE_0_a_0 += 1;
       *r = 1;
-      int32_t *_v = __THE_0_a_0;
+      int32_t *_v = *__THE_0_a_0;
       if (v != NULL) *v = _v;
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
@@ -511,11 +514,12 @@ void __THE_1_job2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   struct __THE_1_fn$1001P *p = pp;
   struct __THE_1_job2_0X *x = px;
   unsigned char *r = &x->r;
-  int32_t *__THE_0_a_0 = p->n0;
+  int32_t **__THE_0_a_0 = &p->n0;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
-      int32_t _v = *__THE_0_a_0;
+      int32_t _v = **__THE_0_a_0;
       if (v != NULL) *v = _v;
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
@@ -555,69 +559,70 @@ void __THE_1_job3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   int32_t *t10 = &x->t10;
   int32_t *t11 = &x->t11;
   int32_t **t12 = &x->t12;
-  int32_t *__THE_0_a_0 = p->n0;
-  const struct __THE_1_fn$1000 __THE_0_fn1_0 = p->n1;
-  const struct __THE_1_fn$1001 __THE_0_fn2_0 = p->n2;
-  const struct __THE_1_fn$1000 *__THE_0_fn3_0 = p->n3;
-  const struct __THE_1_fn$1001 *__THE_0_fn4_0 = p->n4;
+  int32_t **__THE_0_a_0 = &p->n0;
+  const struct __THE_1_fn$1000 *__THE_0_fn1_0 = &p->n1;
+  const struct __THE_1_fn$1001 *__THE_0_fn2_0 = &p->n2;
+  const struct __THE_1_fn$1000 **__THE_0_fn3_0 = &p->n3;
+  const struct __THE_1_fn$1001 **__THE_0_fn4_0 = &p->n4;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
-      return threadpool_add(tp, __THE_0_fn1_0.f, xalloc(__THE_0_fn1_0.x, __THE_0_fn1_0.l), xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t1, job);
+      return threadpool_add(tp, (*__THE_0_fn1_0).f, xalloc((*__THE_0_fn1_0).x, (*__THE_0_fn1_0).l), xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t1, job);
     }
     case 1: {
       job->step = 2;
-      return threadpool_add(tp, __THE_0_fn2_0.f, xalloc(__THE_0_fn2_0.x, __THE_0_fn2_0.l), xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t2, job);
+      return threadpool_add(tp, (*__THE_0_fn2_0).f, xalloc((*__THE_0_fn2_0).x, (*__THE_0_fn2_0).l), xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t2, job);
     }
     case 2: {
       *__THE_0_v1_0 = **t1 + *t2;
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_fn3_0).f, xalloc((*__THE_0_fn3_0).x, (*__THE_0_fn3_0).l), xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t3, job);
+      return threadpool_add(tp, (**__THE_0_fn3_0).f, xalloc((**__THE_0_fn3_0).x, (**__THE_0_fn3_0).l), xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t3, job);
     }
     case 3: {
       job->step = 4;
-      return threadpool_add(tp, (*__THE_0_fn4_0).f, xalloc((*__THE_0_fn4_0).x, (*__THE_0_fn4_0).l), xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t4, job);
+      return threadpool_add(tp, (**__THE_0_fn4_0).f, xalloc((**__THE_0_fn4_0).x, (**__THE_0_fn4_0).l), xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t4, job);
     }
     case 4: {
       *__THE_0_v2_0 = **t3 > *t4;
       job->step = 5;
-      return threadpool_add(tp, __THE_0_fn1_0.f, xalloc(__THE_0_fn1_0.x, __THE_0_fn1_0.l), xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t5, job);
+      return threadpool_add(tp, (*__THE_0_fn1_0).f, xalloc((*__THE_0_fn1_0).x, (*__THE_0_fn1_0).l), xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t5, job);
     }
     case 5: {
       job->step = 6;
-      return threadpool_add(tp, (*__THE_0_fn3_0).f, xalloc((*__THE_0_fn3_0).x, (*__THE_0_fn3_0).l), xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t6, job);
+      return threadpool_add(tp, (**__THE_0_fn3_0).f, xalloc((**__THE_0_fn3_0).x, (**__THE_0_fn3_0).l), xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t6, job);
     }
     case 6: {
       *__THE_0_v3_0 = **t5 & **t6;
       job->step = 7;
-      return threadpool_add(tp, __THE_0_fn2_0.f, xalloc(__THE_0_fn2_0.x, __THE_0_fn2_0.l), xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t7, job);
+      return threadpool_add(tp, (*__THE_0_fn2_0).f, xalloc((*__THE_0_fn2_0).x, (*__THE_0_fn2_0).l), xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t7, job);
     }
     case 7: {
       job->step = 8;
-      return threadpool_add(tp, (*__THE_0_fn4_0).f, xalloc((*__THE_0_fn4_0).x, (*__THE_0_fn4_0).l), xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t8, job);
+      return threadpool_add(tp, (**__THE_0_fn4_0).f, xalloc((**__THE_0_fn4_0).x, (**__THE_0_fn4_0).l), xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t8, job);
     }
     case 8: {
       *__THE_0_v4_0 = *t7 - *t8;
       job->step = 9;
-      return threadpool_add(tp, __THE_0_fn1_0.f, xalloc(__THE_0_fn1_0.x, __THE_0_fn1_0.l), xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t9, job);
+      return threadpool_add(tp, (*__THE_0_fn1_0).f, xalloc((*__THE_0_fn1_0).x, (*__THE_0_fn1_0).l), xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t9, job);
     }
     case 9: {
       job->step = 10;
-      return threadpool_add(tp, (*__THE_0_fn4_0).f, xalloc((*__THE_0_fn4_0).x, (*__THE_0_fn4_0).l), xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t10, job);
+      return threadpool_add(tp, (**__THE_0_fn4_0).f, xalloc((**__THE_0_fn4_0).x, (**__THE_0_fn4_0).l), xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t10, job);
     }
     case 10: {
       *__THE_0_v5_0 = **t9 == *t10;
       job->step = 11;
-      return threadpool_add(tp, __THE_0_fn2_0.f, xalloc(__THE_0_fn2_0.x, __THE_0_fn2_0.l), xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t11, job);
+      return threadpool_add(tp, (*__THE_0_fn2_0).f, xalloc((*__THE_0_fn2_0).x, (*__THE_0_fn2_0).l), xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)), t11, job);
     }
     case 11: {
       job->step = 12;
-      return threadpool_add(tp, (*__THE_0_fn3_0).f, xalloc((*__THE_0_fn3_0).x, (*__THE_0_fn3_0).l), xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t12, job);
+      return threadpool_add(tp, (**__THE_0_fn3_0).f, xalloc((**__THE_0_fn3_0).x, (**__THE_0_fn3_0).l), xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)), t12, job);
     }
     case 12: {
       *__THE_0_v6_0 = *t11 << **t12;
-      __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_fn2_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_fn1_0);
+      __THE_1_fn$1001_free((struct __THE_1_fn$1001) *__THE_0_fn2_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_fn1_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
       free(pp);
@@ -669,6 +674,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   int32_t **t10 = &x->t10;
   int32_t *t11 = &x->t11;
   int32_t *t12 = &x->t12;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_a_0 = 0;
@@ -791,6 +797,7 @@ void __THE_1_mainSDjobLocal1_0 (threadpool_t *tp, threadpool_job_t *job, void *p
   int32_t **t12 = &x->t12;
   int32_t *t13 = &x->t13;
   int32_t *t14 = &x->t14;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
@@ -895,7 +902,6 @@ int main () {
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_job3_0);
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_job2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_job1_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

@@ -89,6 +89,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -395,6 +396,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -579,6 +581,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   const struct __THE_1_fn$1000 *__THE_0_t_0 = x->__THE_0_t_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct __THE_1_TestError_0 **__THE_0_err_0 = &x->__THE_0_err_0;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = 0;
@@ -653,7 +656,6 @@ int main () {
     err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

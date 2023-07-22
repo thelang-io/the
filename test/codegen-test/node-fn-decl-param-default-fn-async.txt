@@ -114,6 +114,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -310,6 +311,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -461,6 +463,7 @@ void __THE_1_jobA_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   struct str *v = pv;
   struct __THE_1_jobA_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -483,6 +486,7 @@ void __THE_1_jobA2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct str *v = pv;
   struct __THE_1_jobA2_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -505,6 +509,7 @@ void __THE_1_jobB_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   struct str *v = pv;
   struct __THE_1_jobB_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -527,6 +532,7 @@ void __THE_1_jobC_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   struct str *v = pv;
   struct __THE_1_jobC_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -556,19 +562,22 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   const struct __THE_1_fn$1000 *__THE_0_jobB_0 = x->__THE_0_jobB_0;
   struct __THE_1_fn$1000 *__THE_0_test1SDjobTmp_0 = &x->__THE_0_test1SDjobTmp_0;
   unsigned char *r = &x->r;
-  const struct __THE_1_fn$1000 __THE_0_a_0 = p->n0;
-  const struct __THE_1_fn$1000 __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_fn$1000_copy(*__THE_0_jobB_0);
-  const struct __THE_1_fn$1000 __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_fn$1000_copy(*__THE_0_jobC_0);
+  const struct __THE_1_fn$1000 *__THE_0_a_0 = &p->n0;
+  if (job->init == 0 && p->o1 != 1) p->n1 = __THE_1_fn$1000_copy(*__THE_0_jobB_0);
+  const struct __THE_1_fn$1000 *__THE_0_b_0 = &p->n1;
+  if (job->init == 0 && p->o2 != 1) p->n2 = __THE_1_fn$1000_copy(*__THE_0_jobC_0);
+  const struct __THE_1_fn$1000 *__THE_0_c_0 = &p->n2;
+  job->init = 1;
   switch (step) {
     case 0: {
-      __THE_1_test1SDjobTmp_0_alloc((struct __THE_1_fn$1000 *) __THE_0_test1SDjobTmp_0, (struct __THE_1_test1SDjobTmp_0X) {&__THE_0_c_0, &__THE_0_b_0, &__THE_0_a_0});
+      __THE_1_test1SDjobTmp_0_alloc((struct __THE_1_fn$1000 *) __THE_0_test1SDjobTmp_0, (struct __THE_1_test1SDjobTmp_0X) {__THE_0_c_0, __THE_0_b_0, __THE_0_a_0});
       *r = 1;
       struct __THE_1_fn$1000 _v = __THE_1_fn$1000_copy(*__THE_0_test1SDjobTmp_0);
       v == NULL ? __THE_1_fn$1000_free((struct __THE_1_fn$1000) _v) : (*v = _v);
       __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_test1SDjobTmp_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_c_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_c_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_b_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_a_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
       free(pp);
@@ -585,6 +594,7 @@ void __THE_1_test1SDjobTmp_0 (threadpool_t *tp, threadpool_job_t *job, void *px,
   struct str *t1 = &x->t1;
   struct str *t2 = &x->t2;
   struct str *t3 = &x->t3;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
@@ -645,6 +655,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   struct __THE_1_fn$1000 *t5 = &x->t5;
   struct __THE_1_fn$1000 *t6 = &x->t6;
   struct __THE_1_fn$1000 *t7 = &x->t7;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
@@ -727,19 +738,22 @@ void __THE_1_mainSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, v
   const struct __THE_1_fn$1000 *__THE_0_jobC_0 = x->__THE_0_jobC_0;
   const struct __THE_1_fn$1000 *__THE_0_jobB_0 = x->__THE_0_jobB_0;
   struct __THE_1_fn$1000 *t1 = &x->t1;
-  const struct __THE_1_fn$1000 __THE_0_a2_0 = p->n0;
-  const struct __THE_1_fn$1000 __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_fn$1000_copy(*__THE_0_jobB_0);
-  const struct __THE_1_fn$1000 __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_fn$1000_copy(*__THE_0_jobC_0);
+  const struct __THE_1_fn$1000 *__THE_0_a2_0 = &p->n0;
+  if (job->init == 0 && p->o1 != 1) p->n1 = __THE_1_fn$1000_copy(*__THE_0_jobB_0);
+  const struct __THE_1_fn$1000 *__THE_0_b_0 = &p->n1;
+  if (job->init == 0 && p->o2 != 1) p->n2 = __THE_1_fn$1000_copy(*__THE_0_jobC_0);
+  const struct __THE_1_fn$1000 *__THE_0_c_0 = &p->n2;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
-      return threadpool_add(tp, (*__THE_0_test1_0).f, xalloc((*__THE_0_test1_0).x, (*__THE_0_test1_0).l), xalloc(&(struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(__THE_0_a2_0), 1, __THE_1_fn$1000_copy(__THE_0_b_0), 1, __THE_1_fn$1000_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn$1001P)), t1, job);
+      return threadpool_add(tp, (*__THE_0_test1_0).f, xalloc((*__THE_0_test1_0).x, (*__THE_0_test1_0).l), xalloc(&(struct __THE_1_fn$1001P) {__THE_1_fn$1000_copy(*__THE_0_a2_0), 1, __THE_1_fn$1000_copy(*__THE_0_b_0), 1, __THE_1_fn$1000_copy(*__THE_0_c_0)}, sizeof(struct __THE_1_fn$1001P)), t1, job);
     }
     case 1: {
       *__THE_0_a_0 = __THE_1_fn$1000_realloc(*__THE_0_a_0, *t1);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_c_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a2_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_c_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_b_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_a2_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
       free(pp);
@@ -786,7 +800,6 @@ int main () {
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_jobB_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_jobA2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_jobA_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

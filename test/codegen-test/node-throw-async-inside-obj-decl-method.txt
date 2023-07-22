@@ -85,6 +85,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -388,6 +389,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -557,6 +559,7 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
 void __THE_1_TestSDtest_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_fn$1000P *p = pp;
   err_state_t *fn_err_state = p->err_state;
+  job->init = 1;
   switch (step) {
     case 0: {
       error_stack_push(fn_err_state, "/test", "Test.test", p->line, p->col);
@@ -584,6 +587,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   const struct __THE_1_fn$1000 *__THE_0_TestSDtest_0 = x->__THE_0_TestSDtest_0;
   struct __THE_1_Test_0 **__THE_0_test_0 = &x->__THE_0_test_0;
   struct error_Error **__THE_0_err_0 = &x->__THE_0_err_0;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_test_0 = __THE_1_Test_0_alloc();
@@ -651,7 +655,6 @@ int main () {
     err_state._free(err_state.ctx);
     exit(EXIT_FAILURE);
   }
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

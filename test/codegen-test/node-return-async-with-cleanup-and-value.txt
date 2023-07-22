@@ -93,6 +93,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -343,6 +344,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -489,6 +491,7 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct __THE_1_test1_0X *x = px;
   struct str *__THE_0_a_0 = &x->__THE_0_a_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_a_0 = str_alloc("a");
@@ -520,11 +523,12 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct str *__THE_0_c_0 = &x->__THE_0_c_0;
   struct str *__THE_0_d_0 = &x->__THE_0_d_0;
   unsigned char *r = &x->r;
-  const struct str __THE_0_i_0 = p->n0;
+  const struct str *__THE_0_i_0 = &p->n0;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_b_0 = str_alloc("b");
-      if (!(str_eq_cstr(str_copy(__THE_0_i_0), "5"))) return threadpool_insert(tp, threadpool_job_step(job, 2));
+      if (!(str_eq_cstr(str_copy(*__THE_0_i_0), "5"))) return threadpool_insert(tp, threadpool_job_step(job, 2));
       *__THE_0_c_0 = str_alloc("c");
       *r = 1;
       struct str _v = str_alloc("5");
@@ -544,7 +548,7 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
     case 3: {
       str_free((struct str) *__THE_0_b_0);
-      str_free((struct str) __THE_0_i_0);
+      str_free((struct str) *__THE_0_i_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
       free(pp);
@@ -573,6 +577,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   struct str *t1 = &x->t1;
   struct str *t2 = &x->t2;
   struct str *t3 = &x->t3;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_e_0 = str_alloc("e");
@@ -626,7 +631,6 @@ int main () {
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) async_main);
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_test2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

@@ -91,6 +91,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -321,6 +322,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -474,6 +476,7 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
 void __THE_1_TestSDtest1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_TestSDtest1_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -493,6 +496,7 @@ void __THE_1_TestSDtest1_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_Test
 void __THE_1_TestSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_TestSDtest2_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -516,10 +520,11 @@ void __THE_1_TestSDtest3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, v
   struct __THE_1_fn$1001P *p = pp;
   struct __THE_1_TestSDtest3_0X *x = px;
   unsigned char *r = &x->r;
-  const int32_t __THE_0_a_0 = p->n0;
+  const int32_t *__THE_0_a_0 = &p->n0;
+  job->init = 1;
   switch (step) {
     case 0: {
-      if (!(__THE_0_a_0 == 5)) return threadpool_insert(tp, threadpool_job_step(job, 1));
+      if (!(*__THE_0_a_0 == 5)) return threadpool_insert(tp, threadpool_job_step(job, 1));
       *r = 1;
       return threadpool_insert(tp, threadpool_job_step(job, 2));
     }
@@ -550,6 +555,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   const struct __THE_1_fn$1000 *__THE_0_TestSDtest2_0 = x->__THE_0_TestSDtest2_0;
   const struct __THE_1_fn$1000 *__THE_0_TestSDtest1_0 = x->__THE_0_TestSDtest1_0;
   struct __THE_1_Test_0 **__THE_0_test_0 = &x->__THE_0_test_0;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_test_0 = __THE_1_Test_0_alloc();
@@ -601,7 +607,6 @@ int main () {
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_TestSDtest3_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_TestSDtest2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_TestSDtest1_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

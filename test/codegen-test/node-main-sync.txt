@@ -77,6 +77,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -175,6 +176,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -315,9 +317,9 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
 }
 void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_fn$1001P *p = pp;
-  const int32_t __THE_0_param1_0 = p->n0;
-  const struct str __THE_0_param2_0 = p->n1;
-  str_free((struct str) __THE_0_param2_0);
+  const int32_t *__THE_0_param1_0 = &p->n0;
+  const struct str *__THE_0_param2_0 = &p->n1;
+  str_free((struct str) *__THE_0_param2_0);
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
   free(pp);
@@ -329,6 +331,7 @@ void __THE_1_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct str *v = pv;
   struct __THE_1_test3_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -360,7 +363,6 @@ int main () {
   threadpool_wait(tp);
   threadpool_deinit(tp);
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_test3_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

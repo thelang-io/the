@@ -258,15 +258,6 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
 
   this->state.cleanUp.gen(&cMain);
 
-  if (this->async) {
-    cMain->append(
-      CodegenASTExprCall::create(
-        CodegenASTExprAccess::create(this->_("pthread_exit")),
-        {CodegenASTExprAccess::create(this->_("NULL"))}
-      )->stmt()
-    );
-  }
-
   auto defineCode = std::string();
   auto enumDeclCode = std::string();
   auto fnDeclCode = std::string();
@@ -408,6 +399,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "  void *params;" EOL;
     builtinStructDefCode += "  void *ret;" EOL;
     builtinStructDefCode += "  int step;" EOL;
+    builtinStructDefCode += "  unsigned char init;" EOL;
     builtinStructDefCode += "  struct threadpool_job *next;" EOL;
     builtinStructDefCode += "} threadpool_job_t;" EOL;
   }

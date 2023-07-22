@@ -309,6 +309,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -721,6 +722,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -878,6 +880,7 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct str *__THE_0_v6_0 = &x->__THE_0_v6_0;
   struct str *__THE_0_v7_0 = &x->__THE_0_v7_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -953,6 +956,7 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -1003,6 +1007,7 @@ void __THE_1_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -1050,6 +1055,7 @@ void __THE_1_test4_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -1097,6 +1103,7 @@ void __THE_1_test5_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct str *__THE_0_v6_0 = &x->__THE_0_v6_0;
   struct str *__THE_0_v7_0 = &x->__THE_0_v7_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = 0;
@@ -1169,6 +1176,7 @@ void __THE_1_test6_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = 0;
@@ -1216,6 +1224,7 @@ void __THE_1_test7_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = 0;
@@ -1260,6 +1269,7 @@ void __THE_1_test8_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = 0;
@@ -1306,6 +1316,7 @@ void __THE_1_test9_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   struct str *__THE_0_v6_0 = &x->__THE_0_v6_0;
   struct str *__THE_0_v7_0 = &x->__THE_0_v7_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -1385,6 +1396,7 @@ void __THE_1_test10_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -1439,6 +1451,7 @@ void __THE_1_test11_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -1490,6 +1503,7 @@ void __THE_1_test12_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_v1_0 = str_alloc("test1");
@@ -1541,6 +1555,7 @@ void __THE_1_test13_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   struct str *__THE_0_v6_0 = &x->__THE_0_v6_0;
   struct str *__THE_0_v7_0 = &x->__THE_0_v7_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = str_alloc("1");
@@ -1617,6 +1632,7 @@ void __THE_1_test14_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = str_alloc("1");
@@ -1668,6 +1684,7 @@ void __THE_1_test15_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = str_alloc("1");
@@ -1716,6 +1733,7 @@ void __THE_1_test16_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_i_0 = str_alloc("1");
@@ -1772,6 +1790,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   const struct __THE_1_fn$1000 *__THE_0_test3_0 = x->__THE_0_test3_0;
   const struct __THE_1_fn$1000 *__THE_0_test2_0 = x->__THE_0_test2_0;
   const struct __THE_1_fn$1000 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
@@ -1909,7 +1928,6 @@ int main () {
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test3_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

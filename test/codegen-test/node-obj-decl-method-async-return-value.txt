@@ -87,6 +87,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -336,6 +337,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -490,6 +492,7 @@ void __THE_1_TestSDtest1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, v
   struct str *v = pv;
   struct __THE_1_TestSDtest1_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -516,10 +519,11 @@ void __THE_1_TestSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, v
   struct __THE_1_fn$1001P *p = pp;
   struct __THE_1_TestSDtest2_0X *x = px;
   unsigned char *r = &x->r;
-  const struct str __THE_0_a_0 = p->n0;
+  const struct str *__THE_0_a_0 = &p->n0;
+  job->init = 1;
   switch (step) {
     case 0: {
-      if (!(str_eq_cstr(str_copy(__THE_0_a_0), "5"))) return threadpool_insert(tp, threadpool_job_step(job, 1));
+      if (!(str_eq_cstr(str_copy(*__THE_0_a_0), "5"))) return threadpool_insert(tp, threadpool_job_step(job, 1));
       *r = 1;
       struct str _v = str_alloc("5");
       v == NULL ? str_free((struct str) _v) : (*v = _v);
@@ -531,7 +535,7 @@ void __THE_1_TestSDtest2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, v
       v == NULL ? str_free((struct str) _v) : (*v = _v);
     }
     case 2: {
-      str_free((struct str) __THE_0_a_0);
+      str_free((struct str) *__THE_0_a_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
       free(pp);
@@ -557,6 +561,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   struct str *t1 = &x->t1;
   struct str *t2 = &x->t2;
   struct str *t3 = &x->t3;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_test_0 = __THE_1_Test_0_alloc();
@@ -604,7 +609,6 @@ int main () {
   __THE_1_fn$1002_free((struct __THE_1_fn$1002) async_main);
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_TestSDtest2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_TestSDtest1_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

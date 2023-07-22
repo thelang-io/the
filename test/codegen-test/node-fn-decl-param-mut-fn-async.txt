@@ -78,6 +78,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -213,6 +214,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -364,6 +366,7 @@ void __THE_1_job1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   int32_t *v = pv;
   struct __THE_1_job1_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -386,6 +389,7 @@ void __THE_1_job2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   int32_t *v = pv;
   struct __THE_1_job2_0X *x = px;
   unsigned char *r = &x->r;
+  job->init = 1;
   switch (step) {
     case 0: {
       *r = 1;
@@ -414,18 +418,19 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   const struct __THE_1_fn$1000 *__THE_0_job2_0 = x->__THE_0_job2_0;
   unsigned char *r = &x->r;
   int32_t *t1 = &x->t1;
-  struct __THE_1_fn$1000 __THE_0_a_0 = p->n0;
+  struct __THE_1_fn$1000 *__THE_0_a_0 = &p->n0;
+  job->init = 1;
   switch (step) {
     case 0: {
-      __THE_0_a_0 = __THE_1_fn$1000_realloc(__THE_0_a_0, __THE_1_fn$1000_copy(*__THE_0_job2_0));
+      *__THE_0_a_0 = __THE_1_fn$1000_realloc(*__THE_0_a_0, __THE_1_fn$1000_copy(*__THE_0_job2_0));
       job->step = 1;
-      return threadpool_add(tp, __THE_0_a_0.f, xalloc(__THE_0_a_0.x, __THE_0_a_0.l), NULL, t1, job);
+      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, t1, job);
     }
     case 1: {
       *r = 1;
       int32_t _v = *t1;
       if (v != NULL) *v = _v;
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_a_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
       free(pp);
@@ -451,24 +456,26 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
   unsigned char *r = &x->r;
   int32_t *t1 = &x->t1;
   int32_t *t2 = &x->t2;
-  struct __THE_1_fn$1000 __THE_0_a_0 = p->n0;
-  struct __THE_1_fn$1000 __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_fn$1000_copy(*__THE_0_job2_0);
+  struct __THE_1_fn$1000 *__THE_0_a_0 = &p->n0;
+  if (job->init == 0 && p->o1 != 1) p->n1 = __THE_1_fn$1000_copy(*__THE_0_job2_0);
+  struct __THE_1_fn$1000 *__THE_0_b_0 = &p->n1;
+  job->init = 1;
   switch (step) {
     case 0: {
-      __THE_0_b_0 = __THE_1_fn$1000_realloc(__THE_0_b_0, __THE_1_fn$1000_copy(__THE_0_a_0));
+      *__THE_0_b_0 = __THE_1_fn$1000_realloc(*__THE_0_b_0, __THE_1_fn$1000_copy(*__THE_0_a_0));
       job->step = 1;
-      return threadpool_add(tp, __THE_0_a_0.f, xalloc(__THE_0_a_0.x, __THE_0_a_0.l), NULL, t1, job);
+      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, t1, job);
     }
     case 1: {
       job->step = 2;
-      return threadpool_add(tp, __THE_0_b_0.f, xalloc(__THE_0_b_0.x, __THE_0_b_0.l), NULL, t2, job);
+      return threadpool_add(tp, (*__THE_0_b_0).f, xalloc((*__THE_0_b_0).x, (*__THE_0_b_0).l), NULL, t2, job);
     }
     case 2: {
       *r = 1;
       int32_t _v = *t1 + *t2;
       if (v != NULL) *v = _v;
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_b_0);
+      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_a_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
       free(pp);
@@ -494,6 +501,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   const struct __THE_1_fn$1000 *__THE_0_job1_0 = x->__THE_0_job1_0;
   int32_t *t1 = &x->t1;
   int32_t *t2 = &x->t2;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
@@ -538,7 +546,6 @@ int main () {
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_test1_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_job2_0);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_job1_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

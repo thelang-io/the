@@ -88,6 +88,7 @@ typedef struct threadpool_job {
   void *params;
   void *ret;
   int step;
+  unsigned char init;
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
@@ -296,6 +297,7 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->params = params;
   job->ret = ret;
   job->step = 0;
+  job->init = 0;
   job->next = NULL;
   threadpool_insert(self, job);
 }
@@ -437,6 +439,7 @@ void __THE_1_testGo_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
   struct __THE_1_testGo_0X *x = px;
   const struct __THE_1_fn$1001 *__THE_0_TestSDgo_0 = x->__THE_0_TestSDgo_0;
   struct __THE_1_Test_0 **__THE_0_test_0 = &x->__THE_0_test_0;
+  job->init = 1;
   switch (step) {
     case 0: {
       *__THE_0_test_0 = __THE_1_Test_0_alloc(0);
@@ -472,6 +475,7 @@ void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
 void __THE_1_TestSDgo_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_fn$1001P *p = pp;
   struct __THE_1_Test_0 **__THE_0_self_0 = p->self;
+  job->init = 1;
   switch (step) {
     case 0: {
       (*__THE_0_self_0)->__THE_0_a += 1;
@@ -484,6 +488,7 @@ void __THE_1_TestSDgo_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void
 void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_async_mainX *x = px;
   const struct __THE_1_fn$1000 *__THE_0_testGo_0 = x->__THE_0_testGo_0;
+  job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
@@ -516,7 +521,6 @@ int main () {
   threadpool_deinit(tp);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) async_main);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_testGo_0);
-  pthread_exit(NULL);
 }
 ======= flags =======
 U:-pthread

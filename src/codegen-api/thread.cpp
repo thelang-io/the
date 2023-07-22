@@ -88,6 +88,7 @@ const std::vector<std::string> codegenThread = {
   R"(  job->params = params;)" EOL
   R"(  job->ret = ret;)" EOL
   R"(  job->step = 0;)" EOL
+  R"(  job->init = 0;)" EOL
   R"(  job->next = _{NULL};)" EOL
   R"(  _{threadpool_insert}(self, job);)" EOL
   R"(})" EOL,

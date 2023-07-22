@@ -386,7 +386,63 @@ void Codegen::_fnDecl (
         );
       }
 
-      if (!params.empty()) {
+      if (!params.empty() && this->state.insideAsync) {
+        auto paramIdx = static_cast<std::size_t>(0);
+
+        for (const auto &param : params) {
+          auto paramName = Codegen::name(param.var->codeName);
+          auto paramTypeInfo = this->_typeInfo(param.var->type);
+          auto paramIdxStr = std::to_string(paramIdx);
+          this->state.contextVars.insert(paramName);
+
+          if (param.init != std::nullopt) {
+            cBody->append(
+              CodegenASTStmtIf::create(
+                CodegenASTExprBinary::create(
+                  CodegenASTExprBinary::create(
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "init", true),
+                    "==",
+                    CodegenASTExprLiteral::create("0")
+                  ),
+                  "&&",
+                  CodegenASTExprBinary::create(
+                    CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "o" + paramIdxStr, true),
+                    "!=",
+                    CodegenASTExprLiteral::create("1")
+                  )
+                ),
+                CodegenASTExprAssign::create(
+                  CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true),
+                  "=",
+                  this->_nodeExpr(*param.init, paramTypeInfo.type, node, &cBody)
+                )->stmt()
+              )
+            );
+          }
+
+          cBody->append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(param.var->mut ? paramTypeInfo.typeRefCode : paramTypeInfo.typeRefCodeConst),
+              CodegenASTExprAccess::create(paramName),
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "n" + paramIdxStr, true)
+              )
+            )
+          );
+
+          if (paramTypeInfo.type->shouldBeFreed()) {
+            this->state.cleanUp.add(
+              this->_genFreeFn(
+                paramTypeInfo.type,
+                CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(paramName))
+              )->stmt()
+            );
+          }
+
+          paramIdx++;
+        }
+      } else if (!params.empty()) {
         auto paramIdx = static_cast<std::size_t>(0);
 
         for (const auto &param : params) {
@@ -432,7 +488,16 @@ void Codegen::_fnDecl (
       }
 
       if (this->state.insideAsync && !body->empty()) {
+        cBody->append(
+          CodegenASTExprAssign::create(
+            CodegenASTExprAccess::create(CodegenASTExprAccess::create("job"), "init", true),
+            "=",
+            CodegenASTExprLiteral::create("1")
+          )->stmt()
+        );
+
         cBody = cBody->append(CodegenASTStmtSwitch::create(CodegenASTExprAccess::create("step")));
+
         cBody = cBody->append(CodegenASTStmtCase::create(
           CodegenASTExprLiteral::create("0"),
           CodegenASTStmtCompound::create()
