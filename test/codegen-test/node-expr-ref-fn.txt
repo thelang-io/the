@@ -258,9 +258,9 @@ void __THE_1_mainSDjobLocal1_0 (void *px) {
   *(**__THE_0_refJob1_0).f((**__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P))) > (**__THE_0_refJob2_0).f((**__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
   *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P))) & *(**__THE_0_refJob1_0).f((**__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
   (**__THE_0_refJob2_0).f((**__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P))) - (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)));
-  *(__THE_1_fn$1000_copy(*__THE_0_job1_0)).f((__THE_1_fn$1000_copy(*__THE_0_job1_0)).x, xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P))) > (__THE_1_fn$1001_copy(*__THE_0_job2_0)).f((__THE_1_fn$1001_copy(*__THE_0_job2_0)).x, xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
-  *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) & *(__THE_1_fn$1000_copy(*__THE_0_job1_0)).f((__THE_1_fn$1000_copy(*__THE_0_job1_0)).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)));
-  (__THE_1_fn$1001_copy(*__THE_0_job2_0)).f((__THE_1_fn$1001_copy(*__THE_0_job2_0)).x, xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P))) - (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
+  *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P))) > (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
+  *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P))) & *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)));
+  (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P))) - (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn$1001P) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
 }
 void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_mainSDjobLocal1_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDjobLocal1_0X);
@@ -285,10 +285,10 @@ int main () {
   __THE_0_job1_0.f(__THE_0_job1_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
   __THE_0_job2_0.f(__THE_0_job2_0.x, xalloc(&(struct __THE_1_fn$1001P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)));
   __THE_0_job2_0.f(__THE_0_job2_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
-  (__THE_1_fn$1000_copy(__THE_0_job1_0)).f((__THE_1_fn$1000_copy(__THE_0_job1_0)).x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)));
-  (__THE_1_fn$1000_copy(__THE_0_job1_0)).f((__THE_1_fn$1000_copy(__THE_0_job1_0)).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
-  (__THE_1_fn$1001_copy(__THE_0_job2_0)).f((__THE_1_fn$1001_copy(__THE_0_job2_0)).x, xalloc(&(struct __THE_1_fn$1001P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)));
-  (__THE_1_fn$1001_copy(__THE_0_job2_0)).f((__THE_1_fn$1001_copy(__THE_0_job2_0)).x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
+  (__THE_0_job1_0).f((__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)));
+  (__THE_0_job1_0).f((__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
+  (__THE_0_job2_0).f((__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn$1001P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)));
+  (__THE_0_job2_0).f((__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1001P)));
   (*__THE_0_refJob1_0).f((*__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn$1000P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)));
   (*__THE_0_refJob1_0).f((*__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_refA_0}, sizeof(struct __THE_1_fn$1000P)));
   (*__THE_0_refJob2_0).f((*__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn$1001P) {&__THE_0_a_0}, sizeof(struct __THE_1_fn$1001P)));

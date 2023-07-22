@@ -25,7 +25,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprRef (const ASTNodeExpr &nodeExpr, 
     auto optTargetType = std::get<TypeOptional>(targetType->body).type;
     expr = this->_nodeExpr(exprRef.expr, optTargetType, parent, c, optTargetType->isRef());
   } else {
-    expr = this->_nodeExpr(exprRef.expr, targetType, parent, c, targetType->isRef());
+    expr = this->_nodeExpr(exprRef.expr, targetType, parent, c, targetType->isRef() || root);
   }
 
   return this->_wrapNodeExpr(nodeExpr, targetType, wrapAsRoot, expr);
