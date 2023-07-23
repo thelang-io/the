@@ -570,11 +570,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     this->builtins.libWinsock2
   ) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
-    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
     headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
     headers += this->builtins.libWinsock2 ? "  #include <winsock2.h>" EOL : "";
     headers += this->builtins.libWinWs2tcpip ? "  #include <ws2tcpip.h>" EOL : "";
+    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += "#endif" EOL;
   }
 

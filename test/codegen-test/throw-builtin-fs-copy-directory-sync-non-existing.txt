@@ -28,8 +28,8 @@ main {
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef THE_OS_WINDOWS
-  #include <windows.h>
   #include <io.h>
+  #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
   #include <dirent.h>
