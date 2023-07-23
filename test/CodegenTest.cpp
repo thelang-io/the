@@ -717,6 +717,10 @@ INSTANTIATE_TEST_SUITE_P(BuiltinRequest, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinThread, CodegenPassTest, testing::Values(
+  "builtin-thread-id",
+  "builtin-thread-id-root",
+  "builtin-thread-id-awaited",
+  "builtin-thread-id-non-awaited",
   "builtin-thread-sleep"
 ));
 
