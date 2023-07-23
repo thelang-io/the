@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include "CodegenAST.hpp"
 #include "../Error.hpp"
 #include "../config.hpp"
