@@ -115,6 +115,7 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"random_randomInt", "@random_randomInt", typeMap.get("random_randomInt"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"random_randomStr", "@random_randomStr", typeMap.get("random_randomStr"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"request_open", "@request_open", typeMap.get("request_open"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"thread_id", "@thread_id", typeMap.get("thread_id"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"thread_sleep", "@thread_sleep", typeMap.get("thread_sleep"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"url_parse", "@url_parse", typeMap.get("url_parse"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"utils_swap", "@utils_swap", typeMap.get("utils_swap"), false, false, true, false, this->_frame}));

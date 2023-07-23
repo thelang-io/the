@@ -990,6 +990,9 @@ void TypeMap::_requestModule (TypeMapPhase phase) {
 
 void TypeMap::_threadModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
+    auto thread_idCallInfo = TypeCallInfo{.codeName = "thread_id", .throws = codegenAPI.at("thread_id").throws};
+    auto thread_idTypeFn = TypeFn{this->get("int"), {}, thread_idCallInfo.throws, false, thread_idCallInfo, false};
+    this->_items.push_back(std::make_unique<Type>(Type{"thread_id", "@thread_id", thread_idTypeFn, {}, true}));
     auto thread_sleepCallInfo = TypeCallInfo{.codeName = "thread_sleep", .throws = codegenAPI.at("thread_sleep").throws};
     auto thread_sleepTypeFn = TypeFn{this->get("void"), {
       TypeFnParam{"milliseconds", this->get("int"), false, true, false}

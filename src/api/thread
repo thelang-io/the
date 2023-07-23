@@ -1,5 +1,8 @@
 // Thread API
 
+/** Returns caller's unique thread id. */
+fn thread_id () int
+
 /**
  * Sleeps the thread for a given time interval.
  *

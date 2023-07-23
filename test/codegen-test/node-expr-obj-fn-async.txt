@@ -28,10 +28,15 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <pthread.h>
 #endif
 
+struct threadpool_cond;
+struct threadpool_mutex;
 struct threadpool;
 struct threadpool_job;
 struct threadpool_thread;
@@ -51,15 +56,29 @@ typedef struct {
   int stack_idx;
   void (*_free) (void *);
 } err_state_t;
+typedef struct threadpool_cond {
+  #ifdef THE_OS_WINDOWS
+    CONDITION_VARIABLE v;
+  #else
+    pthread_cond_t v;
+  #endif
+} threadpool_cond_t;
+typedef struct threadpool_mutex {
+  #ifdef THE_OS_WINDOWS
+    CRITICAL_SECTION v;
+  #else
+    pthread_mutex_t v;
+  #endif
+} threadpool_mutex_t;
 typedef struct threadpool {
   bool active;
-  pthread_cond_t cond1;
-  pthread_cond_t cond2;
+  struct threadpool_cond cond1;
+  struct threadpool_cond cond2;
   struct threadpool_job *jobs;
   struct threadpool_job *jobs_tail;
-  pthread_mutex_t lock1;
-  pthread_mutex_t lock2;
-  pthread_mutex_t lock3;
+  struct threadpool_mutex lock1;
+  struct threadpool_mutex lock2;
+  struct threadpool_mutex lock3;
   struct threadpool_thread *threads;
   int working_threads;
   int alive_threads;
@@ -76,7 +95,11 @@ typedef struct threadpool_job {
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
-  pthread_t id;
+  #ifdef THE_OS_WINDOWS
+    HANDLE id;
+  #else
+    pthread_t id;
+  #endif
   struct threadpool *tp;
   struct threadpool_thread *next;
 } threadpool_thread_t;
@@ -97,8 +120,11 @@ err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
+void threadpool_cond_signal (threadpool_cond_t *);
 void threadpool_insert (threadpool_t *, threadpool_job_t *);
 void threadpool_job_deinit (threadpool_job_t *);
+void threadpool_mutex_lock (threadpool_mutex_t *);
+void threadpool_mutex_unlock (threadpool_mutex_t *);
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
 void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
 struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn$1000);
@@ -126,8 +152,15 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
+void threadpool_cond_signal (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    WakeConditionVariable(&self->v);
+  #else
+    pthread_cond_signal(&self->v);
+  #endif
+}
 void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
-  pthread_mutex_lock(&self->lock2);
+  threadpool_mutex_lock(&self->lock2);
   if (self->jobs == NULL) {
     self->jobs = job;
     self->jobs_tail = job;
@@ -135,14 +168,28 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
     self->jobs_tail->next = job;
     self->jobs_tail = self->jobs_tail->next;
   }
-  pthread_mutex_lock(&self->lock3);
-  pthread_cond_signal(&self->cond2);
-  pthread_mutex_unlock(&self->lock3);
-  pthread_mutex_unlock(&self->lock2);
+  threadpool_mutex_lock(&self->lock3);
+  threadpool_cond_signal(&self->cond2);
+  threadpool_mutex_unlock(&self->lock3);
+  threadpool_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
   if (self->ctx != NULL) free(self->ctx);
   free(self);
+}
+void threadpool_mutex_lock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    EnterCriticalSection(&self->v);
+  #else
+    pthread_mutex_lock(&self->v);
+  #endif
+}
+void threadpool_mutex_unlock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    LeaveCriticalSection(&self->v);
+  #else
+    pthread_mutex_unlock(&self->v);
+  #endif
 }
 struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
   if (n.x == NULL) return n;

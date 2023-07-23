@@ -65,6 +65,7 @@ struct CodegenBuiltins {
   bool libString = false;
   bool libSysSocket = false;
   bool libSysStat = false;
+  bool libSysSyscall = false;
   bool libSysTypes = false;
   bool libSysUtsname = false;
   bool libTime = false;
@@ -81,8 +82,10 @@ struct CodegenBuiltins {
   bool typeRequest = false;
   bool typeStr = false;
   bool typeThreadpool = false;
+  bool typeThreadpoolCond = false;
   bool typeThreadpoolFunc = false;
   bool typeThreadpoolJob = false;
+  bool typeThreadpoolMutex = false;
   bool typeThreadpoolThread = false;
   bool typeWinReparseDataBuffer = false;
   bool varEnviron = false;

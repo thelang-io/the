@@ -369,17 +369,39 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "};" EOL;
   }
 
+  if (this->builtins.typeThreadpoolCond) {
+    builtinStructDeclCode += "struct threadpool_cond;" EOL;
+    builtinStructDefCode += "typedef struct threadpool_cond {" EOL;
+    builtinStructDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinStructDefCode += "    CONDITION_VARIABLE v;" EOL;
+    builtinStructDefCode += "  #else" EOL;
+    builtinStructDefCode += "    pthread_cond_t v;" EOL;
+    builtinStructDefCode += "  #endif" EOL;
+    builtinStructDefCode += "} threadpool_cond_t;" EOL;
+  }
+
+  if (this->builtins.typeThreadpoolMutex) {
+    builtinStructDeclCode += "struct threadpool_mutex;" EOL;
+    builtinStructDefCode += "typedef struct threadpool_mutex {" EOL;
+    builtinStructDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinStructDefCode += "    CRITICAL_SECTION v;" EOL;
+    builtinStructDefCode += "  #else" EOL;
+    builtinStructDefCode += "    pthread_mutex_t v;" EOL;
+    builtinStructDefCode += "  #endif" EOL;
+    builtinStructDefCode += "} threadpool_mutex_t;" EOL;
+  }
+
   if (this->builtins.typeThreadpool) {
     builtinStructDeclCode += "struct threadpool;" EOL;
     builtinStructDefCode += "typedef struct threadpool {" EOL;
     builtinStructDefCode += "  bool active;" EOL;
-    builtinStructDefCode += "  pthread_cond_t cond1;" EOL;
-    builtinStructDefCode += "  pthread_cond_t cond2;" EOL;
+    builtinStructDefCode += "  struct threadpool_cond cond1;" EOL;
+    builtinStructDefCode += "  struct threadpool_cond cond2;" EOL;
     builtinStructDefCode += "  struct threadpool_job *jobs;" EOL;
     builtinStructDefCode += "  struct threadpool_job *jobs_tail;" EOL;
-    builtinStructDefCode += "  pthread_mutex_t lock1;" EOL;
-    builtinStructDefCode += "  pthread_mutex_t lock2;" EOL;
-    builtinStructDefCode += "  pthread_mutex_t lock3;" EOL;
+    builtinStructDefCode += "  struct threadpool_mutex lock1;" EOL;
+    builtinStructDefCode += "  struct threadpool_mutex lock2;" EOL;
+    builtinStructDefCode += "  struct threadpool_mutex lock3;" EOL;
     builtinStructDefCode += "  struct threadpool_thread *threads;" EOL;
     builtinStructDefCode += "  int working_threads;" EOL;
     builtinStructDefCode += "  int alive_threads;" EOL;
@@ -407,7 +429,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   if (this->builtins.typeThreadpoolThread) {
     builtinStructDeclCode += "struct threadpool_thread;" EOL;
     builtinStructDefCode += "typedef struct threadpool_thread {" EOL;
-    builtinStructDefCode += "  pthread_t id;" EOL;
+    builtinStructDefCode += "  #ifdef THE_OS_WINDOWS" EOL;
+    builtinStructDefCode += "    HANDLE id;" EOL;
+    builtinStructDefCode += "  #else" EOL;
+    builtinStructDefCode += "    pthread_t id;" EOL;
+    builtinStructDefCode += "  #endif" EOL;
     builtinStructDefCode += "  struct threadpool *tp;" EOL;
     builtinStructDefCode += "  struct threadpool_thread *next;" EOL;
     builtinStructDefCode += "} threadpool_thread_t;" EOL;
@@ -527,6 +553,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     this->builtins.libSysTypes ||
     this->builtins.libSysSocket ||
     this->builtins.libSysStat ||
+    this->builtins.libSysSyscall ||
     this->builtins.libSysUtsname
   ) {
     headers += this->builtins.libSysTypes ? "#include <sys/types.h>" EOL : "";
@@ -543,11 +570,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     this->builtins.libWinsock2
   ) {
     headers += "#ifdef THE_OS_WINDOWS" EOL;
+    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += this->builtins.libWinDirect ? "  #include <direct.h>" EOL : "";
     headers += this->builtins.libWinIo ? "  #include <io.h>" EOL : "";
     headers += this->builtins.libWinsock2 ? "  #include <winsock2.h>" EOL : "";
     headers += this->builtins.libWinWs2tcpip ? "  #include <ws2tcpip.h>" EOL : "";
-    headers += this->builtins.libWindows ? "  #include <windows.h>" EOL : "";
     headers += "#endif" EOL;
   }
 
@@ -560,18 +587,20 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     this->builtins.libPthread ||
     this->builtins.libPwd ||
     this->builtins.libSysSocket ||
+    this->builtins.libSysSyscall ||
     this->builtins.libSysUtsname ||
     this->builtins.libUnistd
   ) {
     headers += "#ifndef THE_OS_WINDOWS" EOL;
     headers += this->builtins.libArpaInet ? "  #include <arpa/inet.h>" EOL : "";
-    headers += this->builtins.libFcntl ? "  #include <fcntl.h>" EOL : "";
     headers += this->builtins.libDirent ? "  #include <dirent.h>" EOL : "";
+    headers += this->builtins.libFcntl ? "  #include <fcntl.h>" EOL : "";
     headers += this->builtins.libNetdb ? "  #include <netdb.h>" EOL : "";
     headers += this->builtins.libNetinetIn ? "  #include <netinet/in.h>" EOL : "";
     headers += this->builtins.libPthread ? "  #include <pthread.h>" EOL : "";
     headers += this->builtins.libPwd ? "  #include <pwd.h>" EOL : "";
     headers += this->builtins.libSysSocket ? "  #include <sys/socket.h>" EOL : "";
+    headers += this->builtins.libSysSyscall ? "  #include <sys/syscall.h>" EOL : "";
     headers += this->builtins.libSysUtsname ? "  #include <sys/utsname.h>" EOL : "";
     headers += this->builtins.libUnistd ? "  #include <unistd.h>" EOL : "";
     headers += "#endif" EOL;

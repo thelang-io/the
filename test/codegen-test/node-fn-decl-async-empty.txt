@@ -23,10 +23,15 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
 #ifndef THE_OS_WINDOWS
   #include <pthread.h>
 #endif
 
+struct threadpool_cond;
+struct threadpool_mutex;
 struct threadpool;
 struct threadpool_job;
 struct threadpool_thread;
@@ -46,15 +51,29 @@ typedef struct {
   int stack_idx;
   void (*_free) (void *);
 } err_state_t;
+typedef struct threadpool_cond {
+  #ifdef THE_OS_WINDOWS
+    CONDITION_VARIABLE v;
+  #else
+    pthread_cond_t v;
+  #endif
+} threadpool_cond_t;
+typedef struct threadpool_mutex {
+  #ifdef THE_OS_WINDOWS
+    CRITICAL_SECTION v;
+  #else
+    pthread_mutex_t v;
+  #endif
+} threadpool_mutex_t;
 typedef struct threadpool {
   bool active;
-  pthread_cond_t cond1;
-  pthread_cond_t cond2;
+  struct threadpool_cond cond1;
+  struct threadpool_cond cond2;
   struct threadpool_job *jobs;
   struct threadpool_job *jobs_tail;
-  pthread_mutex_t lock1;
-  pthread_mutex_t lock2;
-  pthread_mutex_t lock3;
+  struct threadpool_mutex lock1;
+  struct threadpool_mutex lock2;
+  struct threadpool_mutex lock3;
   struct threadpool_thread *threads;
   int working_threads;
   int alive_threads;
@@ -71,7 +90,11 @@ typedef struct threadpool_job {
   struct threadpool_job *next;
 } threadpool_job_t;
 typedef struct threadpool_thread {
-  pthread_t id;
+  #ifdef THE_OS_WINDOWS
+    HANDLE id;
+  #else
+    pthread_t id;
+  #endif
   struct threadpool *tp;
   struct threadpool_thread *next;
 } threadpool_thread_t;
@@ -93,11 +116,19 @@ err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void threadpool_add (threadpool_t *, threadpool_func_t, void *, void *, void *, threadpool_job_t *);
+void threadpool_cond_deinit (threadpool_cond_t *);
+void threadpool_cond_init (threadpool_cond_t *);
+void threadpool_cond_signal (threadpool_cond_t *);
+void threadpool_cond_wait (threadpool_cond_t *, threadpool_mutex_t *);
 void threadpool_deinit (threadpool_t *);
 threadpool_job_t *threadpool_get (threadpool_t *);
 threadpool_t *threadpool_init (int);
 void threadpool_insert (threadpool_t *, threadpool_job_t *);
 void threadpool_job_deinit (threadpool_job_t *);
+void threadpool_mutex_deinit (threadpool_mutex_t *);
+void threadpool_mutex_init (threadpool_mutex_t *);
+void threadpool_mutex_lock (threadpool_mutex_t *);
+void threadpool_mutex_unlock (threadpool_mutex_t *);
 void threadpool_thread_deinit (threadpool_thread_t *);
 threadpool_thread_t *threadpool_thread_init (threadpool_t *, threadpool_thread_t *);
 void threadpool_wait (threadpool_t *);
@@ -141,16 +172,44 @@ void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void
   job->next = NULL;
   threadpool_insert(self, job);
 }
+void threadpool_cond_deinit (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    (void) &self;
+  #else
+    pthread_cond_destroy(&self->v);
+  #endif
+}
+void threadpool_cond_init (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    InitializeConditionVariable(&self->v);
+  #else
+    pthread_cond_init(&self->v, NULL);
+  #endif
+}
+void threadpool_cond_signal (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    WakeConditionVariable(&self->v);
+  #else
+    pthread_cond_signal(&self->v);
+  #endif
+}
+void threadpool_cond_wait (threadpool_cond_t *self, threadpool_mutex_t *mutex) {
+  #ifdef THE_OS_WINDOWS
+    SleepConditionVariableCS(&self->v, &mutex->v, INFINITE);
+  #else
+    pthread_cond_wait(&self->v, &mutex->v);
+  #endif
+}
 void threadpool_deinit (threadpool_t *self) {
   self->active = false;
-  pthread_mutex_lock(&self->lock1);
+  threadpool_mutex_lock(&self->lock1);
   while (self->alive_threads != 0) {
-    pthread_mutex_lock(&self->lock3);
-    pthread_cond_signal(&self->cond2);
-    pthread_mutex_unlock(&self->lock3);
-    pthread_cond_wait(&self->cond1, &self->lock1);
+    threadpool_mutex_lock(&self->lock3);
+    threadpool_cond_signal(&self->cond2);
+    threadpool_mutex_unlock(&self->lock3);
+    threadpool_cond_wait(&self->cond1, &self->lock1);
   }
-  pthread_mutex_unlock(&self->lock1);
+  threadpool_mutex_unlock(&self->lock1);
   while (self->jobs != NULL) {
     threadpool_job_t *next = self->jobs->next;
     threadpool_job_deinit(self->jobs);
@@ -161,15 +220,15 @@ void threadpool_deinit (threadpool_t *self) {
     threadpool_thread_deinit(self->threads);
     self->threads = next;
   }
-  pthread_cond_destroy(&self->cond1);
-  pthread_cond_destroy(&self->cond2);
-  pthread_mutex_destroy(&self->lock1);
-  pthread_mutex_destroy(&self->lock2);
-  pthread_mutex_destroy(&self->lock3);
+  threadpool_cond_deinit(&self->cond1);
+  threadpool_cond_deinit(&self->cond2);
+  threadpool_mutex_deinit(&self->lock1);
+  threadpool_mutex_deinit(&self->lock2);
+  threadpool_mutex_deinit(&self->lock3);
   free(self);
 }
 threadpool_job_t *threadpool_get (threadpool_t *self) {
-  pthread_mutex_lock(&self->lock2);
+  threadpool_mutex_lock(&self->lock2);
   threadpool_job_t *job = self->jobs;
   if (job != NULL) {
     self->jobs = self->jobs->next;
@@ -177,12 +236,12 @@ threadpool_job_t *threadpool_get (threadpool_t *self) {
     if (self->jobs == NULL) {
       self->jobs_tail = NULL;
     } else {
-      pthread_mutex_lock(&self->lock3);
-      pthread_cond_signal(&self->cond2);
-      pthread_mutex_unlock(&self->lock3);
+      threadpool_mutex_lock(&self->lock3);
+      threadpool_cond_signal(&self->cond2);
+      threadpool_mutex_unlock(&self->lock3);
     }
   }
-  pthread_mutex_unlock(&self->lock2);
+  threadpool_mutex_unlock(&self->lock2);
   return job;
 }
 threadpool_t *threadpool_init (int count) {
@@ -192,20 +251,20 @@ threadpool_t *threadpool_init (int count) {
   self->jobs_tail = NULL;
   self->working_threads = 0;
   self->alive_threads = 0;
-  pthread_cond_init(&self->cond1, NULL);
-  pthread_cond_init(&self->cond2, NULL);
-  pthread_mutex_init(&self->lock1, NULL);
-  pthread_mutex_init(&self->lock2, NULL);
-  pthread_mutex_init(&self->lock3, NULL);
+  threadpool_cond_init(&self->cond1);
+  threadpool_cond_init(&self->cond2);
+  threadpool_mutex_init(&self->lock1);
+  threadpool_mutex_init(&self->lock2);
+  threadpool_mutex_init(&self->lock3);
   self->threads = NULL;
   for (int i = 0; i < count; i++) self->threads = threadpool_thread_init(self, self->threads);
-  pthread_mutex_lock(&self->lock1);
-  while (self->alive_threads != count) pthread_cond_wait(&self->cond1, &self->lock1);
-  pthread_mutex_unlock(&self->lock1);
+  threadpool_mutex_lock(&self->lock1);
+  while (self->alive_threads != count) threadpool_cond_wait(&self->cond1, &self->lock1);
+  threadpool_mutex_unlock(&self->lock1);
   return self;
 }
 void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
-  pthread_mutex_lock(&self->lock2);
+  threadpool_mutex_lock(&self->lock2);
   if (self->jobs == NULL) {
     self->jobs = job;
     self->jobs_tail = job;
@@ -213,57 +272,98 @@ void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
     self->jobs_tail->next = job;
     self->jobs_tail = self->jobs_tail->next;
   }
-  pthread_mutex_lock(&self->lock3);
-  pthread_cond_signal(&self->cond2);
-  pthread_mutex_unlock(&self->lock3);
-  pthread_mutex_unlock(&self->lock2);
+  threadpool_mutex_lock(&self->lock3);
+  threadpool_cond_signal(&self->cond2);
+  threadpool_mutex_unlock(&self->lock3);
+  threadpool_mutex_unlock(&self->lock2);
 }
 void threadpool_job_deinit (threadpool_job_t *self) {
   if (self->ctx != NULL) free(self->ctx);
   free(self);
 }
+void threadpool_mutex_deinit (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    DeleteCriticalSection(&self->v);
+  #else
+    pthread_mutex_destroy(&self->v);
+  #endif
+}
+void threadpool_mutex_init (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    InitializeCriticalSection(&self->v);
+  #else
+    pthread_mutex_init(&self->v, NULL);
+  #endif
+}
+void threadpool_mutex_lock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    EnterCriticalSection(&self->v);
+  #else
+    pthread_mutex_lock(&self->v);
+  #endif
+}
+void threadpool_mutex_unlock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    LeaveCriticalSection(&self->v);
+  #else
+    pthread_mutex_unlock(&self->v);
+  #endif
+}
 void threadpool_thread_deinit (threadpool_thread_t *self) {
-  pthread_join(self->id, NULL);
+  #ifdef THE_OS_WINDOWS
+    WaitForSingleObject(self->id, INFINITE);
+    CloseHandle(self->id);
+    MemoryBarrier();
+  #else
+    pthread_join(self->id, NULL);
+  #endif
   free(self);
 }
 threadpool_thread_t *threadpool_thread_init (threadpool_t *tp, threadpool_thread_t *next) {
   threadpool_thread_t *self = alloc(sizeof(threadpool_thread_t));
   self->tp = tp;
-  pthread_create(&self->id, NULL, threadpool_worker, self);
   self->next = next;
+  #ifdef THE_OS_WINDOWS
+    self->id = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) threadpool_worker, self, CREATE_SUSPENDED, NULL);
+    ResumeThread(self->id);
+  #else
+    pthread_create(&self->id, NULL, threadpool_worker, self);
+  #endif
   return self;
 }
 void threadpool_wait (threadpool_t *self) {
-  pthread_mutex_lock(&self->lock1);
-  while ((self->working_threads != 0 || self->jobs != NULL) && err_state.id == -1) pthread_cond_wait(&self->cond1, &self->lock1);
-  pthread_mutex_unlock(&self->lock1);
+  threadpool_mutex_lock(&self->lock1);
+  while ((self->working_threads != 0 || self->jobs != NULL) && err_state.id == -1) {
+    threadpool_cond_wait(&self->cond1, &self->lock1);
+  }
+  threadpool_mutex_unlock(&self->lock1);
 }
 void *threadpool_worker (void *n) {
   threadpool_thread_t *thread = n;
   threadpool_t *self = thread->tp;
-  pthread_mutex_lock(&self->lock1);
+  threadpool_mutex_lock(&self->lock1);
   self->alive_threads++;
-  pthread_cond_signal(&self->cond1);
-  pthread_mutex_unlock(&self->lock1);
+  threadpool_cond_signal(&self->cond1);
+  threadpool_mutex_unlock(&self->lock1);
   while (self->active) {
-    pthread_mutex_lock(&self->lock3);
-    while (self->active && self->jobs == NULL) pthread_cond_wait(&self->cond2, &self->lock3);
-    pthread_mutex_unlock(&self->lock3);
+    threadpool_mutex_lock(&self->lock3);
+    while (self->active && self->jobs == NULL) threadpool_cond_wait(&self->cond2, &self->lock3);
+    threadpool_mutex_unlock(&self->lock3);
     if (!self->active) break;
-    pthread_mutex_lock(&self->lock1);
+    threadpool_mutex_lock(&self->lock1);
     self->working_threads++;
-    pthread_mutex_unlock(&self->lock1);
+    threadpool_mutex_unlock(&self->lock1);
     threadpool_job_t *job = threadpool_get(self);
     if (job != NULL) job->func(self, job, job->ctx, job->params, job->ret, job->step);
-    pthread_mutex_lock(&self->lock1);
+    threadpool_mutex_lock(&self->lock1);
     self->working_threads--;
-    if ((self->working_threads == 0 && self->jobs == NULL) || err_state.id != -1) pthread_cond_signal(&self->cond1);
-    pthread_mutex_unlock(&self->lock1);
+    if ((self->working_threads == 0 && self->jobs == NULL) || err_state.id != -1) threadpool_cond_signal(&self->cond1);
+    threadpool_mutex_unlock(&self->lock1);
   }
-  pthread_mutex_lock(&self->lock1);
+  threadpool_mutex_lock(&self->lock1);
   self->alive_threads--;
-  pthread_cond_signal(&self->cond1);
-  pthread_mutex_unlock(&self->lock1);
+  threadpool_cond_signal(&self->cond1);
+  threadpool_mutex_unlock(&self->lock1);
   return NULL;
 }
 void *xalloc (void *n1, size_t n2) {

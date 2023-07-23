@@ -120,9 +120,9 @@ main {
 #include <stdlib.h>
 #include <string.h>
 #ifdef THE_OS_WINDOWS
+  #include <windows.h>
   #include <winsock2.h>
   #include <ws2tcpip.h>
-  #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
   #include <netdb.h>

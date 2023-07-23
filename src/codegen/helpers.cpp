@@ -152,6 +152,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libArpaInet") {
     if (this->builtins.libArpaInet) return;
     this->builtins.libArpaInet = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libCtype") {
     if (this->builtins.libCtype) return;
     this->builtins.libCtype = true;
@@ -165,6 +166,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libFcntl") {
     if (this->builtins.libFcntl) return;
     this->builtins.libFcntl = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libFloat") {
     if (this->builtins.libFloat) return;
     this->builtins.libFloat = true;
@@ -181,9 +183,11 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libNetdb") {
     if (this->builtins.libNetdb) return;
     this->builtins.libNetdb = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libNetinetIn") {
     if (this->builtins.libNetinetIn) return;
     this->builtins.libNetinetIn = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libOpensslRand") {
     if (this->builtins.libOpensslRand) return;
     this->builtins.libOpensslRand = true;
@@ -249,6 +253,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libPthread") {
     if (this->builtins.libPthread) return;
     this->builtins.libPthread = true;
+    this->_activateBuiltin("definitions");
 
     if (std::find(this->flags.begin(), this->flags.end(), "U:-pthread") == this->flags.end()) {
       this->flags.emplace_back("U:-pthread");
@@ -256,6 +261,7 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libPwd") {
     if (this->builtins.libPwd) return;
     this->builtins.libPwd = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libSetJmp") {
     if (this->builtins.libSetJmp) return;
     this->builtins.libSetJmp = true;
@@ -286,9 +292,14 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libSysSocket") {
     if (this->builtins.libSysSocket) return;
     this->builtins.libSysSocket = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libSysStat") {
     if (this->builtins.libSysStat) return;
     this->builtins.libSysStat = true;
+  } else if (name == "libSysSyscall") {
+    if (this->builtins.libSysSyscall) return;
+    this->builtins.libSysSyscall = true;
+    this->_activateBuiltin("definitions");
   } else if (name == "libSysTypes") {
     if (this->builtins.libSysTypes) return;
     this->builtins.libSysTypes = true;
@@ -299,7 +310,6 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "libTime") {
     if (this->builtins.libTime) return;
     this->builtins.libTime = true;
-    this->_activateBuiltin("definitions");
   } else if (name == "libUnistd") {
     if (this->builtins.libUnistd) return;
     this->builtins.libUnistd = true;
@@ -353,10 +363,17 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
   } else if (name == "typeThreadpool") {
     if (this->builtins.typeThreadpool) return;
     this->builtins.typeThreadpool = true;
-    this->_activateBuiltin("libPthread");
     this->_activateBuiltin("libStdbool");
+    this->_("threadpool_cond_t");
     this->_("threadpool_job_t");
+    this->_("threadpool_mutex_t");
     this->_("threadpool_thread_t");
+  } else if (name == "typeThreadpoolCond") {
+    if (this->builtins.typeThreadpoolCond) return;
+    this->builtins.typeThreadpoolCond = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libPthread");
+    this->_activateBuiltin("libWindows");
   } else if (name == "typeThreadpoolFunc") {
     if (this->builtins.typeThreadpoolFunc) return;
     this->builtins.typeThreadpoolFunc = true;
@@ -366,10 +383,18 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     if (this->builtins.typeThreadpoolJob) return;
     this->builtins.typeThreadpoolJob = true;
     this->_("threadpool_func_t");
+  } else if (name == "typeThreadpoolMutex") {
+    if (this->builtins.typeThreadpoolMutex) return;
+    this->builtins.typeThreadpoolMutex = true;
+    this->_activateBuiltin("definitions");
+    this->_activateBuiltin("libPthread");
+    this->_activateBuiltin("libWindows");
   } else if (name == "typeThreadpoolThread") {
     if (this->builtins.typeThreadpoolThread) return;
     this->builtins.typeThreadpoolThread = true;
+    this->_activateBuiltin("definitions");
     this->_activateBuiltin("libPthread");
+    this->_activateBuiltin("libWindows");
     this->_("threadpool_t");
   } else if (name == "typeWinReparseDataBuffer") {
     if (this->builtins.typeWinReparseDataBuffer) return;
