@@ -31,6 +31,7 @@ CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool is
 void CodegenCleanUp::add (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (this->empty() || this->_data.back().labelUsed) {
     if (this->async) {
+      // todo test
       this->_data.push_back({"", {}, false, std::make_shared<std::size_t>(1)});
     } else {
       this->_data.push_back({"L" + std::to_string(this->labelIdx)});
@@ -77,6 +78,7 @@ std::string CodegenCleanUp::currentLabel () {
   this->valueVarUsed = true;
 
   if (this->type == CODEGEN_CLEANUP_FN && this->empty()) {
+    // todo test
     this->add();
   }
 

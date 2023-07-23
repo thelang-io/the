@@ -102,6 +102,7 @@ std::string ASTObjProp::xml (const std::string &exprName, std::size_t indent) co
   return result;
 }
 
+// todo test
 bool ASTNodeExpr::isLit () const {
   if (std::holds_alternative<ASTExprBinary>(*this->body)) {
     auto exprBinary = std::get<ASTExprBinary>(*this->body);
@@ -111,6 +112,7 @@ bool ASTNodeExpr::isLit () const {
   return std::holds_alternative<ASTExprLit>(*this->body);
 }
 
+// todo test
 std::string ASTNodeExpr::litBody () const {
   if (std::holds_alternative<ASTExprBinary>(*this->body)) {
     auto exprBinary = std::get<ASTExprBinary>(*this->body);

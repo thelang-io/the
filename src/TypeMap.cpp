@@ -81,6 +81,7 @@ Type *TypeMap::createAlias (const std::string &name, Type *type) {
 
 Type *TypeMap::createArr (Type *elementType) {
   if (elementType->isAlias()) {
+    // todo test
     return this->createArr(std::get<TypeAlias>(elementType->body).type);
   }
 
@@ -110,6 +111,7 @@ Type *TypeMap::createEnum (const std::string &name, const std::string &codeName,
 
   for (const auto &item : this->_items) {
     if (item->isEnum() && item->codeName == newType.codeName) {
+      // todo test
       return item.get();
     }
   }
@@ -127,6 +129,7 @@ Type *TypeMap::createEnumerator (const std::string &enumeratorName, const std::s
 
   for (const auto &item : this->_items) {
     if (item->isEnumerator() && item->codeName == newType.codeName) {
+      // todo test
       return item.get();
     }
   }
@@ -148,6 +151,7 @@ Type *TypeMap::createFn (
 
   for (const auto &item : this->_items) {
     if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
+      // todo test
       return item.get();
     }
   }
@@ -183,6 +187,7 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
 
   for (const auto &item : this->_items) {
     if (item->codeName == newType.codeName) {
+      // todo test
       return item.get();
     }
   }
@@ -202,12 +207,14 @@ Type *TypeMap::createMethod (const std::vector<TypeFnParam> &params, Type *retur
 
   for (const auto &item : this->_items) {
     if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
+      // todo test
       return item.get();
     }
   }
 
   for (const auto &item : this->_items) {
     if (!item->builtin && item->isFn() && item->matchStrict(&newType)) {
+      // todo test
       newType.name = item->name;
       newType.codeName = item->codeName;
       break;
@@ -232,6 +239,7 @@ Type *TypeMap::createObj (const std::string &name, const std::string &codeName, 
 
   for (const auto &item : this->_items) {
     if (item->codeName == newType.codeName) {
+      // todo test
       return item.get();
     }
   }
@@ -246,6 +254,7 @@ Type *TypeMap::createObj (const std::string &name, const std::string &codeName, 
 
 Type *TypeMap::createOpt (Type *type) {
   if (type->isAlias()) {
+    // todo test
     return this->createOpt(std::get<TypeAlias>(type->body).type);
   }
 
@@ -254,9 +263,10 @@ Type *TypeMap::createOpt (Type *type) {
   for (const auto &item : this->_items) {
     if (
       item->isOpt() &&
-      std::get<TypeOptional>(item->body).type->builtin == type->builtin &&
-      item->matchStrict(&newType, true)
+      std::get<TypeOptional>(item->body).type->builtin == type->builtin && // todo test
+      item->matchStrict(&newType, true) // todo test
     ) {
+      // todo test
       return item.get();
     }
   }
@@ -321,6 +331,7 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
 
 Type *TypeMap::get (const std::string &name) {
   if (name == "Self") {
+    // todo test
     return this->self == std::nullopt ? nullptr : *this->self;
   }
 
@@ -328,13 +339,16 @@ Type *TypeMap::get (const std::string &name) {
     if (this->_items[idx]->name == name) {
       return this->_items[idx].get();
     } else if (idx == 0) {
+      // todo test
       break;
     }
   }
 
+  // todo test
   return nullptr;
 }
 
+// todo test
 bool TypeMap::has (const std::string &name) {
   if (name == "Self") {
     return this->self != std::nullopt;
@@ -345,6 +359,7 @@ bool TypeMap::has (const std::string &name) {
   });
 }
 
+// todo test
 bool TypeMap::isSelf (Type *type) {
   return this->self != std::nullopt && Type::real(type)->codeName == (*this->self)->codeName;
 }
@@ -375,6 +390,7 @@ std::string TypeMap::name (const std::string &name) const {
   }
 }
 
+// todo test
 Type *TypeMap::unionAdd (Type *type, Type *subType) {
   auto subTypes = std::vector<Type *>{};
 
@@ -389,6 +405,7 @@ Type *TypeMap::unionAdd (Type *type, Type *subType) {
   return this->createUnion(subTypes);
 }
 
+// todo test
 Type *TypeMap::unionSub (const Type *type, const Type *exceptType) {
   auto subTypes = std::get<TypeUnion>(type->body).subTypes;
   auto newSubTypes = std::vector<Type *>{};

@@ -17,6 +17,10 @@
 #ifndef SRC_CODEGEN_AST_CODEGEN_AST_HPP
 #define SRC_CODEGEN_AST_CODEGEN_AST_HPP
 
+// todo test
+// todo test inline str methods
+// todo test ends with template function
+
 #include <memory>
 #include <optional>
 #include <string>

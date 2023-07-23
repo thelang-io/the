@@ -119,7 +119,7 @@ void Codegen::_block (
 
     if (!nodesParentChecker.is<ASTNodeMain>() && this->throws && !this->state.cleanUp.empty() && !errHandled) {
       auto cStmtIfBody = initialStateCleanUp.isClosestJump()
-        ? CodegenASTExprCall::create(
+        ? CodegenASTExprCall::create( // todo test
           CodegenASTExprAccess::create(this->_("longjmp")),
           {
             CodegenASTExprAccess::create(
@@ -192,10 +192,10 @@ void Codegen::_block (
           initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
             ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
             : nodesChecker.insideMain()
-              ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))
+              ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0")) // todo test
               : this->state.returnType->isVoid()
                 ? CodegenASTStmtReturn::create()
-                : CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v"))
+                : CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v")) // todo test
         )
       );
     }
@@ -249,7 +249,7 @@ void Codegen::_blockAsync (
       auto setJumpArg = CodegenASTExprAccess::create(
         this->_genErrState(ASTChecker(node).insideMain(), false, "buf"),
         jumpedBefore
-          ? CodegenASTExprBinary::create(
+          ? CodegenASTExprBinary::create( // todo test
             this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"),
             "-",
             CodegenASTExprLiteral::create("1")
@@ -290,6 +290,7 @@ void Codegen::_blockAsync (
 
   if (saveCleanUp) {
     auto nodesChecker = ASTChecker(nodes);
+    // todo test
     auto nodesParentChecker = ASTChecker(nodes.empty() ? nullptr : nodes.begin()->parent);
 
     if (!this->state.cleanUp.empty()) {
@@ -305,7 +306,7 @@ void Codegen::_blockAsync (
             ),
             initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
               ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtBreak::create()
+              : CodegenASTStmtBreak::create() // todo test
           )
         );
       }
@@ -354,7 +355,7 @@ void Codegen::_blockAsync (
             ),
             initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
               ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
-              : CodegenASTStmtBreak::create()
+              : CodegenASTStmtBreak::create() // todo test
           )
         );
       }

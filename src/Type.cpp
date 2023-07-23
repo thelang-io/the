@@ -33,6 +33,7 @@ bool numberTypeMatch (const std::string &lhs, const std::string &rhs) {
     ((lhs == "f64" || lhs == "float") && (rhs == "f32" || rhs == "f64" || rhs == "float" || numberTypeMatch("i64", rhs)));
 }
 
+// todo test
 bool TypeCallInfo::empty () const {
   return this->codeName.empty() &&
     !this->isSelfFirst &&

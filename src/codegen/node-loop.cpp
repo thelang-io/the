@@ -98,7 +98,7 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
           initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
             ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
             : ASTChecker(node).insideMain()
-              ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))
+              ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))// todo test
               : this->state.returnType->isVoid()
                 ? CodegenASTStmtReturn::create()
                 : CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v"))
@@ -197,7 +197,7 @@ void Codegen::_nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode 
           ),
           initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
             ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
-            : CodegenASTStmtBreak::create()
+            : CodegenASTStmtBreak::create()// todo test
         )
       );
     }

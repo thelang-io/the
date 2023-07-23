@@ -40,6 +40,7 @@ void Codegen::_nodeThrow (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
   );
 
   if (this->state.cleanUp.isClosestJump()) {
+    // todo test
     (*c)->append(
       CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("longjmp")),
@@ -87,6 +88,6 @@ void Codegen::_nodeThrowAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode
   (*c)->append(
     this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
       ? this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync())
-      : CodegenASTStmtBreak::create()
+      : CodegenASTStmtBreak::create()// todo test
   );
 }

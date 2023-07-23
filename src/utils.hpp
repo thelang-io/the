@@ -56,12 +56,4 @@ inline std::vector<std::string> str_lines (const std::string &str) {
   return result;
 }
 
-[[noreturn]] inline void unreachable () {
-  #ifdef __GNUC__
-    __builtin_unreachable();
-  #elif defined(_MSC_VER)
-    __assume(false);
-  #endif
-}
-
 #endif

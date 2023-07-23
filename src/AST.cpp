@@ -61,6 +61,7 @@ void AST::populateExprAwaitId (ASTBlock &nodes) {
   auto exprId = static_cast<std::size_t>(0);
 
   for (auto &expr : exprs) {
+    // todo test
     if (std::holds_alternative<ASTExprAwait>(*expr.body) && !expr.type->isVoid()) {
       std::get<ASTExprAwait>(*expr.body).id = ++exprId;
     }
@@ -180,6 +181,7 @@ void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent) {
     AST::populateParentExpr(exprAssign.left, &expr);
     AST::populateParentExpr(exprAssign.right, &expr);
   } else if (std::holds_alternative<ASTExprAwait>(*expr.body)) {
+    // todo test
     auto &exprAwait = std::get<ASTExprAwait>(*expr.body);
     AST::populateParentExpr(exprAwait.arg, &expr);
   } else if (std::holds_alternative<ASTExprBinary>(*expr.body)) {

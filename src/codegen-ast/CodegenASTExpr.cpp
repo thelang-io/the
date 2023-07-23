@@ -145,6 +145,7 @@ std::string CodegenASTExpr::str () const {
   } else if (this->isLiteral()) {
     result = this->asLiteral().str();
   } else if (this->isNull()) {
+    // todo test
     result = this->asNull().str();
   } else if (this->isUnary()) {
     result = this->asUnary().str();
@@ -238,6 +239,7 @@ std::string CodegenASTExprCall::str () const {
   auto argsStr = std::string();
   for (const auto &it : this->exprArgs) {
     if (it->isNull()) {
+      // todo test
       continue;
     }
     argsStr += ", " + it->str();
@@ -282,6 +284,7 @@ std::string CodegenASTExprInitList::str () const {
   auto itemsStr = std::string();
   for (const auto &it : this->items) {
     if (it->isNull()) {
+      // todo test
       continue;
     }
     itemsStr += ", " + it->str();

@@ -273,6 +273,7 @@ class ASTChecker {
     this->_isNode = true;
   }
 
+  // todo test
   bool async (bool localScope = true) const {
     if (!this->_exprs.empty()) {
       return this->_asyncExpr(this->_exprs, localScope);
@@ -329,6 +330,7 @@ class ASTChecker {
     });
   }
 
+  // todo test
   bool insideMain () {
     this->_checkNode();
 
@@ -595,6 +597,7 @@ class ASTChecker {
     return this->_throwsExpr(ASTChecker::flattenNodeExprs(flattenNodes, localScope));
   }
 
+  // todo test
   // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   bool _throwsPossibleExpr (const std::vector<ASTNodeExpr> &exprs) const {
     auto result = ASTChecker::flattenExpr(exprs);
