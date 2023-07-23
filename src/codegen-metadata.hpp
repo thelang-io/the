@@ -310,7 +310,6 @@ extern inline const std::map<std::string, std::set<std::string>> codegenMetadata
   std::pair<std::string, std::set<std::string>>{"CopyFile", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CreateDirectory", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CreateFile", {"libWindows"}},
-  std::pair<std::string, std::set<std::string>>{"CreateMutex", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CreateSymbolicLink", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"CreateThread", {"libWindows"}},
   std::pair<std::string, std::set<std::string>>{"DeleteCriticalSection", {"libWindows"}},
