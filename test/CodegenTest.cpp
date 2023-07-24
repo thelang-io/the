@@ -1350,8 +1350,6 @@ INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return-inside-loop",
   "node-return-inside-loop-top-level",
   "node-return-inside-loop-with-cleanup",
-  "node-return-without-value",
-  "node-return-without-value-scoped",
   "node-return-async",
   "node-return-async-with-value",
   "node-return-async-with-cleanup",

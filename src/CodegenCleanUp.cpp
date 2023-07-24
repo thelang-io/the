@@ -20,18 +20,19 @@
 
 CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool isAsync) {
   this->type = t;
-  this->parent = p;
-  this->labelIdx = this->parent->labelIdx;
-  this->breakVarIdx = this->parent->breakVarIdx;
-  this->continueVarIdx = this->parent->continueVarIdx;
   this->async = isAsync;
+
+  if (p != nullptr) {
+    this->parent = p;
+    this->labelIdx = this->parent->labelIdx;
+    this->breakVarIdx = this->parent->breakVarIdx;
+    this->continueVarIdx = this->parent->continueVarIdx;
+  }
 }
 
-// todo test
 void CodegenCleanUp::add (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (this->empty() || this->_data.back().labelUsed) {
     if (this->async) {
-      // todo test
       this->_data.push_back({"", {}, false, std::make_shared<std::size_t>(1)});
     } else {
       this->_data.push_back({"L" + std::to_string(this->labelIdx)});
@@ -61,7 +62,6 @@ std::string CodegenCleanUp::currentBreakVar () {
   return this->parent->currentBreakVar();
 }
 
-// todo test
 std::string CodegenCleanUp::currentContinueVar () {
   this->continueVarUsed = true;
 
@@ -77,11 +77,6 @@ std::string CodegenCleanUp::currentContinueVar () {
 std::string CodegenCleanUp::currentLabel () {
   this->valueVarUsed = true;
 
-  if (this->type == CODEGEN_CLEANUP_FN && this->empty()) {
-    // todo test
-    this->add();
-  }
-
   if (!this->empty()) {
     this->_data.back().labelUsed = true;
     return this->_data.back().label;
@@ -92,13 +87,8 @@ std::string CodegenCleanUp::currentLabel () {
   return this->parent->currentLabel();
 }
 
-// todo test
 std::shared_ptr<std::size_t> CodegenCleanUp::currentLabelAsync () {
   this->valueVarUsed = true;
-
-  if (this->type == CODEGEN_CLEANUP_FN && this->empty()) {
-    this->add();
-  }
 
   if (!this->empty()) {
     this->_data.back().labelUsed = true;
@@ -134,7 +124,6 @@ std::string CodegenCleanUp::currentValueVar () {
   return this->parent->currentValueVar();
 }
 
-// todo test
 bool CodegenCleanUp::empty () const {
   if (this->_data.empty()) {
     return true;
@@ -167,7 +156,6 @@ void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {
   }
 }
 
-// todo test
 void CodegenCleanUp::genAsync (std::shared_ptr<CodegenASTStmt> *c, std::size_t &counter) const {
   if (this->_data.empty()) {
     return;
@@ -195,7 +183,6 @@ bool CodegenCleanUp::hasCleanUp (CodegenCleanUpType t) const {
   return !this->empty() || (this->type != t && this->parent != nullptr && this->parent->hasCleanUp(t));
 }
 
-// todo test
 void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (stmt->isCompound()) {
     auto stmtCompound = stmt->asCompound();

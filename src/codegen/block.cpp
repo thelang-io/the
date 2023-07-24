@@ -170,9 +170,7 @@ void Codegen::_block (
           ),
           initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
             ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
-            : this->state.returnType->isVoid()
-              ? CodegenASTStmtReturn::create()
-              : CodegenASTStmtReturn::create(CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()))
+            : CodegenASTStmtReturn::create()
         )
       );
     }

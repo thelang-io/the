@@ -26,6 +26,14 @@ std::string testCodegenCleanUpGen (const CodegenCleanUp &n) {
   return s.substr(1 + std::string(EOL).size(), s.size() - 2 - std::string(EOL).size());
 }
 
+std::string testCodegenCleanUpGenAsync (const CodegenCleanUp &n, std::size_t &counter) {
+  auto c = CodegenASTStmtSwitch::create(CodegenASTExprAccess::create("test"));
+  c = c->append(CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), CodegenASTStmtCompound::create()));
+  n.genAsync(&c, counter);
+  c = c->exit()->exit();
+  return c->str(0, false);
+}
+
 TEST(CodegenCleanUpTest, InitialSetValues) {
   auto n0 = CodegenCleanUp();
   EXPECT_EQ(n0.labelIdx, 0);
@@ -50,6 +58,14 @@ TEST(CodegenCleanUpTest, Adds) {
   auto n = CodegenCleanUp();
   n.add(CodegenASTExprAccess::create("test")->stmt());
   EXPECT_EQ(testCodegenCleanUpGen(n), "  test;" EOL);
+}
+
+TEST(CodegenCleanUpTest, AddsAsync) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0, true);
+  n1.add(CodegenASTExprAccess::create("test1")->stmt());
+
+  EXPECT_EQ(testCodegenCleanUpGen(n1), "  test1;" EOL);
 }
 
 TEST(CodegenCleanUpTest, AddsToNonLabeled) {
@@ -116,6 +132,28 @@ TEST(CodegenCleanUpTest, ThrowsOnCurrentBreakVarRoot) {
   EXPECT_THROW_WITH_MESSAGE(n0.currentBreakVar(), "tried getting break var on nullptr in CodegenCleanUp");
 }
 
+TEST(CodegenCleanUpTest, CurrentContinueVarOnLoop) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &n0);
+  n1.continueVarIdx++;
+
+  EXPECT_EQ(n1.currentContinueVar(), "c1");
+}
+
+TEST(CodegenCleanUpTest, CurrentContinueVarOnChild) {
+  auto n0 = CodegenCleanUp();
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &n0);
+  n1.continueVarIdx++;
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
+
+  EXPECT_EQ(n2.currentContinueVar(), "c1");
+}
+
+TEST(CodegenCleanUpTest, ThrowsOnCurrentContinueVarRoot) {
+  auto n0 = CodegenCleanUp();
+  EXPECT_THROW_WITH_MESSAGE(n0.currentContinueVar(), "tried getting continue var on nullptr in CodegenCleanUp");
+}
+
 TEST(CodegenCleanUpTest, LabelsOnOneStatement) {
   auto n = CodegenCleanUp();
   n.add(CodegenASTExprAccess::create("test")->stmt());
@@ -145,14 +183,6 @@ TEST(CodegenCleanUpTest, LabelsParent) {
   EXPECT_EQ(testCodegenCleanUpGen(n0), l + ":" EOL "  test;" EOL);
 }
 
-TEST(CodegenCleanUpTest, LabellingDoesNotAddValueToFunction) {
-  auto n0 = CodegenCleanUp();
-  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_FN, &n0);
-  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
-
-  EXPECT_EQ(testCodegenCleanUpGen(n1), "");
-}
-
 TEST(CodegenCleanUpTest, ThrowOnNothingToLabel) {
   auto n0 = CodegenCleanUp();
   EXPECT_THROW_WITH_MESSAGE(n0.currentLabel(), "tried getting current label on nullptr in CodegenCleanUp");
@@ -164,6 +194,80 @@ TEST(CodegenCleanUpTest, ThrowOnNothingToLabelWithParent) {
   auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
 
   EXPECT_THROW_WITH_MESSAGE(n2.currentLabel(), "tried getting current label on nullptr in CodegenCleanUp");
+}
+
+TEST(CodegenCleanUpTest, LabelsAsyncOnOneStatement) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+  auto n = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  n.add(CodegenASTExprAccess::create("test")->stmt());
+  n.currentLabelAsync();
+
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(n, asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "    test;" EOL
+    "  }" EOL
+    "}"
+  );
+
+  EXPECT_EQ(asyncCounter, 0);
+}
+
+TEST(CodegenCleanUpTest, LabelsAsyncOnMultipleStatements) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+  auto n = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.currentLabelAsync();
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
+
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(n, asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "    test3;" EOL
+    "  }" EOL
+    "  case 1: {" EOL
+    "    test2;" EOL
+    "    test1;" EOL
+    "  }" EOL
+    "}"
+  );
+
+  EXPECT_EQ(asyncCounter, 1);
+}
+
+TEST(CodegenCleanUpTest, LabelsAsyncParent) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+  auto n0 = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
+  n0.add(CodegenASTExprAccess::create("test")->stmt());
+  n1.currentLabelAsync();
+
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(n0, asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "    test;" EOL
+    "  }" EOL
+    "}"
+  );
+
+  EXPECT_EQ(asyncCounter, 0);
+}
+
+TEST(CodegenCleanUpTest, ThrowOnNothingToLabelAsync) {
+  auto n = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  EXPECT_THROW_WITH_MESSAGE(n.currentLabelAsync(), "tried getting current label async on nullptr in CodegenCleanUp");
+}
+
+TEST(CodegenCleanUpTest, ThrowOnNothingToLabelAsyncWithParent) {
+  auto n0 = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  auto n1 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n0);
+  auto n2 = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &n1);
+
+  EXPECT_THROW_WITH_MESSAGE(n2.currentLabelAsync(), "tried getting current label async on nullptr in CodegenCleanUp");
 }
 
 TEST(CodegenCleanUpTest, CurrentReturnVarOnFn) {
@@ -208,6 +312,22 @@ TEST(CodegenCleanUpTest, ThrowsOnCurrentValueVarRoot) {
 
 TEST(CodegenCleanUpTest, Empty) {
   EXPECT_TRUE(CodegenCleanUp().empty());
+}
+
+TEST(CodegenCleanUpTest, EmptyWithNull) {
+  auto n1 = CodegenCleanUp();
+  auto n2 = CodegenCleanUp();
+
+  n1.add(CodegenASTStmtNull::create());
+  n2.merge(
+    CodegenASTStmtCompound::create({
+      CodegenASTStmtNull::create(),
+      CodegenASTStmtNull::create()
+    })
+  );
+
+  EXPECT_TRUE(n1.empty());
+  EXPECT_TRUE(n2.empty());
 }
 
 TEST(CodegenCleanUpTest, NonEmpty) {
@@ -274,6 +394,117 @@ TEST(CodegenCleanUpTest, GeneratesOnNonEmptyWithMultipleLabels) {
   );
 }
 
+TEST(CodegenCleanUpTest, GeneratesAsyncOnEmpty) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true), asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "  }" EOL
+    "}"
+  );
+  EXPECT_EQ(asyncCounter, 0);
+}
+
+TEST(CodegenCleanUpTest, GeneratesAsyncOnNonEmpty) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+  auto n = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  n.add(CodegenASTExprAccess::create("test")->stmt());
+
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(n, asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "    test;" EOL
+    "  }" EOL
+    "}"
+  );
+  EXPECT_EQ(asyncCounter, 0);
+}
+
+TEST(CodegenCleanUpTest, GeneratesAsyncOnNonEmptyWithIndent) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+  auto n = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
+
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(n, asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "    test3;" EOL
+    "    test2;" EOL
+    "    test1;" EOL
+    "  }" EOL
+    "}"
+  );
+  EXPECT_EQ(asyncCounter, 0);
+}
+
+TEST(CodegenCleanUpTest, GeneratesAsyncOnNonEmptyWithOneLabel) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+  auto n = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.currentLabelAsync();
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
+
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(n, asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "    test3;" EOL
+    "  }" EOL
+    "  case 1: {" EOL
+    "    test2;" EOL
+    "    test1;" EOL
+    "  }" EOL
+    "}"
+  );
+  EXPECT_EQ(asyncCounter, 1);
+}
+
+TEST(CodegenCleanUpTest, GeneratesAsyncOnNonEmptyWithMultipleLabels) {
+  auto asyncCounter = static_cast<std::size_t>(0);
+
+  auto n = CodegenCleanUp(CODEGEN_CLEANUP_ROOT, nullptr, true);
+  n.add(CodegenASTExprAccess::create("test1")->stmt());
+  n.add(CodegenASTExprAccess::create("test2")->stmt());
+  n.add(CodegenASTExprAccess::create("test3")->stmt());
+  n.currentLabelAsync();
+  n.add(CodegenASTExprAccess::create("test4")->stmt());
+  n.add(CodegenASTExprAccess::create("test5")->stmt());
+  n.add(CodegenASTExprAccess::create("test6")->stmt());
+  n.currentLabelAsync();
+  n.add(CodegenASTExprAccess::create("test7")->stmt());
+  n.add(CodegenASTExprAccess::create("test8")->stmt());
+  n.add(CodegenASTExprAccess::create("test9")->stmt());
+  n.currentLabelAsync();
+
+  EXPECT_EQ(
+    testCodegenCleanUpGenAsync(n, asyncCounter),
+    "switch (test) {" EOL
+    "  case 0: {" EOL
+    "    test9;" EOL
+    "    test8;" EOL
+    "    test7;" EOL
+    "  }" EOL
+    "  case 1: {" EOL
+    "    test6;" EOL
+    "    test5;" EOL
+    "    test4;" EOL
+    "  }" EOL
+    "  case 2: {" EOL
+    "    test3;" EOL
+    "    test2;" EOL
+    "    test1;" EOL
+    "  }" EOL
+    "}"
+  );
+  EXPECT_EQ(asyncCounter, 2);
+}
+
 TEST(CodegenCleanUpTest, HasCleanUpOnEmpty) {
   auto n0 = CodegenCleanUp();
   auto n1 = CodegenCleanUp();
@@ -293,4 +524,31 @@ TEST(CodegenCleanUpTest, HasCleanUpOnType) {
   EXPECT_TRUE(n1.hasCleanUp(CODEGEN_CLEANUP_LOOP));
   EXPECT_FALSE(n2.hasCleanUp(CODEGEN_CLEANUP_FN));
   EXPECT_TRUE(n2.hasCleanUp(CODEGEN_CLEANUP_LOOP));
+}
+
+TEST(CodegenCleanUpTest, MergeNull) {
+  auto n = CodegenCleanUp();
+  n.merge(CodegenASTStmtNull::create());
+  EXPECT_EQ(testCodegenCleanUpGen(n), "");
+}
+
+TEST(CodegenCleanUpTest, MergeStmt) {
+  auto n = CodegenCleanUp();
+  n.merge(
+    CodegenASTStmtVarDecl::create(CodegenASTType::create("int"), CodegenASTExprAccess::create("a"))
+  );
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  int a;" EOL);
+}
+
+TEST(CodegenCleanUpTest, MergeCompound) {
+  auto n = CodegenCleanUp();
+
+  n.merge(
+    CodegenASTStmtCompound::create({
+      CodegenASTStmtVarDecl::create(CodegenASTType::create("int"), CodegenASTExprAccess::create("a")),
+      CodegenASTStmtVarDecl::create(CodegenASTType::create("float"), CodegenASTExprAccess::create("b"))
+    })
+  );
+
+  EXPECT_EQ(testCodegenCleanUpGen(n), "  int a;" EOL "  float b;" EOL);
 }
