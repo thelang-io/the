@@ -99,7 +99,7 @@ void Codegen::_nodeLoop (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
             ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
             : this->state.returnType->isVoid()
               ? CodegenASTStmtReturn::create()
-              : CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v"))
+              : CodegenASTStmtReturn::create(CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()))
         )
       );
     }

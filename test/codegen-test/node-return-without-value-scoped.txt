@@ -227,6 +227,7 @@ void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
 }
 int32_t __THE_1_test_0 (void *px) {
   unsigned char r = 0;
+  int32_t v;
   struct __THE_1_test_0X *x = px;
   const int32_t *__THE_0_NUM_0 = x->__THE_0_NUM_0;
   if (*__THE_0_NUM_0 == 1) {
@@ -236,6 +237,7 @@ int32_t __THE_1_test_0 (void *px) {
     if (r == 1) return v;
   }
   print(stdout, "zz", "test", THE_EOL);
+  return v;
 }
 void __THE_1_test_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test_0X x) {
   size_t l = sizeof(struct __THE_1_test_0X);

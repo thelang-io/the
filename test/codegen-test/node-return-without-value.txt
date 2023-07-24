@@ -200,6 +200,7 @@ void *re_alloc (void *n1, size_t n2) {
   return r;
 }
 int32_t __THE_1_test_0 (void *px) {
+  int32_t v;
   return v;
 }
 

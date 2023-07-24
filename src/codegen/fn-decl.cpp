@@ -542,7 +542,12 @@ void Codegen::_fnDecl (
         this->state.cleanUp.gen(&cBody);
       }
 
-      if (!returnTypeInfo.type->isVoid() && this->state.cleanUp.valueVarUsed && !this->state.insideAsync) {
+      if (
+        !returnTypeInfo.type->isVoid() &&
+        this->state.cleanUp.valueVarUsed &&
+        !this->state.insideAsync &&
+        !cBody->endsWith<CodegenASTStmtReturn>()
+      ) {
         cBody->append(CodegenASTStmtReturn::create(CodegenASTExprAccess::create("v")));
       }
 
