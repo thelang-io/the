@@ -181,13 +181,7 @@ void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
 
   this->state.cleanUp.genAsync(c, this->state.asyncCounter);
   this->state.cleanUp = initialStateCleanUp;
-
-  (*c)->append(
-    initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-      ? this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync())
-      : CodegenASTStmtBreak::create()// todo test
-  );
-
+  (*c)->append(this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync()));
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
   for (auto idx = static_cast<std::size_t>(0); idx < nodeTry.handlers.size(); idx++) {

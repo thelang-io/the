@@ -1249,7 +1249,9 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-async-params",
   "node-fn-decl-async-return",
   "node-fn-decl-async-return-value",
-  "node-fn-decl-async-return-value-with-cleanup"
+  "node-fn-decl-async-return-value-with-cleanup",
+  "node-fn-decl-async-stack",
+  "node-fn-decl-async-stack-obj-method"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
@@ -1348,6 +1350,8 @@ INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return-inside-loop",
   "node-return-inside-loop-top-level",
   "node-return-inside-loop-with-cleanup",
+  "node-return-without-value",
+  "node-return-without-value-scoped",
   "node-return-async",
   "node-return-async-with-value",
   "node-return-async-with-cleanup",
@@ -1397,12 +1401,14 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
   "node-try-inside-loop-with-continue",
   "node-try-inside-loop-with-return",
   "node-try-async",
+  "node-try-async-continuous-setjmp",
   "node-try-async-nested",
   "node-try-async-scoped",
   "node-try-async-scoped-child",
   "node-try-async-scoped-parent",
   "node-try-async-custom",
   "node-try-async-multiple",
+  "node-try-async-empty-try",
   "node-try-async-inside-fn-with-return",
   "node-try-async-inside-if",
   "node-try-async-inside-if-with-return",
@@ -1581,6 +1587,11 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
   "node-var-decl-union-const",
   "node-var-decl-union-mut-init",
   "node-var-decl-inside-async",
+  "node-var-decl-inside-async-init",
+  "node-var-decl-inside-async-short",
+  "node-var-decl-inside-async-mut",
+  "node-var-decl-inside-async-mut-init",
+  "node-var-decl-inside-async-mut-short",
   "node-var-decl-inside-async-with-cleanup"
 ));
 

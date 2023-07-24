@@ -1,6 +1,6 @@
 ======= stdin =======
 async fn test () {
-  a: int
+  mut a: int = 127
 }
 main {
   await test()
@@ -389,7 +389,7 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
   job->init = 1;
   switch (step) {
     case 0: {
-      *__THE_0_a_0 = 0;
+      *__THE_0_a_0 = 127;
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
     }

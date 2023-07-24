@@ -563,11 +563,14 @@ L9:
   }
 }
 void __THE_1_test6_0 (void *px) {
+  unsigned char r = 0;
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     print(stdout, "zziz", "2 start", " ", __THE_0_i_0, THE_EOL);
     if (__THE_0_i_0 == 5) {
       const struct str __THE_0_v2_0 = str_alloc("test1");
+      r = 1;
       str_free((struct str) __THE_0_v2_0);
+      if (r == 1) return;
     }
     print(stdout, "zziz", "2 end", " ", __THE_0_i_0, THE_EOL);
   }
@@ -887,15 +890,6 @@ int main () {
 2 start 4
 2 end 4
 2 start 5
-2 end 5
-2 start 6
-2 end 6
-2 start 7
-2 end 7
-2 start 8
-2 end 8
-2 start 9
-2 end 9
 3 start 0
 3 end 0
 3 start 1

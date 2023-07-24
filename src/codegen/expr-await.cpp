@@ -41,9 +41,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAwait (const ASTNodeExpr &nodeExpr
           "!=",
           CodegenASTExprLiteral::create("-1")
         ),
-        this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-          ? this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync())
-          : CodegenASTStmtBreak::create() // todo test
+        this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync())
       )
     );
   }

@@ -622,7 +622,6 @@ void Codegen::_fnDecl (
     );
 
     if (this->state.insideAsync) {
-      // todo test
       (*c)->append(
         CodegenASTExprAssign::create(
           CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(fnName)),

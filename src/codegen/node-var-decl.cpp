@@ -59,12 +59,6 @@ std::shared_ptr<CodegenASTExpr> Codegen::_nodeVarDeclInit (const CodegenTypeInfo
 }
 
 void Codegen::_nodeVarDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
-  if (this->state.insideAsync) {
-    // todo test
-    this->_nodeVarDeclAsync(c, node);
-    return;
-  }
-
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
   auto name = Codegen::name(nodeVarDecl.var->codeName);
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
@@ -92,7 +86,7 @@ void Codegen::_nodeVarDeclAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNo
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
 
   auto cInit = nodeVarDecl.init == std::nullopt
-    ? this->_nodeVarDeclInit(typeInfo) // todo test
+    ? this->_nodeVarDeclInit(typeInfo)
     : this->_nodeExpr(*nodeVarDecl.init, typeInfo.type, node, c);
 
   (*c)->append(

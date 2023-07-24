@@ -195,13 +195,6 @@ bool CodegenCleanUp::hasCleanUp (CodegenCleanUpType t) const {
   return !this->empty() || (this->type != t && this->parent != nullptr && this->parent->hasCleanUp(t));
 }
 
-bool CodegenCleanUp::isClosestJump () const {
-  if (!this->empty()) {
-    return false;
-  }
-  return this->jumpUsed || (this->parent != nullptr && this->parent->isClosestJump());
-}
-
 // todo test
 void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (stmt->isCompound()) {

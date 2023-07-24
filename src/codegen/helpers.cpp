@@ -33,7 +33,6 @@ std::vector<std::shared_ptr<Var>> Codegen::filterAsyncDeclarations (const std::v
         result.push_back(nodeFnDecl.var);
       }
     } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-      // todo test
       auto nodeObjDecl = std::get<ASTNodeObjDecl>(*node.body);
 
       for (const auto &method : nodeObjDecl.methods) {

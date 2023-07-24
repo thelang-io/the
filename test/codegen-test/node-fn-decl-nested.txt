@@ -136,21 +136,25 @@ int32_t __THE_1_test1_0 (void *px) {
   return __THE_0_test1SDtest2_0.f(__THE_0_test1SDtest2_0.x);
 }
 int32_t __THE_1_mainSDtest4_0 (void *px) {
+  unsigned char r = 0;
   int32_t v;
   struct __THE_1_mainSDtest4_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$1000 __THE_0_mainSDtest4SDtest5_0;
   __THE_1_mainSDtest4SDtest5_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4SDtest5_0, (struct __THE_1_mainSDtest4SDtest5_0X) {__THE_0_a_0});
+  r = 1;
   v = __THE_0_mainSDtest4SDtest5_0.f(__THE_0_mainSDtest4SDtest5_0.x);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4SDtest5_0);
   return v;
 }
 int32_t __THE_1_mainSDtest4SDtest5_0 (void *px) {
+  unsigned char r = 0;
   int32_t v;
   struct __THE_1_mainSDtest4SDtest5_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_fn$1000 __THE_0_mainSDtest4SDtest5SDtest6_0;
   __THE_1_mainSDtest4SDtest5SDtest6_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4SDtest5SDtest6_0, (struct __THE_1_mainSDtest4SDtest5SDtest6_0X) {__THE_0_a_0});
+  r = 1;
   v = __THE_0_mainSDtest4SDtest5SDtest6_0.f(__THE_0_mainSDtest4SDtest5SDtest6_0.x);
   __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4SDtest5SDtest6_0);
   return v;

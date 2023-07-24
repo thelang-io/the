@@ -45,7 +45,6 @@ class CodegenCleanUp {
   bool async = false;
   bool breakVarUsed = false;
   bool continueVarUsed = false;
-  bool jumpUsed = false;
   bool returnVarUsed = false;
   bool valueVarUsed = false;
 
@@ -63,7 +62,6 @@ class CodegenCleanUp {
   void gen (std::shared_ptr<CodegenASTStmt> *) const;
   void genAsync (std::shared_ptr<CodegenASTStmt> *, std::size_t &) const;
   bool hasCleanUp (CodegenCleanUpType) const;
-  bool isClosestJump () const;
   void merge (const std::shared_ptr<CodegenASTStmt> &);
 
  private:
