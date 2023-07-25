@@ -87,6 +87,99 @@ TEST(CodegenTest, ThrowsOnVarDeclInitInvalidType) {
   }, "tried node variable declaration of invalid type");
 }
 
+TEST(CodegenTest, CountAsyncLoopDepthOnEmpty) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 0);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthWithoutLoop) {
+  auto nodes = testing::NiceMock<MockAST>("main {}").gen();
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 0);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthSingleBreak) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    break" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 1);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthSingleContinue) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    continue" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeContinue>(nodes, 0), 1);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthNestedBreak) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    loop {" EOL
+    "      break" EOL
+    "    }" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 2);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthNestedContinue) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    loop {" EOL
+    "      continue" EOL
+    "    }" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeContinue>(nodes, 0), 2);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsEmptyDeclarations) {
+  auto nodes = testing::NiceMock<MockAST>("main {}").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 0);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsMultiple) {
+  auto nodes = testing::NiceMock<MockAST>("obj Test { fn test () {} } fn test2 () {} const A := 2").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 3);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsSingleObjMethod) {
+  auto nodes = testing::NiceMock<MockAST>("obj Test { fn test () {} }").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 1);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsSingleFn) {
+  auto nodes = testing::NiceMock<MockAST>("fn test2 () {}").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 1);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsSingleVar) {
+  auto nodes = testing::NiceMock<MockAST>("const A := 2").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 1);
+}
+
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
   bool isPlatformDefault_ = true;

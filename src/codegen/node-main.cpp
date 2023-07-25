@@ -26,7 +26,7 @@ void Codegen::_nodeMain (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node
 void Codegen::_nodeMainAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
   auto nodeMain = std::get<ASTNodeMain>(*node.body);
   auto returnType = this->ast->typeMap.get("void");
-  auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->throws, this->async);
+  auto asyncMainType = this->ast->typeMap.createFn({}, returnType, this->async);
   auto asyncMainVar = std::make_shared<Var>(Var{"async_main", "async_main", asyncMainType, false, false, true, false, 0});
   auto paramsName = Codegen::typeName(asyncMainVar->type->name + "P");
 

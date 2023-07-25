@@ -174,7 +174,6 @@ class Codegen {
 
   static void compile (const std::string &, const std::tuple<std::string, std::vector<std::string>> &, const std::string &, bool = false);
 
-  // todo test
   template <typename T>
   static std::size_t countAsyncLoopDepth (const std::vector<ASTNode> &nodes, std::size_t prevDepth) {
     auto depth = prevDepth;
@@ -200,7 +199,6 @@ class Codegen {
     return depth;
   }
 
-  // todo test
   static std::vector<std::shared_ptr<Var>> filterAsyncDeclarations (const std::vector<ASTNode> &);
   static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);

@@ -48,10 +48,10 @@ class TypeTest : public testing::Test {
     this->fn_ = this->tm_.createFn({
       TypeFnParam{"a", this->tm_.get("int"), false, true, false},
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-    }, this->tm_.get("int"), false, false);
+    }, this->tm_.get("int"), false);
 
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
-    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
+    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.createObj("Test", "Test_0", {
       TypeField{"a", this->tm_.get("int"), false, false},
@@ -63,6 +63,21 @@ class TypeTest : public testing::Test {
     this->union_ = this->tm_.createUnion({this->tm_.get("int"), this->tm_.get("str")});
   }
 };
+
+TEST_F(TypeTest, TypeCallInfoEmpty) {
+  EXPECT_TRUE(TypeCallInfo{}.empty());
+  EXPECT_FALSE(TypeCallInfo{"name"}.empty());
+  auto typeCallInfo2 = TypeCallInfo{"", true};
+  EXPECT_FALSE(typeCallInfo2.empty());
+  auto typeCallInfo3 = TypeCallInfo{"", false, "self_0"};
+  EXPECT_FALSE(typeCallInfo3.empty());
+  auto typeCallInfo4 = TypeCallInfo{"", false, "", this->obj_};
+  EXPECT_FALSE(typeCallInfo4.empty());
+  auto typeCallInfo5 = TypeCallInfo{"", false, "", nullptr, true};
+  EXPECT_FALSE(typeCallInfo5.empty());
+  auto typeCallInfo6 = TypeCallInfo{"", false, "", nullptr, false, true};
+  EXPECT_FALSE(typeCallInfo6.empty());
+}
 
 TEST_F(TypeTest, LargestNumbers) {
   EXPECT_TRUE(Type::largest(this->tm_.get("f64"), this->tm_.get("f64"))->isF64());
@@ -740,27 +755,27 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfFn) {
-  auto type1 = this->tm_.createFn({}, this->tm_.get("int"), false, false);
+  auto type1 = this->tm_.createFn({}, this->tm_.get("int"), false);
 
   auto type2 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("int"), false, false);
+  }, this->tm_.get("int"), false);
 
   auto type3 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("str"), false, false, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"), false, false);
+  }, this->tm_.get("str"), false);
 
-  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), false, false);
+  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), false);
 
   auto type5 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"), false, false);
+  }, this->tm_.get("void"), false);
 
   auto type6 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"), false, false);
+  }, this->tm_.get("str"), false);
 
   EXPECT_TRUE(this->fn_->isFn());
   EXPECT_TRUE(type1->isFn());
