@@ -23,7 +23,6 @@
 
 class ASTChecker {
  public:
-  // todo test
   static std::vector<ASTNodeExpr> flattenExpr (const std::vector<ASTNodeExpr> &exprs) {
     auto result = std::vector<ASTNodeExpr>{};
 
@@ -103,7 +102,6 @@ class ASTChecker {
     return result;
   }
 
-  // todo test
   static std::vector<ASTNode> flattenNode (const std::vector<ASTNode> &nodes, bool localScope = true) {
     auto result = std::vector<ASTNode>{};
 
@@ -172,7 +170,6 @@ class ASTChecker {
     return result;
   }
 
-  // todo test
   static std::vector<ASTNodeExpr> flattenNodeExprs (const std::vector<ASTNode> &nodes, bool localScope = true) {
     auto flattenNodes = ASTChecker::flattenNode(nodes, localScope);
     auto result = std::vector<ASTNodeExpr>{};
@@ -273,7 +270,6 @@ class ASTChecker {
     this->_isNode = true;
   }
 
-  // todo test
   bool async (bool localScope = true) const {
     if (!this->_exprs.empty()) {
       return this->_asyncExpr(this->_exprs, localScope);
@@ -303,12 +299,10 @@ class ASTChecker {
     return this->_hasNode<T>(this->_nodes);
   }
 
-  // todo test
   bool hasAwait () const {
     return this->hasExpr<ASTExprAwait>();
   }
 
-  // todo test
   template <typename T>
   bool hasExpr () const {
     if (!this->_exprs.empty()) {
@@ -318,7 +312,6 @@ class ASTChecker {
     }
   }
 
-  // todo test
   bool hoistingFriendly () const {
     this->_checkNode();
 
@@ -330,7 +323,6 @@ class ASTChecker {
     });
   }
 
-  // todo test
   bool insideMain () {
     this->_checkNode();
 
@@ -343,11 +335,7 @@ class ASTChecker {
     while (p != nullptr) {
       if (std::holds_alternative<ASTNodeMain>(*p->body)) {
         return !std::get<ASTNodeMain>(*p->body).async;
-      } else if (
-        std::holds_alternative<ASTNodeEnumDecl>(*p->body) ||
-        std::holds_alternative<ASTNodeFnDecl>(*p->body) ||
-        std::holds_alternative<ASTNodeObjDecl>(*p->body)
-      ) {
+      } else if (std::holds_alternative<ASTNodeFnDecl>(*p->body) || std::holds_alternative<ASTNodeObjDecl>(*p->body)) {
         return false;
       }
 
@@ -368,7 +356,6 @@ class ASTChecker {
     return this->_isLastNode(this->_nodes);
   }
 
-  // todo test
   template <typename T>
   bool parentIs () const {
     this->_checkNode();
@@ -383,7 +370,6 @@ class ASTChecker {
       if (std::holds_alternative<T>(*p->body)) {
         return true;
       } else if (
-        std::holds_alternative<ASTNodeEnumDecl>(*p->body) ||
         std::holds_alternative<ASTNodeFnDecl>(*p->body) ||
         std::holds_alternative<ASTNodeMain>(*p->body) ||
         std::holds_alternative<ASTNodeObjDecl>(*p->body)
@@ -405,7 +391,6 @@ class ASTChecker {
     }
   }
 
-  // todo check
   bool throwsPossible () const {
     if (!this->_exprs.empty()) {
       return this->_throwsPossibleExpr(this->_exprs);
@@ -425,7 +410,6 @@ class ASTChecker {
   std::vector<ASTNodeExpr> _exprs;
   std::vector<ASTNode> _nodes;
 
-  // todo test
   // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   bool _asyncExpr (const std::vector<ASTNodeExpr> &exprs, bool localScope) const {
     auto result = ASTChecker::flattenExpr(exprs);
@@ -444,7 +428,6 @@ class ASTChecker {
     });
   }
 
-  // todo test
   bool _asyncNode (const std::vector<ASTNode> &nodes, bool localScope) const {
     return this->_asyncExpr(ASTChecker::flattenNodeExprs(nodes, localScope), localScope);
   }
@@ -597,7 +580,6 @@ class ASTChecker {
     return this->_throwsExpr(ASTChecker::flattenNodeExprs(flattenNodes, localScope));
   }
 
-  // todo test
   // NOLINTNEXTLINE(readability-convert-member-functions-to-static)
   bool _throwsPossibleExpr (const std::vector<ASTNodeExpr> &exprs) const {
     auto result = ASTChecker::flattenExpr(exprs);
