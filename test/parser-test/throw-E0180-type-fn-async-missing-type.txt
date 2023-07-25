@@ -1,0 +1,6 @@
+======= stdin =======
+a: async = test
+======= stderr =======
+/test:1:9: E0180 - Expected function type after `async` keyword
+  1 | a: async = test
+    |         ^

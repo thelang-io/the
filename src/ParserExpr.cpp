@@ -48,7 +48,6 @@ std::string ParserStmtExpr::stringify () const {
     auto exprBody = std::get<ParserExprAssign>(*this->body);
     code += exprBody.left.stringify() + " " + exprBody.op.val + " " + exprBody.right.stringify();
   } else if (std::holds_alternative<ParserExprAwait>(*this->body)) {
-    // todo test
     auto exprBody = std::get<ParserExprAwait>(*this->body);
     code += "await " + exprBody.arg.stringify();
   } else if (std::holds_alternative<ParserExprBinary>(*this->body)) {
@@ -179,7 +178,6 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     result += std::string(indent + 2, ' ') + "</ExprAssignRight>" EOL;
     result += std::string(indent, ' ') + "</ExprAssign>";
   } else if (std::holds_alternative<ParserExprAwait>(*this->body)) {
-    // todo test
     auto exprAwait = std::get<ParserExprAwait>(*this->body);
 
     result += std::string(indent, ' ') + "<ExprAwait" + attrs + ">" EOL;

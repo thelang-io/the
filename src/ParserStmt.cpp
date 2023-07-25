@@ -128,12 +128,10 @@ std::string ParserStmt::doc (const std::string &prefix) const {
     }
 
     auto returnTypeCode = stmtFnDecl.returnType->stringify();
-    // todo test
     auto actualFnCode = std::string(stmtFnDecl.async ? "async " : "");
     actualFnCode += "fn " + fullName + " (" + fnDeclDocParams(prefix, stmtFnDecl.params, "", ", ") + ") " + returnTypeCode;
 
     if (actualFnCode.size() > 80) {
-      // todo test
       actualFnCode = std::string(stmtFnDecl.async ? "async " : "");
       actualFnCode += "fn " + fullName + " (" EOL + fnDeclDocParams(prefix, stmtFnDecl.params, "  ", "," EOL) + EOL ") " + returnTypeCode;
     }
@@ -382,7 +380,6 @@ std::string ParserStmt::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserStmtFnDecl>(*this->body)) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*this->body);
 
-    // todo test
     attrs += stmtFnDecl.async ? " async" : "";
     result += std::string(indent, ' ') + "<StmtFnDecl" + attrs + ">" EOL;
     result += std::string(indent + 2, ' ') + "<StmtFnDeclId>" EOL;

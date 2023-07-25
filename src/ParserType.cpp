@@ -25,8 +25,7 @@ std::string ParserType::stringify () const {
     code = typeBody.elementType.stringify() + "[]";
   } else if (std::holds_alternative<ParserTypeFn>(*this->body)) {
     auto typeBody = std::get<ParserTypeFn>(*this->body);
-    // todo test
-    code += std::string(typeBody.async ? "async" : "") + "(";
+    code += std::string(typeBody.async ? "async " : "") + "(";
 
     for (auto i = static_cast<std::size_t>(0); i < typeBody.params.size(); i++) {
       auto param = typeBody.params[i];
@@ -76,7 +75,6 @@ std::string ParserType::xml (std::size_t indent) const {
     auto typeFn = std::get<ParserTypeFn>(*this->body);
 
     typeName += "Fn";
-    // todo test
     attrs += typeFn.async ? " async" : "";
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     typeName += "Id";

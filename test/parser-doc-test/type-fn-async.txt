@@ -1,0 +1,8 @@
+======= stdin =======
+const a: async () -> void
+======= stdout =======
+## `a`
+
+```the
+const a: async () -> void
+```

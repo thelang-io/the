@@ -119,11 +119,10 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
   }
 
   if (tok0.type == TK_KW_ASYNC) {
-    // todo test
     auto stmt = this->next(false);
 
     if (!std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
-      throw Error(this->reader, stmt.start, stmt.end, E0144);
+      throw Error(this->reader, stmt.start, stmt.end, E0179);
     }
 
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
@@ -624,11 +623,10 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
   auto [loc1, tok1] = this->lexer->next();
 
   if (tok1.type == TK_KW_AWAIT) {
-    // todo test
     auto exprAwaitArg = this->_stmtExpr(false);
 
     if (exprAwaitArg == std::nullopt) {
-      throw Error(this->reader, this->lexer->loc, E0147);
+      throw Error(this->reader, this->lexer->loc, E0181);
     }
 
     auto exprAwait = ParserExprAwait{*exprAwaitArg};
@@ -902,7 +900,6 @@ std::optional<ParserType> Parser::_type () {
     auto typeId = ParserTypeId{tok1};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_KW_ASYNC) {
-    // todo test
     auto type = this->_type();
 
     if (type == std::nullopt) {
@@ -951,7 +948,6 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
       return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprAssign.right.end}, shouldWrap);
     }
   } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body) && !stmtExpr.parenthesized) {
-    // todo test
     auto exprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
     auto tkAwait = Token{TK_KW_AWAIT};
 

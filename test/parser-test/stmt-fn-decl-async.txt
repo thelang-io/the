@@ -1,0 +1,90 @@
+======= stdin =======
+async fn test1 () {}
+async fn test2 () int {
+  return 3
+}
+async fn test3 () str {
+  a := "a"
+  return a + "b"
+}
+async fn test4 () {
+  await test3()
+}
+======= stdout =======
+<StmtFnDecl start="1:1" end="1:21" async>
+  <StmtFnDeclId>
+    <Token type="ID" val="test1" start="1:10" end="1:15" />
+  </StmtFnDeclId>
+</StmtFnDecl>
+<StmtFnDecl start="2:1" end="4:2" async>
+  <StmtFnDeclId>
+    <Token type="ID" val="test2" start="2:10" end="2:15" />
+  </StmtFnDeclId>
+  <StmtFnDeclReturnType>
+    <TypeId start="2:19" end="2:22">
+      <Token type="ID" val="int" start="2:19" end="2:22" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+  <StmtFnDeclBody>
+    <StmtReturn start="3:3" end="3:11">
+      <ExprLit start="3:10" end="3:11">
+        <Token type="LIT_INT_DEC" val="3" start="3:10" end="3:11" />
+      </ExprLit>
+    </StmtReturn>
+  </StmtFnDeclBody>
+</StmtFnDecl>
+<StmtFnDecl start="5:1" end="8:2" async>
+  <StmtFnDeclId>
+    <Token type="ID" val="test3" start="5:10" end="5:15" />
+  </StmtFnDeclId>
+  <StmtFnDeclReturnType>
+    <TypeId start="5:19" end="5:22">
+      <Token type="ID" val="str" start="5:19" end="5:22" />
+    </TypeId>
+  </StmtFnDeclReturnType>
+  <StmtFnDeclBody>
+    <StmtVarDecl start="6:3" end="6:11">
+      <StmtVarDeclId>
+        <Token type="ID" val="a" start="6:3" end="6:4" />
+      </StmtVarDeclId>
+      <StmtVarDeclInit>
+        <ExprLit start="6:8" end="6:11">
+          <Token type="LIT_STR" val="\"a\"" start="6:8" end="6:11" />
+        </ExprLit>
+      </StmtVarDeclInit>
+    </StmtVarDecl>
+    <StmtReturn start="7:3" end="7:17">
+      <ExprBinary start="7:10" end="7:17">
+        <ExprBinaryLeft>
+          <ExprAccess start="7:10" end="7:11">
+            <Token type="ID" val="a" start="7:10" end="7:11" />
+          </ExprAccess>
+        </ExprBinaryLeft>
+        <ExprBinaryOp>
+          <Token type="OP_PLUS" val="+" start="7:12" end="7:13" />
+        </ExprBinaryOp>
+        <ExprBinaryRight>
+          <ExprLit start="7:14" end="7:17">
+            <Token type="LIT_STR" val="\"b\"" start="7:14" end="7:17" />
+          </ExprLit>
+        </ExprBinaryRight>
+      </ExprBinary>
+    </StmtReturn>
+  </StmtFnDeclBody>
+</StmtFnDecl>
+<StmtFnDecl start="9:1" end="11:2" async>
+  <StmtFnDeclId>
+    <Token type="ID" val="test4" start="9:10" end="9:15" />
+  </StmtFnDeclId>
+  <StmtFnDeclBody>
+    <ExprAwait start="10:3" end="10:16">
+      <ExprCall start="10:9" end="10:16">
+        <ExprCallCallee>
+          <ExprAccess start="10:9" end="10:14">
+            <Token type="ID" val="test3" start="10:9" end="10:14" />
+          </ExprAccess>
+        </ExprCallCallee>
+      </ExprCall>
+    </ExprAwait>
+  </StmtFnDeclBody>
+</StmtFnDecl>
