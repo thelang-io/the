@@ -1,0 +1,188 @@
+======= stdin =======
+async fn test1 () {
+}
+
+async fn test2 () int {
+  return 1
+}
+
+main {
+  await test1()
+  a: int = await test2()
+  b := await test2()
+}
+======= stdout =======
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test1" codeName="test1_0" frame="1">
+      <TypeFn name="fn$1000" async>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test2" codeName="test2_0" frame="1">
+      <TypeFn name="fn$1001" async>
+        <TypeFnReturnType>
+          <BuiltinType name="int" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <NodeFnDeclBody>
+    <NodeReturn>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="1" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeReturn>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeMain>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprAwait>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="void" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprCall>
+              <ExprCallCallee>
+                <NodeExpr>
+                  <NodeExprType>
+                    <TypeFn name="fn$1000" async>
+                      <TypeFnReturnType>
+                        <BuiltinType name="void" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="test1" codeName="test1_0" frame="1">
+                        <TypeFn name="fn$1000" async>
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallCallee>
+            </ExprCall>
+          </NodeExprBody>
+        </NodeExpr>
+      </ExprAwait>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAwait>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprCall>
+                  <ExprCallCallee>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeFn name="fn$1001" async>
+                          <TypeFnReturnType>
+                            <BuiltinType name="int" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="test2" codeName="test2_0" frame="1">
+                            <TypeFn name="fn$1001" async>
+                              <TypeFnReturnType>
+                                <BuiltinType name="int" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallCallee>
+                </ExprCall>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAwait>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="b" codeName="b_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAwait>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprCall>
+                  <ExprCallCallee>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeFn name="fn$1001" async>
+                          <TypeFnReturnType>
+                            <BuiltinType name="int" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="test2" codeName="test2_0" frame="1">
+                            <TypeFn name="fn$1001" async>
+                              <TypeFnReturnType>
+                                <BuiltinType name="int" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallCallee>
+                </ExprCall>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAwait>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>

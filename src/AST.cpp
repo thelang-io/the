@@ -55,13 +55,11 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
   throw Error("Tried stringify non lvalue expr access");
 }
 
-// todo test
 void AST::populateExprAwaitId (ASTBlock &nodes) {
   auto exprs = ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(nodes));
   auto exprId = static_cast<std::size_t>(0);
 
   for (auto &expr : exprs) {
-    // todo test
     if (std::holds_alternative<ASTExprAwait>(*expr.body) && !expr.type->isVoid()) {
       std::get<ASTExprAwait>(*expr.body).id = ++exprId;
     }
@@ -159,7 +157,6 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
   }
 }
 
-// todo test
 void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent) {
   expr.parent = parent;
 
@@ -181,7 +178,6 @@ void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent) {
     AST::populateParentExpr(exprAssign.left, &expr);
     AST::populateParentExpr(exprAssign.right, &expr);
   } else if (std::holds_alternative<ASTExprAwait>(*expr.body)) {
-    // todo test
     auto &exprAwait = std::get<ASTExprAwait>(*expr.body);
     AST::populateParentExpr(exprAwait.arg, &expr);
   } else if (std::holds_alternative<ASTExprBinary>(*expr.body)) {
@@ -467,7 +463,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
           : this->_type(*stmtFnDecl.returnType);
 
         this->varMap.restore();
-        // todo test
         auto nodeFnDeclVarType = this->typeMap.createFn(nodeFnDeclVarParams, nodeFnDeclVarReturnType, false, stmtFnDecl.async);
         auto nodeFnDeclVarAliasType = this->typeMap.createAlias(nodeFnDeclName, nodeFnDeclVarType);
 
@@ -552,7 +547,6 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto methodDeclReturnType = stmtFnDecl.returnType == std::nullopt
               ? this->typeMap.get("void")
               : this->_type(*stmtFnDecl.returnType);
-            // todo test
             auto methodDeclType = this->typeMap.createMethod(methodDeclTypeParams, methodDeclReturnType, false, stmtFnDecl.async, methodDeclCallInfo);
             auto methodDeclAliasType = this->typeMap.createAlias(methodDeclName, methodDeclType);
 
@@ -656,7 +650,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       auto throws = ASTChecker(*nodeFnDeclBody).throws();
 
       if (throws) {
-        // todo test
         nodeFnDeclVar->type = this->typeMap.createFn(fnType.params, fnType.returnType, true, fnType.async, fnType.callInfo);
       }
     }
@@ -668,7 +661,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     this->state = initialState;
 
     if (nodeFnDecl.body != std::nullopt) {
-      // todo test
       populateExprAwaitId(*nodeFnDecl.body);
     }
 
@@ -745,12 +737,10 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     this->varMap.restore();
     this->typeMap.stack.pop_back();
 
-    // todo test
     auto nodeMainStack = nodeMainVarStack.snapshot();
     varStack.mark(nodeMainStack);
 
     auto nodeMain = ASTNodeMain{nodeMainStack, nodeMainBody, ASTChecker(nodeMainBody).hasExpr<ASTExprAwait>()};
-    // todo test
     populateExprAwaitId(nodeMain.body);
 
     return this->_wrapNode(stmt, nodeMain);
@@ -816,7 +806,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
         auto throws = ASTChecker(*methodDeclBody).throws();
 
         if (throws) {
-          // todo test
           methodDeclVar->type = this->typeMap.createMethod(methodType.params, methodType.returnType, true, methodType.async, methodType.callInfo);
         }
       }
@@ -827,7 +816,6 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       auto methodDeclMethod = ASTNodeObjDeclMethod{methodDeclVar, methodDeclStack, methodDeclParams, methodDeclBody};
 
       if (methodDeclMethod.body != std::nullopt) {
-        // todo test
         populateExprAwaitId(*methodDeclMethod.body);
       }
 
@@ -1027,7 +1015,6 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAssign{exprAssignLeft, exprAssignOp, exprAssignRight});
   } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body)) {
-    // todo test
     auto parserExprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
     auto exprAwaitExpr = this->_nodeExpr(parserExprAwait.arg, nullptr, varStack);
 
@@ -1036,7 +1023,6 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
       !Type::real(std::get<ASTExprCall>(*exprAwaitExpr.body).callee.type)->isFn() ||
       !std::get<TypeFn>(Type::real(std::get<ASTExprCall>(*exprAwaitExpr.body).callee.type)->body).async
     ) {
-      // todo test
       throw Error(this->reader, parserExprAwait.arg.start, parserExprAwait.arg.end, E1030);
     }
 
@@ -1391,7 +1377,6 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
 
     return this->_wrapNodeExprType(stmtExpr, targetType, leftType->isRef() && !rightType->isRef() ? Type::real(leftType) : leftType);
   } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body)) {
-    // todo test
     auto exprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
     auto exprAwaitExprType = this->_nodeExprType(exprAwait.arg, nullptr);
 
@@ -1631,7 +1616,6 @@ Type *AST::_type (const ParserType &type) {
       fnParams.push_back(TypeFnParam{paramName, paramType, typeFnParam.mut, !typeFnParam.variadic, typeFnParam.variadic});
     }
 
-    // todo test
     return this->typeMap.createFn(fnParams, fnReturnType, false, typeFn.async);
   } else if (std::holds_alternative<ParserTypeId>(*type.body)) {
     auto typeId = std::get<ParserTypeId>(*type.body);
