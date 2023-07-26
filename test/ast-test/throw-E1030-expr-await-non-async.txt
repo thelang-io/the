@@ -1,0 +1,10 @@
+======= stdin =======
+fn test () {}
+
+main {
+  await test()
+}
+======= stderr =======
+/test:4:9: E1030 - Awaiting is only possible on asynchronous functions
+  4 |   await test()
+    |         ^~~~~~

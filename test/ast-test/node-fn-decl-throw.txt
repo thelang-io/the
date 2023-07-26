@@ -1,0 +1,1667 @@
+======= stdin =======
+fn test1 (p1: str, l1: str) {
+  print(p1)
+  print(l1)
+  throw error_NewError("Test")
+}
+
+fn test2 (p2: str = "Hello, World!", args: str...) {
+  print(p2)
+  print(args)
+  throw error_NewError("Test")
+}
+
+fn test3 (sum: ((int), (int)...) -> int) int {
+  throw error_NewError("Test")
+  return sum(1) + sum(2, 3) + sum(4, 5)
+}
+
+fn test3_sum (a: int, b: int...) int {
+  print(b)
+  throw error_NewError("Test")
+  return a
+}
+
+main {
+  fn test0 (p0: int, l0: (int) = 1) int {
+    print(p0)
+    print(l0)
+    throw error_NewError("Test")
+    return p0
+  }
+
+  test1("First", "Second")
+  test2()
+  test2("One")
+  test2("Two", "Three")
+  test2("Four", "Five", "Six")
+  print("test3(test3_sum): ", test3(test3_sum))
+  print("test0(1): ", test0(1))
+  print("test0(2, 3): ", test0(2, 3))
+}
+======= stdout =======
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test1" codeName="test1_0" frame="1">
+      <TypeFn name="fn$1000">
+        <TypeFnParams>
+          <TypeFnParam name="p1" required>
+            <BuiltinType name="str" />
+          </TypeFnParam>
+          <TypeFnParam name="l1" required>
+            <BuiltinType name="str" />
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="p1" codeName="p1_0" frame="2">
+          <BuiltinType name="str" />
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="l1" codeName="l1_0" frame="2">
+          <BuiltinType name="str" />
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+  <NodeFnDeclBody>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="p1" codeName="p1_0" frame="2">
+                      <BuiltinType name="str" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="l1" codeName="l1_0" frame="2">
+                      <BuiltinType name="str" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+    <NodeThrow>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="error_Error" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="error_NewError" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="error_NewError" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="message">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"Test\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeThrow>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test2" codeName="test2_0" frame="1">
+      <TypeFn name="fn$1001">
+        <TypeFnParams>
+          <TypeFnParam name="p2">
+            <BuiltinType name="str" />
+          </TypeFnParam>
+          <TypeFnParam name="args" variadic>
+            <TypeArray name="array_str">
+              <BuiltinType name="str" />
+            </TypeArray>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="p2" codeName="p2_0" frame="2">
+          <BuiltinType name="str" />
+        </Var>
+      </FnDeclParamVar>
+      <FnDeclParamInit>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="str" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprLit type="STR" value="\"Hello, World!\"" />
+          </NodeExprBody>
+        </NodeExpr>
+      </FnDeclParamInit>
+    </FnDeclParam>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="args" codeName="args_0" frame="2">
+          <TypeArray name="array_str">
+            <BuiltinType name="str" />
+          </TypeArray>
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+  <NodeFnDeclBody>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="p2" codeName="p2_0" frame="2">
+                      <BuiltinType name="str" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeArray name="array_str">
+                    <BuiltinType name="str" />
+                  </TypeArray>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="args" codeName="args_0" frame="2">
+                      <TypeArray name="array_str">
+                        <BuiltinType name="str" />
+                      </TypeArray>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+    <NodeThrow>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="error_Error" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="error_NewError" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="error_NewError" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="message">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"Test\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeThrow>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test3" codeName="test3_0" frame="1">
+      <TypeFn name="fn$1006">
+        <TypeFnParams>
+          <TypeFnParam name="sum" required>
+            <TypeFn name="fn$1005">
+              <TypeFnParams>
+                <TypeFnParam required>
+                  <BuiltinType name="int" />
+                </TypeFnParam>
+                <TypeFnParam variadic>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </TypeFnParam>
+              </TypeFnParams>
+              <TypeFnReturnType>
+                <BuiltinType name="int" />
+              </TypeFnReturnType>
+            </TypeFn>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="int" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="sum" codeName="sum_0" frame="2">
+          <TypeFn name="fn$1005">
+            <TypeFnParams>
+              <TypeFnParam required>
+                <BuiltinType name="int" />
+              </TypeFnParam>
+              <TypeFnParam variadic>
+                <TypeArray name="array_int">
+                  <BuiltinType name="int" />
+                </TypeArray>
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <BuiltinType name="int" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+  <NodeFnDeclBody>
+    <NodeThrow>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="error_Error" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="error_NewError" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="error_NewError" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="message">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"Test\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeThrow>
+    <NodeReturn>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprBinary op="ADD">
+            <ExprBinaryLeft>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprBinary op="ADD">
+                    <ExprBinaryLeft>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprCall>
+                            <ExprCallCallee>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <TypeFn name="fn$1005">
+                                    <TypeFnParams>
+                                      <TypeFnParam required>
+                                        <BuiltinType name="int" />
+                                      </TypeFnParam>
+                                      <TypeFnParam variadic>
+                                        <TypeArray name="array_int">
+                                          <BuiltinType name="int" />
+                                        </TypeArray>
+                                      </TypeFnParam>
+                                    </TypeFnParams>
+                                    <TypeFnReturnType>
+                                      <BuiltinType name="int" />
+                                    </TypeFnReturnType>
+                                  </TypeFn>
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprAccess>
+                                    <Var name="sum" codeName="sum_0" frame="2">
+                                      <TypeFn name="fn$1005">
+                                        <TypeFnParams>
+                                          <TypeFnParam required>
+                                            <BuiltinType name="int" />
+                                          </TypeFnParam>
+                                          <TypeFnParam variadic>
+                                            <TypeArray name="array_int">
+                                              <BuiltinType name="int" />
+                                            </TypeArray>
+                                          </TypeFnParam>
+                                        </TypeFnParams>
+                                        <TypeFnReturnType>
+                                          <BuiltinType name="int" />
+                                        </TypeFnReturnType>
+                                      </TypeFn>
+                                    </Var>
+                                  </ExprAccess>
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprCallCallee>
+                            <ExprCallArgs>
+                              <ExprCallArg>
+                                <NodeExpr>
+                                  <NodeExprType>
+                                    <BuiltinType name="int" />
+                                  </NodeExprType>
+                                  <NodeExprBody>
+                                    <ExprLit type="INT_DEC" value="1" />
+                                  </NodeExprBody>
+                                </NodeExpr>
+                              </ExprCallArg>
+                            </ExprCallArgs>
+                          </ExprCall>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryLeft>
+                    <ExprBinaryRight>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprCall>
+                            <ExprCallCallee>
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <TypeFn name="fn$1005">
+                                    <TypeFnParams>
+                                      <TypeFnParam required>
+                                        <BuiltinType name="int" />
+                                      </TypeFnParam>
+                                      <TypeFnParam variadic>
+                                        <TypeArray name="array_int">
+                                          <BuiltinType name="int" />
+                                        </TypeArray>
+                                      </TypeFnParam>
+                                    </TypeFnParams>
+                                    <TypeFnReturnType>
+                                      <BuiltinType name="int" />
+                                    </TypeFnReturnType>
+                                  </TypeFn>
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprAccess>
+                                    <Var name="sum" codeName="sum_0" frame="2">
+                                      <TypeFn name="fn$1005">
+                                        <TypeFnParams>
+                                          <TypeFnParam required>
+                                            <BuiltinType name="int" />
+                                          </TypeFnParam>
+                                          <TypeFnParam variadic>
+                                            <TypeArray name="array_int">
+                                              <BuiltinType name="int" />
+                                            </TypeArray>
+                                          </TypeFnParam>
+                                        </TypeFnParams>
+                                        <TypeFnReturnType>
+                                          <BuiltinType name="int" />
+                                        </TypeFnReturnType>
+                                      </TypeFn>
+                                    </Var>
+                                  </ExprAccess>
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprCallCallee>
+                            <ExprCallArgs>
+                              <ExprCallArg>
+                                <NodeExpr>
+                                  <NodeExprType>
+                                    <BuiltinType name="int" />
+                                  </NodeExprType>
+                                  <NodeExprBody>
+                                    <ExprLit type="INT_DEC" value="2" />
+                                  </NodeExprBody>
+                                </NodeExpr>
+                              </ExprCallArg>
+                              <ExprCallArg>
+                                <NodeExpr>
+                                  <NodeExprType>
+                                    <BuiltinType name="int" />
+                                  </NodeExprType>
+                                  <NodeExprBody>
+                                    <ExprLit type="INT_DEC" value="3" />
+                                  </NodeExprBody>
+                                </NodeExpr>
+                              </ExprCallArg>
+                            </ExprCallArgs>
+                          </ExprCall>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprBinaryRight>
+                  </ExprBinary>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryLeft>
+            <ExprBinaryRight>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprCall>
+                    <ExprCallCallee>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <TypeFn name="fn$1005">
+                            <TypeFnParams>
+                              <TypeFnParam required>
+                                <BuiltinType name="int" />
+                              </TypeFnParam>
+                              <TypeFnParam variadic>
+                                <TypeArray name="array_int">
+                                  <BuiltinType name="int" />
+                                </TypeArray>
+                              </TypeFnParam>
+                            </TypeFnParams>
+                            <TypeFnReturnType>
+                              <BuiltinType name="int" />
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <Var name="sum" codeName="sum_0" frame="2">
+                              <TypeFn name="fn$1005">
+                                <TypeFnParams>
+                                  <TypeFnParam required>
+                                    <BuiltinType name="int" />
+                                  </TypeFnParam>
+                                  <TypeFnParam variadic>
+                                    <TypeArray name="array_int">
+                                      <BuiltinType name="int" />
+                                    </TypeArray>
+                                  </TypeFnParam>
+                                </TypeFnParams>
+                                <TypeFnReturnType>
+                                  <BuiltinType name="int" />
+                                </TypeFnReturnType>
+                              </TypeFn>
+                            </Var>
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallCallee>
+                    <ExprCallArgs>
+                      <ExprCallArg>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprLit type="INT_DEC" value="4" />
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallArg>
+                      <ExprCallArg>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprLit type="INT_DEC" value="5" />
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallArg>
+                    </ExprCallArgs>
+                  </ExprCall>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeReturn>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test3_sum" codeName="test3_sum_0" frame="1">
+      <TypeFn name="fn$1005">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
+            <BuiltinType name="int" />
+          </TypeFnParam>
+          <TypeFnParam name="b" variadic>
+            <TypeArray name="array_int">
+              <BuiltinType name="int" />
+            </TypeArray>
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="int" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <BuiltinType name="int" />
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="b" codeName="b_0" frame="2">
+          <TypeArray name="array_int">
+            <BuiltinType name="int" />
+          </TypeArray>
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+  <NodeFnDeclBody>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeArray name="array_int">
+                    <BuiltinType name="int" />
+                  </TypeArray>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="b" codeName="b_0" frame="2">
+                      <TypeArray name="array_int">
+                        <BuiltinType name="int" />
+                      </TypeArray>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+    <NodeThrow>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="error_Error" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="error_NewError" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="error_NewError" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="message">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprLit type="STR" value="\"Test\"" />
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeThrow>
+    <NodeReturn>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess>
+            <Var name="a" codeName="a_0" frame="2">
+              <BuiltinType name="int" />
+            </Var>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeReturn>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeMain>
+  <NodeFnDecl>
+    <NodeFnDeclVar>
+      <Var name="test0" codeName="mainSDtest0_0" frame="2">
+        <TypeFn name="fn$1007">
+          <TypeFnParams>
+            <TypeFnParam name="p0" required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam name="l0">
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="int" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeFnDeclVar>
+    <FnDeclParams>
+      <FnDeclParam>
+        <FnDeclParamVar>
+          <Var name="p0" codeName="p0_0" frame="3">
+            <BuiltinType name="int" />
+          </Var>
+        </FnDeclParamVar>
+      </FnDeclParam>
+      <FnDeclParam>
+        <FnDeclParamVar>
+          <Var name="l0" codeName="l0_0" frame="3">
+            <BuiltinType name="int" />
+          </Var>
+        </FnDeclParamVar>
+        <FnDeclParamInit>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="int" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprLit type="INT_DEC" value="1" />
+            </NodeExprBody>
+          </NodeExpr>
+        </FnDeclParamInit>
+      </FnDeclParam>
+    </FnDeclParams>
+    <NodeFnDeclBody>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="void" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="print" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="print" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="p0" codeName="p0_0" frame="3">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="void" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprCall>
+            <ExprCallCallee>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="print" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <BuiltinVar name="print" />
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallCallee>
+            <ExprCallArgs>
+              <ExprCallArg id="items">
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="int" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="l0" codeName="l0_0" frame="3">
+                        <BuiltinType name="int" />
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallArg>
+            </ExprCallArgs>
+          </ExprCall>
+        </NodeExprBody>
+      </NodeExpr>
+      <NodeThrow>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="error_Error" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprCall>
+              <ExprCallCallee>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="error_NewError" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <BuiltinVar name="error_NewError" />
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprCallCallee>
+              <ExprCallArgs>
+                <ExprCallArg id="message">
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="str" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprLit type="STR" value="\"Test\"" />
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallArg>
+              </ExprCallArgs>
+            </ExprCall>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeThrow>
+      <NodeReturn>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="int" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprAccess>
+              <Var name="p0" codeName="p0_0" frame="3">
+                <BuiltinType name="int" />
+              </Var>
+            </ExprAccess>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeReturn>
+    </NodeFnDeclBody>
+  </NodeFnDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1000">
+                <TypeFnParams>
+                  <TypeFnParam name="p1" required>
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                  <TypeFnParam name="l1" required>
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test1" codeName="test1_0" frame="1">
+                  <TypeFn name="fn$1000">
+                    <TypeFnParams>
+                      <TypeFnParam name="p1" required>
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                      <TypeFnParam name="l1" required>
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="p1">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"First\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="l1">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Second\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1001">
+                <TypeFnParams>
+                  <TypeFnParam name="p2">
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                  <TypeFnParam name="args" variadic>
+                    <TypeArray name="array_str">
+                      <BuiltinType name="str" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test2" codeName="test2_0" frame="1">
+                  <TypeFn name="fn$1001">
+                    <TypeFnParams>
+                      <TypeFnParam name="p2">
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                      <TypeFnParam name="args" variadic>
+                        <TypeArray name="array_str">
+                          <BuiltinType name="str" />
+                        </TypeArray>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1001">
+                <TypeFnParams>
+                  <TypeFnParam name="p2">
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                  <TypeFnParam name="args" variadic>
+                    <TypeArray name="array_str">
+                      <BuiltinType name="str" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test2" codeName="test2_0" frame="1">
+                  <TypeFn name="fn$1001">
+                    <TypeFnParams>
+                      <TypeFnParam name="p2">
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                      <TypeFnParam name="args" variadic>
+                        <TypeArray name="array_str">
+                          <BuiltinType name="str" />
+                        </TypeArray>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="p2">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"One\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1001">
+                <TypeFnParams>
+                  <TypeFnParam name="p2">
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                  <TypeFnParam name="args" variadic>
+                    <TypeArray name="array_str">
+                      <BuiltinType name="str" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test2" codeName="test2_0" frame="1">
+                  <TypeFn name="fn$1001">
+                    <TypeFnParams>
+                      <TypeFnParam name="p2">
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                      <TypeFnParam name="args" variadic>
+                        <TypeArray name="array_str">
+                          <BuiltinType name="str" />
+                        </TypeArray>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="p2">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Two\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="args">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Three\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn$1001">
+                <TypeFnParams>
+                  <TypeFnParam name="p2">
+                    <BuiltinType name="str" />
+                  </TypeFnParam>
+                  <TypeFnParam name="args" variadic>
+                    <TypeArray name="array_str">
+                      <BuiltinType name="str" />
+                    </TypeArray>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="test2" codeName="test2_0" frame="1">
+                  <TypeFn name="fn$1001">
+                    <TypeFnParams>
+                      <TypeFnParam name="p2">
+                        <BuiltinType name="str" />
+                      </TypeFnParam>
+                      <TypeFnParam name="args" variadic>
+                        <TypeArray name="array_str">
+                          <BuiltinType name="str" />
+                        </TypeArray>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="p2">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Four\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="args">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Five\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="args">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"Six\"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="print" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <BuiltinVar name="print" />
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"test3(test3_sum): \"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprCall>
+                  <ExprCallCallee>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeFn name="fn$1006">
+                          <TypeFnParams>
+                            <TypeFnParam name="sum" required>
+                              <TypeFn name="fn$1005">
+                                <TypeFnParams>
+                                  <TypeFnParam required>
+                                    <BuiltinType name="int" />
+                                  </TypeFnParam>
+                                  <TypeFnParam variadic>
+                                    <TypeArray name="array_int">
+                                      <BuiltinType name="int" />
+                                    </TypeArray>
+                                  </TypeFnParam>
+                                </TypeFnParams>
+                                <TypeFnReturnType>
+                                  <BuiltinType name="int" />
+                                </TypeFnReturnType>
+                              </TypeFn>
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="int" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="test3" codeName="test3_0" frame="1">
+                            <TypeFn name="fn$1006">
+                              <TypeFnParams>
+                                <TypeFnParam name="sum" required>
+                                  <TypeFn name="fn$1005">
+                                    <TypeFnParams>
+                                      <TypeFnParam required>
+                                        <BuiltinType name="int" />
+                                      </TypeFnParam>
+                                      <TypeFnParam variadic>
+                                        <TypeArray name="array_int">
+                                          <BuiltinType name="int" />
+                                        </TypeArray>
+                                      </TypeFnParam>
+                                    </TypeFnParams>
+                                    <TypeFnReturnType>
+                                      <BuiltinType name="int" />
+                                    </TypeFnReturnType>
+                                  </TypeFn>
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="int" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallCallee>
+                  <ExprCallArgs>
+                    <ExprCallArg id="sum">
+                      <NodeExpr>
+                        <NodeExprType>
+                          <TypeFn name="fn$1005">
+                            <TypeFnParams>
+                              <TypeFnParam name="a" required>
+                                <BuiltinType name="int" />
+                              </TypeFnParam>
+                              <TypeFnParam name="b" variadic>
+                                <TypeArray name="array_int">
+                                  <BuiltinType name="int" />
+                                </TypeArray>
+                              </TypeFnParam>
+                            </TypeFnParams>
+                            <TypeFnReturnType>
+                              <BuiltinType name="int" />
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <Var name="test3_sum" codeName="test3_sum_0" frame="1">
+                              <TypeFn name="fn$1005">
+                                <TypeFnParams>
+                                  <TypeFnParam name="a" required>
+                                    <BuiltinType name="int" />
+                                  </TypeFnParam>
+                                  <TypeFnParam name="b" variadic>
+                                    <TypeArray name="array_int">
+                                      <BuiltinType name="int" />
+                                    </TypeArray>
+                                  </TypeFnParam>
+                                </TypeFnParams>
+                                <TypeFnReturnType>
+                                  <BuiltinType name="int" />
+                                </TypeFnReturnType>
+                              </TypeFn>
+                            </Var>
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallArg>
+                  </ExprCallArgs>
+                </ExprCall>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="print" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <BuiltinVar name="print" />
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"test0(1): \"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprCall>
+                  <ExprCallCallee>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeFn name="fn$1007">
+                          <TypeFnParams>
+                            <TypeFnParam name="p0" required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam name="l0">
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="int" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="test0" codeName="mainSDtest0_0" frame="2">
+                            <TypeFn name="fn$1007">
+                              <TypeFnParams>
+                                <TypeFnParam name="p0" required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam name="l0">
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="int" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallCallee>
+                  <ExprCallArgs>
+                    <ExprCallArg id="p0">
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprLit type="INT_DEC" value="1" />
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallArg>
+                  </ExprCallArgs>
+                </ExprCall>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="print" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <BuiltinVar name="print" />
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="str" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprLit type="STR" value="\"test0(2, 3): \"" />
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprCall>
+                  <ExprCallCallee>
+                    <NodeExpr>
+                      <NodeExprType>
+                        <TypeFn name="fn$1007">
+                          <TypeFnParams>
+                            <TypeFnParam name="p0" required>
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                            <TypeFnParam name="l0">
+                              <BuiltinType name="int" />
+                            </TypeFnParam>
+                          </TypeFnParams>
+                          <TypeFnReturnType>
+                            <BuiltinType name="int" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess>
+                          <Var name="test0" codeName="mainSDtest0_0" frame="2">
+                            <TypeFn name="fn$1007">
+                              <TypeFnParams>
+                                <TypeFnParam name="p0" required>
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                                <TypeFnParam name="l0">
+                                  <BuiltinType name="int" />
+                                </TypeFnParam>
+                              </TypeFnParams>
+                              <TypeFnReturnType>
+                                <BuiltinType name="int" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </Var>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallCallee>
+                  <ExprCallArgs>
+                    <ExprCallArg id="p0">
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprLit type="INT_DEC" value="2" />
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallArg>
+                    <ExprCallArg id="l0">
+                      <NodeExpr>
+                        <NodeExprType>
+                          <BuiltinType name="int" />
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprLit type="INT_DEC" value="3" />
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallArg>
+                  </ExprCallArgs>
+                </ExprCall>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

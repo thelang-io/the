@@ -45,7 +45,7 @@ bool TypeCallInfo::empty () const {
 std::string TypeCallInfo::xml (std::size_t indent, std::set<std::string> parentTypes) const {
   auto result = std::string(indent, ' ') + "<TypeCallInfo";
 
-  result += this->codeName[0] != '@' ? R"( codeName=")" + this->codeName + R"(")" : "";
+  result += R"( codeName=")" + this->codeName + R"(")";
   result += this->isSelfFirst ? R"( selfCodeName=")" + this->selfCodeName + R"(")" : "";
   result += this->isSelfFirst ? " selfFirst" : "";
   result += this->isSelfMut ? " selfMut" : "";
@@ -520,6 +520,7 @@ bool Type::matchNice (const Type *type) const {
     if (
       !lhsFn.returnType->matchNice(rhsFn.returnType) ||
       lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.async != rhsFn.async ||
       lhsFn.isMethod != rhsFn.isMethod ||
       (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||
       (lhsFn.callInfo.isSelfFirst && !lhsFn.callInfo.selfType->matchNice(rhsFn.callInfo.selfType)) ||
@@ -609,6 +610,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
     if (
       !lhsFn.returnType->matchStrict(rhsFn.returnType, exact) ||
       lhsFn.params.size() != rhsFn.params.size() ||
+      lhsFn.async != rhsFn.async ||
       lhsFn.isMethod != rhsFn.isMethod ||
       (exact && lhsFn.callInfo.codeName != rhsFn.callInfo.codeName) ||
       (lhsFn.callInfo.isSelfFirst != rhsFn.callInfo.isSelfFirst) ||
@@ -719,6 +721,10 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   }
 
   auto typeName = std::string("Type");
+  auto attrs = std::string();
+
+  attrs += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
+  attrs += R"( name=")" + this->name + R"(")";
 
   if (this->isAlias()) {
     typeName += "Alias";
@@ -729,7 +735,10 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
   } else if (this->isEnumerator()) {
     typeName += "Enumerator";
   } else if (this->isFn()) {
+    auto fnType = std::get<TypeFn>(this->body);
+
     typeName += this->isMethod() ? "Method" : "Fn";
+    attrs += fnType.async ? " async" : "";
   } else if (this->isMap()) {
     typeName += "Map";
   } else if (this->isObj()) {
@@ -742,15 +751,7 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     typeName += "Union";
   }
 
-  auto result = std::string(indent, ' ') + "<" + typeName;
-
-  result += this->codeName[0] == '@' ? "" : R"( codeName=")" + this->codeName + R"(")";
-  result += this->name[0] == '@' ? "" : R"( name=")" + this->name + R"(")";
-
-  if (this->isFn()) {
-    auto fnType = std::get<TypeFn>(this->body);
-    result += fnType.throws ? " throws" : "";
-  }
+  auto result = std::string(indent, ' ') + "<" + typeName + attrs;
 
   if (this->isEnumerator() || (this->isObj() && parentTypes.contains(this->codeName))) {
     return result + " />";
@@ -821,11 +822,6 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
       fieldAttrs += R"( name=")" + field.name + R"(")";
 
       result += std::string(indent + 2, ' ') + "<TypeField" + fieldAttrs + ">" EOL;
-
-      if (!field.callInfo.empty()) {
-        result += field.callInfo.xml(indent + 4, parentTypes) + EOL;
-      }
-
       result += field.type->xml(indent + 4, parentTypes) + EOL;
       result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
     }

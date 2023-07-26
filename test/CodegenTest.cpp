@@ -87,6 +87,99 @@ TEST(CodegenTest, ThrowsOnVarDeclInitInvalidType) {
   }, "tried node variable declaration of invalid type");
 }
 
+TEST(CodegenTest, CountAsyncLoopDepthOnEmpty) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 0);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthWithoutLoop) {
+  auto nodes = testing::NiceMock<MockAST>("main {}").gen();
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 0);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthSingleBreak) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    break" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 1);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthSingleContinue) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    continue" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeContinue>(nodes, 0), 1);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthNestedBreak) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    loop {" EOL
+    "      break" EOL
+    "    }" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeBreak>(nodes, 0), 2);
+}
+
+TEST(CodegenTest, CountAsyncLoopDepthNestedContinue) {
+  auto nodes = testing::NiceMock<MockAST>(
+    "main {" EOL
+    "  loop {" EOL
+    "    loop {" EOL
+    "      continue" EOL
+    "    }" EOL
+    "  }" EOL
+    "}"
+  ).gen();
+
+  EXPECT_EQ(Codegen::countAsyncLoopDepth<ASTNodeContinue>(nodes, 0), 2);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsEmptyDeclarations) {
+  auto nodes = testing::NiceMock<MockAST>("main {}").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 0);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsMultiple) {
+  auto nodes = testing::NiceMock<MockAST>("obj Test { fn test () {} } fn test2 () {} const A := 2").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 3);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsSingleObjMethod) {
+  auto nodes = testing::NiceMock<MockAST>("obj Test { fn test () {} }").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 1);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsSingleFn) {
+  auto nodes = testing::NiceMock<MockAST>("fn test2 () {}").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 1);
+}
+
+TEST(CodegenTest, FilterAsyncDeclarationsSingleVar) {
+  auto nodes = testing::NiceMock<MockAST>("const A := 2").gen();
+  EXPECT_EQ(Codegen::filterAsyncDeclarations(nodes).size(), 1);
+}
+
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
   bool isPlatformDefault_ = true;
@@ -264,6 +357,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinGlobals, CodegenPassTest, testing::Values(
   "builtin-print-buffer",
   "builtin-print-enum",
   "builtin-print-fn",
+  "builtin-print-fn-async",
   "builtin-print-map",
   "builtin-print-obj",
   "builtin-print-opt",
@@ -281,6 +375,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
   "builtin-any-alloc-array",
   "builtin-any-alloc-enum",
   "builtin-any-alloc-fn",
+  "builtin-any-alloc-fn-async",
   "builtin-any-alloc-map",
   "builtin-any-alloc-obj",
   "builtin-any-alloc-opt",
@@ -639,6 +734,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
   "builtin-opt-alloc-array",
   "builtin-opt-alloc-enum",
   "builtin-opt-alloc-fn",
+  "builtin-opt-alloc-fn-async",
   "builtin-opt-alloc-map",
   "builtin-opt-alloc-obj",
   "builtin-opt-alloc-opt",
@@ -714,6 +810,10 @@ INSTANTIATE_TEST_SUITE_P(BuiltinRequest, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinThread, CodegenPassTest, testing::Values(
+  "builtin-thread-id",
+  "builtin-thread-id-root",
+  "builtin-thread-id-awaited",
+  "builtin-thread-id-non-awaited",
   "builtin-thread-sleep"
 ));
 
@@ -837,6 +937,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinUnion, CodegenPassTest, testing::Values(
   "builtin-union-alloc-array",
   "builtin-union-alloc-enum",
   "builtin-union-alloc-fn",
+  "builtin-union-alloc-fn-async",
   "builtin-union-alloc-map",
   "builtin-union-alloc-obj",
   "builtin-union-alloc-opt",
@@ -858,6 +959,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinUtils, CodegenPassTest, testing::Values(
   "builtin-utils-swap-buffer",
   "builtin-utils-swap-enum",
   "builtin-utils-swap-fn",
+  "builtin-utils-swap-fn-async",
   "builtin-utils-swap-map",
   "builtin-utils-swap-obj",
   "builtin-utils-swap-opt",
@@ -876,6 +978,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access-array",
   "expr-access-enum",
   "expr-access-fn",
+  "expr-access-fn-async",
   "expr-access-map",
   "expr-access-obj",
   "expr-access-opt",
@@ -891,6 +994,7 @@ INSTANTIATE_TEST_SUITE_P(ExprArray, CodegenPassTest, testing::Values(
   "expr-array-array",
   "expr-array-enum",
   "expr-array-fn",
+  "expr-array-fn-async",
   "expr-array-map",
   "expr-array-obj",
   "expr-array-opt",
@@ -908,12 +1012,17 @@ INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign-array",
   "expr-assign-enum",
   "expr-assign-fn",
+  "expr-assign-fn-async",
   "expr-assign-map",
   "expr-assign-obj",
   "expr-assign-opt",
   "expr-assign-ref",
   "expr-assign-str",
   "expr-assign-union"
+));
+
+INSTANTIATE_TEST_SUITE_P(ExprAwait, CodegenPassTest, testing::Values(
+  "expr-await"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
@@ -934,7 +1043,8 @@ INSTANTIATE_TEST_SUITE_P(ExprBinary, CodegenPassTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenPassTest, testing::Values(
   "expr-call",
   "expr-call-obj-prop",
-  "expr-call-args"
+  "expr-call-args",
+  "expr-call-non-awaited"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
@@ -945,6 +1055,7 @@ INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
   "expr-cond-array",
   "expr-cond-enum",
   "expr-cond-fn",
+  "expr-cond-fn-async",
   "expr-cond-map",
   "expr-cond-obj",
   "expr-cond-opt",
@@ -962,6 +1073,7 @@ INSTANTIATE_TEST_SUITE_P(ExprIs, CodegenPassTest, testing::Values(
   "expr-is-array",
   "expr-is-enum",
   "expr-is-fn",
+  "expr-is-fn-async",
   "expr-is-map",
   "expr-is-obj",
   "expr-is-opt",
@@ -993,6 +1105,7 @@ INSTANTIATE_TEST_SUITE_P(ExprMap, CodegenPassTest, testing::Values(
   "expr-map-array",
   "expr-map-enum",
   "expr-map-fn",
+  "expr-map-fn-async",
   "expr-map-map",
   "expr-map-obj",
   "expr-map-opt",
@@ -1014,6 +1127,7 @@ INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenPassTest, testing::Values(
   "expr-ref-array",
   "expr-ref-enum",
   "expr-ref-fn",
+  "expr-ref-fn-async",
   "expr-ref-map",
   "expr-ref-obj",
   "expr-ref-opt",
@@ -1026,6 +1140,18 @@ INSTANTIATE_TEST_SUITE_P(ExprUnary, CodegenPassTest, testing::Values(
   "expr-unary",
   "expr-unary-nested",
   "expr-unary-str"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeBreak, CodegenPassTest, testing::Values(
+  "node-break-async",
+  "node-break-async-top-level",
+  "node-break-async-with-cleanup"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeContinue, CodegenPassTest, testing::Values(
+  "node-continue-async",
+  "node-continue-async-top-level",
+  "node-continue-async-with-cleanup"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeEnumDecl, CodegenPassTest, testing::Values(
@@ -1042,6 +1168,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-access-array",
   "node-expr-access-enum",
   "node-expr-access-fn",
+  "node-expr-access-fn-async",
   "node-expr-access-map",
   "node-expr-access-obj",
   "node-expr-access-opt",
@@ -1054,18 +1181,21 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-array-array",
   "node-expr-array-enum",
   "node-expr-array-fn",
+  "node-expr-array-fn-async",
   "node-expr-array-map",
   "node-expr-array-obj",
   "node-expr-array-opt",
   "node-expr-array-ref",
   "node-expr-array-str",
   "node-expr-array-union",
+  "node-expr-await",
   "node-expr-assign",
   "node-expr-assign-alias",
   "node-expr-assign-any",
   "node-expr-assign-array",
   "node-expr-assign-enum",
   "node-expr-assign-fn",
+  "node-expr-assign-fn-async",
   "node-expr-assign-map",
   "node-expr-assign-obj",
   "node-expr-assign-opt",
@@ -1089,12 +1219,26 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-cond-array",
   "node-expr-cond-enum",
   "node-expr-cond-fn",
+  "node-expr-cond-fn-async",
   "node-expr-cond-map",
   "node-expr-cond-obj",
   "node-expr-cond-opt",
   "node-expr-cond-ref",
   "node-expr-cond-str",
   "node-expr-cond-union",
+  "node-expr-is",
+  "node-expr-is-alias",
+  "node-expr-is-any",
+  "node-expr-is-array",
+  "node-expr-is-enum",
+  "node-expr-is-fn",
+  "node-expr-is-fn-async",
+  "node-expr-is-map",
+  "node-expr-is-obj",
+  "node-expr-is-opt",
+  "node-expr-is-ref",
+  "node-expr-is-str",
+  "node-expr-is-union",
   "node-expr-lit",
   "node-expr-map",
   "node-expr-map-alias",
@@ -1102,6 +1246,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-map-array",
   "node-expr-map-enum",
   "node-expr-map-fn",
+  "node-expr-map-fn-async",
   "node-expr-map-map",
   "node-expr-map-obj",
   "node-expr-map-opt",
@@ -1115,6 +1260,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-obj-buffer",
   "node-expr-obj-enum",
   "node-expr-obj-fn",
+  "node-expr-obj-fn-async",
   "node-expr-obj-map",
   "node-expr-obj-obj",
   "node-expr-obj-opt",
@@ -1127,6 +1273,7 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-ref-array",
   "node-expr-ref-enum",
   "node-expr-ref-fn",
+  "node-expr-ref-fn-async",
   "node-expr-ref-map",
   "node-expr-ref-obj",
   "node-expr-ref-opt",
@@ -1151,6 +1298,7 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-param-default-array",
   "node-fn-decl-param-default-enum",
   "node-fn-decl-param-default-fn",
+  "node-fn-decl-param-default-fn-async",
   "node-fn-decl-param-default-map",
   "node-fn-decl-param-default-obj",
   "node-fn-decl-param-default-opt",
@@ -1158,6 +1306,7 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-param-default-str",
   "node-fn-decl-param-default-union",
   "node-fn-decl-param-fn",
+  "node-fn-decl-param-fn-async",
   "node-fn-decl-nested",
   "node-fn-decl-complex",
   "node-fn-decl-param-mut",
@@ -1166,6 +1315,7 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-param-mut-array",
   "node-fn-decl-param-mut-enum",
   "node-fn-decl-param-mut-fn",
+  "node-fn-decl-param-mut-fn-async",
   "node-fn-decl-param-mut-map",
   "node-fn-decl-param-mut-obj",
   "node-fn-decl-param-mut-opt",
@@ -1180,12 +1330,21 @@ INSTANTIATE_TEST_SUITE_P(NodeFnDecl, CodegenPassTest, testing::Values(
   "node-fn-decl-stack-array",
   "node-fn-decl-stack-enum",
   "node-fn-decl-stack-fn",
+  "node-fn-decl-stack-fn-async",
   "node-fn-decl-stack-map",
   "node-fn-decl-stack-obj",
   "node-fn-decl-stack-opt",
   "node-fn-decl-stack-ref",
   "node-fn-decl-stack-str",
-  "node-fn-decl-stack-union"
+  "node-fn-decl-stack-union",
+  "node-fn-decl-async-empty",
+  "node-fn-decl-async-body",
+  "node-fn-decl-async-params",
+  "node-fn-decl-async-return",
+  "node-fn-decl-async-return-value",
+  "node-fn-decl-async-return-value-with-cleanup",
+  "node-fn-decl-async-stack",
+  "node-fn-decl-async-stack-obj-method"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
@@ -1201,7 +1360,11 @@ INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if-cmp-str",
   "node-if-cmp-union",
   "node-if-type-casts",
-  "node-if-type-casts-elif"
+  "node-if-type-casts-elif",
+  "node-if-async",
+  "node-if-async-with-cleanup",
+  "node-if-async-nested",
+  "node-if-async-nested-with-cleanup"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
@@ -1218,7 +1381,16 @@ INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(
   "node-loop-ref",
   "node-loop-str",
   "node-loop-union",
-  "node-loop-complex"
+  "node-loop-complex",
+  "node-loop-async",
+  "node-loop-async-with-cleanup",
+  "node-loop-async-nested",
+  "node-loop-async-nested-with-cleanup"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeMain, CodegenPassTest, testing::Values(
+  "node-main-sync",
+  "node-main-async"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
@@ -1239,6 +1411,7 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-field-array",
   "node-obj-decl-field-enum",
   "node-obj-decl-field-fn",
+  "node-obj-decl-field-fn-async",
   "node-obj-decl-field-map",
   "node-obj-decl-field-obj",
   "node-obj-decl-field-opt",
@@ -1255,12 +1428,28 @@ INSTANTIATE_TEST_SUITE_P(NodeObjDecl, CodegenPassTest, testing::Values(
   "node-obj-decl-method-body-after",
   "node-obj-decl-method-forward-decl",
   "node-obj-decl-method-forward-decl-with-fn",
-  "node-obj-decl-method-variadic"
+  "node-obj-decl-method-forward-decl-with-fn-async",
+  "node-obj-decl-method-variadic",
+  "node-obj-decl-method-async-empty",
+  "node-obj-decl-method-async-body",
+  "node-obj-decl-method-async-params",
+  "node-obj-decl-method-async-return",
+  "node-obj-decl-method-async-return-value"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeReturn, CodegenPassTest, testing::Values(
   "node-return",
-  "node-return-scope-cleanup"
+  "node-return-scope-cleanup",
+  "node-return-inside-loop",
+  "node-return-inside-loop-top-level",
+  "node-return-inside-loop-with-cleanup",
+  "node-return-async",
+  "node-return-async-with-value",
+  "node-return-async-with-cleanup",
+  "node-return-async-with-cleanup-and-value",
+  "node-return-async-inside-loop",
+  "node-return-async-inside-loop-top-level",
+  "node-return-async-inside-loop-with-cleanup"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenPassTest, testing::Values(
@@ -1273,7 +1462,17 @@ INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenPassTest, testing::Values(
   "node-throw-inside-obj-decl",
   "node-throw-inside-obj-decl-method",
   "node-throw-inside-try",
-  "node-throw-raw"
+  "node-throw-raw",
+  "node-throw-async",
+  "node-throw-async-custom",
+  "node-throw-async-custom-extended",
+  "node-throw-async-inside-fn-decl",
+  "node-throw-async-inside-if",
+  "node-throw-async-inside-loop",
+  "node-throw-async-inside-obj-decl",
+  "node-throw-async-inside-obj-decl-method",
+  "node-throw-async-inside-try",
+  "node-throw-async-raw"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
@@ -1281,6 +1480,7 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
   "node-try-nested",
   "node-try-scoped",
   "node-try-scoped-child",
+  "node-try-scoped-parent",
   "node-try-custom",
   "node-try-multiple",
   "node-try-inside-fn-with-return",
@@ -1290,7 +1490,24 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenPassTest, testing::Values(
   "node-try-inside-loop-deep",
   "node-try-inside-loop-with-break",
   "node-try-inside-loop-with-continue",
-  "node-try-inside-loop-with-return"
+  "node-try-inside-loop-with-return",
+  "node-try-async",
+  "node-try-async-continuous-setjmp",
+  "node-try-async-nested",
+  "node-try-async-scoped",
+  "node-try-async-scoped-child",
+  "node-try-async-scoped-parent",
+  "node-try-async-custom",
+  "node-try-async-multiple",
+  "node-try-async-empty-try",
+  "node-try-async-inside-fn-with-return",
+  "node-try-async-inside-if",
+  "node-try-async-inside-if-with-return",
+  "node-try-async-inside-loop",
+  "node-try-async-inside-loop-deep",
+  "node-try-async-inside-loop-with-break",
+  "node-try-async-inside-loop-with-continue",
+  "node-try-async-inside-loop-with-return"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeTypeDecl, CodegenPassTest, testing::Values(
@@ -1300,6 +1517,7 @@ INSTANTIATE_TEST_SUITE_P(NodeTypeDecl, CodegenPassTest, testing::Values(
   "node-type-decl-array",
   "node-type-decl-enum",
   "node-type-decl-fn",
+  "node-type-decl-fn-async",
   "node-type-decl-map",
   "node-type-decl-obj",
   "node-type-decl-opt",
@@ -1458,7 +1676,14 @@ INSTANTIATE_TEST_SUITE_P(NodeVarDecl, CodegenPassTest, testing::Values(
   "node-var-decl-u64-mut-init",
   "node-var-decl-union-init",
   "node-var-decl-union-const",
-  "node-var-decl-union-mut-init"
+  "node-var-decl-union-mut-init",
+  "node-var-decl-inside-async",
+  "node-var-decl-inside-async-init",
+  "node-var-decl-inside-async-short",
+  "node-var-decl-inside-async-mut",
+  "node-var-decl-inside-async-mut-init",
+  "node-var-decl-inside-async-mut-short",
+  "node-var-decl-inside-async-with-cleanup"
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinArray, CodegenThrowTest, testing::Values(
@@ -1645,7 +1870,17 @@ INSTANTIATE_TEST_SUITE_P(NodeThrow, CodegenThrowTest, testing::Values(
   "throw-node-throw-inside-obj-decl",
   "throw-node-throw-inside-obj-decl-method",
   "throw-node-throw-inside-try",
-  "throw-node-throw-raw"
+  "throw-node-throw-raw",
+  "throw-node-throw-async",
+  "throw-node-throw-async-custom",
+  "throw-node-throw-async-custom-extended",
+  "throw-node-throw-async-inside-fn-decl",
+  "throw-node-throw-async-inside-if",
+  "throw-node-throw-async-inside-loop",
+  "throw-node-throw-async-inside-obj-decl",
+  "throw-node-throw-async-inside-obj-decl-method",
+  "throw-node-throw-async-inside-try",
+  "throw-node-throw-async-raw"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
@@ -1654,6 +1889,7 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
   "throw-node-try-nested2",
   "throw-node-try-scoped",
   "throw-node-try-scoped-child",
+  "throw-node-try-scoped-parent",
   "throw-node-try-custom",
   "throw-node-try-multiple",
   "throw-node-try-multiple2",
@@ -1664,5 +1900,26 @@ INSTANTIATE_TEST_SUITE_P(NodeTry, CodegenThrowTest, testing::Values(
   "throw-node-try-inside-loop-deep",
   "throw-node-try-inside-loop-with-break",
   "throw-node-try-inside-loop-with-continue",
-  "throw-node-try-inside-loop-with-return"
+  "throw-node-try-inside-loop-with-return",
+  "throw-node-try-scoped-fn",
+  "throw-node-try-scoped-obj-method",
+  "throw-node-try-async",
+  "throw-node-try-async-nested",
+  "throw-node-try-async-nested2",
+  "throw-node-try-async-scoped",
+  "throw-node-try-async-scoped-child",
+  "throw-node-try-async-scoped-parent",
+  "throw-node-try-async-custom",
+  "throw-node-try-async-multiple",
+  "throw-node-try-async-multiple2",
+  "throw-node-try-async-inside-fn-with-return",
+  "throw-node-try-async-inside-if",
+  "throw-node-try-async-inside-if-with-return",
+  "throw-node-try-async-inside-loop",
+  "throw-node-try-async-inside-loop-deep",
+  "throw-node-try-async-inside-loop-with-break",
+  "throw-node-try-async-inside-loop-with-continue",
+  "throw-node-try-async-inside-loop-with-return",
+  "throw-node-try-async-scoped-fn",
+  "throw-node-try-async-scoped-obj-method"
 ));

@@ -50,7 +50,7 @@ struct str {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void buffer_free (struct buffer);
@@ -76,11 +76,11 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -115,7 +115,7 @@ int main () {
   buffer_free((struct buffer) str_toBuffer(str_alloc("0")));
   buffer_free((struct buffer) str_toBuffer(str_alloc("test")));
   buffer_free((struct buffer) str_toBuffer(str_alloc("test in test")));
-  buffer_free((struct buffer) str_toBuffer(str_concat_cstr(cstr_concat_str("multiline ", str_alloc(THE_EOL)), " test")));
+  buffer_free((struct buffer) str_toBuffer((str_concat_cstr(cstr_concat_str("multiline ", str_alloc(THE_EOL)), " test"))));
 }
 ======= flags =======
 ======= stdout =======

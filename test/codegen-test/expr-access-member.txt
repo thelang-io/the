@@ -13,7 +13,24 @@ main {
   testCall(.Green)
 }
 ======= code =======
-#include <stddef.h>
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 enum __THE_1_Color_0 {
   __THE_0_ColorSDRed_0,
@@ -21,29 +38,73 @@ enum __THE_1_Color_0 {
   __THE_0_ColorSDBlue_0
 };
 
-struct __THE_1_fn$1000P;
-struct __THE_1_fn$1000;
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
 
-struct __THE_1_fn$1000P {
-  enum __THE_1_Color_0 n0;
-};
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
+
 struct __THE_1_fn$1000 {
-  void (*f) (void *, struct __THE_1_fn$1000P);
+  void (*f) (void *, void *);
   void *x;
   size_t l;
 };
+struct __THE_1_fn$1000P {
+  enum __THE_1_Color_0 n0;
+};
 
-void __THE_1_testCall_0 (void *, struct __THE_1_fn$1000P);
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
-void __THE_1_testCall_0 (void *px, struct __THE_1_fn$1000P p) {
-  const enum __THE_1_Color_0 __THE_0_t_0 = p.n0;
+void error_alloc (err_state_t *, size_t);
+void *xalloc (void *, size_t);
+void __THE_1_testCall_0 (void *, void *);
+
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
+void __THE_1_testCall_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  const enum __THE_1_Color_0 __THE_0_t_0 = p->n0;
+  free(pp);
 }
 
 int main () {
   const struct __THE_1_fn$1000 __THE_0_testCall_0 = (struct __THE_1_fn$1000) {&__THE_1_testCall_0, NULL, 0};
   enum __THE_1_Color_0 __THE_0_test1_0 = __THE_0_ColorSDRed_0;
   __THE_0_test1_0 = __THE_0_ColorSDGreen_0;
-  __THE_0_testCall_0.f(__THE_0_testCall_0.x, (struct __THE_1_fn$1000P) {__THE_0_ColorSDGreen_0});
+  __THE_0_testCall_0.f(__THE_0_testCall_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_ColorSDGreen_0}, sizeof(struct __THE_1_fn$1000P)));
 }
 ======= flags =======
 ======= stdout =======

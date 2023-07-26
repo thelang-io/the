@@ -69,7 +69,8 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-param-mut",
   "stmt-fn-decl-param-mut-obj",
   "stmt-fn-decl-param-mut-fn",
-  "stmt-fn-decl-variadic"
+  "stmt-fn-decl-variadic",
+  "stmt-fn-decl-async"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
@@ -152,6 +153,9 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-assign-op",
   "expr-assign-precedence",
   "expr-assign-associativity",
+  "expr-await",
+  "expr-await-precedence",
+  "expr-await-associativity",
   "expr-binary",
   "expr-binary-str",
   "expr-binary-nested",
@@ -186,6 +190,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
+  "type-fn-async",
   "type-map",
   "type-optional",
   "type-ref",
@@ -225,7 +230,8 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0120-stmt-fn-decl-missing-type-parenthesized-return-type",
   "throw-E0130-stmt-fn-decl-missing-param-init",
   "throw-E0130-stmt-fn-decl-missing-param-init-after-type",
-  "throw-E0153-stmt-fn-decl-missing-arrow"
+  "throw-E0153-stmt-fn-decl-missing-arrow",
+  "throw-E0179-stmt-fn-decl-async-missing-fn-decl"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
@@ -328,7 +334,8 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0164-expr-is-missing-type",
   "throw-E0168-expr-map-missing-name",
   "throw-E0169-expr-map-missing-colon",
-  "throw-E0170-expr-map-missing-initializer"
+  "throw-E0170-expr-map-missing-initializer",
+  "throw-E0181-expr-await-missing-arg"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
@@ -338,5 +345,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
   "throw-E0151-type-array-missing-rbrack",
   "throw-E0163-type-union-missing-subtype",
   "throw-E0171-type-map-illegal-key-type",
-  "throw-E0172-type-map-missing-rbrack"
+  "throw-E0172-type-map-missing-rbrack",
+  "throw-E0180-type-fn-async-missing-type",
+  "throw-E0180-type-fn-async-invalid-type"
 ));

@@ -1,11 +1,11 @@
 name: the/yaml
-version: 0.1.1
+version: 0.2.0
 description: YAML parser
 license: MIT
 main: src/yaml
 
 files:
+  - src/node
+  - src/state
+  - src/token
   - src/yaml
-
-scripts:
-  test: the build && the run build/result

@@ -64,7 +64,7 @@ struct __THE_1_array_str {
   size_t l;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -79,11 +79,11 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
-double str_toFloat (struct str, int, int);
+double str_toFloat (err_state_t *, int, int, struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
-struct str *__THE_1_array_str_at (struct __THE_1_array_str, int32_t, int, int);
+struct str *__THE_1_array_str_at (err_state_t *, int, int, struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
@@ -93,11 +93,11 @@ void *alloc (size_t n1) {
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -109,34 +109,34 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void error_stack_pop (err_state_t *fn_err_state) {
+  fn_err_state->stack_idx--;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  fn_err_state->stack[fn_err_state->stack_idx].file = file;
+  fn_err_state->stack[fn_err_state->stack_idx].name = name;
+  error_stack_pos(fn_err_state, line, col);
+  fn_err_state->stack_idx++;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -161,33 +161,113 @@ void error_stack_str (err_state_t *state) {
   }
 }
 void print (FILE *stream, const char *fmt, ...) {
+  char *d = alloc(1024);
+  size_t cap = 1024;
+  size_t len = 0;
+  size_t y;
   va_list args;
   va_start(args, fmt);
-  char buf[512];
-  struct str s;
   while (*fmt) {
     switch (*fmt++) {
-      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
-      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
-      case 'c': fputc(va_arg(args, int), stream); break;
+      case 't': {
+        int a = va_arg(args, int);
+        y = a == 0 ? 5 : 4;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a == 0 ? "false" : "true", y);
+        break;
+      }
+      case 'b': {
+        unsigned int a = va_arg(args, unsigned int);
+        y = snprintf(NULL, 0, "%u", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%u", a);
+        break;
+      }
+      case 'c': {
+        char a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%c", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%c", a);
+        break;
+      }
       case 'e':
       case 'f':
-      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'g': {
+        double a = va_arg(args, double);
+        y = snprintf(NULL, 0, "%f", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%f", a);
+        break;
+      }
       case 'h':
       case 'j':
       case 'v':
-      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'w': {
+        int a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%d", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%d", a);
+        break;
+      }
       case 'i':
-      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
-      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
-      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
-      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
-      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
-      case 'z': fputs(va_arg(args, char *), stream); break;
+      case 'k': {
+        int32_t a = va_arg(args, int32_t);
+        y = snprintf(NULL, 0, "%" PRId32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId32, a);
+        break;
+      }
+      case 'l': {
+        int64_t a = va_arg(args, int64_t);
+        y = snprintf(NULL, 0, "%" PRId64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId64, a);
+        break;
+      }
+      case 'p': {
+        void *a = va_arg(args, void *);
+        y = snprintf(NULL, 0, "%p", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%p", a);
+        break;
+      }
+      case 's': {
+        struct str a = va_arg(args, struct str);
+        y = a.l;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a.d, y);
+        free(a.d);
+        break;
+      }
+      case 'u': {
+        uint32_t a = va_arg(args, uint32_t);
+        y = snprintf(NULL, 0, "%" PRIu32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu32, a);
+        break;
+      }
+      case 'y': {
+        uint64_t a = va_arg(args, uint64_t);
+        y = snprintf(NULL, 0, "%" PRIu64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu64, a);
+        break;
+      }
+      case 'z': {
+        char *a = va_arg(args, char *);
+        y = strlen(a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a, y);
+        break;
+      }
     }
+    len += y;
   }
   va_end(args);
+  d[len] = '\0';
+  fputs(d, stream);
+  fflush(stream);
+  free(d);
 }
 void *re_alloc (void *n1, size_t n2) {
   void *r = realloc(n1, n2);
@@ -214,7 +294,7 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-double str_toFloat (struct str self, int line, int col) {
+double str_toFloat (err_state_t *fn_err_state, int line, int col, struct str self) {
   char *c = str_cstr(self);
   char *e = NULL;
   errno = 0;
@@ -226,8 +306,8 @@ double str_toFloat (struct str self, int line, int col) {
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   } else if (errno != 0 || e == c || *e != 0) {
     const char *fmt = "value `%s` has invalid syntax";
     size_t z = snprintf(NULL, 0, fmt, c);
@@ -235,8 +315,8 @@ double str_toFloat (struct str self, int line, int col) {
     sprintf(d, fmt, c);
     free(c);
     free(self.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   free(c);
   free(self.d);
@@ -262,14 +342,14 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_str) {d, x};
 }
-struct str *__THE_1_array_str_at (struct __THE_1_array_str n, int32_t i, int line, int col) {
+struct str *__THE_1_array_str_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_str n, int32_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     const char *fmt = "index %" PRId32 " out of array bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
     char *d = alloc(z + 1);
     sprintf(d, fmt, i);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
 }
@@ -291,19 +371,16 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
   const struct __THE_1_array_str __THE_0_arr_0 = __THE_1_array_str_alloc(3, str_alloc("0"), str_alloc("1"), str_alloc("1.79769E+308"));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
-    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L3;
-    print(stdout, "fz", str_toFloat(str_copy(*__THE_1_array_str_at(__THE_0_arr_0, __THE_0_i_0, 5, 11)), 5, 11), THE_EOL);
-L3:
-    err_state.buf_idx--;
-    if (err_state.id != -1) goto L2;
-  }
+    if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L2;
+    print(stdout, "fz", str_toFloat(&err_state, 5, 11, str_copy(*__THE_1_array_str_at(&err_state, 5, 11, __THE_0_arr_0, __THE_0_i_0))), THE_EOL);
 L2:
-  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
+    err_state.buf_idx--;
+    if (err_state.id != -1) goto L1;
+  }
 L1:
-  err_state.buf_idx--;
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_arr_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

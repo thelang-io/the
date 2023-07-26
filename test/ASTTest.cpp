@@ -61,6 +61,8 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-fn-decl-param-mut-obj",
   "node-fn-decl-param-variadic",
   "node-fn-decl-stack",
+  "node-fn-decl-async",
+  "node-fn-decl-throw",
   "node-if",
   "node-if-type-casts",
   "node-if-type-casts-elif",
@@ -75,6 +77,8 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-obj-decl-method",
   "node-obj-decl-method-body",
   "node-obj-decl-method-variadic",
+  "node-obj-decl-method-async",
+  "node-obj-decl-method-throw",
   "node-return",
   "node-throw",
   "node-try",
@@ -92,6 +96,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-array",
   "expr-array-root",
   "expr-assign",
+  "expr-await",
   "expr-binary",
   "expr-binary-type-casts",
   "expr-call",
@@ -118,6 +123,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ASTPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
+  "type-fn-async",
   "type-map",
   "type-opt",
   "type-ref",
@@ -182,5 +188,6 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1028-node-throw-partial-type",
   "throw-E1029-node-try-handler-invalid-order-type",
   "throw-E1029-node-try-handler-invalid-type",
-  "throw-E1029-node-try-handler-partial-type"
+  "throw-E1029-node-try-handler-partial-type",
+  "throw-E1030-expr-await-non-async"
 ));

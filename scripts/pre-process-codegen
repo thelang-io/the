@@ -89,7 +89,7 @@ const ENTITIES_TRANSFORMER := {
 }
 
 const SRC_DIR := fs_realpathSync(process_cwd() + path_SEP + "src")
-const CODEGEN_DIR := SRC_DIR + path_SEP + "codegen"
+const CODEGEN_DIR := SRC_DIR + path_SEP + "codegen-api"
 
 fn filterStrEmpty (it: str) bool {
   return !it.empty
@@ -501,18 +501,8 @@ main {
   output += "#ifndef SRC_CODEGEN_API_HPP" + os_EOL
   output += "#define SRC_CODEGEN_API_HPP" + os_EOL + os_EOL
   output += "#include <map>" + os_EOL
-  output += "#include <set>" + os_EOL
-  output += "#include <string>" + os_EOL
+  output += "#include \"CodegenAPIItem.hpp\"" + os_EOL
   output += "#include \"config.hpp\"" + os_EOL + os_EOL
-  output += "struct CodegenAPIItem {" + os_EOL
-  output += "  bool enabled;" + os_EOL
-  output += "  std::string name;" + os_EOL
-  output += "  std::string decl;" + os_EOL
-  output += "  std::string def;" + os_EOL
-  output += "  std::set<std::string> dependencies;" + os_EOL
-  output += "  std::set<std::string> entityDependencies;" + os_EOL
-  output += "  bool throws;" + os_EOL
-  output += "};" + os_EOL + os_EOL
   output += "extern inline const std::map<std::string, CodegenAPIItem> codegenAPI = {" + os_EOL
 
   loop i := 0; i < keysLen; i++ {

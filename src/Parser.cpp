@@ -118,6 +118,18 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     return this->_wrapStmt(false, ParserStmtEmpty{}, tok0.start);
   }
 
+  if (tok0.type == TK_KW_ASYNC) {
+    auto stmt = this->next(false);
+
+    if (!std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
+      throw Error(this->reader, stmt.start, stmt.end, E0179);
+    }
+
+    auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
+    stmtFnDecl.async = true;
+    return this->_wrapStmt(allowSemi, stmtFnDecl, tok0.start);
+  }
+
   if (tok0.type == TK_KW_CONST) {
     auto [loc1, tok1] = this->lexer->next();
 
@@ -306,7 +318,7 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
       this->lexer->seek(loc7);
     }
 
-    return this->_wrapStmt(allowSemi, ParserStmtFnDecl{tok1, fnDeclParams, fnDeclReturnType, fnDeclBody}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtFnDecl{tok1, fnDeclParams, fnDeclReturnType, fnDeclBody, false}, tok0.start);
   }
 
   if (tok0.type == TK_KW_IF || tok0.type == TK_KW_ELIF) {
@@ -610,6 +622,19 @@ ParserBlock Parser::_block (bool keepComments) {
 std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
   auto [loc1, tok1] = this->lexer->next();
 
+  if (tok1.type == TK_KW_AWAIT) {
+    auto exprAwaitArg = this->_stmtExpr(false);
+
+    if (exprAwaitArg == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0181);
+    }
+
+    auto exprAwait = ParserExprAwait{*exprAwaitArg};
+    auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprAwait), false, tok1.start, this->lexer->loc};
+
+    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
+  }
+
   if (
     tok1.type == TK_KW_FALSE ||
     tok1.type == TK_KW_NIL ||
@@ -869,11 +894,23 @@ std::optional<ParserType> Parser::_type () {
       throw Error(this->reader, this->lexer->loc, E0120);
     }
 
-    auto typeFn = ParserTypeFn{fnParams, *fnReturnType};
+    auto typeFn = ParserTypeFn{fnParams, *fnReturnType, false};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_ID) {
     auto typeId = ParserTypeId{tok1};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc});
+  } else if (tok1.type == TK_KW_ASYNC) {
+    auto type = this->_type();
+
+    if (type == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0180);
+    } else if (!std::holds_alternative<ParserTypeFn>(*type->body)) {
+      throw Error(this->reader, type->start, type->end, E0180);
+    }
+
+    auto typeFn = std::get<ParserTypeFn>(*type->body);
+    typeFn.async = true;
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_KW_REF) {
     auto type = this->_type();
 
@@ -909,6 +946,17 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
       auto newExpr = std::make_shared<ParserExpr>(newExprAssign);
 
       return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprAssign.right.end}, shouldWrap);
+    }
+  } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body) && !stmtExpr.parenthesized) {
+    auto exprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
+    auto tkAwait = Token{TK_KW_AWAIT};
+
+    if (tkAwait.precedence() < precedence) {
+      auto [newStmtExpr, shouldWrap] = this->_wrapExpr(exprAwait.arg, loc, tok, precedence, wrap);
+      auto newExprAwait = ParserExprAwait{newStmtExpr};
+      auto newExpr = std::make_shared<ParserExpr>(newExprAwait);
+
+      return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprAwait.arg.end}, shouldWrap);
     }
   } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprBinary = std::get<ParserExprBinary>(*stmtExpr.body);

@@ -81,6 +81,7 @@ enum ASTExprUnaryOp {
 struct ASTExprAccess;
 struct ASTExprArray;
 struct ASTExprAssign;
+struct ASTExprAwait;
 struct ASTExprBinary;
 struct ASTExprCall;
 struct ASTExprCond;
@@ -95,6 +96,7 @@ using ASTExpr = std::variant<
   ASTExprAccess,
   ASTExprArray,
   ASTExprAssign,
+  ASTExprAwait,
   ASTExprBinary,
   ASTExprCall,
   ASTExprCond,
@@ -112,6 +114,7 @@ struct ASTNodeExpr {
   bool parenthesized = false;
   ReaderLocation start;
   ReaderLocation end;
+  ASTNodeExpr *parent = nullptr;
 
   bool isLit () const;
   std::string litBody () const;
@@ -139,6 +142,11 @@ struct ASTExprAssign {
   ASTNodeExpr left;
   ASTExprAssignOp op;
   ASTNodeExpr right;
+};
+
+struct ASTExprAwait {
+  ASTNodeExpr arg;
+  std::size_t id;
 };
 
 struct ASTExprBinary {

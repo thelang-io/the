@@ -64,6 +64,21 @@ class TypeTest : public testing::Test {
   }
 };
 
+TEST_F(TypeTest, TypeCallInfoEmpty) {
+  EXPECT_TRUE(TypeCallInfo{}.empty());
+  EXPECT_FALSE(TypeCallInfo{"name"}.empty());
+  auto typeCallInfo2 = TypeCallInfo{"", true};
+  EXPECT_FALSE(typeCallInfo2.empty());
+  auto typeCallInfo3 = TypeCallInfo{"", false, "self_0"};
+  EXPECT_FALSE(typeCallInfo3.empty());
+  auto typeCallInfo4 = TypeCallInfo{"", false, "", this->obj_};
+  EXPECT_FALSE(typeCallInfo4.empty());
+  auto typeCallInfo5 = TypeCallInfo{"", false, "", nullptr, true};
+  EXPECT_FALSE(typeCallInfo5.empty());
+  auto typeCallInfo6 = TypeCallInfo{"", false, "", nullptr, false, true};
+  EXPECT_FALSE(typeCallInfo6.empty());
+}
+
 TEST_F(TypeTest, LargestNumbers) {
   EXPECT_TRUE(Type::largest(this->tm_.get("f64"), this->tm_.get("f64"))->isF64());
   EXPECT_TRUE(Type::largest(this->tm_.get("f64"), this->tm_.get("float"))->isF64());

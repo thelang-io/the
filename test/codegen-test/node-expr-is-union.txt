@@ -1,0 +1,342 @@
+======= stdin =======
+main {
+  testUnion: char | str = 'a'
+
+  a: any = testUnion
+  if a is (char | str) { "(char | str) " + a.str(); }
+
+  b: any = 3.14
+  if b is (char | str) { "(char | str) " + b.str(); }
+
+  c: (char | str) | float = testUnion
+  if c is (char | str) { "(char | str) " + c.str(); }
+  else { "float " + c.str(); }
+
+  d: (char | str) | float = 3.14
+  if d is (char | str) { "(char | str) " + d.str(); }
+  else { "float " + d.str(); }
+
+  mut e: any = testUnion
+  if (e = testUnion) is (char | str) { "(char | str) " + e.str(); }
+
+  mut f: any = 3.14
+  if (f = 3.14) is (char | str) { "(char | str) " + f.str(); }
+
+  mut g: (char | str) | float = testUnion
+  if (g = testUnion) is (char | str) { "(char | str) " + g.str(); }
+  else { "float " + g.str(); }
+
+  mut h: (char | str) | float = 3.14
+  if (h = 3.14) is (char | str) { "(char | str) " + h.str(); }
+  else { "float " + h.str(); }
+
+  (a is (char | str)) ? "(char | str) " + a.str() : "any";
+  (b is (char | str)) ? "(char | str) " + b.str() : "any";
+  (c is (char | str)) ? "(char | str) " + c.str() : "float " + c.str();
+  (d is (char | str)) ? "(char | str) " + d.str() : "float " + d.str();
+  ((e = testUnion) is (char | str)) ? "(char | str) " + e.str() : "any";
+  ((f = 3.14) is (char | str)) ? "(char | str) " + f.str() : "any";
+  ((g = testUnion) is (char | str)) ? "(char | str) " + g.str() : "float " + g.str();
+  ((h = 3.14) is (char | str)) ? "(char | str) " + h.str() : "float " + h.str();
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_char 2
+#define TYPE_str 3
+#define TYPE_union_charUSstrUE 4
+#define TYPE_float 5
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct __THE_1_union_charUSstrUE;
+struct __THE_1_any_union_charUSstrUE;
+struct __THE_1_any_float;
+struct __THE_1_union_union_charUSstrUEUSfloatUE;
+
+struct __THE_1_union_charUSstrUE {
+  int t;
+  union {
+    char v2;
+    struct str v3;
+  };
+};
+struct __THE_1_any_union_charUSstrUE {
+  struct __THE_1_union_charUSstrUE d;
+};
+struct __THE_1_any_float {
+  double d;
+};
+struct __THE_1_union_union_charUSstrUEUSfloatUE {
+  int t;
+  union {
+    struct __THE_1_union_charUSstrUE v4;
+    double v5;
+  };
+};
+
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
+
+void *alloc (size_t);
+void any_free (struct any);
+struct any any_realloc (struct any, struct any);
+struct str char_str (char);
+struct str cstr_concat_str (const char *, struct str);
+void error_alloc (err_state_t *, size_t);
+struct str float_str (double);
+struct str str_alloc (const char *);
+struct str str_copy (const struct str);
+void str_free (struct str);
+struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_alloc (int, ...);
+struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_copy (const struct __THE_1_union_charUSstrUE);
+void __THE_1_union_charUSstrUE_free (struct __THE_1_union_charUSstrUE);
+struct str __THE_1_union_charUSstrUE_str (struct __THE_1_union_charUSstrUE);
+struct any __THE_1_any_union_charUSstrUE_alloc (struct __THE_1_union_charUSstrUE);
+struct any __THE_1_any_union_charUSstrUE_copy (const struct any);
+void __THE_1_any_union_charUSstrUE_free (struct any);
+struct any __THE_1_any_float_alloc (double);
+struct any __THE_1_any_float_copy (const struct any);
+void __THE_1_any_float_free (struct any);
+struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEUSfloatUE_alloc (int, ...);
+void __THE_1_union_union_charUSstrUEUSfloatUE_free (struct __THE_1_union_union_charUSstrUEUSfloatUE);
+struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEUSfloatUE_realloc (struct __THE_1_union_union_charUSstrUEUSfloatUE, struct __THE_1_union_union_charUSstrUEUSfloatUE);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+struct any any_realloc (struct any n1, struct any n2) {
+  if (n1.d != NULL) n1._free(n1);
+  return n2;
+}
+struct str char_str (char c) {
+  char buf[2] = {c, '\0'};
+  return str_alloc(buf);
+}
+struct str cstr_concat_str (const char *r, struct str s) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l - s.l);
+  memcpy(&d[l - s.l], s.d, s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+struct str float_str (double f) {
+  char buf[512];
+  sprintf(buf, "%f", f);
+  return str_alloc(buf);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_alloc (int t, ...) {
+  struct __THE_1_union_charUSstrUE r = {t};
+  va_list args;
+  va_start(args, t);
+  if (t == TYPE_char) r.v2 = va_arg(args, int);
+  if (t == TYPE_str) r.v3 = va_arg(args, struct str);
+  va_end(args);
+  return r;
+}
+struct __THE_1_union_charUSstrUE __THE_1_union_charUSstrUE_copy (const struct __THE_1_union_charUSstrUE n) {
+  struct __THE_1_union_charUSstrUE r = {n.t};
+  if (n.t == TYPE_char) r.v2 = n.v2;
+  if (n.t == TYPE_str) r.v3 = str_copy(n.v3);
+  return r;
+}
+void __THE_1_union_charUSstrUE_free (struct __THE_1_union_charUSstrUE n) {
+  if (n.t == TYPE_str) str_free((struct str) n.v3);
+}
+struct str __THE_1_union_charUSstrUE_str (struct __THE_1_union_charUSstrUE n) {
+  struct str r;
+  if (n.t == TYPE_char) r = char_str(n.v2);
+  if (n.t == TYPE_str) r = str_copy(n.v3);
+  __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) n);
+  return r;
+}
+struct any __THE_1_any_union_charUSstrUE_alloc (struct __THE_1_union_charUSstrUE d) {
+  size_t l = sizeof(struct __THE_1_any_union_charUSstrUE);
+  struct __THE_1_any_union_charUSstrUE *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_union_charUSstrUE, r, l, &__THE_1_any_union_charUSstrUE_copy, &__THE_1_any_union_charUSstrUE_free};
+}
+struct any __THE_1_any_union_charUSstrUE_copy (const struct any n) {
+  struct __THE_1_any_union_charUSstrUE *o = n.d;
+  struct __THE_1_any_union_charUSstrUE *r = alloc(n.l);
+  r->d = __THE_1_union_charUSstrUE_copy(o->d);
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_union_charUSstrUE_free (struct any _n) {
+  struct __THE_1_any_union_charUSstrUE *n = _n.d;
+  __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) n->d);
+  free(n);
+}
+struct any __THE_1_any_float_alloc (double d) {
+  size_t l = sizeof(struct __THE_1_any_float);
+  struct __THE_1_any_float *r = alloc(l);
+  r->d = d;
+  return (struct any) {TYPE_float, r, l, &__THE_1_any_float_copy, &__THE_1_any_float_free};
+}
+struct any __THE_1_any_float_copy (const struct any n) {
+  struct __THE_1_any_float *o = n.d;
+  struct __THE_1_any_float *r = alloc(n.l);
+  r->d = o->d;
+  return (struct any) {n.t, r, n.l, n._copy, n._free};
+}
+void __THE_1_any_float_free (struct any _n) {
+  struct __THE_1_any_float *n = _n.d;
+  free(n);
+}
+struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEUSfloatUE_alloc (int t, ...) {
+  struct __THE_1_union_union_charUSstrUEUSfloatUE r = {t};
+  va_list args;
+  va_start(args, t);
+  if (t == TYPE_union_charUSstrUE) r.v4 = va_arg(args, struct __THE_1_union_charUSstrUE);
+  if (t == TYPE_float) r.v5 = va_arg(args, double);
+  va_end(args);
+  return r;
+}
+void __THE_1_union_union_charUSstrUEUSfloatUE_free (struct __THE_1_union_union_charUSstrUEUSfloatUE n) {
+  if (n.t == TYPE_union_charUSstrUE) __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) n.v4);
+}
+struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_1_union_union_charUSstrUEUSfloatUE_realloc (struct __THE_1_union_union_charUSstrUEUSfloatUE n1, struct __THE_1_union_union_charUSstrUEUSfloatUE n2) {
+  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) n1);
+  return n2;
+}
+
+int main () {
+  const struct __THE_1_union_charUSstrUE __THE_0_testUnion_0 = __THE_1_union_charUSstrUE_alloc(TYPE_char, 'a');
+  const struct any __THE_0_a_0 = __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
+  if (__THE_0_a_0.t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d))));
+  }
+  const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
+  if (__THE_0_b_0.t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d))));
+  }
+  const struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_c_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
+  if (__THE_0_c_0.t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v4))));
+  } else {
+    str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_c_0.v5)));
+  }
+  const struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_d_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14);
+  if (__THE_0_d_0.t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v4))));
+  } else {
+    str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_d_0.v5)));
+  }
+  struct any __THE_0_e_0 = __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
+  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d))));
+  }
+  struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
+  if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d))));
+  }
+  struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0));
+  if ((__THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v4))));
+  } else {
+    str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_g_0.v5)));
+  }
+  struct __THE_1_union_union_charUSstrUEUSfloatUE __THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14);
+  if ((__THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_union_charUSstrUE) {
+    str_free((struct str) cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v4))));
+  } else {
+    str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_h_0.v5)));
+  }
+  str_free((struct str) ((__THE_0_a_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_a_0.d)->d))) : str_alloc("any")));
+  str_free((struct str) ((__THE_0_b_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_b_0.d)->d))) : str_alloc("any")));
+  str_free((struct str) ((__THE_0_c_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_c_0.v4))) : cstr_concat_str("float ", float_str(__THE_0_c_0.v5))));
+  str_free((struct str) ((__THE_0_d_0.t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_d_0.v4))) : cstr_concat_str("float ", float_str(__THE_0_d_0.v5))));
+  str_free((struct str) (((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_union_charUSstrUE_alloc(__THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_e_0.d)->d))) : str_alloc("any")));
+  str_free((struct str) (((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(((struct __THE_1_any_union_charUSstrUE *) __THE_0_f_0.d)->d))) : str_alloc("any")));
+  str_free((struct str) (((__THE_0_g_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_union_charUSstrUE, __THE_1_union_charUSstrUE_copy(__THE_0_testUnion_0)))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_g_0.v4))) : cstr_concat_str("float ", float_str(__THE_0_g_0.v5))));
+  str_free((struct str) (((__THE_0_h_0 = __THE_1_union_union_charUSstrUEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_union_charUSstrUEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_union_charUSstrUE) ? cstr_concat_str("(char | str) ", __THE_1_union_charUSstrUE_str(__THE_1_union_charUSstrUE_copy(__THE_0_h_0.v4))) : cstr_concat_str("float ", float_str(__THE_0_h_0.v5))));
+  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_h_0);
+  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_g_0);
+  any_free((struct any) __THE_0_f_0);
+  any_free((struct any) __THE_0_e_0);
+  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_d_0);
+  __THE_1_union_union_charUSstrUEUSfloatUE_free((struct __THE_1_union_union_charUSstrUEUSfloatUE) __THE_0_c_0);
+  any_free((struct any) __THE_0_b_0);
+  any_free((struct any) __THE_0_a_0);
+  __THE_1_union_charUSstrUE_free((struct __THE_1_union_charUSstrUE) __THE_0_testUnion_0);
+}
+======= flags =======
+======= stdout =======

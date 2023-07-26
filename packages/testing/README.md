@@ -1,2 +1,2 @@
 # the/testing
-The Programming Language test framework
+The programming language test framework

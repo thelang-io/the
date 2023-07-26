@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include "codegen-ast/CodegenAST.hpp"
 
 enum CodegenCleanUpType {
   CODEGEN_CLEANUP_ROOT,
@@ -29,8 +30,9 @@ enum CodegenCleanUpType {
 
 struct CodegenCleanUpItem {
   std::string label;
-  std::string content;
+  std::vector<std::shared_ptr<CodegenASTStmt>> content = {};
   bool labelUsed = false;
+  std::shared_ptr<size_t> asyncCounter = std::make_shared<std::size_t>(0);
 };
 
 class CodegenCleanUp {
@@ -39,23 +41,28 @@ class CodegenCleanUp {
   CodegenCleanUp *parent = nullptr;
   std::size_t labelIdx = 0;
   std::size_t breakVarIdx = 0;
+  std::size_t continueVarIdx = 0;
+  bool async = false;
   bool breakVarUsed = false;
-  bool jumpUsed = false;
+  bool continueVarUsed = false;
   bool returnVarUsed = false;
   bool valueVarUsed = false;
 
   CodegenCleanUp () = default;
-  explicit CodegenCleanUp (CodegenCleanUpType, CodegenCleanUp *);
+  explicit CodegenCleanUp (CodegenCleanUpType, CodegenCleanUp *, bool = false);
 
-  void add (const std::string &);
+  void add (const std::shared_ptr<CodegenASTStmt> & = CodegenASTStmtNull::create());
   std::string currentBreakVar ();
+  std::string currentContinueVar ();
   std::string currentLabel ();
+  std::shared_ptr<std::size_t> currentLabelAsync ();
   std::string currentReturnVar ();
   std::string currentValueVar ();
   bool empty () const;
-  std::string gen (std::size_t) const;
+  void gen (std::shared_ptr<CodegenASTStmt> *) const;
+  void genAsync (std::shared_ptr<CodegenASTStmt> *, std::size_t &) const;
   bool hasCleanUp (CodegenCleanUpType) const;
-  bool isClosestJump () const;
+  void merge (const std::shared_ptr<CodegenASTStmt> &);
 
  private:
   std::vector<CodegenCleanUpItem> _data;

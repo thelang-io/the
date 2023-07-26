@@ -1,0 +1,900 @@
+======= stdin =======
+async fn test () {}
+main {
+  mut i := 0
+  mut j := 0
+  mut k := 0
+  loop i = 0; i < 3; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    i *= 2
+    await test()
+    c := "c"
+  }
+  loop i := 0; i < 10; i++ {
+    a := "a"
+    j += i
+    await test()
+    b := "b"
+    if j > 10 {
+      c := "c"
+      await test()
+      d := "d"
+      break
+    }
+  }
+  loop i := 0; i < 10; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    if (j / 2) * 2 != j {
+      c := "c"
+      await test()
+      d := "d"
+      continue
+    }
+    e := "e"
+    await test()
+    f := "f"
+    j += i
+  }
+  loop i := 0; i < 10; {
+    a := "a"
+    await test()
+    i++
+    b := "b"
+    if i % 2 {
+      c := "c"
+      await test()
+      d := "d"
+      continue
+    }
+    e := "e"
+    await test()
+    f := "f"
+    j += i
+  }
+  loop i := 0; i < 3; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    j++
+    await test()
+    c := "c"
+  }
+  loop i := 100; i > 0; i-- {
+    a := "a"
+    await test()
+    b := "b"
+    i := 0
+    j := j * 2 + i
+    await test()
+    c := "c"
+  }
+  loop i = 0; i < 10; i++ {
+    a := "a"
+    k := i
+    await test()
+    b := "b"
+    loop i := k; i < 10; i++ {
+      c := "c"
+      await test()
+      d := "d"
+      j++
+      await test()
+      e := "e"
+    }
+    f := "f"
+  }
+  loop i := 0; i < 10; i++ {
+    a := "a"
+    await test()
+    b := "b"
+    loop j := 0; j < 10; j++ {
+      c := "c"
+      await test()
+      d := "d"
+      if (i / 2) * 2 == i {
+        e := "e"
+        await test()
+        f := "f"
+        break
+      }
+      g := "g"
+      await test()
+      k += i
+      h := "h"
+    }
+    p := "p"
+  }
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <pthread.h>
+#endif
+
+struct threadpool_cond;
+struct threadpool_mutex;
+struct threadpool;
+struct threadpool_job;
+struct threadpool_thread;
+
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
+struct str {
+  char *d;
+  size_t l;
+};
+typedef struct threadpool_cond {
+  #ifdef THE_OS_WINDOWS
+    CONDITION_VARIABLE v;
+  #else
+    pthread_cond_t v;
+  #endif
+} threadpool_cond_t;
+typedef struct threadpool_mutex {
+  #ifdef THE_OS_WINDOWS
+    CRITICAL_SECTION v;
+  #else
+    pthread_mutex_t v;
+  #endif
+} threadpool_mutex_t;
+typedef struct threadpool {
+  bool active;
+  struct threadpool_cond cond1;
+  struct threadpool_cond cond2;
+  struct threadpool_job *jobs;
+  struct threadpool_job *jobs_tail;
+  struct threadpool_mutex lock1;
+  struct threadpool_mutex lock2;
+  struct threadpool_mutex lock3;
+  struct threadpool_thread *threads;
+  int working_threads;
+  int alive_threads;
+} threadpool_t;
+typedef void (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);
+typedef struct threadpool_job {
+  struct threadpool_job *parent;
+  threadpool_func_t func;
+  void *ctx;
+  void *params;
+  void *ret;
+  int step;
+  unsigned char init;
+  struct threadpool_job *next;
+} threadpool_job_t;
+typedef struct threadpool_thread {
+  #ifdef THE_OS_WINDOWS
+    HANDLE id;
+  #else
+    pthread_t id;
+  #endif
+  struct threadpool *tp;
+  struct threadpool_thread *next;
+} threadpool_thread_t;
+
+struct __THE_1_fn$1000;
+struct __THE_1_async_mainX;
+
+struct __THE_1_fn$1000 {
+  void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+  void *x;
+  size_t l;
+};
+struct __THE_1_async_mainX {
+  const struct __THE_1_fn$1000 *__THE_0_test_0;
+  int32_t __THE_0_i_0;
+  int32_t __THE_0_j_0;
+  int32_t __THE_0_k_0;
+  struct str __THE_0_a_0;
+  struct str __THE_0_b_0;
+  struct str __THE_0_c_0;
+  int32_t __THE_0_i_1;
+  struct str __THE_0_d_0;
+  struct str __THE_0_e_0;
+  struct str __THE_0_f_0;
+  int32_t __THE_0_i_2;
+  int32_t __THE_0_j_1;
+  int32_t __THE_0_k_1;
+  struct str __THE_0_g_0;
+  struct str __THE_0_h_0;
+  struct str __THE_0_p_0;
+  unsigned char b1;
+  unsigned char b2;
+  unsigned char c1;
+};
+
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
+
+void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+void threadpool_add (threadpool_t *, threadpool_func_t, void *, void *, void *, threadpool_job_t *);
+void threadpool_cond_deinit (threadpool_cond_t *);
+void threadpool_cond_init (threadpool_cond_t *);
+void threadpool_cond_signal (threadpool_cond_t *);
+void threadpool_cond_wait (threadpool_cond_t *, threadpool_mutex_t *);
+void threadpool_deinit (threadpool_t *);
+threadpool_job_t *threadpool_get (threadpool_t *);
+threadpool_t *threadpool_init (int);
+void threadpool_insert (threadpool_t *, threadpool_job_t *);
+void threadpool_job_deinit (threadpool_job_t *);
+threadpool_job_t *threadpool_job_step (threadpool_job_t *, int);
+void threadpool_mutex_deinit (threadpool_mutex_t *);
+void threadpool_mutex_init (threadpool_mutex_t *);
+void threadpool_mutex_lock (threadpool_mutex_t *);
+void threadpool_mutex_unlock (threadpool_mutex_t *);
+void threadpool_thread_deinit (threadpool_thread_t *);
+threadpool_thread_t *threadpool_thread_init (threadpool_t *, threadpool_thread_t *);
+void threadpool_wait (threadpool_t *);
+void *threadpool_worker (void *);
+void *xalloc (void *, size_t);
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *, struct __THE_1_async_mainX);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+void threadpool_add (threadpool_t *self, threadpool_func_t func, void *ctx, void *params, void *ret, threadpool_job_t *parent) {
+  threadpool_job_t *job = alloc(sizeof(threadpool_job_t));
+  job->parent = parent;
+  job->func = func;
+  job->ctx = ctx;
+  job->params = params;
+  job->ret = ret;
+  job->step = 0;
+  job->init = 0;
+  job->next = NULL;
+  threadpool_insert(self, job);
+}
+void threadpool_cond_deinit (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    (void) &self;
+  #else
+    pthread_cond_destroy(&self->v);
+  #endif
+}
+void threadpool_cond_init (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    InitializeConditionVariable(&self->v);
+  #else
+    pthread_cond_init(&self->v, NULL);
+  #endif
+}
+void threadpool_cond_signal (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    WakeConditionVariable(&self->v);
+  #else
+    pthread_cond_signal(&self->v);
+  #endif
+}
+void threadpool_cond_wait (threadpool_cond_t *self, threadpool_mutex_t *mutex) {
+  #ifdef THE_OS_WINDOWS
+    SleepConditionVariableCS(&self->v, &mutex->v, INFINITE);
+  #else
+    pthread_cond_wait(&self->v, &mutex->v);
+  #endif
+}
+void threadpool_deinit (threadpool_t *self) {
+  self->active = false;
+  threadpool_mutex_lock(&self->lock1);
+  while (self->alive_threads != 0) {
+    threadpool_mutex_lock(&self->lock3);
+    threadpool_cond_signal(&self->cond2);
+    threadpool_mutex_unlock(&self->lock3);
+    threadpool_cond_wait(&self->cond1, &self->lock1);
+  }
+  threadpool_mutex_unlock(&self->lock1);
+  while (self->jobs != NULL) {
+    threadpool_job_t *next = self->jobs->next;
+    threadpool_job_deinit(self->jobs);
+    self->jobs = next;
+  }
+  while (self->threads != NULL) {
+    threadpool_thread_t *next = self->threads->next;
+    threadpool_thread_deinit(self->threads);
+    self->threads = next;
+  }
+  threadpool_cond_deinit(&self->cond1);
+  threadpool_cond_deinit(&self->cond2);
+  threadpool_mutex_deinit(&self->lock1);
+  threadpool_mutex_deinit(&self->lock2);
+  threadpool_mutex_deinit(&self->lock3);
+  free(self);
+}
+threadpool_job_t *threadpool_get (threadpool_t *self) {
+  threadpool_mutex_lock(&self->lock2);
+  threadpool_job_t *job = self->jobs;
+  if (job != NULL) {
+    self->jobs = self->jobs->next;
+    job->next = NULL;
+    if (self->jobs == NULL) {
+      self->jobs_tail = NULL;
+    } else {
+      threadpool_mutex_lock(&self->lock3);
+      threadpool_cond_signal(&self->cond2);
+      threadpool_mutex_unlock(&self->lock3);
+    }
+  }
+  threadpool_mutex_unlock(&self->lock2);
+  return job;
+}
+threadpool_t *threadpool_init (int count) {
+  threadpool_t *self = alloc(sizeof(threadpool_t));
+  self->active = true;
+  self->jobs = NULL;
+  self->jobs_tail = NULL;
+  self->working_threads = 0;
+  self->alive_threads = 0;
+  threadpool_cond_init(&self->cond1);
+  threadpool_cond_init(&self->cond2);
+  threadpool_mutex_init(&self->lock1);
+  threadpool_mutex_init(&self->lock2);
+  threadpool_mutex_init(&self->lock3);
+  self->threads = NULL;
+  for (int i = 0; i < count; i++) self->threads = threadpool_thread_init(self, self->threads);
+  threadpool_mutex_lock(&self->lock1);
+  while (self->alive_threads != count) threadpool_cond_wait(&self->cond1, &self->lock1);
+  threadpool_mutex_unlock(&self->lock1);
+  return self;
+}
+void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
+  threadpool_mutex_lock(&self->lock2);
+  if (self->jobs == NULL) {
+    self->jobs = job;
+    self->jobs_tail = job;
+  } else {
+    self->jobs_tail->next = job;
+    self->jobs_tail = self->jobs_tail->next;
+  }
+  threadpool_mutex_lock(&self->lock3);
+  threadpool_cond_signal(&self->cond2);
+  threadpool_mutex_unlock(&self->lock3);
+  threadpool_mutex_unlock(&self->lock2);
+}
+void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
+  free(self);
+}
+threadpool_job_t *threadpool_job_step (threadpool_job_t *self, int step) {
+  self->step = step;
+  return self;
+}
+void threadpool_mutex_deinit (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    DeleteCriticalSection(&self->v);
+  #else
+    pthread_mutex_destroy(&self->v);
+  #endif
+}
+void threadpool_mutex_init (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    InitializeCriticalSection(&self->v);
+  #else
+    pthread_mutex_init(&self->v, NULL);
+  #endif
+}
+void threadpool_mutex_lock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    EnterCriticalSection(&self->v);
+  #else
+    pthread_mutex_lock(&self->v);
+  #endif
+}
+void threadpool_mutex_unlock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    LeaveCriticalSection(&self->v);
+  #else
+    pthread_mutex_unlock(&self->v);
+  #endif
+}
+void threadpool_thread_deinit (threadpool_thread_t *self) {
+  #ifdef THE_OS_WINDOWS
+    WaitForSingleObject(self->id, INFINITE);
+    CloseHandle(self->id);
+    MemoryBarrier();
+  #else
+    pthread_join(self->id, NULL);
+  #endif
+  free(self);
+}
+threadpool_thread_t *threadpool_thread_init (threadpool_t *tp, threadpool_thread_t *next) {
+  threadpool_thread_t *self = alloc(sizeof(threadpool_thread_t));
+  self->tp = tp;
+  self->next = next;
+  #ifdef THE_OS_WINDOWS
+    self->id = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) threadpool_worker, self, CREATE_SUSPENDED, NULL);
+    ResumeThread(self->id);
+  #else
+    pthread_create(&self->id, NULL, threadpool_worker, self);
+  #endif
+  return self;
+}
+void threadpool_wait (threadpool_t *self) {
+  threadpool_mutex_lock(&self->lock1);
+  while ((self->working_threads != 0 || self->jobs != NULL) && err_state.id == -1) {
+    threadpool_cond_wait(&self->cond1, &self->lock1);
+  }
+  threadpool_mutex_unlock(&self->lock1);
+}
+void *threadpool_worker (void *n) {
+  threadpool_thread_t *thread = n;
+  threadpool_t *self = thread->tp;
+  threadpool_mutex_lock(&self->lock1);
+  self->alive_threads++;
+  threadpool_cond_signal(&self->cond1);
+  threadpool_mutex_unlock(&self->lock1);
+  while (self->active) {
+    threadpool_mutex_lock(&self->lock3);
+    while (self->active && self->jobs == NULL) threadpool_cond_wait(&self->cond2, &self->lock3);
+    threadpool_mutex_unlock(&self->lock3);
+    if (!self->active) break;
+    threadpool_mutex_lock(&self->lock1);
+    self->working_threads++;
+    threadpool_mutex_unlock(&self->lock1);
+    threadpool_job_t *job = threadpool_get(self);
+    if (job != NULL) job->func(self, job, job->ctx, job->params, job->ret, job->step);
+    threadpool_mutex_lock(&self->lock1);
+    self->working_threads--;
+    if ((self->working_threads == 0 && self->jobs == NULL) || err_state.id != -1) threadpool_cond_signal(&self->cond1);
+    threadpool_mutex_unlock(&self->lock1);
+  }
+  threadpool_mutex_lock(&self->lock1);
+  self->alive_threads--;
+  threadpool_cond_signal(&self->cond1);
+  threadpool_mutex_unlock(&self->lock1);
+  return NULL;
+}
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
+void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+  if (n.x != NULL) free(n.x);
+}
+void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  if (job->parent != NULL) threadpool_insert(tp, job->parent);
+  threadpool_job_deinit(job);
+}
+void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_async_mainX *x = px;
+  const struct __THE_1_fn$1000 *__THE_0_test_0 = x->__THE_0_test_0;
+  int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
+  int32_t *__THE_0_j_0 = &x->__THE_0_j_0;
+  int32_t *__THE_0_k_0 = &x->__THE_0_k_0;
+  struct str *__THE_0_a_0 = &x->__THE_0_a_0;
+  struct str *__THE_0_b_0 = &x->__THE_0_b_0;
+  struct str *__THE_0_c_0 = &x->__THE_0_c_0;
+  int32_t *__THE_0_i_1 = &x->__THE_0_i_1;
+  struct str *__THE_0_d_0 = &x->__THE_0_d_0;
+  struct str *__THE_0_e_0 = &x->__THE_0_e_0;
+  struct str *__THE_0_f_0 = &x->__THE_0_f_0;
+  int32_t *__THE_0_i_2 = &x->__THE_0_i_2;
+  int32_t *__THE_0_j_1 = &x->__THE_0_j_1;
+  int32_t *__THE_0_k_1 = &x->__THE_0_k_1;
+  struct str *__THE_0_g_0 = &x->__THE_0_g_0;
+  struct str *__THE_0_h_0 = &x->__THE_0_h_0;
+  struct str *__THE_0_p_0 = &x->__THE_0_p_0;
+  unsigned char *b1 = &x->b1;
+  unsigned char *b2 = &x->b2;
+  unsigned char *c1 = &x->c1;
+  job->init = 1;
+  switch (step) {
+    case 0: {
+      *__THE_0_i_0 = 0;
+      *__THE_0_j_0 = 0;
+      *__THE_0_k_0 = 0;
+      *__THE_0_i_0 = 0;
+    }
+    case 1: {
+      if (!(*__THE_0_i_0 < 3)) return threadpool_insert(tp, threadpool_job_step(job, 5));
+      *__THE_0_a_0 = str_alloc("a");
+      job->step = 2;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 2: {
+      *__THE_0_b_0 = str_alloc("b");
+      *__THE_0_i_0 *= 2;
+      job->step = 3;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 3: {
+      *__THE_0_c_0 = str_alloc("c");
+      str_free((struct str) *__THE_0_c_0);
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+    }
+    case 4: {
+      (*__THE_0_i_0)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 1));
+    }
+    case 5: {
+      *__THE_0_i_1 = 0;
+    }
+    case 6: {
+      *b1 = 0;
+      if (!(*__THE_0_i_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 12));
+      *__THE_0_a_0 = str_alloc("a");
+      *__THE_0_j_0 += *__THE_0_i_1;
+      job->step = 7;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 7: {
+      *__THE_0_b_0 = str_alloc("b");
+      if (!(*__THE_0_j_0 > 10)) return threadpool_insert(tp, threadpool_job_step(job, 10));
+      *__THE_0_c_0 = str_alloc("c");
+      job->step = 8;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 8: {
+      *__THE_0_d_0 = str_alloc("d");
+      *b1 = 1;
+      return threadpool_insert(tp, threadpool_job_step(job, 9));
+    }
+    case 9: {
+      str_free((struct str) *__THE_0_d_0);
+      str_free((struct str) *__THE_0_c_0);
+      if (*b1 == 1) return threadpool_insert(tp, threadpool_job_step(job, 10));
+    }
+    case 10: {
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+      if (*b1 == 1) return threadpool_insert(tp, threadpool_job_step(job, 12));
+    }
+    case 11: {
+      (*__THE_0_i_1)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 6));
+    }
+    case 12: {
+      *__THE_0_i_1 = 0;
+    }
+    case 13: {
+      *c1 = 0;
+      if (!(*__THE_0_i_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 21));
+      *__THE_0_a_0 = str_alloc("a");
+      job->step = 14;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 14: {
+      *__THE_0_b_0 = str_alloc("b");
+      if (!((*__THE_0_j_0 / 2) * 2 != *__THE_0_j_0)) return threadpool_insert(tp, threadpool_job_step(job, 17));
+      *__THE_0_c_0 = str_alloc("c");
+      job->step = 15;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 15: {
+      *__THE_0_d_0 = str_alloc("d");
+      *c1 = 1;
+      return threadpool_insert(tp, threadpool_job_step(job, 16));
+    }
+    case 16: {
+      str_free((struct str) *__THE_0_d_0);
+      str_free((struct str) *__THE_0_c_0);
+      if (*c1 == 1) return threadpool_insert(tp, threadpool_job_step(job, 19));
+    }
+    case 17: {
+      *__THE_0_e_0 = str_alloc("e");
+      job->step = 18;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 18: {
+      *__THE_0_f_0 = str_alloc("f");
+      *__THE_0_j_0 += *__THE_0_i_1;
+      str_free((struct str) *__THE_0_f_0);
+      str_free((struct str) *__THE_0_e_0);
+    }
+    case 19: {
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+    }
+    case 20: {
+      (*__THE_0_i_1)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 13));
+    }
+    case 21: {
+      *__THE_0_i_1 = 0;
+    }
+    case 22: {
+      *c1 = 0;
+      if (!(*__THE_0_i_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 30));
+      *__THE_0_a_0 = str_alloc("a");
+      job->step = 23;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 23: {
+      (*__THE_0_i_1)++;
+      *__THE_0_b_0 = str_alloc("b");
+      if (!(*__THE_0_i_1 % 2)) return threadpool_insert(tp, threadpool_job_step(job, 26));
+      *__THE_0_c_0 = str_alloc("c");
+      job->step = 24;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 24: {
+      *__THE_0_d_0 = str_alloc("d");
+      *c1 = 1;
+      return threadpool_insert(tp, threadpool_job_step(job, 25));
+    }
+    case 25: {
+      str_free((struct str) *__THE_0_d_0);
+      str_free((struct str) *__THE_0_c_0);
+      if (*c1 == 1) return threadpool_insert(tp, threadpool_job_step(job, 28));
+    }
+    case 26: {
+      *__THE_0_e_0 = str_alloc("e");
+      job->step = 27;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 27: {
+      *__THE_0_f_0 = str_alloc("f");
+      *__THE_0_j_0 += *__THE_0_i_1;
+      str_free((struct str) *__THE_0_f_0);
+      str_free((struct str) *__THE_0_e_0);
+    }
+    case 28: {
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+    }
+    case 29: {
+      return threadpool_insert(tp, threadpool_job_step(job, 22));
+    }
+    case 30: {
+      *__THE_0_i_1 = 0;
+    }
+    case 31: {
+      if (!(*__THE_0_i_1 < 3)) return threadpool_insert(tp, threadpool_job_step(job, 35));
+      *__THE_0_a_0 = str_alloc("a");
+      job->step = 32;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 32: {
+      *__THE_0_b_0 = str_alloc("b");
+      (*__THE_0_j_0)++;
+      job->step = 33;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 33: {
+      *__THE_0_c_0 = str_alloc("c");
+      str_free((struct str) *__THE_0_c_0);
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+    }
+    case 34: {
+      (*__THE_0_i_1)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 31));
+    }
+    case 35: {
+      *__THE_0_i_1 = 100;
+    }
+    case 36: {
+      if (!(*__THE_0_i_1 > 0)) return threadpool_insert(tp, threadpool_job_step(job, 40));
+      *__THE_0_a_0 = str_alloc("a");
+      job->step = 37;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 37: {
+      *__THE_0_b_0 = str_alloc("b");
+      *__THE_0_i_2 = 0;
+      *__THE_0_j_1 = *__THE_0_j_0 * 2 + *__THE_0_i_2;
+      job->step = 38;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 38: {
+      *__THE_0_c_0 = str_alloc("c");
+      str_free((struct str) *__THE_0_c_0);
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+    }
+    case 39: {
+      (*__THE_0_i_1)--;
+      return threadpool_insert(tp, threadpool_job_step(job, 36));
+    }
+    case 40: {
+      *__THE_0_i_0 = 0;
+    }
+    case 41: {
+      if (!(*__THE_0_i_0 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 49));
+      *__THE_0_a_0 = str_alloc("a");
+      *__THE_0_k_1 = *__THE_0_i_0;
+      job->step = 42;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 42: {
+      *__THE_0_b_0 = str_alloc("b");
+      *__THE_0_i_1 = *__THE_0_k_1;
+    }
+    case 43: {
+      if (!(*__THE_0_i_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 47));
+      *__THE_0_c_0 = str_alloc("c");
+      job->step = 44;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 44: {
+      *__THE_0_d_0 = str_alloc("d");
+      (*__THE_0_j_0)++;
+      job->step = 45;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 45: {
+      *__THE_0_e_0 = str_alloc("e");
+      str_free((struct str) *__THE_0_e_0);
+      str_free((struct str) *__THE_0_d_0);
+      str_free((struct str) *__THE_0_c_0);
+    }
+    case 46: {
+      (*__THE_0_i_1)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 43));
+    }
+    case 47: {
+      *__THE_0_f_0 = str_alloc("f");
+      str_free((struct str) *__THE_0_f_0);
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+    }
+    case 48: {
+      (*__THE_0_i_0)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 41));
+    }
+    case 49: {
+      *__THE_0_i_1 = 0;
+    }
+    case 50: {
+      if (!(*__THE_0_i_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 62));
+      *__THE_0_a_0 = str_alloc("a");
+      job->step = 51;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 51: {
+      *__THE_0_b_0 = str_alloc("b");
+      *__THE_0_j_1 = 0;
+    }
+    case 52: {
+      *b2 = 0;
+      if (!(*__THE_0_j_1 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 60));
+      *__THE_0_c_0 = str_alloc("c");
+      job->step = 53;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 53: {
+      *__THE_0_d_0 = str_alloc("d");
+      if (!((*__THE_0_i_1 / 2) * 2 == *__THE_0_i_1)) return threadpool_insert(tp, threadpool_job_step(job, 56));
+      *__THE_0_e_0 = str_alloc("e");
+      job->step = 54;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 54: {
+      *__THE_0_f_0 = str_alloc("f");
+      *b2 = 1;
+      return threadpool_insert(tp, threadpool_job_step(job, 55));
+    }
+    case 55: {
+      str_free((struct str) *__THE_0_f_0);
+      str_free((struct str) *__THE_0_e_0);
+      if (*b2 == 1) return threadpool_insert(tp, threadpool_job_step(job, 58));
+    }
+    case 56: {
+      *__THE_0_g_0 = str_alloc("g");
+      job->step = 57;
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+    }
+    case 57: {
+      *__THE_0_k_0 += *__THE_0_i_1;
+      *__THE_0_h_0 = str_alloc("h");
+      str_free((struct str) *__THE_0_h_0);
+      str_free((struct str) *__THE_0_g_0);
+    }
+    case 58: {
+      str_free((struct str) *__THE_0_d_0);
+      str_free((struct str) *__THE_0_c_0);
+      if (*b2 == 1) return threadpool_insert(tp, threadpool_job_step(job, 60));
+    }
+    case 59: {
+      (*__THE_0_j_1)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 52));
+    }
+    case 60: {
+      *__THE_0_p_0 = str_alloc("p");
+      str_free((struct str) *__THE_0_p_0);
+      str_free((struct str) *__THE_0_b_0);
+      str_free((struct str) *__THE_0_a_0);
+    }
+    case 61: {
+      (*__THE_0_i_1)++;
+      return threadpool_insert(tp, threadpool_job_step(job, 50));
+    }
+    case 62: {
+      if (job->parent != NULL) threadpool_insert(tp, job->parent);
+      threadpool_job_deinit(job);
+    }
+  }
+}
+void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_async_mainX x) {
+  size_t l = sizeof(struct __THE_1_async_mainX);
+  struct __THE_1_async_mainX *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_async_main;
+  n->x = r;
+  n->l = l;
+}
+
+int main () {
+  threadpool_t *tp = threadpool_init(5);
+  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn$1000 async_main;
+  __THE_1_async_main_alloc((struct __THE_1_fn$1000 *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_0});
+  threadpool_add(tp, async_main.f, xalloc(async_main.x, async_main.l), NULL, NULL, NULL);
+  threadpool_wait(tp);
+  threadpool_deinit(tp);
+  __THE_1_fn$1000_free((struct __THE_1_fn$1000) async_main);
+}
+======= flags =======
+U:-pthread
+======= stdout =======

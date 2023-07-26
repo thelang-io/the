@@ -1,0 +1,236 @@
+======= stdin =======
+obj Test { a: int }
+
+main {
+  a01: async () -> void
+  a02: async (int) -> void
+  a03: async (a: int) -> void
+  a04: async (mut a: int) -> void
+  a05: async ((int)) -> void
+  a06: async (int, float) -> void
+  a07: async (a: int, mut b: float) -> void
+  a08: async ((int), (float)) -> void
+  a09: async (int, float, Test) -> void
+  a10: async (a: int, mut b: float, c: Test) -> void
+  a11: async ((int), (float), (Test)) -> void
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Test_0" name="Test">
+    <TypeField name="a">
+      <BuiltinType name="int" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a01" codeName="a01_0" frame="2">
+        <TypeFn name="fn$1000" async>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a02" codeName="a02_0" frame="2">
+        <TypeFn name="fn$1001" async>
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a03" codeName="a03_0" frame="2">
+        <TypeFn name="fn$1001" async>
+          <TypeFnParams>
+            <TypeFnParam name="a" required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a04" codeName="a04_0" frame="2">
+        <TypeFn name="fn$1002" async>
+          <TypeFnParams>
+            <TypeFnParam name="a" mut required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a05" codeName="a05_0" frame="2">
+        <TypeFn name="fn$1001" async>
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a06" codeName="a06_0" frame="2">
+        <TypeFn name="fn$1003" async>
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam required>
+              <BuiltinType name="float" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a07" codeName="a07_0" frame="2">
+        <TypeFn name="fn$1004" async>
+          <TypeFnParams>
+            <TypeFnParam name="a" required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam name="b" mut required>
+              <BuiltinType name="float" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a08" codeName="a08_0" frame="2">
+        <TypeFn name="fn$1003" async>
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam required>
+              <BuiltinType name="float" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a09" codeName="a09_0" frame="2">
+        <TypeFn name="fn$1005" async>
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam required>
+              <BuiltinType name="float" />
+            </TypeFnParam>
+            <TypeFnParam required>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeField name="a">
+                  <BuiltinType name="int" />
+                </TypeField>
+              </TypeObj>
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a10" codeName="a10_0" frame="2">
+        <TypeFn name="fn$1006" async>
+          <TypeFnParams>
+            <TypeFnParam name="a" required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam name="b" mut required>
+              <BuiltinType name="float" />
+            </TypeFnParam>
+            <TypeFnParam name="c" required>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeField name="a">
+                  <BuiltinType name="int" />
+                </TypeField>
+              </TypeObj>
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a11" codeName="a11_0" frame="2">
+        <TypeFn name="fn$1005" async>
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam required>
+              <BuiltinType name="float" />
+            </TypeFnParam>
+            <TypeFnParam required>
+              <TypeObj codeName="Test_0" name="Test">
+                <TypeField name="a">
+                  <BuiltinType name="int" />
+                </TypeField>
+              </TypeObj>
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+</NodeMain>

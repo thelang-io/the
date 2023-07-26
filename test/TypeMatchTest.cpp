@@ -384,6 +384,16 @@ TEST_F(TypeMatchTest, MatchesNiceFunction) {
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"), false);
 
+  auto type12 = this->tm_.createFn({
+    TypeFnParam{"a", ref2, true, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
+  auto type13 = this->tm_.createFn({
+    TypeFnParam{std::nullopt, ref2, true, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
   EXPECT_FALSE(type1->matchNice(this->tm_.get("any")));
   EXPECT_TRUE(type1->matchNice(type1));
   EXPECT_TRUE(type1->matchNice(type2));
@@ -402,6 +412,10 @@ TEST_F(TypeMatchTest, MatchesNiceFunction) {
   EXPECT_FALSE(type11->matchNice(type1));
   EXPECT_FALSE(type10->matchNice(type11));
   EXPECT_FALSE(type11->matchNice(type10));
+  EXPECT_FALSE(type11->matchNice(type12));
+  EXPECT_FALSE(type12->matchNice(type11));
+  EXPECT_FALSE(type12->matchNice(type13));
+  EXPECT_TRUE(type13->matchNice(type12));
 }
 
 TEST_F(TypeMatchTest, MatchesNiceMap) {
@@ -654,6 +668,21 @@ TEST_F(TypeMatchTest, MatchesStrictFunction) {
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"), false);
 
+  auto type12 = this->tm_.createFn({
+    TypeFnParam{"a", ref2, true, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
+  auto type13 = this->tm_.createFn({
+    TypeFnParam{std::nullopt, ref2, true, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
+  auto type14 = this->tm_.createFn({
+    TypeFnParam{std::nullopt, ref2, true, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
   EXPECT_FALSE(type1->matchStrict(this->tm_.get("any")));
   EXPECT_TRUE(type1->matchStrict(type1));
   EXPECT_TRUE(type1->matchStrict(type2));
@@ -672,6 +701,14 @@ TEST_F(TypeMatchTest, MatchesStrictFunction) {
   EXPECT_FALSE(type11->matchStrict(type1));
   EXPECT_FALSE(type10->matchStrict(type11));
   EXPECT_FALSE(type11->matchStrict(type10));
+  EXPECT_FALSE(type11->matchStrict(type12));
+  EXPECT_FALSE(type12->matchStrict(type11));
+  EXPECT_TRUE(type12->matchStrict(type13));
+  EXPECT_TRUE(type12->matchStrict(type14));
+  EXPECT_TRUE(type13->matchStrict(type12));
+  EXPECT_TRUE(type13->matchStrict(type14));
+  EXPECT_TRUE(type14->matchStrict(type13));
+  EXPECT_TRUE(type14->matchStrict(type12));
 }
 
 TEST_F(TypeMatchTest, MatchesStrictExactFunction) {
@@ -729,6 +766,21 @@ TEST_F(TypeMatchTest, MatchesStrictExactFunction) {
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
   }, this->tm_.get("int"), false);
 
+  auto type12 = this->tm_.createFn({
+    TypeFnParam{"a", ref2, true, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
+  auto type13 = this->tm_.createFn({
+    TypeFnParam{std::nullopt, ref2, true, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
+  auto type14 = this->tm_.createFn({
+    TypeFnParam{std::nullopt, ref2, true, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), true);
+
   EXPECT_FALSE(type1->matchStrict(this->tm_.get("any"), true));
   EXPECT_TRUE(type1->matchStrict(type1, true));
   EXPECT_TRUE(type1->matchStrict(type2, true));
@@ -747,6 +799,14 @@ TEST_F(TypeMatchTest, MatchesStrictExactFunction) {
   EXPECT_FALSE(type11->matchStrict(type1, true));
   EXPECT_FALSE(type10->matchStrict(type11, true));
   EXPECT_FALSE(type11->matchStrict(type10, true));
+  EXPECT_FALSE(type11->matchStrict(type12, true));
+  EXPECT_FALSE(type12->matchStrict(type11, true));
+  EXPECT_FALSE(type12->matchStrict(type13, true));
+  EXPECT_FALSE(type12->matchStrict(type14, true));
+  EXPECT_FALSE(type13->matchStrict(type12, true));
+  EXPECT_TRUE(type13->matchStrict(type14, true));
+  EXPECT_TRUE(type14->matchStrict(type13, true));
+  EXPECT_FALSE(type14->matchStrict(type12, true));
 }
 
 TEST_F(TypeMatchTest, MatchesStrictMap) {

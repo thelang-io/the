@@ -187,6 +187,12 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     result += exprAssign.right.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</ExprAssignRight>" EOL;
     result += std::string(indent, ' ') + "</ExprAssign>" EOL;
+  } else if (std::holds_alternative<ASTExprAwait>(*this->body)) {
+    auto exprAwait = std::get<ASTExprAwait>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprAwait>" EOL;
+    result += exprAwait.arg.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</ExprAwait>" EOL;
   } else if (std::holds_alternative<ASTExprBinary>(*this->body)) {
     auto exprBinary = std::get<ASTExprBinary>(*this->body);
 

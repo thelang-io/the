@@ -58,14 +58,14 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_str (err_state_t *);
-struct str process_home (int, int);
+struct str process_home (err_state_t *, int, int);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -77,11 +77,11 @@ void *alloc (size_t n1) {
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -93,25 +93,25 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -135,12 +135,12 @@ void error_stack_str (err_state_t *state) {
     stack->l += z;
   }
 }
-struct str process_home (int line, int col) {
+struct str process_home (err_state_t *fn_err_state, int line, int col) {
   #ifdef THE_OS_WINDOWS
     char r[0xFFFF];
     if (GetEnvironmentVariable("USERPROFILE", r, 0xFFFF) == 0) {
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("environment variable `USERPROFILE` is not set"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("environment variable `USERPROFILE` is not set"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     }
   #else
     char *r = getenv("HOME");
@@ -177,7 +177,7 @@ void error_Error_free (struct error_Error *n) {
 }
 
 int main () {
-  str_free((struct str) process_home(2, 3));
+  str_free((struct str) process_home(&err_state, 2, 3));
 }
 ======= flags =======
 ======= stdout =======

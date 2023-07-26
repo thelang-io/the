@@ -26,6 +26,7 @@
 struct ParserExprAccess;
 struct ParserExprArray;
 struct ParserExprAssign;
+struct ParserExprAwait;
 struct ParserExprBinary;
 struct ParserExprCall;
 struct ParserExprCond;
@@ -40,6 +41,7 @@ using ParserExpr = std::variant<
   ParserExprAccess,
   ParserExprArray,
   ParserExprAssign,
+  ParserExprAwait,
   ParserExprBinary,
   ParserExprCall,
   ParserExprCond,
@@ -75,6 +77,10 @@ struct ParserExprAssign {
   ParserStmtExpr left;
   Token op;
   ParserStmtExpr right;
+};
+
+struct ParserExprAwait {
+  ParserStmtExpr arg;
 };
 
 struct ParserExprBinary {

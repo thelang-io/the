@@ -1,2 +1,2 @@
 # the/parser
-The Programming Language parser
+The programming language parser

@@ -106,7 +106,7 @@ struct __THE_1_mainSDtestCtx_0X {
   const struct __THE_1_fn$1000 *__THE_0_testCall_0;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -132,11 +132,11 @@ void *alloc (size_t n1) {
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -230,9 +230,9 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   const struct __THE_1_fn$1000 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
   const struct str __THE_0_v101_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(*__THE_0_test_0));
   const struct str __THE_0_v102_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy((*__THE_0_test1_0)->__THE_0_o));
-  const struct str __THE_0_v103_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(*__THE_0_test2_0 = __THE_1_TestObj_0_realloc(*__THE_0_test2_0, __THE_1_TestObj_0_alloc(9))));
+  const struct str __THE_0_v103_0 = __THE_1_TestObj_0_str((__THE_1_TestObj_0_copy(*__THE_0_test2_0 = __THE_1_TestObj_0_realloc(*__THE_0_test2_0, __THE_1_TestObj_0_alloc(9)))));
   const struct str __THE_0_v104_0 = __THE_1_TestObj_0_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
-  const struct str __THE_0_v105_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(*__THE_0_test_0));
+  const struct str __THE_0_v105_0 = __THE_1_TestObj_0_str((__THE_1_TestObj_0_copy(*__THE_0_test_0)));
   const struct str __THE_0_v106_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(**__THE_0_refTest_0));
   str_free((struct str) __THE_0_v106_0);
   str_free((struct str) __THE_0_v105_0);
@@ -258,11 +258,11 @@ int main () {
   struct __THE_1_TestObj_0 *__THE_0_test2_0 = __THE_1_TestObj_0_alloc(4);
   const struct str __THE_0_v01_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(__THE_0_test_0));
   const struct str __THE_0_v02_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(__THE_0_test1_0->__THE_0_o));
-  const struct str __THE_0_v03_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(__THE_0_test2_0 = __THE_1_TestObj_0_realloc(__THE_0_test2_0, __THE_1_TestObj_0_alloc(5))));
+  const struct str __THE_0_v03_0 = __THE_1_TestObj_0_str((__THE_1_TestObj_0_copy(__THE_0_test2_0 = __THE_1_TestObj_0_realloc(__THE_0_test2_0, __THE_1_TestObj_0_alloc(5)))));
   const struct str __THE_0_v05_0 = __THE_1_TestObj_0_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
-  const struct str __THE_0_v06_0 = __THE_1_TestObj_0_str(1 > 2 ? __THE_1_TestObj_0_alloc(6) : __THE_1_TestObj_0_alloc(7));
+  const struct str __THE_0_v06_0 = __THE_1_TestObj_0_str((1 > 2 ? __THE_1_TestObj_0_alloc(6) : __THE_1_TestObj_0_alloc(7)));
   const struct str __THE_0_v07_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_alloc(8));
-  const struct str __THE_0_v08_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(__THE_0_test_0));
+  const struct str __THE_0_v08_0 = __THE_1_TestObj_0_str((__THE_1_TestObj_0_copy(__THE_0_test_0)));
   const struct str __THE_0_v09_0 = __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(*__THE_0_refTest_0));
   const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});

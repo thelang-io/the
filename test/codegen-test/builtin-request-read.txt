@@ -124,7 +124,7 @@ struct url_URL {
   const struct str __THE_0_hash;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 bool lib_openssl_init = false;
 bool lib_ws2_init = false;
 
@@ -141,8 +141,8 @@ void error_stack_str (err_state_t *);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 void request_close (struct request_Request **);
-struct request_Request *request_open (struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header, int, int);
-struct request_Response *request_read (struct request_Request **, int, int);
+struct request_Request *request_open (err_state_t *, int, int, struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
+struct request_Response *request_read (err_state_t *, int, int, struct request_Request **);
 char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
@@ -151,7 +151,7 @@ struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
-struct url_URL *url_parse (struct str, int, int);
+struct url_URL *url_parse (err_state_t *, int, int, struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct request_Header *request_Header_alloc (struct str, struct str);
@@ -159,7 +159,7 @@ struct request_Header *request_Header_copy (const struct request_Header *);
 void request_Header_free (struct request_Header *);
 struct str request_Header_str (struct request_Header *);
 void request_Request_free (struct request_Request *);
-struct request_Header **__THE_1_array_request_Header_at (struct __THE_1_array_request_Header, int32_t, int, int);
+struct request_Header **__THE_1_array_request_Header_at (err_state_t *, int, int, struct __THE_1_array_request_Header, int32_t);
 struct __THE_1_array_request_Header __THE_1_array_request_Header_copy (const struct __THE_1_array_request_Header);
 void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header);
 size_t __THE_1_array_request_Header_len (struct __THE_1_array_request_Header);
@@ -184,11 +184,11 @@ void buffer_free (struct buffer o) {
 struct str buffer_to_str (struct buffer b) {
   return (struct str) {(char *) b.d, b.l};
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -200,34 +200,34 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void error_stack_pop (err_state_t *fn_err_state) {
+  fn_err_state->stack_idx--;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  fn_err_state->stack[fn_err_state->stack_idx].file = file;
+  fn_err_state->stack[fn_err_state->stack_idx].name = name;
+  error_stack_pos(fn_err_state, line, col);
+  fn_err_state->stack_idx++;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -252,33 +252,113 @@ void error_stack_str (err_state_t *state) {
   }
 }
 void print (FILE *stream, const char *fmt, ...) {
+  char *d = alloc(1024);
+  size_t cap = 1024;
+  size_t len = 0;
+  size_t y;
   va_list args;
   va_start(args, fmt);
-  char buf[512];
-  struct str s;
   while (*fmt) {
     switch (*fmt++) {
-      case 't': fputs(va_arg(args, int) ? "true" : "false", stream); break;
-      case 'b': sprintf(buf, "%u", va_arg(args, unsigned)); fputs(buf, stream); break;
-      case 'c': fputc(va_arg(args, int), stream); break;
+      case 't': {
+        int a = va_arg(args, int);
+        y = a == 0 ? 5 : 4;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a == 0 ? "false" : "true", y);
+        break;
+      }
+      case 'b': {
+        unsigned int a = va_arg(args, unsigned int);
+        y = snprintf(NULL, 0, "%u", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%u", a);
+        break;
+      }
+      case 'c': {
+        char a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%c", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%c", a);
+        break;
+      }
       case 'e':
       case 'f':
-      case 'g': snprintf(buf, 512, "%f", va_arg(args, double)); fputs(buf, stream); break;
+      case 'g': {
+        double a = va_arg(args, double);
+        y = snprintf(NULL, 0, "%f", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%f", a);
+        break;
+      }
       case 'h':
       case 'j':
       case 'v':
-      case 'w': sprintf(buf, "%d", va_arg(args, int)); fputs(buf, stream); break;
+      case 'w': {
+        int a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%d", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%d", a);
+        break;
+      }
       case 'i':
-      case 'k': sprintf(buf, "%" PRId32, va_arg(args, int32_t)); fputs(buf, stream); break;
-      case 'l': sprintf(buf, "%" PRId64, va_arg(args, int64_t)); fputs(buf, stream); break;
-      case 'p': sprintf(buf, "%p", va_arg(args, void *)); fputs(buf, stream); break;
-      case 's': s = va_arg(args, struct str); fwrite(s.d, 1, s.l, stream); free(s.d); break;
-      case 'u': sprintf(buf, "%" PRIu32, va_arg(args, uint32_t)); fputs(buf, stream); break;
-      case 'y': sprintf(buf, "%" PRIu64, va_arg(args, uint64_t)); fputs(buf, stream); break;
-      case 'z': fputs(va_arg(args, char *), stream); break;
+      case 'k': {
+        int32_t a = va_arg(args, int32_t);
+        y = snprintf(NULL, 0, "%" PRId32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId32, a);
+        break;
+      }
+      case 'l': {
+        int64_t a = va_arg(args, int64_t);
+        y = snprintf(NULL, 0, "%" PRId64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId64, a);
+        break;
+      }
+      case 'p': {
+        void *a = va_arg(args, void *);
+        y = snprintf(NULL, 0, "%p", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%p", a);
+        break;
+      }
+      case 's': {
+        struct str a = va_arg(args, struct str);
+        y = a.l;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a.d, y);
+        free(a.d);
+        break;
+      }
+      case 'u': {
+        uint32_t a = va_arg(args, uint32_t);
+        y = snprintf(NULL, 0, "%" PRIu32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu32, a);
+        break;
+      }
+      case 'y': {
+        uint64_t a = va_arg(args, uint64_t);
+        y = snprintf(NULL, 0, "%" PRIu64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu64, a);
+        break;
+      }
+      case 'z': {
+        char *a = va_arg(args, char *);
+        y = strlen(a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a, y);
+        break;
+      }
     }
+    len += y;
   }
   va_end(args);
+  d[len] = '\0';
+  fputs(d, stream);
+  fflush(stream);
+  free(d);
 }
 void *re_alloc (void *n1, size_t n2) {
   void *r = realloc(n1, n2);
@@ -301,8 +381,8 @@ void request_close (struct request_Request **r) {
   req->ctx = NULL;
   req->ssl = NULL;
 }
-struct request_Request *request_open (struct str method, struct str u, unsigned char o1, struct buffer data, unsigned char o2, struct __THE_1_array_request_Header headers, int line, int col) {
-  struct url_URL *url = url_parse(u, line, col);
+struct request_Request *request_open (err_state_t *fn_err_state, int line, int col, struct str method, struct str u, unsigned char o1, struct buffer data, unsigned char o2, struct __THE_1_array_request_Header headers) {
+  struct url_URL *url = url_parse(fn_err_state, line, col, u);
   if (
     !(url->__THE_0_protocol.l == 5 && memcmp(url->__THE_0_protocol.d, "http:", 5) == 0) &&
     !(url->__THE_0_protocol.l == 6 && memcmp(url->__THE_0_protocol.d, "https:", 6) == 0)
@@ -313,7 +393,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     char *d = alloc(z + 1);
     sprintf(d, fmt, protocol);
     free(protocol);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto request_open_cleanup1;
   } else if (url->__THE_0_port.l >= 6) {
     char *port = str_cstr(url->__THE_0_port);
@@ -322,7 +402,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     char *d = alloc(z + 1);
     sprintf(d, fmt, port);
     free(port);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto request_open_cleanup1;
   }
   char port[6];
@@ -335,7 +415,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
       size_t z = snprintf(NULL, 0, fmt, port);
       char *d = alloc(z + 1);
       sprintf(d, fmt, port);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto request_open_cleanup1;
     }
   } else {
@@ -346,7 +426,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     if (!lib_ws2_init) {
       WSADATA w;
       if (WSAStartup(MAKEWORD(2, 2), &w) != 0) {
-        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to initialize use of Windows Sockets DLL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+        error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to initialize use of Windows Sockets DLL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
         goto request_open_cleanup1;
       }
       lib_ws2_init = true;
@@ -360,7 +440,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_protocol = IPPROTO_TCP;
   if (getaddrinfo(hostname, port, &hints, &addr) != 0) {
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to resolve hostname address"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to resolve hostname address"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto request_open_cleanup2;
   }
   unsigned char req_free = 0;
@@ -375,7 +455,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
   #endif
   if (!socket_res) {
     req_free = 1;
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto request_open_cleanup3;
   }
   #ifdef THE_OS_WINDOWS
@@ -391,7 +471,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     sprintf(d, fmt, origin);
     free(origin);
     req_free = 1;
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto request_open_cleanup4;
   }
   if (strcmp(port, "443") == 0) {
@@ -402,7 +482,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     req->ctx = SSL_CTX_new(TLS_client_method());
     if (req->ctx == NULL) {
       req_free = 1;
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create SSL context"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create SSL context"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto request_open_cleanup4;
     }
     req->ssl = SSL_new(req->ctx);
@@ -410,7 +490,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     SSL_set_tlsext_host_name(req->ssl, hostname);
     if (SSL_connect(req->ssl) != 1) {
       req_free = 1;
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to connect to socket with SSL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to connect to socket with SSL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto request_open_cleanup5;
     }
   }
@@ -432,7 +512,7 @@ struct request_Request *request_open (struct str method, struct str u, unsigned 
     int z = req->ssl == NULL ? (int) send(req->fd, &request[y], req_len - y, 0) : SSL_write(req->ssl, &request[y], (int) (req_len - y));
     if (z < 0) {
       req_free = 1;
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to write to socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to write to socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
       goto request_open_cleanup6;
     }
     y += (size_t) z;
@@ -464,10 +544,10 @@ request_open_cleanup1:
   __THE_1_array_request_Header_free(headers);
   buffer_free(data);
   str_free(method);
-  if (err_state.id != -1) longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   return (struct request_Request *) req;
 }
-struct request_Response *request_read (struct request_Request **r, int line, int col) {
+struct request_Response *request_read (err_state_t *fn_err_state, int line, int col, struct request_Request **r) {
   struct request *req = (void *) *r;
   unsigned char b[1024];
   struct buffer data = {NULL, 0};
@@ -475,8 +555,8 @@ struct request_Response *request_read (struct request_Request **r, int line, int
     int y = req->ssl == NULL ? (int) recv(req->fd, b, sizeof(b), 0) : SSL_read(req->ssl, b, sizeof(b));
     if (y < 0) {
       free(data.d);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to read from socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to read from socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     } else if (y == 0 && data.l != 0) {
       break;
     } else if (y == 0) {
@@ -495,15 +575,15 @@ struct request_Response *request_read (struct request_Request **r, int line, int
     i = 7;
   } else {
     free(data.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP version"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP version"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   size_t status_start = i;
   while (i < data.l && isdigit(data.d[i])) i++;
   if (status_start == i) {
     free(data.d);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP status code"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid response HTTP status code"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   size_t status_len = i - status_start;
   char *status = alloc(status_len + 1);
@@ -668,11 +748,11 @@ struct str str_escape (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct url_URL *url_parse (struct str s, int line, int col) {
+struct url_URL *url_parse (err_state_t *fn_err_state, int line, int col, struct str s) {
   if (s.l == 0) {
     str_free(s);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   size_t i = 0;
   for (;; i++) {
@@ -682,12 +762,12 @@ struct url_URL *url_parse (struct str s, int line, int col) {
       break;
     } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL protocol"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL protocol"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     } else if (i == s.l - 1) {
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     }
   }
   struct str protocol;
@@ -714,13 +794,13 @@ struct url_URL *url_parse (struct str s, int line, int col) {
     if (ch == '@' && hostname_start != 0 && pathname_start == 0) {
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL auth is not supported"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL auth is not supported"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     } else if (ch == ':' && port_start != 0 && (pathname_start == 0 || search_start == 0 || hash_start == 0)) {
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL port"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL port"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     }
     if (ch == ':' && hostname_start != 0 && pathname_start == 0) port_start = i;
     else if (ch == '/' && pathname_start == 0) pathname_start = i;
@@ -734,8 +814,8 @@ struct url_URL *url_parse (struct str s, int line, int col) {
     str_free(hostname);
     str_free(protocol);
     str_free(s);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL hostname"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL hostname"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   } else if (hostname_start != 0 && hostname_start != hostname_end) {
     hostname.l = hostname_end - hostname_start;
     hostname.d = re_alloc(hostname.d, hostname.l);
@@ -767,8 +847,8 @@ struct url_URL *url_parse (struct str s, int line, int col) {
       str_free(hostname);
       str_free(protocol);
       str_free(s);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL origin is not present"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL origin is not present"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     }
     origin.l = protocol.l + 2 + host.l;
     origin.d = re_alloc(origin.d, origin.l);
@@ -857,14 +937,14 @@ void request_Request_free (struct request_Request *n) {
   request_close(&n);
   free(n);
 }
-struct request_Header **__THE_1_array_request_Header_at (struct __THE_1_array_request_Header n, int32_t i, int line, int col) {
+struct request_Header **__THE_1_array_request_Header_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_request_Header n, int32_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     const char *fmt = "index %" PRId32 " out of array bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
     char *d = alloc(z + 1);
     sprintf(d, fmt, i);
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
 }
@@ -916,9 +996,9 @@ void url_URL_free (struct url_URL *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  struct request_Request *__THE_0_req_0 = request_open(str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}, 2, 14);
+  struct request_Request *__THE_0_req_0 = request_open(&err_state, 2, 14, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {});
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L2;
-  const struct request_Response *__THE_0_res_0 = request_read(&__THE_0_req_0, 3, 10);
+  const struct request_Response *__THE_0_res_0 = request_read(&err_state, 3, 10, &__THE_0_req_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
   request_close(&__THE_0_req_0);
   if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L3;
@@ -927,7 +1007,7 @@ int main () {
   print(stdout, "z", THE_EOL);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
     if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L4;
-    print(stdout, "sz", request_Header_str(request_Header_copy(*__THE_1_array_request_Header_at(__THE_0_res_0->__THE_0_headers, __THE_0_i_0, 10, 11))), THE_EOL);
+    print(stdout, "sz", request_Header_str(request_Header_copy(*__THE_1_array_request_Header_at(&err_state, 10, 11, __THE_0_res_0->__THE_0_headers, __THE_0_i_0))), THE_EOL);
 L4:
     err_state.buf_idx--;
     if (err_state.id != -1) goto L3;

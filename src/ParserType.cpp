@@ -25,7 +25,7 @@ std::string ParserType::stringify () const {
     code = typeBody.elementType.stringify() + "[]";
   } else if (std::holds_alternative<ParserTypeFn>(*this->body)) {
     auto typeBody = std::get<ParserTypeFn>(*this->body);
-    code += "(";
+    code += std::string(typeBody.async ? "async " : "") + "(";
 
     for (auto i = static_cast<std::size_t>(0); i < typeBody.params.size(); i++) {
       auto param = typeBody.params[i];
@@ -64,11 +64,18 @@ std::string ParserType::stringify () const {
 
 std::string ParserType::xml (std::size_t indent) const {
   auto typeName = std::string("Type");
+  auto attrs = std::string(this->parenthesized ? " parenthesized" : "");
+
+  attrs += R"( start=")" + this->start.str() + R"(")";
+  attrs += R"( end=")" + this->end.str() + R"(")";
 
   if (std::holds_alternative<ParserTypeArray>(*this->body)) {
     typeName += "Array";
   } else if (std::holds_alternative<ParserTypeFn>(*this->body)) {
+    auto typeFn = std::get<ParserTypeFn>(*this->body);
+
     typeName += "Fn";
+    attrs += typeFn.async ? " async" : "";
   } else if (std::holds_alternative<ParserTypeId>(*this->body)) {
     typeName += "Id";
   } else if (std::holds_alternative<ParserTypeMap>(*this->body)) {
@@ -80,11 +87,6 @@ std::string ParserType::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserTypeUnion>(*this->body)) {
     typeName += "Union";
   }
-
-  auto attrs = std::string(this->parenthesized ? " parenthesized" : "");
-
-  attrs += R"( start=")" + this->start.str() + R"(")";
-  attrs += R"( end=")" + this->end.str() + R"(")";
 
   auto result = std::string(indent, ' ') + "<" + typeName + attrs + ">" EOL;
 

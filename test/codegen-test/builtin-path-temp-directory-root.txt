@@ -61,7 +61,7 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 
-err_state_t err_state = {-1, (void *) 0, {}, 0, {}, 0, (void *) 0};
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -70,10 +70,10 @@ void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void error_stack_str (err_state_t *);
-char *path_mktemp (unsigned char (*f) (char *), int, int);
-struct str path_tempDirectory (int, int);
+char *path_mktemp (err_state_t *, int, int, unsigned char (*f) (char *));
+struct str path_tempDirectory (err_state_t *, int, int);
 unsigned char path_tempDirectoryFunctor (char *);
-char *path_tmpdir (int, int);
+char *path_tmpdir (err_state_t *, int, int);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -85,11 +85,11 @@ void *alloc (size_t n1) {
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-void error_alloc (err_state_t *state, size_t n1) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     const char *fmt = THE_EOL "  at %s (%s)";
     size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
     if (l + z >= 4096) {
@@ -101,34 +101,34 @@ void error_alloc (err_state_t *state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void error_assign (err_state_t *state, int id, void *ctx, void (*f) (void *), int line, int col) {
-  state->id = id;
-  state->ctx = ctx;
-  state->_free = f;
-  error_stack_pos(state, line, col);
-  error_stack_str(state);
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
 }
-void error_stack_pop (err_state_t *state) {
-  state->stack_idx--;
+void error_stack_pop (err_state_t *fn_err_state) {
+  fn_err_state->stack_idx--;
 }
-void error_stack_pos (err_state_t *state, int line, int col) {
-  if (line != 0) state->stack[state->stack_idx - 1].line = line;
-  if (col != 0) state->stack[state->stack_idx - 1].col = col;
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
+  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
 }
-void error_stack_push (err_state_t *state, const char *file, const char *name, int line, int col) {
-  state->stack[state->stack_idx].file = file;
-  state->stack[state->stack_idx].name = name;
-  error_stack_pos(state, line, col);
-  state->stack_idx++;
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  fn_err_state->stack[fn_err_state->stack_idx].file = file;
+  fn_err_state->stack[fn_err_state->stack_idx].name = name;
+  error_stack_pos(fn_err_state, line, col);
+  fn_err_state->stack_idx++;
 }
-void error_stack_str (err_state_t *state) {
-  struct str *stack = (struct str *) &((struct error_Error *) state->ctx)->__THE_0_stack;
-  struct str message = ((struct error_Error *) state->ctx)->__THE_0_message;
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = state->stack[i];
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
     size_t z;
     char *fmt;
     if (it.col == 0 && it.line == 0) {
@@ -152,11 +152,11 @@ void error_stack_str (err_state_t *state) {
     stack->l += z;
   }
 }
-char *path_mktemp (unsigned char (*f) (char *), int line, int col) {
+char *path_mktemp (err_state_t *fn_err_state, int line, int col, unsigned char (*f) (char *)) {
   static const char *chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   static const size_t chars_len = 62;
   static const size_t x = 6;
-  char *d = path_tmpdir(line, col);
+  char *d = path_tmpdir(fn_err_state, line, col);
   size_t l = strlen(d) + x;
   d = re_alloc(d, l + 1);
   memcpy(&d[l - x], "XXXXXX", x + 1);
@@ -166,8 +166,8 @@ char *path_mktemp (unsigned char (*f) (char *), int line, int col) {
     do {
       if (!SystemFunction036((void *) &v, sizeof(v))) {
         free(d);
-        error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random with `SystemFunction036`"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-        longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+        error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random with `SystemFunction036`"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+        longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
       }
       char *p = &d[l - x];
       for (size_t i = 0; i < x; i++) {
@@ -186,11 +186,11 @@ char *path_mktemp (unsigned char (*f) (char *), int line, int col) {
     return d;
   #endif
 }
-struct str path_tempDirectory (int line, int col) {
-  char *d = path_mktemp(path_tempDirectoryFunctor, line, col);
+struct str path_tempDirectory (err_state_t *fn_err_state, int line, int col) {
+  char *d = path_mktemp(fn_err_state, line, col, path_tempDirectoryFunctor);
   if (d == NULL) {
-    error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create temporary directory"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create temporary directory"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
   }
   struct str r = str_alloc(d);
   free(d);
@@ -203,20 +203,20 @@ unsigned char path_tempDirectoryFunctor (char *c) {
     return mkdtemp(c) == NULL ? 0 : 1;
   #endif
 }
-char *path_tmpdir (int line, int col) {
+char *path_tmpdir (err_state_t *fn_err_state, int line, int col) {
   char *d;
   #ifdef THE_OS_WINDOWS
     size_t l = GetTempPath(0, NULL);
     if (l == 0) {
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     }
     l -= 1;
     d = alloc(l + 1);
     if (GetTempPath(l + 1, d) == 0) {
       free(d);
-      error_assign(&err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-      longjmp(err_state.buf[err_state.buf_idx - 1], err_state.id);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
     }
     if (d[l - 1] != '\\' && d[l - 1] != '/') {
       d[l] = '\\';
@@ -273,7 +273,7 @@ void error_Error_free (struct error_Error *n) {
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
   if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
-  str_free((struct str) path_tempDirectory(2, 3));
+  str_free((struct str) path_tempDirectory(&err_state, 2, 3));
 L1:
   err_state.buf_idx--;
   error_stack_pop(&err_state);

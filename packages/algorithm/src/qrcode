@@ -482,17 +482,6 @@ fn mask5 (x: int, y: int) bool { return ((x * y) % 2) + ((x * y) % 3) == 0 }
 fn mask6 (x: int, y: int) bool { return (((x * y) % 2) + ((x * y) % 3)) % 2 == 0 }
 fn mask7 (x: int, y: int) bool { return (((x + y) % 2) + ((x * y) % 3)) % 2 == 0 }
 
-const MASKS := {
-  "0": mask0,
-  "1": mask1,
-  "2": mask2,
-  "3": mask3,
-  "4": mask4,
-  "5": mask5,
-  "6": mask6,
-  "7": mask7,
-}
-
 obj IPolynomial {
   _exp: IByteArray
   _log: IByteArray
@@ -914,9 +903,18 @@ obj IQRCode {
   }
 
   fn drawMaskData (mut self: ref Self) {
+    mut mask := mask0
+
+    if self._a == 1 { mask = mask1 }
+    elif self._a == 2 { mask = mask2 }
+    elif self._a == 3 { mask = mask3 }
+    elif self._a == 4 { mask = mask4 }
+    elif self._a == 5 { mask = mask5 }
+    elif self._a == 6 { mask = mask6 }
+    elif self._a == 7 { mask = mask7 }
+
     b1: byte = 1
     b2: byte = 2
-    mask := MASKS.get(self._a.str())
     seqLen := self._q.len
 
     loop i := 0; i < seqLen; i++ {

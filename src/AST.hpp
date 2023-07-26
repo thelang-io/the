@@ -41,7 +41,9 @@ class AST {
   ASTState state;
   std::map<std::string, Type *> typeCasts = {};
 
+  static void populateExprAwaitId (ASTBlock &);
   static void populateParent (ASTNode &, ASTNode *);
+  static void populateParentExpr (ASTNodeExpr &, ASTNodeExpr *);
   static void populateParents (ASTBlock &, ASTNode * = nullptr);
 
   explicit AST (Parser *);

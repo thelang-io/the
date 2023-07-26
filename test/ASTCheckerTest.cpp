@@ -48,6 +48,45 @@ class ASTCheckerTest : public testing::Test {
   }
 };
 
+TEST_F(ASTCheckerTest, FlattenNodeGlobalFn) {
+  auto nodes = testing::NiceMock<MockAST>("fn test () int { a := 1; return a }").gen();
+  EXPECT_EQ(ASTChecker::flattenNode(nodes, false).size(), 3);
+}
+
+TEST_F(ASTCheckerTest, FlattenNodeGlobalObjMethod) {
+  auto nodes = testing::NiceMock<MockAST>("obj Test { fn test () int { a := 1; return a } }").gen();
+  EXPECT_EQ(ASTChecker::flattenNode(nodes, false).size(), 3);
+}
+
+TEST_F(ASTCheckerTest, FlattenNodeExprsGlobalEnum) {
+  auto nodes = testing::NiceMock<MockAST>("enum Test { Color = 1, T = 2 << 3, A = !2 }").gen();
+  EXPECT_EQ(ASTChecker::flattenNodeExprs(nodes, false).size(), 3);
+}
+
+TEST_F(ASTCheckerTest, FlattenNodeExprsGlobalFn) {
+  auto nodes = testing::NiceMock<MockAST>("fn test (a: int, b: int = 2, c := 3) int { return a + b + c + 2 }").gen();
+  EXPECT_EQ(ASTChecker::flattenNodeExprs(nodes, false).size(), 3);
+}
+
+TEST_F(ASTCheckerTest, FlattenNodeExprsGlobalObjMethod) {
+  auto nodes = testing::NiceMock<MockAST>("obj Test { fn test (a: int, b: int = 2, c := 3) int { return a + b + c + 2 } }").gen();
+  EXPECT_EQ(ASTChecker::flattenNodeExprs(nodes, false).size(), 3);
+}
+
+TEST_F(ASTCheckerTest, Async) {
+  EXPECT_FALSE(this->node_("async fn test () {}").async());
+  EXPECT_FALSE(this->node_("async fn test () {}; test();").async());
+  EXPECT_FALSE(this->expr_("async fn test () {}", "test()").async());
+  EXPECT_TRUE(this->expr_("async fn test () {}", "await test()").async());
+}
+
+TEST_F(ASTCheckerTest, AsyncNonLocal) {
+  EXPECT_FALSE(this->node_("async fn test () {}").async(false));
+  EXPECT_TRUE(this->node_("async fn test () {}; test();").async(false));
+  EXPECT_TRUE(this->expr_("async fn test () {}", "test()").async(false));
+  EXPECT_TRUE(this->expr_("async fn test () {}", "await test()").async(false));
+}
+
 TEST_F(ASTCheckerTest, CtorWithExprs) {
   auto nodes = testing::NiceMock<MockAST>("main {a := 1; a + 1 a - 2}" EOL).gen();
   auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
@@ -72,8 +111,11 @@ TEST_F(ASTCheckerTest, CtorWithPointers) {
 TEST_F(ASTCheckerTest, ThrowsOnNonNode) {
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").endsWith<ASTNodeReturn>(), "tried node method on non node");
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").has<ASTNodeReturn>(), "tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").hoistingFriendly(), "tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").insideMain(), "tried node method on non node");
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").is<ASTNodeFnDecl>(), "tried node method on non node");
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").isLast(), "tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").parentIs<ASTNodeFnDecl>(), "tried node method on non node");
 }
 
 TEST_F(ASTCheckerTest, EndsWithReturn) {
@@ -136,9 +178,9 @@ TEST_F(ASTCheckerTest, GetExprOfType) {
 }
 
 TEST_F(ASTCheckerTest, GetExprOfTypeFromNodes) {
-  EXPECT_EQ(this->node_("enum Color { Red = 1, Green = 2, Blue = 3 }").getExprOfType<ASTExprLit>().size(), 3);
-  EXPECT_EQ(this->node_("fn test (a := 2, b := 3) {}").getExprOfType<ASTExprLit>().size(), 2);
-  EXPECT_EQ(this->node_("fn test () { a := 2; b := 3 }").getExprOfType<ASTExprLit>().size(), 2);
+  EXPECT_EQ(this->node_("enum Color { Red = 1, Green = 2, Blue = 3 }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test (a := 2, b := 3) {}").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test () { a := 2; b := 3 }").getExprOfType<ASTExprLit>().size(), 0);
   EXPECT_EQ(this->node_("1 + 2").getExprOfType<ASTExprLit>().size(), 2);
   EXPECT_EQ(this->node_("if 1 == 1 {}").getExprOfType<ASTExprLit>().size(), 2);
   EXPECT_EQ(this->node_("if true { 1 + 1 }").getExprOfType<ASTExprLit>().size(), 3);
@@ -151,10 +193,10 @@ TEST_F(ASTCheckerTest, GetExprOfTypeFromNodes) {
   EXPECT_EQ(this->node_("loop true { 1 + 1 }").getExprOfType<ASTExprLit>().size(), 3);
   EXPECT_EQ(this->node_("loop a := 1; a < 2; a++ { 1 + 1 }").getExprOfType<ASTExprAccess>().size(), 2);
   EXPECT_EQ(this->node_("loop a := 1; a < 2; a++ { 1 + 1 }").getExprOfType<ASTExprLit>().size(), 4);
-  EXPECT_EQ(this->node_("obj Test { fn test (a := 1, b := 2) }").getExprOfType<ASTExprLit>().size(), 2);
-  EXPECT_EQ(this->node_("obj Test { fn test () {a := 1; b := 2} }").getExprOfType<ASTExprLit>().size(), 2);
-  EXPECT_EQ(this->node_("fn test () { return 1 }").getExprOfType<ASTExprLit>().size(), 1);
-  EXPECT_EQ(this->node_("fn test () { return 1 + 1 }").getExprOfType<ASTExprLit>().size(), 2);
+  EXPECT_EQ(this->node_("obj Test { fn test (a := 1, b := 2) }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("obj Test { fn test () {a := 1; b := 2} }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test () { return 1 }").getExprOfType<ASTExprLit>().size(), 0);
+  EXPECT_EQ(this->node_("fn test () { return 1 + 1 }").getExprOfType<ASTExprLit>().size(), 0);
   EXPECT_EQ(this->node_("throw error_NewError(\"message\")").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->node_("throw error_NewError(\"message\")").getExprOfType<ASTExprLit>().size(), 1);
   EXPECT_EQ(this->node_("try { 1 + 1 } catch err: error_Error {}").getExprOfType<ASTExprLit>().size(), 2);
@@ -167,6 +209,69 @@ TEST_F(ASTCheckerTest, GetExprOfTypeFromNodes) {
 TEST_F(ASTCheckerTest, GetExprOfTypeFromNodeMain) {
   auto nodes = testing::NiceMock<MockAST>("main { 1 + 1 }").gen();
   EXPECT_EQ(ASTChecker(nodes).getExprOfType<ASTExprLit>().size(), 2);
+}
+
+TEST_F(ASTCheckerTest, HasAwait) {
+  EXPECT_TRUE(this->expr_("async fn test () {}", "await test()").hasAwait());
+  EXPECT_FALSE(this->expr_("fn test () {}", "test()").hasAwait());
+}
+
+TEST_F(ASTCheckerTest, HasExpr) {
+  EXPECT_TRUE(this->expr_("a := 1", "a").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->expr_("", "[1, 2, 3]").hasExpr<ASTExprArray>());
+  EXPECT_TRUE(this->expr_("a := 1", "a = 2").hasExpr<ASTExprAssign>());
+  EXPECT_TRUE(this->expr_("", "1+1").hasExpr<ASTExprBinary>());
+  EXPECT_TRUE(this->expr_("", "print()").hasExpr<ASTExprCall>());
+  EXPECT_TRUE(this->expr_("a := 1", "a ? 1 : 2").hasExpr<ASTExprCond>());
+  EXPECT_TRUE(this->expr_("a := 1", "a is int").hasExpr<ASTExprIs>());
+  EXPECT_TRUE(this->expr_("", "1").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("", "{\"key\": \"val\"}").hasExpr<ASTExprMap>());
+  EXPECT_TRUE(this->expr_("", "fs_Stats{mode: 1}").hasExpr<ASTExprObj>());
+  EXPECT_TRUE(this->expr_("a := 1", "ref a").hasExpr<ASTExprRef>());
+  EXPECT_TRUE(this->expr_("", "-2").hasExpr<ASTExprUnary>());
+
+  EXPECT_TRUE(this->expr_("arr := [1, 2, 3]", "arr[1]").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("obj Test { arr: int[] }; test: Test", "test.arr[1]").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("", "[1, 2, 3]").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("a := 1", "a = 2").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->expr_("a := 1", "a = 2").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("", "2 + 2").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("", "print()").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->expr_("", "print(1, 2, 3)").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("a := 1", "a ? 1 : 2").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->expr_("a := 1", "a ? 1 : 2").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("a := 1", "a is int").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->expr_("", "{\"key\": 1, \"key2\": 2}").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("obj Test { a: int; arr: int[] }", "Test{a: 1, arr: [1, 2, 3]}").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("a := 1", "ref a").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->expr_("a := 1", "-a").hasExpr<ASTExprAccess>());
+
+  EXPECT_FALSE(this->node_("enum Color { Red = 1, Green = 2, Blue = 3 }").hasExpr<ASTExprLit>());
+  EXPECT_FALSE(this->node_("fn test (a := 2, b := 3) {}").hasExpr<ASTExprLit>());
+  EXPECT_FALSE(this->node_("fn test () { a := 2; b := 3 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("1 + 2").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("if 1 == 1 {}").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("if true { 1 + 1 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("if true { 1 + 1 } else { 2 + 2 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("if true { 1 + 1 } elif false { 2 + 2 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("if true { 1 + 1 } elif false { 2 + 2 } else { 3 + 3 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("if true { 1 + 1 } elif false { 2 + 2 } elif true { 3 + 3 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("if true { 1 + 1 } elif false { 2 + 2 } elif true { 3 + 3 } else { 4 + 4 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("loop { 1 + 1 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("loop true { 1 + 1 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("loop a := 1; a < 2; a++ { 1 + 1 }").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->node_("loop a := 1; a < 2; a++ { 1 + 1 }").hasExpr<ASTExprLit>());
+  EXPECT_FALSE(this->node_("obj Test { fn test (a := 1, b := 2) }").hasExpr<ASTExprLit>());
+  EXPECT_FALSE(this->node_("obj Test { fn test () {a := 1; b := 2} }").hasExpr<ASTExprLit>());
+  EXPECT_FALSE(this->node_("fn test () { return 1 }").hasExpr<ASTExprLit>());
+  EXPECT_FALSE(this->node_("fn test () { return 1 + 1 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("throw error_NewError(\"message\")").hasExpr<ASTExprAccess>());
+  EXPECT_TRUE(this->node_("throw error_NewError(\"message\")").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("try { 1 + 1 } catch err: error_Error {}").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("try {} catch err: error_Error { 1 + 1 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("try {} catch err: error_Error { 1 + 1 } catch err: error_Error { 2 + 2 }").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("a := 1").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->node_("a := 1 + 1").hasExpr<ASTExprLit>());
 }
 
 TEST_F(ASTCheckerTest, HasReturn) {
@@ -189,7 +294,7 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "return" EOL
   ).has<ASTNodeReturn>());
 
-  EXPECT_TRUE(this->node_(
+  EXPECT_FALSE(this->node_(
     "fn test () {" EOL
     "  print(\"Test\")" EOL
     "  return" EOL
@@ -321,7 +426,7 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "}" EOL
   ).has<ASTNodeReturn>());
 
-  EXPECT_TRUE(this->node_(
+  EXPECT_FALSE(this->node_(
     "obj Test {" EOL
     "  fn test () {" EOL
     "    return 1;" EOL
@@ -329,7 +434,7 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "}" EOL
   ).has<ASTNodeReturn>());
 
-  EXPECT_TRUE(this->node_(
+  EXPECT_FALSE(this->node_(
     "obj Test {" EOL
     "  fn test1 () {" EOL
     "  }" EOL
@@ -419,6 +524,65 @@ TEST_F(ASTCheckerTest, HasReturn) {
     "print(\"Test\")" EOL
     "return" EOL
   ).has<ASTNodeReturn>());
+}
+
+TEST_F(ASTCheckerTest, HoistingFriendly) {
+  EXPECT_TRUE(this->node_("enum Test { One, Two, Three }").hoistingFriendly());
+  EXPECT_TRUE(this->node_("fn test () {}").hoistingFriendly());
+  EXPECT_TRUE(this->node_("obj Test { a: int }").hoistingFriendly());
+  EXPECT_TRUE(this->node_("type Alias = int").hoistingFriendly());
+  EXPECT_TRUE(this->node_("fn test () {} type Alias = int").hoistingFriendly());
+  EXPECT_TRUE(this->node_("enum Test { One, Two, Three } obj Alias { a: int }").hoistingFriendly());
+}
+
+TEST_F(ASTCheckerTest, InsideMainOnNull) {
+  auto nullNode = static_cast<ASTNode *>(nullptr);
+  EXPECT_FALSE(ASTChecker(nullNode).insideMain());
+}
+
+TEST_F(ASTCheckerTest, InsideMainNormal) {
+  auto nodes = testing::NiceMock<MockAST>("main {a := 1}" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+
+  EXPECT_TRUE(ASTChecker(nodeMain.body[0]).insideMain());
+}
+
+TEST_F(ASTCheckerTest, InsideMainMultipleParent) {
+  auto nodes = testing::NiceMock<MockAST>("main { loop { if true { a := 1 } } }" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+  auto nodeLoop = std::get<ASTNodeLoop>(*nodeMain.body[0].body);
+  auto nodeIf = std::get<ASTNodeIf>(*nodeLoop.body[0].body);
+
+  EXPECT_TRUE(ASTChecker(nodeIf.body[0]).insideMain());
+}
+
+TEST_F(ASTCheckerTest, InsideMainAsync) {
+  auto nodes = testing::NiceMock<MockAST>("main {async fn test () {}; await test()}" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+
+  EXPECT_FALSE(ASTChecker(nodeMain.body[0]).insideMain());
+}
+
+TEST_F(ASTCheckerTest, InsideMainFn) {
+  auto nodes = testing::NiceMock<MockAST>("main { fn test () { a := 1 } }" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+  auto nodeFnDecl = std::get<ASTNodeFnDecl>(*nodeMain.body[0].body);
+
+  EXPECT_FALSE(ASTChecker((*nodeFnDecl.body)[0]).insideMain());
+}
+
+TEST_F(ASTCheckerTest, InsideMainObjMethod) {
+  auto nodes = testing::NiceMock<MockAST>("main { obj Test { fn test () { a := 1 } } }" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+  auto nodeObjDecl = std::get<ASTNodeObjDecl>(*nodeMain.body[0].body);
+  auto nodeObjDeclMethod = nodeObjDecl.methods[0];
+
+  EXPECT_FALSE(ASTChecker((*nodeObjDeclMethod.body)[0]).insideMain());
+}
+
+TEST_F(ASTCheckerTest, InsideMainRoot) {
+  auto nodes = testing::NiceMock<MockAST>("const A := 1" EOL).gen();
+  EXPECT_FALSE(ASTChecker(nodes[0]).insideMain());
 }
 
 TEST_F(ASTCheckerTest, IsFnDecl) {
@@ -670,6 +834,56 @@ TEST_F(ASTCheckerTest, IsLastOnTryHandler) {
   EXPECT_TRUE(ASTChecker(node.handlers[0].body[2]).isLast());
 }
 
+TEST_F(ASTCheckerTest, ParentIsEmpty) {
+  auto nodes = testing::NiceMock<MockAST>("main {}" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+  EXPECT_FALSE(ASTChecker(nodeMain.body).parentIs<ASTNodeFnDecl>());
+}
+
+TEST_F(ASTCheckerTest, ParentIsRoot) {
+  auto nodes = testing::NiceMock<MockAST>("const A := 1" EOL).gen();
+  EXPECT_FALSE(ASTChecker(nodes[0]).parentIs<ASTNodeFnDecl>());
+}
+
+TEST_F(ASTCheckerTest, ParentIsMultipleParent) {
+  auto nodes = testing::NiceMock<MockAST>("main { loop { if true { a := 1 } } }" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+  auto nodeLoop = std::get<ASTNodeLoop>(*nodeMain.body[0].body);
+  auto nodeIf = std::get<ASTNodeIf>(*nodeLoop.body[0].body);
+
+  EXPECT_FALSE(ASTChecker(nodeIf.body[0]).parentIs<ASTNodeFnDecl>());
+}
+
+TEST_F(ASTCheckerTest, ParentIsMultipleParent2) {
+  auto nodes = testing::NiceMock<MockAST>("fn test () { loop { if true { a := 1 } } }" EOL).gen();
+  auto nodeFnDecl = std::get<ASTNodeFnDecl>(*nodes[0].body);
+  auto nodeLoop = std::get<ASTNodeLoop>(*(*nodeFnDecl.body)[0].body);
+  auto nodeIf = std::get<ASTNodeIf>(*nodeLoop.body[0].body);
+
+  EXPECT_TRUE(ASTChecker(nodeIf.body[0]).parentIs<ASTNodeFnDecl>());
+}
+
+TEST_F(ASTCheckerTest, ParentIsOnFn) {
+  auto nodes = testing::NiceMock<MockAST>("fn test () int { return 1 }" EOL).gen();
+  auto nodeFnDecl = std::get<ASTNodeFnDecl>(*nodes[0].body);
+
+  EXPECT_TRUE(ASTChecker((*nodeFnDecl.body)[0]).parentIs<ASTNodeFnDecl>());
+}
+
+TEST_F(ASTCheckerTest, ParentIsOnMain) {
+  auto nodes = testing::NiceMock<MockAST>("main { a := 1 }" EOL).gen();
+  auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
+
+  EXPECT_FALSE(ASTChecker(nodeMain.body[0]).parentIs<ASTNodeFnDecl>());
+}
+
+TEST_F(ASTCheckerTest, ParentIsOnObjMethod) {
+  auto nodes = testing::NiceMock<MockAST>("obj Test { fn test () int { return 1 } }" EOL).gen();
+  auto nodeObjDecl = std::get<ASTNodeObjDecl>(*nodes[0].body);
+
+  EXPECT_FALSE(ASTChecker((*nodeObjDecl.methods[0].body)[0]).parentIs<ASTNodeFnDecl>());
+}
+
 TEST_F(ASTCheckerTest, ThrowsOnManyIsLast) {
   auto code =
     "  a := 1" EOL
@@ -721,10 +935,10 @@ TEST_F(ASTCheckerTest, ThrowsNode) {
   EXPECT_TRUE(this->node_("throw error_NewError(\"test\")").throws());
   EXPECT_TRUE(this->node_("try {} catch err: error_Error {}").throws());
 
-  EXPECT_TRUE(this->node_("enum Color { Red = [1].first }").throws());
-  EXPECT_TRUE(this->node_("fn test () { throw error_NewError(\"test\") }").throws());
+  EXPECT_FALSE(this->node_("enum Color { Red = [1].first }").throws());
+  EXPECT_FALSE(this->node_("fn test () { throw error_NewError(\"test\") }").throws());
   EXPECT_TRUE(this->node_("[1].first").throws());
-  EXPECT_TRUE(this->node_("fn test (arr := [1], a := arr.first) {}").throws());
+  EXPECT_FALSE(this->node_("fn test (arr := [1], a := arr.first) {}").throws());
   EXPECT_TRUE(this->node_("if [1].first == 1 {}").throws());
   EXPECT_TRUE(this->node_("if true { a := [1].first }").throws());
   EXPECT_TRUE(this->node_("if true {} else { a := [1].first }").throws());
@@ -738,10 +952,10 @@ TEST_F(ASTCheckerTest, ThrowsNode) {
   EXPECT_TRUE(this->node_("loop a := 0; [1].first < 1; a++ {}").throws());
   EXPECT_TRUE(this->node_("loop a := 0; a < 1; a += [1].first {}").throws());
 
-  EXPECT_TRUE(this->node_("obj Test { fn test (a := [1].first) {} }").throws());
-  EXPECT_TRUE(this->node_("obj Test { fn test () { [1].first } }").throws());
+  EXPECT_FALSE(this->node_("obj Test { fn test (a := [1].first) {} }").throws());
+  EXPECT_FALSE(this->node_("obj Test { fn test () { [1].first } }").throws());
 
-  EXPECT_TRUE(this->node_("fn test () int { return [1].first }").throws());
+  EXPECT_TRUE(this->node_("return [1].first").throws());
 
   EXPECT_TRUE(this->node_("a := [1].first").throws());
   EXPECT_TRUE(this->node_("a: int? = [1].first").throws());
@@ -752,4 +966,16 @@ TEST_F(ASTCheckerTest, ThrowsNodeMain) {
   auto ast = AST(&parser);
   auto nodes = ast.gen();
   EXPECT_TRUE(ASTChecker(nodes).throws());
+}
+
+TEST_F(ASTCheckerTest, ThrowsPossibleExprAccess) {
+  EXPECT_TRUE(this->expr_("", "print()").throwsPossible());
+  EXPECT_TRUE(this->expr_("a: int[]", "a[0]").throwsPossible());
+  EXPECT_TRUE(this->expr_("a: int[]", "a.first").throwsPossible());
+  EXPECT_TRUE(this->expr_("fn test() {}", "test()").throwsPossible());
+  EXPECT_TRUE(this->node_("print()").throwsPossible());
+  EXPECT_TRUE(this->node_("a: int[]; a[0]").throwsPossible());
+  EXPECT_TRUE(this->node_("a: int[]; a.first").throwsPossible());
+  EXPECT_TRUE(this->node_("fn test() {}; test()").throwsPossible());
+  EXPECT_FALSE(this->node_("async fn test() {}; await test()").throwsPossible());
 }

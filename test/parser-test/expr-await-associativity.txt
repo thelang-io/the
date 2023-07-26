@@ -1,0 +1,21 @@
+======= stdin =======
+a := await (await test1())
+======= stdout =======
+<StmtVarDecl start="1:1" end="1:27">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprAwait start="1:6" end="1:27">
+      <ExprAwait parenthesized start="1:12" end="1:27">
+        <ExprCall start="1:19" end="1:26">
+          <ExprCallCallee>
+            <ExprAccess start="1:19" end="1:24">
+              <Token type="ID" val="test1" start="1:19" end="1:24" />
+            </ExprAccess>
+          </ExprCallCallee>
+        </ExprCall>
+      </ExprAwait>
+    </ExprAwait>
+  </StmtVarDeclInit>
+</StmtVarDecl>

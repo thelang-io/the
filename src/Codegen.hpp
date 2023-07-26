@@ -17,8 +17,10 @@
 #ifndef SRC_CODEGEN_HPP
 #define SRC_CODEGEN_HPP
 
+#include "codegen-ast/CodegenAST.hpp"
 #include "AST.hpp"
-#include "codegen-api.hpp"
+#include "ASTChecker.hpp"
+#include "CodegenAPIItem.hpp"
 #include "CodegenCleanUp.hpp"
 
 enum CodegenEntityType {
@@ -50,6 +52,7 @@ struct CodegenBuiltins {
   bool libNetinetIn = false;
   bool libOpensslSsl = false;
   bool libOpensslRand = false;
+  bool libPthread = false;
   bool libPwd = false;
   bool libSetJmp = false;
   bool libStdNoReturn = false;
@@ -62,6 +65,7 @@ struct CodegenBuiltins {
   bool libString = false;
   bool libSysSocket = false;
   bool libSysStat = false;
+  bool libSysSyscall = false;
   bool libSysTypes = false;
   bool libSysUtsname = false;
   bool libTime = false;
@@ -77,6 +81,12 @@ struct CodegenBuiltins {
   bool typeErrState = false;
   bool typeRequest = false;
   bool typeStr = false;
+  bool typeThreadpool = false;
+  bool typeThreadpoolCond = false;
+  bool typeThreadpoolFunc = false;
+  bool typeThreadpoolJob = false;
+  bool typeThreadpoolMutex = false;
+  bool typeThreadpoolThread = false;
   bool typeWinReparseDataBuffer = false;
   bool varEnviron = false;
   bool varErrState = false;
@@ -100,7 +110,11 @@ struct CodegenState {
   CodegenCleanUp cleanUp;
   std::set<std::string> contextVars = {};
   Type *returnType = nullptr;
+  bool insideAsync = false;
   std::map<std::string, Type *> typeCasts = {};
+  std::size_t asyncCounter = 0;
+  std::shared_ptr<std::size_t> asyncCounterLoopBreak = nullptr;
+  std::shared_ptr<std::size_t> asyncCounterLoopContinue = nullptr;
 };
 
 struct CodegenTypeInfo {
@@ -155,14 +169,37 @@ class Codegen {
   std::vector<CodegenStateBuiltinsEntities> builtinsEntitiesBuffer = {};
   std::vector<std::string> bufferBuiltins = {};
   std::vector<std::string> bufferEntities = {};
+  bool async = false;
   bool throws = false;
 
-  static void compile (
-    const std::string &,
-    const std::tuple<std::string, std::vector<std::string>> &,
-    const std::string &,
-    bool = false
-  );
+  static void compile (const std::string &, const std::tuple<std::string, std::vector<std::string>> &, const std::string &, bool = false);
+
+  template <typename T>
+  static std::size_t countAsyncLoopDepth (const std::vector<ASTNode> &nodes, std::size_t prevDepth) {
+    auto depth = prevDepth;
+
+    for (const auto &node : nodes) {
+      auto flattenNodes = ASTChecker::flattenNode({ node });
+
+      for (const auto &flattenNode : flattenNodes) {
+        if (std::holds_alternative<ASTNodeLoop>(*flattenNode.body)) {
+          auto nodeLoop = std::get<ASTNodeLoop>(*flattenNode.body);
+
+          if (ASTChecker(nodeLoop.body).has<T>()) {
+            auto newDepth = Codegen::countAsyncLoopDepth<T>(nodeLoop.body, prevDepth + 1);
+
+            if (newDepth > depth) {
+              depth = newDepth;
+            }
+          }
+        }
+      }
+    }
+
+    return depth;
+  }
+
+  static std::vector<std::shared_ptr<Var>> filterAsyncDeclarations (const std::vector<ASTNode> &);
   static std::string getEnvVar (const std::string &);
   static std::string name (const std::string &);
   static std::string stringifyFlags (const std::vector<std::string> &);
@@ -176,40 +213,66 @@ class Codegen {
   Codegen (const Codegen &);
   Codegen &operator= (const Codegen &);
 
-  int _apiEntity (
-    const std::string &,
-    CodegenEntityType,
-    const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt
-  );
-  std::string _apiEval (
-    const std::string &,
-    int = 0,
-    const std::string & = "",
-    const std::optional<std::set<std::string> *> & = std::nullopt
-  );
+  std::string _ (const std::string &, const std::optional<std::set<std::string> *> & = std::nullopt);
+  int _apiEntity (const std::string &, CodegenEntityType, const std::optional<std::function<int (std::string &, std::string &)>> & = std::nullopt);
+  std::string _apiEval (const std::string &, int = 0, const std::string & = "", const std::optional<std::set<std::string> *> & = std::nullopt);
   void _activateBuiltin (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
   void _activateEntity (const std::string &, std::optional<std::vector<std::string> *> = std::nullopt);
-  std::string _block (const ASTBlock &, bool = true, const std::string & = "");
-  std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &);
-  std::string _exprCallDefaultArg (const CodegenTypeInfo &);
-  std::string _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &);
+  void _block (std::shared_ptr<CodegenASTStmt> *, const ASTBlock &, bool = true, const std::shared_ptr<CodegenASTStmt> & = nullptr, bool = false);
+  void _blockAsync (std::shared_ptr<CodegenASTStmt> *, const ASTBlock &, bool = true, const std::shared_ptr<CodegenASTStmt> & = nullptr, bool = false);
+  std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &, const ASTNode &);
+  std::shared_ptr<CodegenASTExpr> _exprAccess (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprArray (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprAssign (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprAwait (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprBinary (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprCall (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool, std::size_t);
+  std::shared_ptr<CodegenASTExpr> _exprCallDefaultArg (const CodegenTypeInfo &);
+  std::shared_ptr<CodegenASTExpr> _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &, const ASTNode &, std::shared_ptr<CodegenASTStmt> *);
   std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
-  std::string _exprObjDefaultField (const CodegenTypeInfo &);
-  std::string _fnDecl (
-    std::shared_ptr<Var>,
-    const std::vector<std::shared_ptr<Var>> &,
-    const std::vector<ASTFnDeclParam> &,
-    const std::optional<ASTBlock> &,
-    CodegenPhase
-  );
-  std::string _genCopyFn (Type *, const std::string &);
-  std::string _genEqFn (Type *, const std::string &, const std::string &, bool = false);
-  std::string _genFreeFn (Type *, const std::string &);
-  std::string _genReallocFn (Type *, const std::string &, const std::string &);
-  std::string _genStrFn (Type *, const std::string &, bool = true, bool = true);
-  std::string _node (const ASTNode &, bool = true, CodegenPhase = CODEGEN_PHASE_FULL);
-  std::string _nodeExpr (const ASTNodeExpr &, Type *, bool = false);
-  std::string _nodeVarDeclInit (const CodegenTypeInfo &);
+  std::shared_ptr<CodegenASTExpr> _exprCond (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprIs (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprLit (const ASTNodeExpr &, Type *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprMap (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprObj (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprObjDefaultField (const CodegenTypeInfo &);
+  std::shared_ptr<CodegenASTExpr> _exprRef (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  void _fnDecl (std::shared_ptr<CodegenASTStmt> *, std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
+  void _fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *, const std::string &);
+  std::shared_ptr<CodegenASTStmt> _genAsyncReturn (const std::shared_ptr<std::size_t> &);
+  std::shared_ptr<CodegenASTExpr> _genCopyFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
+  std::shared_ptr<CodegenASTExpr> _genEqFn (Type *, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &, bool = false);
+  std::shared_ptr<CodegenASTExpr> _genErrState (bool, bool, const std::string & = "");
+  std::shared_ptr<CodegenASTExpr> _genFreeFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
+  std::shared_ptr<CodegenASTExpr> _genReallocFn (Type *, const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTExpr> &);
+  std::shared_ptr<CodegenASTExpr> _genStrFn (Type *, const std::shared_ptr<CodegenASTExpr> &, bool = true, bool = true);
+  void _node (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase = CODEGEN_PHASE_FULL);
+  void _nodeAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase = CODEGEN_PHASE_FULL);
+  void _nodeBreak (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeBreakAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeContinue (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeContinueAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeEnumDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
+  void _nodeExprDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  std::shared_ptr<CodegenASTExpr> _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool = false, std::size_t = 0);
+  void _nodeFnDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
+  void _nodeIf (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeIfAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeLoop (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeMain (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeMainAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeObjDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
+  void _nodeReturn (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeReturnAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeThrow (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeThrowAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeTry (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeTryAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeVarDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeVarDeclAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  std::shared_ptr<CodegenASTExpr> _nodeVarDeclInit (const CodegenTypeInfo &);
   void _restoreStateBuiltinsEntities ();
   void _saveStateBuiltinsEntities ();
   std::string _type (Type *);
@@ -225,8 +288,7 @@ class Codegen {
   std::string _typeNameObjDef (Type *, const std::map<std::string, std::string> & = {});
   std::string _typeNameOpt (Type *);
   std::string _typeNameUnion (Type *);
-  std::string _wrapNode (const ASTNode &, const std::string &);
-  std::string _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::string &);
+  std::shared_ptr<CodegenASTExpr> _wrapNodeExpr (const ASTNodeExpr &, Type *, bool, const std::shared_ptr<CodegenASTExpr> &);
 };
 
 #endif
