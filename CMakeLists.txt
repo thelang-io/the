@@ -150,6 +150,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/ASTCheckerTest.cpp
     test/ASTExprTest.cpp
     test/CodegenTest.cpp
+    test/CodegenASTTest.cpp
     test/CodegenCleanUpTest.cpp
     test/CParserTest.cpp
     test/ErrorTest.cpp

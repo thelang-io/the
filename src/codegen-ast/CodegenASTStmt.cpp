@@ -291,10 +291,8 @@ std::string CodegenASTStmt::str (std::size_t indent, bool root) const {
   else if (this->isCase()) { return this->asCase().str(indent, root); }
   else if (this->isCompound()) { return this->asCompound().str(indent, root); }
   else if (this->isContinue()) { return this->asContinue().str(indent, root); }
-    // todo test
   else if (this->isEnumDecl()) { return this->asEnumDecl().str(indent, root); }
   else if (this->isExpr()) { return this->asExpr().str(indent, root); }
-    // todo test
   else if (this->isFnDecl()) { return this->asFnDecl().str(indent, root); }
   else if (this->isFor()) { return this->asFor().str(indent, root); }
   else if (this->isGoto()) { return this->asGoto().str(indent, root); }
@@ -302,7 +300,6 @@ std::string CodegenASTStmt::str (std::size_t indent, bool root) const {
   else if (this->isLabel()) { return this->asLabel().str(indent, root); }
   else if (this->isNull()) { return this->asNull().str(indent, root); }
   else if (this->isReturn()) { return this->asReturn().str(indent, root); }
-    // todo test
   else if (this->isStructDecl()) { return this->asStructDecl().str(indent, root); }
   else if (this->isSwitch()) { return this->asSwitch().str(indent, root); }
   else if (this->isVarDecl()) { return this->asVarDecl().str(indent, root); }
@@ -328,11 +325,9 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtCase::create (
 }
 
 std::string CodegenASTStmtCase::str (std::size_t indent, bool root) const {
-  // todo test
   auto result = root ? std::string(indent, ' ') : "";
   result += (this->test == nullptr || this->test->isNull()) ? "default" : "case " + this->test->str();
   result += ": " + this->body->str(indent, false);
-  // todo test
   result += root ? EOL : "";
   return result;
 }
@@ -390,7 +385,6 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtFor::create (
 }
 
 std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
-  // todo test
   auto result = root ? std::string(indent, ' ') : "";
   result += "for (";
   if (this->init != nullptr && !this->init->isNullable()) {
@@ -409,10 +403,8 @@ std::string CodegenASTStmtFor::str (std::size_t indent, bool root) const {
   if (this->body != nullptr && !this->body->isNullable()) {
     result += " " + this->body->str(indent, false);
   } else {
-    // todo test
     result += ";";
   }
-  // todo test
   result += root ? EOL : "";
   return result;
 }
@@ -449,7 +441,6 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtLabel::create (const std::string &
 }
 
 std::string CodegenASTStmtLabel::str ([[maybe_unused]] std::size_t indent, bool root) const {
-  // todo test
   return this->name + ":" + (root ? EOL : "");
 }
 
@@ -489,14 +480,12 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtSwitch::create (
 }
 
 std::string CodegenASTStmtSwitch::str (std::size_t indent, bool root) const {
-  // todo test
   auto result = root ? std::string(indent, ' ') : "";
   result += "switch (" + this->discriminant->str() + ") {" EOL;
   for (const auto &it : this->body) {
     result += it->str(indent + 2);
   }
   result += std::string(indent, ' ') + "}";
-  // todo test
   result += root ? EOL : "";
   return result;
 }
@@ -528,16 +517,13 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmtWhile::create (
 }
 
 std::string CodegenASTStmtWhile::str (std::size_t indent, bool root) const {
-  // todo test
   auto result = root ? std::string(indent, ' ') : "";
   result += "while (" + this->cond->str() + ")";
   if (this->body != nullptr && !this->body->isNullable()) {
     result += " " + this->body->str(indent, false);
   } else {
-    // todo test
     result += ";";
   }
-  // todo test
   result += root ? EOL : "";
   return result;
 }

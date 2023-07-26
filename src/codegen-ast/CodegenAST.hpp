@@ -17,10 +17,6 @@
 #ifndef SRC_CODEGEN_AST_CODEGEN_AST_HPP
 #define SRC_CODEGEN_AST_CODEGEN_AST_HPP
 
-// todo test
-// todo test inline str methods
-// todo test ends with template function
-
 #include <memory>
 #include <optional>
 #include <string>
@@ -89,7 +85,11 @@ using CodegenASTExprBody = std::variant<
   CodegenASTExprUnary
 >;
 
-inline std::string notImplementedStr ([[maybe_unused]] std::size_t indent, [[maybe_unused]] bool root) {
+inline std::string notImplementedStr (
+  [[maybe_unused]] std::variant<const CodegenASTStmtEnumDecl *, const CodegenASTStmtFnDecl *, const CodegenASTStmtStructDecl *> self,
+  [[maybe_unused]] std::size_t indent,
+  [[maybe_unused]] bool root
+) {
   return "undefined";
 }
 
@@ -329,7 +329,7 @@ struct CodegenASTStmtCase {
   std::shared_ptr<CodegenASTExpr> test;
   std::shared_ptr<CodegenASTStmt> body;
 
-  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> & = nullptr, const std::shared_ptr<CodegenASTStmt> & = nullptr);
+  static std::shared_ptr<CodegenASTStmt> create (const std::shared_ptr<CodegenASTExpr> &, const std::shared_ptr<CodegenASTStmt> &);
   std::string str (std::size_t, bool) const;
 };
 
@@ -347,8 +347,7 @@ struct CodegenASTStmtContinue {
 };
 
 struct CodegenASTStmtEnumDecl {
-  // NOLINTNEXTLINE(readability-convert-member-functions-to-static, readability-make-member-function-const)
-  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
+  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(this, indent, root); };
 };
 
 struct CodegenASTStmtExpr {
@@ -359,8 +358,7 @@ struct CodegenASTStmtExpr {
 };
 
 struct CodegenASTStmtFnDecl {
-  // NOLINTNEXTLINE(readability-convert-member-functions-to-static, readability-make-member-function-const)
-  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
+  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(this, indent, root); };
 };
 
 struct CodegenASTStmtFor {
@@ -410,8 +408,7 @@ struct CodegenASTStmtReturn {
 };
 
 struct CodegenASTStmtStructDecl {
-  // NOLINTNEXTLINE(readability-convert-member-functions-to-static, readability-make-member-function-const)
-  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(indent, root); };
+  inline std::string str (std::size_t indent, bool root) const { return notImplementedStr(this, indent, root); };
 };
 
 struct CodegenASTStmtSwitch {
