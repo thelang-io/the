@@ -148,6 +148,9 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-access-member",
   "expr-access-associativity",
   "expr-array",
+  "expr-as",
+  "expr-as-precedence",
+  "expr-as-associativity",
   "expr-assign",
   "expr-assign-member",
   "expr-assign-op",
@@ -169,6 +172,8 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-cond-precedence",
   "expr-cond-associativity",
   "expr-is",
+  "expr-is-precedence",
+  "expr-is-associativity",
   "expr-lit",
   "expr-lit-esc",
   "expr-lit-nil",
@@ -335,7 +340,8 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0168-expr-map-missing-name",
   "throw-E0169-expr-map-missing-colon",
   "throw-E0170-expr-map-missing-initializer",
-  "throw-E0181-expr-await-missing-arg"
+  "throw-E0181-expr-await-missing-arg",
+  "throw-E0182-expr-as-missing-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(

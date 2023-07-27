@@ -120,6 +120,7 @@
 #define E0179 "E0179 - Expected function declaration after `async` keyword"
 #define E0180 "E0180 - Expected function type after `async` keyword"
 #define E0181 "E0181 - Expected expression after `await` keyword"
+#define E0182 "E0182 - Expected type after `as` keyword"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

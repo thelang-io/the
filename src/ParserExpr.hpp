@@ -25,6 +25,7 @@
 
 struct ParserExprAccess;
 struct ParserExprArray;
+struct ParserExprAs;
 struct ParserExprAssign;
 struct ParserExprAwait;
 struct ParserExprBinary;
@@ -40,6 +41,7 @@ struct ParserExprUnary;
 using ParserExpr = std::variant<
   ParserExprAccess,
   ParserExprArray,
+  ParserExprAs,
   ParserExprAssign,
   ParserExprAwait,
   ParserExprBinary,
@@ -71,6 +73,11 @@ struct ParserExprAccess {
 
 struct ParserExprArray {
   std::vector<ParserStmtExpr> elements;
+};
+
+struct ParserExprAs {
+  ParserStmtExpr expr;
+  ParserType type;
 };
 
 struct ParserExprAssign {

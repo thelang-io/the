@@ -1,0 +1,33 @@
+======= stdin =======
+test as str as str as str
+======= stdout =======
+<ExprAs start="1:1" end="1:26">
+  <ExprAsExpr>
+    <ExprAs start="1:1" end="1:19">
+      <ExprAsExpr>
+        <ExprAs start="1:1" end="1:12">
+          <ExprAsExpr>
+            <ExprAccess start="1:1" end="1:5">
+              <Token type="ID" val="test" start="1:1" end="1:5" />
+            </ExprAccess>
+          </ExprAsExpr>
+          <ExprAsType>
+            <TypeId start="1:9" end="1:12">
+              <Token type="ID" val="str" start="1:9" end="1:12" />
+            </TypeId>
+          </ExprAsType>
+        </ExprAs>
+      </ExprAsExpr>
+      <ExprAsType>
+        <TypeId start="1:16" end="1:19">
+          <Token type="ID" val="str" start="1:16" end="1:19" />
+        </TypeId>
+      </ExprAsType>
+    </ExprAs>
+  </ExprAsExpr>
+  <ExprAsType>
+    <TypeId start="1:23" end="1:26">
+      <Token type="ID" val="str" start="1:23" end="1:26" />
+    </TypeId>
+  </ExprAsType>
+</ExprAs>

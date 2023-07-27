@@ -200,7 +200,7 @@ std::string Token::upperFirst (const std::string &str) {
 
 TokenAssociativity Token::associativity (bool unary) const {
   if (
-    this->type == TK_KW_AWAIT || this->type == TK_KW_IS || this->type == TK_KW_REF ||
+    this->type == TK_KW_AS || this->type == TK_KW_AWAIT || this->type == TK_KW_IS || this->type == TK_KW_REF ||
     this->type == TK_OP_LBRACE || this->type == TK_OP_RBRACE ||
     this->type == TK_OP_LPAR || this->type == TK_OP_RPAR ||
     this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS ||
@@ -259,7 +259,7 @@ int Token::precedence (bool isUnary) const {
     return 11;
   } else if (this->type == TK_OP_LSHIFT || this->type == TK_OP_RSHIFT) {
     return 10;
-  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ || this->type == TK_KW_IS) {
+  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ || this->type == TK_KW_AS || this->type == TK_KW_IS) {
     return 9;
   } else if (this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ) {
     return 8;
