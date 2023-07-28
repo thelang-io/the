@@ -173,6 +173,9 @@ void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent) {
     for (auto &elem : exprArray.elements) {
       AST::populateParentExpr(elem, &expr);
     }
+  } else if (std::holds_alternative<ASTExprAs>(*expr.body)) {
+    auto &exprAs = std::get<ASTExprAs>(*expr.body);
+    AST::populateParentExpr(exprAs.expr, &expr);
   } else if (std::holds_alternative<ASTExprAssign>(*expr.body)) {
     auto &exprAssign = std::get<ASTExprAssign>(*expr.body);
     AST::populateParentExpr(exprAssign.left, &expr);
@@ -975,6 +978,16 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     }
 
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprArray{exprArrayElements});
+  } else if (std::holds_alternative<ParserExprAs>(*stmtExpr.body)) {
+    auto parserExprAs = std::get<ParserExprAs>(*stmtExpr.body);
+    auto exprAsType = this->_type(parserExprAs.type);
+    auto exprAsExpr = this->_nodeExpr(parserExprAs.expr, exprAsType, varStack);
+
+    if (!exprAsExpr.type->canBeCast(exprAsType)) {
+      throw Error(this->reader, stmtExpr.start, stmtExpr.end, E1031);
+    }
+
+    return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprAs{exprAsExpr, exprAsType});
   } else if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     auto parserExprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto exprAssignOp = ASTExprAssignOp{};
@@ -1353,6 +1366,9 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     }
 
     return this->_wrapNodeExprType(stmtExpr, targetType, realTargetType == nullptr ? this->typeMap.createArr(elementsType) : realTargetType);
+  } else if (std::holds_alternative<ParserExprAs>(*stmtExpr.body)) {
+    auto exprAs = std::get<ParserExprAs>(*stmtExpr.body);
+    return this->_wrapNodeExprType(stmtExpr, targetType, this->_type(exprAs.type));
   } else if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     auto exprAssign = std::get<ParserExprAssign>(*stmtExpr.body);
     auto leftType = this->_nodeExprType(exprAssign.left, nullptr);

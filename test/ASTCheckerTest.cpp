@@ -149,6 +149,7 @@ TEST_F(ASTCheckerTest, EndsWithReturn) {
 TEST_F(ASTCheckerTest, GetExprOfType) {
   EXPECT_EQ(this->expr_("a := 1", "a").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->expr_("", "[1, 2, 3]").getExprOfType<ASTExprArray>().size(), 1);
+  EXPECT_EQ(this->expr_("a := 1", "a as int").getExprOfType<ASTExprAs>().size(), 1);
   EXPECT_EQ(this->expr_("a := 1", "a = 2").getExprOfType<ASTExprAssign>().size(), 1);
   EXPECT_EQ(this->expr_("", "1+1").getExprOfType<ASTExprBinary>().size(), 1);
   EXPECT_EQ(this->expr_("", "print()").getExprOfType<ASTExprCall>().size(), 1);
@@ -163,6 +164,7 @@ TEST_F(ASTCheckerTest, GetExprOfType) {
   EXPECT_EQ(this->expr_("arr := [1, 2, 3]", "arr[1]").getExprOfType<ASTExprLit>().size(), 1);
   EXPECT_EQ(this->expr_("obj Test { arr: int[] }; test: Test", "test.arr[1]").getExprOfType<ASTExprLit>().size(), 1);
   EXPECT_EQ(this->expr_("", "[1, 2, 3]").getExprOfType<ASTExprLit>().size(), 3);
+  EXPECT_EQ(this->expr_("a := 1", "a as int").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->expr_("a := 1", "a = 2").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->expr_("a := 1", "a = 2").getExprOfType<ASTExprLit>().size(), 1);
   EXPECT_EQ(this->expr_("", "2 + 2").getExprOfType<ASTExprLit>().size(), 2);
@@ -219,6 +221,7 @@ TEST_F(ASTCheckerTest, HasAwait) {
 TEST_F(ASTCheckerTest, HasExpr) {
   EXPECT_TRUE(this->expr_("a := 1", "a").hasExpr<ASTExprAccess>());
   EXPECT_TRUE(this->expr_("", "[1, 2, 3]").hasExpr<ASTExprArray>());
+  EXPECT_TRUE(this->expr_("a := 1", "a as int").hasExpr<ASTExprAs>());
   EXPECT_TRUE(this->expr_("a := 1", "a = 2").hasExpr<ASTExprAssign>());
   EXPECT_TRUE(this->expr_("", "1+1").hasExpr<ASTExprBinary>());
   EXPECT_TRUE(this->expr_("", "print()").hasExpr<ASTExprCall>());
@@ -233,6 +236,7 @@ TEST_F(ASTCheckerTest, HasExpr) {
   EXPECT_TRUE(this->expr_("arr := [1, 2, 3]", "arr[1]").hasExpr<ASTExprLit>());
   EXPECT_TRUE(this->expr_("obj Test { arr: int[] }; test: Test", "test.arr[1]").hasExpr<ASTExprLit>());
   EXPECT_TRUE(this->expr_("", "[1, 2, 3]").hasExpr<ASTExprLit>());
+  EXPECT_TRUE(this->expr_("a := 1", "a as int").hasExpr<ASTExprAccess>());
   EXPECT_TRUE(this->expr_("a := 1", "a = 2").hasExpr<ASTExprAccess>());
   EXPECT_TRUE(this->expr_("a := 1", "a = 2").hasExpr<ASTExprLit>());
   EXPECT_TRUE(this->expr_("", "2 + 2").hasExpr<ASTExprLit>());

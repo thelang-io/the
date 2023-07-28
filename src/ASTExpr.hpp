@@ -80,6 +80,7 @@ enum ASTExprUnaryOp {
 
 struct ASTExprAccess;
 struct ASTExprArray;
+struct ASTExprAs;
 struct ASTExprAssign;
 struct ASTExprAwait;
 struct ASTExprBinary;
@@ -95,6 +96,7 @@ struct ASTExprUnary;
 using ASTExpr = std::variant<
   ASTExprAccess,
   ASTExprArray,
+  ASTExprAs,
   ASTExprAssign,
   ASTExprAwait,
   ASTExprBinary,
@@ -136,6 +138,11 @@ struct ASTExprAccess {
 
 struct ASTExprArray {
   std::vector<ASTNodeExpr> elements;
+};
+
+struct ASTExprAs {
+  ASTNodeExpr expr;
+  Type *type;
 };
 
 struct ASTExprAssign {

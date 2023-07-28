@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  testUnion: int | float = 10
+  testUnion as str
+}
+======= stderr =======
+/test:3:3: E1031 - Type casting is not possible in this case
+  3 |   testUnion as str
+    |   ^~~~~~~~~~~~~~~~

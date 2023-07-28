@@ -134,6 +134,23 @@ Type *Type::largest (Type *a, Type *b) {
   ) ? a : b;
 }
 
+bool Type::canBeCast (Type *t) {
+  auto t1 = Type::actual(this);
+  auto t2 = Type::actual(t);
+
+  return
+    t1->isAny() ||
+    (t1->isBool() && t2->isIntNumber()) ||
+    (t1->isByte() && t2->isChar()) ||
+    (t1->isChar() && t2->isByte()) ||
+    (t1->isEnum() && t2->isInt()) ||
+    (t1->isFn() && t2->isFn() && t2->matchNice(t1)) ||
+    (t1->isNumber() && t2->isNumber() && numberTypeMatch(t2->name, t1->name)) ||
+    (t1->isOpt() && Type::actual(std::get<TypeOptional>(t1->body).type)->matchStrict(t2, true)) ||
+    (t1->isRef() && Type::actual(std::get<TypeRef>(t1->body).refType)->matchStrict(t2, true)) ||
+    (t1->isUnion() && t1->hasSubType(t2));
+}
+
 std::optional<TypeField> Type::fieldNth (std::size_t idx) const {
   if (this->isAlias()) {
     return std::get<TypeAlias>(this->body).type->fieldNth(idx);

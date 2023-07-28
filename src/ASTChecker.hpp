@@ -45,6 +45,10 @@ class ASTChecker {
         auto exprBody = std::get<ASTExprArray>(*expr.body);
         auto childResult = ASTChecker::flattenExpr(exprBody.elements);
         result.insert(result.end(), childResult.begin(), childResult.end());
+      } else if (std::holds_alternative<ASTExprAs>(*expr.body)) {
+        auto exprBody = std::get<ASTExprAs>(*expr.body);
+        auto childResult = ASTChecker::flattenExpr({ exprBody.expr });
+        result.insert(result.end(), childResult.begin(), childResult.end());
       } else if (std::holds_alternative<ASTExprAssign>(*expr.body)) {
         auto exprBody = std::get<ASTExprAssign>(*expr.body);
         auto childResult = ASTChecker::flattenExpr({ exprBody.left, exprBody.right });

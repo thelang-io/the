@@ -152,6 +152,7 @@
 #define E1028 "E1028 - Throw argument required to be object with first field string `message` and second field string `stack`"
 #define E1029 "E1029 - Catch block can only catch object with first field string `message` and second field string `stack`"
 #define E1030 "E1030 - Awaiting is only possible on asynchronous functions"
+#define E1031 "E1031 - Type casting is not possible in this case"
 
 class Error : public std::exception {
  public:

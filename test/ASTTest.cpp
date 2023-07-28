@@ -95,6 +95,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-access-member",
   "expr-array",
   "expr-array-root",
+  "expr-as",
   "expr-assign",
   "expr-await",
   "expr-binary",
@@ -189,5 +190,13 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1029-node-try-handler-invalid-order-type",
   "throw-E1029-node-try-handler-invalid-type",
   "throw-E1029-node-try-handler-partial-type",
-  "throw-E1030-expr-await-non-async"
+  "throw-E1030-expr-await-non-async",
+  "throw-E1031-expr-as-incorrect-type-any",
+  "throw-E1031-expr-as-incorrect-type-bool",
+  "throw-E1031-expr-as-incorrect-type-enum",
+  "throw-E1031-expr-as-incorrect-type-fn",
+  "throw-E1031-expr-as-incorrect-type-number",
+  "throw-E1031-expr-as-incorrect-type-opt",
+  "throw-E1031-expr-as-incorrect-type-ref",
+  "throw-E1031-expr-as-incorrect-type-union"
 ));

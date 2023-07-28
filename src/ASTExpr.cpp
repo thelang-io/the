@@ -176,6 +176,17 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
 
       result += std::string(indent, ' ') + "</ExprArray>" EOL;
     }
+  } else if (std::holds_alternative<ASTExprAs>(*this->body)) {
+    auto exprAs = std::get<ASTExprAs>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprAs>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprAsExpr>" EOL;
+    result += exprAs.expr.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprAsExpr>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprAsType>" EOL;
+    result += exprAs.type->xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprAsType>" EOL;
+    result += std::string(indent, ' ') + "</ExprAs>" EOL;
   } else if (std::holds_alternative<ASTExprAssign>(*this->body)) {
     auto exprAssign = std::get<ASTExprAssign>(*this->body);
 
