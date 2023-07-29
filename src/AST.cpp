@@ -1059,7 +1059,13 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
     if (
       (exprBinaryLeft.type->isStr() || exprBinaryRight.type->isStr()) &&
-      (parserExprBinary.op.type != TK_OP_PLUS && parserExprBinary.op.type != TK_OP_EQ_EQ && parserExprBinary.op.type != TK_OP_EXCL_EQ)
+      parserExprBinary.op.type != TK_OP_PLUS &&
+      parserExprBinary.op.type != TK_OP_EQ_EQ &&
+      parserExprBinary.op.type != TK_OP_EXCL_EQ &&
+      parserExprBinary.op.type != TK_OP_GT &&
+      parserExprBinary.op.type != TK_OP_GT_EQ &&
+      parserExprBinary.op.type != TK_OP_LT &&
+      parserExprBinary.op.type != TK_OP_LT_EQ
     ) {
       throw Error(this->reader, parserExprBinary.left.start, parserExprBinary.right.end, E1003);
     }
@@ -1403,7 +1409,14 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     }
 
     if (exprBinaryLeftType->isStr() || exprBinaryRightType->isStr()) {
-      if (exprBinary.op.type == TK_OP_EQ_EQ || exprBinary.op.type == TK_OP_EXCL_EQ) {
+      if (
+        exprBinary.op.type == TK_OP_EQ_EQ ||
+        exprBinary.op.type == TK_OP_EXCL_EQ ||
+        exprBinary.op.type == TK_OP_GT ||
+        exprBinary.op.type == TK_OP_GT_EQ ||
+        exprBinary.op.type == TK_OP_LT ||
+        exprBinary.op.type == TK_OP_LT_EQ
+      ) {
         return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("bool"));
       } else {
         return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("str"));

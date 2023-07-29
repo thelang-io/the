@@ -5,7 +5,20 @@ main {
   b := "str2"
   a + b
   a + "str3"
-  "str4" + b
+  "str4" + b;
+
+  "a" == "a";
+  "a" == "b";
+  "a" != "a";
+  "a" != "b";
+  "a" > "b";
+  "a" >= "b";
+  "a" < "b";
+  "a" <= "b";
+  "a" > "a";
+  "a" >= "a";
+  "a" < "a";
+  "a" <= "a";
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -23,6 +36,7 @@ main {
 #endif
 
 #include <setjmp.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -51,12 +65,18 @@ err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
 
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+bool cstr_eq_cstr (const char *, const char *);
+bool cstr_ne_cstr (const char *, const char *);
 void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 void str_free (struct str);
+bool str_ge (struct str, struct str);
+bool str_gt (struct str, struct str);
+bool str_le (struct str, struct str);
+bool str_lt (struct str, struct str);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -70,6 +90,14 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
+}
+bool cstr_eq_cstr (const char *c1, const char *c2) {
+  size_t l = strlen(c1);
+  return l == strlen(c2) && memcmp(c1, c2, l) == 0;
+}
+bool cstr_ne_cstr (const char *c1, const char *c2) {
+  size_t l = strlen(c1);
+  return l != strlen(c2) || memcmp(c1, c2, l) != 0;
 }
 void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
@@ -118,6 +146,30 @@ struct str str_copy (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+bool str_ge (struct str s1, struct str s2) {
+  bool r = memcmp(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) >= 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
+bool str_gt (struct str s1, struct str s2) {
+  bool r = memcmp(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) > 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
+bool str_le (struct str s1, struct str s2) {
+  bool r = memcmp(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) <= 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
+bool str_lt (struct str s1, struct str s2) {
+  bool r = memcmp(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) < 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
 
 int main () {
   "helloworld";
@@ -126,6 +178,18 @@ int main () {
   str_free((struct str) str_concat_str(str_copy(__THE_0_a_0), str_copy(__THE_0_b_0)));
   str_free((struct str) str_concat_cstr(str_copy(__THE_0_a_0), "str3"));
   str_free((struct str) cstr_concat_str("str4", str_copy(__THE_0_b_0)));
+  cstr_eq_cstr("a", "a");
+  cstr_eq_cstr("a", "b");
+  cstr_ne_cstr("a", "a");
+  cstr_ne_cstr("a", "b");
+  str_gt(str_alloc("a"), str_alloc("b"));
+  str_ge(str_alloc("a"), str_alloc("b"));
+  str_lt(str_alloc("a"), str_alloc("b"));
+  str_le(str_alloc("a"), str_alloc("b"));
+  str_gt(str_alloc("a"), str_alloc("a"));
+  str_ge(str_alloc("a"), str_alloc("a"));
+  str_lt(str_alloc("a"), str_alloc("a"));
+  str_le(str_alloc("a"), str_alloc("a"));
   str_free((struct str) __THE_0_b_0);
   str_free((struct str) __THE_0_a_0);
 }

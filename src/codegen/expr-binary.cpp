@@ -84,6 +84,14 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprBinary (const ASTNodeExpr &nodeExp
         {cLeft, cRight}
       );
     }
+  } else if (
+    (exprBinary.op == AST_EXPR_BINARY_LE || exprBinary.op == AST_EXPR_BINARY_LT || exprBinary.op == AST_EXPR_BINARY_GE || exprBinary.op == AST_EXPR_BINARY_GT) &&
+    (Type::real(exprBinary.left.type)->isStr() && Type::real(exprBinary.right.type)->isStr())
+  ) {
+    direction = exprBinary.op == AST_EXPR_BINARY_LE ? "le" : exprBinary.op == AST_EXPR_BINARY_LT ? "lt" : exprBinary.op == AST_EXPR_BINARY_GE ? "ge" : "gt";
+    auto cLeft = this->_nodeExpr(exprBinary.left, this->ast->typeMap.get("str"), parent, c);
+    auto cRight = this->_nodeExpr(exprBinary.right, this->ast->typeMap.get("str"), parent, c);
+    expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_" + direction)), {cLeft, cRight});
   } else if (exprBinary.op == AST_EXPR_BINARY_ADD && (
     Type::real(exprBinary.left.type)->isStr() &&
     Type::real(exprBinary.right.type)->isStr()
