@@ -1003,6 +1003,22 @@ INSTANTIATE_TEST_SUITE_P(ExprArray, CodegenPassTest, testing::Values(
   "expr-array-union"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprAs, CodegenPassTest, testing::Values(
+  "expr-as",
+  "expr-as-alias",
+  "expr-as-any",
+  "expr-as-array",
+  "expr-as-enum",
+  "expr-as-fn",
+  "expr-as-fn-async",
+  "expr-as-map",
+  "expr-as-obj",
+  "expr-as-opt",
+  "expr-as-ref",
+  "expr-as-str",
+  "expr-as-union"
+));
+
 INSTANTIATE_TEST_SUITE_P(ExprAssign, CodegenPassTest, testing::Values(
   "expr-assign",
   "expr-assign-op",
@@ -1189,6 +1205,19 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-array-str",
   "node-expr-array-union",
   "node-expr-await",
+  "node-expr-as",
+  "node-expr-as-alias",
+  "node-expr-as-any",
+  "node-expr-as-array",
+  "node-expr-as-enum",
+  "node-expr-as-fn",
+  "node-expr-as-fn-async",
+  "node-expr-as-map",
+  "node-expr-as-obj",
+  "node-expr-as-opt",
+  "node-expr-as-ref",
+  "node-expr-as-str",
+  "node-expr-as-union",
   "node-expr-assign",
   "node-expr-assign-alias",
   "node-expr-assign-any",

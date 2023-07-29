@@ -266,6 +266,51 @@ TEST_F(TypeTest, RealOnRef) {
   EXPECT_EQ(Type::real(this->ref_), this->tm_.get("int"));
 }
 
+TEST_F(TypeTest, CanBeCast) {
+  auto fn1 = this->tm_.createFn({
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), false);
+
+  EXPECT_TRUE(this->alias_->canBeCast(this->tm_.get("i64")));
+  EXPECT_TRUE(this->tm_.get("any")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("bool")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("bool")->canBeCast(this->tm_.get("float")));
+  EXPECT_TRUE(this->tm_.get("byte")->canBeCast(this->tm_.get("char")));
+  EXPECT_TRUE(this->tm_.get("byte")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("byte")->canBeCast(this->tm_.get("float")));
+  EXPECT_TRUE(this->tm_.get("char")->canBeCast(this->tm_.get("byte")));
+  EXPECT_TRUE(this->tm_.get("char")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("char")->canBeCast(this->tm_.get("float")));
+  EXPECT_TRUE(this->enum_->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->fn_->canBeCast(fn1));
+  EXPECT_TRUE(this->tm_.get("int")->canBeCast(this->tm_.get("i64")));
+  EXPECT_TRUE(this->tm_.get("float")->canBeCast(this->tm_.get("f64")));
+  EXPECT_TRUE(this->opt_->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->ref_->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.createRef(this->tm_.get("str"))->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->union_->canBeCast(this->tm_.get("int")));
+}
+
+TEST_F(TypeTest, CanNotBeCast) {
+  auto fn1 = this->tm_.createFn({
+    TypeFnParam{"a", this->tm_.get("i64"), false, true, false}
+  }, this->tm_.get("int"), false);
+
+  EXPECT_FALSE(this->alias_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("int")->canBeCast(this->tm_.get("any")));
+  EXPECT_FALSE(this->tm_.get("bool")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("byte")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("char")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->enum_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->fn_->canBeCast(fn1));
+  EXPECT_FALSE(this->tm_.get("int")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("float")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->opt_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->ref_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->union_->canBeCast(this->tm_.get("char")));
+}
+
 TEST_F(TypeTest, FieldNthGetsZero) {
   auto type1 = this->tm_.createAlias("Test", this->obj_);
   auto type2 = this->tm_.createRef(this->obj_);

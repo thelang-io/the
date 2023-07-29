@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  testInt := 10
+  testInt as i8
+}
+======= stderr =======
+/test:3:3: E1031 - Type casting is not possible in this case
+  3 |   testInt as i8
+    |   ^~~~~~~~~~~~~

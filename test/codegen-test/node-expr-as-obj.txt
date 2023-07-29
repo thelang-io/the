@@ -1,0 +1,99 @@
+======= stdin =======
+obj Test {
+  a: int
+}
+
+main {
+  a := Test{a: 1};
+  b := ref a;
+  b as Test;
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  jmp_buf buf[10];
+  int buf_idx;
+  err_stack_t stack[10];
+  int stack_idx;
+  void (*_free) (void *);
+} err_state_t;
+
+struct __THE_1_Test_0;
+
+struct __THE_1_Test_0 {
+  const int32_t __THE_0_a;
+};
+
+err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
+
+void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t);
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
+    err_stack_t it = fn_err_state->stack[i];
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
+    if (l + z >= 4096) {
+      break;
+    }
+    sprintf(&d[l], fmt, it.name, it.file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
+}
+
+int main () {
+  const struct __THE_1_Test_0 *__THE_0_a_0 = __THE_1_Test_0_alloc(1);
+  const struct __THE_1_Test_0 **__THE_0_b_0 = &__THE_0_a_0;
+  *__THE_0_b_0;
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_a_0);
+}
+======= flags =======
+======= stdout =======

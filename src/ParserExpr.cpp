@@ -44,6 +44,9 @@ std::string ParserStmtExpr::stringify () const {
     }
 
     code += "]";
+  } else if (std::holds_alternative<ParserExprAs>(*this->body)) {
+    auto exprBody = std::get<ParserExprAs>(*this->body);
+    code += exprBody.expr.stringify() + " as " + exprBody.type.stringify();
   } else if (std::holds_alternative<ParserExprAssign>(*this->body)) {
     auto exprBody = std::get<ParserExprAssign>(*this->body);
     code += exprBody.left.stringify() + " " + exprBody.op.val + " " + exprBody.right.stringify();
@@ -163,6 +166,17 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
 
       result += std::string(indent, ' ') + "</ExprArray>";
     }
+  } else if (std::holds_alternative<ParserExprAs>(*this->body)) {
+    auto exprAs = std::get<ParserExprAs>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprAs" + attrs + ">" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprAsExpr>" EOL;
+    result += exprAs.expr.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprAsExpr>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprAsType>" EOL;
+    result += exprAs.type.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprAsType>" EOL;
+    result += std::string(indent, ' ') + "</ExprAs>";
   } else if (std::holds_alternative<ParserExprAssign>(*this->body)) {
     auto exprAssign = std::get<ParserExprAssign>(*this->body);
 

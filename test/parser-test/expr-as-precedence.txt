@@ -1,0 +1,34 @@
+======= stdin =======
+a := "test" == test as str
+======= stdout =======
+<StmtVarDecl start="1:1" end="1:27">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprBinary start="1:6" end="1:27">
+      <ExprBinaryLeft>
+        <ExprLit start="1:6" end="1:12">
+          <Token type="LIT_STR" val="\"test\"" start="1:6" end="1:12" />
+        </ExprLit>
+      </ExprBinaryLeft>
+      <ExprBinaryOp>
+        <Token type="OP_EQ_EQ" val="==" start="1:13" end="1:15" />
+      </ExprBinaryOp>
+      <ExprBinaryRight>
+        <ExprAs start="1:16" end="1:27">
+          <ExprAsExpr>
+            <ExprAccess start="1:16" end="1:20">
+              <Token type="ID" val="test" start="1:16" end="1:20" />
+            </ExprAccess>
+          </ExprAsExpr>
+          <ExprAsType>
+            <TypeId start="1:24" end="1:27">
+              <Token type="ID" val="str" start="1:24" end="1:27" />
+            </TypeId>
+          </ExprAsType>
+        </ExprAs>
+      </ExprBinaryRight>
+    </ExprBinary>
+  </StmtVarDeclInit>
+</StmtVarDecl>

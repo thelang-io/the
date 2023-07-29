@@ -41,6 +41,7 @@ set(
   src/codegen/block.cpp
   src/codegen/expr-access.cpp
   src/codegen/expr-array.cpp
+  src/codegen/expr-as.cpp
   src/codegen/expr-assign.cpp
   src/codegen/expr-await.cpp
   src/codegen/expr-binary.cpp

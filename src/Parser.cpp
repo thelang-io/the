@@ -1044,6 +1044,21 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAccess (const ParserStmtExpr &
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAs (
+  const ParserStmtExpr &stmtExpr,
+  [[maybe_unused]] ReaderLocation loc,
+  [[maybe_unused]] const Token &tok
+) {
+  auto exprAsRight = this->_type();
+
+  if (exprAsRight == std::nullopt) {
+    throw Error(this->reader, this->lexer->loc, E0182);
+  }
+
+  auto exprAs = ParserExprAs{stmtExpr, *exprAsRight};
+  return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprAs), false, stmtExpr.start, this->lexer->loc}, true);
+}
+
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
   auto exprAssignRight = this->_stmtExpr(false);
 
@@ -1265,7 +1280,13 @@ ParserStmt Parser::_wrapStmt (bool allowSemi, const ParserStmtBody &body, Reader
 ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
   auto [loc, tok] = this->lexer->next();
 
-  if (tok.type == TK_KW_IS) {
+  if (tok.type == TK_KW_AS) {
+    auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
+      return this->_wrapExprAs(_1, _2, _3);
+    });
+
+    return this->_wrapStmtExpr(newStmtExpr);
+  } else if (tok.type == TK_KW_IS) {
     auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
       return this->_wrapExprIs(_1, _2, _3);
     });

@@ -120,6 +120,7 @@
 #define E0179 "E0179 - Expected function declaration after `async` keyword"
 #define E0180 "E0180 - Expected function type after `async` keyword"
 #define E0181 "E0181 - Expected expression after `await` keyword"
+#define E0182 "E0182 - Expected type after `as` keyword"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
@@ -151,6 +152,7 @@
 #define E1028 "E1028 - Throw argument required to be object with first field string `message` and second field string `stack`"
 #define E1029 "E1029 - Catch block can only catch object with first field string `message` and second field string `stack`"
 #define E1030 "E1030 - Awaiting is only possible on asynchronous functions"
+#define E1031 "E1031 - Type casting is not possible in this case"
 
 class Error : public std::exception {
  public:

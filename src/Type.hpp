@@ -132,6 +132,7 @@ struct Type {
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
+  bool canBeCast (Type *);
   std::optional<TypeField> fieldNth (std::size_t) const;
   Type *getEnumerator (const std::string &) const;
   TypeField getField (const std::string &) const;

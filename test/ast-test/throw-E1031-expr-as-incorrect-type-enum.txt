@@ -1,0 +1,11 @@
+======= stdin =======
+enum TestEnum { One, Two, Three }
+
+main {
+  test := TestEnum.One
+  test as float
+}
+======= stderr =======
+/test:5:3: E1031 - Type casting is not possible in this case
+  5 |   test as float
+    |   ^~~~~~~~~~~~~

@@ -37,6 +37,7 @@ INSTANTIATE_TEST_SUITE_P(General, ParserDocTest, testing::Values(
   "expr-parenthesized",
   "expr-access",
   "expr-array",
+  "expr-as",
   "expr-assign",
   "expr-await",
   "expr-binary",
