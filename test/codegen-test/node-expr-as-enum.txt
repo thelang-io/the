@@ -1,0 +1,31 @@
+======= stdin =======
+enum Test { One, Two, Three }
+
+main {
+  a := Test.One;
+  b := Test.Two;
+  c := ref a;
+
+  a as int;
+  b as int;
+  c as Test;
+}
+======= code =======
+#include <stdint.h>
+
+enum __THE_1_Test_0 {
+  __THE_0_TestSDOne_0,
+  __THE_0_TestSDTwo_0,
+  __THE_0_TestSDThree_0
+};
+
+int main () {
+  const enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDOne_0;
+  const enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_TestSDTwo_0;
+  const enum __THE_1_Test_0 *__THE_0_c_0 = &__THE_0_a_0;
+  (int32_t) __THE_0_a_0;
+  (int32_t) __THE_0_b_0;
+  *__THE_0_c_0;
+}
+======= flags =======
+======= stdout =======

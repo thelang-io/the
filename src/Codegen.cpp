@@ -694,6 +694,8 @@ std::shared_ptr<CodegenASTExpr> Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr,
     return this->_exprAccess(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
     return this->_exprArray(nodeExpr, targetType, parent, c, root);
+  } else if (std::holds_alternative<ASTExprAs>(*nodeExpr.body)) {
+    return this->_exprAs(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprAssign>(*nodeExpr.body)) {
     return this->_exprAssign(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprAwait>(*nodeExpr.body)) {

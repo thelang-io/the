@@ -223,6 +223,7 @@ class Codegen {
   std::tuple<std::map<std::string, Type *>, std::map<std::string, Type *>> _evalTypeCasts (const ASTNodeExpr &, const ASTNode &);
   std::shared_ptr<CodegenASTExpr> _exprAccess (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprArray (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
+  std::shared_ptr<CodegenASTExpr> _exprAs (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprAssign (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprAwait (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprBinary (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);

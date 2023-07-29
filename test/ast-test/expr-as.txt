@@ -19,7 +19,7 @@ main {
   d := testByte as char
   e := testChar as byte
   f := testEnum as int
-  g := testFn as (i64) -> void
+  g := testFn as (int) -> void
   h := testInt as i64
   i := testFloat as f64
   j := testOpt as int
@@ -472,10 +472,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="g" codeName="g_0" frame="2">
-        <TypeFn name="fn$1001">
+        <TypeFn name="fn$1000">
           <TypeFnParams>
             <TypeFnParam required>
-              <BuiltinType name="i64" />
+              <BuiltinType name="int" />
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
@@ -487,10 +487,10 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeFn name="fn$1001">
+          <TypeFn name="fn$1000">
             <TypeFnParams>
               <TypeFnParam required>
-                <BuiltinType name="i64" />
+                <BuiltinType name="int" />
               </TypeFnParam>
             </TypeFnParams>
             <TypeFnReturnType>
@@ -533,10 +533,10 @@ main {
               </NodeExpr>
             </ExprAsExpr>
             <ExprAsType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn$1000">
                 <TypeFnParams>
                   <TypeFnParam required>
-                    <BuiltinType name="i64" />
+                    <BuiltinType name="int" />
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>

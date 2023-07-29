@@ -140,14 +140,14 @@ bool Type::canBeCast (Type *t) {
 
   return
     t1->isAny() ||
-    (t1->isBool() && t2->isIntNumber()) ||
-    (t1->isByte() && t2->isChar()) ||
-    (t1->isChar() && t2->isByte()) ||
+    (t1->isBool() && t2->isNumber()) ||
+    (t1->isByte() && (t2->isChar() || t2->isNumber())) ||
+    (t1->isChar() && (t2->isByte() || t2->isNumber())) ||
     (t1->isEnum() && t2->isInt()) ||
-    (t1->isFn() && t2->isFn() && t2->matchNice(t1)) ||
+    (t1->isFn() && t2->isFn() && t2->matchStrict(t1)) ||
     (t1->isNumber() && t2->isNumber() && numberTypeMatch(t2->name, t1->name)) ||
     (t1->isOpt() && Type::actual(std::get<TypeOptional>(t1->body).type)->matchStrict(t2, true)) ||
-    (t1->isRef() && Type::actual(std::get<TypeRef>(t1->body).refType)->matchStrict(t2, true)) ||
+    (t1->isRef() && (Type::actual(std::get<TypeRef>(t1->body).refType)->matchStrict(t2, true) || t2->isInt())) ||
     (t1->isUnion() && t1->hasSubType(t2));
 }
 
