@@ -347,3 +347,15 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
+true
+false
+false
+true
+false
+false
+true
+true
+false
+true
+false
+true

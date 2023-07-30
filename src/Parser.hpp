@@ -35,6 +35,8 @@ class Parser {
   Parser &operator= (const Parser &);
 
   ParserBlock _block (bool = false);
+  ParserStmtExpr _exprClosure (bool, const Token &, bool = false);
+  std::vector<ParserFnParam> _fnParamList ();
   std::optional<ParserStmtExpr> _stmtExpr (bool = true);
   std::optional<ParserType> _type ();
   std::tuple<ParserStmtExpr, bool> _wrapExpr (

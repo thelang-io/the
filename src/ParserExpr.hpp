@@ -23,6 +23,7 @@
 #include "Lexer.hpp"
 #include "ParserType.hpp"
 
+struct ParserStmt;
 struct ParserExprAccess;
 struct ParserExprArray;
 struct ParserExprAs;
@@ -30,6 +31,7 @@ struct ParserExprAssign;
 struct ParserExprAwait;
 struct ParserExprBinary;
 struct ParserExprCall;
+struct ParserExprClosure;
 struct ParserExprCond;
 struct ParserExprIs;
 struct ParserExprLit;
@@ -46,6 +48,7 @@ using ParserExpr = std::variant<
   ParserExprAwait,
   ParserExprBinary,
   ParserExprCall,
+  ParserExprClosure,
   ParserExprCond,
   ParserExprIs,
   ParserExprLit,
@@ -63,6 +66,14 @@ struct ParserStmtExpr {
 
   std::string stringify () const;
   std::string xml (std::size_t = 0) const;
+};
+
+struct ParserFnParam {
+  Token id;
+  std::optional<ParserType> type = std::nullopt;
+  bool mut = false;
+  bool variadic = false;
+  std::optional<ParserStmtExpr> init = std::nullopt;
 };
 
 struct ParserExprAccess {
@@ -104,6 +115,13 @@ struct ParserExprCallArg {
 struct ParserExprCall {
   ParserStmtExpr callee;
   std::vector<ParserExprCallArg> args;
+};
+
+struct ParserExprClosure {
+  std::vector<ParserFnParam> params;
+  std::optional<ParserType> returnType;
+  std::shared_ptr<std::vector<ParserStmt>> body;
+  bool async;
 };
 
 struct ParserExprCond {

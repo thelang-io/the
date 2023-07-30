@@ -69,6 +69,12 @@ std::string ParserStmtExpr::stringify () const {
     }
 
     code += ")";
+  } else if (std::holds_alternative<ParserExprClosure>(*this->body)) {
+    auto exprBody = std::get<ParserExprClosure>(*this->body);
+    code += exprBody.async ? "async " : "";
+    code += "(";
+    // todo finish
+    code += ")";
   } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
     auto exprBody = std::get<ParserExprCond>(*this->body);
     code += exprBody.cond.stringify() + " ? " + exprBody.body.stringify() + " : " + exprBody.alt.stringify();
@@ -241,6 +247,12 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprCall>";
+  } else if (std::holds_alternative<ParserExprClosure>(*this->body)) {
+    auto exprClosure = std::get<ParserExprClosure>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprClosure" + attrs + ">" EOL;
+    // todo finish
+    result += std::string(indent, ' ') + "</ExprClosure>";
   } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
     auto exprCond = std::get<ParserExprCond>(*this->body);
 

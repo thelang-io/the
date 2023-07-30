@@ -103,17 +103,9 @@ struct ParserStmtEnumDecl {
 struct ParserStmtEof {
 };
 
-struct ParserStmtFnDeclParam {
-  Token id;
-  std::optional<ParserType> type;
-  bool mut;
-  bool variadic;
-  std::optional<ParserStmtExpr> init;
-};
-
 struct ParserStmtFnDecl {
   Token id;
-  std::vector<ParserStmtFnDeclParam> params;
+  std::vector<ParserFnParam> params;
   std::optional<ParserType> returnType;
   std::optional<ParserBlock> body;
   bool async;
