@@ -15,7 +15,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "../src/ParserExpr.hpp"
+#include "../src/Parser.hpp"
 #include "../src/config.hpp"
 #include "MockParser.hpp"
 
@@ -42,9 +42,18 @@ TEST(ParserExprTest, StringifyArray) {
   EXPECT_EQ(parserExprTestGen("[1,2,3]").stringify(), "[1, 2, 3]");
 }
 
+TEST(ParserExprTest, StringifyAs) {
+  EXPECT_EQ(parserExprTestGen("a as  int").stringify(), "a as int");
+}
+
 TEST(ParserExprTest, StringifyAssign) {
   EXPECT_EQ(parserExprTestGen("a=2").stringify(), "a = 2");
   EXPECT_EQ(parserExprTestGen("a=b=2").stringify(), "a = b = 2");
+}
+
+TEST(ParserExprTest, StringifyAwait) {
+  EXPECT_EQ(parserExprTestGen("await test ()").stringify(), "await test()");
+  EXPECT_EQ(parserExprTestGen("await( await test () ) ( )").stringify(), "await (await test())()");
 }
 
 TEST(ParserExprTest, StringifyBinary) {
@@ -56,6 +65,19 @@ TEST(ParserExprTest, StringifyCall) {
   EXPECT_EQ(parserExprTestGen("test ()").stringify(), "test()");
   EXPECT_EQ(parserExprTestGen("test (1,2,3)").stringify(), "test(1, 2, 3)");
   EXPECT_EQ(parserExprTestGen("test (1,a:2,b:3)").stringify(), "test(1, a: 2, b: 3)");
+}
+
+TEST(ParserExprTest, StringifyClosure) {
+  EXPECT_EQ(
+    parserExprTestGen(
+      "async  ( a : int , mut  b : str   ...  )->int{ " EOL
+      "  print ( a ) " EOL
+      "}"
+    ).stringify(),
+    "async (a: int, mut b: str...) -> int {" EOL
+    "  print(a)" EOL
+    "}" EOL
+  );
 }
 
 TEST(ParserExprTest, StringifyCond) {

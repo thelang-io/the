@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "ParserExpr.hpp"
+#include "Parser.hpp"
 #include "config.hpp"
 
 std::string ParserStmtExpr::stringify () const {
@@ -71,10 +71,24 @@ std::string ParserStmtExpr::stringify () const {
     code += ")";
   } else if (std::holds_alternative<ParserExprClosure>(*this->body)) {
     auto exprBody = std::get<ParserExprClosure>(*this->body);
-    code += exprBody.async ? "async " : "";
-    code += "(";
-    // todo finish
-    code += ")";
+    auto paramIdx = static_cast<std::size_t>(0);
+
+    code += std::string(exprBody.async ? "async " : "") + "(";
+
+    for (auto i = static_cast<std::size_t>(0); i < exprBody.params.size(); i++) {
+      auto param = exprBody.params[i];
+
+      code += paramIdx == 0 ? "" : ", ";
+      code += param.mut ? "mut " : "";
+      code += param.id.val;
+      code += param.type == std::nullopt ? " := " : (": " + param.type->stringify());
+      code += param.variadic ? "..." : "";
+      code += param.type != std::nullopt && param.init != std::nullopt ? " = " : "";
+      code += param.init == std::nullopt ? "" : param.init->stringify();
+      paramIdx++;
+    }
+
+    code += ") -> " + exprBody.returnType.stringify();
   } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
     auto exprBody = std::get<ParserExprCond>(*this->body);
     code += exprBody.cond.stringify() + " ? " + exprBody.body.stringify() + " : " + exprBody.alt.stringify();
@@ -250,8 +264,55 @@ std::string ParserStmtExpr::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserExprClosure>(*this->body)) {
     auto exprClosure = std::get<ParserExprClosure>(*this->body);
 
+    attrs += exprClosure.async ? " async" : "";
     result += std::string(indent, ' ') + "<ExprClosure" + attrs + ">" EOL;
-    // todo finish
+
+    if (!exprClosure.params.empty()) {
+      result += std::string(indent + 2, ' ') + "<ExprClosureParams>" EOL;
+
+      for (const auto &exprClosureParam : exprClosure.params) {
+        auto paramAttrs = std::string();
+
+        paramAttrs += exprClosureParam.mut ? " mut" : "";
+        paramAttrs += exprClosureParam.variadic ? " variadic" : "";
+
+        result += std::string(indent + 4, ' ') + "<ExprClosureParam" + paramAttrs + ">" EOL;
+        result += std::string(indent + 6, ' ') + "<ExprClosureParamId>" EOL;
+        result += exprClosureParam.id.xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</ExprClosureParamId>" EOL;
+
+        if (exprClosureParam.type != std::nullopt) {
+          result += std::string(indent + 6, ' ') + "<ExprClosureParamType>" EOL;
+          result += exprClosureParam.type->xml(indent + 8) + EOL;
+          result += std::string(indent + 6, ' ') + "</ExprClosureParamType>" EOL;
+        }
+
+        if (exprClosureParam.init != std::nullopt) {
+          result += std::string(indent + 6, ' ') + "<ExprClosureParamInit>" EOL;
+          result += exprClosureParam.init->xml(indent + 8) + EOL;
+          result += std::string(indent + 6, ' ') + "</ExprClosureParamInit>" EOL;
+        }
+
+        result += std::string(indent + 4, ' ') + "</ExprClosureParam>" EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</ExprClosureParams>" EOL;
+    }
+
+    result += std::string(indent + 2, ' ') + "<ExprClosureReturnType>" EOL;
+    result += exprClosure.returnType.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprClosureReturnType>" EOL;
+
+    if (!exprClosure.body.empty()) {
+      result += std::string(indent + 2, ' ') + "<ExprClosureBody>" EOL;
+
+      for (const auto &stmt : exprClosure.body) {
+        result += stmt.xml(indent + 4) + EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</ExprClosureBody>" EOL;
+    }
+
     result += std::string(indent, ' ') + "</ExprClosure>";
   } else if (std::holds_alternative<ParserExprCond>(*this->body)) {
     auto exprCond = std::get<ParserExprCond>(*this->body);

@@ -94,9 +94,9 @@ set(
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
   src/ParserComment.cpp src/ParserComment.hpp
-  src/ParserExpr.cpp src/ParserExpr.hpp
-  src/ParserStmt.cpp src/ParserStmt.hpp
-  src/ParserType.cpp src/ParserType.hpp
+  src/ParserExpr.cpp
+  src/ParserStmt.cpp
+  src/ParserType.cpp
   src/Reader.cpp src/Reader.hpp
   src/Token.cpp src/Token.hpp
   src/Type.cpp src/Type.hpp

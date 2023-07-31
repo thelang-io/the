@@ -551,19 +551,17 @@ ParserStmtExpr Parser::_exprClosure (bool root, const Token &tok1, bool async) {
   auto [_2, tok2] = this->lexer->next();
 
   if (tok2.type != TK_OP_ARROW) {
-    // todo error
-    throw Error(this->reader, tok2.start, E0000);
+    throw Error(this->reader, tok2.start, E0183);
   }
 
   auto returnType = this->_type();
 
   if (returnType == std::nullopt) {
-    // todo error
-    throw Error(this->reader, tok2.start, E0000);
+    throw Error(this->reader, this->lexer->loc, E0184);
   }
 
-  auto body = std::make_shared<ParserBlock>(this->_block());
-  auto exprClosure = ParserExprClosure{params, returnType, body, async};
+  auto body = this->_block();
+  auto exprClosure = ParserExprClosure{params, *returnType, body, async};
   auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprClosure), false, tok1.start, this->lexer->loc};
 
   return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
@@ -823,7 +821,10 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
     if (stmtExpr == std::nullopt) {
       auto [loc2, tok2] = this->lexer->next();
 
-      if (tok2.type == TK_OP_RPAR) {
+      if (tok2.type == TK_KW_MUT) {
+        this->lexer->seek(loc1);
+        return this->_exprClosure(root, tok1);
+      } else if (tok2.type == TK_OP_RPAR) {
         auto [_3, tok3] = this->lexer->next();
 
         if (tok3.type == TK_OP_ARROW) {
