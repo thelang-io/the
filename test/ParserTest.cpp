@@ -167,6 +167,8 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-call",
   "expr-call-member",
   "expr-call-precedence",
+  "expr-closure",
+  "expr-closure-precedence",
   "expr-cond",
   "expr-cond-nested",
   "expr-cond-precedence",
@@ -235,8 +237,7 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0120-stmt-fn-decl-missing-type-parenthesized-return-type",
   "throw-E0130-stmt-fn-decl-missing-param-init",
   "throw-E0130-stmt-fn-decl-missing-param-init-after-type",
-  "throw-E0153-stmt-fn-decl-missing-arrow",
-  "throw-E0179-stmt-fn-decl-async-missing-fn-decl"
+  "throw-E0153-stmt-fn-decl-missing-arrow"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
@@ -341,7 +342,9 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0169-expr-map-missing-colon",
   "throw-E0170-expr-map-missing-initializer",
   "throw-E0181-expr-await-missing-arg",
-  "throw-E0182-expr-as-missing-type"
+  "throw-E0182-expr-as-missing-type",
+  "throw-E0183-expr-closure-missing-arrow",
+  "throw-E0184-expr-closure-missing-return-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(

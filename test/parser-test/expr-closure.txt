@@ -1,0 +1,218 @@
+======= stdin =======
+a := () -> void {}
+b := (a: int) -> int {}
+c := (mut a: int, b: str) -> str[str] {}
+d := async (mut a: int..., b := "10") -> str[str] {}
+
+e := (a: str) -> str {
+  b := a.toInt()
+  return a + b.str()
+}
+======= stdout =======
+<StmtVarDecl start="1:1" end="1:19">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprClosure start="1:6" end="1:19">
+      <ExprClosureReturnType>
+        <TypeId start="1:12" end="1:16">
+          <Token type="ID" val="void" start="1:12" end="1:16" />
+        </TypeId>
+      </ExprClosureReturnType>
+    </ExprClosure>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="2:1" end="2:24">
+  <StmtVarDeclId>
+    <Token type="ID" val="b" start="2:1" end="2:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprClosure start="2:6" end="2:24">
+      <ExprClosureParams>
+        <ExprClosureParam>
+          <ExprClosureParamId>
+            <Token type="ID" val="a" start="2:7" end="2:8" />
+          </ExprClosureParamId>
+          <ExprClosureParamType>
+            <TypeId start="2:10" end="2:13">
+              <Token type="ID" val="int" start="2:10" end="2:13" />
+            </TypeId>
+          </ExprClosureParamType>
+        </ExprClosureParam>
+      </ExprClosureParams>
+      <ExprClosureReturnType>
+        <TypeId start="2:18" end="2:21">
+          <Token type="ID" val="int" start="2:18" end="2:21" />
+        </TypeId>
+      </ExprClosureReturnType>
+    </ExprClosure>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="3:1" end="3:41">
+  <StmtVarDeclId>
+    <Token type="ID" val="c" start="3:1" end="3:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprClosure start="3:6" end="3:41">
+      <ExprClosureParams>
+        <ExprClosureParam mut>
+          <ExprClosureParamId>
+            <Token type="ID" val="a" start="3:11" end="3:12" />
+          </ExprClosureParamId>
+          <ExprClosureParamType>
+            <TypeId start="3:14" end="3:17">
+              <Token type="ID" val="int" start="3:14" end="3:17" />
+            </TypeId>
+          </ExprClosureParamType>
+        </ExprClosureParam>
+        <ExprClosureParam>
+          <ExprClosureParamId>
+            <Token type="ID" val="b" start="3:19" end="3:20" />
+          </ExprClosureParamId>
+          <ExprClosureParamType>
+            <TypeId start="3:22" end="3:25">
+              <Token type="ID" val="str" start="3:22" end="3:25" />
+            </TypeId>
+          </ExprClosureParamType>
+        </ExprClosureParam>
+      </ExprClosureParams>
+      <ExprClosureReturnType>
+        <TypeMap start="3:30" end="3:38">
+          <TypeMapKeyType>
+            <TypeId start="3:34" end="3:37">
+              <Token type="ID" val="str" start="3:34" end="3:37" />
+            </TypeId>
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeId start="3:30" end="3:33">
+              <Token type="ID" val="str" start="3:30" end="3:33" />
+            </TypeId>
+          </TypeMapValueType>
+        </TypeMap>
+      </ExprClosureReturnType>
+    </ExprClosure>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="4:1" end="4:53">
+  <StmtVarDeclId>
+    <Token type="ID" val="d" start="4:1" end="4:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprClosure start="4:6" end="4:53" async>
+      <ExprClosureParams>
+        <ExprClosureParam mut variadic>
+          <ExprClosureParamId>
+            <Token type="ID" val="a" start="4:17" end="4:18" />
+          </ExprClosureParamId>
+          <ExprClosureParamType>
+            <TypeId start="4:20" end="4:23">
+              <Token type="ID" val="int" start="4:20" end="4:23" />
+            </TypeId>
+          </ExprClosureParamType>
+        </ExprClosureParam>
+        <ExprClosureParam>
+          <ExprClosureParamId>
+            <Token type="ID" val="b" start="4:28" end="4:29" />
+          </ExprClosureParamId>
+          <ExprClosureParamInit>
+            <ExprLit start="4:33" end="4:37">
+              <Token type="LIT_STR" val="\"10\"" start="4:33" end="4:37" />
+            </ExprLit>
+          </ExprClosureParamInit>
+        </ExprClosureParam>
+      </ExprClosureParams>
+      <ExprClosureReturnType>
+        <TypeMap start="4:42" end="4:50">
+          <TypeMapKeyType>
+            <TypeId start="4:46" end="4:49">
+              <Token type="ID" val="str" start="4:46" end="4:49" />
+            </TypeId>
+          </TypeMapKeyType>
+          <TypeMapValueType>
+            <TypeId start="4:42" end="4:45">
+              <Token type="ID" val="str" start="4:42" end="4:45" />
+            </TypeId>
+          </TypeMapValueType>
+        </TypeMap>
+      </ExprClosureReturnType>
+    </ExprClosure>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="6:1" end="9:2">
+  <StmtVarDeclId>
+    <Token type="ID" val="e" start="6:1" end="6:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprClosure start="6:6" end="9:2">
+      <ExprClosureParams>
+        <ExprClosureParam>
+          <ExprClosureParamId>
+            <Token type="ID" val="a" start="6:7" end="6:8" />
+          </ExprClosureParamId>
+          <ExprClosureParamType>
+            <TypeId start="6:10" end="6:13">
+              <Token type="ID" val="str" start="6:10" end="6:13" />
+            </TypeId>
+          </ExprClosureParamType>
+        </ExprClosureParam>
+      </ExprClosureParams>
+      <ExprClosureReturnType>
+        <TypeId start="6:18" end="6:21">
+          <Token type="ID" val="str" start="6:18" end="6:21" />
+        </TypeId>
+      </ExprClosureReturnType>
+      <ExprClosureBody>
+        <StmtVarDecl start="7:3" end="7:17">
+          <StmtVarDeclId>
+            <Token type="ID" val="b" start="7:3" end="7:4" />
+          </StmtVarDeclId>
+          <StmtVarDeclInit>
+            <ExprCall start="7:8" end="7:17">
+              <ExprCallCallee>
+                <ExprAccess start="7:8" end="7:15">
+                  <ExprAccessExpr>
+                    <ExprAccess start="7:8" end="7:9">
+                      <Token type="ID" val="a" start="7:8" end="7:9" />
+                    </ExprAccess>
+                  </ExprAccessExpr>
+                  <ExprAccessProp>
+                    <Token type="ID" val="toInt" start="7:10" end="7:15" />
+                  </ExprAccessProp>
+                </ExprAccess>
+              </ExprCallCallee>
+            </ExprCall>
+          </StmtVarDeclInit>
+        </StmtVarDecl>
+        <StmtReturn start="8:3" end="8:21">
+          <ExprBinary start="8:10" end="8:21">
+            <ExprBinaryLeft>
+              <ExprAccess start="8:10" end="8:11">
+                <Token type="ID" val="a" start="8:10" end="8:11" />
+              </ExprAccess>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_PLUS" val="+" start="8:12" end="8:13" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprCall start="8:14" end="8:21">
+                <ExprCallCallee>
+                  <ExprAccess start="8:14" end="8:19">
+                    <ExprAccessExpr>
+                      <ExprAccess start="8:14" end="8:15">
+                        <Token type="ID" val="b" start="8:14" end="8:15" />
+                      </ExprAccess>
+                    </ExprAccessExpr>
+                    <ExprAccessProp>
+                      <Token type="ID" val="str" start="8:16" end="8:19" />
+                    </ExprAccessProp>
+                  </ExprAccess>
+                </ExprCallCallee>
+              </ExprCall>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtReturn>
+      </ExprClosureBody>
+    </ExprClosure>
+  </StmtVarDeclInit>
+</StmtVarDecl>

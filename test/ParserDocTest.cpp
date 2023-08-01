@@ -42,6 +42,7 @@ INSTANTIATE_TEST_SUITE_P(General, ParserDocTest, testing::Values(
   "expr-await",
   "expr-binary",
   "expr-call",
+  "expr-closure",
   "expr-cond",
   "expr-is",
   "expr-lit",

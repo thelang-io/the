@@ -346,7 +346,7 @@ class ASTChecker {
       p = p->parent;
     }
 
-    return false;
+    return true;
   }
 
   template <typename T>

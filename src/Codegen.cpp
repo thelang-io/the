@@ -342,9 +342,9 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "typedef struct {" EOL;
     builtinStructDefCode += "  int id;" EOL;
     builtinStructDefCode += "  void *ctx;" EOL;
-    builtinStructDefCode += "  jmp_buf buf[10];" EOL;
+    builtinStructDefCode += "  jmp_buf buf[0xFFFFF];" EOL;
     builtinStructDefCode += "  int buf_idx;" EOL;
-    builtinStructDefCode += "  err_stack_t stack[10];" EOL;
+    builtinStructDefCode += "  err_stack_t stack[0xFFFF];" EOL;
     builtinStructDefCode += "  int stack_idx;" EOL;
     builtinStructDefCode += "  void (*_free) (void *);" EOL;
     builtinStructDefCode += "} err_state_t;" EOL;

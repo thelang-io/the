@@ -1,0 +1,33 @@
+======= stdin =======
+a := () -> void {} == () -> void {}
+======= stdout =======
+<StmtVarDecl start="1:1" end="1:36">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprBinary start="1:6" end="1:36">
+      <ExprBinaryLeft>
+        <ExprClosure start="1:6" end="1:19">
+          <ExprClosureReturnType>
+            <TypeId start="1:12" end="1:16">
+              <Token type="ID" val="void" start="1:12" end="1:16" />
+            </TypeId>
+          </ExprClosureReturnType>
+        </ExprClosure>
+      </ExprBinaryLeft>
+      <ExprBinaryOp>
+        <Token type="OP_EQ_EQ" val="==" start="1:20" end="1:22" />
+      </ExprBinaryOp>
+      <ExprBinaryRight>
+        <ExprClosure start="1:23" end="1:36">
+          <ExprClosureReturnType>
+            <TypeId start="1:29" end="1:33">
+              <Token type="ID" val="void" start="1:29" end="1:33" />
+            </TypeId>
+          </ExprClosureReturnType>
+        </ExprClosure>
+      </ExprBinaryRight>
+    </ExprBinary>
+  </StmtVarDeclInit>
+</StmtVarDecl>

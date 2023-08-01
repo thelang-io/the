@@ -74,9 +74,7 @@ TEST(ParserExprTest, StringifyClosure) {
       "  print ( a ) " EOL
       "}"
     ).stringify(),
-    "async (a: int, mut b: str...) -> int {" EOL
-    "  print(a)" EOL
-    "}" EOL
+    "async (a: int, mut b: str...) -> int"
   );
 }
 

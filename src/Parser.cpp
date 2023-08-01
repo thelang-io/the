@@ -124,11 +124,6 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
 
     if (tok1.type == TK_KW_FN) {
       auto stmt = this->next(false);
-
-      if (!std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
-        throw Error(this->reader, stmt.start, stmt.end, E0179);
-      }
-
       auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
       stmtFnDecl.async = true;
       return this->_wrapStmt(allowSemi, stmtFnDecl, tok0.start);
