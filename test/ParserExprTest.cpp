@@ -70,11 +70,11 @@ TEST(ParserExprTest, StringifyCall) {
 TEST(ParserExprTest, StringifyClosure) {
   EXPECT_EQ(
     parserExprTestGen(
-      "async  ( a : int , mut  b : str   ...  )->int{ " EOL
+      "async  ( a : int , mut  b : str   ...  ,  c  :=  \"string\"    ,  d :  str  ?  =  \"string\"  )->int{ " EOL
       "  print ( a ) " EOL
       "}"
     ).stringify(),
-    "async (a: int, mut b: str...) -> int"
+    "async (a: int, mut b: str..., c := \"string\", d: str? = \"string\") -> int"
   );
 }
 

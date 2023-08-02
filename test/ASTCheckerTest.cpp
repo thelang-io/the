@@ -586,7 +586,7 @@ TEST_F(ASTCheckerTest, InsideMainObjMethod) {
 
 TEST_F(ASTCheckerTest, InsideMainRoot) {
   auto nodes = testing::NiceMock<MockAST>("const A := 1" EOL).gen();
-  EXPECT_FALSE(ASTChecker(nodes[0]).insideMain());
+  EXPECT_TRUE(ASTChecker(nodes[0]).insideMain());
 }
 
 TEST_F(ASTCheckerTest, IsFnDecl) {

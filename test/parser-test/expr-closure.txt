@@ -8,6 +8,11 @@ e := (a: str) -> str {
   b := a.toInt()
   return a + b.str()
 }
+
+f := (a := "string") -> str {
+  b := a.toInt()
+  return a + b.str()
+}
 ======= stdout =======
 <StmtVarDecl start="1:1" end="1:19">
   <StmtVarDeclId>
@@ -205,6 +210,83 @@ e := (a: str) -> str {
                     </ExprAccessExpr>
                     <ExprAccessProp>
                       <Token type="ID" val="str" start="8:16" end="8:19" />
+                    </ExprAccessProp>
+                  </ExprAccess>
+                </ExprCallCallee>
+              </ExprCall>
+            </ExprBinaryRight>
+          </ExprBinary>
+        </StmtReturn>
+      </ExprClosureBody>
+    </ExprClosure>
+  </StmtVarDeclInit>
+</StmtVarDecl>
+<StmtVarDecl start="11:1" end="14:2">
+  <StmtVarDeclId>
+    <Token type="ID" val="f" start="11:1" end="11:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprClosure start="11:6" end="14:2">
+      <ExprClosureParams>
+        <ExprClosureParam>
+          <ExprClosureParamId>
+            <Token type="ID" val="a" start="11:7" end="11:8" />
+          </ExprClosureParamId>
+          <ExprClosureParamInit>
+            <ExprLit start="11:12" end="11:20">
+              <Token type="LIT_STR" val="\"string\"" start="11:12" end="11:20" />
+            </ExprLit>
+          </ExprClosureParamInit>
+        </ExprClosureParam>
+      </ExprClosureParams>
+      <ExprClosureReturnType>
+        <TypeId start="11:25" end="11:28">
+          <Token type="ID" val="str" start="11:25" end="11:28" />
+        </TypeId>
+      </ExprClosureReturnType>
+      <ExprClosureBody>
+        <StmtVarDecl start="12:3" end="12:17">
+          <StmtVarDeclId>
+            <Token type="ID" val="b" start="12:3" end="12:4" />
+          </StmtVarDeclId>
+          <StmtVarDeclInit>
+            <ExprCall start="12:8" end="12:17">
+              <ExprCallCallee>
+                <ExprAccess start="12:8" end="12:15">
+                  <ExprAccessExpr>
+                    <ExprAccess start="12:8" end="12:9">
+                      <Token type="ID" val="a" start="12:8" end="12:9" />
+                    </ExprAccess>
+                  </ExprAccessExpr>
+                  <ExprAccessProp>
+                    <Token type="ID" val="toInt" start="12:10" end="12:15" />
+                  </ExprAccessProp>
+                </ExprAccess>
+              </ExprCallCallee>
+            </ExprCall>
+          </StmtVarDeclInit>
+        </StmtVarDecl>
+        <StmtReturn start="13:3" end="13:21">
+          <ExprBinary start="13:10" end="13:21">
+            <ExprBinaryLeft>
+              <ExprAccess start="13:10" end="13:11">
+                <Token type="ID" val="a" start="13:10" end="13:11" />
+              </ExprAccess>
+            </ExprBinaryLeft>
+            <ExprBinaryOp>
+              <Token type="OP_PLUS" val="+" start="13:12" end="13:13" />
+            </ExprBinaryOp>
+            <ExprBinaryRight>
+              <ExprCall start="13:14" end="13:21">
+                <ExprCallCallee>
+                  <ExprAccess start="13:14" end="13:19">
+                    <ExprAccessExpr>
+                      <ExprAccess start="13:14" end="13:15">
+                        <Token type="ID" val="b" start="13:14" end="13:15" />
+                      </ExprAccess>
+                    </ExprAccessExpr>
+                    <ExprAccessProp>
+                      <Token type="ID" val="str" start="13:16" end="13:19" />
                     </ExprAccessProp>
                   </ExprAccess>
                 </ExprCallCallee>
