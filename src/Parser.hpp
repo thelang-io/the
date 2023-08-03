@@ -203,7 +203,7 @@ struct ParserExprCall {
 struct ParserExprClosure {
   std::vector<ParserFnParam> params;
   ParserType returnType;
-  std::vector<ParserStmt> body;
+  ParserBlock body;
   bool async;
 };
 

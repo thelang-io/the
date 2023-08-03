@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-#include "ASTExpr.hpp"
+#include "AST.hpp"
 #include "Error.hpp"
-#include "Token.hpp"
 #include "config.hpp"
 
 std::string exprAssignOpStr (ASTExprAssignOp op) {
@@ -238,6 +237,55 @@ std::string ASTNodeExpr::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</ExprCall>" EOL;
+  } else if (std::holds_alternative<ASTExprClosure>(*this->body)) {
+    auto exprClosure = std::get<ASTExprClosure>(*this->body);
+
+    result += std::string(indent, ' ') + "<ExprClosure>" EOL;
+    result += std::string(indent + 2, ' ') + "<ExprClosureVar>" EOL;
+    result += exprClosure.var->xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</ExprClosureVar>" EOL;
+
+    if (!exprClosure.stack.empty()) {
+      result += std::string(indent + 2, ' ') + "<ExprClosureCtx>" EOL;
+
+      for (const auto &ctxVar : exprClosure.stack) {
+        result += ctxVar->xml(indent + 4) + EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</ExprClosureCtx>" EOL;
+    }
+
+    if (!exprClosure.params.empty()) {
+      result += std::string(indent + 2, ' ') + "<FnDeclParams>" EOL;
+
+      for (const auto &param : exprClosure.params) {
+        result += std::string(indent + 4, ' ') + "<FnDeclParam>" EOL;
+        result += std::string(indent + 6, ' ') + "<FnDeclParamVar>" EOL;
+        result += param.var->xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</FnDeclParamVar>" EOL;
+
+        if (param.init != std::nullopt) {
+          result += std::string(indent + 6, ' ') + "<FnDeclParamInit>" EOL;
+          result += param.init->xml(indent + 8) + EOL;
+          result += std::string(indent + 6, ' ') + "</FnDeclParamInit>" EOL;
+        }
+
+        result += std::string(indent + 4, ' ') + "</FnDeclParam>" EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</FnDeclParams>" EOL;
+    }
+
+    if (!exprClosure.body.empty()) {
+      result += std::string(indent + 2, ' ') + "<ExprClosureBody>" EOL;
+
+      for (const auto &it : exprClosure.body) {
+        result += it.xml(indent + 4) + EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</ExprClosureBody>" EOL;
+    }
+    result += std::string(indent, ' ') + "</ExprClosure>" EOL;
   } else if (std::holds_alternative<ASTExprCond>(*this->body)) {
     auto exprCond = std::get<ASTExprCond>(*this->body);
 

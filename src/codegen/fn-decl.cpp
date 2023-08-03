@@ -70,7 +70,7 @@ void Codegen::_fnDecl (
   std::shared_ptr<CodegenASTStmt> *c,
   std::shared_ptr<Var> var,
   const std::vector<std::shared_ptr<Var>> &stack,
-  const std::vector<ASTFnDeclParam> &params,
+  const std::vector<ASTFnParam> &params,
   const std::optional<ASTBlock> &body,
   const ASTNode &node,
   CodegenPhase phase

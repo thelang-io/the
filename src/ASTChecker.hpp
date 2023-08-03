@@ -17,7 +17,7 @@
 #ifndef SRC_AST_CHECKER_HPP
 #define SRC_AST_CHECKER_HPP
 
-#include "ASTNode.hpp"
+#include "AST.hpp"
 #include <algorithm>
 #include "Error.hpp"
 

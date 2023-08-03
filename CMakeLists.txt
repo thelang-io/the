@@ -84,8 +84,8 @@ set(
 
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
-  src/ASTExpr.cpp src/ASTExpr.hpp
-  src/ASTNode.cpp src/ASTNode.hpp
+  src/ASTExpr.cpp
+  src/ASTNode.cpp
   src/Codegen.cpp src/Codegen.hpp
   src/CodegenAPIItem.hpp
   src/CodegenCleanUp.cpp src/CodegenCleanUp.hpp

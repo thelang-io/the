@@ -1,0 +1,207 @@
+======= stdin =======
+fn test (a: int) {
+  print(a)
+}
+
+main {
+  mut a := 0
+
+  testClosure := () -> void {
+    test(a)
+  }
+}
+======= stdout =======
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="test" codeName="test_0" frame="1">
+      <TypeFn name="fn$1000">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
+            <BuiltinType name="int" />
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <BuiltinType name="int" />
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+  <NodeFnDeclBody>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="void" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="print" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="print" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="items">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="a" codeName="a_0" frame="2">
+                      <BuiltinType name="int" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+  </NodeFnDeclBody>
+</NodeFnDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" mut frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="0" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testClosure" codeName="testClosure_0" frame="2">
+        <TypeFn name="fn$1001">
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeFn name="fn$1001">
+            <TypeFnReturnType>
+              <BuiltinType name="void" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprClosure>
+            <ExprClosureVar>
+              <Var name="$" codeName="mainSD$_0" frame="3">
+                <TypeFn name="fn$1001">
+                  <TypeFnReturnType>
+                    <BuiltinType name="void" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </Var>
+            </ExprClosureVar>
+            <ExprClosureCtx>
+              <Var name="a" codeName="a_0" mut frame="2">
+                <BuiltinType name="int" />
+              </Var>
+              <Var name="test" codeName="test_0" frame="1">
+                <TypeFn name="fn$1000">
+                  <TypeFnParams>
+                    <TypeFnParam name="a" required>
+                      <BuiltinType name="int" />
+                    </TypeFnParam>
+                  </TypeFnParams>
+                  <TypeFnReturnType>
+                    <BuiltinType name="void" />
+                  </TypeFnReturnType>
+                </TypeFn>
+              </Var>
+            </ExprClosureCtx>
+            <ExprClosureBody>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="void" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprCall>
+                    <ExprCallCallee>
+                      <NodeExpr>
+                        <NodeExprType>
+                          <TypeFn name="fn$1000">
+                            <TypeFnParams>
+                              <TypeFnParam name="a" required>
+                                <BuiltinType name="int" />
+                              </TypeFnParam>
+                            </TypeFnParams>
+                            <TypeFnReturnType>
+                              <BuiltinType name="void" />
+                            </TypeFnReturnType>
+                          </TypeFn>
+                        </NodeExprType>
+                        <NodeExprBody>
+                          <ExprAccess>
+                            <Var name="test" codeName="test_0" frame="1">
+                              <TypeFn name="fn$1000">
+                                <TypeFnParams>
+                                  <TypeFnParam name="a" required>
+                                    <BuiltinType name="int" />
+                                  </TypeFnParam>
+                                </TypeFnParams>
+                                <TypeFnReturnType>
+                                  <BuiltinType name="void" />
+                                </TypeFnReturnType>
+                              </TypeFn>
+                            </Var>
+                          </ExprAccess>
+                        </NodeExprBody>
+                      </NodeExpr>
+                    </ExprCallCallee>
+                    <ExprCallArgs>
+                      <ExprCallArg id="a">
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess>
+                              <Var name="a" codeName="a_0" mut frame="2">
+                                <BuiltinType name="int" />
+                              </Var>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallArg>
+                    </ExprCallArgs>
+                  </ExprCall>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprClosureBody>
+          </ExprClosure>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>
