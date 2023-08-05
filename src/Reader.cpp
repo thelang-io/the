@@ -19,6 +19,7 @@
 #include <fstream>
 #include <sstream>
 #include "Error.hpp"
+#include "config.hpp"
 
 std::string ReaderLocation::str () const {
   return std::to_string(this->line) + ":" + std::to_string(this->col + 1);
