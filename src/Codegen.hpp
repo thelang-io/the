@@ -115,6 +115,7 @@ struct CodegenState {
   std::size_t asyncCounter = 0;
   std::shared_ptr<std::size_t> asyncCounterLoopBreak = nullptr;
   std::shared_ptr<std::size_t> asyncCounterLoopContinue = nullptr;
+  ASTBlock fnDeclBody = {};
 };
 
 struct CodegenTypeInfo {
@@ -231,6 +232,7 @@ class Codegen {
   std::shared_ptr<CodegenASTExpr> _exprCallDefaultArg (const CodegenTypeInfo &);
   std::shared_ptr<CodegenASTExpr> _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &, const ASTNode &, std::shared_ptr<CodegenASTStmt> *);
   std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
+  std::shared_ptr<CodegenASTExpr> _exprClosure (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprCond (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprIs (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprLit (const ASTNodeExpr &, Type *, bool);

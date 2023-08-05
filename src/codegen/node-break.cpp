@@ -26,7 +26,7 @@ void Codegen::_nodeBreak (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
       )->stmt()
     );
 
-    if (!ASTChecker(node).isLast()) {
+    if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
       (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
     }
   } else {

@@ -46,6 +46,7 @@ set(
   src/codegen/expr-await.cpp
   src/codegen/expr-binary.cpp
   src/codegen/expr-call.cpp
+  src/codegen/expr-closure.cpp
   src/codegen/expr-cond.cpp
   src/codegen/expr-is.cpp
   src/codegen/expr-lit.cpp

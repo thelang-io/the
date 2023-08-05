@@ -43,7 +43,7 @@ void Codegen::_nodeReturn (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &no
     }
 
     auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
-    auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast();
+    auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast(this->state.fnDeclBody);
 
     if ((!nodeParentFunction && this->state.cleanUp.empty()) || !nodeIsLast) {
       (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
@@ -121,7 +121,7 @@ void Codegen::_nodeReturnAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNod
   }
 
   auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
-  auto nodeIsLast = ASTChecker(node).isLast();
+  auto nodeIsLast = ASTChecker(node).isLast(this->state.fnDeclBody);
 
   if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) && (!nodeParentFunction || !nodeIsLast)) {
     (*c)->append(this->_genAsyncReturn(this->state.cleanUp.currentLabelAsync()));
