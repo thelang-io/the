@@ -71,7 +71,6 @@ class ASTChecker {
           result.insert(result.end(), childResult2.begin(), childResult2.end());
         }
       } else if (std::holds_alternative<ASTExprClosure>(*expr.body)) {
-        // todo test
         auto exprBody = std::get<ASTExprClosure>(*expr.body);
 
         if (!localScope) {
@@ -551,9 +550,8 @@ class ASTChecker {
       });
     }
 
-// todo test
-    if (!backupNodes.empty() && backupNodes.back().body == node.body) {
-      return true;
+    if (!backupNodes.empty()) {
+      return backupNodes.back().body == node.body;
     }
 
     throw Error("tried isLast on unknown node");
