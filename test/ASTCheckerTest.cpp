@@ -48,6 +48,13 @@ class ASTCheckerTest : public testing::Test {
   }
 };
 
+TEST_F(ASTCheckerTest, FlattenExprGlobalExprClosure) {
+  auto nodes = testing::NiceMock<MockAST>("(a: int, b: int = 2, c := 3) -> int { return a + b + c }").gen();
+  auto nodeExpr = std::get<ASTNodeExpr>(*nodes[0].body);
+
+  EXPECT_EQ(ASTChecker::flattenExpr({ nodeExpr }, false).size(), 8);
+}
+
 TEST_F(ASTCheckerTest, FlattenNodeGlobalFn) {
   auto nodes = testing::NiceMock<MockAST>("fn test () int { a := 1; return a }").gen();
   EXPECT_EQ(ASTChecker::flattenNode(nodes, false).size(), 3);
@@ -153,6 +160,7 @@ TEST_F(ASTCheckerTest, GetExprOfType) {
   EXPECT_EQ(this->expr_("a := 1", "a = 2").getExprOfType<ASTExprAssign>().size(), 1);
   EXPECT_EQ(this->expr_("", "1+1").getExprOfType<ASTExprBinary>().size(), 1);
   EXPECT_EQ(this->expr_("", "print()").getExprOfType<ASTExprCall>().size(), 1);
+  EXPECT_EQ(this->expr_("", "() -> void {}").getExprOfType<ASTExprClosure>().size(), 1);
   EXPECT_EQ(this->expr_("a := 1", "a ? 1 : 2").getExprOfType<ASTExprCond>().size(), 1);
   EXPECT_EQ(this->expr_("a := 1", "a is int").getExprOfType<ASTExprIs>().size(), 1);
   EXPECT_EQ(this->expr_("", "1").getExprOfType<ASTExprLit>().size(), 1);
@@ -170,6 +178,7 @@ TEST_F(ASTCheckerTest, GetExprOfType) {
   EXPECT_EQ(this->expr_("", "2 + 2").getExprOfType<ASTExprLit>().size(), 2);
   EXPECT_EQ(this->expr_("", "print()").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->expr_("", "print(1, 2, 3)").getExprOfType<ASTExprLit>().size(), 3);
+  EXPECT_EQ(this->expr_("", "(a: int, b := 2) -> int { return a + b }").getExprOfType<ASTExprAccess>().size(), 0);
   EXPECT_EQ(this->expr_("a := 1", "a ? 1 : 2").getExprOfType<ASTExprAccess>().size(), 1);
   EXPECT_EQ(this->expr_("a := 1", "a ? 1 : 2").getExprOfType<ASTExprLit>().size(), 2);
   EXPECT_EQ(this->expr_("a := 1", "a is int").getExprOfType<ASTExprAccess>().size(), 1);
@@ -225,6 +234,7 @@ TEST_F(ASTCheckerTest, HasExpr) {
   EXPECT_TRUE(this->expr_("a := 1", "a = 2").hasExpr<ASTExprAssign>());
   EXPECT_TRUE(this->expr_("", "1+1").hasExpr<ASTExprBinary>());
   EXPECT_TRUE(this->expr_("", "print()").hasExpr<ASTExprCall>());
+  EXPECT_TRUE(this->expr_("", "() -> void {}").hasExpr<ASTExprClosure>());
   EXPECT_TRUE(this->expr_("a := 1", "a ? 1 : 2").hasExpr<ASTExprCond>());
   EXPECT_TRUE(this->expr_("a := 1", "a is int").hasExpr<ASTExprIs>());
   EXPECT_TRUE(this->expr_("", "1").hasExpr<ASTExprLit>());
@@ -242,6 +252,7 @@ TEST_F(ASTCheckerTest, HasExpr) {
   EXPECT_TRUE(this->expr_("", "2 + 2").hasExpr<ASTExprLit>());
   EXPECT_TRUE(this->expr_("", "print()").hasExpr<ASTExprAccess>());
   EXPECT_TRUE(this->expr_("", "print(1, 2, 3)").hasExpr<ASTExprLit>());
+  EXPECT_FALSE(this->expr_("", "(a: int, b := 2) -> int { return 1 + b }").hasExpr<ASTExprAccess>());
   EXPECT_TRUE(this->expr_("a := 1", "a ? 1 : 2").hasExpr<ASTExprAccess>());
   EXPECT_TRUE(this->expr_("a := 1", "a ? 1 : 2").hasExpr<ASTExprLit>());
   EXPECT_TRUE(this->expr_("a := 1", "a is int").hasExpr<ASTExprAccess>());
@@ -586,7 +597,7 @@ TEST_F(ASTCheckerTest, InsideMainObjMethod) {
 
 TEST_F(ASTCheckerTest, InsideMainRoot) {
   auto nodes = testing::NiceMock<MockAST>("const A := 1" EOL).gen();
-  EXPECT_FALSE(ASTChecker(nodes[0]).insideMain());
+  EXPECT_TRUE(ASTChecker(nodes[0]).insideMain());
 }
 
 TEST_F(ASTCheckerTest, IsFnDecl) {
@@ -838,6 +849,16 @@ TEST_F(ASTCheckerTest, IsLastOnTryHandler) {
   EXPECT_TRUE(ASTChecker(node.handlers[0].body[2]).isLast());
 }
 
+TEST_F(ASTCheckerTest, IsLastWithBackup) {
+  auto ast = testing::NiceMock<MockAST>("() -> int { a := 1; return a }");
+  auto nodes = ast.gen();
+  auto nodeExpr = std::get<ASTNodeExpr>(*nodes[0].body);
+  auto exprClosure = std::get<ASTExprClosure>(*nodeExpr.body);
+
+  EXPECT_FALSE(ASTChecker(exprClosure.body[0]).isLast(exprClosure.body));
+  EXPECT_TRUE(ASTChecker(exprClosure.body[1]).isLast(exprClosure.body));
+}
+
 TEST_F(ASTCheckerTest, ParentIsEmpty) {
   auto nodes = testing::NiceMock<MockAST>("main {}" EOL).gen();
   auto nodeMain = std::get<ASTNodeMain>(*nodes[0].body);
@@ -902,6 +923,15 @@ TEST_F(ASTCheckerTest, ThrowsOnManyIsLast) {
 TEST_F(ASTCheckerTest, ThrowsOnRootIsLast) {
   auto nodes = testing::NiceMock<MockAST>("main {}").gen();
   EXPECT_THROW_WITH_MESSAGE(ASTChecker(nodes[0]).isLast(), "tried isLast on root node");
+}
+
+TEST_F(ASTCheckerTest, ThrowsOnUnknown) {
+  auto ast = testing::NiceMock<MockAST>("() -> int { a := 1; return a }");
+  auto nodes = ast.gen();
+  auto nodeExpr = std::get<ASTNodeExpr>(*nodes[0].body);
+  auto exprClosure = std::get<ASTExprClosure>(*nodeExpr.body);
+
+  EXPECT_THROW_WITH_MESSAGE(ASTChecker(exprClosure.body[0]).isLast(), "tried isLast on unknown node");
 }
 
 TEST_F(ASTCheckerTest, ThrowsExpr) {

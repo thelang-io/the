@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "ParserStmt.hpp"
+#include "Parser.hpp"
 #include <sstream>
 #include "ParserComment.hpp"
 #include "utils.hpp"
@@ -40,7 +40,7 @@ std::string normalizeNote (const std::string &note) {
   return result;
 }
 
-bool paramIsSelf (const std::string &prefix, const ParserStmtFnDeclParam &param) {
+bool paramIsSelf (const std::string &prefix, const ParserFnParam &param) {
   if (prefix.empty() || param.type == std::nullopt) {
     return false;
   }
@@ -51,7 +51,7 @@ bool paramIsSelf (const std::string &prefix, const ParserStmtFnDeclParam &param)
 
 std::string fnDeclDocParams (
   const std::string &prefix,
-  const std::vector<ParserStmtFnDeclParam> &params,
+  const std::vector<ParserFnParam> &params,
   const std::string &trailing,
   const std::string &separator
 ) {

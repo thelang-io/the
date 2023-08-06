@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "ParserType.hpp"
+#include "Parser.hpp"
 #include "config.hpp"
 
 std::string ParserType::stringify () const {

@@ -15,7 +15,6 @@
  */
 
 #include "CodegenAST.hpp"
-#include "../utils.hpp"
 
 // NOLINTNEXTLINE(readability-make-member-function-const)
 CodegenASTExprAccess &CodegenASTExpr::asAccess () { return std::get<CodegenASTExprAccess>(*this->body); }

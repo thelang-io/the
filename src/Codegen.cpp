@@ -342,9 +342,9 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "typedef struct {" EOL;
     builtinStructDefCode += "  int id;" EOL;
     builtinStructDefCode += "  void *ctx;" EOL;
-    builtinStructDefCode += "  jmp_buf buf[10];" EOL;
+    builtinStructDefCode += "  jmp_buf buf[0xFFFFF];" EOL;
     builtinStructDefCode += "  int buf_idx;" EOL;
-    builtinStructDefCode += "  err_stack_t stack[10];" EOL;
+    builtinStructDefCode += "  err_stack_t stack[0xFFFF];" EOL;
     builtinStructDefCode += "  int stack_idx;" EOL;
     builtinStructDefCode += "  void (*_free) (void *);" EOL;
     builtinStructDefCode += "} err_state_t;" EOL;
@@ -704,6 +704,8 @@ std::shared_ptr<CodegenASTExpr> Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr,
     return this->_exprBinary(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprCall>(*nodeExpr.body)) {
     return this->_exprCall(nodeExpr, targetType, parent, c, root, awaitCallId);
+  } else if (std::holds_alternative<ASTExprClosure>(*nodeExpr.body)) {
+    return this->_exprClosure(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprCond>(*nodeExpr.body)) {
     return this->_exprCond(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprIs>(*nodeExpr.body)) {

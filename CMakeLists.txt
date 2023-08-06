@@ -46,6 +46,7 @@ set(
   src/codegen/expr-await.cpp
   src/codegen/expr-binary.cpp
   src/codegen/expr-call.cpp
+  src/codegen/expr-closure.cpp
   src/codegen/expr-cond.cpp
   src/codegen/expr-is.cpp
   src/codegen/expr-lit.cpp
@@ -84,8 +85,8 @@ set(
 
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
-  src/ASTExpr.cpp src/ASTExpr.hpp
-  src/ASTNode.cpp src/ASTNode.hpp
+  src/ASTExpr.cpp
+  src/ASTNode.cpp
   src/Codegen.cpp src/Codegen.hpp
   src/CodegenAPIItem.hpp
   src/CodegenCleanUp.cpp src/CodegenCleanUp.hpp
@@ -94,9 +95,9 @@ set(
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
   src/ParserComment.cpp src/ParserComment.hpp
-  src/ParserExpr.cpp src/ParserExpr.hpp
-  src/ParserStmt.cpp src/ParserStmt.hpp
-  src/ParserType.cpp src/ParserType.hpp
+  src/ParserExpr.cpp
+  src/ParserStmt.cpp
+  src/ParserType.cpp
   src/Reader.cpp src/Reader.hpp
   src/Token.cpp src/Token.hpp
   src/Type.cpp src/Type.hpp

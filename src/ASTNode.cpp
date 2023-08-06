@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "ASTNode.hpp"
+#include "AST.hpp"
 #include "config.hpp"
 
 std::string blockToXml (const ASTBlock &block, std::size_t indent) {
@@ -27,7 +27,7 @@ std::string blockToXml (const ASTBlock &block, std::size_t indent) {
   return result;
 }
 
-std::string fnDeclParamsToXml (const std::vector<ASTFnDeclParam> &params, std::size_t indent) {
+std::string fnDeclParamsToXml (const std::vector<ASTFnParam> &params, std::size_t indent) {
   auto result = std::string();
 
   if (!params.empty()) {

@@ -1,0 +1,10 @@
+======= stdin =======
+const a := (a: int, mut b: str) -> str {
+  return a.str() + b
+}
+======= stdout =======
+## `a`
+
+```the
+const a := (a: int, mut b: str) -> str
+```

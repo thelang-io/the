@@ -20,7 +20,7 @@ VarStack::VarStack (const std::vector<std::shared_ptr<Var>> &items) {
   this->_items.reserve(items.size());
 
   for (const auto &item : items) {
-    this->_items.emplace_back(std::make_tuple(item, false));
+    this->_items.emplace_back(item, false);
   }
 }
 

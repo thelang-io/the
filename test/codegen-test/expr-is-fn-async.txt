@@ -97,9 +97,9 @@ typedef struct {
 typedef struct {
   int id;
   void *ctx;
-  jmp_buf buf[10];
+  jmp_buf buf[0xFFFFF];
   int buf_idx;
-  err_stack_t stack[10];
+  err_stack_t stack[0xFFFF];
   int stack_idx;
   void (*_free) (void *);
 } err_state_t;

@@ -70,7 +70,7 @@ void Codegen::_fnDecl (
   std::shared_ptr<CodegenASTStmt> *c,
   std::shared_ptr<Var> var,
   const std::vector<std::shared_ptr<Var>> &stack,
-  const std::vector<ASTFnDeclParam> &params,
+  const std::vector<ASTFnParam> &params,
   const std::optional<ASTBlock> &body,
   const ASTNode &node,
   CodegenPhase phase
@@ -92,17 +92,23 @@ void Codegen::_fnDecl (
   auto asyncContinueNodesCount = Codegen::countAsyncLoopDepth<ASTNodeContinue>(fnType.async ? *body : ASTBlock{}, 0);
   auto asyncBodyDeclarations = Codegen::filterAsyncDeclarations(fnType.async ? ASTChecker::flattenNode(*body) : ASTBlock{});
   auto awaitExprCalls = !fnType.async ? std::vector<ASTNodeExpr>{} : ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(*body));
+  auto closureExpressions = awaitExprCalls;
   auto hasAsyncReturn = fnType.async && ASTChecker(*body).has<ASTNodeReturn>();
 
   awaitExprCalls.erase(std::remove_if(awaitExprCalls.begin(), awaitExprCalls.end(), [] (const auto &it) -> bool {
     return !std::holds_alternative<ASTExprAwait>(*it.body) || it.type->isVoid();
   }), awaitExprCalls.end());
 
+  closureExpressions.erase(std::remove_if(closureExpressions.begin(), closureExpressions.end(), [] (const auto &it) -> bool {
+    return !std::holds_alternative<ASTExprClosure>(*it.body);
+  }), closureExpressions.end());
+
   auto hasStack = !stack.empty() ||
     !asyncBodyDeclarations.empty() ||
     hasAsyncReturn ||
     asyncBreakNodesCount > 0 ||
     asyncContinueNodesCount > 0 ||
+    !closureExpressions.empty() ||
     !awaitExprCalls.empty();
 
   if (phase == CODEGEN_PHASE_ALLOC || phase == CODEGEN_PHASE_FULL) {
@@ -111,6 +117,7 @@ void Codegen::_fnDecl (
     auto initialStateInsideAsync = this->state.insideAsync;
     auto initialStateReturnType = this->state.returnType;
     auto initialStateAsyncCounter = this->state.asyncCounter;
+    auto initialStateFnDeclBody = this->state.fnDeclBody;
     auto contextEntityIdx = 0;
 
     this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp, fnType.async);
@@ -147,11 +154,18 @@ void Codegen::_fnDecl (
           def += "  unsigned char c" + std::to_string(i + 1) + ";" EOL;
         }
 
-        for (const auto &awaitExpr : awaitExprCalls) {
-          auto exprAwait = std::get<ASTExprAwait>(*awaitExpr.body);
-          auto typeInfo = this->_typeInfo(awaitExpr.type);
+        for (const auto &nodeExpr : awaitExprCalls) {
+          auto exprAwait = std::get<ASTExprAwait>(*nodeExpr.body);
+          auto typeInfo = this->_typeInfo(nodeExpr.type);
 
           def += "  " + typeInfo.typeCode + "t" + std::to_string(exprAwait.id) + ";" EOL;
+        }
+
+        for (const auto &nodeExpr : closureExpressions) {
+          auto exprClosure = std::get<ASTExprClosure>(*nodeExpr.body);
+          auto typeInfo = this->_typeInfo(exprClosure.var->type);
+
+          def += "  " + typeInfo.typeCode + Codegen::name(exprClosure.var->codeName) + ";" EOL;
         }
 
         def += "};";
@@ -356,10 +370,28 @@ void Codegen::_fnDecl (
           );
         }
 
-        for (const auto &awaitExpr : awaitExprCalls) {
-          auto exprAwait = std::get<ASTExprAwait>(*awaitExpr.body);
+        for (const auto &nodeExpr : awaitExprCalls) {
+          auto exprAwait = std::get<ASTExprAwait>(*nodeExpr.body);
           auto contextVarName = "t" + std::to_string(exprAwait.id);
-          auto typeInfo = this->_typeInfo(awaitExpr.type);
+          auto typeInfo = this->_typeInfo(nodeExpr.type);
+
+          cBody->append(
+            CodegenASTStmtVarDecl::create(
+              CodegenASTType::create(typeInfo.typeRefCode),
+              CodegenASTExprAccess::create(contextVarName),
+              CodegenASTExprUnary::create(
+                "&",
+                CodegenASTExprAccess::create(CodegenASTExprAccess::create("x"), contextVarName, true)
+              )
+            )
+          );
+        }
+
+        for (const auto &nodeExpr : closureExpressions) {
+          auto exprClosure = std::get<ASTExprClosure>(*nodeExpr.body);
+          auto contextVarName = Codegen::name(exprClosure.var->codeName);
+          auto typeInfo = this->_typeInfo(nodeExpr.type);
+          this->state.contextVars.insert(contextVarName);
 
           cBody->append(
             CodegenASTStmtVarDecl::create(
@@ -512,6 +544,7 @@ void Codegen::_fnDecl (
 
       this->state.returnType = returnTypeInfo.type;
       this->state.asyncCounter = 0;
+      this->state.fnDeclBody = *body;
       this->_block(&cBody, *body, false);
       this->varMap.restore();
 
@@ -612,6 +645,7 @@ void Codegen::_fnDecl (
     this->state.insideAsync = initialStateInsideAsync;
     this->state.returnType = initialStateReturnType;
     this->state.asyncCounter = initialStateAsyncCounter;
+    this->state.fnDeclBody = initialStateFnDeclBody;
   }
 
   auto fnName = var->builtin ? codeName : Codegen::name(codeName);
@@ -691,7 +725,7 @@ void Codegen::_fnDecl (
       this->state.cleanUp.add(
         this->_genFreeFn(
           varTypeInfo.type,
-          (this->async && node.parent != nullptr)
+          (this->async && node.parent != nullptr && !ASTChecker(node).insideMain())
             ? CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(fnName))
             : CodegenASTExprAccess::create(fnName)
         )->stmt()

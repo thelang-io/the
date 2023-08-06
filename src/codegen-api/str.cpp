@@ -181,10 +181,38 @@ const std::vector<std::string> codegenStr = {
   R"(  _{free}(s.d);)" EOL
   R"(})" EOL,
 
+  R"(_{bool} str_ge (_{struct str} s1, _{struct str} s2) {)" EOL
+  R"(  _{bool} r = _{memcmp}(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) >= 0;)" EOL
+  R"(  _{free}(s1.d);)" EOL
+  R"(  _{free}(s2.d);)" EOL
+  R"(  return r;)" EOL
+  R"(})" EOL,
+
+  R"(_{bool} str_gt (_{struct str} s1, _{struct str} s2) {)" EOL
+  R"(  _{bool} r = _{memcmp}(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) > 0;)" EOL
+  R"(  _{free}(s1.d);)" EOL
+  R"(  _{free}(s2.d);)" EOL
+  R"(  return r;)" EOL
+  R"(})" EOL,
+
+  R"(_{bool} str_le (_{struct str} s1, _{struct str} s2) {)" EOL
+  R"(  _{bool} r = _{memcmp}(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) <= 0;)" EOL
+  R"(  _{free}(s1.d);)" EOL
+  R"(  _{free}(s2.d);)" EOL
+  R"(  return r;)" EOL
+  R"(})" EOL,
+
   R"(_{size_t} str_len (_{struct str} s) {)" EOL
   R"(  _{size_t} l = s.l;)" EOL
   R"(  _{free}(s.d);)" EOL
   R"(  return l;)" EOL
+  R"(})" EOL,
+
+  R"(_{bool} str_lt (_{struct str} s1, _{struct str} s2) {)" EOL
+  R"(  _{bool} r = _{memcmp}(s1.d, s2.d, s1.l > s2.l ? s1.l : s2.l) < 0;)" EOL
+  R"(  _{free}(s1.d);)" EOL
+  R"(  _{free}(s2.d);)" EOL
+  R"(  return r;)" EOL
   R"(})" EOL,
 
   R"(_{bool} str_ne_cstr (_{struct str} s, const char *c) {)" EOL

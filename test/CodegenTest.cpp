@@ -1063,6 +1063,21 @@ INSTANTIATE_TEST_SUITE_P(ExprCall, CodegenPassTest, testing::Values(
   "expr-call-non-awaited"
 ));
 
+INSTANTIATE_TEST_SUITE_P(ExprClosure, CodegenPassTest, testing::Values(
+  "expr-closure",
+  "expr-closure-body",
+  "expr-closure-params",
+  "expr-closure-return",
+  "expr-closure-inline",
+  "expr-closure-stack",
+  "expr-closure-async",
+  "expr-closure-async-body",
+  "expr-closure-async-params",
+  "expr-closure-async-return",
+  "expr-closure-async-inline",
+  "expr-closure-async-stack"
+));
+
 INSTANTIATE_TEST_SUITE_P(ExprCond, CodegenPassTest, testing::Values(
   "expr-cond",
   "expr-cond-nested",
@@ -1242,6 +1257,16 @@ INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-binary-str",
   "node-expr-binary-union",
   "node-expr-call",
+  "node-expr-closure",
+  "node-expr-closure-body",
+  "node-expr-closure-params",
+  "node-expr-closure-return",
+  "node-expr-closure-stack",
+  "node-expr-closure-async",
+  "node-expr-closure-async-body",
+  "node-expr-closure-async-params",
+  "node-expr-closure-async-return",
+  "node-expr-closure-async-stack",
   "node-expr-cond",
   "node-expr-cond-alias",
   "node-expr-cond-any",

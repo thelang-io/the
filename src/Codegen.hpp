@@ -115,6 +115,7 @@ struct CodegenState {
   std::size_t asyncCounter = 0;
   std::shared_ptr<std::size_t> asyncCounterLoopBreak = nullptr;
   std::shared_ptr<std::size_t> asyncCounterLoopContinue = nullptr;
+  ASTBlock fnDeclBody = {};
 };
 
 struct CodegenTypeInfo {
@@ -231,6 +232,7 @@ class Codegen {
   std::shared_ptr<CodegenASTExpr> _exprCallDefaultArg (const CodegenTypeInfo &);
   std::shared_ptr<CodegenASTExpr> _exprCallPrintArg (const CodegenTypeInfo &, const ASTNodeExpr &, const ASTNode &, std::shared_ptr<CodegenASTStmt> *);
   std::string _exprCallPrintArgSign (const CodegenTypeInfo &, const ASTNodeExpr &);
+  std::shared_ptr<CodegenASTExpr> _exprClosure (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprCond (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprIs (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprLit (const ASTNodeExpr &, Type *, bool);
@@ -239,7 +241,7 @@ class Codegen {
   std::shared_ptr<CodegenASTExpr> _exprObjDefaultField (const CodegenTypeInfo &);
   std::shared_ptr<CodegenASTExpr> _exprRef (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
-  void _fnDecl (std::shared_ptr<CodegenASTStmt> *, std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnDeclParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
+  void _fnDecl (std::shared_ptr<CodegenASTStmt> *, std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
   void _fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *, const std::string &);
   std::shared_ptr<CodegenASTStmt> _genAsyncReturn (const std::shared_ptr<std::size_t> &);
   std::shared_ptr<CodegenASTExpr> _genCopyFn (Type *, const std::shared_ptr<CodegenASTExpr> &);
