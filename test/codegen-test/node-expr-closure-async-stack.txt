@@ -559,7 +559,7 @@ int main () {
   const struct __THE_1_fn$1001 __THE_0_mainSD$_0;
   __THE_1_mainSD$_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSD$_0, (struct __THE_1_mainSD$_0X) {&__THE_0_a_0, &__THE_0_test_0});
   __THE_0_mainSD$_0;
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) *__THE_0_mainSD$_0);
+  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSD$_0);
   threadpool_wait(tp);
   threadpool_deinit(tp);
 }

@@ -725,7 +725,7 @@ void Codegen::_fnDecl (
       this->state.cleanUp.add(
         this->_genFreeFn(
           varTypeInfo.type,
-          (this->async && node.parent != nullptr)
+          (this->async && node.parent != nullptr && !ASTChecker(node).insideMain())
             ? CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(fnName))
             : CodegenASTExprAccess::create(fnName)
         )->stmt()
