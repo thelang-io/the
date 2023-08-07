@@ -234,7 +234,7 @@ const std::vector<std::string> codegenRequest = {
   R"(  _{array_request_Header_free}(headers);)" EOL
   R"(  _{buffer_free}(data);)" EOL
   R"(  _{str_free}(method);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  return (struct _{request_Request} *) req;)" EOL
   R"(})" EOL,
 
@@ -247,7 +247,7 @@ const std::vector<std::string> codegenRequest = {
   R"(    if (y < 0) {)" EOL
   R"(      _{free}(data.d);)" EOL
   R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to read from socket"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(      _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(      _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(    } else if (y == 0 && data.l != 0) {)" EOL
   R"(      break;)" EOL
   R"(    } else if (y == 0) {)" EOL
@@ -267,14 +267,14 @@ const std::vector<std::string> codegenRequest = {
   R"(  } else {)" EOL
   R"(    _{free}(data.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid response HTTP version"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{size_t} status_start = i;)" EOL
   R"(  while (i < data.l && _{isdigit}(data.d[i])) i++;)" EOL
   R"(  if (status_start == i) {)" EOL
   R"(    _{free}(data.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("invalid response HTTP status code"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{size_t} status_len = i - status_start;)" EOL
   R"(  char *status = _{alloc}(status_len + 1);)" EOL

@@ -40,19 +40,26 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
   const char *file;
   const char *name;
   int line;
   int col;
+  struct err_stack *next;
+  struct err_stack *prev;
 } err_stack_t;
 typedef struct {
   int id;
   void *ctx;
-  jmp_buf buf[0xFFFFF];
-  int buf_idx;
-  err_stack_t stack[0xFFFF];
-  int stack_idx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
   void (*_free) (void *);
 } err_state_t;
 struct str {
@@ -82,7 +89,7 @@ struct __THE_1_fn$1001 {
   size_t l;
 };
 
-err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
@@ -109,14 +116,11 @@ void *alloc (size_t n1) {
 void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = fn_err_state->stack[i];
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
     const char *fmt = THE_EOL "  at %s (%s)";
-    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
-    if (l + z >= 4096) {
-      break;
-    }
-    sprintf(&d[l], fmt, it.name, it.file);
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
     l += z;
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);

@@ -27,8 +27,12 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
         CodegenASTExprAccess::create(this->_("setjmp")),
         {
           CodegenASTExprAccess::create(
-            this->_genErrState(ASTChecker(node).insideMain(), false, "buf"),
-            CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "++")
+            CodegenASTExprCall::create(
+              CodegenASTExprAccess::create(this->_("error_buf_increase")),
+              {this->_genErrState(ASTChecker(node).insideMain(), false)}
+            ),
+            "buf",
+            true
           )
         }
       )
@@ -52,18 +56,18 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
         CodegenASTExprAccess::create(this->_("longjmp")),
         {
           CodegenASTExprAccess::create(
-            this->_genErrState(ASTChecker(node).insideMain(), false, "buf"),
-            CodegenASTExprBinary::create(
-              this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"),
-              "-",
-              CodegenASTExprLiteral::create("1")
-            )
+            this->_genErrState(ASTChecker(node).insideMain(), false, "buf_last"),
+            "buf",
+            true
           ),
           this->_genErrState(ASTChecker(node).insideMain(), false, "id")
         }
       )->stmt()
     ),
-    CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "--")->stmt()
+    CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("error_buf_decrease")),
+      {this->_genErrState(ASTChecker(node).insideMain(), false)}
+    )->stmt()
   });
 
   this->_block(c, nodeTry.body, true, blockCleanUp, true);
@@ -86,7 +90,10 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
     );
 
     (*c)->append(
-      CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "--")->stmt()
+      CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("error_buf_decrease")),
+        {this->_genErrState(ASTChecker(node).insideMain(), false)}
+      )->stmt()
     );
 
     (*c)->append(
@@ -124,7 +131,10 @@ void Codegen::_nodeTry (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node)
   *c = (*c)->append(CodegenASTStmtCase::create(nullptr, CodegenASTStmtCompound::create()));
 
   (*c)->append(
-    CodegenASTExprUnary::create(this->_genErrState(ASTChecker(node).insideMain(), false, "buf_idx"), "--")->stmt()
+    CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_("error_buf_decrease")),
+      {this->_genErrState(ASTChecker(node).insideMain(), false)}
+    )->stmt()
   );
 
   (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));

@@ -64,19 +64,26 @@ main {
 
 #define TYPE_error_Error 1
 
-typedef struct {
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
   const char *file;
   const char *name;
   int line;
   int col;
+  struct err_stack *next;
+  struct err_stack *prev;
 } err_stack_t;
 typedef struct {
   int id;
   void *ctx;
-  jmp_buf buf[0xFFFFF];
-  int buf_idx;
-  err_stack_t stack[0xFFFF];
-  int stack_idx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
   void (*_free) (void *);
 } err_state_t;
 struct str {
@@ -135,11 +142,13 @@ struct __THE_1_mainSDtest2_0X {
   const struct __THE_1_fn$1003 *__THE_0_test1_0;
 };
 
-err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_buf_decrease (err_state_t *);
+err_buf_t *error_buf_increase (err_state_t *);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
@@ -169,14 +178,11 @@ void *alloc (size_t n1) {
 void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = fn_err_state->stack[i];
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
     const char *fmt = THE_EOL "  at %s (%s)";
-    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
-    if (l + z >= 4096) {
-      break;
-    }
-    sprintf(&d[l], fmt, it.name, it.file);
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
     l += z;
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
@@ -189,18 +195,39 @@ void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void
   error_stack_pos(fn_err_state, line, col);
   error_stack_str(fn_err_state);
 }
+void error_buf_decrease (err_state_t *fn_err_state) {
+  err_buf_t *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  free(buf);
+}
+err_buf_t *error_buf_increase (err_state_t *fn_err_state) {
+  err_buf_t *buf = alloc(sizeof(err_buf_t));
+  buf->next = NULL;
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == NULL) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != NULL) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
 void error_stack_pop (err_state_t *fn_err_state) {
-  fn_err_state->stack_idx--;
+  err_stack_t *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  free(stack);
 }
 void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
-  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
-  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
 }
 void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
-  fn_err_state->stack[fn_err_state->stack_idx].file = file;
-  fn_err_state->stack[fn_err_state->stack_idx].name = name;
   error_stack_pos(fn_err_state, line, col);
-  fn_err_state->stack_idx++;
+  err_stack_t *stack = alloc(sizeof(err_stack_t));
+  stack->file = file;
+  stack->name = name;
+  stack->next = NULL;
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == NULL) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != NULL) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
 }
 void error_stack_str (err_state_t *fn_err_state) {
   struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
@@ -208,29 +235,30 @@ void error_stack_str (err_state_t *fn_err_state) {
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = fn_err_state->stack[i];
+  int i = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
     size_t z;
     char *fmt;
-    if (it.col == 0 && it.line == 0) {
+    if (it->col == 0 && it->line == 0) {
       fmt = THE_EOL "  at %s (%s)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file);
-    } else if (it.col == 0) {
+      z = snprintf(NULL, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
       fmt = THE_EOL "  at %s (%s:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
     } else {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
     }
     stack->d = re_alloc(stack->d, stack->l + z + 1);
-    if (it.col == 0 && it.line == 0) {
-      sprintf(&stack->d[stack->l], fmt, it.name, it.file);
-    } else if (it.col == 0) {
-      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line);
+    if (it->col == 0 && it->line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
     } else {
-      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line, it.col);
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
     }
     stack->l += z;
+    i++;
   }
 }
 void *re_alloc (void *n1, size_t n2) {
@@ -274,7 +302,7 @@ int32_t *__THE_1_array_int_at (err_state_t *fn_err_state, int line, int col, str
     char *d = alloc(z + 1);
     sprintf(d, fmt, i);
     error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
 }
@@ -314,24 +342,24 @@ struct __THE_1_array_int __THE_1_test1_0 (void *px, void *pp) {
   const struct __THE_1_array_int __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_array_int_alloc(3, 1, 2, 3);
   struct __THE_1_array_int __THE_0_d_0 = __THE_1_array_int_alloc(0);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_a_0)); __THE_0_i_0++) {
-    if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L2;
+    if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L2;
     __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(fn_err_state, 5, 12, __THE_0_a_0, __THE_0_i_0)));
 L2:
-    fn_err_state->buf_idx--;
+    error_buf_decrease(fn_err_state);
     if (fn_err_state->id != -1) goto L1;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_b_0)); __THE_0_i_0++) {
-    if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L3;
+    if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L3;
     __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(fn_err_state, 9, 12, __THE_0_b_0, __THE_0_i_0)));
 L3:
-    fn_err_state->buf_idx--;
+    error_buf_decrease(fn_err_state);
     if (fn_err_state->id != -1) goto L1;
   }
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_int_len(__THE_1_array_int_copy(__THE_0_c_0)); __THE_0_i_0++) {
-    if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L4;
+    if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L4;
     __THE_1_array_int_push(&__THE_0_d_0, __THE_1_array_int_alloc(1, *__THE_1_array_int_at(fn_err_state, 13, 12, __THE_0_c_0, __THE_0_i_0)));
 L4:
-    fn_err_state->buf_idx--;
+    error_buf_decrease(fn_err_state);
     if (fn_err_state->id != -1) goto L1;
   }
   v = __THE_1_array_int_copy(__THE_0_d_0);
@@ -342,7 +370,7 @@ L1:
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
   free(pp);
   error_stack_pop(fn_err_state);
-  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   return v;
 }
 void __THE_1_fn$1004_free (struct __THE_1_fn$1004 n) {
@@ -358,16 +386,16 @@ void __THE_1_mainSDtest2_0 (void *px, void *pp) {
   const struct __THE_1_array_int __THE_0_a2_0 = p->n0;
   const struct __THE_1_array_int __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_array_int_alloc(3, 13, 14, 15);
   const struct __THE_1_array_int __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_array_int_alloc(3, 16, 17, 18);
-  if (setjmp(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto L7;
+  if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L7;
   *__THE_0_a_0 = __THE_1_array_int_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn$1003P) {fn_err_state, 31, 9, __THE_1_array_int_copy(__THE_0_a2_0), 1, __THE_1_array_int_copy(__THE_0_b_0), 1, __THE_1_array_int_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn$1003P))));
 L7:
-  fn_err_state->buf_idx--;
+  error_buf_decrease(fn_err_state);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_c_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_b_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a2_0);
   free(pp);
   error_stack_pop(fn_err_state);
-  if (fn_err_state->id != -1) longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
 void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1004 *n, struct __THE_1_mainSDtest2_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
@@ -381,42 +409,42 @@ void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn$1004 *n, struct __THE_1_main
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_fn$1003 __THE_0_test1_0 = (struct __THE_1_fn$1003) {&__THE_1_test1_0, NULL, 0};
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L5;
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L5;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 20, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 0, (struct __THE_1_array_int) {}, 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1003P))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L5;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 21, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1003P))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L5;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 22, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L5;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 23, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1003P))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L5;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 24, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 0, (struct __THE_1_array_int) {}, 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L5;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 25, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L5;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L5;
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 26, 3, __THE_1_array_int_alloc(3, 1, 2, 3), 1, __THE_1_array_int_alloc(3, 4, 5, 6), 1, __THE_1_array_int_alloc(3, 7, 8, 9)}, sizeof(struct __THE_1_fn$1003P))));
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 10, 11, 12);
   const struct __THE_1_fn$1004 __THE_0_mainSDtest2_0;
   __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn$1004 *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L6;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {&err_state, 34, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1004P)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L6;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {&err_state, 35, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1004P)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L6;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {&err_state, 36, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L6;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {&err_state, 37, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn$1004P)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L6;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {&err_state, 38, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 0, (struct __THE_1_array_int) {}, 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L6;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {&err_state, 39, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
-  if (setjmp(err_state.buf[err_state.buf_idx - 1]) != 0) goto L6;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L6;
   __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn$1004P) {&err_state, 40, 3, __THE_1_array_int_alloc(3, 19, 20, 21), 1, __THE_1_array_int_alloc(3, 22, 23, 24), 1, __THE_1_array_int_alloc(3, 25, 26, 27)}, sizeof(struct __THE_1_fn$1004P)));
 L6:
   __THE_1_fn$1004_free((struct __THE_1_fn$1004) __THE_0_mainSDtest2_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
 L5:
-  err_state.buf_idx--;
+  error_buf_decrease(&err_state);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

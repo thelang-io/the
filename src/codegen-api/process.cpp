@@ -33,7 +33,7 @@ const std::vector<std::string> codegenProcess = {
   R"(  #endif)" EOL
   R"(  if (p == _{NULL}) {)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to retrieve current working directory information"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  return _{str_alloc}(buf);)" EOL
   R"(})" EOL,
@@ -81,7 +81,7 @@ const std::vector<std::string> codegenProcess = {
   R"(    char r[0xFFFF];)" EOL
   R"(    if (_{GetEnvironmentVariable}("USERPROFILE", r, 0xFFFF) == 0) {)" EOL
   R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("environment variable `USERPROFILE` is not set"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(      _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(      _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(    })" EOL
   R"(  #else)" EOL
   R"(    char *r = _{getenv}("HOME");)" EOL
@@ -107,7 +107,7 @@ const std::vector<std::string> codegenProcess = {
   R"(    _{free}(c);)" EOL
   R"(    _{str_free}((_{struct str}) s);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  unsigned char *d = _{NULL};)" EOL
   R"(  unsigned char b[4096];)" EOL
@@ -131,7 +131,7 @@ const std::vector<std::string> codegenProcess = {
   R"(    _{free}(c);)" EOL
   R"(    _{str_free}((_{struct str}) s);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL

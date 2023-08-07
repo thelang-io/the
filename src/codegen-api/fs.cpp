@@ -45,7 +45,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{buffer_free}(b);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_chmodSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s, _{int32_t} m) {)" EOL
@@ -66,7 +66,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_chmodSync_cleanup:)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{free}(c);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_chownSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s, _{int32_t} u, _{int32_t} g) {)" EOL
@@ -86,11 +86,11 @@ const std::vector<std::string> codegenFs = {
   R"(fs_chownSync_cleanup:)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{free}(c);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_copyDirectorySync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} n1, _{struct str} n2) {)" EOL
-  R"(  if (_{setjmp}(fn_err_state->buf[fn_err_state->buf_idx++]) != 0) goto fs_copyDirectorySync_cleanup1;)" EOL
+  R"(  if (_{setjmp}(_{error_buf_increase}(fn_err_state)) != 0) goto fs_copyDirectorySync_cleanup1;)" EOL
   R"(  if (_{fs_existsSync}(_{str_copy}(n2))) {)" EOL
   R"(    if (_{fs_isDirectorySync}(_{str_copy}(n2))) {)" EOL
   R"(      _{fs_rmdirSync}(fn_err_state, line, col, _{str_copy}(n2));)" EOL
@@ -107,7 +107,7 @@ const std::vector<std::string> codegenFs = {
   R"(    n2.d[n2.l - 1] = (_{THE_PATH_SEP})[0];)" EOL
   R"(  })" EOL
   R"(  struct _{array_str} files = _{fs_scandirSync}(fn_err_state, line, col, _{str_copy}(n1));)" EOL
-  R"(  if (_{setjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1]) != 0) goto fs_copyDirectorySync_cleanup2;)" EOL
+  R"(  if (_{setjmp}(fn_err_state->buf_last->buf) != 0) goto fs_copyDirectorySync_cleanup2;)" EOL
   R"(  _{fs_mkdirSync}(fn_err_state, line, col, _{str_copy}(n2));)" EOL
   R"(  for (_{size_t} i = 0; i < files.l; i++) {)" EOL
   R"(    _{struct str} file = _{str_concat_str}(_{str_copy}(n1), _{str_copy}(files.d[i]));)" EOL
@@ -120,10 +120,10 @@ const std::vector<std::string> codegenFs = {
   R"(fs_copyDirectorySync_cleanup2:)" EOL
   R"(  _{array_str_free}(files);)" EOL
   R"(fs_copyDirectorySync_cleanup1:)" EOL
-  R"(  fn_err_state->buf_idx--;)" EOL
+  R"(  _{error_buf_decrease}(fn_err_state);)" EOL
   R"(  _{str_free}(n2);)" EOL
   R"(  _{str_free}(n1);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_copyFileSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} n1, _{struct str} n2) {)" EOL
@@ -246,7 +246,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{free}(c1);)" EOL
   R"(  _{str_free}(n2);)" EOL
   R"(  _{str_free}(n1);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(_{bool} fs_existsSync (_{struct str} s) {)" EOL
@@ -385,7 +385,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{str_free}(s2);)" EOL
   R"(  _{free}(c1);)" EOL
   R"(  _{free}(c2);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_mkdirSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s) {)" EOL
@@ -406,7 +406,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_mkdirSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(_{struct buffer} fs_readFileSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s) {)" EOL
@@ -433,7 +433,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_readFileSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  return (_{struct buffer}) {d, l};)" EOL
   R"(})" EOL,
 
@@ -498,7 +498,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_realpathSync_cleanup1:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}((_{struct str}) s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  return (_{struct str}) {d, l};)" EOL
   R"(})" EOL,
 
@@ -518,7 +518,7 @@ const std::vector<std::string> codegenFs = {
   R"(  _{free}(c1);)" EOL
   R"(  _{str_free}(n2);)" EOL
   R"(  _{str_free}(n1);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_rmSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s) {)" EOL
@@ -534,7 +534,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_rmSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_rmdirSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s) {)" EOL
@@ -555,7 +555,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_rmdirSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(struct _{array_str} fs_scandirSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s) {)" EOL
@@ -660,7 +660,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_scandirSync_cleanup1:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  return (struct _{array_str}) {r, l};)" EOL
   R"(})" EOL,
 
@@ -697,7 +697,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_statSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  return r;)" EOL
   R"(})" EOL,
 
@@ -724,7 +724,7 @@ const std::vector<std::string> codegenFs = {
   R"(fs_unlinkSync_cleanup:)" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 
   R"(void fs_writeFileSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s, _{struct buffer} b) {)" EOL
@@ -754,6 +754,6 @@ const std::vector<std::string> codegenFs = {
   R"(  _{free}(c);)" EOL
   R"(  _{str_free}(s);)" EOL
   R"(  _{buffer_free}(b);)" EOL
-  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL
 };

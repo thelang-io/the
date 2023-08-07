@@ -100,7 +100,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, i);)" EOL;
     def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return i < 0 ? &n.d[n.l + i] : &n.d[i];)" EOL;
     def += R"(})";
@@ -296,7 +296,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += elementTypeInfo.typeRefCode + typeName + "_first (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} *self) {" EOL;
     def += R"(  if (self->l == 0) {)" EOL;
     def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting first element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  return &self->d[0];)" EOL;
     def += R"(})";
@@ -358,7 +358,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += elementTypeInfo.typeRefCode + typeName + "_last (_{err_state_t} *fn_err_state, int line, int col, struct _{" + typeName + "} *self) {" EOL;
     def += "  if (self->l == 0) {" EOL;
     def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("tried getting last element of empty array"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL;
     def += "  }" EOL;
     def += "  return &self->d[self->l - 1];" EOL;
     def += "}";
@@ -490,7 +490,7 @@ std::string Codegen::_typeNameArray (Type *type) {
     def += R"(    char *d = _{alloc}(z + 1);)" EOL;
     def += R"(    _{sprintf}(d, fmt, n1);)" EOL;
     def += R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
+    def += R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL;
     def += R"(  })" EOL;
     def += R"(  _{size_t} i = n1 < 0 ? n1 + self->l : n1;)" EOL;
 

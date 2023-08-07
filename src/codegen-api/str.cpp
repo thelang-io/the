@@ -63,7 +63,7 @@ const std::vector<std::string> codegenStr = {
   R"(    char *d = _{alloc}(z + 1);)" EOL
   R"(    _{sprintf}(d, fmt, i);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  return i < 0 ? &s.d[s.l + i] : &s.d[i];)" EOL
   R"(})" EOL,
@@ -422,7 +422,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -431,7 +431,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -451,7 +451,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -460,7 +460,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -480,7 +480,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -489,7 +489,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -504,7 +504,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -518,7 +518,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -527,7 +527,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -542,7 +542,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -556,7 +556,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -565,7 +565,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -580,7 +580,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -594,7 +594,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -603,7 +603,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -618,7 +618,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -632,7 +632,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -641,7 +641,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -656,7 +656,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -670,7 +670,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0) {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -679,7 +679,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -694,7 +694,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -708,7 +708,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -717,7 +717,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -732,7 +732,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -746,7 +746,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -755,7 +755,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -770,7 +770,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -784,7 +784,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -793,7 +793,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL
@@ -808,7 +808,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{sprintf}(d, fmt, n1);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  char *c = _{str_cstr}(self);)" EOL
   R"(  char *e = _{NULL};)" EOL
@@ -822,7 +822,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {)" EOL
   R"(    const char *fmt = "value `%s` has invalid syntax";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
@@ -831,7 +831,7 @@ const std::vector<std::string> codegenStr = {
   R"(    _{free}(c);)" EOL
   R"(    _{free}(self.d);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{free}(c);)" EOL
   R"(  _{free}(self.d);)" EOL

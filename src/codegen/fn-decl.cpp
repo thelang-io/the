@@ -43,14 +43,7 @@ void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, cons
         CodegenASTExprCall::create(
           CodegenASTExprAccess::create(this->_("longjmp")),
           {
-            CodegenASTExprAccess::create(
-              this->_genErrState(false, false, "buf"),
-              CodegenASTExprBinary::create(
-                this->_genErrState(false, false, "buf_idx"),
-                "-",
-                CodegenASTExprLiteral::create("1")
-              )
-            ),
+            CodegenASTExprAccess::create(this->_genErrState(false, false, "buf_last"), "buf", true),
             this->_genErrState(false, false, "id")
           }
         )->stmt()

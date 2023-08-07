@@ -329,12 +329,22 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "};" EOL;
   }
 
+  if (this->builtins.typeErrBuf) {
+    builtinStructDefCode += "typedef struct err_buf {" EOL;
+    builtinStructDefCode += "  jmp_buf buf;" EOL;
+    builtinStructDefCode += "  struct err_buf *next;" EOL;
+    builtinStructDefCode += "  struct err_buf *prev;" EOL;
+    builtinStructDefCode += "} err_buf_t;" EOL;
+  }
+
   if (this->builtins.typeErrStack) {
-    builtinStructDefCode += "typedef struct {" EOL;
+    builtinStructDefCode += "typedef struct err_stack {" EOL;
     builtinStructDefCode += "  const char *file;" EOL;
     builtinStructDefCode += "  const char *name;" EOL;
     builtinStructDefCode += "  int line;" EOL;
     builtinStructDefCode += "  int col;" EOL;
+    builtinStructDefCode += "  struct err_stack *next;" EOL;
+    builtinStructDefCode += "  struct err_stack *prev;" EOL;
     builtinStructDefCode += "} err_stack_t;" EOL;
   }
 
@@ -342,10 +352,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     builtinStructDefCode += "typedef struct {" EOL;
     builtinStructDefCode += "  int id;" EOL;
     builtinStructDefCode += "  void *ctx;" EOL;
-    builtinStructDefCode += "  jmp_buf buf[0xFFFFF];" EOL;
-    builtinStructDefCode += "  int buf_idx;" EOL;
-    builtinStructDefCode += "  err_stack_t stack[0xFFFF];" EOL;
-    builtinStructDefCode += "  int stack_idx;" EOL;
+    builtinStructDefCode += "  err_buf_t *buf_first;" EOL;
+    builtinStructDefCode += "  err_buf_t *buf_last;" EOL;
+    builtinStructDefCode += "  err_stack_t *stack_first;" EOL;
+    builtinStructDefCode += "  err_stack_t *stack_last;" EOL;
     builtinStructDefCode += "  void (*_free) (void *);" EOL;
     builtinStructDefCode += "} err_state_t;" EOL;
   }
@@ -499,7 +509,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   if (this->builtins.varErrState) {
-    builtinVarCode += "err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};" EOL;
+    builtinVarCode += "err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};" EOL;
   }
 
   if (this->builtins.varLibOpensslInit) {
