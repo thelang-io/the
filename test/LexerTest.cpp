@@ -604,6 +604,8 @@ TEST(LexerTest, LexKeywords) {
   auto r31 = testing::NiceMock<MockReader>("try");
   auto r32 = testing::NiceMock<MockReader>("type");
   auto r33 = testing::NiceMock<MockReader>("finally");
+  auto r34 = testing::NiceMock<MockReader>("import");
+  auto r35 = testing::NiceMock<MockReader>("export");
 
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
@@ -632,6 +634,8 @@ TEST(LexerTest, LexKeywords) {
   auto l31 = Lexer(&r31);
   auto l32 = Lexer(&r32);
   auto l33 = Lexer(&r33);
+  auto l34 = Lexer(&r34);
+  auto l35 = Lexer(&r35);
 
   EXPECT_EQ(std::get<1>(l1.next()).str(), "KW_AS(1:1-1:3): as");
   EXPECT_EQ(std::get<1>(l2.next()).str(), "KW_ASYNC(1:1-1:6): async");
@@ -660,12 +664,14 @@ TEST(LexerTest, LexKeywords) {
   EXPECT_EQ(std::get<1>(l31.next()).str(), "KW_TRY(1:1-1:4): try");
   EXPECT_EQ(std::get<1>(l32.next()).str(), "KW_TYPE(1:1-1:5): type");
   EXPECT_EQ(std::get<1>(l33.next()).str(), "KW_FINALLY(1:1-1:8): finally");
+  EXPECT_EQ(std::get<1>(l34.next()).str(), "KW_IMPORT(1:1-1:7): import");
+  EXPECT_EQ(std::get<1>(l35.next()).str(), "KW_EXPORT(1:1-1:7): export");
 }
 
 TEST(LexerTest, LexKeywordsWhitespace) {
   auto reader = testing::NiceMock<MockReader>(
     " as async await break catch const continue elif else enum false fn from"
-    " if is loop main mut nil obj ref return throw true try type finally "
+    " if is loop main mut nil obj ref return throw true try type finally import export "
   );
 
   auto lexer = Lexer(&reader);
@@ -697,7 +703,9 @@ TEST(LexerTest, LexKeywordsWhitespace) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TRY(1:123-1:126): try");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_TYPE(1:127-1:131): type");
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_FINALLY(1:132-1:139): finally");
-  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:140-1:140)");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_IMPORT(1:140-1:146): import");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "KW_EXPORT(1:147-1:153): export");
+  EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:154-1:154)");
 }
 
 TEST(LexerTest, LexKeywordsAsIdentifiers) {

@@ -35,11 +35,13 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_ELIF: return "KW_ELIF";
     case TK_KW_ELSE: return "KW_ELSE";
     case TK_KW_ENUM: return "KW_ENUM";
+    case TK_KW_EXPORT: return "KW_EXPORT";
     case TK_KW_FALSE: return "KW_FALSE";
     case TK_KW_FINALLY: return "KW_FINALLY";
     case TK_KW_FN: return "KW_FN";
     case TK_KW_FROM: return "KW_FROM";
     case TK_KW_IF: return "KW_IF";
+    case TK_KW_IMPORT: return "KW_IMPORT";
     case TK_KW_IS: return "KW_IS";
     case TK_KW_LOOP: return "KW_LOOP";
     case TK_KW_MAIN: return "KW_MAIN";
