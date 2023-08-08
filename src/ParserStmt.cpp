@@ -117,6 +117,10 @@ std::string ParserStmt::doc (const std::string &prefix) const {
       result += prefix + "." + comment.sign + " " + (comment.ret.empty() ? "void" : comment.ret) + EOL;
       result += "```" EOL EOL;
     }
+  } else if (std::holds_alternative<ParserStmtExportDecl>(*this->body)) {
+    auto stmtExportDecl = std::get<ParserStmtExportDecl>(*this->body);
+    (void) stmtExportDecl;
+    // todo
   } else if (std::holds_alternative<ParserStmtFnDecl>(*this->body) && std::get<ParserStmtFnDecl>(*this->body).body == std::nullopt) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*this->body);
     auto fullName = (prefix.empty() ? "" : prefix + ".") + stmtFnDecl.id.val;
@@ -201,6 +205,10 @@ std::string ParserStmt::doc (const std::string &prefix) const {
         result += it.doc();
       }
     }
+  } else if (std::holds_alternative<ParserStmtImportDecl>(*this->body)) {
+    auto stmtImportDecl = std::get<ParserStmtImportDecl>(*this->body);
+    (void) stmtImportDecl;
+    // todo
   } else if (std::holds_alternative<ParserStmtLoop>(*this->body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(*this->body);
 
@@ -374,6 +382,12 @@ std::string ParserStmt::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</StmtEnumDecl>";
+  } else if (std::holds_alternative<ParserStmtExportDecl>(*this->body)) {
+    auto stmtExportDecl = std::get<ParserStmtExportDecl>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtExportDecl" + attrs + ">" EOL;
+    result += stmtExportDecl.declaration.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</StmtExportDecl>";
   } else if (std::holds_alternative<ParserStmtExpr>(*this->body)) {
     auto stmtExpr = std::get<ParserStmtExpr>(*this->body);
     result += stmtExpr.xml(indent);
@@ -465,6 +479,35 @@ std::string ParserStmt::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</StmtIf>";
+  } else if (std::holds_alternative<ParserStmtImportDecl>(*this->body)) {
+    auto stmtImportDecl = std::get<ParserStmtImportDecl>(*this->body);
+    result += std::string(indent, ' ') + "<StmtImportDecl" + attrs + ">" EOL;
+
+    if (!stmtImportDecl.specifiers.empty()) {
+      result += std::string(indent + 2, ' ') + "<StmtImportDeclSpecifiers>" EOL;
+
+      for (const auto &specifier : stmtImportDecl.specifiers) {
+        result += std::string(indent + 4, ' ') + "<StmtImportDeclSpecifier>" EOL;
+
+        if (specifier.imported != std::nullopt) {
+          result += std::string(indent + 6, ' ') + "<StmtImportDeclSpecifierImported>" EOL;
+          result += specifier.imported->xml(indent + 8) + EOL;
+          result += std::string(indent + 6, ' ') + "</StmtImportDeclSpecifierImported>" EOL;
+        }
+
+        result += std::string(indent + 6, ' ') + "<StmtImportDeclSpecifierLocal>" EOL;
+        result += specifier.local.xml(indent + 8) + EOL;
+        result += std::string(indent + 6, ' ') + "</StmtImportDeclSpecifierLocal>" EOL;
+        result += std::string(indent + 4, ' ') + "</StmtImportDeclSpecifier>" EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</StmtImportDeclSpecifiers>" EOL;
+    }
+
+    result += std::string(indent + 2, ' ') + "<StmtImportDeclSource>" EOL;
+    result += stmtImportDecl.source.xml(indent + 4) + EOL;
+    result += std::string(indent + 2, ' ') + "</StmtImportDeclSource>" EOL;
+    result += std::string(indent, ' ') + "</StmtImportDecl>";
   } else if (std::holds_alternative<ParserStmtLoop>(*this->body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(*this->body);
     result += std::string(indent, ' ') + "<StmtLoop" + attrs + (stmtLoop.parenthesized ? " parenthesized" : "") + ">" EOL;

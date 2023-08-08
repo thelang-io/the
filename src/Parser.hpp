@@ -44,9 +44,11 @@ struct ParserStmtContinue;
 struct ParserStmtEmpty;
 struct ParserStmtEnumDecl;
 struct ParserStmtEof;
+struct ParserStmtExportDecl;
 struct ParserStmtExpr;
 struct ParserStmtFnDecl;
 struct ParserStmtIf;
+struct ParserStmtImportDecl;
 struct ParserStmtLoop;
 struct ParserStmtMain;
 struct ParserStmtObjDecl;
@@ -88,9 +90,11 @@ using ParserStmtBody = std::variant<
   ParserStmtEmpty,
   ParserStmtEnumDecl,
   ParserStmtEof,
+  ParserStmtExportDecl,
   ParserStmtExpr,
   ParserStmtFnDecl,
   ParserStmtIf,
+  ParserStmtImportDecl,
   ParserStmtLoop,
   ParserStmtMain,
   ParserStmtObjDecl,
@@ -277,6 +281,10 @@ struct ParserStmtEnumDecl {
 struct ParserStmtEof {
 };
 
+struct ParserStmtExportDecl {
+  ParserStmt declaration;
+};
+
 struct ParserStmtFnDecl {
   Token id;
   std::vector<ParserFnParam> params;
@@ -289,6 +297,16 @@ struct ParserStmtIf {
   ParserStmtExpr cond;
   ParserBlock body;
   std::optional<std::variant<ParserBlock, ParserStmt>> alt;
+};
+
+struct ParserStmtImportDeclSpecifier {
+  std::optional<ParserStmtExpr> imported;
+  ParserStmtExpr local;
+};
+
+struct ParserStmtImportDecl {
+  std::vector<ParserStmtImportDeclSpecifier> specifiers;
+  ParserStmtExpr source;
 };
 
 struct ParserStmtLoop {

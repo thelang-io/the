@@ -221,6 +221,89 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     return this->_wrapStmt(allowSemi, ParserStmtEnumDecl{tok1, enumDeclMembers}, tok0.start);
   }
 
+  if (tok0.type == TK_KW_EXPORT) {
+    auto declaration = this->next();
+    return this->_wrapStmt(allowSemi, ParserStmtExportDecl{declaration}, tok0.start);
+  }
+
+  if (tok0.type == TK_KW_IMPORT) {
+    auto specifiers = std::vector<ParserStmtImportDeclSpecifier>{};
+    auto [loc1, tok1] = this->lexer->next();
+    this->lexer->seek(loc1);
+
+    if (tok1.type == TK_LIT_STR) {
+      auto source = *this->_stmtExpr(false);
+      return this->_wrapStmt(allowSemi, ParserStmtImportDecl{specifiers, source}, tok0.start);
+    }
+
+    while (true) {
+      auto [loc2, tok2] = this->lexer->next();
+
+      if (tok2.type == TK_OP_STAR) {
+        auto [_3, tok3] = this->lexer->next();
+
+        if (tok3.type != TK_KW_AS) {
+          throw Error(this->reader, tok3.start, E0000);
+        }
+
+        auto [loc4, tok4] = this->lexer->next();
+
+        if (tok4.type != TK_ID) {
+          throw Error(this->reader, tok4.start, E0000);
+        }
+
+        this->lexer->seek(loc4);
+        auto specifierLocal = *this->_stmtExpr(false);
+        specifiers.push_back(ParserStmtImportDeclSpecifier{std::nullopt, specifierLocal});
+      } else if (tok2.type == TK_ID) {
+        this->lexer->seek(loc2);
+        auto specifierImported = *this->_stmtExpr(false);
+        auto specifierLocal = specifierImported;
+        auto [loc3, tok3] = this->lexer->next();
+
+        if (tok3.type == TK_KW_AS) {
+          auto [loc4, tok4] = this->lexer->next();
+
+          if (tok4.type != TK_ID) {
+            throw Error(this->reader, tok4.start, E0000);
+          }
+
+          this->lexer->seek(loc4);
+          specifierLocal = *this->_stmtExpr(false);
+        } else {
+          this->lexer->seek(loc3);
+        }
+
+        specifiers.push_back(ParserStmtImportDeclSpecifier{specifierImported, specifierLocal});
+      } else {
+        throw Error(this->reader, tok2.start, E0000);
+      }
+
+      auto [loc5, tok5] = this->lexer->next();
+
+      if (tok5.type != TK_OP_COMMA) {
+        this->lexer->seek(loc5);
+        break;
+      }
+    }
+
+    auto [_6, tok6] = this->lexer->next();
+
+    if (tok6.type != TK_KW_FROM) {
+      throw Error(this->reader, tok6.start, E0000);
+    }
+
+    auto [loc7, tok7] = this->lexer->next();
+    this->lexer->seek(loc7);
+
+    if (tok7.type != TK_LIT_STR) {
+      throw Error(this->reader, tok7.start, E0000);
+    }
+
+    auto source = *this->_stmtExpr(false);
+    return this->_wrapStmt(allowSemi, ParserStmtImportDecl{specifiers, source}, tok0.start);
+  }
+
   if (tok0.type == TK_KW_FN) {
     auto [_1, tok1] = this->lexer->next();
 
