@@ -342,13 +342,17 @@ void Codegen::_activateBuiltin (const std::string &name, std::optional<std::vect
     if (this->builtins.typeBuffer) return;
     this->builtins.typeBuffer = true;
     this->_activateBuiltin("libStdlib");
+  } else if (name == "typeErrBuf") {
+    if (this->builtins.typeErrBuf) return;
+    this->builtins.typeErrBuf = true;
+    this->_activateBuiltin("libSetJmp");
   } else if (name == "typeErrStack") {
     if (this->builtins.typeErrStack) return;
     this->builtins.typeErrStack = true;
   } else if (name == "typeErrState") {
     if (this->builtins.typeErrState) return;
     this->builtins.typeErrState = true;
-    this->_activateBuiltin("libSetJmp");
+    this->_activateBuiltin("typeErrBuf");
     this->_activateBuiltin("typeErrStack");
   } else if (name == "typeRequest") {
     if (this->builtins.typeRequest) return;

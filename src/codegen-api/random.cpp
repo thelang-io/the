@@ -24,7 +24,7 @@ const std::vector<std::string> codegenRandom = {
   R"(  unsigned char d[4];)" EOL
   R"(  if (_{RAND_bytes}(d, 4) != 1) {)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{uint32_t} r = (d[0] << 24) | (d[1] << 16) | (d[2] << 8) | d[3];)" EOL
   R"(  return a + r / ((double) _{UINT32_MAX} / (b - a));)" EOL
@@ -36,7 +36,7 @@ const std::vector<std::string> codegenRandom = {
   R"(  unsigned char d[4];)" EOL
   R"(  if (_{RAND_bytes}(d, 4) != 1) {)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  _{uint32_t} r = (d[0] << 24) | (d[1] << 16) | (d[2] << 8) | d[3];)" EOL
   R"(  return (int32_t) (a + r / (_{UINT32_MAX} / (b - a + 1) + 1));)" EOL
@@ -50,7 +50,7 @@ const std::vector<std::string> codegenRandom = {
   R"(    _{free}(d);)" EOL
   R"(    _{str_free}(a);)" EOL
   R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to generate random bytes"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL
+  R"(    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(  })" EOL
   R"(  for (_{size_t} i = 0; i < l; i++) d[i] = a.d[(_{size_t}) _{round}((double) d[i] / 0xFF * (double) (a.l - 1))];)" EOL
   R"(  _{struct str} r = _{str_calloc}((void *) d, l);)" EOL

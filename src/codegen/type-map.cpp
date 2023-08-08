@@ -269,7 +269,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     }
 
     def += R"(  _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to get map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(  _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
+    def += R"(  _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL;
     def += R"(})";
 
     return 0;
@@ -537,7 +537,7 @@ std::string Codegen::_typeNameMap (Type *type) {
     }
 
     def += R"(  _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}(_{str_alloc}("failed to remove map value"), (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL;
-    def += R"(  _{longjmp}(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);)" EOL;
+    def += R"(  _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL;
     def += R"(})";
 
     return 0;

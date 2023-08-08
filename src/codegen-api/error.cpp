@@ -21,14 +21,11 @@ const std::vector<std::string> codegenError = {
   R"~(void error_alloc (_{err_state_t} *fn_err_state, _{size_t} n1) {)~" EOL
   R"~(  char d[4096];)~" EOL
   R"~(  _{size_t} l = 0;)~" EOL
-  R"~(  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {)~" EOL
-  R"~(    _{err_stack_t} it = fn_err_state->stack[i];)~" EOL
+  R"~(  for (_{err_stack_t} *it = fn_err_state->stack_last; it != _{NULL}; it = it->prev) {)~" EOL
   R"~(    const char *fmt = _{THE_EOL} "  at %s (%s)";)~" EOL
-  R"~(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file);)~" EOL
-  R"~(    if (l + z >= 4096) {)~" EOL
-  R"~(      break;)~" EOL
-  R"~(    })~" EOL
-  R"~(    _{sprintf}(&d[l], fmt, it.name, it.file);)~" EOL
+  R"~(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);)~" EOL
+  R"~(    if (l + z >= 4096) break;)~" EOL
+  R"~(    _{sprintf}(&d[l], fmt, it->name, it->file);)~" EOL
   R"~(    l += z;)~" EOL
   R"~(  })~" EOL
   R"~(  _{fprintf}(_{stderr}, "Allocation Error: failed to allocate %zu bytes%s" _{THE_EOL}, n1, d);)~" EOL
@@ -43,20 +40,43 @@ const std::vector<std::string> codegenError = {
   R"(  _{error_stack_str}(fn_err_state);)" EOL
   R"(})" EOL,
 
+  R"(void error_buf_decrease (_{err_state_t} *fn_err_state) {)" EOL
+  R"(  _{err_buf_t} *buf = fn_err_state->buf_last;)" EOL
+  R"(  fn_err_state->buf_last = buf->prev;)" EOL
+  R"(  _{free}(buf);)" EOL
+  R"(})" EOL,
+
+  R"(_{err_buf_t} *error_buf_increase (_{err_state_t} *fn_err_state) {)" EOL
+  R"(  _{err_buf_t} *buf = _{alloc}(sizeof(_{err_buf_t}));)" EOL
+  R"(  buf->next = _{NULL};)" EOL
+  R"(  buf->prev = fn_err_state->buf_last;)" EOL
+  R"(  if (fn_err_state->buf_first == _{NULL}) fn_err_state->buf_first = buf;)" EOL
+  R"(  if (fn_err_state->buf_last != _{NULL}) fn_err_state->buf_last->next = buf;)" EOL
+  R"(  fn_err_state->buf_last = buf;)" EOL
+  R"(  return fn_err_state->buf_last;)" EOL
+  R"(})" EOL,
+
   R"(void error_stack_pop (_{err_state_t} *fn_err_state) {)" EOL
-  R"(  fn_err_state->stack_idx--;)" EOL
+  R"(  _{err_stack_t} *stack = fn_err_state->stack_last;)" EOL
+  R"(  fn_err_state->stack_last = stack->prev;)" EOL
+  R"(  _{free}(stack);)" EOL
   R"(})" EOL,
 
   R"(void error_stack_pos (_{err_state_t} *fn_err_state, int line, int col) {)" EOL
-  R"(  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;)" EOL
-  R"(  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;)" EOL
+  R"(  if (line != 0) fn_err_state->stack_last->line = line;)" EOL
+  R"(  if (col != 0) fn_err_state->stack_last->col = col;)" EOL
   R"(})" EOL,
 
   R"(void error_stack_push (_{err_state_t} *fn_err_state, const char *file, const char *name, int line, int col) {)" EOL
-  R"(  fn_err_state->stack[fn_err_state->stack_idx].file = file;)" EOL
-  R"(  fn_err_state->stack[fn_err_state->stack_idx].name = name;)" EOL
   R"(  _{error_stack_pos}(fn_err_state, line, col);)" EOL
-  R"(  fn_err_state->stack_idx++;)" EOL
+  R"(  _{err_stack_t} *stack = _{alloc}(sizeof(_{err_stack_t}));)" EOL
+  R"(  stack->file = file;)" EOL
+  R"(  stack->name = name;)" EOL
+  R"(  stack->next = _{NULL};)" EOL
+  R"(  stack->prev = fn_err_state->stack_last;)" EOL
+  R"(  if (fn_err_state->stack_first == _{NULL}) fn_err_state->stack_first = stack;)" EOL
+  R"(  if (fn_err_state->stack_last != _{NULL}) fn_err_state->stack_last->next = stack;)" EOL
+  R"(  fn_err_state->stack_last = stack;)" EOL
   R"(})" EOL,
 
   R"~(void error_stack_str (_{err_state_t} *fn_err_state) {)~" EOL
@@ -65,29 +85,30 @@ const std::vector<std::string> codegenError = {
   R"~(  stack->l = message.l;)~" EOL
   R"~(  stack->d = _{re_alloc}(stack->d, stack->l);)~" EOL
   R"~(  _{memcpy}(stack->d, message.d, stack->l);)~" EOL
-  R"~(  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {)~" EOL
-  R"~(    _{err_stack_t} it = fn_err_state->stack[i];)~" EOL
+  R"~(  int i = 0;)~" EOL
+  R"~(  for (_{err_stack_t} *it = fn_err_state->stack_last; it != _{NULL}; it = it->prev) {)~" EOL
   R"~(    _{size_t} z;)~" EOL
   R"~(    char *fmt;)~" EOL
-  R"~(    if (it.col == 0 && it.line == 0) {)~" EOL
+  R"~(    if (it->col == 0 && it->line == 0) {)~" EOL
   R"~(      fmt = _{THE_EOL} "  at %s (%s)";)~" EOL
-  R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file);)~" EOL
-  R"~(    } else if (it.col == 0) {)~" EOL
+  R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);)~" EOL
+  R"~(    } else if (it->col == 0) {)~" EOL
   R"~(      fmt = _{THE_EOL} "  at %s (%s:%d)";)~" EOL
-  R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file, it.line);)~" EOL
+  R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file, it->line);)~" EOL
   R"~(    } else {)~" EOL
   R"~(      fmt = _{THE_EOL} "  at %s (%s:%d:%d)";)~" EOL
-  R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it.name, it.file, it.line, it.col);)~" EOL
+  R"~(      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file, it->line, it->col);)~" EOL
   R"~(    })~" EOL
   R"~(    stack->d = _{re_alloc}(stack->d, stack->l + z + 1);)~" EOL
-  R"~(    if (it.col == 0 && it.line == 0) {)~" EOL
-  R"~(      _{sprintf}(&stack->d[stack->l], fmt, it.name, it.file);)~" EOL
-  R"~(    } else if (it.col == 0) {)~" EOL
-  R"~(      _{sprintf}(&stack->d[stack->l], fmt, it.name, it.file, it.line);)~" EOL
+  R"~(    if (it->col == 0 && it->line == 0) {)~" EOL
+  R"~(      _{sprintf}(&stack->d[stack->l], fmt, it->name, it->file);)~" EOL
+  R"~(    } else if (it->col == 0) {)~" EOL
+  R"~(      _{sprintf}(&stack->d[stack->l], fmt, it->name, it->file, it->line);)~" EOL
   R"~(    } else {)~" EOL
-  R"~(      _{sprintf}(&stack->d[stack->l], fmt, it.name, it.file, it.line, it.col);)~" EOL
+  R"~(      _{sprintf}(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);)~" EOL
   R"~(    })~" EOL
   R"~(    stack->l += z;)~" EOL
+  R"~(    i++;)~" EOL
   R"~(  })~" EOL
   R"~(})~" EOL,
 

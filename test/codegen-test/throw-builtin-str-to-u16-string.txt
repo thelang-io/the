@@ -26,19 +26,26 @@ main {
 
 #define TYPE_error_Error 1
 
-typedef struct {
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
   const char *file;
   const char *name;
   int line;
   int col;
+  struct err_stack *next;
+  struct err_stack *prev;
 } err_stack_t;
 typedef struct {
   int id;
   void *ctx;
-  jmp_buf buf[0xFFFFF];
-  int buf_idx;
-  err_stack_t stack[0xFFFF];
-  int stack_idx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
   void (*_free) (void *);
 } err_state_t;
 struct str {
@@ -53,11 +60,13 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 
-err_state_t err_state = {-1, NULL, {}, 0, {}, 0, NULL};
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_buf_decrease (err_state_t *);
+err_buf_t *error_buf_increase (err_state_t *);
 void error_stack_pop (err_state_t *);
 void error_stack_pos (err_state_t *, int, int);
 void error_stack_push (err_state_t *, const char *, const char *, int, int);
@@ -78,14 +87,11 @@ void *alloc (size_t n1) {
 void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
   size_t l = 0;
-  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = fn_err_state->stack[i];
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
     const char *fmt = THE_EOL "  at %s (%s)";
-    size_t z = snprintf(NULL, 0, fmt, it.name, it.file);
-    if (l + z >= 4096) {
-      break;
-    }
-    sprintf(&d[l], fmt, it.name, it.file);
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
     l += z;
   }
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
@@ -98,18 +104,39 @@ void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void
   error_stack_pos(fn_err_state, line, col);
   error_stack_str(fn_err_state);
 }
+void error_buf_decrease (err_state_t *fn_err_state) {
+  err_buf_t *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  free(buf);
+}
+err_buf_t *error_buf_increase (err_state_t *fn_err_state) {
+  err_buf_t *buf = alloc(sizeof(err_buf_t));
+  buf->next = NULL;
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == NULL) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != NULL) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
 void error_stack_pop (err_state_t *fn_err_state) {
-  fn_err_state->stack_idx--;
+  err_stack_t *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  free(stack);
 }
 void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
-  if (line != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].line = line;
-  if (col != 0) fn_err_state->stack[fn_err_state->stack_idx - 1].col = col;
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
 }
 void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
-  fn_err_state->stack[fn_err_state->stack_idx].file = file;
-  fn_err_state->stack[fn_err_state->stack_idx].name = name;
   error_stack_pos(fn_err_state, line, col);
-  fn_err_state->stack_idx++;
+  err_stack_t *stack = alloc(sizeof(err_stack_t));
+  stack->file = file;
+  stack->name = name;
+  stack->next = NULL;
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == NULL) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != NULL) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
 }
 void error_stack_str (err_state_t *fn_err_state) {
   struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
@@ -117,29 +144,30 @@ void error_stack_str (err_state_t *fn_err_state) {
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  for (int i = fn_err_state->stack_idx - 1; i >= 0; i--) {
-    err_stack_t it = fn_err_state->stack[i];
+  int i = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
     size_t z;
     char *fmt;
-    if (it.col == 0 && it.line == 0) {
+    if (it->col == 0 && it->line == 0) {
       fmt = THE_EOL "  at %s (%s)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file);
-    } else if (it.col == 0) {
+      z = snprintf(NULL, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
       fmt = THE_EOL "  at %s (%s:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line);
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
     } else {
       fmt = THE_EOL "  at %s (%s:%d:%d)";
-      z = snprintf(NULL, 0, fmt, it.name, it.file, it.line, it.col);
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
     }
     stack->d = re_alloc(stack->d, stack->l + z + 1);
-    if (it.col == 0 && it.line == 0) {
-      sprintf(&stack->d[stack->l], fmt, it.name, it.file);
-    } else if (it.col == 0) {
-      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line);
+    if (it->col == 0 && it->line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
     } else {
-      sprintf(&stack->d[stack->l], fmt, it.name, it.file, it.line, it.col);
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
     }
     stack->l += z;
+    i++;
   }
 }
 void *re_alloc (void *n1, size_t n2) {
@@ -170,7 +198,7 @@ uint16_t str_toU16 (err_state_t *fn_err_state, int line, int col, struct str sel
     sprintf(d, fmt, n1);
     free(self.d);
     error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   }
   char *c = str_cstr(self);
   char *e = NULL;
@@ -184,7 +212,7 @@ uint16_t str_toU16 (err_state_t *fn_err_state, int line, int col, struct str sel
     free(c);
     free(self.d);
     error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   } else if (errno != 0 || e == c || *e != 0 || self.d[0] == '-') {
     const char *fmt = "value `%s` has invalid syntax";
     size_t z = snprintf(NULL, 0, fmt, c);
@@ -193,7 +221,7 @@ uint16_t str_toU16 (err_state_t *fn_err_state, int line, int col, struct str sel
     free(c);
     free(self.d);
     error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
-    longjmp(fn_err_state->buf[fn_err_state->buf_idx - 1], fn_err_state->id);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   }
   free(c);
   free(self.d);
@@ -213,10 +241,10 @@ void error_Error_free (struct error_Error *n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(err_state.buf[err_state.buf_idx++]) != 0) goto L1;
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L1;
   str_toU16(&err_state, 2, 3, str_alloc("test"), 0, 0);
 L1:
-  err_state.buf_idx--;
+  error_buf_decrease(&err_state);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

@@ -77,6 +77,7 @@ struct CodegenBuiltins {
   bool libWinsock2 = false;
   bool typeAny = false;
   bool typeBuffer = false;
+  bool typeErrBuf = false;
   bool typeErrStack = false;
   bool typeErrState = false;
   bool typeRequest = false;

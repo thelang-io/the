@@ -32,6 +32,7 @@ extern inline const std::map<std::string, std::set<std::string>> codegenMetadata
 
   std::pair<std::string, std::set<std::string>>{"struct any", {"typeAny"}},
   std::pair<std::string, std::set<std::string>>{"struct buffer", {"typeBuffer"}},
+  std::pair<std::string, std::set<std::string>>{"err_buf_t", {"typeErrBuf"}},
   std::pair<std::string, std::set<std::string>>{"err_stack_t", {"typeErrStack"}},
   std::pair<std::string, std::set<std::string>>{"err_state_t", {"typeErrState"}},
   std::pair<std::string, std::set<std::string>>{"struct request", {"typeRequest"}},
