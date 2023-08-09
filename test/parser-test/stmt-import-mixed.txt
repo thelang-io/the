@@ -1,0 +1,60 @@
+======= stdin =======
+import id1, * as Base1 from "test"
+import * as Base2, id2 from "test"
+======= stdout =======
+<StmtImportDecl start="1:1" end="1:35">
+  <StmtImportDeclSpecifiers>
+    <StmtImportDeclSpecifier>
+      <StmtImportDeclSpecifierImported>
+        <ExprAccess start="1:8" end="1:11">
+          <Token type="ID" val="id1" start="1:8" end="1:11" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierImported>
+      <StmtImportDeclSpecifierLocal>
+        <ExprAccess start="1:8" end="1:11">
+          <Token type="ID" val="id1" start="1:8" end="1:11" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierLocal>
+    </StmtImportDeclSpecifier>
+    <StmtImportDeclSpecifier>
+      <StmtImportDeclSpecifierLocal>
+        <ExprAccess start="1:18" end="1:23">
+          <Token type="ID" val="Base1" start="1:18" end="1:23" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierLocal>
+    </StmtImportDeclSpecifier>
+  </StmtImportDeclSpecifiers>
+  <StmtImportDeclSource>
+    <ExprLit start="1:29" end="1:35">
+      <Token type="LIT_STR" val="\"test\"" start="1:29" end="1:35" />
+    </ExprLit>
+  </StmtImportDeclSource>
+</StmtImportDecl>
+<StmtImportDecl start="2:1" end="2:35">
+  <StmtImportDeclSpecifiers>
+    <StmtImportDeclSpecifier>
+      <StmtImportDeclSpecifierLocal>
+        <ExprAccess start="2:13" end="2:18">
+          <Token type="ID" val="Base2" start="2:13" end="2:18" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierLocal>
+    </StmtImportDeclSpecifier>
+    <StmtImportDeclSpecifier>
+      <StmtImportDeclSpecifierImported>
+        <ExprAccess start="2:20" end="2:23">
+          <Token type="ID" val="id2" start="2:20" end="2:23" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierImported>
+      <StmtImportDeclSpecifierLocal>
+        <ExprAccess start="2:20" end="2:23">
+          <Token type="ID" val="id2" start="2:20" end="2:23" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierLocal>
+    </StmtImportDeclSpecifier>
+  </StmtImportDeclSpecifiers>
+  <StmtImportDeclSource>
+    <ExprLit start="2:29" end="2:35">
+      <Token type="LIT_STR" val="\"test\"" start="2:29" end="2:35" />
+    </ExprLit>
+  </StmtImportDeclSource>
+</StmtImportDecl>

@@ -1,0 +1,26 @@
+======= stdin =======
+import * as Base1, * as Base2 from "test"
+======= stdout =======
+<StmtImportDecl start="1:1" end="1:42">
+  <StmtImportDeclSpecifiers>
+    <StmtImportDeclSpecifier>
+      <StmtImportDeclSpecifierLocal>
+        <ExprAccess start="1:13" end="1:18">
+          <Token type="ID" val="Base1" start="1:13" end="1:18" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierLocal>
+    </StmtImportDeclSpecifier>
+    <StmtImportDeclSpecifier>
+      <StmtImportDeclSpecifierLocal>
+        <ExprAccess start="1:25" end="1:30">
+          <Token type="ID" val="Base2" start="1:25" end="1:30" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierLocal>
+    </StmtImportDeclSpecifier>
+  </StmtImportDeclSpecifiers>
+  <StmtImportDeclSource>
+    <ExprLit start="1:36" end="1:42">
+      <Token type="LIT_STR" val="\"test\"" start="1:36" end="1:42" />
+    </ExprLit>
+  </StmtImportDeclSource>
+</StmtImportDecl>

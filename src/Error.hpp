@@ -123,6 +123,12 @@
 #define E0182 "E0182 - Expected type after `as` keyword"
 #define E0183 "E0183 - Expected arrow after closure expression parameters list"
 #define E0184 "E0184 - Expected return type after closure expression arrow"
+#define E0185 "E0185 - Expected `as` keyword after importing namespace"
+#define E0186 "E0186 - Expected identifier after `as` keyword"
+#define E0187 "E0187 - Expected import specifier"
+#define E0188 "E0188 - Expected `from` keyword"
+#define E0189 "E0189 - Expected import source after `from` keyword"
+#define E0190 "E0190 - Only declarations can be exported"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"

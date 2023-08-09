@@ -117,10 +117,6 @@ std::string ParserStmt::doc (const std::string &prefix) const {
       result += prefix + "." + comment.sign + " " + (comment.ret.empty() ? "void" : comment.ret) + EOL;
       result += "```" EOL EOL;
     }
-  } else if (std::holds_alternative<ParserStmtExportDecl>(*this->body)) {
-    auto stmtExportDecl = std::get<ParserStmtExportDecl>(*this->body);
-    (void) stmtExportDecl;
-    // todo
   } else if (std::holds_alternative<ParserStmtFnDecl>(*this->body) && std::get<ParserStmtFnDecl>(*this->body).body == std::nullopt) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*this->body);
     auto fullName = (prefix.empty() ? "" : prefix + ".") + stmtFnDecl.id.val;
@@ -205,10 +201,6 @@ std::string ParserStmt::doc (const std::string &prefix) const {
         result += it.doc();
       }
     }
-  } else if (std::holds_alternative<ParserStmtImportDecl>(*this->body)) {
-    auto stmtImportDecl = std::get<ParserStmtImportDecl>(*this->body);
-    (void) stmtImportDecl;
-    // todo
   } else if (std::holds_alternative<ParserStmtLoop>(*this->body)) {
     auto stmtLoop = std::get<ParserStmtLoop>(*this->body);
 

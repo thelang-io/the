@@ -1,0 +1,6 @@
+======= stdin =======
+import * as from "test"
+======= stderr =======
+/test:1:13: E0186 - Expected identifier after `as` keyword
+  1 | import * as from "test"
+    |             ^~~~

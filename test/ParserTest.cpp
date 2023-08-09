@@ -56,6 +56,10 @@ INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserPassTest, testing::Values(
   "stmt-enum-decl"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtExport, ParserPassTest, testing::Values(
+  "stmt-export"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-empty",
   "stmt-fn-decl-body",
@@ -81,6 +85,15 @@ INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
   "stmt-if-multi-elif",
   "stmt-if-nested",
   "stmt-if-complex"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtImport, ParserPassTest, testing::Values(
+  "stmt-import",
+  "stmt-import-namespace",
+  "stmt-import-no-specifiers",
+  "stmt-import-multiple-specifiers",
+  "stmt-import-multiple-namespaces",
+  "stmt-import-mixed"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserPassTest, testing::Values(
@@ -221,6 +234,10 @@ INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserThrowTest, testing::Values(
   "throw-E0158-stmt-enum-decl-empty"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtExport, ParserThrowTest, testing::Values(
+  "throw-E0190-stmt-export-invalid-declaration"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
   "throw-E0115-stmt-fn-decl-unexpected-id",
   "throw-E0116-stmt-fn-decl-missing-lpar",
@@ -243,6 +260,15 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
   "throw-E0103-stmt-if-missing-lbrace",
   "throw-E0143-stmt-if-expected-expr"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtImport, ParserThrowTest, testing::Values(
+  "throw-E0185-stmt-import-missing-as-after-namespace",
+  "throw-E0186-stmt-import-missing-id-after-namespace-as",
+  "throw-E0186-stmt-import-missing-id-after-specifier-as",
+  "throw-E0187-stmt-import-missing-specifier",
+  "throw-E0188-stmt-import-missing-from",
+  "throw-E0189-stmt-import-missing-source"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(

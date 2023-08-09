@@ -222,7 +222,18 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
   }
 
   if (tok0.type == TK_KW_EXPORT) {
-    auto declaration = this->next();
+    auto declaration = this->next(true, keepComments);
+
+    if (
+      !std::holds_alternative<ParserStmtEnumDecl>(*declaration.body) &&
+      !std::holds_alternative<ParserStmtFnDecl>(*declaration.body) &&
+      !std::holds_alternative<ParserStmtObjDecl>(*declaration.body) &&
+      !std::holds_alternative<ParserStmtTypeDecl>(*declaration.body) &&
+      !std::holds_alternative<ParserStmtVarDecl>(*declaration.body)
+    ) {
+      throw Error(this->reader, declaration.start, E0190);
+    }
+
     return this->_wrapStmt(allowSemi, ParserStmtExportDecl{declaration}, tok0.start);
   }
 
@@ -243,13 +254,13 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
         auto [_3, tok3] = this->lexer->next();
 
         if (tok3.type != TK_KW_AS) {
-          throw Error(this->reader, tok3.start, E0000);
+          throw Error(this->reader, tok3.start, E0185);
         }
 
         auto [loc4, tok4] = this->lexer->next();
 
         if (tok4.type != TK_ID) {
-          throw Error(this->reader, tok4.start, E0000);
+          throw Error(this->reader, tok4.start, E0186);
         }
 
         this->lexer->seek(loc4);
@@ -265,7 +276,7 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
           auto [loc4, tok4] = this->lexer->next();
 
           if (tok4.type != TK_ID) {
-            throw Error(this->reader, tok4.start, E0000);
+            throw Error(this->reader, tok4.start, E0186);
           }
 
           this->lexer->seek(loc4);
@@ -276,7 +287,7 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
 
         specifiers.push_back(ParserStmtImportDeclSpecifier{specifierImported, specifierLocal});
       } else {
-        throw Error(this->reader, tok2.start, E0000);
+        throw Error(this->reader, tok2.start, E0187);
       }
 
       auto [loc5, tok5] = this->lexer->next();
@@ -290,14 +301,14 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     auto [_6, tok6] = this->lexer->next();
 
     if (tok6.type != TK_KW_FROM) {
-      throw Error(this->reader, tok6.start, E0000);
+      throw Error(this->reader, tok6.start, E0188);
     }
 
     auto [loc7, tok7] = this->lexer->next();
     this->lexer->seek(loc7);
 
     if (tok7.type != TK_LIT_STR) {
-      throw Error(this->reader, tok7.start, E0000);
+      throw Error(this->reader, tok7.start, tok7.end, E0189);
     }
 
     auto source = *this->_stmtExpr(false);

@@ -1,0 +1,6 @@
+======= stdin =======
+import id "test"
+======= stderr =======
+/test:1:11: E0188 - Expected `from` keyword
+  1 | import id "test"
+    |           ^~~~~~

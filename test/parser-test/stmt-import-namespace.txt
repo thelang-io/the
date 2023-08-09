@@ -1,0 +1,19 @@
+======= stdin =======
+import * as Name from "test"
+======= stdout =======
+<StmtImportDecl start="1:1" end="1:29">
+  <StmtImportDeclSpecifiers>
+    <StmtImportDeclSpecifier>
+      <StmtImportDeclSpecifierLocal>
+        <ExprAccess start="1:13" end="1:17">
+          <Token type="ID" val="Name" start="1:13" end="1:17" />
+        </ExprAccess>
+      </StmtImportDeclSpecifierLocal>
+    </StmtImportDeclSpecifier>
+  </StmtImportDeclSpecifiers>
+  <StmtImportDeclSource>
+    <ExprLit start="1:23" end="1:29">
+      <Token type="LIT_STR" val="\"test\"" start="1:23" end="1:29" />
+    </ExprLit>
+  </StmtImportDeclSource>
+</StmtImportDecl>
