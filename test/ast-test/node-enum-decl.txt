@@ -34,10 +34,12 @@ main {
 ======= stdout =======
 <NodeEnumDecl>
   <NodeEnumDeclType>
-    <TypeEnum codeName="AnimalType_0" name="AnimalType">
-      <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
-      <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
-    </TypeEnum>
+    <Var name="AnimalType" codeName="AnimalType_0" ctxIgnored frame="1">
+      <TypeEnum codeName="AnimalType_0" name="AnimalType">
+        <TypeEnumerator codeName="AnimalTypeSDCat_0" name="Cat" />
+        <TypeEnumerator codeName="AnimalTypeSDDog_0" name="Dog" />
+      </TypeEnum>
+    </Var>
   </NodeEnumDeclType>
   <NodeEnumDeclMembers>
     <NodeEnumDeclMember id="Cat" />
@@ -201,11 +203,13 @@ main {
   </NodeVarDecl>
   <NodeEnumDecl>
     <NodeEnumDeclType>
-      <TypeEnum codeName="mainSDColor_0" name="Color">
-        <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
-        <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
-        <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
-      </TypeEnum>
+      <Var name="Color" codeName="mainSDColor_0" ctxIgnored frame="2">
+        <TypeEnum codeName="mainSDColor_0" name="Color">
+          <TypeEnumerator codeName="mainSDColorSDBrown_0" name="Brown" />
+          <TypeEnumerator codeName="mainSDColorSDBlack_0" name="Black" />
+          <TypeEnumerator codeName="mainSDColorSDGreen_0" name="Green" />
+        </TypeEnum>
+      </Var>
     </NodeEnumDeclType>
     <NodeEnumDeclMembers>
       <NodeEnumDeclMember id="Brown">

@@ -24,11 +24,13 @@ main {
 ======= stdout =======
 <NodeEnumDecl>
   <NodeEnumDeclType>
-    <TypeEnum codeName="Color_0" name="Color">
-      <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-      <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-      <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
-    </TypeEnum>
+    <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
+      <TypeEnum codeName="Color_0" name="Color">
+        <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
+        <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
+        <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+      </TypeEnum>
+    </Var>
   </NodeEnumDeclType>
   <NodeEnumDeclMembers>
     <NodeEnumDeclMember id="Brown">

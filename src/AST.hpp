@@ -286,7 +286,7 @@ struct ASTNodeEnumDeclMember {
 };
 
 struct ASTNodeEnumDecl {
-  Type *type;
+  std::shared_ptr<Var> var;
   std::vector<ASTNodeEnumDeclMember> members;
 };
 
@@ -375,10 +375,10 @@ struct ASTState {
   Type *returnType = nullptr;
 };
 
-class ASTImport {
+struct ASTImport {
   std::string fullPath;
-  std::shared_ptr<AST> ast;
-  ASTBlock nodes;
+  std::shared_ptr<AST> ast = nullptr;
+  ASTBlock nodes = {};
 };
 
 class AST {
@@ -396,7 +396,8 @@ class AST {
   static void populateParentExpr (ASTNodeExpr &, ASTNodeExpr *, ASTNode *);
   static void populateParents (ASTBlock &, ASTNode * = nullptr);
 
-  explicit AST (Parser *);
+  explicit AST (Parser *, const std::shared_ptr<std::vector<ASTImport>> & = nullptr);
+  virtual ~AST () = default;
 
   virtual ASTBlock gen ();
   virtual std::string xml ();

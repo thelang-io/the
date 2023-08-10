@@ -29,11 +29,13 @@ main {
 ======= stdout =======
 <NodeEnumDecl>
   <NodeEnumDeclType>
-    <TypeEnum codeName="TestEnum_0" name="TestEnum">
-      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
-      <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
-    </TypeEnum>
+    <Var name="TestEnum" codeName="TestEnum_0" ctxIgnored frame="1">
+      <TypeEnum codeName="TestEnum_0" name="TestEnum">
+        <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+        <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+        <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+      </TypeEnum>
+    </Var>
   </NodeEnumDeclType>
   <NodeEnumDeclMembers>
     <NodeEnumDeclMember id="One" />

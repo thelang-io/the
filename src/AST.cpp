@@ -600,7 +600,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     return this->_wrapNode(stmt, nodeContinue);
   } else if (std::holds_alternative<ParserStmtEnumDecl>(*stmt.body)) {
     auto stmtEnumDecl = std::get<ParserStmtEnumDecl>(*stmt.body);
-    auto type = this->typeMap.get(stmtEnumDecl.id.val);
+    auto var = this->varMap.get(stmtEnumDecl.id.val);
     auto nodeEnumDeclMembers = std::vector<ASTNodeEnumDeclMember>{};
 
     for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
@@ -613,7 +613,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
       nodeEnumDeclMembers.push_back(ASTNodeEnumDeclMember{stmtEnumDeclMember.id.val, memberInit});
     }
 
-    auto nodeEnumDecl = ASTNodeEnumDecl{type, nodeEnumDeclMembers};
+    auto nodeEnumDecl = ASTNodeEnumDecl{var, nodeEnumDeclMembers};
     return this->_wrapNode(stmt, nodeEnumDecl);
   } else if (std::holds_alternative<ParserStmtExpr>(*stmt.body)) {
     auto stmtExpr = std::get<ParserStmtExpr>(*stmt.body);
@@ -883,9 +883,9 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*stmt.body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*stmt.body);
     auto type = this->typeMap.get(stmtTypeDecl.id.val);
-    auto nodeUnionDecl = ASTNodeTypeDecl{type};
+    auto nodeTypeDecl = ASTNodeTypeDecl{type};
 
-    return this->_wrapNode(stmt, nodeUnionDecl);
+    return this->_wrapNode(stmt, nodeTypeDecl);
   } else if (std::holds_alternative<ParserStmtVarDecl>(*stmt.body)) {
     auto stmtVarDecl = std::get<ParserStmtVarDecl>(*stmt.body);
     auto nodeVarDeclName = stmtVarDecl.id.val;
