@@ -42,6 +42,7 @@ class TypeMap {
   Type *createRef (Type *);
   Type *createUnion (const std::vector<Type *> &);
   Type *get (const std::string &);
+  Type *insert (Type *);
   bool has (const std::string &);
   void init ();
   bool isSelf (Type *);

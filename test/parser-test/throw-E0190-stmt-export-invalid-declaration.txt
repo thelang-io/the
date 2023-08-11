@@ -1,6 +1,6 @@
 ======= stdin =======
-export test
+export 9999
 ======= stderr =======
 /test:1:8: E0190 - Only declarations can be exported
-  1 | export test
+  1 | export 9999
     |        ^~~~

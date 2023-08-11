@@ -224,8 +224,14 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
   if (tok0.type == TK_KW_EXPORT) {
     auto declaration = this->next(true, keepComments);
 
+    auto isExprAccessWithToken = std::holds_alternative<ParserStmtExpr>(*declaration.body) &&
+      std::holds_alternative<ParserExprAccess>(*std::get<ParserStmtExpr>(*declaration.body).body) &&
+      std::get<ParserExprAccess>(*std::get<ParserStmtExpr>(*declaration.body).body).expr != std::nullopt &&
+      std::holds_alternative<Token>(*std::get<ParserExprAccess>(*std::get<ParserStmtExpr>(*declaration.body).body).expr);
+
     if (
       !std::holds_alternative<ParserStmtEnumDecl>(*declaration.body) &&
+      !isExprAccessWithToken &&
       !std::holds_alternative<ParserStmtFnDecl>(*declaration.body) &&
       !std::holds_alternative<ParserStmtObjDecl>(*declaration.body) &&
       !std::holds_alternative<ParserStmtTypeDecl>(*declaration.body) &&

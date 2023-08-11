@@ -121,6 +121,12 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"utils_swap", "@utils_swap", typeMap.get("utils_swap"), false, false, true, false, this->_frame}));
 }
 
+// todo test
+std::shared_ptr<Var> VarMap::insert (const std::shared_ptr<Var> &var) {
+  this->_items.push_back(std::make_shared<Var>(*var));
+  return this->_items.back();
+}
+
 std::string VarMap::name (const std::string &name) const {
   auto fullName = name + "_";
 

@@ -321,6 +321,12 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   return selfType;
 }
 
+// todo test
+Type *TypeMap::insert (Type *t) {
+  this->_items.push_back(std::make_unique<Type>(*t));
+  return this->_items.back().get();
+}
+
 Type *TypeMap::get (const std::string &name) {
   if (name == "Self") {
     return this->self == std::nullopt ? nullptr : *this->self;

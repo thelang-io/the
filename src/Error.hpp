@@ -161,6 +161,8 @@
 #define E1029 "E1029 - Catch block can only catch object with first field string `message` and second field string `stack`"
 #define E1030 "E1030 - Awaiting is only possible on asynchronous functions"
 #define E1031 "E1031 - Type casting is not possible in this case"
+#define E1032 "E1032 - Circular imports are not allowed"
+#define E1033 "E1033 - Object is not exported"
 
 class Error : public std::exception {
  public:

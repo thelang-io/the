@@ -106,6 +106,12 @@ std::string ASTNode::xml (std::size_t indent) const {
 
     result += std::string(indent + 2, ' ') + "</NodeEnumDeclMembers>" EOL;
     result += std::string(indent, ' ') + "</NodeEnumDecl>";
+  } else if (std::holds_alternative<ASTNodeExportDecl>(*this->body)) {
+    auto nodeExportDecl = std::get<ASTNodeExportDecl>(*this->body);
+
+    result += std::string(indent, ' ') + "<NodeExportDecl>" EOL;
+    result += nodeExportDecl.declaration.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</NodeExportDecl>";
   } else if (std::holds_alternative<ASTNodeFnDecl>(*this->body)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*this->body);
 
@@ -167,6 +173,25 @@ std::string ASTNode::xml (std::size_t indent) const {
     }
 
     result += std::string(indent, ' ') + "</NodeIf>";
+  } else if (std::holds_alternative<ASTNodeImportDecl>(*this->body)) {
+    auto nodeImportDecl = std::get<ASTNodeImportDecl>(*this->body);
+    auto attrs = R"(source=")" + nodeImportDecl.source + R"(")";
+
+    result += std::string(indent, ' ') + "<NodeImportDecl" + attrs + ">" EOL;
+
+    if (!nodeImportDecl.specifiers.empty()) {
+      result += std::string(indent + 2, ' ') + "<NodeImportDeclSpecifiers>" EOL;
+
+      for (const auto &specifier : nodeImportDecl.specifiers) {
+        auto specifierAttrs = R"( local=")" + specifier.local + R"(")";
+        specifierAttrs += specifier.imported == std::nullopt ? "" : (R"( imported=")" + *specifier.imported + R"(")");
+        result += std::string(indent + 2, ' ') + "<NodeImportDeclSpecifier" + specifierAttrs + "/>" EOL;
+      }
+
+      result += std::string(indent + 2, ' ') + "</NodeImportDeclSpecifiers>" EOL;
+    }
+
+    result += std::string(indent, ' ') + "</NodeImportDecl>";
   } else if (std::holds_alternative<ASTNodeLoop>(*this->body)) {
     auto nodeLoop = std::get<ASTNodeLoop>(*this->body);
     result += std::string(indent, ' ') + "<NodeLoop>" EOL;
