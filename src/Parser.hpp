@@ -61,6 +61,7 @@ struct ParserTypeArray;
 struct ParserTypeFn;
 struct ParserTypeId;
 struct ParserTypeMap;
+struct ParserTypeMember;
 struct ParserTypeOptional;
 struct ParserTypeRef;
 struct ParserTypeUnion;
@@ -110,6 +111,7 @@ using ParserTypeBody = std::variant<
   ParserTypeFn,
   ParserTypeId,
   ParserTypeMap,
+  ParserTypeMember,
   ParserTypeOptional,
   ParserTypeRef,
   ParserTypeUnion
@@ -241,7 +243,7 @@ struct ParserExprObjProp {
 };
 
 struct ParserExprObj {
-  Token id;
+  ParserStmtExpr id;
   std::vector<ParserExprObjProp> props;
 };
 
@@ -376,6 +378,11 @@ struct ParserTypeId {
 struct ParserTypeMap {
   ParserType keyType;
   ParserType valueType;
+};
+
+struct ParserTypeMember {
+  ParserType id;
+  Token member;
 };
 
 struct ParserTypeOptional {

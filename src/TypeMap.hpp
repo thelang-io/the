@@ -37,6 +37,7 @@ class TypeMap {
   Type *createFn (const std::vector<TypeFnParam> &, Type *, bool, const std::optional<TypeCallInfo> & = std::nullopt);
   Type *createMap (Type *, Type *);
   Type *createMethod (const std::vector<TypeFnParam> &, Type *, bool, TypeCallInfo);
+  Type *createNamespace (const std::string &, const std::vector<TypeField> & = {});
   Type *createObj (const std::string &, const std::string &, const std::vector<TypeField> & = {}, bool = false);
   Type *createOpt (Type *);
   Type *createRef (Type *);

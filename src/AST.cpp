@@ -493,6 +493,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         this->varMap.add(enumName, enumCodeName, enumType, false, false, true);
       }
     } else if (std::holds_alternative<ParserStmtExportDecl>(*stmt.body)) {
+      // todo test
       auto stmtExportDecl = std::get<ParserStmtExportDecl>(*stmt.body);
       this->_forwardNode({ stmtExportDecl.declaration }, phase);
     } else if (std::holds_alternative<ParserStmtFnDecl>(*stmt.body)) {
@@ -546,6 +547,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         continue;
       }
 
+      // todo test
       auto stmtImportDecl = std::get<ParserStmtImportDecl>(*stmt.body);
       auto source = std::get<ParserExprLit>(*stmtImportDecl.source.body).body.val;
       auto sourceString = source.substr(1, source.size() - 2);
@@ -594,10 +596,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
               namespaceFields.push_back(TypeField{getExportName(node), getExportType(node), false, false});
             }
 
-            this->typeMap.createObj(specifierLocal, this->typeMap.name(specifierLocal), namespaceFields);
-
-            // todo new type namespace
-            // todo find solution to both keep varMap and typeMap
+            auto namespaceType = this->typeMap.createNamespace(specifierLocal, namespaceFields);
+            this->varMap.addNamespace(specifierLocal, namespaceType);
           } else {
             auto specifierImported = std::get<Token>(*std::get<ParserExprAccess>(*specifier.imported->body).expr).val;
 
@@ -755,6 +755,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
     auto nodeEnumDecl = ASTNodeEnumDecl{var, nodeEnumDeclMembers};
     return this->_wrapNode(stmt, nodeEnumDecl);
   } else if (std::holds_alternative<ParserStmtExportDecl>(*stmt.body)) {
+    // todo test
     auto stmtExportDecl = std::get<ParserStmtExportDecl>(*stmt.body);
     auto nodeExportDecl = ASTNodeExportDecl{this->_node(stmtExportDecl.declaration, varStack)};
     return this->_wrapNode(stmt, nodeExportDecl);
@@ -844,6 +845,7 @@ ASTNode AST::_node (const ParserStmt &stmt, VarStack &varStack) {
 
     return this->_wrapNode(stmt, ASTNodeIf{nodeIfCond, nodeIfBody, nodeIfAlt});
   } else if (std::holds_alternative<ParserStmtImportDecl>(*stmt.body)) {
+    // todo test
     auto stmtImportDecl = std::get<ParserStmtImportDecl>(*stmt.body);
     auto source = std::get<ParserExprLit>(*stmtImportDecl.source.body).body.val;
     auto specifiers = std::vector<ASTNodeImportDeclSpecifier>{};
@@ -1440,7 +1442,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprMap{exprMapProps});
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto parserExprObj = std::get<ParserExprObj>(*stmtExpr.body);
-    auto type = this->typeMap.get(parserExprObj.id.val);
+    auto type = this->_nodeExprType(parserExprObj.id, nullptr);
 
     if (type == nullptr) {
       throw Error(this->reader, parserExprObj.id.start, parserExprObj.id.end, E1010);
@@ -1837,7 +1839,9 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     return this->_wrapNodeExprType(stmtExpr, targetType, wrapTargetType);
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto exprObj = std::get<ParserExprObj>(*stmtExpr.body);
-    return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get(exprObj.id.val));
+    auto exprObjIdType = this->_nodeExprType(exprObj.id, nullptr);
+
+    return this->_wrapNodeExprType(stmtExpr, targetType, exprObjIdType);
   } else if (std::holds_alternative<ParserExprRef>(*stmtExpr.body)) {
     auto exprRef = std::get<ParserExprRef>(*stmtExpr.body);
     auto exprRefExprType = this->_nodeExprType(exprRef.expr, nullptr);
@@ -1913,6 +1917,16 @@ Type *AST::_type (const ParserType &type) {
     auto valueType = this->_type(typeBodyMap.valueType);
 
     return this->typeMap.createMap(keyType, valueType);
+  } else if (std::holds_alternative<ParserTypeMember>(*type.body)) {
+    // todo test
+    auto typeMember = std::get<ParserTypeMember>(*type.body);
+    auto idType = this->_type(typeMember.id);
+
+    if (!idType->hasField(typeMember.member.val)) {
+      throw Error(this->reader, typeMember.member.start, typeMember.member.end, E1034);
+    }
+
+    return idType->getField(typeMember.member.val).type;
   } else if (std::holds_alternative<ParserTypeOptional>(*type.body)) {
     auto typeOptional = std::get<ParserTypeOptional>(*type.body);
     auto optionalType = this->_type(typeOptional.type);

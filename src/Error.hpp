@@ -129,6 +129,8 @@
 #define E0188 "E0188 - Expected `from` keyword"
 #define E0189 "E0189 - Expected import source after `from` keyword"
 #define E0190 "E0190 - Only declarations can be exported"
+#define E0191 "E0191 - Member type allowed only on id or another member type"
+#define E0192 "E0192 - Expected type member after dot"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
@@ -163,6 +165,7 @@
 #define E1031 "E1031 - Type casting is not possible in this case"
 #define E1032 "E1032 - Circular imports are not allowed"
 #define E1033 "E1033 - Object is not exported"
+#define E1034 "E1034 - Namespace member doesn't exists"
 
 class Error : public std::exception {
  public:

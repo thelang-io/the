@@ -23,6 +23,12 @@ std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &co
   return this->_items.back();
 }
 
+// todo test
+std::shared_ptr<Var> VarMap::addNamespace (const std::string &name, Type *type) {
+  this->_items.push_back(std::make_shared<Var>(Var{name, this->name(name), type, false, false, false, false, this->_frame}));
+  return this->_items.back();
+}
+
 std::shared_ptr<Var> VarMap::get (const std::string &name) {
   if (this->_items.empty()) {
     return nullptr;

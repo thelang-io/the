@@ -371,6 +371,11 @@ bool Type::isMethod () const {
   return std::holds_alternative<TypeFn>(this->body) && std::get<TypeFn>(this->body).isMethod;
 }
 
+// todo test
+bool Type::isNamespace () const {
+  return std::holds_alternative<TypeNamespace>(this->body);
+}
+
 bool Type::isNumber () const {
   return this->isIntNumber() || this->isFloatNumber();
 }
@@ -387,6 +392,7 @@ bool Type::isObj () const {
     !this->isNumber() &&
     !this->isFn() &&
     !this->isMap() &&
+    !this->isNamespace() && // todo test
     !this->isOpt() &&
     !this->isRef() &&
     !this->isStr() &&
@@ -758,6 +764,8 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     attrs += fnType.async ? " async" : "";
   } else if (this->isMap()) {
     typeName += "Map";
+  } else if (this->isNamespace()) {
+    typeName += "Namespace";
   } else if (this->isObj()) {
     typeName += "Obj";
   } else if (this->isOpt()) {
@@ -825,6 +833,19 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     result += std::string(indent + 2, ' ') + "<TypeMapValueType>" EOL;
     result += mapType.valueType->xml(indent + 4, parentTypes) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeMapValueType>" EOL;
+  } else if (this->isNamespace()) {
+    // todo test
+    parentTypes.insert(this->codeName);
+
+    for (const auto &field : this->fields) {
+      if (field.builtin) {
+        continue;
+      }
+
+      result += std::string(indent + 2, ' ') + R"(<TypeField name=")" + field.name + R"(">)" EOL;
+      result += field.type->xml(indent + 4, parentTypes) + EOL;
+      result += std::string(indent + 2, ' ') + "</TypeField>" EOL;
+    }
   } else if (this->isObj()) {
     parentTypes.insert(this->codeName);
 

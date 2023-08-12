@@ -185,7 +185,7 @@ std::string ASTNode::xml (std::size_t indent) const {
       for (const auto &specifier : nodeImportDecl.specifiers) {
         auto specifierAttrs = R"( local=")" + specifier.local + R"(")";
         specifierAttrs += specifier.imported == std::nullopt ? "" : (R"( imported=")" + *specifier.imported + R"(")");
-        result += std::string(indent + 2, ' ') + "<NodeImportDeclSpecifier" + specifierAttrs + "/>" EOL;
+        result += std::string(indent + 4, ' ') + "<NodeImportDeclSpecifier" + specifierAttrs + " />" EOL;
       }
 
       result += std::string(indent + 2, ' ') + "</NodeImportDeclSpecifiers>" EOL;

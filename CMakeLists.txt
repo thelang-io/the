@@ -108,7 +108,7 @@ set(
   src/codegen-api.hpp
   src/codegen-metadata.hpp
   src/config.hpp
-  src/utils.hpp
+  src/utils.cpp src/utils.hpp
 )
 
 function (the_target_add_flags target)

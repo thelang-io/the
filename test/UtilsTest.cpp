@@ -15,6 +15,7 @@
  */
 
 #include <gtest/gtest.h>
+#include "../src/config.hpp"
 #include "../src/utils.hpp"
 
 TEST(UtilsTest, StrTrim) {

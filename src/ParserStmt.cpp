@@ -17,6 +17,7 @@
 #include "Parser.hpp"
 #include <sstream>
 #include "ParserComment.hpp"
+#include "config.hpp"
 #include "utils.hpp"
 
 std::string blockToXml (const ParserBlock &block, std::size_t indent) {

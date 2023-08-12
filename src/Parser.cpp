@@ -56,6 +56,21 @@ void bindSiblings (ParserBlock &block) {
   }
 }
 
+bool isValidExprObjId (const ParserStmtExpr &stmtExpr) {
+  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
+    return false;
+  }
+
+  auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
+
+  if (exprAccess.expr == std::nullopt || exprAccess.elem != std::nullopt) {
+    return false;
+  }
+
+  return std::holds_alternative<Token>(*exprAccess.expr) ||
+    isValidExprObjId(std::get<ParserStmtExpr>(*exprAccess.expr));
+}
+
 ParserStmtExpr &stmtExprLastChild (ParserStmtExpr &stmtExpr) {
   if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     return stmtExprLastChild(std::get<ParserExprAssign>(*stmtExpr.body).right);
@@ -1336,14 +1351,8 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprIs (
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
-  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
-    this->lexer->seek(loc);
-    return std::make_tuple(stmtExpr, false);
-  }
-
-  auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
-
-  if (exprAccess.expr == std::nullopt || !std::holds_alternative<Token>(*exprAccess.expr)) {
+  // todo test variant Namespace.Object
+  if (!isValidExprObjId(stmtExpr)) {
     this->lexer->seek(loc);
     return std::make_tuple(stmtExpr, false);
   }
@@ -1395,7 +1404,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
     }
   }
 
-  auto exprObj = ParserExprObj{std::get<Token>(*exprAccess.expr), exprObjProps};
+  auto exprObj = ParserExprObj{stmtExpr, exprObjProps};
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprObj), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
@@ -1627,7 +1636,21 @@ ParserStmt Parser::_wrapStmtLoop (bool allowSemi, const Token &tok1, bool parent
 ParserType Parser::_wrapType (const ParserType &type) {
   auto [loc1, tok1] = this->lexer->next();
 
-  if (tok1.type == TK_OP_LBRACK) {
+  if (tok1.type == TK_OP_DOT) {
+    // todo test
+    if (!std::holds_alternative<ParserTypeId>(*type.body) && !std::holds_alternative<ParserTypeMember>(*type.body)) {
+      throw Error(this->reader, type.start, type.end, E0191);
+    }
+
+    auto [_2, tok2] = this->lexer->next();
+
+    if (tok2.type != TK_ID) {
+      throw Error(this->reader, this->lexer->loc, E0192);
+    }
+
+    auto typeMember = ParserTypeMember{type, tok2};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeMember), false, type.start, this->lexer->loc});
+  } else if (tok1.type == TK_OP_LBRACK) {
     auto [loc2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_RBRACK) {
