@@ -243,7 +243,7 @@ struct ParserExprObjProp {
 };
 
 struct ParserExprObj {
-  ParserStmtExpr id;
+  ParserType id;
   std::vector<ParserExprObjProp> props;
 };
 
@@ -403,6 +403,7 @@ class Parser {
   Reader *reader;
 
   explicit Parser (Lexer *);
+  virtual ~Parser () = default;
 
   virtual std::string doc ();
   virtual ParserStmt next (bool = true, bool = false);

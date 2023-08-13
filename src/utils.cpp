@@ -56,10 +56,10 @@ std::vector<std::string> str_lines (const std::string &str) {
 }
 
 // todo test
-std::optional<std::string> parse_package_main (const std::string &packageName) {
+std::optional<std::string> parse_package_yaml_main (const std::string &packageName) {
   try {
     auto d = std::filesystem::current_path() / ".packages" / packageName;
-    auto f = std::ifstream((d / "package.yml").string());
+    auto f = std::ifstream(std::filesystem::canonical(d / "package.yml").string());
 
     if (f.is_open() && !f.fail()) {
       auto c = std::stringstream();
@@ -68,7 +68,7 @@ std::optional<std::string> parse_package_main (const std::string &packageName) {
 
       for (const auto &line : contentLines) {
         if (line.starts_with("main:")) {
-          return (d / str_trim(line.substr(5))).string();
+          return std::filesystem::canonical(d / str_trim(line.substr(5))).string();
         }
       }
     }

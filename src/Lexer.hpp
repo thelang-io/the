@@ -29,6 +29,7 @@ class Lexer {
   std::string val;
 
   explicit Lexer (Reader *);
+  virtual ~Lexer () = default;
 
   virtual std::tuple<ReaderLocation, Token> next (bool = false);
   virtual void seek (ReaderLocation);

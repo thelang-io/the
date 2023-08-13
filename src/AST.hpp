@@ -376,8 +376,10 @@ struct ASTState {
 };
 
 struct ASTImport {
-  std::string fullPath;
-  std::shared_ptr<AST> ast = nullptr;
+  std::shared_ptr<Reader> reader;
+  std::shared_ptr<Lexer> lexer;
+  std::shared_ptr<Parser> parser;
+  std::shared_ptr<AST> ast;
   ASTBlock nodes = {};
 };
 

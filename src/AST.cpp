@@ -20,6 +20,7 @@
 #include "ASTChecker.hpp"
 #include "Parser.hpp"
 #include "config.hpp"
+#include "utils.hpp"
 
 bool isExprAccessLvalue (const ParserStmtExpr &stmtExpr) {
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
@@ -291,7 +292,7 @@ AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &imports) {
   this->reader = this->parser->reader;
   this->typeMap.init();
   this->varMap.init(this->typeMap);
-  this->imports = imports == nullptr ? std::make_shared<std::vector<ASTImport>>(std::vector<ASTImport>{}) : imports;
+  this->imports = imports == nullptr ? std::make_shared<std::vector<ASTImport>>() : imports;
 }
 
 ASTBlock AST::gen () {
@@ -551,29 +552,42 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto stmtImportDecl = std::get<ParserStmtImportDecl>(*stmt.body);
       auto source = std::get<ParserExprLit>(*stmtImportDecl.source.body).body.val;
       auto sourceString = source.substr(1, source.size() - 2);
-      auto relativePath = sourceString.starts_with(".")
-        ? (std::filesystem::path(this->reader->path).parent_path() / sourceString).string()
-        : sourceString;
-      auto r = Reader(relativePath);
+      auto relativePath = std::string();
+
+      if (sourceString.starts_with(".")) {
+        relativePath = std::filesystem::canonical(std::filesystem::path(this->reader->path).parent_path() / sourceString).string();
+      } else if (sourceString.starts_with("/")) {
+        relativePath = std::filesystem::canonical(sourceString).string();
+      } else {
+        auto possibleRelativePath = parse_package_yaml_main(sourceString);
+
+        if (possibleRelativePath == std::nullopt) {
+          throw Error(this->reader, stmtImportDecl.source.start, stmtImportDecl.source.end, E1035);
+        }
+
+        relativePath = *possibleRelativePath;
+      }
+
+      auto r = std::make_shared<Reader>(relativePath);
 
       auto importExists = std::find_if(this->imports->begin(), this->imports->end(), [&] (const auto &it) -> bool {
-        return it.fullPath == r.path;
+        return it.reader->path == r->path;
       });
 
       if (importExists == this->imports->end()) {
-        this->imports->push_back(ASTImport{r.path});
-        auto &importItem = this->imports->back();
-        auto lexer = Lexer(&r);
-        auto p = Parser(&lexer);
-        auto a = AST(&p, this->imports);
-        importItem.ast = std::make_shared<AST>(&p, this->imports);
-        importItem.nodes = importItem.ast->gen();
+        auto l = std::make_shared<Lexer>(r.get());
+        auto p = std::make_shared<Parser>(l.get());
+        auto a = std::make_shared<AST>(p.get(), this->imports);
+        this->imports->push_back(ASTImport{r, l, p, a});
+        auto importItemIdx = this->imports->size() - 1;
+
+        this->imports->at(importItemIdx).nodes = this->imports->at(importItemIdx).ast->gen();
       } else if (importExists->ast == nullptr) {
         throw Error(this->reader, stmt.start, stmt.end, E1032);
       }
 
       auto importItem = std::find_if(this->imports->begin(), this->imports->end(), [&] (const auto &it) -> bool {
-        return it.fullPath == r.path;
+        return it.reader->path == r->path;
       });
 
       auto importNodes = importItem->nodes;
@@ -1442,12 +1456,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
     return this->_wrapNodeExpr(stmtExpr, targetType, ASTExprMap{exprMapProps});
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto parserExprObj = std::get<ParserExprObj>(*stmtExpr.body);
-    auto type = this->_nodeExprType(parserExprObj.id, nullptr);
-
-    if (type == nullptr) {
-      throw Error(this->reader, parserExprObj.id.start, parserExprObj.id.end, E1010);
-    }
-
+    auto type = this->_type(parserExprObj.id);
     auto exprObjProps = std::vector<ASTObjProp>{};
 
     for (const auto &parserExprObjProp : parserExprObj.props) {
@@ -1839,9 +1848,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     return this->_wrapNodeExprType(stmtExpr, targetType, wrapTargetType);
   } else if (std::holds_alternative<ParserExprObj>(*stmtExpr.body)) {
     auto exprObj = std::get<ParserExprObj>(*stmtExpr.body);
-    auto exprObjIdType = this->_nodeExprType(exprObj.id, nullptr);
-
-    return this->_wrapNodeExprType(stmtExpr, targetType, exprObjIdType);
+    return this->_wrapNodeExprType(stmtExpr, targetType, this->_type(exprObj.id));
   } else if (std::holds_alternative<ParserExprRef>(*stmtExpr.body)) {
     auto exprRef = std::get<ParserExprRef>(*stmtExpr.body);
     auto exprRefExprType = this->_nodeExprType(exprRef.expr, nullptr);

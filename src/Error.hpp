@@ -166,6 +166,7 @@
 #define E1032 "E1032 - Circular imports are not allowed"
 #define E1033 "E1033 - Object is not exported"
 #define E1034 "E1034 - Namespace member doesn't exists"
+#define E1035 "E1035 - Package not installed"
 
 class Error : public std::exception {
  public:
