@@ -1,0 +1,6 @@
+======= stdin =======
+a: Test. ;
+======= stderr =======
+/test:1:10: E0192 - Expected type member after dot
+  1 | a: Test. ;
+    |          ^

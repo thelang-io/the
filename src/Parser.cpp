@@ -1377,7 +1377,6 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprIs (
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
-  // todo test variant Namespace.Object
   if (!isValidExprObjId(stmtExpr)) {
     this->lexer->seek(loc);
     return std::make_tuple(stmtExpr, false);
@@ -1593,9 +1592,7 @@ ParserStmt Parser::_wrapStmtLoop (bool allowSemi, const Token &tok1, bool parent
       std::holds_alternative<ParserExprObj>(*std::get<ParserStmtExpr>(*loopInit->body).body)
     ) {
       auto exprObj = std::get<ParserExprObj>(*std::get<ParserStmtExpr>(*loopInit->body).body);
-      auto exprAccess = ParserExprAccess{transformTypeMemberToExprObj(exprObj.id), std::nullopt, std::nullopt};
-
-      *loopInit->body = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), exprObj.id.parenthesized, exprObj.id.start, exprObj.id.end};
+      *loopInit->body = transformTypeMemberToExprObj(exprObj.id);
       this->lexer->seek(exprObj.id.end);
     } else if (
       std::holds_alternative<ParserStmtExpr>(*loopInit->body) &&
@@ -1663,7 +1660,6 @@ ParserType Parser::_wrapType (const ParserType &type) {
   auto [loc1, tok1] = this->lexer->next();
 
   if (tok1.type == TK_OP_DOT) {
-    // todo test
     if (!std::holds_alternative<ParserTypeId>(*type.body) && !std::holds_alternative<ParserTypeMember>(*type.body)) {
       throw Error(this->reader, type.start, type.end, E0191);
     }
@@ -1671,7 +1667,7 @@ ParserType Parser::_wrapType (const ParserType &type) {
     auto [_2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_ID) {
-      throw Error(this->reader, this->lexer->loc, E0192);
+      throw Error(this->reader, tok2.start, E0192);
     }
 
     auto typeMember = ParserTypeMember{type, tok2};

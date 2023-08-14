@@ -21,7 +21,9 @@ false ? 1 : Test{a: 1}
   <ExprAssignRight>
     <ExprObj start="1:5" end="1:15">
       <ExprObjId>
-        <Token type="ID" val="Test" start="1:5" end="1:9" />
+        <TypeId start="1:5" end="1:9">
+          <Token type="ID" val="Test" start="1:5" end="1:9" />
+        </TypeId>
       </ExprObjId>
       <ExprObjProps>
         <ExprObjProp>
@@ -60,7 +62,9 @@ false ? 1 : Test{a: 1}
       <ExprAssignRight>
         <ExprObj start="2:9" end="2:19">
           <ExprObjId>
-            <Token type="ID" val="Test" start="2:9" end="2:13" />
+            <TypeId start="2:9" end="2:13">
+              <Token type="ID" val="Test" start="2:9" end="2:13" />
+            </TypeId>
           </ExprObjId>
           <ExprObjProps>
             <ExprObjProp>
@@ -91,7 +95,9 @@ false ? 1 : Test{a: 1}
   <ExprBinaryRight>
     <ExprObj start="4:5" end="4:15">
       <ExprObjId>
-        <Token type="ID" val="Test" start="4:5" end="4:9" />
+        <TypeId start="4:5" end="4:9">
+          <Token type="ID" val="Test" start="4:5" end="4:9" />
+        </TypeId>
       </ExprObjId>
       <ExprObjProps>
         <ExprObjProp>
@@ -132,7 +138,9 @@ false ? 1 : Test{a: 1}
   <ExprBinaryRight>
     <ExprObj start="5:9" end="5:19">
       <ExprObjId>
-        <Token type="ID" val="Test" start="5:9" end="5:13" />
+        <TypeId start="5:9" end="5:13">
+          <Token type="ID" val="Test" start="5:9" end="5:13" />
+        </TypeId>
       </ExprObjId>
       <ExprObjProps>
         <ExprObjProp>
@@ -163,7 +171,9 @@ false ? 1 : Test{a: 1}
   <ExprCondAlt>
     <ExprObj start="7:13" end="7:23">
       <ExprObjId>
-        <Token type="ID" val="Test" start="7:13" end="7:17" />
+        <TypeId start="7:13" end="7:17">
+          <Token type="ID" val="Test" start="7:13" end="7:17" />
+        </TypeId>
       </ExprObjId>
       <ExprObjProps>
         <ExprObjProp>
@@ -184,7 +194,9 @@ false ? 1 : Test{a: 1}
   <ExprUnaryArg>
     <ExprObj start="9:2" end="9:12">
       <ExprObjId>
-        <Token type="ID" val="Test" start="9:2" end="9:6" />
+        <TypeId start="9:2" end="9:6">
+          <Token type="ID" val="Test" start="9:2" end="9:6" />
+        </TypeId>
       </ExprObjId>
       <ExprObjProps>
         <ExprObjProp>

@@ -196,6 +196,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-map-nested",
   "expr-map-precedence",
   "expr-obj",
+  "expr-obj-type-member",
   "expr-obj-empty",
   "expr-obj-nested",
   "expr-obj-precedence",
@@ -212,6 +213,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type-fn",
   "type-fn-async",
   "type-map",
+  "type-member",
   "type-optional",
   "type-ref",
   "type-union",
@@ -382,5 +384,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
   "throw-E0171-type-map-illegal-key-type",
   "throw-E0172-type-map-missing-rbrack",
   "throw-E0180-type-fn-async-missing-type",
-  "throw-E0180-type-fn-async-invalid-type"
+  "throw-E0180-type-fn-async-invalid-type",
+  "throw-E0191-type-member-invalid-id",
+  "throw-E0192-type-member-missing-member"
 ));

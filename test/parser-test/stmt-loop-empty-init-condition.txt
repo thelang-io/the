@@ -48,7 +48,11 @@ loop ;; Test {
 <StmtLoop start="6:1" end="7:2">
   <StmtLoopUpd>
     <ExprAccess start="6:9" end="6:13">
-      <Token type="ID" val="Test" start="6:9" end="6:13" />
+      <ExprAccessExpr>
+        <ExprAccess start="6:9" end="6:13">
+          <Token type="ID" val="Test" start="6:9" end="6:13" />
+        </ExprAccess>
+      </ExprAccessExpr>
     </ExprAccess>
   </StmtLoopUpd>
 </StmtLoop>

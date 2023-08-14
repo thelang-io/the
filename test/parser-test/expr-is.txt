@@ -369,7 +369,9 @@ a := !test is int
       <ExprIsExpr>
         <ExprObj start="13:6" end="13:12">
           <ExprObjId>
-            <Token type="ID" val="Test" start="13:6" end="13:10" />
+            <TypeId start="13:6" end="13:10">
+              <Token type="ID" val="Test" start="13:6" end="13:10" />
+            </TypeId>
           </ExprObjId>
         </ExprObj>
       </ExprIsExpr>

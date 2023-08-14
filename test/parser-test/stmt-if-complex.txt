@@ -50,9 +50,12 @@ main {
   if a ? b : test {
     b: str
   }
+  if Test[i++] {
+    b: str
+  }
 }
 ======= stdout =======
-<StmtMain start="1:1" end="52:2">
+<StmtMain start="1:1" end="55:2">
   <StmtIf start="2:3" end="3:4">
     <StmtIfCond>
       <ExprBinary start="2:6" end="2:12">
@@ -76,27 +79,39 @@ main {
     <StmtIfCond>
       <ExprAccess start="4:6" end="4:12">
         <ExprAccessExpr>
-          <ExprAccess start="4:6" end="4:10">
-            <Token type="ID" val="test" start="4:6" end="4:10" />
+          <ExprAccess start="4:6" end="4:12">
+            <ExprAccessExpr>
+              <ExprAccess start="4:6" end="4:10">
+                <Token type="ID" val="test" start="4:6" end="4:10" />
+              </ExprAccess>
+            </ExprAccessExpr>
+            <ExprAccessProp>
+              <Token type="ID" val="d" start="4:11" end="4:12" />
+            </ExprAccessProp>
           </ExprAccess>
         </ExprAccessExpr>
-        <ExprAccessProp>
-          <Token type="ID" val="d" start="4:11" end="4:12" />
-        </ExprAccessProp>
       </ExprAccess>
     </StmtIfCond>
   </StmtIf>
   <StmtIf start="6:3" end="7:4">
     <StmtIfCond>
       <ExprAccess start="6:6" end="6:10">
-        <Token type="ID" val="test" start="6:6" end="6:10" />
+        <ExprAccessExpr>
+          <ExprAccess start="6:6" end="6:10">
+            <Token type="ID" val="test" start="6:6" end="6:10" />
+          </ExprAccess>
+        </ExprAccessExpr>
       </ExprAccess>
     </StmtIfCond>
   </StmtIf>
   <StmtIf start="8:3" end="10:4">
     <StmtIfCond>
       <ExprAccess start="8:6" end="8:10">
-        <Token type="ID" val="test" start="8:6" end="8:10" />
+        <ExprAccessExpr>
+          <ExprAccess start="8:6" end="8:10">
+            <Token type="ID" val="test" start="8:6" end="8:10" />
+          </ExprAccess>
+        </ExprAccessExpr>
       </ExprAccess>
     </StmtIfCond>
     <StmtIfBody>
@@ -138,7 +153,11 @@ main {
   <StmtIf start="14:3" end="16:4">
     <StmtIfCond>
       <ExprAccess start="14:6" end="14:10">
-        <Token type="ID" val="test" start="14:6" end="14:10" />
+        <ExprAccessExpr>
+          <ExprAccess start="14:6" end="14:10">
+            <Token type="ID" val="test" start="14:6" end="14:10" />
+          </ExprAccess>
+        </ExprAccessExpr>
       </ExprAccess>
     </StmtIfCond>
     <StmtIfBody>
@@ -364,7 +383,11 @@ main {
         </ExprAssignOp>
         <ExprAssignRight>
           <ExprAccess start="43:10" end="43:14">
-            <Token type="ID" val="test" start="43:10" end="43:14" />
+            <ExprAccessExpr>
+              <ExprAccess start="43:10" end="43:14">
+                <Token type="ID" val="test" start="43:10" end="43:14" />
+              </ExprAccess>
+            </ExprAccessExpr>
           </ExprAccess>
         </ExprAssignRight>
       </ExprAssign>
@@ -395,7 +418,11 @@ main {
         </ExprBinaryOp>
         <ExprBinaryRight>
           <ExprAccess start="46:10" end="46:14">
-            <Token type="ID" val="test" start="46:10" end="46:14" />
+            <ExprAccessExpr>
+              <ExprAccess start="46:10" end="46:14">
+                <Token type="ID" val="test" start="46:10" end="46:14" />
+              </ExprAccess>
+            </ExprAccessExpr>
           </ExprAccess>
         </ExprBinaryRight>
       </ExprBinary>
@@ -428,7 +455,11 @@ main {
         </ExprCondBody>
         <ExprCondAlt>
           <ExprAccess start="49:14" end="49:18">
-            <Token type="ID" val="test" start="49:14" end="49:18" />
+            <ExprAccessExpr>
+              <ExprAccess start="49:14" end="49:18">
+                <Token type="ID" val="test" start="49:14" end="49:18" />
+              </ExprAccess>
+            </ExprAccessExpr>
           </ExprAccess>
         </ExprCondAlt>
       </ExprCond>
@@ -441,6 +472,41 @@ main {
         <StmtVarDeclType>
           <TypeId start="50:8" end="50:11">
             <Token type="ID" val="str" start="50:8" end="50:11" />
+          </TypeId>
+        </StmtVarDeclType>
+      </StmtVarDecl>
+    </StmtIfBody>
+  </StmtIf>
+  <StmtIf start="52:3" end="54:4">
+    <StmtIfCond>
+      <ExprAccess start="52:6" end="52:15">
+        <ExprAccessExpr>
+          <ExprAccess start="52:6" end="52:10">
+            <Token type="ID" val="Test" start="52:6" end="52:10" />
+          </ExprAccess>
+        </ExprAccessExpr>
+        <ExprAccessElem>
+          <ExprUnary start="52:11" end="52:14">
+            <ExprUnaryArg>
+              <ExprAccess start="52:11" end="52:12">
+                <Token type="ID" val="i" start="52:11" end="52:12" />
+              </ExprAccess>
+            </ExprUnaryArg>
+            <ExprUnaryOp>
+              <Token type="OP_PLUS_PLUS" val="++" start="52:12" end="52:14" />
+            </ExprUnaryOp>
+          </ExprUnary>
+        </ExprAccessElem>
+      </ExprAccess>
+    </StmtIfCond>
+    <StmtIfBody>
+      <StmtVarDecl start="53:5" end="53:11">
+        <StmtVarDeclId>
+          <Token type="ID" val="b" start="53:5" end="53:6" />
+        </StmtVarDeclId>
+        <StmtVarDeclType>
+          <TypeId start="53:8" end="53:11">
+            <Token type="ID" val="str" start="53:8" end="53:11" />
           </TypeId>
         </StmtVarDeclType>
       </StmtVarDecl>

@@ -158,7 +158,9 @@ d := true ? a = [1, 2] : [1, 2]
       </ExprRef>
       <ExprObj start="16:3" end="16:13">
         <ExprObjId>
-          <Token type="ID" val="Test" start="16:3" end="16:7" />
+          <TypeId start="16:3" end="16:7">
+            <Token type="ID" val="Test" start="16:3" end="16:7" />
+          </TypeId>
         </ExprObjId>
         <ExprObjProps>
           <ExprObjProp>

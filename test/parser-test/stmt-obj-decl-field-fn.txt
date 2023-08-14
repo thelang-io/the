@@ -171,7 +171,9 @@ main {
     <StmtVarDeclInit>
       <ExprObj start="19:12" end="19:24">
         <ExprObjId>
-          <Token type="ID" val="Test1" start="19:12" end="19:17" />
+          <TypeId start="19:12" end="19:17">
+            <Token type="ID" val="Test1" start="19:12" end="19:17" />
+          </TypeId>
         </ExprObjId>
         <ExprObjProps>
           <ExprObjProp>
@@ -195,7 +197,9 @@ main {
     <StmtVarDeclInit>
       <ExprObj start="20:12" end="20:24">
         <ExprObjId>
-          <Token type="ID" val="Test2" start="20:12" end="20:17" />
+          <TypeId start="20:12" end="20:17">
+            <Token type="ID" val="Test2" start="20:12" end="20:17" />
+          </TypeId>
         </ExprObjId>
         <ExprObjProps>
           <ExprObjProp>

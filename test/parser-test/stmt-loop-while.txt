@@ -11,6 +11,8 @@ loop Test {
 }
 loop Test {
 }
+loop Test[i++] {
+}
 ======= stdout =======
 <StmtLoop start="1:1" end="3:2">
   <StmtLoopCond>
@@ -124,4 +126,27 @@ loop Test {
       <Token type="ID" val="Test" start="11:6" end="11:10" />
     </ExprAccess>
   </StmtLoopInit>
+</StmtLoop>
+<StmtLoop start="13:1" end="14:2">
+  <StmtLoopCond>
+    <ExprAccess start="13:6" end="13:15">
+      <ExprAccessExpr>
+        <ExprAccess start="13:6" end="13:10">
+          <Token type="ID" val="Test" start="13:6" end="13:10" />
+        </ExprAccess>
+      </ExprAccessExpr>
+      <ExprAccessElem>
+        <ExprUnary start="13:11" end="13:14">
+          <ExprUnaryArg>
+            <ExprAccess start="13:11" end="13:12">
+              <Token type="ID" val="i" start="13:11" end="13:12" />
+            </ExprAccess>
+          </ExprUnaryArg>
+          <ExprUnaryOp>
+            <Token type="OP_PLUS_PLUS" val="++" start="13:12" end="13:14" />
+          </ExprUnaryOp>
+        </ExprUnary>
+      </ExprAccessElem>
+    </ExprAccess>
+  </StmtLoopCond>
 </StmtLoop>
