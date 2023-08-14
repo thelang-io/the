@@ -404,11 +404,8 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
         throw Error(this->reader, this->lexer->loc, E0103);
       } else {
         auto exprObj = std::get<ParserExprObj>(*ifCondLastChild.body);
-        auto exprAccess = ParserExprAccess{transformTypeMemberToExprObj(exprObj.id), std::nullopt, std::nullopt};
-
-        ifCondLastChild = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), exprObj.id.parenthesized, exprObj.id.start, exprObj.id.end};
+        ifCondLastChild = transformTypeMemberToExprObj(exprObj.id);
         this->lexer->seek(exprObj.id.end);
-
         ifBody = this->_block(keepComments);
       }
     }
@@ -1639,9 +1636,7 @@ ParserStmt Parser::_wrapStmtLoop (bool allowSemi, const Token &tok1, bool parent
         loopBody = this->_block(keepComments);
       } else if (std::holds_alternative<ParserExprObj>(*loopPartLastChild.body)) {
         auto exprObj = std::get<ParserExprObj>(*loopPartLastChild.body);
-        auto exprAccess = ParserExprAccess{transformTypeMemberToExprObj(exprObj.id), std::nullopt, std::nullopt};
-
-        loopPartLastChild = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), exprObj.id.parenthesized, exprObj.id.start, exprObj.id.end};
+        loopPartLastChild = transformTypeMemberToExprObj(exprObj.id);
         this->lexer->seek(exprObj.id.end);
         loopBody = this->_block(keepComments);
       }

@@ -15,9 +15,10 @@
  */
 
 #include "MockReader.hpp"
+#include <filesystem>
 
 MockReader::MockReader (const std::string &content) : Reader("CMakeLists.txt") {
-  this->path = "/test";
+  this->path = (std::filesystem::current_path() / "app").string();
   this->content = content;
   this->size = this->content.length();
 

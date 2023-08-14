@@ -31,7 +31,7 @@ TEST_P(ASTPassTest, Passes) {
   auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
   auto ast = AST(&parser);
 
-  EXPECT_EQ(sections["stdout"], ast.xml());
+  EXPECT_EQ(prepareTestOutput(sections["stdout"]), ast.xml());
 }
 
 TEST_P(ASTThrowTest, Throws) {
@@ -40,7 +40,7 @@ TEST_P(ASTThrowTest, Throws) {
   auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
   auto ast = AST(&parser);
 
-  EXPECT_THROW_WITH_MESSAGE(ast.xml(), sections["stderr"]);
+  EXPECT_THROW_WITH_MESSAGE(ast.xml(), prepareTestOutput(sections["stderr"]));
 }
 
 INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(

@@ -5,7 +5,7 @@ main {
   if os_NAME == "Windows" {
     print(fs_isAbsoluteSync("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync.txt"))
   } else {
-    print(fs_isAbsoluteSync("/test/fixtures/builtin-fs-is-absolute-sync.txt"))
+    print(fs_isAbsoluteSync(path_SEP + "test/fixtures/builtin-fs-is-absolute-sync.txt"))
   }
 }
 ======= code =======
@@ -340,7 +340,7 @@ int main () {
   if (str_eq_cstr(os_name(&err_state, 4, 6), "Windows")) {
     print(stdout, "tz", fs_isAbsoluteSync(str_alloc("C:\\\\test\\fixtures\\builtin-fs-is-absolute-sync.txt")), THE_EOL);
   } else {
-    print(stdout, "tz", fs_isAbsoluteSync(str_alloc("/test/fixtures/builtin-fs-is-absolute-sync.txt")), THE_EOL);
+    print(stdout, "tz", fs_isAbsoluteSync(str_concat_cstr(str_alloc(THE_PATH_SEP), "test/fixtures/builtin-fs-is-absolute-sync.txt")), THE_EOL);
   }
 }
 ======= flags =======

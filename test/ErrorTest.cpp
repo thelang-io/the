@@ -33,7 +33,7 @@ TEST(LexerErrorTest, SingleToken) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | @" EOL "    | ^");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0000 + EOL "  1 | @" EOL "    | ^"));
 }
 
 TEST(LexerErrorTest, MultipleTokens) {
@@ -44,7 +44,7 @@ TEST(LexerErrorTest, MultipleTokens) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~~~");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~~~"));
 }
 
 TEST(LexerErrorTest, MultipleTokensWithEnd) {
@@ -53,7 +53,7 @@ TEST(LexerErrorTest, MultipleTokensWithEnd) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, ReaderLocation{2, 1, 2}, E0000);
-  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~"));
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterTokens) {
@@ -65,7 +65,7 @@ TEST(LexerErrorTest, MultipleTokensAfterTokens) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:5: ") + E0000 + EOL "  1 | 1 + test" EOL "    |     ^~~~");
+  }, prepareTestOutput(std::string("/test:1:5: ") + E0000 + EOL "  1 | 1 + test" EOL "    |     ^~~~"));
 }
 
 TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
@@ -77,7 +77,7 @@ TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~");
+  }, prepareTestOutput(std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~"));
 }
 
 TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
@@ -89,7 +89,7 @@ TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~");
+  }, prepareTestOutput(std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~"));
 }
 
 TEST(LexerErrorTest, MultipleTokensBeforeNewLine) {
@@ -100,5 +100,5 @@ TEST(LexerErrorTest, MultipleTokensBeforeNewLine) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:1:1: ") + E0001 + EOL "  1 | /*Hello" EOL "    | ^~~~~~~");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0001 + EOL "  1 | /*Hello" EOL "    | ^~~~~~~"));
 }

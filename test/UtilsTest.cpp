@@ -15,6 +15,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <filesystem>
 #include "../src/config.hpp"
 #include "../src/utils.hpp"
 
@@ -39,4 +40,43 @@ TEST(UtilsTest, StrLines) {
   EXPECT_EQ(str_lines(EOL "test" EOL), std::vector<std::string>{"test"});
   EXPECT_EQ(str_lines(EOL "test1" EOL "test2"), output1);
   EXPECT_EQ(str_lines(EOL "test1" EOL "test2" EOL), output1);
+}
+
+TEST(UtilsTest, ParsePackageYamlMain) {
+  auto cwd = std::filesystem::current_path();
+  std::filesystem::current_path(cwd / "test" / "fixtures");
+
+  EXPECT_EQ(
+    parse_package_yaml_main("test/package"),
+    (std::filesystem::current_path() / ".packages" / "test" / "package" / "package").string()
+  );
+
+  std::filesystem::current_path(cwd);
+}
+
+TEST(UtilsTest, ParsePackageYamlMainNonExisting) {
+  auto cwd = std::filesystem::current_path();
+  std::filesystem::current_path(cwd / "test" / "fixtures");
+
+  EXPECT_EQ(parse_package_yaml_main("test/no-package"), std::nullopt);
+
+  std::filesystem::current_path(cwd);
+}
+
+TEST(UtilsTest, ParsePackageYamlMainWithoutMain) {
+  auto cwd = std::filesystem::current_path();
+  std::filesystem::current_path(cwd / "test" / "fixtures");
+
+  EXPECT_EQ(parse_package_yaml_main("test/without-name"), std::nullopt);
+
+  std::filesystem::current_path(cwd);
+}
+
+TEST(UtilsTest, ParsePackageYamlMainPackageFileIsDirectory) {
+  auto cwd = std::filesystem::current_path();
+  std::filesystem::current_path(cwd / "test" / "fixtures");
+
+  EXPECT_EQ(parse_package_yaml_main("test/package-file-is-directory"), std::nullopt);
+
+  std::filesystem::current_path(cwd);
 }

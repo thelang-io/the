@@ -85,6 +85,20 @@ std::optional<std::string> getEnvVar (const std::string &name) {
   #endif
 }
 
+std::string prepareTestOutput (const std::string &output) {
+  auto result = output;
+  auto from = std::string("/test");
+  auto to = (std::filesystem::current_path() / "app").string();
+  auto startPos = static_cast<std::size_t>(0);
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    result.replace(startPos, from.length(), to);
+    startPos += to.length();
+  }
+
+  return result;
+}
+
 std::map<std::string, std::string> readTestFile (
   const std::string &testName,
   const std::string &filepath,

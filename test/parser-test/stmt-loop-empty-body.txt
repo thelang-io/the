@@ -110,11 +110,7 @@ loop i := 0; i < 10; Test {}
   </StmtLoopCond>
   <StmtLoopUpd>
     <ExprAccess start="4:22" end="4:26">
-      <ExprAccessExpr>
-        <ExprAccess start="4:22" end="4:26">
-          <Token type="ID" val="Test" start="4:22" end="4:26" />
-        </ExprAccess>
-      </ExprAccessExpr>
+      <Token type="ID" val="Test" start="4:22" end="4:26" />
     </ExprAccess>
   </StmtLoopUpd>
 </StmtLoop>

@@ -55,7 +55,6 @@ std::vector<std::string> str_lines (const std::string &str) {
   return result;
 }
 
-// todo test
 std::optional<std::string> parse_package_yaml_main (const std::string &packageName) {
   try {
     auto d = std::filesystem::current_path() / ".packages" / packageName;
@@ -72,8 +71,9 @@ std::optional<std::string> parse_package_yaml_main (const std::string &packageNa
         }
       }
     }
-  } catch (const std::exception &) {
-  }
 
-  return std::nullopt;
+    return std::nullopt;
+  } catch (const std::exception &) {
+    return std::nullopt;
+  }
 }

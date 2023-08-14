@@ -31,7 +31,7 @@ TEST_P(ParserPassTest, Passes) {
   auto lexer = testing::NiceMock<MockLexer>(sections["stdin"]);
   auto parser = Parser(&lexer);
 
-  EXPECT_EQ(sections["stdout"], parser.xml());
+  EXPECT_EQ(prepareTestOutput(sections["stdout"]), parser.xml());
 }
 
 TEST_P(ParserThrowTest, Throws) {
@@ -40,7 +40,7 @@ TEST_P(ParserThrowTest, Throws) {
   auto lexer = testing::NiceMock<MockLexer>(sections["stdin"]);
   auto parser = Parser(&lexer);
 
-  EXPECT_THROW_WITH_MESSAGE(parser.xml(), sections["stderr"]);
+  EXPECT_THROW_WITH_MESSAGE(parser.xml(), prepareTestOutput(sections["stderr"]));
 }
 
 INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
