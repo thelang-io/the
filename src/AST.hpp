@@ -291,7 +291,8 @@ struct ASTNodeEnumDecl {
 };
 
 struct ASTNodeExportDecl {
-  ASTNode declaration;
+  std::optional<ASTNode> declaration;
+  Type *declarationType;
 };
 
 struct ASTNodeFnDecl {

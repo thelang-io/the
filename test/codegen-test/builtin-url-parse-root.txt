@@ -10,9 +10,8 @@ main {
   url_parse("test:+1234567890")
   url_parse("view-source:https://thelang.io")
   url_parse("test.test-test+test:pathname?test=value")
-  path := "test?test"
-  url_parse("test://" + path)
-  url_parse("https://" + path)
+  url_parse("test://test?test")
+  url_parse("https://test?test")
   url_parse("test:")
   url_parse("test:/")
   url_parse("test://")
@@ -89,7 +88,6 @@ struct url_URL {
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
-struct str cstr_concat_str (const char *, struct str);
 void error_alloc (err_state_t *, size_t);
 void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
 void error_buf_decrease (err_state_t *);
@@ -100,7 +98,6 @@ void error_stack_push (err_state_t *, const char *, const char *, int, int);
 void error_stack_str (err_state_t *);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
-struct str str_copy (const struct str);
 void str_free (struct str);
 struct url_URL *url_parse (err_state_t *, int, int, struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
@@ -112,14 +109,6 @@ void *alloc (size_t n1) {
   void *r = malloc(n1);
   if (r == NULL) error_alloc(&err_state, n1);
   return r;
-}
-struct str cstr_concat_str (const char *r, struct str s) {
-  size_t l = s.l + strlen(r);
-  char *d = alloc(l);
-  memcpy(d, r, l - s.l);
-  memcpy(&d[l - s.l], s.d, s.l);
-  free(s.d);
-  return (struct str) {d, l};
 }
 void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
@@ -217,11 +206,6 @@ struct str str_alloc (const char *r) {
   char *d = alloc(l);
   memcpy(d, r, l);
   return (struct str) {d, l};
-}
-struct str str_copy (const struct str s) {
-  char *d = alloc(s.l);
-  memcpy(d, s.d, s.l);
-  return (struct str) {d, s.l};
 }
 void str_free (struct str s) {
   free(s.d);
@@ -424,19 +408,16 @@ int main () {
   url_URL_free((struct url_URL *) url_parse(&err_state, 10, 3, str_alloc("view-source:https://thelang.io")));
   if (setjmp(err_state.buf_last->buf) != 0) goto L1;
   url_URL_free((struct url_URL *) url_parse(&err_state, 11, 3, str_alloc("test.test-test+test:pathname?test=value")));
-  const struct str __THE_0_path_0 = str_alloc("test?test");
-  if (setjmp(err_state.buf_last->buf) != 0) goto L2;
-  url_URL_free((struct url_URL *) url_parse(&err_state, 13, 3, cstr_concat_str("test://", str_copy(__THE_0_path_0))));
-  if (setjmp(err_state.buf_last->buf) != 0) goto L2;
-  url_URL_free((struct url_URL *) url_parse(&err_state, 14, 3, cstr_concat_str("https://", str_copy(__THE_0_path_0))));
-  if (setjmp(err_state.buf_last->buf) != 0) goto L2;
-  url_URL_free((struct url_URL *) url_parse(&err_state, 15, 3, str_alloc("test:")));
-  if (setjmp(err_state.buf_last->buf) != 0) goto L2;
-  url_URL_free((struct url_URL *) url_parse(&err_state, 16, 3, str_alloc("test:/")));
-  if (setjmp(err_state.buf_last->buf) != 0) goto L2;
-  url_URL_free((struct url_URL *) url_parse(&err_state, 17, 3, str_alloc("test://")));
-L2:
-  str_free((struct str) __THE_0_path_0);
+  if (setjmp(err_state.buf_last->buf) != 0) goto L1;
+  url_URL_free((struct url_URL *) url_parse(&err_state, 12, 3, str_alloc("test://test?test")));
+  if (setjmp(err_state.buf_last->buf) != 0) goto L1;
+  url_URL_free((struct url_URL *) url_parse(&err_state, 13, 3, str_alloc("https://test?test")));
+  if (setjmp(err_state.buf_last->buf) != 0) goto L1;
+  url_URL_free((struct url_URL *) url_parse(&err_state, 14, 3, str_alloc("test:")));
+  if (setjmp(err_state.buf_last->buf) != 0) goto L1;
+  url_URL_free((struct url_URL *) url_parse(&err_state, 15, 3, str_alloc("test:/")));
+  if (setjmp(err_state.buf_last->buf) != 0) goto L1;
+  url_URL_free((struct url_URL *) url_parse(&err_state, 16, 3, str_alloc("test://")));
 L1:
   error_buf_decrease(&err_state);
   error_stack_pop(&err_state);

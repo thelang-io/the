@@ -402,6 +402,9 @@ class Parser {
   Lexer *lexer;
   Reader *reader;
 
+  static ParserType transformExprToType (const ParserStmtExpr &);
+  static ParserStmtExpr transformTypeToExpr (const ParserType &);
+
   explicit Parser (Lexer *);
   virtual ~Parser () = default;
 

@@ -50,6 +50,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-continue",
   "node-empty",
   "node-enum-decl",
+  "node-export",
   "node-expr",
   "node-expr-lit",
   "node-fn-decl",
@@ -66,6 +67,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-if",
   "node-if-type-casts",
   "node-if-type-casts-elif",
+  "node-import",
   "node-loop",
   "node-main",
   "node-obj-decl",
@@ -118,6 +120,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ASTPassTest, testing::Values(
   "expr-lit-nil",
   "expr-map",
   "expr-obj",
+  "expr-obj-member",
   "expr-ref",
   "expr-ref-fn",
   "expr-unary"

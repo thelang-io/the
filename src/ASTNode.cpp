@@ -110,7 +110,13 @@ std::string ASTNode::xml (std::size_t indent) const {
     auto nodeExportDecl = std::get<ASTNodeExportDecl>(*this->body);
 
     result += std::string(indent, ' ') + "<NodeExportDecl>" EOL;
-    result += nodeExportDecl.declaration.xml(indent + 2) + EOL;
+
+    if (nodeExportDecl.declarationType == nullptr) {
+      result += nodeExportDecl.declaration->xml(indent + 2) + EOL;
+    } else {
+      result += nodeExportDecl.declarationType->xml(indent + 2) + EOL;
+    }
+
     result += std::string(indent, ' ') + "</NodeExportDecl>";
   } else if (std::holds_alternative<ASTNodeFnDecl>(*this->body)) {
     auto nodeFnDecl = std::get<ASTNodeFnDecl>(*this->body);

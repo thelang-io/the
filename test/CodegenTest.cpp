@@ -231,7 +231,7 @@ TEST_P(CodegenPassTest, Passes) {
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = prepareTestOutput(sections["code"]);
-  auto expectedOutput = sections["stdout"];
+  auto expectedOutput = prepareTestOutput(sections["stdout"]);
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
@@ -295,7 +295,7 @@ TEST_P(CodegenThrowTest, Throws) {
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = prepareTestOutput(sections["code"]);
-  auto expectedStderr = sections["stderr"];
+  auto expectedStderr = prepareTestOutput(sections["stderr"]);
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));

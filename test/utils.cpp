@@ -92,8 +92,17 @@ std::string prepareTestOutput (const std::string &output) {
   auto startPos = static_cast<std::size_t>(0);
 
   while ((startPos = result.find(from, startPos)) != std::string::npos) {
-    result.replace(startPos, from.length(), to);
-    startPos += to.length();
+    if (
+      (startPos <= 0 || (result[startPos - 1] != '.' && result[startPos - 1] != '/')) &&
+      std::isalnum(result[startPos + from.length()]) == 0 &&
+      result[startPos + from.length()] != '.' &&
+      result[startPos + from.length()] != '/'
+    ) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    } else {
+      startPos += from.length();
+    }
   }
 
   return result;
