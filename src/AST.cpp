@@ -299,12 +299,12 @@ void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent, ASTNode *n
   }
 }
 
-AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &imports) {
+AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &i) {
   this->parser = p;
   this->reader = this->parser->reader;
   this->typeMap.init();
   this->varMap.init(this->typeMap);
-  this->imports = imports == nullptr ? std::make_shared<std::vector<ASTImport>>() : imports;
+  this->imports = i == nullptr ? std::make_shared<std::vector<ASTImport>>() : i;
 }
 
 ASTBlock AST::gen () {
