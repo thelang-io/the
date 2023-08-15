@@ -230,8 +230,9 @@ TEST_P(CodegenPassTest, Passes) {
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
-  auto expectedCode = prepareTestOutput(sections["code"]);
-  auto expectedOutput = prepareTestOutput(sections["stdout"]);
+  auto expectedCode = sections["code"];
+  auto expectedOutput = sections["stdout"];
+  std::get<0>(result) = prepareTestOutputFrom(std::get<0>(result));
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
@@ -294,8 +295,9 @@ TEST_P(CodegenThrowTest, Throws) {
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
-  auto expectedCode = prepareTestOutput(sections["code"]);
-  auto expectedStderr = prepareTestOutput(sections["stderr"]);
+  auto expectedCode = sections["code"];
+  auto expectedStderr = sections["stderr"];
+  std::get<0>(result) = prepareTestOutputFrom(std::get<0>(result));
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));

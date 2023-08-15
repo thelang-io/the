@@ -108,6 +108,36 @@ std::string prepareTestOutput (const std::string &output) {
   return result;
 }
 
+std::string prepareTestOutputFrom (const std::string &output) {
+  auto result = output;
+  auto from = (std::filesystem::current_path() / "app").string();
+  auto to = std::string("/test");
+  auto startPos = static_cast<std::size_t>(0);
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    result.replace(startPos, from.length(), to);
+    startPos += to.length();
+  }
+
+  if (from.find('\\') != std::string::npos) {
+    auto fromPos = static_cast<std::size_t>(0);
+
+    while ((fromPos = from.find('\\', fromPos)) != std::string::npos) {
+      from.replace(fromPos, 1, "\\\\");
+      fromPos += 2;
+    }
+
+    startPos = 0;
+
+    while ((startPos = result.find(from, startPos)) != std::string::npos) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    }
+  }
+
+  return result;
+}
+
 std::map<std::string, std::string> readTestFile (
   const std::string &testName,
   const std::string &filepath,
