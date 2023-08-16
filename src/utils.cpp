@@ -16,7 +16,6 @@
 
 #include "utils.hpp"
 #include <algorithm>
-#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -37,17 +36,23 @@ std::string str_trim (const std::string &str) {
 }
 
 std::vector<std::string> str_lines (const std::string &str) {
-  auto delimiter = std::string(EOL);
-  auto pos = static_cast<std::string::size_type>(0);
-  auto prev = static_cast<std::string::size_type>(0);
-  auto result = std::vector<std::string>{};
+  auto result = std::vector<std::string>{""};
 
-  while ((pos = str.find(delimiter, prev)) != std::string::npos) {
-    result.push_back(str.substr(prev, pos - prev));
-    prev = pos + delimiter.size();
+  for (auto i = static_cast<std::size_t>(0); i < str.size(); i++) {
+    auto ch = str[i];
+
+    if (ch == '\r') {
+      if (i + 1 < str.size() && str[i + 1] == '\n') {
+        i++;
+      }
+
+      result.push_back("");
+    } else if (ch == '\n') {
+      result.push_back("");
+    } else {
+      result.back() += ch;
+    }
   }
-
-  result.push_back(str.substr(prev));
 
   result.erase(std::remove_if(result.begin(), result.end(), [] (auto it) {
     return str_trim(it).empty();
@@ -74,8 +79,7 @@ std::optional<std::string> parse_package_yaml_main (const std::string &packageNa
     }
 
     return std::nullopt;
-  } catch (const std::exception &err) {
-    printf("Error: %s" EOL, err.what());
+  } catch (const std::exception &) {
     return std::nullopt;
   }
 }

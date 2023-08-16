@@ -57,7 +57,7 @@ Reader::Reader (const std::string &p) {
       : "";
   }
 
-  this->size = this->content.length();
+  this->size = this->content.size();
 }
 
 bool Reader::eof () const {
