@@ -1,0 +1,6 @@
+======= stdin =======
+import TestFunction from "./test/fixtures/export-obj"
+======= stderr =======
+/test:1:8: E1033 - Object is not exported
+  1 | import TestFunction from "./test/fixtures/export-obj"
+    |        ^~~~~~~~~~~~

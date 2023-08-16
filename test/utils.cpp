@@ -85,10 +85,11 @@ std::optional<std::string> getEnvVar (const std::string &name) {
   #endif
 }
 
-std::string prepareTestOutput (const std::string &output) {
+std::string prepareTestOutput (const std::string &output, bool insideFixtures) {
   auto result = output;
   auto from = std::string("/test");
-  auto to = (std::filesystem::current_path() / "app").string();
+  auto toFixtures = insideFixtures ? std::filesystem::path("..") / ".." : std::filesystem::path("");
+  auto to = (std::filesystem::canonical(std::filesystem::current_path() / toFixtures) / "app").string();
   auto startPos = static_cast<std::size_t>(0);
 
   while ((startPos = result.find(from, startPos)) != std::string::npos) {
@@ -97,6 +98,22 @@ std::string prepareTestOutput (const std::string &output) {
       std::isalnum(result[startPos + from.length()]) == 0 &&
       result[startPos + from.length()] != '.' &&
       result[startPos + from.length()] != '/'
+    ) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    } else {
+      startPos += from.length();
+    }
+  }
+
+  from = std::string("/fixtures/");
+  to = std::filesystem::current_path().string() + std::filesystem::path::preferred_separator;
+  startPos = 0;
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    if (
+      startPos <= 0 ||
+      (result[startPos - 1] != '.' && result[startPos - 1] != '/' && !std::isalnum(result[startPos - 1]))
     ) {
       result.replace(startPos, from.length(), to);
       startPos += to.length();

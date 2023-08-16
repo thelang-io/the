@@ -16,6 +16,7 @@
 
 #include "utils.hpp"
 #include <algorithm>
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -73,7 +74,8 @@ std::optional<std::string> parse_package_yaml_main (const std::string &packageNa
     }
 
     return std::nullopt;
-  } catch (const std::exception &) {
+  } catch (const std::exception &err) {
+    printf("Error: %s" EOL, err.what());
     return std::nullopt;
   }
 }

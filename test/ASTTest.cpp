@@ -15,20 +15,42 @@
  */
 
 #include <gtest/gtest.h>
+#include <filesystem>
 #include "../src/AST.hpp"
 #include "MockParser.hpp"
 #include "utils.hpp"
 
 class ASTPassTest : public testing::TestWithParam<const char *> {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 class ASTThrowTest : public testing::TestWithParam<const char *> {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 TEST_P(ASTPassTest, Passes) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("ast", param, {"stdin", "stdout"});
   auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test" / "fixtures");
   auto ast = AST(&parser);
 
   EXPECT_EQ(sections["stdout"], prepareTestOutputFrom(ast.xml()));
@@ -38,9 +60,10 @@ TEST_P(ASTThrowTest, Throws) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("ast", param, {"stdin", "stderr"});
   auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test" / "fixtures");
   auto ast = AST(&parser);
 
-  EXPECT_THROW_WITH_MESSAGE(ast.xml(), prepareTestOutput(sections["stderr"]));
+  EXPECT_THROW_WITH_MESSAGE(ast.xml(), prepareTestOutput(sections["stderr"], true));
 }
 
 INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
@@ -68,6 +91,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-if-type-casts",
   "node-if-type-casts-elif",
   "node-import",
+  "node-import-package",
   "node-loop",
   "node-main",
   "node-obj-decl",
@@ -206,5 +230,9 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1031-expr-as-incorrect-type-number",
   "throw-E1031-expr-as-incorrect-type-opt",
   "throw-E1031-expr-as-incorrect-type-ref",
-  "throw-E1031-expr-as-incorrect-type-union"
+  "throw-E1031-expr-as-incorrect-type-union",
+  "throw-E1032-node-import-circular",
+  "throw-E1033-node-import-not-exported",
+  "throw-E1034-expr-obj-non-existing-namespace-member",
+  "throw-E1035-node-import-non-existing-package"
 ));
