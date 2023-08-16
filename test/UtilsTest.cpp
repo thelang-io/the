@@ -47,8 +47,8 @@ TEST(UtilsTest, ParsePackageYamlMain) {
   std::filesystem::current_path(cwd / "test" / "fixtures");
 
   EXPECT_EQ(
-    parse_package_yaml_main("test/package"),
-    (std::filesystem::current_path() / ".packages" / "test" / "package" / "package").string()
+    *parse_package_yaml_main("test/package"),
+    (std::filesystem::current_path() / ".packages" / "test/package" / "package").string()
   );
 
   std::filesystem::current_path(cwd);
