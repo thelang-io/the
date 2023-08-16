@@ -107,7 +107,7 @@ std::string prepareTestOutput (const std::string &output, bool insideFixtures) {
   }
 
   from = std::string("/fixtures/");
-  to = std::filesystem::current_path().string() + std::filesystem::path::preferred_separator;
+  to = std::filesystem::current_path().string() + OS_PATH_SEP;
   startPos = 0;
 
   while ((startPos = result.find(from, startPos)) != std::string::npos) {
