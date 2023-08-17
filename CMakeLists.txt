@@ -59,6 +59,7 @@ set(
   src/codegen/node-break.cpp
   src/codegen/node-continue.cpp
   src/codegen/node-enum-decl.cpp
+  src/codegen/node-export-decl.cpp
   src/codegen/node-expr.cpp
   src/codegen/node-fn-decl.cpp
   src/codegen/node-if.cpp

@@ -239,6 +239,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     );
   }
 
+  for (auto it = this->ast->imports->rbegin(); it != this->ast->imports->rend(); it++) {
+    this->_block(&cMain, it->nodes, false);
+  }
+
   this->_block(&cMain, nodes, false);
 
   if (this->async) {
@@ -652,6 +656,8 @@ void Codegen::_node (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, Co
     return this->_nodeContinue(c, node);
   } else if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
     return this->_nodeEnumDecl(c, node, phase);
+  } else if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
+    return this->_nodeExportDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
     return this->_nodeExprDecl(c, node);
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {

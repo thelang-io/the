@@ -258,6 +258,7 @@ class Codegen {
   void _nodeContinue (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   void _nodeContinueAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   void _nodeEnumDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
+  void _nodeExportDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
   void _nodeExprDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   std::shared_ptr<CodegenASTExpr> _nodeExpr (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool = false, std::size_t = 0);
   void _nodeFnDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
