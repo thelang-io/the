@@ -179,6 +179,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   )
 
   add_executable(${PROJECT_NAME}-tests ${tests})
+  the_target_add_flags(${PROJECT_NAME}-tests)
   target_link_libraries(${PROJECT_NAME}-tests gmock_main ${PROJECT_NAME}-lib)
 
   gtest_discover_tests(

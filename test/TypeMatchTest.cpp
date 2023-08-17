@@ -38,9 +38,9 @@ class TypeMatchTest : public testing::Test {
     this->arr_ = this->tm_.createArr(this->tm_.get("int"));
 
     this->tm_.stack.emplace_back("TestEnum");
-    this->enum_ = this->tm_.createEnum("TestEnum", "TestEnum_0", {
-      this->tm_.createEnumerator("Red", this->tm_.name("Red")),
-      this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
+    this->enum_ = this->tm_.createEnum("TestEnum", {
+      this->tm_.createEnumerator("Red"),
+      this->tm_.createEnumerator("Brown")
     });
     this->tm_.stack.pop_back();
 
@@ -52,7 +52,7 @@ class TypeMatchTest : public testing::Test {
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
     auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
-    this->obj_ = this->tm_.createObj("Test", "Test_0", {
+    this->obj_ = this->tm_.createObj("Test", {
       TypeField{"a", this->tm_.get("int"), false, false},
       TypeField{"m", objMethod, false, false}
     });
@@ -301,22 +301,22 @@ TEST_F(TypeMatchTest, MatchesNiceArray) {
 
 TEST_F(TypeMatchTest, MatchesNiceEnum) {
   this->tm_.stack.emplace_back("Test2");
-  auto type1 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
+  auto type1 = this->tm_.createEnum("Test2", {
+    this->tm_.createEnumerator("Brown")
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test2");
-  auto type2 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
+  auto type2 = this->tm_.createEnum("Test2", {
+    this->tm_.createEnumerator("Brown"),
+    this->tm_.createEnumerator("Red")
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test3");
-  auto type3 = this->tm_.createEnum("Test3", "Test3_0", {
-    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
+  auto type3 = this->tm_.createEnum("Test3", {
+    this->tm_.createEnumerator("Brown"),
+    this->tm_.createEnumerator("Red")
   });
   this->tm_.stack.pop_back();
 
@@ -430,23 +430,23 @@ TEST_F(TypeMatchTest, MatchesNiceMap) {
 }
 
 TEST_F(TypeMatchTest, MatchesNiceObject) {
-  auto type1 = this->tm_.createObj("Test1", "Test1_0", {
+  auto type1 = this->tm_.createObj("Test1", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("int"), false, false}
   });
 
-  auto type2 = this->tm_.createObj("Test2", "Test2_0");
+  auto type2 = this->tm_.createObj("Test2");
 
-  auto type3 = this->tm_.createObj("Test3", "Test3_0", {
+  auto type3 = this->tm_.createObj("Test3", {
     TypeField{"a", this->tm_.get("int"), false, false}
   });
 
-  auto type4 = this->tm_.createObj("Test4", "Test4_0", {
+  auto type4 = this->tm_.createObj("Test4", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("int"), false, false}
   });
 
-  auto type5 = this->tm_.createObj("Test5", "Test5_0", {
+  auto type5 = this->tm_.createObj("Test5", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("str"), false, false}
   });
@@ -585,22 +585,22 @@ TEST_F(TypeMatchTest, MatchesStrictArray) {
 
 TEST_F(TypeMatchTest, MatchesStrictEnum) {
   this->tm_.stack.emplace_back("Test2");
-  auto type1 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
+  auto type1 = this->tm_.createEnum("Test2", {
+    this->tm_.createEnumerator("Brown")
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test2");
-  auto type2 = this->tm_.createEnum("Test2", "Test2_0", {
-    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
+  auto type2 = this->tm_.createEnum("Test2", {
+    this->tm_.createEnumerator("Brown"),
+    this->tm_.createEnumerator("Red")
   });
   this->tm_.stack.pop_back();
 
   this->tm_.stack.emplace_back("Test3");
-  auto type3 = this->tm_.createEnum("Test3", "Test3_0", {
-    this->tm_.createEnumerator("Brown", this->tm_.name("Brown")),
-    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
+  auto type3 = this->tm_.createEnum("Test3", {
+    this->tm_.createEnumerator("Brown"),
+    this->tm_.createEnumerator("Red")
   });
   this->tm_.stack.pop_back();
 
@@ -821,23 +821,23 @@ TEST_F(TypeMatchTest, MatchesStrictMap) {
 }
 
 TEST_F(TypeMatchTest, MatchesStrictObject) {
-  auto type1 = this->tm_.createObj("Test1", "Test1_0", {
+  auto type1 = this->tm_.createObj("Test1", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("int"), false, false}
   });
 
-  auto type2 = this->tm_.createObj("Test2", "Test2_0");
+  auto type2 = this->tm_.createObj("Test2");
 
-  auto type3 = this->tm_.createObj("Test3", "Test3_0", {
+  auto type3 = this->tm_.createObj("Test3", {
     TypeField{"a", this->tm_.get("int"), false, false}
   });
 
-  auto type4 = this->tm_.createObj("Test4", "Test4_0", {
+  auto type4 = this->tm_.createObj("Test4", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("int"), false, false}
   });
 
-  auto type5 = this->tm_.createObj("Test5", "Test5_0", {
+  auto type5 = this->tm_.createObj("Test5", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("str"), false, false}
   });

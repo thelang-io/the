@@ -272,7 +272,7 @@ TEST_P(CodegenPassTest, Passes) {
     auto match = std::smatch();
     std::regex_search(actualStdoutSlice, match, placeholderRegex);
 
-    auto placeholderValue = actualStdout.substr(placeholderStart, match[0].length());
+    auto placeholderValue = actualStdout.substr(placeholderStart, static_cast<std::size_t>(match[0].length()));
     expectedOutput.replace(placeholderStart, placeholderLen, placeholderValue);
   }
 
@@ -339,7 +339,7 @@ TEST_P(CodegenThrowTest, Throws) {
     auto match = std::smatch();
     std::regex_search(actualStderrSlice, match, placeholderRegex);
 
-    auto placeholderValue = actualStderr.substr(placeholderStart, match[0].length());
+    auto placeholderValue = actualStderr.substr(placeholderStart, static_cast<std::size_t>(match[0].length()));
     expectedStderr.replace(placeholderStart, placeholderLen, placeholderValue);
   }
 

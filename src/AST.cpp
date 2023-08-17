@@ -496,14 +496,12 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         this->typeMap.stack.emplace_back(enumName);
 
         for (const auto &stmtEnumDeclMember : stmtEnumDecl.members) {
-          enumMembers.push_back(this->typeMap.createEnumerator(stmtEnumDeclMember.id.val, this->typeMap.name(stmtEnumDeclMember.id.val)));
+          enumMembers.push_back(this->typeMap.createEnumerator(stmtEnumDeclMember.id.val));
         }
 
         this->typeMap.stack.pop_back();
-        auto enumCodeName = this->typeMap.name(enumName);
-        auto enumType = this->typeMap.createEnum(enumName, enumCodeName, enumMembers);
-
-        this->varMap.add(enumName, enumCodeName, enumType, false, false, true);
+        auto enumType = this->typeMap.createEnum(enumName, enumMembers);
+        this->varMap.add(enumName, enumType->codeName, enumType, false, false, true);
       }
     } else if (std::holds_alternative<ParserStmtExportDecl>(*stmt.body)) {
       auto stmtExportDecl = std::get<ParserStmtExportDecl>(*stmt.body);
@@ -651,7 +649,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto objName = stmtObjDecl.id.val;
 
       if (phase == AST_PHASE_ALLOC || phase == AST_PHASE_FULL) {
-        this->typeMap.createObj(objName, this->typeMap.name(objName));
+        this->typeMap.createObj(objName);
       }
 
       if (phase == AST_PHASE_INIT || phase == AST_PHASE_FULL) {

@@ -16,7 +16,7 @@
 
 #include "MockParser.hpp"
 
-MockParser::MockParser (const std::string &content) : _l(content), Parser(&this->_l) {
+MockParser::MockParser (const std::string &content) : Parser(&this->_l), _l(content) {
   this->reader = this->_l.reader;
 
   ON_CALL(*this, doc).WillByDefault([this] () {

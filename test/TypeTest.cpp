@@ -39,9 +39,9 @@ class TypeTest : public testing::Test {
     this->arr_ = this->tm_.createArr(this->tm_.get("int"));
 
     this->tm_.stack.emplace_back("TestEnum");
-    this->enum_ = this->tm_.createEnum("TestEnum", "TestEnum_0", {
-      this->tm_.createEnumerator("Red", this->tm_.name("Red")),
-      this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))
+    this->enum_ = this->tm_.createEnum("TestEnum", {
+      this->tm_.createEnumerator("Red"),
+      this->tm_.createEnumerator("Brown")
     });
     this->tm_.stack.pop_back();
 
@@ -53,7 +53,7 @@ class TypeTest : public testing::Test {
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
     auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
-    this->obj_ = this->tm_.createObj("Test", "Test_0", {
+    this->obj_ = this->tm_.createObj("Test", {
       TypeField{"a", this->tm_.get("int"), false, false},
       TypeField{"m", objMethod, false, false}
     });
@@ -321,7 +321,7 @@ TEST_F(TypeTest, FieldNthGetsZero) {
 }
 
 TEST_F(TypeTest, FieldNthGetsOne) {
-  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {
+  auto type1 = this->tm_.createObj("Test1", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("int"), false, false}
   });
@@ -335,7 +335,7 @@ TEST_F(TypeTest, FieldNthGetsOne) {
 }
 
 TEST_F(TypeTest, FieldNthReturnsNull) {
-  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {});
+  auto type1 = this->tm_.createObj("Test1", {});
   auto type2 = this->tm_.createAlias("Test", type1);
   auto type3 = this->tm_.createRef(type2);
 
@@ -679,8 +679,8 @@ TEST_F(TypeTest, CheckIfEnum) {
   EXPECT_TRUE(this->enum_->isEnum());
 
   this->tm_.stack.emplace_back("Test2");
-  EXPECT_TRUE(this->tm_.createEnum("Test2", this->tm_.name("Test2"), {
-    this->tm_.createEnumerator("Red", this->tm_.name("Red"))
+  EXPECT_TRUE(this->tm_.createEnum("Test2", {
+    this->tm_.createEnumerator("Red")
   })->isEnum());
   this->tm_.stack.pop_back();
 }
@@ -717,7 +717,7 @@ TEST_F(TypeTest, CheckIfNotEnum) {
 }
 
 TEST_F(TypeTest, CheckIfEnumerator) {
-  EXPECT_TRUE(this->tm_.createEnumerator("Brown", this->tm_.name("Brown"))->isEnumerator());
+  EXPECT_TRUE(this->tm_.createEnumerator("Brown")->isEnumerator());
 }
 
 TEST_F(TypeTest, CheckIfNotEnumerator) {
@@ -1025,13 +1025,13 @@ TEST_F(TypeTest, CheckIfNotNumber) {
 }
 
 TEST_F(TypeTest, CheckIfObj) {
-  auto type1 = this->tm_.createObj("Test1", "Test1_0");
+  auto type1 = this->tm_.createObj("Test1");
 
-  auto type2 = this->tm_.createObj("Test2", "Test2_0", {
+  auto type2 = this->tm_.createObj("Test2", {
     TypeField{"a", this->tm_.get("int"), false, false}
   });
 
-  auto type3 = this->tm_.createObj("Test3", "Test3_0", {
+  auto type3 = this->tm_.createObj("Test3", {
     TypeField{"a", this->tm_.get("int"), false, false},
     TypeField{"b", this->tm_.get("str"), false, false}
   });

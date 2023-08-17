@@ -21,6 +21,7 @@
 #include "utils.hpp"
 
 std::string blockToXml (const ParserBlock &block, std::size_t indent) {
+  auto test = std::string();
   auto result = std::string();
 
   for (const auto &stmt : block) {

@@ -16,7 +16,7 @@
 
 #include "MockAST.hpp"
 
-MockAST::MockAST (const std::string &content) : _p(content), AST(&this->_p)  {
+MockAST::MockAST (const std::string &content) : AST(&this->_p), _p(content)  {
   this->reader = this->_p.reader;
 
   ON_CALL(*this, gen).WillByDefault([this] () {

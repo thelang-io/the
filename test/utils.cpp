@@ -167,10 +167,10 @@ std::map<std::string, std::string> readTestFile (
     throw Error("Error: unable to open " + testName + R"( test file ")" + path + R"(")");
   }
 
-  auto size = static_cast<std::ptrdiff_t>(std::filesystem::file_size(path));
+  auto size = std::filesystem::file_size(path);
   auto content = std::string(size, '\0');
 
-  file.read(content.data(), size);
+  file.read(content.data(), static_cast<std::ptrdiff_t>(size));
   file.close();
 
   if (!content.starts_with("======= ")) {
