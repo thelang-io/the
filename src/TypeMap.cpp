@@ -50,8 +50,10 @@ std::string typeName (const std::string &name) {
   return "__THE_1_" + name;
 }
 
-void TypeMap::init () {
+void TypeMap::init (const std::string &ns) {
   this->stack.reserve(std::numeric_limits<short>::max());
+  this->stack.push_back(ns);
+
   this->_anyType(TYPE_MAP_DECL);
   this->_boolType(TYPE_MAP_DECL);
   this->_byteType(TYPE_MAP_DECL);
@@ -95,8 +97,6 @@ void TypeMap::init () {
   this->_threadModule(TYPE_MAP_DEF);
   this->_urlModule(TYPE_MAP_DEF);
   this->_utilsModule(TYPE_MAP_DEF);
-
-  this->_fnIdx = 1000;
 }
 
 Type *TypeMap::createAlias (const std::string &n, Type *type) {

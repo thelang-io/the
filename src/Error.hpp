@@ -167,6 +167,7 @@
 #define E1033 "E1033 - Object is not exported"
 #define E1034 "E1034 - Namespace member doesn't exists"
 #define E1035 "E1035 - Package not installed"
+#define E1036 "E1036 - Referencing files outside of current working directory is not supported"
 
 class Error : public std::exception {
  public:

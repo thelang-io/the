@@ -302,7 +302,15 @@ void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent, ASTNode *n
 AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &i) {
   this->parser = p;
   this->reader = this->parser->reader;
-  this->typeMap.init();
+
+  auto typeMapNamespace = convert_path_to_namespace(this->reader->path);
+
+  if (typeMapNamespace == std::nullopt) {
+    // todo test
+    throw Error(this->reader, ReaderLocation{}, E1036);
+  }
+
+  this->typeMap.init(*typeMapNamespace);
   this->varMap.init(this->typeMap);
   this->imports = i == nullptr ? std::make_shared<std::vector<ASTImport>>() : i;
 }

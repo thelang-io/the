@@ -21,6 +21,45 @@
 #include <sstream>
 #include "config.hpp"
 
+std::optional<std::string> convert_path_to_namespace (const std::string &p) {
+  auto cwd = std::filesystem::current_path().string();
+
+  if (!p.starts_with(cwd)) {
+    return std::nullopt;
+  }
+
+  auto s = p.substr(cwd.size());
+
+  for (auto i = static_cast<std::size_t>(0); i < s.size(); i++) {
+    if (!std::isalnum(s[i])) {
+      s[i] = '_';
+    }
+  }
+
+  auto prevIsUnderscore = false;
+
+  auto iterator = std::remove_if(s.begin(), s.end(), [&] (auto it) -> bool {
+    if (it == '_' && prevIsUnderscore) {
+      return true;
+    }
+
+    prevIsUnderscore = it == '_';
+    return false;
+  });
+
+  s.erase(iterator, s.end());
+
+  if (s.starts_with('_') && s.ends_with('_')) {
+    s = s.substr(1, s.size() - 2);
+  } else if (s.starts_with('_')) {
+    s = s.substr(1);
+  } else if (s.starts_with('_')) {
+    s = s.substr(0, s.size() - 1);
+  }
+
+  return s;
+}
+
 std::string str_trim (const std::string &str) {
   auto result = str;
 
