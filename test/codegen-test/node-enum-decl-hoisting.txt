@@ -103,40 +103,40 @@ struct str {
 };
 
 struct __THE_1_Human_0;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
-struct __THE_1_fn$1002;
-struct __THE_1_fn$1002P;
+struct __THE_1_fn_sFP3IncomeTypeFRvoidFE;
+struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP;
+struct __THE_1_fn_sFP3ColorFRvoidFE;
+struct __THE_1_fn_sFP3ColorFRvoidFEP;
+struct __THE_1_fn_sFP3HumanFRvoidFE;
+struct __THE_1_fn_sFP3HumanFRvoidFEP;
 
 struct __THE_1_Human_0 {
   const struct str __THE_0_name;
   const enum __THE_1_Color_0 __THE_0_hairColor;
   const enum __THE_1_IncomeType_0 __THE_0_incomeType;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3IncomeTypeFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP {
   enum __THE_1_IncomeType_0 n0;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFP3ColorFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_sFP3ColorFRvoidFEP {
   enum __THE_1_Color_0 n0;
 };
-struct __THE_1_fn$1002 {
+struct __THE_1_fn_sFP3HumanFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1002P {
+struct __THE_1_fn_sFP3HumanFRvoidFEP {
   struct __THE_1_Human_0 *n0;
 };
 
@@ -343,19 +343,19 @@ struct str __THE_1_IncomeType_0_rawValue (enum __THE_1_IncomeType_0 n) {
   if (n == __THE_0_IncomeTypeSDPassive_0) return str_alloc("Passive");
 }
 void __THE_1_printIncomeType_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP *p = pp;
   const enum __THE_1_IncomeType_0 __THE_0_n_0 = p->n0;
   print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0), THE_EOL);
   free(pp);
 }
 void __THE_1_printColor_0 (void *px, void *pp) {
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP3ColorFRvoidFEP *p = pp;
   const enum __THE_1_Color_0 __THE_0_n_0 = p->n0;
   print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_Color_0_rawValue(__THE_0_n_0), THE_EOL);
   free(pp);
 }
 void __THE_1_printHuman_0 (void *px, void *pp) {
-  struct __THE_1_fn$1002P *p = pp;
+  struct __THE_1_fn_sFP3HumanFRvoidFEP *p = pp;
   const struct __THE_1_Human_0 *__THE_0_n_0 = p->n0;
   print(stdout, "zzszzzszzzsz", "Name:", " ", str_copy(__THE_0_n_0->__THE_0_name), " ", "Hair:", " ", __THE_1_Color_0_rawValue(__THE_0_n_0->__THE_0_hairColor), " ", "Income Type:", " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0->__THE_0_incomeType), THE_EOL);
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_n_0);
@@ -363,17 +363,17 @@ void __THE_1_printHuman_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_printIncomeType_0 = (struct __THE_1_fn$1000) {&__THE_1_printIncomeType_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_printColor_0 = (struct __THE_1_fn$1001) {&__THE_1_printColor_0, NULL, 0};
-  const struct __THE_1_fn$1002 __THE_0_printHuman_0 = (struct __THE_1_fn$1002) {&__THE_1_printHuman_0, NULL, 0};
+  const struct __THE_1_fn_sFP3IncomeTypeFRvoidFE __THE_0_printIncomeType_0 = (struct __THE_1_fn_sFP3IncomeTypeFRvoidFE) {&__THE_1_printIncomeType_0, NULL, 0};
+  const struct __THE_1_fn_sFP3ColorFRvoidFE __THE_0_printColor_0 = (struct __THE_1_fn_sFP3ColorFRvoidFE) {&__THE_1_printColor_0, NULL, 0};
+  const struct __THE_1_fn_sFP3HumanFRvoidFE __THE_0_printHuman_0 = (struct __THE_1_fn_sFP3HumanFRvoidFE) {&__THE_1_printHuman_0, NULL, 0};
   const struct __THE_1_Human_0 *__THE_0_danny_0 = __THE_1_Human_0_alloc(str_alloc("Danny"), __THE_0_ColorSDBlue_0, __THE_0_IncomeTypeSDPassive_0);
   const struct __THE_1_Human_0 *__THE_0_tricia_0 = __THE_1_Human_0_alloc(str_alloc("Tricia"), __THE_0_ColorSDRed_0, __THE_0_IncomeTypeSDActive_0);
-  __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, xalloc(&(struct __THE_1_fn$1002P) {__THE_1_Human_0_copy(__THE_0_danny_0)}, sizeof(struct __THE_1_fn$1002P)));
-  __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, xalloc(&(struct __THE_1_fn$1002P) {__THE_1_Human_0_copy(__THE_0_tricia_0)}, sizeof(struct __THE_1_fn$1002P)));
-  __THE_0_printColor_0.f(__THE_0_printColor_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_danny_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn$1001P)));
-  __THE_0_printColor_0.f(__THE_0_printColor_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_tricia_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn$1001P)));
-  __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_danny_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn$1000P)));
-  __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_tricia_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, xalloc(&(struct __THE_1_fn_sFP3HumanFRvoidFEP) {__THE_1_Human_0_copy(__THE_0_danny_0)}, sizeof(struct __THE_1_fn_sFP3HumanFRvoidFEP)));
+  __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, xalloc(&(struct __THE_1_fn_sFP3HumanFRvoidFEP) {__THE_1_Human_0_copy(__THE_0_tricia_0)}, sizeof(struct __THE_1_fn_sFP3HumanFRvoidFEP)));
+  __THE_0_printColor_0.f(__THE_0_printColor_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_danny_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
+  __THE_0_printColor_0.f(__THE_0_printColor_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_tricia_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
+  __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, xalloc(&(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP) {__THE_0_danny_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP)));
+  __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, xalloc(&(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP) {__THE_0_tricia_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP)));
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_tricia_0);
   __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_danny_0);
 }

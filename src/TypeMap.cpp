@@ -20,21 +20,28 @@
 #include <utility>
 #include "codegen-api.hpp"
 
-std::tuple<std::string, std::string> genFnType (const std::vector<TypeFnParam> &params, Type *returnType, bool async) {
+std::string genFnTypeBodyParamId (const TypeFnParam &param) {
+  if (param.mut && param.required) return "FP5";
+  else if (param.mut && param.variadic) return "FP6";
+  else if (param.mut) return "FP2";
+  else if (param.required) return "FP3";
+  else if (param.variadic) return "FP4";
+  else return "FP1";
+}
+
+std::tuple<std::string, std::string> genFnTypeBody (const std::vector<TypeFnParam> &params, Type *returnType, bool async) {
   auto name = "fn_" + std::string(async ? "a" : "s");
   auto codeName = "@" + name;
 
   for (const auto &param : params) {
     auto paramType = Type::actual(param.type);
 
-    name += paramType->name + "PS";
-    codeName += paramType->codeName + "PS";
+    name += genFnTypeBodyParamId(param) + paramType->name;
+    codeName += genFnTypeBodyParamId(param) + paramType->codeName;
   }
 
-  name = name.substr(0, name.size() - 2) + "PE";
-  codeName = codeName.substr(0, codeName.size() - 2) + "PE";
-  name += returnType->name + "FE";
-  codeName += returnType->codeName + "FE";
+  name += "FR" + returnType->name + "FE";
+  codeName += "FR" + returnType->codeName + "FE";
 
   return std::make_tuple(name, codeName);
 }
@@ -149,7 +156,7 @@ Type *TypeMap::createFn (
   bool async,
   const std::optional<TypeCallInfo> &callInfo
 ) {
-  auto [n, codeName] = genFnType(params, returnType, async);
+  auto [n, codeName] = genFnTypeBody(params, returnType, async);
   auto typeBody = TypeFn{returnType, params, false, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo, async};
   auto newType = Type{n, codeName, typeBody};
 
@@ -195,7 +202,7 @@ Type *TypeMap::createMethod (
   bool async,
   TypeCallInfo callInfo
 ) {
-  auto [n, codeName] = genFnType(params, returnType, async);
+  auto [n, codeName] = genFnTypeBody(params, returnType, async);
   auto typeBody = TypeFn{returnType, params, false, true, std::move(callInfo), async};
   auto newType = Type{n, codeName, typeBody};
 

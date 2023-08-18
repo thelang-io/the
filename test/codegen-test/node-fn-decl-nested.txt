@@ -72,12 +72,12 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRintFE;
 struct __THE_1_mainSDtest4_0X;
 struct __THE_1_mainSDtest4SDtest5_0X;
 struct __THE_1_mainSDtest4SDtest5SDtest6_0X;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRintFE {
   int32_t (*f) (void *);
   void *x;
   size_t l;
@@ -96,16 +96,16 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_fn_sFRintFE_free (struct __THE_1_fn_sFRintFE);
 int32_t __THE_1_test1SDtest2SDtest3_0 (void *);
 int32_t __THE_1_test1SDtest2_0 (void *);
 int32_t __THE_1_test1_0 (void *);
 int32_t __THE_1_mainSDtest4_0 (void *);
 int32_t __THE_1_mainSDtest4SDtest5_0 (void *);
 int32_t __THE_1_mainSDtest4SDtest5SDtest6_0 (void *);
-void __THE_1_mainSDtest4SDtest5SDtest6_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest4SDtest5SDtest6_0X);
-void __THE_1_mainSDtest4SDtest5_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest4SDtest5_0X);
-void __THE_1_mainSDtest4_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest4_0X);
+void __THE_1_mainSDtest4SDtest5SDtest6_0_alloc (struct __THE_1_fn_sFRintFE *, struct __THE_1_mainSDtest4SDtest5SDtest6_0X);
+void __THE_1_mainSDtest4SDtest5_0_alloc (struct __THE_1_fn_sFRintFE *, struct __THE_1_mainSDtest4SDtest5_0X);
+void __THE_1_mainSDtest4_0_alloc (struct __THE_1_fn_sFRintFE *, struct __THE_1_mainSDtest4_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -125,18 +125,18 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFRintFE_free (struct __THE_1_fn_sFRintFE n) {
   if (n.x != NULL) free(n.x);
 }
 int32_t __THE_1_test1SDtest2SDtest3_0 (void *px) {
   return 1;
 }
 int32_t __THE_1_test1SDtest2_0 (void *px) {
-  const struct __THE_1_fn$1000 __THE_0_test1SDtest2SDtest3_0 = (struct __THE_1_fn$1000) {&__THE_1_test1SDtest2SDtest3_0, NULL, 0};
+  const struct __THE_1_fn_sFRintFE __THE_0_test1SDtest2SDtest3_0 = (struct __THE_1_fn_sFRintFE) {&__THE_1_test1SDtest2SDtest3_0, NULL, 0};
   return __THE_0_test1SDtest2SDtest3_0.f(__THE_0_test1SDtest2SDtest3_0.x);
 }
 int32_t __THE_1_test1_0 (void *px) {
-  const struct __THE_1_fn$1000 __THE_0_test1SDtest2_0 = (struct __THE_1_fn$1000) {&__THE_1_test1SDtest2_0, NULL, 0};
+  const struct __THE_1_fn_sFRintFE __THE_0_test1SDtest2_0 = (struct __THE_1_fn_sFRintFE) {&__THE_1_test1SDtest2_0, NULL, 0};
   return __THE_0_test1SDtest2_0.f(__THE_0_test1SDtest2_0.x);
 }
 int32_t __THE_1_mainSDtest4_0 (void *px) {
@@ -144,11 +144,11 @@ int32_t __THE_1_mainSDtest4_0 (void *px) {
   int32_t v;
   struct __THE_1_mainSDtest4_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn$1000 __THE_0_mainSDtest4SDtest5_0;
-  __THE_1_mainSDtest4SDtest5_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4SDtest5_0, (struct __THE_1_mainSDtest4SDtest5_0X) {__THE_0_a_0});
+  const struct __THE_1_fn_sFRintFE __THE_0_mainSDtest4SDtest5_0;
+  __THE_1_mainSDtest4SDtest5_0_alloc((struct __THE_1_fn_sFRintFE *) &__THE_0_mainSDtest4SDtest5_0, (struct __THE_1_mainSDtest4SDtest5_0X) {__THE_0_a_0});
   r = 1;
   v = __THE_0_mainSDtest4SDtest5_0.f(__THE_0_mainSDtest4SDtest5_0.x);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4SDtest5_0);
+  __THE_1_fn_sFRintFE_free((struct __THE_1_fn_sFRintFE) __THE_0_mainSDtest4SDtest5_0);
   return v;
 }
 int32_t __THE_1_mainSDtest4SDtest5_0 (void *px) {
@@ -156,11 +156,11 @@ int32_t __THE_1_mainSDtest4SDtest5_0 (void *px) {
   int32_t v;
   struct __THE_1_mainSDtest4SDtest5_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn$1000 __THE_0_mainSDtest4SDtest5SDtest6_0;
-  __THE_1_mainSDtest4SDtest5SDtest6_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4SDtest5SDtest6_0, (struct __THE_1_mainSDtest4SDtest5SDtest6_0X) {__THE_0_a_0});
+  const struct __THE_1_fn_sFRintFE __THE_0_mainSDtest4SDtest5SDtest6_0;
+  __THE_1_mainSDtest4SDtest5SDtest6_0_alloc((struct __THE_1_fn_sFRintFE *) &__THE_0_mainSDtest4SDtest5SDtest6_0, (struct __THE_1_mainSDtest4SDtest5SDtest6_0X) {__THE_0_a_0});
   r = 1;
   v = __THE_0_mainSDtest4SDtest5SDtest6_0.f(__THE_0_mainSDtest4SDtest5SDtest6_0.x);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4SDtest5SDtest6_0);
+  __THE_1_fn_sFRintFE_free((struct __THE_1_fn_sFRintFE) __THE_0_mainSDtest4SDtest5SDtest6_0);
   return v;
 }
 int32_t __THE_1_mainSDtest4SDtest5SDtest6_0 (void *px) {
@@ -168,7 +168,7 @@ int32_t __THE_1_mainSDtest4SDtest5SDtest6_0 (void *px) {
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
   return *__THE_0_a_0;
 }
-void __THE_1_mainSDtest4SDtest5SDtest6_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSDtest4SDtest5SDtest6_0X x) {
+void __THE_1_mainSDtest4SDtest5SDtest6_0_alloc (struct __THE_1_fn_sFRintFE *n, struct __THE_1_mainSDtest4SDtest5SDtest6_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest4SDtest5SDtest6_0X);
   struct __THE_1_mainSDtest4SDtest5SDtest6_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -176,7 +176,7 @@ void __THE_1_mainSDtest4SDtest5SDtest6_0_alloc (struct __THE_1_fn$1000 *n, struc
   n->x = r;
   n->l = l;
 }
-void __THE_1_mainSDtest4SDtest5_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSDtest4SDtest5_0X x) {
+void __THE_1_mainSDtest4SDtest5_0_alloc (struct __THE_1_fn_sFRintFE *n, struct __THE_1_mainSDtest4SDtest5_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest4SDtest5_0X);
   struct __THE_1_mainSDtest4SDtest5_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -184,7 +184,7 @@ void __THE_1_mainSDtest4SDtest5_0_alloc (struct __THE_1_fn$1000 *n, struct __THE
   n->x = r;
   n->l = l;
 }
-void __THE_1_mainSDtest4_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSDtest4_0X x) {
+void __THE_1_mainSDtest4_0_alloc (struct __THE_1_fn_sFRintFE *n, struct __THE_1_mainSDtest4_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest4_0X);
   struct __THE_1_mainSDtest4_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -194,12 +194,12 @@ void __THE_1_mainSDtest4_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_main
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRintFE __THE_0_test1_0 = (struct __THE_1_fn_sFRintFE) {&__THE_1_test1_0, NULL, 0};
   const int32_t __THE_0_a_0 = __THE_0_test1_0.f(__THE_0_test1_0.x);
-  const struct __THE_1_fn$1000 __THE_0_mainSDtest4_0;
-  __THE_1_mainSDtest4_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest4_0, (struct __THE_1_mainSDtest4_0X) {&__THE_0_a_0});
+  const struct __THE_1_fn_sFRintFE __THE_0_mainSDtest4_0;
+  __THE_1_mainSDtest4_0_alloc((struct __THE_1_fn_sFRintFE *) &__THE_0_mainSDtest4_0, (struct __THE_1_mainSDtest4_0X) {&__THE_0_a_0});
   const int32_t __THE_0_b_0 = __THE_0_mainSDtest4_0.f(__THE_0_mainSDtest4_0.x);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest4_0);
+  __THE_1_fn_sFRintFE_free((struct __THE_1_fn_sFRintFE) __THE_0_mainSDtest4_0);
 }
 ======= flags =======
 ======= stdout =======

@@ -81,19 +81,19 @@ struct str {
 };
 
 struct __THE_1_Test1_0;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1001;
+struct __THE_1_fn_sFRi16FE;
+struct __THE_1_fn_sFRvoidFE;
 struct __THE_1_mainSDtestCtx_0X;
 
 struct __THE_1_Test1_0 {
   const int16_t __THE_0_i;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRi16FE {
   int16_t (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -103,7 +103,7 @@ struct __THE_1_mainSDtestCtx_0X {
   const struct __THE_1_Test1_0 **__THE_0_test1_0;
   const int16_t **__THE_0_refTest_0;
   const int16_t *__THE_0_test_0;
-  const struct __THE_1_fn$1000 *__THE_0_testCall_0;
+  const struct __THE_1_fn_sFRi16FE *__THE_0_testCall_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -116,9 +116,9 @@ void str_free (struct str);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int16_t);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
 int16_t __THE_1_testCall_0 (void *);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
 void __THE_1_mainSDtestCtx_0 (void *);
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSDtestCtx_0X);
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn_sFRvoidFE *, struct __THE_1_mainSDtestCtx_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -164,7 +164,7 @@ void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
 int16_t __THE_1_testCall_0 (void *px) {
   return 1;
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtestCtx_0 (void *px) {
@@ -173,7 +173,7 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   const struct __THE_1_Test1_0 **__THE_0_test1_0 = x->__THE_0_test1_0;
   const int16_t **__THE_0_refTest_0 = x->__THE_0_refTest_0;
   const int16_t *__THE_0_test_0 = x->__THE_0_test_0;
-  const struct __THE_1_fn$1000 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
+  const struct __THE_1_fn_sFRi16FE *__THE_0_testCall_0 = x->__THE_0_testCall_0;
   const struct str __THE_0_v11_0 = i16_str(*__THE_0_test_0);
   const struct str __THE_0_v12_0 = i16_str((*__THE_0_test1_0)->__THE_0_i);
   const struct str __THE_0_v13_0 = i16_str((*__THE_0_test2_0 = 6));
@@ -187,7 +187,7 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   str_free((struct str) __THE_0_v12_0);
   str_free((struct str) __THE_0_v11_0);
 }
-void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSDtestCtx_0X x) {
+void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn_sFRvoidFE *n, struct __THE_1_mainSDtestCtx_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtestCtx_0X);
   struct __THE_1_mainSDtestCtx_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -197,7 +197,7 @@ void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_ma
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_testCall_0 = (struct __THE_1_fn$1000) {&__THE_1_testCall_0, NULL, 0};
+  const struct __THE_1_fn_sFRi16FE __THE_0_testCall_0 = (struct __THE_1_fn_sFRi16FE) {&__THE_1_testCall_0, NULL, 0};
   const int16_t __THE_0_test_0 = 2;
   const int16_t *__THE_0_refTest_0 = &__THE_0_test_0;
   const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(3);
@@ -211,9 +211,9 @@ int main () {
   const struct str __THE_0_v7_0 = i16_str((__THE_0_test_0));
   const struct str __THE_0_v8_0 = i16_str(*__THE_0_refTest_0);
   const struct str __THE_0_v9_0 = i16_str((-__THE_0_test_0));
-  const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
-  __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtestCtx_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_mainSDtestCtx_0;
+  __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn_sFRvoidFE *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_mainSDtestCtx_0);
   str_free((struct str) __THE_0_v9_0);
   str_free((struct str) __THE_0_v8_0);
   str_free((struct str) __THE_0_v7_0);

@@ -101,50 +101,50 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP3i64FRi64FE;
+struct __THE_1_fn_sFP3i64FRi64FEP;
 struct __THE_1_factorial_0X;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
-struct __THE_1_fn$1002;
-struct __THE_1_fn$1002P;
+struct __THE_1_fn_sFP5intFRintFE;
+struct __THE_1_fn_sFP5intFRintFEP;
+struct __THE_1_fn_sFP3intFRintFE;
+struct __THE_1_fn_sFP3intFRintFEP;
 struct __THE_1_test1_0X;
 struct __THE_1_test2_0X;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3i64FRi64FE {
   int64_t (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3i64FRi64FEP {
   int64_t n0;
 };
 struct __THE_1_factorial_0X {
-  const struct __THE_1_fn$1000 *__THE_0_factorial_0;
+  const struct __THE_1_fn_sFP3i64FRi64FE *__THE_0_factorial_0;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFP5intFRintFE {
   int32_t (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_sFP5intFRintFEP {
   int32_t n0;
 };
-struct __THE_1_fn$1002 {
+struct __THE_1_fn_sFP3intFRintFE {
   int32_t (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1002P {
+struct __THE_1_fn_sFP3intFRintFEP {
   int32_t n0;
 };
 struct __THE_1_test1_0X {
-  const struct __THE_1_fn$1002 *__THE_0_test2_0;
-  const struct __THE_1_fn$1001 *__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3intFRintFE *__THE_0_test2_0;
+  const struct __THE_1_fn_sFP5intFRintFE *__THE_0_test1_0;
 };
 struct __THE_1_test2_0X {
-  const struct __THE_1_fn$1002 *__THE_0_test2_0;
-  const struct __THE_1_fn$1001 *__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3intFRintFE *__THE_0_test2_0;
+  const struct __THE_1_fn_sFP5intFRintFE *__THE_0_test1_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -158,15 +158,15 @@ void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 void *xalloc (void *, size_t);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_fn_sFP3i64FRi64FE_free (struct __THE_1_fn_sFP3i64FRi64FE);
 int64_t __THE_1_factorial_0 (void *, void *);
-void __THE_1_factorial_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_factorial_0X);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002);
+void __THE_1_factorial_0_alloc (struct __THE_1_fn_sFP3i64FRi64FE *, struct __THE_1_factorial_0X);
+void __THE_1_fn_sFP5intFRintFE_free (struct __THE_1_fn_sFP5intFRintFE);
+void __THE_1_fn_sFP3intFRintFE_free (struct __THE_1_fn_sFP3intFRintFE);
 int32_t __THE_1_test1_0 (void *, void *);
-void __THE_1_test1_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_test1_0X);
+void __THE_1_test1_0_alloc (struct __THE_1_fn_sFP5intFRintFE *, struct __THE_1_test1_0X);
 int32_t __THE_1_test2_0 (void *, void *);
-void __THE_1_test2_0_alloc (struct __THE_1_fn$1002 *, struct __THE_1_test2_0X);
+void __THE_1_test2_0_alloc (struct __THE_1_fn_sFP3intFRintFE *, struct __THE_1_test2_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -333,20 +333,20 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFP3i64FRi64FE_free (struct __THE_1_fn_sFP3i64FRi64FE n) {
   if (n.x != NULL) free(n.x);
 }
 int64_t __THE_1_factorial_0 (void *px, void *pp) {
   int64_t v;
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3i64FRi64FEP *p = pp;
   struct __THE_1_factorial_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_factorial_0 = x->__THE_0_factorial_0;
+  const struct __THE_1_fn_sFP3i64FRi64FE *__THE_0_factorial_0 = x->__THE_0_factorial_0;
   const int64_t __THE_0_n_0 = p->n0;
-  v = __THE_0_n_0 <= 1 ? 1 : __THE_0_n_0 * (*__THE_0_factorial_0).f((*__THE_0_factorial_0).x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_n_0 - 1}, sizeof(struct __THE_1_fn$1000P)));
+  v = __THE_0_n_0 <= 1 ? 1 : __THE_0_n_0 * (*__THE_0_factorial_0).f((*__THE_0_factorial_0).x, xalloc(&(struct __THE_1_fn_sFP3i64FRi64FEP) {__THE_0_n_0 - 1}, sizeof(struct __THE_1_fn_sFP3i64FRi64FEP)));
   free(pp);
   return v;
 }
-void __THE_1_factorial_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_factorial_0X x) {
+void __THE_1_factorial_0_alloc (struct __THE_1_fn_sFP3i64FRi64FE *n, struct __THE_1_factorial_0X x) {
   size_t l = sizeof(struct __THE_1_factorial_0X);
   struct __THE_1_factorial_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -354,27 +354,27 @@ void __THE_1_factorial_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_factor
   n->x = r;
   n->l = l;
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn_sFP5intFRintFE_free (struct __THE_1_fn_sFP5intFRintFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
+void __THE_1_fn_sFP3intFRintFE_free (struct __THE_1_fn_sFP3intFRintFE n) {
   if (n.x != NULL) free(n.x);
 }
 int32_t __THE_1_test1_0 (void *px, void *pp) {
   unsigned char r = 0;
   int32_t v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP5intFRintFEP *p = pp;
   struct __THE_1_test1_0X *x = px;
-  const struct __THE_1_fn$1002 *__THE_0_test2_0 = x->__THE_0_test2_0;
-  const struct __THE_1_fn$1001 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3intFRintFE *__THE_0_test2_0 = x->__THE_0_test2_0;
+  const struct __THE_1_fn_sFP5intFRintFE *__THE_0_test1_0 = x->__THE_0_test1_0;
   int32_t __THE_0_a_0 = p->n0;
   if (__THE_0_a_0 == 1) {
     r = 1;
-    v = (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0 + 10}, sizeof(struct __THE_1_fn$1001P)));
+    v = (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {__THE_0_a_0 + 10}, sizeof(struct __THE_1_fn_sFP5intFRintFEP)));
     goto L1;
   } else if (__THE_0_a_0 == 10) {
     r = 1;
-    v = (*__THE_0_test2_0).f((*__THE_0_test2_0).x, xalloc(&(struct __THE_1_fn$1002P) {__THE_0_a_0 + 100}, sizeof(struct __THE_1_fn$1002P)));
+    v = (*__THE_0_test2_0).f((*__THE_0_test2_0).x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {__THE_0_a_0 + 100}, sizeof(struct __THE_1_fn_sFP3intFRintFEP)));
     goto L1;
   } else {
     r = 1;
@@ -385,7 +385,7 @@ L1:
   free(pp);
   return v;
 }
-void __THE_1_test1_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_test1_0X x) {
+void __THE_1_test1_0_alloc (struct __THE_1_fn_sFP5intFRintFE *n, struct __THE_1_test1_0X x) {
   size_t l = sizeof(struct __THE_1_test1_0X);
   struct __THE_1_test1_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -396,18 +396,18 @@ void __THE_1_test1_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_test1_0X x
 int32_t __THE_1_test2_0 (void *px, void *pp) {
   unsigned char r = 0;
   int32_t v;
-  struct __THE_1_fn$1002P *p = pp;
+  struct __THE_1_fn_sFP3intFRintFEP *p = pp;
   struct __THE_1_test2_0X *x = px;
-  const struct __THE_1_fn$1002 *__THE_0_test2_0 = x->__THE_0_test2_0;
-  const struct __THE_1_fn$1001 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3intFRintFE *__THE_0_test2_0 = x->__THE_0_test2_0;
+  const struct __THE_1_fn_sFP5intFRintFE *__THE_0_test1_0 = x->__THE_0_test1_0;
   const int32_t __THE_0_a_0 = p->n0;
   if (__THE_0_a_0 == 11) {
     r = 1;
-    v = (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0 - 10}, sizeof(struct __THE_1_fn$1001P)));
+    v = (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {__THE_0_a_0 - 10}, sizeof(struct __THE_1_fn_sFP5intFRintFEP)));
     goto L2;
   } else if (__THE_0_a_0 == 101) {
     r = 1;
-    v = (*__THE_0_test2_0).f((*__THE_0_test2_0).x, xalloc(&(struct __THE_1_fn$1002P) {__THE_0_a_0 - 100}, sizeof(struct __THE_1_fn$1002P)));
+    v = (*__THE_0_test2_0).f((*__THE_0_test2_0).x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {__THE_0_a_0 - 100}, sizeof(struct __THE_1_fn_sFP3intFRintFEP)));
     goto L2;
   } else {
     r = 1;
@@ -418,7 +418,7 @@ L2:
   free(pp);
   return v;
 }
-void __THE_1_test2_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_test2_0X x) {
+void __THE_1_test2_0_alloc (struct __THE_1_fn_sFP3intFRintFE *n, struct __THE_1_test2_0X x) {
   size_t l = sizeof(struct __THE_1_test2_0X);
   struct __THE_1_test2_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -428,42 +428,42 @@ void __THE_1_test2_0_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_test2_0X x
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_factorial_0;
-  const struct __THE_1_fn$1001 __THE_0_test1_0;
-  const struct __THE_1_fn$1002 __THE_0_test2_0;
-  __THE_1_factorial_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_factorial_0, (struct __THE_1_factorial_0X) {&__THE_0_factorial_0});
-  __THE_1_test1_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
-  __THE_1_test2_0_alloc((struct __THE_1_fn$1002 *) &__THE_0_test2_0, (struct __THE_1_test2_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
+  const struct __THE_1_fn_sFP3i64FRi64FE __THE_0_factorial_0;
+  const struct __THE_1_fn_sFP5intFRintFE __THE_0_test1_0;
+  const struct __THE_1_fn_sFP3intFRintFE __THE_0_test2_0;
+  __THE_1_factorial_0_alloc((struct __THE_1_fn_sFP3i64FRi64FE *) &__THE_0_factorial_0, (struct __THE_1_factorial_0X) {&__THE_0_factorial_0});
+  __THE_1_test1_0_alloc((struct __THE_1_fn_sFP5intFRintFE *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
+  __THE_1_test2_0_alloc((struct __THE_1_fn_sFP3intFRintFE *) &__THE_0_test2_0, (struct __THE_1_test2_0X) {&__THE_0_test2_0, &__THE_0_test1_0});
   for (int32_t __THE_0_i_0 = -1; __THE_0_i_0 < 10; __THE_0_i_0++) {
-    print(stdout, "szlz", str_concat_cstr(cstr_concat_str("factorial(", int_str(__THE_0_i_0)), "):"), " ", __THE_0_factorial_0.f(__THE_0_factorial_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_i_0}, sizeof(struct __THE_1_fn$1000P))), THE_EOL);
+    print(stdout, "szlz", str_concat_cstr(cstr_concat_str("factorial(", int_str(__THE_0_i_0)), "):"), " ", __THE_0_factorial_0.f(__THE_0_factorial_0.x, xalloc(&(struct __THE_1_fn_sFP3i64FRi64FEP) {__THE_0_i_0}, sizeof(struct __THE_1_fn_sFP3i64FRi64FEP))), THE_EOL);
   }
-  print(stdout, "zziz", "test1(0):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {0}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(1):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {1}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(2):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {2}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(10):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {10}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(11):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {11}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(12):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {12}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(20):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {20}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(21):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {21}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(22):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {22}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(100):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {100}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(101):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {101}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test1(102):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1001P) {102}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  print(stdout, "zziz", "test2(0):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {0}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(1):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {1}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(2):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {2}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(10):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {10}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(11):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {11}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(12):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {12}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(20):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {20}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(21):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {21}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(22):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {22}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(100):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {100}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(101):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {101}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  print(stdout, "zziz", "test2(102):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1002P) {102}, sizeof(struct __THE_1_fn$1002P))), THE_EOL);
-  __THE_1_fn$1002_free((struct __THE_1_fn$1002) __THE_0_test2_0);
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_test1_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_factorial_0);
+  print(stdout, "zziz", "test1(0):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {0}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(1):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {1}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(2):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {2}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(10):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {10}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(11):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {11}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(12):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {12}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(20):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {20}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(21):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {21}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(22):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {22}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(100):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {100}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(101):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {101}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test1(102):", " ", __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5intFRintFEP) {102}, sizeof(struct __THE_1_fn_sFP5intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(0):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {0}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(1):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {1}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(2):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {2}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(10):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {10}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(11):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {11}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(12):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {12}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(20):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {20}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(21):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {21}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(22):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {22}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(100):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {100}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(101):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {101}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  print(stdout, "zziz", "test2(102):", " ", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFRintFEP) {102}, sizeof(struct __THE_1_fn_sFP3intFRintFEP))), THE_EOL);
+  __THE_1_fn_sFP3intFRintFE_free((struct __THE_1_fn_sFP3intFRintFE) __THE_0_test2_0);
+  __THE_1_fn_sFP5intFRintFE_free((struct __THE_1_fn_sFP5intFRintFE) __THE_0_test1_0);
+  __THE_1_fn_sFP3i64FRi64FE_free((struct __THE_1_fn_sFP3i64FRi64FE) __THE_0_factorial_0);
 }
 ======= flags =======
 ======= stdout =======

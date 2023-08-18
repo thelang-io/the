@@ -302,7 +302,7 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeFn name="fn$1000">
+                <TypeFn name="fn_sFP3intFP3strFRstrFE">
                   <TypeFnParams>
                     <TypeFnParam name="a" required>
                       <BuiltinType name="int" />
@@ -319,7 +319,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="TestFn" codeName="TestFn_0" frame="1">
-                    <TypeFn name="fn$1000">
+                    <TypeFn name="fn_sFP3intFP3strFRstrFE">
                       <TypeFnParams>
                         <TypeFnParam name="a" required>
                           <BuiltinType name="int" />
@@ -347,7 +347,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1000">
+                        <TypeFn name="fn_sFP3intFP3strFRstrFE">
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -364,7 +364,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="TestFn" codeName="TestFn_0" frame="1">
-                            <TypeFn name="fn$1000">
+                            <TypeFn name="fn_sFP3intFP3strFRstrFE">
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -638,7 +638,7 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeFn name="fn$1000">
+                <TypeFn name="fn_sFP3intFP3strFRstrFE">
                   <TypeFnParams>
                     <TypeFnParam name="a" required>
                       <BuiltinType name="int" />
@@ -655,7 +655,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="TestFnLocal" codeName="TestFnLocal_0" frame="1">
-                    <TypeFn name="fn$1000">
+                    <TypeFn name="fn_sFP3intFP3strFRstrFE">
                       <TypeFnParams>
                         <TypeFnParam name="a" required>
                           <BuiltinType name="int" />
@@ -683,7 +683,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1000">
+                        <TypeFn name="fn_sFP3intFP3strFRstrFE">
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -700,7 +700,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="TestFnLocal" codeName="TestFnLocal_0" frame="1">
-                            <TypeFn name="fn$1000">
+                            <TypeFn name="fn_sFP3intFP3strFRstrFE">
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
                                   <BuiltinType name="int" />
@@ -814,7 +814,7 @@ main {
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFP3intFP3strFRstrFE">
                             <TypeFnParams>
                               <TypeFnParam name="a" required>
                                 <BuiltinType name="int" />
@@ -859,7 +859,7 @@ main {
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
-                              <TypeFn name="fn$1000">
+                              <TypeFn name="fn_sFP3intFP3strFRstrFE">
                                 <TypeFnParams>
                                   <TypeFnParam name="a" required>
                                     <BuiltinType name="int" />
@@ -1058,7 +1058,7 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeFn name="fn$1000">
+                <TypeFn name="fn_sFP3intFP3strFRstrFE">
                   <TypeFnParams>
                     <TypeFnParam name="a" required>
                       <BuiltinType name="int" />
@@ -1084,7 +1084,7 @@ main {
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFP3intFP3strFRstrFE">
                             <TypeFnParams>
                               <TypeFnParam name="a" required>
                                 <BuiltinType name="int" />
@@ -1129,7 +1129,7 @@ main {
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
-                              <TypeFn name="fn$1000">
+                              <TypeFn name="fn_sFP3intFP3strFRstrFE">
                                 <TypeFnParams>
                                   <TypeFnParam name="a" required>
                                     <BuiltinType name="int" />
@@ -1180,7 +1180,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1000">
+                        <TypeFn name="fn_sFP3intFP3strFRstrFE">
                           <TypeFnParams>
                             <TypeFnParam name="a" required>
                               <BuiltinType name="int" />
@@ -1206,7 +1206,7 @@ main {
                                   </TypeEnum>
                                 </TypeField>
                                 <TypeField name="TestFn">
-                                  <TypeFn name="fn$1000">
+                                  <TypeFn name="fn_sFP3intFP3strFRstrFE">
                                     <TypeFnParams>
                                       <TypeFnParam name="a" required>
                                         <BuiltinType name="int" />
@@ -1251,7 +1251,7 @@ main {
                                       </TypeEnum>
                                     </TypeField>
                                     <TypeField name="TestFn">
-                                      <TypeFn name="fn$1000">
+                                      <TypeFn name="fn_sFP3intFP3strFRstrFE">
                                         <TypeFnParams>
                                           <TypeFnParam name="a" required>
                                             <BuiltinType name="int" />
@@ -1335,7 +1335,7 @@ main {
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFP3intFP3strFRstrFE">
                             <TypeFnParams>
                               <TypeFnParam name="a" required>
                                 <BuiltinType name="int" />
@@ -1380,7 +1380,7 @@ main {
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
-                              <TypeFn name="fn$1000">
+                              <TypeFn name="fn_sFP3intFP3strFRstrFE">
                                 <TypeFnParams>
                                   <TypeFnParam name="a" required>
                                     <BuiltinType name="int" />
@@ -1438,7 +1438,7 @@ main {
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFP3intFP3strFRstrFE">
                             <TypeFnParams>
                               <TypeFnParam name="a" required>
                                 <BuiltinType name="int" />
@@ -1483,7 +1483,7 @@ main {
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
-                              <TypeFn name="fn$1000">
+                              <TypeFn name="fn_sFP3intFP3strFRstrFE">
                                 <TypeFnParams>
                                   <TypeFnParam name="a" required>
                                     <BuiltinType name="int" />

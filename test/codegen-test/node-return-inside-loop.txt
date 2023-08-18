@@ -77,9 +77,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -256,9 +256,9 @@ void __THE_1_test3_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test3_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test3_0, NULL, 0};
   __THE_0_test1_0.f(__THE_0_test1_0.x);
   __THE_0_test2_0.f(__THE_0_test2_0.x);
   __THE_0_test3_0.f(__THE_0_test3_0.x);

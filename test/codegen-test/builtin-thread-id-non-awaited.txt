@@ -126,9 +126,9 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_aFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
@@ -530,7 +530,7 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
 
 int main () {
   threadpool_t *tp = threadpool_init(5);
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_0, NULL, 0};
   threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
   threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
   threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);

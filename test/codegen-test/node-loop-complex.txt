@@ -110,9 +110,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRintFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRintFE {
   int32_t (*f) (void *);
   void *x;
   size_t l;
@@ -284,7 +284,7 @@ L8:
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn_sFRintFE __THE_0_test_0 = (struct __THE_1_fn_sFRintFE) {&__THE_1_test_0, NULL, 0};
   __THE_0_test_0.f(__THE_0_test_0.x);
 }
 ======= flags =======

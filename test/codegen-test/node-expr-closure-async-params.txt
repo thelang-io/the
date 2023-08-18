@@ -123,45 +123,45 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
-struct __THE_1_fn$1002;
-struct __THE_1_fn$1002P;
-struct __THE_1_fn$1006;
+struct __THE_1_fn_aFP3intFRvoidFE;
+struct __THE_1_fn_aFP3intFRvoidFEP;
+struct __THE_1_fn_aFP3intFP5strFRvoidFE;
+struct __THE_1_fn_aFP3intFP5strFRvoidFEP;
+struct __THE_1_fn_aFP1intFP1opt_strFRvoidFE;
+struct __THE_1_fn_aFP1intFP1opt_strFRvoidFEP;
+struct __THE_1_fn_aFP3intFP4array_intFRvoidFE;
 struct __THE_1_array_int;
-struct __THE_1_fn$1006P;
+struct __THE_1_fn_aFP3intFP4array_intFRvoidFEP;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFP3intFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_aFP3intFRvoidFEP {
   int32_t n0;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_aFP3intFP5strFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_aFP3intFP5strFRvoidFEP {
   int32_t n0;
   struct str n1;
 };
-struct __THE_1_fn$1002 {
+struct __THE_1_fn_aFP1intFP1opt_strFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1002P {
+struct __THE_1_fn_aFP1intFP1opt_strFRvoidFEP {
   unsigned char o0;
   int32_t n0;
   unsigned char o1;
   struct str *n1;
 };
-struct __THE_1_fn$1006 {
+struct __THE_1_fn_aFP3intFP4array_intFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
@@ -170,7 +170,7 @@ struct __THE_1_array_int {
   int32_t *d;
   size_t l;
 };
-struct __THE_1_fn$1006P {
+struct __THE_1_fn_aFP3intFP4array_intFRvoidFEP {
   int32_t n0;
   struct __THE_1_array_int n1;
 };
@@ -439,7 +439,7 @@ void threadpool_mutex_unlock (threadpool_mutex_t *self) {
   #endif
 }
 void __THE_1_mainSD$_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_aFP3intFRvoidFEP *p = pp;
   const int32_t *__THE_0_param1_0 = &p->n0;
   job->init = 1;
   switch (step) {
@@ -452,7 +452,7 @@ void __THE_1_mainSD$_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void 
   }
 }
 void __THE_1_mainSD$_1 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_aFP3intFP5strFRvoidFEP *p = pp;
   const int32_t *__THE_0_param1_0 = &p->n0;
   struct str *__THE_0_param2_0 = &p->n1;
   job->init = 1;
@@ -492,7 +492,7 @@ struct str __THE_1_opt_str_str (struct str *n) {
   return r;
 }
 void __THE_1_mainSD$_2 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_fn$1002P *p = pp;
+  struct __THE_1_fn_aFP1intFP1opt_strFRvoidFEP *p = pp;
   if (job->init == 0 && p->o0 != 1) p->n0 = 10;
   const int32_t *__THE_0_param1_0 = &p->n0;
   if (job->init == 0 && p->o1 != 1) p->n1 = __THE_1_opt_str_alloc(str_alloc("test"));
@@ -527,7 +527,7 @@ struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
   return str_concat_cstr(r, "]");
 }
 void __THE_1_mainSD$_3 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_fn$1006P *p = pp;
+  struct __THE_1_fn_aFP3intFP4array_intFRvoidFEP *p = pp;
   const int32_t *__THE_0_param1_0 = &p->n0;
   const struct __THE_1_array_int *__THE_0_param2_0 = &p->n1;
   job->init = 1;
@@ -543,13 +543,13 @@ void __THE_1_mainSD$_3 (threadpool_t *tp, threadpool_job_t *job, void *px, void 
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_mainSD$_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSD$_0, NULL, 0};
+  const struct __THE_1_fn_aFP3intFRvoidFE __THE_0_mainSD$_0 = (struct __THE_1_fn_aFP3intFRvoidFE) {&__THE_1_mainSD$_0, NULL, 0};
   __THE_0_mainSD$_0;
-  const struct __THE_1_fn$1001 __THE_0_mainSD$_1 = (struct __THE_1_fn$1001) {&__THE_1_mainSD$_1, NULL, 0};
+  const struct __THE_1_fn_aFP3intFP5strFRvoidFE __THE_0_mainSD$_1 = (struct __THE_1_fn_aFP3intFP5strFRvoidFE) {&__THE_1_mainSD$_1, NULL, 0};
   __THE_0_mainSD$_1;
-  const struct __THE_1_fn$1002 __THE_0_mainSD$_2 = (struct __THE_1_fn$1002) {&__THE_1_mainSD$_2, NULL, 0};
+  const struct __THE_1_fn_aFP1intFP1opt_strFRvoidFE __THE_0_mainSD$_2 = (struct __THE_1_fn_aFP1intFP1opt_strFRvoidFE) {&__THE_1_mainSD$_2, NULL, 0};
   __THE_0_mainSD$_2;
-  const struct __THE_1_fn$1006 __THE_0_mainSD$_3 = (struct __THE_1_fn$1006) {&__THE_1_mainSD$_3, NULL, 0};
+  const struct __THE_1_fn_aFP3intFP4array_intFRvoidFE __THE_0_mainSD$_3 = (struct __THE_1_fn_aFP3intFP4array_intFRvoidFE) {&__THE_1_mainSD$_3, NULL, 0};
   __THE_0_mainSD$_3;
 }
 ======= flags =======

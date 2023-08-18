@@ -61,15 +61,15 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP3ColorFRvoidFE;
+struct __THE_1_fn_sFP3ColorFRvoidFEP;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3ColorFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3ColorFRvoidFEP {
   enum __THE_1_Color_0 n0;
 };
 
@@ -99,16 +99,16 @@ void *xalloc (void *n1, size_t n2) {
   return r;
 }
 void __THE_1_testCall_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3ColorFRvoidFEP *p = pp;
   const enum __THE_1_Color_0 __THE_0_t_0 = p->n0;
   free(pp);
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_testCall_0 = (struct __THE_1_fn$1000) {&__THE_1_testCall_0, NULL, 0};
+  const struct __THE_1_fn_sFP3ColorFRvoidFE __THE_0_testCall_0 = (struct __THE_1_fn_sFP3ColorFRvoidFE) {&__THE_1_testCall_0, NULL, 0};
   enum __THE_1_Color_0 __THE_0_test1_0 = __THE_0_ColorSDRed_0;
   __THE_0_test1_0 = __THE_0_ColorSDGreen_0;
-  __THE_0_testCall_0.f(__THE_0_testCall_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_ColorSDGreen_0}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_testCall_0.f(__THE_0_testCall_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_ColorSDGreen_0}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
 }
 ======= flags =======
 ======= stdout =======

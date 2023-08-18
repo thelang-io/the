@@ -78,12 +78,12 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a4" codeName="a4_0" frame="2">
-        <TypeMap name="map_strMSfn$1009ME">
+        <TypeMap name="map_strMSfn_sFRvoidFEME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
           <TypeMapValueType>
-            <TypeFn name="fn$1009">
+            <TypeFn name="fn_sFRvoidFE">
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
@@ -214,17 +214,17 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b4" codeName="b4_0" frame="2">
-        <TypeMap name="map_strMSmap_strMSfn$1009MEME">
+        <TypeMap name="map_strMSmap_strMSfn_sFRvoidFEMEME">
           <TypeMapKeyType>
             <BuiltinType name="str" />
           </TypeMapKeyType>
           <TypeMapValueType>
-            <TypeMap name="map_strMSfn$1009ME">
+            <TypeMap name="map_strMSfn_sFRvoidFEME">
               <TypeMapKeyType>
                 <BuiltinType name="str" />
               </TypeMapKeyType>
               <TypeMapValueType>
-                <TypeFn name="fn$1009">
+                <TypeFn name="fn_sFRvoidFE">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
                   </TypeFnReturnType>

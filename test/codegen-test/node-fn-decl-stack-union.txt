@@ -61,8 +61,8 @@ struct str {
 };
 
 struct __THE_1_union_intUSstrUE;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE;
+struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFEP;
 struct __THE_1_mainSDtest_0X;
 
 struct __THE_1_union_intUSstrUE {
@@ -72,12 +72,12 @@ struct __THE_1_union_intUSstrUE {
     struct str v3;
   };
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFEP {
   struct __THE_1_union_intUSstrUE n0;
 };
 struct __THE_1_mainSDtest_0X {
@@ -96,9 +96,9 @@ struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int, ...);
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_copy (const struct __THE_1_union_intUSstrUE);
 void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE);
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_realloc (struct __THE_1_union_intUSstrUE, struct __THE_1_union_intUSstrUE);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_fn_sFP3union_intUSstrUEFRvoidFE_free (struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE);
 void __THE_1_mainSDtest_0 (void *, void *);
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest_0X);
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE *, struct __THE_1_mainSDtest_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -160,11 +160,11 @@ struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_realloc (struct __THE_1
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) n1);
   return n2;
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFP3union_intUSstrUEFRvoidFE_free (struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtest_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFEP *p = pp;
   struct __THE_1_mainSDtest_0X *x = px;
   struct __THE_1_union_intUSstrUE *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_union_intUSstrUE __THE_0_newA_0 = p->n0;
@@ -172,7 +172,7 @@ void __THE_1_mainSDtest_0 (void *px, void *pp) {
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_newA_0);
   free(pp);
 }
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSDtest_0X x) {
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);
   struct __THE_1_mainSDtest_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -183,10 +183,10 @@ void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainS
 
 int main () {
   struct __THE_1_union_intUSstrUE __THE_0_a_0 = __THE_1_union_intUSstrUE_alloc(TYPE_int, 1);
-  const struct __THE_1_fn$1000 __THE_0_mainSDtest_0;
-  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test2"))}, sizeof(struct __THE_1_fn$1000P)));
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest_0);
+  const struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE __THE_0_mainSDtest_0;
+  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
+  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test2"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFEP)));
+  __THE_1_fn_sFP3union_intUSstrUEFRvoidFE_free((struct __THE_1_fn_sFP3union_intUSstrUEFRvoidFE) __THE_0_mainSDtest_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_a_0);
 }
 ======= flags =======

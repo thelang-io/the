@@ -53,15 +53,15 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP3intFRvoidFE;
+struct __THE_1_fn_sFP3intFRvoidFEP;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3intFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3intFRvoidFEP {
   int32_t n0;
 };
 
@@ -72,9 +72,9 @@ void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000);
+struct __THE_1_fn_sFP3intFRvoidFE __THE_1_fn_sFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFRvoidFE);
+void __THE_1_fn_sFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFRvoidFE);
+struct str __THE_1_fn_sFP3intFRvoidFE_str (struct __THE_1_fn_sFP3intFRvoidFE);
 void __THE_1_test_0 (void *, void *);
 
 void *alloc (size_t n1) {
@@ -215,28 +215,28 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_sFP3intFRvoidFE __THE_1_fn_sFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFP3intFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000 n) {
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) n);
+struct str __THE_1_fn_sFP3intFRvoidFE_str (struct __THE_1_fn_sFP3intFRvoidFE n) {
+  __THE_1_fn_sFP3intFRvoidFE_free((struct __THE_1_fn_sFP3intFRvoidFE) n);
   return str_alloc("[Function]");
 }
 void __THE_1_test_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   free(pp);
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
-  print(stdout, "sz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy((struct __THE_1_fn$1000) __THE_0_test_0)), THE_EOL);
+  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFP3intFRvoidFE) {&__THE_1_test_0, NULL, 0};
+  print(stdout, "sz", __THE_1_fn_sFP3intFRvoidFE_str(__THE_1_fn_sFP3intFRvoidFE_copy((struct __THE_1_fn_sFP3intFRvoidFE) __THE_0_test_0)), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

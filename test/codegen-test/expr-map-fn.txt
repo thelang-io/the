@@ -54,21 +54,21 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_pair_strMSfn$1000ME;
-struct __THE_1_map_strMSfn$1000ME;
+struct __THE_1_fn_sFRvoidFE;
+struct __THE_1_pair_strMSfn_sFRvoidFEME;
+struct __THE_1_map_strMSfn_sFRvoidFEME;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_pair_strMSfn$1000ME {
+struct __THE_1_pair_strMSfn_sFRvoidFEME {
   struct str f;
-  struct __THE_1_fn$1000 s;
+  struct __THE_1_fn_sFRvoidFE s;
 };
-struct __THE_1_map_strMSfn$1000ME {
-  struct __THE_1_pair_strMSfn$1000ME *d;
+struct __THE_1_map_strMSfn_sFRvoidFEME {
+  struct __THE_1_pair_strMSfn_sFRvoidFEME *d;
   size_t c;
   size_t l;
 };
@@ -79,13 +79,13 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
 void __THE_1_test1_0 (void *);
 void __THE_1_test2_0 (void *);
 void __THE_1_test3_0 (void *);
-struct __THE_1_map_strMSfn$1000ME __THE_1_map_strMSfn$1000ME_alloc (int, ...);
-void __THE_1_map_strMSfn$1000ME_free (struct __THE_1_map_strMSfn$1000ME);
+struct __THE_1_map_strMSfn_sFRvoidFEME __THE_1_map_strMSfn_sFRvoidFEME_alloc (int, ...);
+void __THE_1_map_strMSfn_sFRvoidFEME_free (struct __THE_1_map_strMSfn_sFRvoidFEME);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -114,13 +114,13 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_test1_0 (void *px) {
@@ -129,30 +129,30 @@ void __THE_1_test2_0 (void *px) {
 }
 void __THE_1_test3_0 (void *px) {
 }
-struct __THE_1_map_strMSfn$1000ME __THE_1_map_strMSfn$1000ME_alloc (int x, ...) {
-  struct __THE_1_pair_strMSfn$1000ME *d = alloc(x * sizeof(struct __THE_1_pair_strMSfn$1000ME));
+struct __THE_1_map_strMSfn_sFRvoidFEME __THE_1_map_strMSfn_sFRvoidFEME_alloc (int x, ...) {
+  struct __THE_1_pair_strMSfn_sFRvoidFEME *d = alloc(x * sizeof(struct __THE_1_pair_strMSfn_sFRvoidFEME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSfn$1000ME) {va_arg(args, struct str), va_arg(args, struct __THE_1_fn$1000)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSfn_sFRvoidFEME) {va_arg(args, struct str), va_arg(args, struct __THE_1_fn_sFRvoidFE)};
   va_end(args);
-  return (struct __THE_1_map_strMSfn$1000ME) {d, x, x};
+  return (struct __THE_1_map_strMSfn_sFRvoidFEME) {d, x, x};
 }
-void __THE_1_map_strMSfn$1000ME_free (struct __THE_1_map_strMSfn$1000ME n) {
+void __THE_1_map_strMSfn_sFRvoidFEME_free (struct __THE_1_map_strMSfn_sFRvoidFEME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
-    __THE_1_fn$1000_free((struct __THE_1_fn$1000) n.d[i].s);
+    __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n.d[i].s);
   }
   free(n.d);
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
-  const struct __THE_1_map_strMSfn$1000ME __THE_0_a_0 = __THE_1_map_strMSfn$1000ME_alloc(3, str_alloc("key1"), __THE_1_fn$1000_copy(__THE_0_test1_0), str_alloc("key2"), __THE_1_fn$1000_copy(__THE_0_test2_0), str_alloc("key3"), __THE_1_fn$1000_copy(__THE_0_test3_0));
-  const struct __THE_1_map_strMSfn$1000ME __THE_0_b_0 = __THE_1_map_strMSfn$1000ME_alloc(3, str_alloc("key1"), __THE_1_fn$1000_copy(__THE_0_test1_0), str_alloc("key2"), __THE_1_fn$1000_copy(__THE_0_test2_0), str_alloc("key3"), __THE_1_fn$1000_copy(__THE_0_test3_0));
-  __THE_1_map_strMSfn$1000ME_free((struct __THE_1_map_strMSfn$1000ME) __THE_0_b_0);
-  __THE_1_map_strMSfn$1000ME_free((struct __THE_1_map_strMSfn$1000ME) __THE_0_a_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test2_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test3_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test3_0, NULL, 0};
+  const struct __THE_1_map_strMSfn_sFRvoidFEME __THE_0_a_0 = __THE_1_map_strMSfn_sFRvoidFEME_alloc(3, str_alloc("key1"), __THE_1_fn_sFRvoidFE_copy(__THE_0_test1_0), str_alloc("key2"), __THE_1_fn_sFRvoidFE_copy(__THE_0_test2_0), str_alloc("key3"), __THE_1_fn_sFRvoidFE_copy(__THE_0_test3_0));
+  const struct __THE_1_map_strMSfn_sFRvoidFEME __THE_0_b_0 = __THE_1_map_strMSfn_sFRvoidFEME_alloc(3, str_alloc("key1"), __THE_1_fn_sFRvoidFE_copy(__THE_0_test1_0), str_alloc("key2"), __THE_1_fn_sFRvoidFE_copy(__THE_0_test2_0), str_alloc("key3"), __THE_1_fn_sFRvoidFE_copy(__THE_0_test3_0));
+  __THE_1_map_strMSfn_sFRvoidFEME_free((struct __THE_1_map_strMSfn_sFRvoidFEME) __THE_0_b_0);
+  __THE_1_map_strMSfn_sFRvoidFEME_free((struct __THE_1_map_strMSfn_sFRvoidFEME) __THE_0_a_0);
 }
 ======= flags =======
 ======= stdout =======

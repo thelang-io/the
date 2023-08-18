@@ -132,27 +132,27 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
-struct __THE_1_fn$1001;
+struct __THE_1_fn_aFP3strFP3intFRvoidFE;
+struct __THE_1_fn_aFP3strFP3intFRvoidFEP;
+struct __THE_1_fn_aFRvoidFE;
 struct __THE_1_async_mainX;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFP3strFP3intFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_aFP3strFP3intFRvoidFEP {
   struct str n0;
   int32_t n1;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_aFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
 struct __THE_1_async_mainX {
-  const struct __THE_1_fn$1000 *__THE_0_test_0;
+  const struct __THE_1_fn_aFP3strFP3intFRvoidFE *__THE_0_test_0;
   struct str __THE_0_a_0;
   int32_t __THE_0_i_0;
   struct str __THE_0_b_0;
@@ -194,9 +194,9 @@ void threadpool_wait (threadpool_t *);
 void *threadpool_worker (void *);
 void *xalloc (void *, size_t);
 void __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
 void __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_async_main_alloc (struct __THE_1_fn$1001 *, struct __THE_1_async_mainX);
+void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_async_mainX);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -561,7 +561,7 @@ void *xalloc (void *n1, size_t n2) {
   return r;
 }
 void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_aFP3strFP3intFRvoidFEP *p = pp;
   const struct str *__THE_0_prefix_0 = &p->n0;
   const int32_t *__THE_0_i_0 = &p->n1;
   job->init = 1;
@@ -575,12 +575,12 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
     }
   }
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_async_mainX *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_test_0 = x->__THE_0_test_0;
+  const struct __THE_1_fn_aFP3strFP3intFRvoidFE *__THE_0_test_0 = x->__THE_0_test_0;
   struct str *__THE_0_a_0 = &x->__THE_0_a_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_b_0 = &x->__THE_0_b_0;
@@ -600,7 +600,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
       if (!(*__THE_0_i_0 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 9));
       *__THE_0_b_0 = str_alloc("b");
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn$1000P) {str_alloc("outer1"), *__THE_0_i_0}, sizeof(struct __THE_1_fn$1000P)), NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn_aFP3strFP3intFRvoidFEP) {str_alloc("outer1"), *__THE_0_i_0}, sizeof(struct __THE_1_fn_aFP3strFP3intFRvoidFEP)), NULL, job);
     }
     case 2: {
       print(stdout, "z", THE_EOL);
@@ -612,7 +612,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
       if (!(*__THE_0_j_0 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 6));
       *__THE_0_d_0 = str_alloc("d");
       job->step = 4;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn$1000P) {str_alloc(""), *__THE_0_j_0}, sizeof(struct __THE_1_fn$1000P)), NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn_aFP3strFP3intFRvoidFEP) {str_alloc(""), *__THE_0_j_0}, sizeof(struct __THE_1_fn_aFP3strFP3intFRvoidFEP)), NULL, job);
     }
     case 4: {
       *__THE_0_e_0 = str_alloc("e");
@@ -627,7 +627,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
       *__THE_0_f_0 = str_alloc("f");
       print(stdout, "z", THE_EOL);
       job->step = 7;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn$1000P) {str_alloc("outer2"), *__THE_0_i_0}, sizeof(struct __THE_1_fn$1000P)), NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), xalloc(&(struct __THE_1_fn_aFP3strFP3intFRvoidFEP) {str_alloc("outer2"), *__THE_0_i_0}, sizeof(struct __THE_1_fn_aFP3strFP3intFRvoidFEP)), NULL, job);
     }
     case 7: {
       print(stdout, "z", THE_EOL);
@@ -648,7 +648,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     }
   }
 }
-void __THE_1_async_main_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_async_mainX x) {
+void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_async_mainX x) {
   size_t l = sizeof(struct __THE_1_async_mainX);
   struct __THE_1_async_mainX *r = alloc(l);
   memcpy(r, &x, l);
@@ -659,13 +659,13 @@ void __THE_1_async_main_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_async_m
 
 int main () {
   threadpool_t *tp = threadpool_init(5);
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
-  const struct __THE_1_fn$1001 async_main;
-  __THE_1_async_main_alloc((struct __THE_1_fn$1001 *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_0});
+  const struct __THE_1_fn_aFP3strFP3intFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_aFP3strFP3intFRvoidFE) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE async_main;
+  __THE_1_async_main_alloc((struct __THE_1_fn_aFRvoidFE *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_0});
   threadpool_add(tp, async_main.f, xalloc(async_main.x, async_main.l), NULL, NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) async_main);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) async_main);
 }
 ======= flags =======
 U:-pthread

@@ -80,9 +80,9 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_aFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
@@ -140,7 +140,7 @@ void __THE_1_mainSD$_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void 
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_mainSD$_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSD$_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_mainSD$_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_mainSD$_0, NULL, 0};
   __THE_0_mainSD$_0;
 }
 ======= flags =======

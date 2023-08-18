@@ -55,7 +55,7 @@ typedef struct {
 
 struct __THE_1_Item_0;
 struct __THE_1_Items_0;
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRvoidFE;
 
 struct __THE_1_Item_0 {
   void *_;
@@ -63,7 +63,7 @@ struct __THE_1_Item_0 {
 struct __THE_1_Items_0 {
   const struct __THE_1_Item_0 *__THE_0_d;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -120,7 +120,7 @@ void __THE_1_ItemSDtest_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_ItemSDtest_0 = (struct __THE_1_fn$1000) {&__THE_1_ItemSDtest_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_ItemSDtest_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_ItemSDtest_0, NULL, 0};
   const struct __THE_1_Items_0 *__THE_0_items_0 = __THE_1_Items_0_alloc(__THE_1_Item_0_alloc());
   __THE_1_Items_0_free((struct __THE_1_Items_0 *) __THE_0_items_0);
 }

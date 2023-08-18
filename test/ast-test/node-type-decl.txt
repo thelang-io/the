@@ -42,9 +42,7 @@ type Test8 = Test1 | Test2 | Test3 | Test4
 </NodeTypeDecl>
 <NodeTypeDecl>
   <TypeAlias codeName="Test5_0" name="Test5">
-    <TypeAlias codeName="Test1_0" name="Test1">
-      <BuiltinType name="int" />
-    </TypeAlias>
+    <BuiltinType name="int" />
   </TypeAlias>
 </NodeTypeDecl>
 <NodeTypeDecl>

@@ -63,16 +63,16 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP3TestFRvoidFE;
+struct __THE_1_fn_sFP3TestFRvoidFEP;
 struct __THE_1_mainSDtest_0X;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3TestFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3TestFRvoidFEP {
   enum __THE_1_Test_0 n0;
 };
 struct __THE_1_mainSDtest_0X {
@@ -84,9 +84,9 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void *xalloc (void *, size_t);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_fn_sFP3TestFRvoidFE_free (struct __THE_1_fn_sFP3TestFRvoidFE);
 void __THE_1_mainSDtest_0 (void *, void *);
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSDtest_0X);
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn_sFP3TestFRvoidFE *, struct __THE_1_mainSDtest_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -112,18 +112,18 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFP3TestFRvoidFE_free (struct __THE_1_fn_sFP3TestFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_mainSDtest_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3TestFRvoidFEP *p = pp;
   struct __THE_1_mainSDtest_0X *x = px;
   enum __THE_1_Test_0 *__THE_0_a_0 = x->__THE_0_a_0;
   const enum __THE_1_Test_0 __THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = __THE_0_newA_0;
   free(pp);
 }
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSDtest_0X x) {
+void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn_sFP3TestFRvoidFE *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);
   struct __THE_1_mainSDtest_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -134,10 +134,10 @@ void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainS
 
 int main () {
   enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
-  const struct __THE_1_fn$1000 __THE_0_mainSDtest_0;
-  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_0_TestSDGreen_0}, sizeof(struct __THE_1_fn$1000P)));
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_mainSDtest_0);
+  const struct __THE_1_fn_sFP3TestFRvoidFE __THE_0_mainSDtest_0;
+  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn_sFP3TestFRvoidFE *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
+  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn_sFP3TestFRvoidFEP) {__THE_0_TestSDGreen_0}, sizeof(struct __THE_1_fn_sFP3TestFRvoidFEP)));
+  __THE_1_fn_sFP3TestFRvoidFE_free((struct __THE_1_fn_sFP3TestFRvoidFE) __THE_0_mainSDtest_0);
 }
 ======= flags =======
 ======= stdout =======

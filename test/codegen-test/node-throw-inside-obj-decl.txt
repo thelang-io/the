@@ -67,26 +67,26 @@ struct str {
 };
 
 struct error_Error;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFRvoidFE;
+struct __THE_1_fn_sFRvoidFEP;
 struct __THE_1_Test_0;
 
 struct error_Error {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFRvoidFEP {
   err_state_t *err_state;
   int line;
   int col;
 };
 struct __THE_1_Test_0 {
-  const struct __THE_1_fn$1000 __THE_0_test;
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -110,9 +110,9 @@ void str_free (struct str);
 void *xalloc (void *, size_t);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn$1000);
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_sFRvoidFE);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 void __THE_1_t1_0 (void *, void *);
 
@@ -359,27 +359,27 @@ void error_Error_free (struct error_Error *n) {
   str_free((struct str) n->__THE_0_stack);
   free(n);
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn$1000 __THE_0_test) {
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_sFRvoidFE __THE_0_test) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_test};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) n->__THE_0_test);
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n->__THE_0_test);
   free(n);
 }
 void __THE_1_t1_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "t1", p->line, p->col);
   error_assign(fn_err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 6, 3);
@@ -392,12 +392,12 @@ L1:
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn$1000 __THE_0_t1_0 = (struct __THE_1_fn$1000) {&__THE_1_t1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_t1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_t1_0, NULL, 0};
   switch (setjmp(error_buf_increase(&err_state)->buf)) {
     case 0: {
-      const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(__THE_1_fn$1000_copy(__THE_0_t1_0));
+      const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_t1_0));
       if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L2;
-      __THE_0_test_0->__THE_0_test.f(__THE_0_test_0->__THE_0_test.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 12, 5}, sizeof(struct __THE_1_fn$1000P)));
+      __THE_0_test_0->__THE_0_test.f(__THE_0_test_0->__THE_0_test.x, xalloc(&(struct __THE_1_fn_sFRvoidFEP) {&err_state, 12, 5}, sizeof(struct __THE_1_fn_sFRvoidFEP)));
 L2:
       error_buf_decrease(&err_state);
       __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);

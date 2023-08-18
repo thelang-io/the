@@ -119,9 +119,9 @@ typedef struct threadpool_thread {
 } threadpool_thread_t;
 
 struct __THE_1_array_str;
-struct __THE_1_fn$1002;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1001;
+struct __THE_1_fn_aFRvoidFE;
+struct __THE_1_fn_aFRstrFE;
+struct __THE_1_fn_aFRarray_strFE;
 struct __THE_1_async_mainX;
 struct __THE_1_mainSD$_0X;
 struct __THE_1_mainSD$_1X;
@@ -130,28 +130,28 @@ struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_fn$1002 {
+struct __THE_1_fn_aFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFRstrFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_aFRarray_strFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
 struct __THE_1_async_mainX {
-  struct __THE_1_fn$1000 __THE_0_a_0;
-  struct __THE_1_fn$1001 __THE_0_b_0;
+  struct __THE_1_fn_aFRstrFE __THE_0_a_0;
+  struct __THE_1_fn_aFRarray_strFE __THE_0_b_0;
   struct str t1;
   struct __THE_1_array_str t2;
-  struct __THE_1_fn$1000 __THE_0_mainSD$_0;
-  struct __THE_1_fn$1001 __THE_0_mainSD$_1;
+  struct __THE_1_fn_aFRstrFE __THE_0_mainSD$_0;
+  struct __THE_1_fn_aFRarray_strFE __THE_0_mainSD$_1;
 };
 struct __THE_1_mainSD$_0X {
   unsigned char r;
@@ -194,17 +194,17 @@ void *xalloc (void *, size_t);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
+struct __THE_1_fn_aFRstrFE __THE_1_fn_aFRstrFE_copy (const struct __THE_1_fn_aFRstrFE);
+void __THE_1_fn_aFRstrFE_free (struct __THE_1_fn_aFRstrFE);
+struct __THE_1_fn_aFRarray_strFE __THE_1_fn_aFRarray_strFE_copy (const struct __THE_1_fn_aFRarray_strFE);
+void __THE_1_fn_aFRarray_strFE_free (struct __THE_1_fn_aFRarray_strFE);
 void __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_mainSD$_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_mainSD$_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_mainSD$_0X);
+void __THE_1_mainSD$_0_alloc (struct __THE_1_fn_aFRstrFE *, struct __THE_1_mainSD$_0X);
 void __THE_1_mainSD$_1 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_mainSD$_1_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSD$_1X);
-void __THE_1_async_main_alloc (struct __THE_1_fn$1002 *, struct __THE_1_async_mainX);
+void __THE_1_mainSD$_1_alloc (struct __THE_1_fn_aFRarray_strFE *, struct __THE_1_mainSD$_1X);
+void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_async_mainX);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -625,42 +625,42 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return str_concat_cstr(r, "]");
 }
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_aFRstrFE __THE_1_fn_aFRstrFE_copy (const struct __THE_1_fn_aFRstrFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_aFRstrFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_aFRstrFE_free (struct __THE_1_fn_aFRstrFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {
+struct __THE_1_fn_aFRarray_strFE __THE_1_fn_aFRarray_strFE_copy (const struct __THE_1_fn_aFRarray_strFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1001) {n.f, x, n.l};
+  return (struct __THE_1_fn_aFRarray_strFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn_aFRarray_strFE_free (struct __THE_1_fn_aFRarray_strFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_async_mainX *x = px;
-  struct __THE_1_fn$1000 *__THE_0_a_0 = &x->__THE_0_a_0;
-  struct __THE_1_fn$1001 *__THE_0_b_0 = &x->__THE_0_b_0;
+  struct __THE_1_fn_aFRstrFE *__THE_0_a_0 = &x->__THE_0_a_0;
+  struct __THE_1_fn_aFRarray_strFE *__THE_0_b_0 = &x->__THE_0_b_0;
   struct str *t1 = &x->t1;
   struct __THE_1_array_str *t2 = &x->t2;
-  struct __THE_1_fn$1000 *__THE_0_mainSD$_0 = &x->__THE_0_mainSD$_0;
-  struct __THE_1_fn$1001 *__THE_0_mainSD$_1 = &x->__THE_0_mainSD$_1;
+  struct __THE_1_fn_aFRstrFE *__THE_0_mainSD$_0 = &x->__THE_0_mainSD$_0;
+  struct __THE_1_fn_aFRarray_strFE *__THE_0_mainSD$_1 = &x->__THE_0_mainSD$_1;
   job->init = 1;
   switch (step) {
     case 0: {
-      __THE_1_mainSD$_0_alloc((struct __THE_1_fn$1000 *) __THE_0_mainSD$_0, (struct __THE_1_mainSD$_0X) {});
-      *__THE_0_a_0 = __THE_1_fn$1000_copy(*__THE_0_mainSD$_0);
-      __THE_1_mainSD$_1_alloc((struct __THE_1_fn$1001 *) __THE_0_mainSD$_1, (struct __THE_1_mainSD$_1X) {});
-      *__THE_0_b_0 = __THE_1_fn$1001_copy(*__THE_0_mainSD$_1);
+      __THE_1_mainSD$_0_alloc((struct __THE_1_fn_aFRstrFE *) __THE_0_mainSD$_0, (struct __THE_1_mainSD$_0X) {});
+      *__THE_0_a_0 = __THE_1_fn_aFRstrFE_copy(*__THE_0_mainSD$_0);
+      __THE_1_mainSD$_1_alloc((struct __THE_1_fn_aFRarray_strFE *) __THE_0_mainSD$_1, (struct __THE_1_mainSD$_1X) {});
+      *__THE_0_b_0 = __THE_1_fn_aFRarray_strFE_copy(*__THE_0_mainSD$_1);
       job->step = 1;
       return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, t1, job);
     }
@@ -671,10 +671,10 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     }
     case 2: {
       print(stdout, "sz", __THE_1_array_str_str(*t2), THE_EOL);
-      __THE_1_fn$1001_free((struct __THE_1_fn$1001) *__THE_0_b_0);
-      __THE_1_fn$1001_free((struct __THE_1_fn$1001) *__THE_0_mainSD$_1);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_a_0);
-      __THE_1_fn$1000_free((struct __THE_1_fn$1000) *__THE_0_mainSD$_0);
+      __THE_1_fn_aFRarray_strFE_free((struct __THE_1_fn_aFRarray_strFE) *__THE_0_b_0);
+      __THE_1_fn_aFRarray_strFE_free((struct __THE_1_fn_aFRarray_strFE) *__THE_0_mainSD$_1);
+      __THE_1_fn_aFRstrFE_free((struct __THE_1_fn_aFRstrFE) *__THE_0_a_0);
+      __THE_1_fn_aFRstrFE_free((struct __THE_1_fn_aFRstrFE) *__THE_0_mainSD$_0);
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
       threadpool_job_deinit(job);
     }
@@ -698,7 +698,7 @@ void __THE_1_mainSD$_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void 
     }
   }
 }
-void __THE_1_mainSD$_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_mainSD$_0X x) {
+void __THE_1_mainSD$_0_alloc (struct __THE_1_fn_aFRstrFE *n, struct __THE_1_mainSD$_0X x) {
   size_t l = sizeof(struct __THE_1_mainSD$_0X);
   struct __THE_1_mainSD$_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -724,7 +724,7 @@ void __THE_1_mainSD$_1 (threadpool_t *tp, threadpool_job_t *job, void *px, void 
     }
   }
 }
-void __THE_1_mainSD$_1_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSD$_1X x) {
+void __THE_1_mainSD$_1_alloc (struct __THE_1_fn_aFRarray_strFE *n, struct __THE_1_mainSD$_1X x) {
   size_t l = sizeof(struct __THE_1_mainSD$_1X);
   struct __THE_1_mainSD$_1X *r = alloc(l);
   memcpy(r, &x, l);
@@ -732,7 +732,7 @@ void __THE_1_mainSD$_1_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSD$_
   n->x = r;
   n->l = l;
 }
-void __THE_1_async_main_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_async_mainX x) {
+void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_async_mainX x) {
   size_t l = sizeof(struct __THE_1_async_mainX);
   struct __THE_1_async_mainX *r = alloc(l);
   memcpy(r, &x, l);
@@ -743,12 +743,12 @@ void __THE_1_async_main_alloc (struct __THE_1_fn$1002 *n, struct __THE_1_async_m
 
 int main () {
   threadpool_t *tp = threadpool_init(5);
-  const struct __THE_1_fn$1002 async_main;
-  __THE_1_async_main_alloc((struct __THE_1_fn$1002 *) &async_main, (struct __THE_1_async_mainX) {});
+  const struct __THE_1_fn_aFRvoidFE async_main;
+  __THE_1_async_main_alloc((struct __THE_1_fn_aFRvoidFE *) &async_main, (struct __THE_1_async_mainX) {});
   threadpool_add(tp, async_main.f, xalloc(async_main.x, async_main.l), NULL, NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);
-  __THE_1_fn$1002_free((struct __THE_1_fn$1002) async_main);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) async_main);
 }
 ======= flags =======
 U:-pthread

@@ -227,7 +227,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="x" codeName="x_0" frame="2">
-        <TypeFn name="fn$1003">
+        <TypeFn name="fn_sFRopt_voidFE">
           <TypeFnReturnType>
             <TypeOptional name="opt_void">
               <BuiltinType name="void" />
@@ -240,8 +240,8 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="y" codeName="y_0" frame="2">
-        <TypeOptional name="opt_fn$1004">
-          <TypeFn name="fn$1004">
+        <TypeOptional name="opt_fn_sFRvoidFE">
+          <TypeFn name="fn_sFRvoidFE">
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>

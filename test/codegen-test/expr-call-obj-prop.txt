@@ -103,55 +103,55 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRvoidFE;
 struct __THE_1_A_0;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
+struct __THE_1_fn_sFP3intFRvoidFE;
+struct __THE_1_fn_sFP3intFRvoidFEP;
 struct __THE_1_Test_0;
 struct __THE_1_Test1_0;
-struct __THE_1_fn$1002;
-struct __THE_1_fn$1002P;
+struct __THE_1_fn_sFP3intFP3intFRvoidFE;
+struct __THE_1_fn_sFP3intFP3intFRvoidFEP;
 struct __THE_1_Test2_0;
 struct __THE_1_B_0;
 struct __THE_1_C_0;
 struct __THE_1_D_0;
-struct __THE_1_fn$1003;
-struct __THE_1_fn$1003P;
+struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE;
+struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFEP;
 struct __THE_1_E_0;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
 };
 struct __THE_1_A_0 {
-  const struct __THE_1_fn$1000 __THE_0_b;
+  const struct __THE_1_fn_sFRvoidFE __THE_0_b;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFP3intFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_sFP3intFRvoidFEP {
   int32_t n0;
 };
 struct __THE_1_Test_0 {
-  const struct __THE_1_fn$1001 __THE_0_game;
+  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_game;
 };
 struct __THE_1_Test1_0 {
   const struct __THE_1_Test2_0 *__THE_0_test2;
 };
-struct __THE_1_fn$1002 {
+struct __THE_1_fn_sFP3intFP3intFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1002P {
+struct __THE_1_fn_sFP3intFP3intFRvoidFEP {
   int32_t n0;
   int32_t n1;
 };
 struct __THE_1_Test2_0 {
-  const struct __THE_1_fn$1002 __THE_0_test3;
+  const struct __THE_1_fn_sFP3intFP3intFRvoidFE __THE_0_test3;
 };
 struct __THE_1_B_0 {
   const struct __THE_1_C_0 *__THE_0_c;
@@ -162,18 +162,18 @@ struct __THE_1_C_0 {
 struct __THE_1_D_0 {
   const struct __THE_1_E_0 *__THE_0_e;
 };
-struct __THE_1_fn$1003 {
+struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1003P {
+struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFEP {
   int32_t n0;
   int32_t n1;
   int32_t n2;
 };
 struct __THE_1_E_0 {
-  const struct __THE_1_fn$1003 __THE_0_f;
+  const struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE __THE_0_f;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -181,19 +181,19 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void *xalloc (void *, size_t);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-struct __THE_1_A_0 *__THE_1_A_0_alloc (struct __THE_1_fn$1000);
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
+struct __THE_1_A_0 *__THE_1_A_0_alloc (struct __THE_1_fn_sFRvoidFE);
 void __THE_1_A_0_free (struct __THE_1_A_0 *);
-struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn$1001);
+struct __THE_1_fn_sFP3intFRvoidFE __THE_1_fn_sFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFRvoidFE);
+void __THE_1_fn_sFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFRvoidFE);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_sFP3intFRvoidFE);
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *);
 void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-struct __THE_1_fn$1002 __THE_1_fn$1002_copy (const struct __THE_1_fn$1002);
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_fn$1002);
+struct __THE_1_fn_sFP3intFP3intFRvoidFE __THE_1_fn_sFP3intFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFP3intFRvoidFE);
+void __THE_1_fn_sFP3intFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFP3intFRvoidFE);
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_fn_sFP3intFP3intFRvoidFE);
 void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
 struct __THE_1_B_0 *__THE_1_B_0_alloc (struct __THE_1_C_0 *);
 void __THE_1_B_0_free (struct __THE_1_B_0 *);
@@ -201,9 +201,9 @@ struct __THE_1_C_0 *__THE_1_C_0_alloc (struct __THE_1_D_0 *);
 void __THE_1_C_0_free (struct __THE_1_C_0 *);
 struct __THE_1_D_0 *__THE_1_D_0_alloc (struct __THE_1_E_0 *);
 void __THE_1_D_0_free (struct __THE_1_D_0 *);
-struct __THE_1_fn$1003 __THE_1_fn$1003_copy (const struct __THE_1_fn$1003);
-void __THE_1_fn$1003_free (struct __THE_1_fn$1003);
-struct __THE_1_E_0 *__THE_1_E_0_alloc (struct __THE_1_fn$1003);
+struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE __THE_1_fn_sFP3intFP3intFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE);
+void __THE_1_fn_sFP3intFP3intFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE);
+struct __THE_1_E_0 *__THE_1_E_0_alloc (struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE);
 void __THE_1_E_0_free (struct __THE_1_E_0 *);
 void __THE_1_job1_0 (void *);
 void __THE_1_job2_0 (void *, void *);
@@ -234,42 +234,42 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_A_0 *__THE_1_A_0_alloc (struct __THE_1_fn$1000 __THE_0_b) {
+struct __THE_1_A_0 *__THE_1_A_0_alloc (struct __THE_1_fn_sFRvoidFE __THE_0_b) {
   struct __THE_1_A_0 *r = alloc(sizeof(struct __THE_1_A_0));
   struct __THE_1_A_0 s = {__THE_0_b};
   memcpy(r, &s, sizeof(struct __THE_1_A_0));
   return r;
 }
 void __THE_1_A_0_free (struct __THE_1_A_0 *n) {
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) n->__THE_0_b);
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n->__THE_0_b);
   free(n);
 }
-struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {
+struct __THE_1_fn_sFP3intFRvoidFE __THE_1_fn_sFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1001) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFP3intFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn_sFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn$1001 __THE_0_game) {
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_sFP3intFRvoidFE __THE_0_game) {
   struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
   struct __THE_1_Test_0 s = {__THE_0_game};
   memcpy(r, &s, sizeof(struct __THE_1_Test_0));
   return r;
 }
 void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) n->__THE_0_game);
+  __THE_1_fn_sFP3intFRvoidFE_free((struct __THE_1_fn_sFP3intFRvoidFE) n->__THE_0_game);
   free(n);
 }
 struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (struct __THE_1_Test2_0 *__THE_0_test2) {
@@ -282,23 +282,23 @@ void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
   __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) n->__THE_0_test2);
   free(n);
 }
-struct __THE_1_fn$1002 __THE_1_fn$1002_copy (const struct __THE_1_fn$1002 n) {
+struct __THE_1_fn_sFP3intFP3intFRvoidFE __THE_1_fn_sFP3intFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFP3intFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1002) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFP3intFP3intFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1002_free (struct __THE_1_fn$1002 n) {
+void __THE_1_fn_sFP3intFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFP3intFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_fn$1002 __THE_0_test3) {
+struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_fn_sFP3intFP3intFRvoidFE __THE_0_test3) {
   struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
   struct __THE_1_Test2_0 s = {__THE_0_test3};
   memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
   return r;
 }
 void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
-  __THE_1_fn$1002_free((struct __THE_1_fn$1002) n->__THE_0_test3);
+  __THE_1_fn_sFP3intFP3intFRvoidFE_free((struct __THE_1_fn_sFP3intFP3intFRvoidFE) n->__THE_0_test3);
   free(n);
 }
 struct __THE_1_B_0 *__THE_1_B_0_alloc (struct __THE_1_C_0 *__THE_0_c) {
@@ -331,40 +331,40 @@ void __THE_1_D_0_free (struct __THE_1_D_0 *n) {
   __THE_1_E_0_free((struct __THE_1_E_0 *) n->__THE_0_e);
   free(n);
 }
-struct __THE_1_fn$1003 __THE_1_fn$1003_copy (const struct __THE_1_fn$1003 n) {
+struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE __THE_1_fn_sFP3intFP3intFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1003) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
+void __THE_1_fn_sFP3intFP3intFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_E_0 *__THE_1_E_0_alloc (struct __THE_1_fn$1003 __THE_0_f) {
+struct __THE_1_E_0 *__THE_1_E_0_alloc (struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE __THE_0_f) {
   struct __THE_1_E_0 *r = alloc(sizeof(struct __THE_1_E_0));
   struct __THE_1_E_0 s = {__THE_0_f};
   memcpy(r, &s, sizeof(struct __THE_1_E_0));
   return r;
 }
 void __THE_1_E_0_free (struct __THE_1_E_0 *n) {
-  __THE_1_fn$1003_free((struct __THE_1_fn$1003) n->__THE_0_f);
+  __THE_1_fn_sFP3intFP3intFP3intFRvoidFE_free((struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE) n->__THE_0_f);
   free(n);
 }
 void __THE_1_job1_0 (void *px) {
 }
 void __THE_1_job2_0 (void *px, void *pp) {
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_n_0 = p->n0;
   free(pp);
 }
 void __THE_1_job3_0 (void *px, void *pp) {
-  struct __THE_1_fn$1002P *p = pp;
+  struct __THE_1_fn_sFP3intFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_x_0 = p->n0;
   const int32_t __THE_0_y_0 = p->n1;
   free(pp);
 }
 void __THE_1_job4_0 (void *px, void *pp) {
-  struct __THE_1_fn$1003P *p = pp;
+  struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_x_0 = p->n0;
   const int32_t __THE_0_y_0 = p->n1;
   const int32_t __THE_0_z_0 = p->n2;
@@ -372,18 +372,18 @@ void __THE_1_job4_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_job1_0 = (struct __THE_1_fn$1000) {&__THE_1_job1_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_job2_0 = (struct __THE_1_fn$1001) {&__THE_1_job2_0, NULL, 0};
-  const struct __THE_1_fn$1002 __THE_0_job3_0 = (struct __THE_1_fn$1002) {&__THE_1_job3_0, NULL, 0};
-  const struct __THE_1_fn$1003 __THE_0_job4_0 = (struct __THE_1_fn$1003) {&__THE_1_job4_0, NULL, 0};
-  const struct __THE_1_A_0 *__THE_0_a_0 = __THE_1_A_0_alloc(__THE_1_fn$1000_copy(__THE_0_job1_0));
+  const struct __THE_1_fn_sFRvoidFE __THE_0_job1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_job1_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_job2_0 = (struct __THE_1_fn_sFP3intFRvoidFE) {&__THE_1_job2_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFRvoidFE __THE_0_job3_0 = (struct __THE_1_fn_sFP3intFP3intFRvoidFE) {&__THE_1_job3_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE __THE_0_job4_0 = (struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFE) {&__THE_1_job4_0, NULL, 0};
+  const struct __THE_1_A_0 *__THE_0_a_0 = __THE_1_A_0_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_job1_0));
   __THE_0_a_0->__THE_0_b.f(__THE_0_a_0->__THE_0_b.x);
-  const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(__THE_1_fn$1001_copy(__THE_0_job2_0));
-  __THE_0_test_0->__THE_0_game.f(__THE_0_test_0->__THE_0_game.x, xalloc(&(struct __THE_1_fn$1001P) {3}, sizeof(struct __THE_1_fn$1001P)));
-  const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_1_Test2_0_alloc(__THE_1_fn$1002_copy(__THE_0_job3_0)));
-  __THE_0_test1_0->__THE_0_test2->__THE_0_test3.f(__THE_0_test1_0->__THE_0_test2->__THE_0_test3.x, xalloc(&(struct __THE_1_fn$1002P) {5, 6}, sizeof(struct __THE_1_fn$1002P)));
-  const struct __THE_1_B_0 *__THE_0_b_0 = __THE_1_B_0_alloc(__THE_1_C_0_alloc(__THE_1_D_0_alloc(__THE_1_E_0_alloc(__THE_1_fn$1003_copy(__THE_0_job4_0)))));
-  __THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.f(__THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.x, xalloc(&(struct __THE_1_fn$1003P) {7, 8, 9}, sizeof(struct __THE_1_fn$1003P)));
+  const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc(__THE_1_fn_sFP3intFRvoidFE_copy(__THE_0_job2_0));
+  __THE_0_test_0->__THE_0_game.f(__THE_0_test_0->__THE_0_game.x, xalloc(&(struct __THE_1_fn_sFP3intFRvoidFEP) {3}, sizeof(struct __THE_1_fn_sFP3intFRvoidFEP)));
+  const struct __THE_1_Test1_0 *__THE_0_test1_0 = __THE_1_Test1_0_alloc(__THE_1_Test2_0_alloc(__THE_1_fn_sFP3intFP3intFRvoidFE_copy(__THE_0_job3_0)));
+  __THE_0_test1_0->__THE_0_test2->__THE_0_test3.f(__THE_0_test1_0->__THE_0_test2->__THE_0_test3.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRvoidFEP) {5, 6}, sizeof(struct __THE_1_fn_sFP3intFP3intFRvoidFEP)));
+  const struct __THE_1_B_0 *__THE_0_b_0 = __THE_1_B_0_alloc(__THE_1_C_0_alloc(__THE_1_D_0_alloc(__THE_1_E_0_alloc(__THE_1_fn_sFP3intFP3intFP3intFRvoidFE_copy(__THE_0_job4_0)))));
+  __THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.f(__THE_0_b_0->__THE_0_c->__THE_0_d->__THE_0_e->__THE_0_f.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFEP) {7, 8, 9}, sizeof(struct __THE_1_fn_sFP3intFP3intFP3intFRvoidFEP)));
   __THE_1_B_0_free((struct __THE_1_B_0 *) __THE_0_b_0);
   __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_test1_0);
   __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);

@@ -43,7 +43,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job1" codeName="job1_0" frame="1">
-      <TypeFn name="fn$1000">
+      <TypeFn name="fn_sFP3ref_intFRref_intFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <TypeRef name="ref_int">
@@ -74,7 +74,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job2" codeName="job2_0" frame="1">
-      <TypeFn name="fn$1001">
+      <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <TypeRef name="ref_int">
@@ -123,7 +123,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job3" codeName="job3_0" frame="1">
-      <TypeFn name="fn$1002">
+      <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <TypeRef name="ref_int">
@@ -131,8 +131,8 @@ main {
             </TypeRef>
           </TypeFnParam>
           <TypeFnParam name="b" required>
-            <TypeRef name="ref_fn$1000">
-              <TypeFn name="fn$1000">
+            <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+              <TypeFn name="fn_sFP3ref_intFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -170,8 +170,8 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="b" codeName="b_0" frame="2">
-          <TypeRef name="ref_fn$1000">
-            <TypeFn name="fn$1000">
+          <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+            <TypeFn name="fn_sFP3ref_intFRref_intFE">
               <TypeFnParams>
                 <TypeFnParam required>
                   <TypeRef name="ref_int">
@@ -269,7 +269,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="c" codeName="c_0" mut frame="2">
-        <TypeFn name="fn$1000">
+        <TypeFn name="fn_sFP3ref_intFRref_intFE">
           <TypeFnParams>
             <TypeFnParam required>
               <TypeRef name="ref_int">
@@ -289,7 +289,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="d" codeName="d_0" mut frame="2">
-        <TypeFn name="fn$1001">
+        <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
           <TypeFnParams>
             <TypeFnParam required>
               <TypeRef name="ref_int">
@@ -318,7 +318,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="e" codeName="e_0" mut frame="2">
-        <TypeFn name="fn$1002">
+        <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
           <TypeFnParams>
             <TypeFnParam required>
               <TypeRef name="ref_int">
@@ -326,8 +326,8 @@ main {
               </TypeRef>
             </TypeFnParam>
             <TypeFnParam required>
-              <TypeRef name="ref_fn$1000">
-                <TypeFn name="fn$1000">
+              <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                <TypeFn name="fn_sFP3ref_intFRref_intFE">
                   <TypeFnParams>
                     <TypeFnParam required>
                       <TypeRef name="ref_int">
@@ -355,7 +355,7 @@ main {
   </NodeVarDecl>
   <NodeExpr>
     <NodeExprType>
-      <TypeFn name="fn$1000">
+      <TypeFn name="fn_sFP3ref_intFRref_intFE">
         <TypeFnParams>
           <TypeFnParam required>
             <TypeRef name="ref_int">
@@ -375,7 +375,7 @@ main {
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3ref_intFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -393,7 +393,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="c" codeName="c_0" mut frame="2">
-                  <TypeFn name="fn$1000">
+                  <TypeFn name="fn_sFP3ref_intFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -415,7 +415,7 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3ref_intFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -433,7 +433,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job1" codeName="job1_0" frame="1">
-                  <TypeFn name="fn$1000">
+                  <TypeFn name="fn_sFP3ref_intFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -457,7 +457,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeFn name="fn$1001">
+      <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
         <TypeFnParams>
           <TypeFnParam required>
             <TypeRef name="ref_int">
@@ -486,7 +486,7 @@ main {
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -513,7 +513,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="d" codeName="d_0" mut frame="2">
-                  <TypeFn name="fn$1001">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -544,7 +544,7 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -571,7 +571,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job2" codeName="job2_0" frame="1">
-                  <TypeFn name="fn$1001">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -604,7 +604,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeFn name="fn$1002">
+      <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
         <TypeFnParams>
           <TypeFnParam required>
             <TypeRef name="ref_int">
@@ -612,8 +612,8 @@ main {
             </TypeRef>
           </TypeFnParam>
           <TypeFnParam required>
-            <TypeRef name="ref_fn$1000">
-              <TypeFn name="fn$1000">
+            <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+              <TypeFn name="fn_sFP3ref_intFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -642,7 +642,7 @@ main {
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1002">
+              <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -650,8 +650,8 @@ main {
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam required>
-                    <TypeRef name="ref_fn$1000">
-                      <TypeFn name="fn$1000">
+                    <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                      <TypeFn name="fn_sFP3ref_intFRref_intFE">
                         <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef name="ref_int">
@@ -678,7 +678,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="e" codeName="e_0" mut frame="2">
-                  <TypeFn name="fn$1002">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -686,8 +686,8 @@ main {
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam required>
-                        <TypeRef name="ref_fn$1000">
-                          <TypeFn name="fn$1000">
+                        <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                          <TypeFn name="fn_sFP3ref_intFRref_intFE">
                             <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef name="ref_int">
@@ -718,7 +718,7 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1002">
+              <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -726,8 +726,8 @@ main {
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam name="b" required>
-                    <TypeRef name="ref_fn$1000">
-                      <TypeFn name="fn$1000">
+                    <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                      <TypeFn name="fn_sFP3ref_intFRref_intFE">
                         <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef name="ref_int">
@@ -754,7 +754,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job3" codeName="job3_0" frame="1">
-                  <TypeFn name="fn$1002">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -762,8 +762,8 @@ main {
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam name="b" required>
-                        <TypeRef name="ref_fn$1000">
-                          <TypeFn name="fn$1000">
+                        <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                          <TypeFn name="fn_sFP3ref_intFRref_intFE">
                             <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef name="ref_int">
@@ -805,7 +805,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3ref_intFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -823,7 +823,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="c" codeName="c_0" mut frame="2">
-                  <TypeFn name="fn$1000">
+                  <TypeFn name="fn_sFP3ref_intFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -883,7 +883,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3ref_intFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -901,7 +901,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job1" codeName="job1_0" frame="1">
-                  <TypeFn name="fn$1000">
+                  <TypeFn name="fn_sFP3ref_intFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -965,7 +965,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -992,7 +992,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="d" codeName="d_0" mut frame="2">
-                  <TypeFn name="fn$1001">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -1090,7 +1090,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -1117,7 +1117,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job2" codeName="job2_0" frame="1">
-                  <TypeFn name="fn$1001">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -1211,7 +1211,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1002">
+              <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -1219,8 +1219,8 @@ main {
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam required>
-                    <TypeRef name="ref_fn$1000">
-                      <TypeFn name="fn$1000">
+                    <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                      <TypeFn name="fn_sFP3ref_intFRref_intFE">
                         <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef name="ref_int">
@@ -1247,7 +1247,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="e" codeName="e_0" mut frame="2">
-                  <TypeFn name="fn$1002">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -1255,8 +1255,8 @@ main {
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam required>
-                        <TypeRef name="ref_fn$1000">
-                          <TypeFn name="fn$1000">
+                        <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                          <TypeFn name="fn_sFP3ref_intFRref_intFE">
                             <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef name="ref_int">
@@ -1313,8 +1313,8 @@ main {
           <ExprCallArg>
             <NodeExpr>
               <NodeExprType>
-                <TypeRef name="ref_fn$1000">
-                  <TypeFn name="fn$1000">
+                <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                  <TypeFn name="fn_sFP3ref_intFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -1334,7 +1334,7 @@ main {
                 <ExprRef>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeFn name="fn$1000">
+                      <TypeFn name="fn_sFP3ref_intFRref_intFE">
                         <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef name="ref_int">
@@ -1352,7 +1352,7 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="c" codeName="c_0" mut frame="2">
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFP3ref_intFRref_intFE">
                             <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef name="ref_int">
@@ -1389,7 +1389,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1002">
+              <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -1397,8 +1397,8 @@ main {
                     </TypeRef>
                   </TypeFnParam>
                   <TypeFnParam name="b" required>
-                    <TypeRef name="ref_fn$1000">
-                      <TypeFn name="fn$1000">
+                    <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                      <TypeFn name="fn_sFP3ref_intFRref_intFE">
                         <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef name="ref_int">
@@ -1425,7 +1425,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job3" codeName="job3_0" frame="1">
-                  <TypeFn name="fn$1002">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_fn_sFP3ref_intFRref_intFEFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -1433,8 +1433,8 @@ main {
                         </TypeRef>
                       </TypeFnParam>
                       <TypeFnParam name="b" required>
-                        <TypeRef name="ref_fn$1000">
-                          <TypeFn name="fn$1000">
+                        <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                          <TypeFn name="fn_sFP3ref_intFRref_intFE">
                             <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef name="ref_int">
@@ -1491,8 +1491,8 @@ main {
           <ExprCallArg id="b">
             <NodeExpr>
               <NodeExprType>
-                <TypeRef name="ref_fn$1000">
-                  <TypeFn name="fn$1000">
+                <TypeRef name="ref_fn_sFP3ref_intFRref_intFE">
+                  <TypeFn name="fn_sFP3ref_intFRref_intFE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -1512,7 +1512,7 @@ main {
                 <ExprRef>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeFn name="fn$1000">
+                      <TypeFn name="fn_sFP3ref_intFRref_intFE">
                         <TypeFnParams>
                           <TypeFnParam required>
                             <TypeRef name="ref_int">
@@ -1530,7 +1530,7 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="c" codeName="c_0" mut frame="2">
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFP3ref_intFRref_intFE">
                             <TypeFnParams>
                               <TypeFnParam required>
                                 <TypeRef name="ref_int">

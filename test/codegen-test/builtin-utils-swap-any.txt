@@ -81,17 +81,17 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP3strFP3anyFRvoidFE;
+struct __THE_1_fn_sFP3strFP3anyFRvoidFEP;
 struct __THE_1_any_int;
 struct __THE_1_any_str;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3strFP3anyFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3strFP3anyFRvoidFEP {
   struct str n0;
   struct any n1;
 };
@@ -322,7 +322,7 @@ void __THE_1_any_str_free (struct any _n) {
   free(n);
 }
 void __THE_1_printAny_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3strFP3anyFRvoidFEP *p = pp;
   const struct str __THE_0_prefix_0 = p->n0;
   const struct any __THE_0_v_0 = p->n1;
   if (__THE_0_v_0.t == TYPE_int) {
@@ -337,17 +337,17 @@ void __THE_1_printAny_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_printAny_0 = (struct __THE_1_fn$1000) {&__THE_1_printAny_0, NULL, 0};
+  const struct __THE_1_fn_sFP3strFP3anyFRvoidFE __THE_0_printAny_0 = (struct __THE_1_fn_sFP3strFP3anyFRvoidFE) {&__THE_1_printAny_0, NULL, 0};
   struct any __THE_0_a_0 = __THE_1_any_int_alloc(1);
   struct any __THE_0_b_0 = __THE_1_any_str_alloc(str_alloc("test"));
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)}, sizeof(struct __THE_1_fn$1000P)));
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP) {str_alloc("a"), any_copy(__THE_0_a_0)}, sizeof(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP)));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP) {str_alloc("b"), any_copy(__THE_0_b_0)}, sizeof(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP)));
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any));
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)}, sizeof(struct __THE_1_fn$1000P)));
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP) {str_alloc("a"), any_copy(__THE_0_a_0)}, sizeof(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP)));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP) {str_alloc("b"), any_copy(__THE_0_b_0)}, sizeof(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP)));
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct any));
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn$1000P) {str_alloc("a"), any_copy(__THE_0_a_0)}, sizeof(struct __THE_1_fn$1000P)));
-  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn$1000P) {str_alloc("b"), any_copy(__THE_0_b_0)}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP) {str_alloc("a"), any_copy(__THE_0_a_0)}, sizeof(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP)));
+  __THE_0_printAny_0.f(__THE_0_printAny_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP) {str_alloc("b"), any_copy(__THE_0_b_0)}, sizeof(struct __THE_1_fn_sFP3strFP3anyFRvoidFEP)));
   any_free((struct any) __THE_0_b_0);
   any_free((struct any) __THE_0_a_0);
 }

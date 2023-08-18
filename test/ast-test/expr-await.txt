@@ -15,7 +15,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$1000" async>
+      <TypeFn name="fn_aFRvoidFE" async>
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -26,7 +26,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$1001" async>
+      <TypeFn name="fn_aFRintFE" async>
         <TypeFnReturnType>
           <BuiltinType name="int" />
         </TypeFnReturnType>
@@ -62,7 +62,7 @@ main {
               <ExprCallCallee>
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeFn name="fn$1000" async>
+                    <TypeFn name="fn_aFRvoidFE" async>
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
                       </TypeFnReturnType>
@@ -71,7 +71,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test1" codeName="test1_0" frame="1">
-                        <TypeFn name="fn$1000" async>
+                        <TypeFn name="fn_aFRvoidFE" async>
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
                           </TypeFnReturnType>
@@ -109,7 +109,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1001" async>
+                        <TypeFn name="fn_aFRintFE" async>
                           <TypeFnReturnType>
                             <BuiltinType name="int" />
                           </TypeFnReturnType>
@@ -118,7 +118,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="1">
-                            <TypeFn name="fn$1001" async>
+                            <TypeFn name="fn_aFRintFE" async>
                               <TypeFnReturnType>
                                 <BuiltinType name="int" />
                               </TypeFnReturnType>
@@ -158,7 +158,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1001" async>
+                        <TypeFn name="fn_aFRintFE" async>
                           <TypeFnReturnType>
                             <BuiltinType name="int" />
                           </TypeFnReturnType>
@@ -167,7 +167,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" frame="1">
-                            <TypeFn name="fn$1001" async>
+                            <TypeFn name="fn_aFRintFE" async>
                               <TypeFnReturnType>
                                 <BuiltinType name="int" />
                               </TypeFnReturnType>

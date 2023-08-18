@@ -277,13 +277,13 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ao" codeName="ao_0" frame="2">
-        <TypeUnion name="union_fn$1009USfn$1010UE">
-          <TypeFn name="fn$1009">
+        <TypeUnion name="union_fn_sFRstrFEUSfn_sFRintFEUE">
+          <TypeFn name="fn_sFRstrFE">
             <TypeFnReturnType>
               <BuiltinType name="str" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1010">
+          <TypeFn name="fn_sFRintFE">
             <TypeFnReturnType>
               <BuiltinType name="int" />
             </TypeFnReturnType>
@@ -295,11 +295,11 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ap" codeName="ap_0" frame="2">
-        <TypeFn name="fn$1011">
+        <TypeFn name="fn_sFRunion_strUSfn_sFRintFEUEFE">
           <TypeFnReturnType>
-            <TypeUnion name="union_strUSfn$1010UE">
+            <TypeUnion name="union_strUSfn_sFRintFEUE">
               <BuiltinType name="str" />
-              <TypeFn name="fn$1010">
+              <TypeFn name="fn_sFRintFE">
                 <TypeFnReturnType>
                   <BuiltinType name="int" />
                 </TypeFnReturnType>
@@ -313,18 +313,18 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="aq" codeName="aq_0" frame="2">
-        <TypeUnion name="union_fn$1009USfn$1010USfn$1012UE">
-          <TypeFn name="fn$1009">
+        <TypeUnion name="union_fn_sFRstrFEUSfn_sFRintFEUSfn_sFRcharFEUE">
+          <TypeFn name="fn_sFRstrFE">
             <TypeFnReturnType>
               <BuiltinType name="str" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1010">
+          <TypeFn name="fn_sFRintFE">
             <TypeFnReturnType>
               <BuiltinType name="int" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1012">
+          <TypeFn name="fn_sFRcharFE">
             <TypeFnReturnType>
               <BuiltinType name="char" />
             </TypeFnReturnType>
@@ -336,15 +336,15 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="ar" codeName="ar_0" frame="2">
-        <TypeFn name="fn$1014">
+        <TypeFn name="fn_sFRunion_strUSfn_sFRunion_intUSfn_sFRcharFEUEFEUEFE">
           <TypeFnReturnType>
-            <TypeUnion name="union_strUSfn$1013UE">
+            <TypeUnion name="union_strUSfn_sFRunion_intUSfn_sFRcharFEUEFEUE">
               <BuiltinType name="str" />
-              <TypeFn name="fn$1013">
+              <TypeFn name="fn_sFRunion_intUSfn_sFRcharFEUEFE">
                 <TypeFnReturnType>
-                  <TypeUnion name="union_intUSfn$1012UE">
+                  <TypeUnion name="union_intUSfn_sFRcharFEUE">
                     <BuiltinType name="int" />
-                    <TypeFn name="fn$1012">
+                    <TypeFn name="fn_sFRcharFE">
                       <TypeFnReturnType>
                         <BuiltinType name="char" />
                       </TypeFnReturnType>
@@ -361,23 +361,23 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="as2" codeName="as2_0" frame="2">
-        <TypeUnion name="union_fn$1009USfn$1010USfn$1012USfn$1015UE">
-          <TypeFn name="fn$1009">
+        <TypeUnion name="union_fn_sFRstrFEUSfn_sFRintFEUSfn_sFRcharFEUSfn_sFRboolFEUE">
+          <TypeFn name="fn_sFRstrFE">
             <TypeFnReturnType>
               <BuiltinType name="str" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1010">
+          <TypeFn name="fn_sFRintFE">
             <TypeFnReturnType>
               <BuiltinType name="int" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1012">
+          <TypeFn name="fn_sFRcharFE">
             <TypeFnReturnType>
               <BuiltinType name="char" />
             </TypeFnReturnType>
           </TypeFn>
-          <TypeFn name="fn$1015">
+          <TypeFn name="fn_sFRboolFE">
             <TypeFnReturnType>
               <BuiltinType name="bool" />
             </TypeFnReturnType>
@@ -389,19 +389,19 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="at" codeName="at_0" frame="2">
-        <TypeFn name="fn$1018">
+        <TypeFn name="fn_sFRunion_strUSfn_sFRunion_intUSfn_sFRunion_charUSfn_sFRboolFEUEFEUEFEUEFE">
           <TypeFnReturnType>
-            <TypeUnion name="union_strUSfn$1017UE">
+            <TypeUnion name="union_strUSfn_sFRunion_intUSfn_sFRunion_charUSfn_sFRboolFEUEFEUEFEUE">
               <BuiltinType name="str" />
-              <TypeFn name="fn$1017">
+              <TypeFn name="fn_sFRunion_intUSfn_sFRunion_charUSfn_sFRboolFEUEFEUEFE">
                 <TypeFnReturnType>
-                  <TypeUnion name="union_intUSfn$1016UE">
+                  <TypeUnion name="union_intUSfn_sFRunion_charUSfn_sFRboolFEUEFEUE">
                     <BuiltinType name="int" />
-                    <TypeFn name="fn$1016">
+                    <TypeFn name="fn_sFRunion_charUSfn_sFRboolFEUEFE">
                       <TypeFnReturnType>
-                        <TypeUnion name="union_charUSfn$1015UE">
+                        <TypeUnion name="union_charUSfn_sFRboolFEUE">
                           <BuiltinType name="char" />
-                          <TypeFn name="fn$1015">
+                          <TypeFn name="fn_sFRboolFE">
                             <TypeFnReturnType>
                               <BuiltinType name="bool" />
                             </TypeFnReturnType>

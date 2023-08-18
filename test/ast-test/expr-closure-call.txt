@@ -34,7 +34,7 @@ main {
         <ExprCallCallee>
           <NodeExpr parenthesized>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam name="v" required>
                     <BuiltinType name="int" />
@@ -49,7 +49,7 @@ main {
               <ExprClosure>
                 <ExprClosureVar>
                   <Var name="$" codeName="mainSD$_0" frame="3">
-                    <TypeFn name="fn$1000">
+                    <TypeFn name="fn_sFP3intFRvoidFE">
                       <TypeFnParams>
                         <TypeFnParam name="v" required>
                           <BuiltinType name="int" />

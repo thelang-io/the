@@ -8,9 +8,9 @@ main {
 ======= code =======
 #include <stddef.h>
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -22,7 +22,7 @@ void __THE_1_test_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_0, NULL, 0};
   __THE_0_test_0.f(__THE_0_test_0.x);
 }
 ======= flags =======

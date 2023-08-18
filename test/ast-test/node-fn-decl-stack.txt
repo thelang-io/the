@@ -30,7 +30,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job" codeName="job_0" frame="1">
-      <TypeFn name="fn$1000">
+      <TypeFn name="fn_sFRintFE">
         <TypeFnReturnType>
           <BuiltinType name="int" />
         </TypeFnReturnType>
@@ -105,7 +105,7 @@ main {
   <NodeFnDecl>
     <NodeFnDeclVar>
       <Var name="test" codeName="mainSDtest_0" frame="2">
-        <TypeFn name="fn$1000">
+        <TypeFn name="fn_sFRintFE">
           <TypeFnReturnType>
             <BuiltinType name="int" />
           </TypeFnReturnType>
@@ -120,7 +120,7 @@ main {
         <BuiltinType name="int" />
       </Var>
       <Var name="job" codeName="job_0" frame="1">
-        <TypeFn name="fn$1000">
+        <TypeFn name="fn_sFRintFE">
           <TypeFnReturnType>
             <BuiltinType name="int" />
           </TypeFnReturnType>
@@ -244,7 +244,7 @@ main {
                               <ExprCallCallee>
                                 <NodeExpr>
                                   <NodeExprType>
-                                    <TypeFn name="fn$1000">
+                                    <TypeFn name="fn_sFRintFE">
                                       <TypeFnReturnType>
                                         <BuiltinType name="int" />
                                       </TypeFnReturnType>
@@ -253,7 +253,7 @@ main {
                                   <NodeExprBody>
                                     <ExprAccess>
                                       <Var name="job" codeName="job_0" frame="1">
-                                        <TypeFn name="fn$1000">
+                                        <TypeFn name="fn_sFRintFE">
                                           <TypeFnReturnType>
                                             <BuiltinType name="int" />
                                           </TypeFnReturnType>
@@ -330,7 +330,7 @@ main {
                 <ExprCallCallee>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeFn name="fn$1000">
+                      <TypeFn name="fn_sFRintFE">
                         <TypeFnReturnType>
                           <BuiltinType name="int" />
                         </TypeFnReturnType>
@@ -339,7 +339,7 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test" codeName="mainSDtest_0" frame="2">
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFRintFE">
                             <TypeFnReturnType>
                               <BuiltinType name="int" />
                             </TypeFnReturnType>

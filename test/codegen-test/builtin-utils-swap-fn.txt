@@ -61,9 +61,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -77,9 +77,9 @@ void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 void utils_swap (void *, void *, size_t);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000);
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
+struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE);
 void __THE_1_test1_0 (void *);
 void __THE_1_test2_0 (void *);
 
@@ -228,17 +228,17 @@ void utils_swap (void *a, void *b, size_t l) {
   memcpy(b, t, l);
   free(t);
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct str __THE_1_fn$1000_str (struct __THE_1_fn$1000 n) {
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) n);
+struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE n) {
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n);
   return str_alloc("[Function]");
 }
 void __THE_1_test1_0 (void *px) {
@@ -249,23 +249,23 @@ void __THE_1_test2_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
-  struct __THE_1_fn$1000 __THE_0_a_0 = __THE_1_fn$1000_copy(__THE_0_test1_0);
-  struct __THE_1_fn$1000 __THE_0_b_0 = __THE_1_fn$1000_copy(__THE_0_test2_0);
-  print(stdout, "szsz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_a_0)), " ", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_b_0)), THE_EOL);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test2_0, NULL, 0};
+  struct __THE_1_fn_sFRvoidFE __THE_0_a_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test1_0);
+  struct __THE_1_fn_sFRvoidFE __THE_0_b_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test2_0);
+  print(stdout, "szsz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_a_0)), " ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_b_0)), THE_EOL);
   __THE_0_a_0.f(__THE_0_a_0.x);
   __THE_0_b_0.f(__THE_0_b_0.x);
-  utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct __THE_1_fn$1000));
-  print(stdout, "szsz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_a_0)), " ", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_b_0)), THE_EOL);
+  utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct __THE_1_fn_sFRvoidFE));
+  print(stdout, "szsz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_a_0)), " ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_b_0)), THE_EOL);
   __THE_0_a_0.f(__THE_0_a_0.x);
   __THE_0_b_0.f(__THE_0_b_0.x);
-  utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct __THE_1_fn$1000));
-  print(stdout, "szsz", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_a_0)), " ", __THE_1_fn$1000_str(__THE_1_fn$1000_copy(__THE_0_b_0)), THE_EOL);
+  utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(struct __THE_1_fn_sFRvoidFE));
+  print(stdout, "szsz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_a_0)), " ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_b_0)), THE_EOL);
   __THE_0_a_0.f(__THE_0_a_0.x);
   __THE_0_b_0.f(__THE_0_b_0.x);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_b_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_b_0);
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_a_0);
 }
 ======= flags =======
 ======= stdout =======

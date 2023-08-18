@@ -180,11 +180,11 @@ struct __THE_1_array_request_Header;
 struct request_Response;
 struct url_URL;
 struct __THE_1_array_str;
-struct __THE_1_fn$0;
-struct __THE_1_fn$0P;
+struct __THE_1_fn_sFP3strFRboolFE;
+struct __THE_1_fn_sFP3strFRboolFEP;
 struct __THE_1_ignoredHeadersIncludes_0X;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE;
+struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP;
 struct __THE_1_requestWithPrint_0X;
 
 struct error_Error {
@@ -222,12 +222,12 @@ struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_fn$0 {
+struct __THE_1_fn_sFP3strFRboolFE {
   bool (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$0P {
+struct __THE_1_fn_sFP3strFRboolFEP {
   err_state_t *err_state;
   int line;
   int col;
@@ -236,12 +236,12 @@ struct __THE_1_fn$0P {
 struct __THE_1_ignoredHeadersIncludes_0X {
   const struct __THE_1_array_str *__THE_0_IGNORED_HEADERS_0;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP {
   err_state_t *err_state;
   int line;
   int col;
@@ -252,7 +252,7 @@ struct __THE_1_fn$1000P {
   struct __THE_1_array_request_Header n3;
 };
 struct __THE_1_requestWithPrint_0X {
-  const struct __THE_1_fn$0 *__THE_0_ignoredHeadersIncludes_0;
+  const struct __THE_1_fn_sFP3strFRboolFE *__THE_0_ignoredHeadersIncludes_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -311,13 +311,13 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct str *__THE_1_array_str_at (err_state_t *, int, int, struct __THE_1_array_str, int32_t);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
-void __THE_1_fn$0_free (struct __THE_1_fn$0);
+void __THE_1_fn_sFP3strFRboolFE_free (struct __THE_1_fn_sFP3strFRboolFE);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 bool __THE_1_ignoredHeadersIncludes_0 (void *, void *);
-void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *, struct __THE_1_ignoredHeadersIncludes_0X);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
+void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn_sFP3strFRboolFE *, struct __THE_1_ignoredHeadersIncludes_0X);
+void __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE_free (struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE);
 void __THE_1_requestWithPrint_0 (void *, void *);
-void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_requestWithPrint_0X);
+void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE *, struct __THE_1_requestWithPrint_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -1238,7 +1238,7 @@ void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
-void __THE_1_fn$0_free (struct __THE_1_fn$0 n) {
+void __THE_1_fn_sFP3strFRboolFE_free (struct __THE_1_fn_sFP3strFRboolFE n) {
   if (n.x != NULL) free(n.x);
 }
 size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
@@ -1249,7 +1249,7 @@ size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
 bool __THE_1_ignoredHeadersIncludes_0 (void *px, void *pp) {
   unsigned char r = 0;
   bool v;
-  struct __THE_1_fn$0P *p = pp;
+  struct __THE_1_fn_sFP3strFRboolFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "ignoredHeadersIncludes", p->line, p->col);
   struct __THE_1_ignoredHeadersIncludes_0X *x = px;
@@ -1270,7 +1270,7 @@ L1:
   if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   return v;
 }
-void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *n, struct __THE_1_ignoredHeadersIncludes_0X x) {
+void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn_sFP3strFRboolFE *n, struct __THE_1_ignoredHeadersIncludes_0X x) {
   size_t l = sizeof(struct __THE_1_ignoredHeadersIncludes_0X);
   struct __THE_1_ignoredHeadersIncludes_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -1278,15 +1278,15 @@ void __THE_1_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn$0 *n, struct __TH
   n->x = r;
   n->l = l;
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE_free (struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_requestWithPrint_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "requestWithPrint", p->line, p->col);
   struct __THE_1_requestWithPrint_0X *x = px;
-  const struct __THE_1_fn$0 *__THE_0_ignoredHeadersIncludes_0 = x->__THE_0_ignoredHeadersIncludes_0;
+  const struct __THE_1_fn_sFP3strFRboolFE *__THE_0_ignoredHeadersIncludes_0 = x->__THE_0_ignoredHeadersIncludes_0;
   const struct str __THE_0_method_0 = p->n0;
   const struct str __THE_0_url_0 = p->n1;
   const struct buffer __THE_0_data_0 = p->n2;
@@ -1303,7 +1303,7 @@ void __THE_1_requestWithPrint_0 (void *px, void *pp) {
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
     if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L6;
     const struct request_Header **__THE_0_header_0 = __THE_1_array_request_Header_at(fn_err_state, 27, 15, __THE_0_res_0->__THE_0_headers, __THE_0_i_0);
-    if (!(*__THE_0_ignoredHeadersIncludes_0).f((*__THE_0_ignoredHeadersIncludes_0).x, xalloc(&(struct __THE_1_fn$0P) {fn_err_state, 29, 9, str_copy((*__THE_0_header_0)->__THE_0_name)}, sizeof(struct __THE_1_fn$0P)))) {
+    if (!(*__THE_0_ignoredHeadersIncludes_0).f((*__THE_0_ignoredHeadersIncludes_0).x, xalloc(&(struct __THE_1_fn_sFP3strFRboolFEP) {fn_err_state, 29, 9, str_copy((*__THE_0_header_0)->__THE_0_name)}, sizeof(struct __THE_1_fn_sFP3strFRboolFEP)))) {
       if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L7;
       __THE_1_array_request_Header_push(&__THE_0_actualHeaders_0, __THE_1_array_request_Header_alloc(1, request_Header_copy(*__THE_0_header_0)));
 L7:
@@ -1349,7 +1349,7 @@ L2:
   error_stack_pop(fn_err_state);
   if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
-void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_requestWithPrint_0X x) {
+void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE *n, struct __THE_1_requestWithPrint_0X x) {
   size_t l = sizeof(struct __THE_1_requestWithPrint_0X);
   struct __THE_1_requestWithPrint_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -1361,36 +1361,36 @@ void __THE_1_requestWithPrint_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
   const struct __THE_1_array_str __THE_0_IGNORED_HEADERS_0 = __THE_1_array_str_alloc(5, str_alloc("date"), str_alloc("connection"), str_alloc("keep-alive"), str_alloc("content-length"), str_alloc("server"));
-  const struct __THE_1_fn$0 __THE_0_ignoredHeadersIncludes_0;
-  const struct __THE_1_fn$1000 __THE_0_requestWithPrint_0;
-  __THE_1_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn$0 *) &__THE_0_ignoredHeadersIncludes_0, (struct __THE_1_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
-  __THE_1_requestWithPrint_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_requestWithPrint_0, (struct __THE_1_requestWithPrint_0X) {&__THE_0_ignoredHeadersIncludes_0});
+  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_ignoredHeadersIncludes_0;
+  const struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE __THE_0_requestWithPrint_0;
+  __THE_1_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn_sFP3strFRboolFE *) &__THE_0_ignoredHeadersIncludes_0, (struct __THE_1_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
+  __THE_1_requestWithPrint_0_alloc((struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE *) &__THE_0_requestWithPrint_0, (struct __THE_1_requestWithPrint_0X) {&__THE_0_ignoredHeadersIncludes_0});
   if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L10;
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 47, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 47, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 55, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 55, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 63, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 63, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 71, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 71, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 79, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 79, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 87, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_requestWithPrint_0.f(__THE_0_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 87, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
 L10:
   error_buf_decrease(&err_state);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_requestWithPrint_0);
-  __THE_1_fn$0_free((struct __THE_1_fn$0) __THE_0_ignoredHeadersIncludes_0);
+  __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE_free((struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE) __THE_0_requestWithPrint_0);
+  __THE_1_fn_sFP3strFRboolFE_free((struct __THE_1_fn_sFP3strFRboolFE) __THE_0_ignoredHeadersIncludes_0);
   __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_IGNORED_HEADERS_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {

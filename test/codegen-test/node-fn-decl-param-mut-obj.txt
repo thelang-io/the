@@ -60,28 +60,28 @@ typedef struct {
 } err_state_t;
 
 struct __THE_1_Test_0;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
+struct __THE_1_fn_sFP5TestFRTestFE;
+struct __THE_1_fn_sFP5TestFRTestFEP;
+struct __THE_1_fn_sFP5TestFP2TestFRTestFE;
+struct __THE_1_fn_sFP5TestFP2TestFRTestFEP;
 
 struct __THE_1_Test_0 {
   int32_t __THE_0_v;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP5TestFRTestFE {
   struct __THE_1_Test_0 *(*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP5TestFRTestFEP {
   struct __THE_1_Test_0 *n0;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFP5TestFP2TestFRTestFE {
   struct __THE_1_Test_0 *(*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_sFP5TestFP2TestFRTestFEP {
   struct __THE_1_Test_0 *n0;
   unsigned char o1;
   struct __THE_1_Test_0 *n1;
@@ -144,7 +144,7 @@ struct __THE_1_Test_0 *__THE_1_Test_0_realloc (struct __THE_1_Test_0 *n1, struct
 }
 struct __THE_1_Test_0 *__THE_1_test1_0 (void *px, void *pp) {
   struct __THE_1_Test_0 *v;
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP5TestFRTestFEP *p = pp;
   struct __THE_1_Test_0 *__THE_0_a_0 = p->n0;
   __THE_0_a_0->__THE_0_v = 2;
   v = __THE_1_Test_0_copy(__THE_0_a_0);
@@ -154,7 +154,7 @@ struct __THE_1_Test_0 *__THE_1_test1_0 (void *px, void *pp) {
 }
 struct __THE_1_Test_0 *__THE_1_test2_0 (void *px, void *pp) {
   struct __THE_1_Test_0 *v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP5TestFP2TestFRTestFEP *p = pp;
   struct __THE_1_Test_0 *__THE_0_a_0 = p->n0;
   struct __THE_1_Test_0 *__THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_Test_0_alloc(2);
   __THE_0_b_0 = __THE_1_Test_0_realloc(__THE_0_b_0, __THE_1_Test_0_copy(__THE_0_a_0));
@@ -167,10 +167,10 @@ struct __THE_1_Test_0 *__THE_1_test2_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_Test_0_alloc(1)}, sizeof(struct __THE_1_fn$1000P))));
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_1_Test_0_alloc(3), 0, NULL}, sizeof(struct __THE_1_fn$1001P))));
+  const struct __THE_1_fn_sFP5TestFRTestFE __THE_0_test1_0 = (struct __THE_1_fn_sFP5TestFRTestFE) {&__THE_1_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFP5TestFP2TestFRTestFE __THE_0_test2_0 = (struct __THE_1_fn_sFP5TestFP2TestFRTestFE) {&__THE_1_test2_0, NULL, 0};
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5TestFRTestFEP) {__THE_1_Test_0_alloc(1)}, sizeof(struct __THE_1_fn_sFP5TestFRTestFEP))));
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5TestFP2TestFRTestFEP) {__THE_1_Test_0_alloc(3), 0, NULL}, sizeof(struct __THE_1_fn_sFP5TestFP2TestFRTestFEP))));
 }
 ======= flags =======
 ======= stdout =======

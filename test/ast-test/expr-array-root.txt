@@ -24,7 +24,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="testFn" codeName="testFn_0" frame="1">
-      <TypeFn name="fn$1000">
+      <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
         </TypeFnReturnType>
@@ -111,8 +111,8 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeArray name="array_fn$1000">
-        <TypeFn name="fn$1000">
+      <TypeArray name="array_fn_sFRvoidFE">
+        <TypeFn name="fn_sFRvoidFE">
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
@@ -123,7 +123,7 @@ main {
       <ExprArray>
         <NodeExpr>
           <NodeExprType>
-            <TypeFn name="fn$1000">
+            <TypeFn name="fn_sFRvoidFE">
               <TypeFnReturnType>
                 <BuiltinType name="void" />
               </TypeFnReturnType>
@@ -132,7 +132,7 @@ main {
           <NodeExprBody>
             <ExprAccess>
               <Var name="testFn" codeName="testFn_0" frame="1">
-                <TypeFn name="fn$1000">
+                <TypeFn name="fn_sFRvoidFE">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
                   </TypeFnReturnType>

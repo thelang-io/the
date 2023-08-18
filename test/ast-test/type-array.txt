@@ -210,8 +210,8 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a11" codeName="a11_0" frame="2">
-        <TypeArray name="array_fn$1001">
-          <TypeFn name="fn$1001">
+        <TypeArray name="array_fn_sFP3intFP3intFRvoidFE">
+          <TypeFn name="fn_sFP3intFP3intFRvoidFE">
             <TypeFnParams>
               <TypeFnParam required>
                 <BuiltinType name="int" />

@@ -44,7 +44,7 @@ export mut TEST_MUT := 2
   <NodeFnDecl>
     <NodeFnDeclVar>
       <Var name="testFn" codeName="testFn_0" frame="1">
-        <TypeFn name="fn$1000">
+        <TypeFn name="fn_sFP3intFP3strFRstrFE">
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
