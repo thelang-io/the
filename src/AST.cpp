@@ -302,7 +302,10 @@ void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent, ASTNode *n
 AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &i) {
   this->parser = p;
   this->reader = this->parser->reader;
+  this->imports = i == nullptr ? std::make_shared<std::vector<ASTImport>>() : i;
+}
 
+ASTBlock AST::gen () {
   auto typeMapNamespace = convert_path_to_namespace(this->reader->path);
 
   if (typeMapNamespace == std::nullopt) {
@@ -312,10 +315,7 @@ AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &i) {
 
   this->typeMap.init(*typeMapNamespace);
   this->varMap.init(this->typeMap);
-  this->imports = i == nullptr ? std::make_shared<std::vector<ASTImport>>() : i;
-}
 
-ASTBlock AST::gen () {
   auto block = ParserBlock{};
 
   while (true) {
@@ -643,7 +643,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto exportVar = AST::getExportVar(*specifierExport);
 
             if (exportVar != nullptr) {
-              this->varMap.add(specifierLocal, this->varMap.name(specifierLocal), exportVar->type);
+              this->varMap.add(specifierLocal, exportVar->codeName, exportVar->type);
             } else if (specifierImported != specifierLocal) {
               this->typeMap.createAlias(specifierLocal, AST::getExportType(*specifierExport));
             } else {

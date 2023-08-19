@@ -22,7 +22,7 @@ class TypeMapTest : public testing::Test {
   TypeMap tm_;
 
   void SetUp () override {
-    this->tm_.init();
+    this->tm_.init("test");
   }
 };
 

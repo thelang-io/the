@@ -32,7 +32,7 @@ class TypeMatchTest : public testing::Test {
   Type *union_;
 
   void SetUp () override {
-    this->tm_.init();
+    this->tm_.init("test");
     this->alias_ = this->tm_.createAlias("Alias", this->tm_.get("int"));
     this->any_ = this->tm_.get("any");
     this->arr_ = this->tm_.createArr(this->tm_.get("int"));
