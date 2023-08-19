@@ -17,9 +17,9 @@
 #include "MockReader.hpp"
 #include <filesystem>
 
-MockReader::MockReader (const std::string &content) : Reader("CMakeLists.txt") {
+MockReader::MockReader (const std::string &c) : Reader("CMakeLists.txt") {
   this->path = (std::filesystem::current_path() / "test" / "test").string();
-  this->content = content;
+  this->content = c;
   this->size = this->content.length();
 
   ON_CALL(*this, eof).WillByDefault([this] () {
