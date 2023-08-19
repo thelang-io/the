@@ -96,11 +96,11 @@ struct str {
 struct __THE_1_fn_sFRstrFE;
 struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE;
 struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP;
-struct __THE_1_test1_0X;
-struct __THE_1_test1SDjobTmp_0X;
+struct __THE_1_test_test1_0X;
+struct __THE_1_test_test1SDjobTmp_0X;
 struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE;
 struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP;
-struct __THE_1_mainSDtest2_0X;
+struct __THE_1_test_mainSDtest2_0X;
 
 struct __THE_1_fn_sFRstrFE {
   struct str (*f) (void *);
@@ -119,11 +119,11 @@ struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP {
   unsigned char o2;
   struct __THE_1_fn_sFRstrFE n2;
 };
-struct __THE_1_test1_0X {
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobC_0;
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobB_0;
+struct __THE_1_test_test1_0X {
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobC_0;
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobB_0;
 };
-struct __THE_1_test1SDjobTmp_0X {
+struct __THE_1_test_test1SDjobTmp_0X {
   const struct __THE_1_fn_sFRstrFE *__THE_0_c_0;
   const struct __THE_1_fn_sFRstrFE *__THE_0_b_0;
   const struct __THE_1_fn_sFRstrFE *__THE_0_a_0;
@@ -140,11 +140,11 @@ struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP {
   unsigned char o2;
   struct __THE_1_fn_sFRstrFE n2;
 };
-struct __THE_1_mainSDtest2_0X {
+struct __THE_1_test_mainSDtest2_0X {
   struct __THE_1_fn_sFRstrFE *__THE_0_a_0;
-  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *__THE_0_test1_0;
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobC_0;
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobB_0;
+  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *__THE_0_test_test1_0;
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobC_0;
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobB_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -157,18 +157,18 @@ void *xalloc (void *, size_t);
 struct __THE_1_fn_sFRstrFE __THE_1_fn_sFRstrFE_copy (const struct __THE_1_fn_sFRstrFE);
 void __THE_1_fn_sFRstrFE_free (struct __THE_1_fn_sFRstrFE);
 struct __THE_1_fn_sFRstrFE __THE_1_fn_sFRstrFE_realloc (struct __THE_1_fn_sFRstrFE, struct __THE_1_fn_sFRstrFE);
-struct str __THE_1_jobA_0 (void *);
-struct str __THE_1_jobA2_0 (void *);
-struct str __THE_1_jobB_0 (void *);
-struct str __THE_1_jobC_0 (void *);
+struct str __THE_1_test_jobA_0 (void *);
+struct str __THE_1_test_jobA2_0 (void *);
+struct str __THE_1_test_jobB_0 (void *);
+struct str __THE_1_test_jobC_0 (void *);
 void __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE_free (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE);
-struct __THE_1_fn_sFRstrFE __THE_1_test1_0 (void *, void *);
-struct str __THE_1_test1SDjobTmp_0 (void *);
-void __THE_1_test1SDjobTmp_0_alloc (struct __THE_1_fn_sFRstrFE *, struct __THE_1_test1SDjobTmp_0X);
-void __THE_1_test1_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *, struct __THE_1_test1_0X);
+struct __THE_1_fn_sFRstrFE __THE_1_test_test1_0 (void *, void *);
+struct str __THE_1_test_test1SDjobTmp_0 (void *);
+void __THE_1_test_test1SDjobTmp_0_alloc (struct __THE_1_fn_sFRstrFE *, struct __THE_1_test_test1SDjobTmp_0X);
+void __THE_1_test_test1_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *, struct __THE_1_test_test1_0X);
 void __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE_free (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE);
-void __THE_1_mainSDtest2_0 (void *, void *);
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE *, struct __THE_1_mainSDtest2_0X);
+void __THE_1_test_mainSDtest2_0 (void *, void *);
+void __THE_1_test_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE *, struct __THE_1_test_mainSDtest2_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -222,118 +222,118 @@ struct __THE_1_fn_sFRstrFE __THE_1_fn_sFRstrFE_realloc (struct __THE_1_fn_sFRstr
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) n1);
   return n2;
 }
-struct str __THE_1_jobA_0 (void *px) {
+struct str __THE_1_test_jobA_0 (void *px) {
   return str_alloc("a");
 }
-struct str __THE_1_jobA2_0 (void *px) {
+struct str __THE_1_test_jobA2_0 (void *px) {
   return str_alloc("a2");
 }
-struct str __THE_1_jobB_0 (void *px) {
+struct str __THE_1_test_jobB_0 (void *px) {
   return str_alloc("b");
 }
-struct str __THE_1_jobC_0 (void *px) {
+struct str __THE_1_test_jobC_0 (void *px) {
   return str_alloc("c");
 }
 void __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE_free (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_fn_sFRstrFE __THE_1_test1_0 (void *px, void *pp) {
+struct __THE_1_fn_sFRstrFE __THE_1_test_test1_0 (void *px, void *pp) {
   struct __THE_1_fn_sFRstrFE v;
   struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP *p = pp;
-  struct __THE_1_test1_0X *x = px;
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobC_0 = x->__THE_0_jobC_0;
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobB_0 = x->__THE_0_jobB_0;
+  struct __THE_1_test_test1_0X *x = px;
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobC_0 = x->__THE_0_test_jobC_0;
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobB_0 = x->__THE_0_test_jobB_0;
   const struct __THE_1_fn_sFRstrFE __THE_0_a_0 = p->n0;
-  const struct __THE_1_fn_sFRstrFE __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_fn_sFRstrFE_copy(*__THE_0_jobB_0);
-  const struct __THE_1_fn_sFRstrFE __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_fn_sFRstrFE_copy(*__THE_0_jobC_0);
-  const struct __THE_1_fn_sFRstrFE __THE_0_test1SDjobTmp_0;
-  __THE_1_test1SDjobTmp_0_alloc((struct __THE_1_fn_sFRstrFE *) &__THE_0_test1SDjobTmp_0, (struct __THE_1_test1SDjobTmp_0X) {&__THE_0_c_0, &__THE_0_b_0, &__THE_0_a_0});
-  v = __THE_1_fn_sFRstrFE_copy(__THE_0_test1SDjobTmp_0);
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1SDjobTmp_0);
+  const struct __THE_1_fn_sFRstrFE __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_fn_sFRstrFE_copy(*__THE_0_test_jobB_0);
+  const struct __THE_1_fn_sFRstrFE __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_fn_sFRstrFE_copy(*__THE_0_test_jobC_0);
+  const struct __THE_1_fn_sFRstrFE __THE_0_test_test1SDjobTmp_0;
+  __THE_1_test_test1SDjobTmp_0_alloc((struct __THE_1_fn_sFRstrFE *) &__THE_0_test_test1SDjobTmp_0, (struct __THE_1_test_test1SDjobTmp_0X) {&__THE_0_c_0, &__THE_0_b_0, &__THE_0_a_0});
+  v = __THE_1_fn_sFRstrFE_copy(__THE_0_test_test1SDjobTmp_0);
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1SDjobTmp_0);
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_c_0);
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_b_0);
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_a_0);
   free(pp);
   return v;
 }
-struct str __THE_1_test1SDjobTmp_0 (void *px) {
-  struct __THE_1_test1SDjobTmp_0X *x = px;
+struct str __THE_1_test_test1SDjobTmp_0 (void *px) {
+  struct __THE_1_test_test1SDjobTmp_0X *x = px;
   const struct __THE_1_fn_sFRstrFE *__THE_0_c_0 = x->__THE_0_c_0;
   const struct __THE_1_fn_sFRstrFE *__THE_0_b_0 = x->__THE_0_b_0;
   const struct __THE_1_fn_sFRstrFE *__THE_0_a_0 = x->__THE_0_a_0;
   return str_concat_str(str_concat_str((*__THE_0_a_0).f((*__THE_0_a_0).x), (*__THE_0_b_0).f((*__THE_0_b_0).x)), (*__THE_0_c_0).f((*__THE_0_c_0).x));
 }
-void __THE_1_test1SDjobTmp_0_alloc (struct __THE_1_fn_sFRstrFE *n, struct __THE_1_test1SDjobTmp_0X x) {
-  size_t l = sizeof(struct __THE_1_test1SDjobTmp_0X);
-  struct __THE_1_test1SDjobTmp_0X *r = alloc(l);
+void __THE_1_test_test1SDjobTmp_0_alloc (struct __THE_1_fn_sFRstrFE *n, struct __THE_1_test_test1SDjobTmp_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test1SDjobTmp_0X);
+  struct __THE_1_test_test1SDjobTmp_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test1SDjobTmp_0;
+  n->f = &__THE_1_test_test1SDjobTmp_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test1_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *n, struct __THE_1_test1_0X x) {
-  size_t l = sizeof(struct __THE_1_test1_0X);
-  struct __THE_1_test1_0X *r = alloc(l);
+void __THE_1_test_test1_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *n, struct __THE_1_test_test1_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test1_0X);
+  struct __THE_1_test_test1_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test1_0;
+  n->f = &__THE_1_test_test1_0;
   n->x = r;
   n->l = l;
 }
 void __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE_free (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest2_0 (void *px, void *pp) {
+void __THE_1_test_mainSDtest2_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP *p = pp;
-  struct __THE_1_mainSDtest2_0X *x = px;
+  struct __THE_1_test_mainSDtest2_0X *x = px;
   struct __THE_1_fn_sFRstrFE *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *__THE_0_test1_0 = x->__THE_0_test1_0;
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobC_0 = x->__THE_0_jobC_0;
-  const struct __THE_1_fn_sFRstrFE *__THE_0_jobB_0 = x->__THE_0_jobB_0;
+  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *__THE_0_test_test1_0 = x->__THE_0_test_test1_0;
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobC_0 = x->__THE_0_test_jobC_0;
+  const struct __THE_1_fn_sFRstrFE *__THE_0_test_jobB_0 = x->__THE_0_test_jobB_0;
   const struct __THE_1_fn_sFRstrFE __THE_0_a2_0 = p->n0;
-  const struct __THE_1_fn_sFRstrFE __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_fn_sFRstrFE_copy(*__THE_0_jobB_0);
-  const struct __THE_1_fn_sFRstrFE __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_fn_sFRstrFE_copy(*__THE_0_jobC_0);
-  *__THE_0_a_0 = __THE_1_fn_sFRstrFE_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_a2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_b_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  const struct __THE_1_fn_sFRstrFE __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_fn_sFRstrFE_copy(*__THE_0_test_jobB_0);
+  const struct __THE_1_fn_sFRstrFE __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_fn_sFRstrFE_copy(*__THE_0_test_jobC_0);
+  *__THE_0_a_0 = __THE_1_fn_sFRstrFE_realloc(*__THE_0_a_0, (*__THE_0_test_test1_0).f((*__THE_0_test_test1_0).x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_a2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_b_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_c_0);
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_b_0);
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_a2_0);
   free(pp);
 }
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE *n, struct __THE_1_mainSDtest2_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
-  struct __THE_1_mainSDtest2_0X *r = alloc(l);
+void __THE_1_test_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE *n, struct __THE_1_test_mainSDtest2_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSDtest2_0X);
+  struct __THE_1_test_mainSDtest2_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtest2_0;
+  n->f = &__THE_1_test_mainSDtest2_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
-  const struct __THE_1_fn_sFRstrFE __THE_0_jobA_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_jobA_0, NULL, 0};
-  const struct __THE_1_fn_sFRstrFE __THE_0_jobA2_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_jobA2_0, NULL, 0};
-  const struct __THE_1_fn_sFRstrFE __THE_0_jobB_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_jobB_0, NULL, 0};
-  const struct __THE_1_fn_sFRstrFE __THE_0_jobC_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_jobC_0, NULL, 0};
-  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE __THE_0_test1_0;
-  __THE_1_test1_0_alloc((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_jobC_0, &__THE_0_jobB_0});
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
-  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
-  struct __THE_1_fn_sFRstrFE __THE_0_a_0 = __THE_1_fn_sFRstrFE_copy(__THE_0_jobA_0);
-  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE __THE_0_mainSDtest2_0;
-  __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0, &__THE_0_jobC_0, &__THE_0_jobB_0});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA2_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA2_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
-  __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE_free((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE) __THE_0_mainSDtest2_0);
+  const struct __THE_1_fn_sFRstrFE __THE_0_test_jobA_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_test_jobA_0, NULL, 0};
+  const struct __THE_1_fn_sFRstrFE __THE_0_test_jobA2_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_test_jobA2_0, NULL, 0};
+  const struct __THE_1_fn_sFRstrFE __THE_0_test_jobB_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_test_jobB_0, NULL, 0};
+  const struct __THE_1_fn_sFRstrFE __THE_0_test_jobC_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_test_jobC_0, NULL, 0};
+  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE __THE_0_test_test1_0;
+  __THE_1_test_test1_0_alloc((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE *) &__THE_0_test_test1_0, (struct __THE_1_test_test1_0X) {&__THE_0_test_jobC_0, &__THE_0_test_jobB_0});
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFEP))));
+  struct __THE_1_fn_sFRstrFE __THE_0_a_0 = __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA_0);
+  const struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE __THE_0_test_mainSDtest2_0;
+  __THE_1_test_mainSDtest2_0_alloc((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE *) &__THE_0_test_mainSDtest2_0, (struct __THE_1_test_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test_test1_0, &__THE_0_test_jobC_0, &__THE_0_test_jobB_0});
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA2_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 0, (struct __THE_1_fn_sFRstrFE) {}}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA2_0), 0, (struct __THE_1_fn_sFRstrFE) {}, 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP) {__THE_1_fn_sFRstrFE_copy(__THE_0_test_jobA2_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobB_0), 1, __THE_1_fn_sFRstrFE_copy(__THE_0_test_jobC_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFEP)));
+  __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE_free((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRvoidFE) __THE_0_test_mainSDtest2_0);
   __THE_1_fn_sFRstrFE_free((struct __THE_1_fn_sFRstrFE) __THE_0_a_0);
-  __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE_free((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE) __THE_0_test1_0);
+  __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE_free((struct __THE_1_fn_sFP3fn_sFRstrFEFP1fn_sFRstrFEFP1fn_sFRstrFEFRfn_sFRstrFEFE) __THE_0_test_test1_0);
 }
 ======= flags =======
 ======= stdout =======

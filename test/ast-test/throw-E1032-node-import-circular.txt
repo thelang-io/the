@@ -1,5 +1,5 @@
 ======= stdin =======
-import TestObject from "./test/fixtures/import-circular"
+import TestObject from "./fixtures/import-circular"
 ======= stderr =======
 /fixtures/export-circular:1:39: E1032 - Circular imports are not allowed
   1 | import TestObject as TestObject2 from "./import-circular"

@@ -19,7 +19,7 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
+    <Var name="test1" codeName="test_test1_0" frame="1">
       <TypeFn name="fn_sFP5intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
@@ -93,7 +93,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
+    <Var name="test2" codeName="test_test2_0" frame="1">
       <TypeFn name="fn_sFP5intFP2intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
@@ -216,7 +216,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test3" codeName="test3_0" frame="1">
+    <Var name="test3" codeName="test_test3_0" frame="1">
       <TypeFn name="fn_sFP5intFP2intFP2floatFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
@@ -405,7 +405,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test1" codeName="test1_0" frame="1">
+                <Var name="test1" codeName="test_test1_0" frame="1">
                   <TypeFn name="fn_sFP5intFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
@@ -461,7 +461,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
+                <Var name="test2" codeName="test_test2_0" frame="1">
                   <TypeFn name="fn_sFP5intFP2intFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
@@ -533,7 +533,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test3" codeName="test3_0" frame="1">
+                <Var name="test3" codeName="test_test3_0" frame="1">
                   <TypeFn name="fn_sFP5intFP2intFP2floatFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>

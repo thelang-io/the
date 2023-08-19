@@ -36,10 +36,10 @@ main {
 
 #define TYPE_error_Error 1
 
-enum __THE_1_Color_0 {
-  __THE_0_ColorSDRed_0,
-  __THE_0_ColorSDGreen_0,
-  __THE_0_ColorSDBlue_0
+enum __THE_1_test_Color_0 {
+  __THE_0_test_ColorSDRed_0,
+  __THE_0_test_ColorSDGreen_0,
+  __THE_0_test_ColorSDBlue_0
 };
 
 typedef struct err_buf {
@@ -77,7 +77,7 @@ struct error_Error {
   const struct str __THE_0_stack;
 };
 struct __THE_1_array_Color {
-  enum __THE_1_Color_0 *d;
+  enum __THE_1_test_Color_0 *d;
   size_t l;
 };
 
@@ -100,7 +100,7 @@ void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct __THE_1_array_Color __THE_1_array_Color_alloc (size_t, ...);
-enum __THE_1_Color_0 *__THE_1_array_Color_at (err_state_t *, int, int, struct __THE_1_array_Color, int32_t);
+enum __THE_1_test_Color_0 *__THE_1_array_Color_at (err_state_t *, int, int, struct __THE_1_array_Color, int32_t);
 struct __THE_1_array_Color __THE_1_array_Color_copy (const struct __THE_1_array_Color);
 void __THE_1_array_Color_free (struct __THE_1_array_Color);
 size_t __THE_1_array_Color_len (struct __THE_1_array_Color);
@@ -337,14 +337,14 @@ void error_Error_free (struct error_Error *n) {
 }
 struct __THE_1_array_Color __THE_1_array_Color_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_Color) {NULL, 0};
-  enum __THE_1_Color_0 *d = alloc(x * sizeof(enum __THE_1_Color_0));
+  enum __THE_1_test_Color_0 *d = alloc(x * sizeof(enum __THE_1_test_Color_0));
   va_list args;
   va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, enum __THE_1_Color_0);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, enum __THE_1_test_Color_0);
   va_end(args);
   return (struct __THE_1_array_Color) {d, x};
 }
-enum __THE_1_Color_0 *__THE_1_array_Color_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_Color n, int32_t i) {
+enum __THE_1_test_Color_0 *__THE_1_array_Color_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_Color n, int32_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     const char *fmt = "index %" PRId32 " out of array bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
@@ -357,7 +357,7 @@ enum __THE_1_Color_0 *__THE_1_array_Color_at (err_state_t *fn_err_state, int lin
 }
 struct __THE_1_array_Color __THE_1_array_Color_copy (const struct __THE_1_array_Color n) {
   if (n.l == 0) return (struct __THE_1_array_Color) {NULL, 0};
-  enum __THE_1_Color_0 *d = alloc(n.l * sizeof(enum __THE_1_Color_0));
+  enum __THE_1_test_Color_0 *d = alloc(n.l * sizeof(enum __THE_1_test_Color_0));
   for (size_t i = 0; i < n.l; i++) d[i] = n.d[i];
   return (struct __THE_1_array_Color) {d, n.l};
 }
@@ -372,7 +372,7 @@ size_t __THE_1_array_Color_len (struct __THE_1_array_Color n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_array_Color __THE_0_arr_0 = __THE_1_array_Color_alloc(3, __THE_0_ColorSDRed_0, __THE_0_ColorSDGreen_0, __THE_0_ColorSDBlue_0);
+  const struct __THE_1_array_Color __THE_0_arr_0 = __THE_1_array_Color_alloc(3, __THE_0_test_ColorSDRed_0, __THE_0_test_ColorSDGreen_0, __THE_0_test_ColorSDBlue_0);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_Color_len(__THE_1_array_Color_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L2;
     print(stdout, "sz", enum_str(*__THE_1_array_Color_at(&err_state, 11, 11, __THE_0_arr_0, __THE_0_i_0)), THE_EOL);

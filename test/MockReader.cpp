@@ -18,7 +18,7 @@
 #include <filesystem>
 
 MockReader::MockReader (const std::string &content) : Reader("CMakeLists.txt") {
-  this->path = (std::filesystem::current_path() / "app").string();
+  this->path = (std::filesystem::current_path() / "test" / "test").string();
   this->content = content;
   this->size = this->content.length();
 

@@ -35,7 +35,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -43,7 +43,7 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
+    <Var name="test1" codeName="test_test1_0" frame="1">
       <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -54,7 +54,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
+    <Var name="test2" codeName="test_test2_0" frame="1">
       <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -65,7 +65,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test3" codeName="test3_0" frame="1">
+    <Var name="test3" codeName="test_test3_0" frame="1">
       <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -403,7 +403,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test1" codeName="test1_0" frame="1">
+                              <Var name="test1" codeName="test_test1_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -423,134 +423,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test1" codeName="test1_0" frame="1">
-                                <TypeFn name="fn_sFRvoidFE">
-                                  <TypeFnReturnType>
-                                    <BuiltinType name="void" />
-                                  </TypeFnReturnType>
-                                </TypeFn>
-                              </Var>
-                            </ExprAccess>
-                          </NodeExprBody>
-                        </NodeExpr>
-                      </ExprArray>
-                    </NodeExprBody>
-                  </NodeExpr>
-                  <NodeExpr>
-                    <NodeExprType>
-                      <TypeArray name="array_fn_sFRvoidFE">
-                        <TypeFn name="fn_sFRvoidFE">
-                          <TypeFnReturnType>
-                            <BuiltinType name="void" />
-                          </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeArray>
-                    </NodeExprType>
-                    <NodeExprBody>
-                      <ExprArray>
-                        <NodeExpr>
-                          <NodeExprType>
-                            <TypeFn name="fn_sFRvoidFE">
-                              <TypeFnReturnType>
-                                <BuiltinType name="void" />
-                              </TypeFnReturnType>
-                            </TypeFn>
-                          </NodeExprType>
-                          <NodeExprBody>
-                            <ExprAccess>
-                              <Var name="test1" codeName="test1_0" frame="1">
-                                <TypeFn name="fn_sFRvoidFE">
-                                  <TypeFnReturnType>
-                                    <BuiltinType name="void" />
-                                  </TypeFnReturnType>
-                                </TypeFn>
-                              </Var>
-                            </ExprAccess>
-                          </NodeExprBody>
-                        </NodeExpr>
-                        <NodeExpr>
-                          <NodeExprType>
-                            <TypeFn name="fn_sFRvoidFE">
-                              <TypeFnReturnType>
-                                <BuiltinType name="void" />
-                              </TypeFnReturnType>
-                            </TypeFn>
-                          </NodeExprType>
-                          <NodeExprBody>
-                            <ExprAccess>
-                              <Var name="test1" codeName="test1_0" frame="1">
-                                <TypeFn name="fn_sFRvoidFE">
-                                  <TypeFnReturnType>
-                                    <BuiltinType name="void" />
-                                  </TypeFnReturnType>
-                                </TypeFn>
-                              </Var>
-                            </ExprAccess>
-                          </NodeExprBody>
-                        </NodeExpr>
-                      </ExprArray>
-                    </NodeExprBody>
-                  </NodeExpr>
-                </ExprArray>
-              </NodeExprBody>
-            </NodeExpr>
-            <NodeExpr>
-              <NodeExprType>
-                <TypeArray name="array_array_fn_sFRvoidFE">
-                  <TypeArray name="array_fn_sFRvoidFE">
-                    <TypeFn name="fn_sFRvoidFE">
-                      <TypeFnReturnType>
-                        <BuiltinType name="void" />
-                      </TypeFnReturnType>
-                    </TypeFn>
-                  </TypeArray>
-                </TypeArray>
-              </NodeExprType>
-              <NodeExprBody>
-                <ExprArray>
-                  <NodeExpr>
-                    <NodeExprType>
-                      <TypeArray name="array_fn_sFRvoidFE">
-                        <TypeFn name="fn_sFRvoidFE">
-                          <TypeFnReturnType>
-                            <BuiltinType name="void" />
-                          </TypeFnReturnType>
-                        </TypeFn>
-                      </TypeArray>
-                    </NodeExprType>
-                    <NodeExprBody>
-                      <ExprArray>
-                        <NodeExpr>
-                          <NodeExprType>
-                            <TypeFn name="fn_sFRvoidFE">
-                              <TypeFnReturnType>
-                                <BuiltinType name="void" />
-                              </TypeFnReturnType>
-                            </TypeFn>
-                          </NodeExprType>
-                          <NodeExprBody>
-                            <ExprAccess>
-                              <Var name="test2" codeName="test2_0" frame="1">
-                                <TypeFn name="fn_sFRvoidFE">
-                                  <TypeFnReturnType>
-                                    <BuiltinType name="void" />
-                                  </TypeFnReturnType>
-                                </TypeFn>
-                              </Var>
-                            </ExprAccess>
-                          </NodeExprBody>
-                        </NodeExpr>
-                        <NodeExpr>
-                          <NodeExprType>
-                            <TypeFn name="fn_sFRvoidFE">
-                              <TypeFnReturnType>
-                                <BuiltinType name="void" />
-                              </TypeFnReturnType>
-                            </TypeFn>
-                          </NodeExprType>
-                          <NodeExprBody>
-                            <ExprAccess>
-                              <Var name="test2" codeName="test2_0" frame="1">
+                              <Var name="test1" codeName="test_test1_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -585,7 +458,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test2" codeName="test2_0" frame="1">
+                              <Var name="test1" codeName="test_test1_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -605,7 +478,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test2" codeName="test2_0" frame="1">
+                              <Var name="test1" codeName="test_test1_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -657,7 +530,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test3" codeName="test3_0" frame="1">
+                              <Var name="test2" codeName="test_test2_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -677,7 +550,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test3" codeName="test3_0" frame="1">
+                              <Var name="test2" codeName="test_test2_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -712,7 +585,7 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test3" codeName="test3_0" frame="1">
+                              <Var name="test2" codeName="test_test2_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -732,7 +605,134 @@ main {
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="test3" codeName="test3_0" frame="1">
+                              <Var name="test2" codeName="test_test2_0" frame="1">
+                                <TypeFn name="fn_sFRvoidFE">
+                                  <TypeFnReturnType>
+                                    <BuiltinType name="void" />
+                                  </TypeFnReturnType>
+                                </TypeFn>
+                              </Var>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprArray>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprArray>
+              </NodeExprBody>
+            </NodeExpr>
+            <NodeExpr>
+              <NodeExprType>
+                <TypeArray name="array_array_fn_sFRvoidFE">
+                  <TypeArray name="array_fn_sFRvoidFE">
+                    <TypeFn name="fn_sFRvoidFE">
+                      <TypeFnReturnType>
+                        <BuiltinType name="void" />
+                      </TypeFnReturnType>
+                    </TypeFn>
+                  </TypeArray>
+                </TypeArray>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprArray>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <TypeArray name="array_fn_sFRvoidFE">
+                        <TypeFn name="fn_sFRvoidFE">
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeArray>
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprArray>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <TypeFn name="fn_sFRvoidFE">
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess>
+                              <Var name="test3" codeName="test_test3_0" frame="1">
+                                <TypeFn name="fn_sFRvoidFE">
+                                  <TypeFnReturnType>
+                                    <BuiltinType name="void" />
+                                  </TypeFnReturnType>
+                                </TypeFn>
+                              </Var>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <TypeFn name="fn_sFRvoidFE">
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess>
+                              <Var name="test3" codeName="test_test3_0" frame="1">
+                                <TypeFn name="fn_sFRvoidFE">
+                                  <TypeFnReturnType>
+                                    <BuiltinType name="void" />
+                                  </TypeFnReturnType>
+                                </TypeFn>
+                              </Var>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprArray>
+                    </NodeExprBody>
+                  </NodeExpr>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <TypeArray name="array_fn_sFRvoidFE">
+                        <TypeFn name="fn_sFRvoidFE">
+                          <TypeFnReturnType>
+                            <BuiltinType name="void" />
+                          </TypeFnReturnType>
+                        </TypeFn>
+                      </TypeArray>
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprArray>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <TypeFn name="fn_sFRvoidFE">
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess>
+                              <Var name="test3" codeName="test_test3_0" frame="1">
+                                <TypeFn name="fn_sFRvoidFE">
+                                  <TypeFnReturnType>
+                                    <BuiltinType name="void" />
+                                  </TypeFnReturnType>
+                                </TypeFn>
+                              </Var>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <TypeFn name="fn_sFRvoidFE">
+                              <TypeFnReturnType>
+                                <BuiltinType name="void" />
+                              </TypeFnReturnType>
+                            </TypeFn>
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess>
+                              <Var name="test3" codeName="test_test3_0" frame="1">
                                 <TypeFn name="fn_sFRvoidFE">
                                   <TypeFnReturnType>
                                     <BuiltinType name="void" />
@@ -757,7 +757,7 @@ main {
     <NodeVarDeclVar>
       <Var name="v08" codeName="v08_0" mut frame="2">
         <TypeArray name="array_Test">
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <BuiltinType name="int" />
             </TypeField>
@@ -782,7 +782,7 @@ main {
                 <NodeExpr>
                   <NodeExprType>
                     <TypeArray name="array_Test">
-                      <TypeObj codeName="Test_0" name="Test">
+                      <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <BuiltinType name="int" />
                         </TypeField>
@@ -793,7 +793,7 @@ main {
                     <ExprAccess>
                       <Var name="v08" codeName="v08_0" mut frame="2">
                         <TypeArray name="array_Test">
-                          <TypeObj codeName="Test_0" name="Test">
+                          <TypeObj codeName="test_Test_0" name="Test">
                             <TypeField name="a">
                               <BuiltinType name="int" />
                             </TypeField>
@@ -811,7 +811,7 @@ main {
           <ExprCallArg id="elements">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="Test_0" name="Test">
+                <TypeObj codeName="test_Test_0" name="Test">
                   <TypeField name="a">
                     <BuiltinType name="int" />
                   </TypeField>
@@ -853,7 +853,7 @@ main {
                 <NodeExpr>
                   <NodeExprType>
                     <TypeArray name="array_Test">
-                      <TypeObj codeName="Test_0" name="Test">
+                      <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <BuiltinType name="int" />
                         </TypeField>
@@ -864,7 +864,7 @@ main {
                     <ExprAccess>
                       <Var name="v08" codeName="v08_0" mut frame="2">
                         <TypeArray name="array_Test">
-                          <TypeObj codeName="Test_0" name="Test">
+                          <TypeObj codeName="test_Test_0" name="Test">
                             <TypeField name="a">
                               <BuiltinType name="int" />
                             </TypeField>
@@ -882,7 +882,7 @@ main {
           <ExprCallArg id="elements">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="Test_0" name="Test">
+                <TypeObj codeName="test_Test_0" name="Test">
                   <TypeField name="a">
                     <BuiltinType name="int" />
                   </TypeField>

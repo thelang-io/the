@@ -16,7 +16,7 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="job1" codeName="job1_0" frame="1">
+    <Var name="job1" codeName="test_job1_0" frame="1">
       <TypeFn name="fn_sFRintFE">
         <TypeFnReturnType>
           <BuiltinType name="int" />
@@ -39,7 +39,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="job2" codeName="job2_0" frame="1">
+    <Var name="job2" codeName="test_job2_0" frame="1">
       <TypeFn name="fn_sFRintFE">
         <TypeFnReturnType>
           <BuiltinType name="int" />
@@ -62,7 +62,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
+    <Var name="test1" codeName="test_test1_0" frame="1">
       <TypeFn name="fn_sFP5fn_sFRintFEFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
@@ -80,7 +80,7 @@ main {
     </Var>
   </NodeFnDeclVar>
   <NodeFnDeclCtx>
-    <Var name="job2" codeName="job2_0" frame="1">
+    <Var name="job2" codeName="test_job2_0" frame="1">
       <TypeFn name="fn_sFRintFE">
         <TypeFnReturnType>
           <BuiltinType name="int" />
@@ -145,7 +145,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="job2" codeName="job2_0" frame="1">
+                  <Var name="job2" codeName="test_job2_0" frame="1">
                     <TypeFn name="fn_sFRintFE">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
@@ -196,7 +196,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
+    <Var name="test2" codeName="test_test2_0" frame="1">
       <TypeFn name="fn_sFP5fn_sFRintFEFP2fn_sFRintFEFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" mut required>
@@ -221,7 +221,7 @@ main {
     </Var>
   </NodeFnDeclVar>
   <NodeFnDeclCtx>
-    <Var name="job2" codeName="job2_0" frame="1">
+    <Var name="job2" codeName="test_job2_0" frame="1">
       <TypeFn name="fn_sFRintFE">
         <TypeFnReturnType>
           <BuiltinType name="int" />
@@ -262,7 +262,7 @@ main {
           </NodeExprType>
           <NodeExprBody>
             <ExprAccess>
-              <Var name="job2" codeName="job2_0" frame="1">
+              <Var name="job2" codeName="test_job2_0" frame="1">
                 <TypeFn name="fn_sFRintFE">
                   <TypeFnReturnType>
                     <BuiltinType name="int" />
@@ -439,7 +439,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test1" codeName="test1_0" frame="1">
+                <Var name="test1" codeName="test_test1_0" frame="1">
                   <TypeFn name="fn_sFP5fn_sFRintFEFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
@@ -471,7 +471,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="job1" codeName="job1_0" frame="1">
+                  <Var name="job1" codeName="test_job1_0" frame="1">
                     <TypeFn name="fn_sFRintFE">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
@@ -519,7 +519,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
+                <Var name="test2" codeName="test_test2_0" frame="1">
                   <TypeFn name="fn_sFP5fn_sFRintFEFP2fn_sFRintFEFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" mut required>
@@ -558,7 +558,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="job2" codeName="job2_0" frame="1">
+                  <Var name="job2" codeName="test_job2_0" frame="1">
                     <TypeFn name="fn_sFRintFE">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />

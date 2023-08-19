@@ -16,7 +16,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -164,7 +164,7 @@ main {
                   <TypeArray name="array_array_array_Test">
                     <TypeArray name="array_array_Test">
                       <TypeArray name="array_Test">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />
                           </TypeField>
@@ -191,7 +191,7 @@ main {
                   <TypeArray name="array_array_ref_Test">
                     <TypeArray name="array_ref_Test">
                       <TypeRef name="ref_Test">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />
                           </TypeField>

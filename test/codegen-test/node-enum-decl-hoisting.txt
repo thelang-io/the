@@ -65,14 +65,14 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_Color_0 {
-  __THE_0_ColorSDRed_0,
-  __THE_0_ColorSDGreen_0,
-  __THE_0_ColorSDBlue_0
+enum __THE_1_test_Color_0 {
+  __THE_0_test_ColorSDRed_0,
+  __THE_0_test_ColorSDGreen_0,
+  __THE_0_test_ColorSDBlue_0
 };
-enum __THE_1_IncomeType_0 {
-  __THE_0_IncomeTypeSDActive_0,
-  __THE_0_IncomeTypeSDPassive_0
+enum __THE_1_test_IncomeType_0 {
+  __THE_0_test_IncomeTypeSDActive_0,
+  __THE_0_test_IncomeTypeSDPassive_0
 };
 
 typedef struct err_buf {
@@ -102,7 +102,7 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_Human_0;
+struct __THE_1_test_Human_0;
 struct __THE_1_fn_sFP3IncomeTypeFRvoidFE;
 struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP;
 struct __THE_1_fn_sFP3ColorFRvoidFE;
@@ -110,10 +110,10 @@ struct __THE_1_fn_sFP3ColorFRvoidFEP;
 struct __THE_1_fn_sFP3HumanFRvoidFE;
 struct __THE_1_fn_sFP3HumanFRvoidFEP;
 
-struct __THE_1_Human_0 {
+struct __THE_1_test_Human_0 {
   const struct str __THE_0_name;
-  const enum __THE_1_Color_0 __THE_0_hairColor;
-  const enum __THE_1_IncomeType_0 __THE_0_incomeType;
+  const enum __THE_1_test_Color_0 __THE_0_hairColor;
+  const enum __THE_1_test_IncomeType_0 __THE_0_incomeType;
 };
 struct __THE_1_fn_sFP3IncomeTypeFRvoidFE {
   void (*f) (void *, void *);
@@ -121,7 +121,7 @@ struct __THE_1_fn_sFP3IncomeTypeFRvoidFE {
   size_t l;
 };
 struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP {
-  enum __THE_1_IncomeType_0 n0;
+  enum __THE_1_test_IncomeType_0 n0;
 };
 struct __THE_1_fn_sFP3ColorFRvoidFE {
   void (*f) (void *, void *);
@@ -129,7 +129,7 @@ struct __THE_1_fn_sFP3ColorFRvoidFE {
   size_t l;
 };
 struct __THE_1_fn_sFP3ColorFRvoidFEP {
-  enum __THE_1_Color_0 n0;
+  enum __THE_1_test_Color_0 n0;
 };
 struct __THE_1_fn_sFP3HumanFRvoidFE {
   void (*f) (void *, void *);
@@ -137,7 +137,7 @@ struct __THE_1_fn_sFP3HumanFRvoidFE {
   size_t l;
 };
 struct __THE_1_fn_sFP3HumanFRvoidFEP {
-  struct __THE_1_Human_0 *n0;
+  struct __THE_1_test_Human_0 *n0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -151,14 +151,14 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 void *xalloc (void *, size_t);
-struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0);
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str, enum __THE_1_Color_0, enum __THE_1_IncomeType_0);
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *);
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-struct str __THE_1_IncomeType_0_rawValue (enum __THE_1_IncomeType_0);
-void __THE_1_printIncomeType_0 (void *, void *);
-void __THE_1_printColor_0 (void *, void *);
-void __THE_1_printHuman_0 (void *, void *);
+struct str __THE_1_test_Color_0_rawValue (enum __THE_1_test_Color_0);
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (struct str, enum __THE_1_test_Color_0, enum __THE_1_test_IncomeType_0);
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_copy (const struct __THE_1_test_Human_0 *);
+void __THE_1_test_Human_0_free (struct __THE_1_test_Human_0 *);
+struct str __THE_1_test_IncomeType_0_rawValue (enum __THE_1_test_IncomeType_0);
+void __THE_1_test_printIncomeType_0 (void *, void *);
+void __THE_1_test_printColor_0 (void *, void *);
+void __THE_1_test_printHuman_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -317,65 +317,65 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0 n) {
-  if (n == __THE_0_ColorSDRed_0) return str_alloc("Red");
-  if (n == __THE_0_ColorSDGreen_0) return str_alloc("Green");
-  if (n == __THE_0_ColorSDBlue_0) return str_alloc("Blue");
+struct str __THE_1_test_Color_0_rawValue (enum __THE_1_test_Color_0 n) {
+  if (n == __THE_0_test_ColorSDRed_0) return str_alloc("Red");
+  if (n == __THE_0_test_ColorSDGreen_0) return str_alloc("Green");
+  if (n == __THE_0_test_ColorSDBlue_0) return str_alloc("Blue");
 }
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (struct str __THE_0_name, enum __THE_1_Color_0 __THE_0_hairColor, enum __THE_1_IncomeType_0 __THE_0_incomeType) {
-  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  struct __THE_1_Human_0 s = {__THE_0_name, __THE_0_hairColor, __THE_0_incomeType};
-  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (struct str __THE_0_name, enum __THE_1_test_Color_0 __THE_0_hairColor, enum __THE_1_test_IncomeType_0 __THE_0_incomeType) {
+  struct __THE_1_test_Human_0 *r = alloc(sizeof(struct __THE_1_test_Human_0));
+  struct __THE_1_test_Human_0 s = {__THE_0_name, __THE_0_hairColor, __THE_0_incomeType};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Human_0));
   return r;
 }
-struct __THE_1_Human_0 *__THE_1_Human_0_copy (const struct __THE_1_Human_0 *n) {
-  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  struct __THE_1_Human_0 s = {str_copy(n->__THE_0_name), n->__THE_0_hairColor, n->__THE_0_incomeType};
-  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_copy (const struct __THE_1_test_Human_0 *n) {
+  struct __THE_1_test_Human_0 *r = alloc(sizeof(struct __THE_1_test_Human_0));
+  struct __THE_1_test_Human_0 s = {str_copy(n->__THE_0_name), n->__THE_0_hairColor, n->__THE_0_incomeType};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Human_0));
   return r;
 }
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
+void __THE_1_test_Human_0_free (struct __THE_1_test_Human_0 *n) {
   str_free((struct str) n->__THE_0_name);
   free(n);
 }
-struct str __THE_1_IncomeType_0_rawValue (enum __THE_1_IncomeType_0 n) {
-  if (n == __THE_0_IncomeTypeSDActive_0) return str_alloc("Active");
-  if (n == __THE_0_IncomeTypeSDPassive_0) return str_alloc("Passive");
+struct str __THE_1_test_IncomeType_0_rawValue (enum __THE_1_test_IncomeType_0 n) {
+  if (n == __THE_0_test_IncomeTypeSDActive_0) return str_alloc("Active");
+  if (n == __THE_0_test_IncomeTypeSDPassive_0) return str_alloc("Passive");
 }
-void __THE_1_printIncomeType_0 (void *px, void *pp) {
+void __THE_1_test_printIncomeType_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP *p = pp;
-  const enum __THE_1_IncomeType_0 __THE_0_n_0 = p->n0;
-  print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0), THE_EOL);
+  const enum __THE_1_test_IncomeType_0 __THE_0_n_0 = p->n0;
+  print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_test_IncomeType_0_rawValue(__THE_0_n_0), THE_EOL);
   free(pp);
 }
-void __THE_1_printColor_0 (void *px, void *pp) {
+void __THE_1_test_printColor_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3ColorFRvoidFEP *p = pp;
-  const enum __THE_1_Color_0 __THE_0_n_0 = p->n0;
-  print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_Color_0_rawValue(__THE_0_n_0), THE_EOL);
+  const enum __THE_1_test_Color_0 __THE_0_n_0 = p->n0;
+  print(stdout, "szsz", enum_str(__THE_0_n_0), " ", __THE_1_test_Color_0_rawValue(__THE_0_n_0), THE_EOL);
   free(pp);
 }
-void __THE_1_printHuman_0 (void *px, void *pp) {
+void __THE_1_test_printHuman_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3HumanFRvoidFEP *p = pp;
-  const struct __THE_1_Human_0 *__THE_0_n_0 = p->n0;
-  print(stdout, "zzszzzszzzsz", "Name:", " ", str_copy(__THE_0_n_0->__THE_0_name), " ", "Hair:", " ", __THE_1_Color_0_rawValue(__THE_0_n_0->__THE_0_hairColor), " ", "Income Type:", " ", __THE_1_IncomeType_0_rawValue(__THE_0_n_0->__THE_0_incomeType), THE_EOL);
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_n_0);
+  const struct __THE_1_test_Human_0 *__THE_0_n_0 = p->n0;
+  print(stdout, "zzszzzszzzsz", "Name:", " ", str_copy(__THE_0_n_0->__THE_0_name), " ", "Hair:", " ", __THE_1_test_Color_0_rawValue(__THE_0_n_0->__THE_0_hairColor), " ", "Income Type:", " ", __THE_1_test_IncomeType_0_rawValue(__THE_0_n_0->__THE_0_incomeType), THE_EOL);
+  __THE_1_test_Human_0_free((struct __THE_1_test_Human_0 *) __THE_0_n_0);
   free(pp);
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3IncomeTypeFRvoidFE __THE_0_printIncomeType_0 = (struct __THE_1_fn_sFP3IncomeTypeFRvoidFE) {&__THE_1_printIncomeType_0, NULL, 0};
-  const struct __THE_1_fn_sFP3ColorFRvoidFE __THE_0_printColor_0 = (struct __THE_1_fn_sFP3ColorFRvoidFE) {&__THE_1_printColor_0, NULL, 0};
-  const struct __THE_1_fn_sFP3HumanFRvoidFE __THE_0_printHuman_0 = (struct __THE_1_fn_sFP3HumanFRvoidFE) {&__THE_1_printHuman_0, NULL, 0};
-  const struct __THE_1_Human_0 *__THE_0_danny_0 = __THE_1_Human_0_alloc(str_alloc("Danny"), __THE_0_ColorSDBlue_0, __THE_0_IncomeTypeSDPassive_0);
-  const struct __THE_1_Human_0 *__THE_0_tricia_0 = __THE_1_Human_0_alloc(str_alloc("Tricia"), __THE_0_ColorSDRed_0, __THE_0_IncomeTypeSDActive_0);
-  __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, xalloc(&(struct __THE_1_fn_sFP3HumanFRvoidFEP) {__THE_1_Human_0_copy(__THE_0_danny_0)}, sizeof(struct __THE_1_fn_sFP3HumanFRvoidFEP)));
-  __THE_0_printHuman_0.f(__THE_0_printHuman_0.x, xalloc(&(struct __THE_1_fn_sFP3HumanFRvoidFEP) {__THE_1_Human_0_copy(__THE_0_tricia_0)}, sizeof(struct __THE_1_fn_sFP3HumanFRvoidFEP)));
-  __THE_0_printColor_0.f(__THE_0_printColor_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_danny_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
-  __THE_0_printColor_0.f(__THE_0_printColor_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_tricia_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
-  __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, xalloc(&(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP) {__THE_0_danny_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP)));
-  __THE_0_printIncomeType_0.f(__THE_0_printIncomeType_0.x, xalloc(&(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP) {__THE_0_tricia_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP)));
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_tricia_0);
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_danny_0);
+  const struct __THE_1_fn_sFP3IncomeTypeFRvoidFE __THE_0_test_printIncomeType_0 = (struct __THE_1_fn_sFP3IncomeTypeFRvoidFE) {&__THE_1_test_printIncomeType_0, NULL, 0};
+  const struct __THE_1_fn_sFP3ColorFRvoidFE __THE_0_test_printColor_0 = (struct __THE_1_fn_sFP3ColorFRvoidFE) {&__THE_1_test_printColor_0, NULL, 0};
+  const struct __THE_1_fn_sFP3HumanFRvoidFE __THE_0_test_printHuman_0 = (struct __THE_1_fn_sFP3HumanFRvoidFE) {&__THE_1_test_printHuman_0, NULL, 0};
+  const struct __THE_1_test_Human_0 *__THE_0_danny_0 = __THE_1_test_Human_0_alloc(str_alloc("Danny"), __THE_0_test_ColorSDBlue_0, __THE_0_test_IncomeTypeSDPassive_0);
+  const struct __THE_1_test_Human_0 *__THE_0_tricia_0 = __THE_1_test_Human_0_alloc(str_alloc("Tricia"), __THE_0_test_ColorSDRed_0, __THE_0_test_IncomeTypeSDActive_0);
+  __THE_0_test_printHuman_0.f(__THE_0_test_printHuman_0.x, xalloc(&(struct __THE_1_fn_sFP3HumanFRvoidFEP) {__THE_1_test_Human_0_copy(__THE_0_danny_0)}, sizeof(struct __THE_1_fn_sFP3HumanFRvoidFEP)));
+  __THE_0_test_printHuman_0.f(__THE_0_test_printHuman_0.x, xalloc(&(struct __THE_1_fn_sFP3HumanFRvoidFEP) {__THE_1_test_Human_0_copy(__THE_0_tricia_0)}, sizeof(struct __THE_1_fn_sFP3HumanFRvoidFEP)));
+  __THE_0_test_printColor_0.f(__THE_0_test_printColor_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_danny_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
+  __THE_0_test_printColor_0.f(__THE_0_test_printColor_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_tricia_0->__THE_0_hairColor}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
+  __THE_0_test_printIncomeType_0.f(__THE_0_test_printIncomeType_0.x, xalloc(&(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP) {__THE_0_danny_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP)));
+  __THE_0_test_printIncomeType_0.f(__THE_0_test_printIncomeType_0.x, xalloc(&(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP) {__THE_0_tricia_0->__THE_0_incomeType}, sizeof(struct __THE_1_fn_sFP3IncomeTypeFRvoidFEP)));
+  __THE_1_test_Human_0_free((struct __THE_1_test_Human_0 *) __THE_0_tricia_0);
+  __THE_1_test_Human_0_free((struct __THE_1_test_Human_0 *) __THE_0_danny_0);
 }
 ======= flags =======
 ======= stdout =======

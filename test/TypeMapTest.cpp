@@ -391,27 +391,27 @@ TEST_F(TypeMapTest, IsSelf) {
 }
 
 TEST_F(TypeMapTest, NameGeneratesValid) {
-  EXPECT_EQ(this->tm_.name("test"), "test_0");
+  EXPECT_EQ(this->tm_.name("test"), "test_test_0");
   this->tm_.createObj("test");
-  EXPECT_EQ(this->tm_.name("test"), "test_1");
+  EXPECT_EQ(this->tm_.name("test"), "test_test_1");
 
   this->tm_.stack.emplace_back("main");
 
-  EXPECT_EQ(this->tm_.name("test"), "mainSDtest_0");
+  EXPECT_EQ(this->tm_.name("test"), "test_mainSDtest_0");
   this->tm_.createObj("test");
-  EXPECT_EQ(this->tm_.name("test"), "mainSDtest_1");
+  EXPECT_EQ(this->tm_.name("test"), "test_mainSDtest_1");
 
   this->tm_.stack.emplace_back("hello");
 
-  EXPECT_EQ(this->tm_.name("world"), "mainSDhelloSDworld_0");
+  EXPECT_EQ(this->tm_.name("world"), "test_mainSDhelloSDworld_0");
   this->tm_.createObj("world");
-  EXPECT_EQ(this->tm_.name("world"), "mainSDhelloSDworld_1");
+  EXPECT_EQ(this->tm_.name("world"), "test_mainSDhelloSDworld_1");
 
   this->tm_.stack.emplace_back("world");
 
-  EXPECT_EQ(this->tm_.name("test"), "mainSDhelloSDworldSDtest_0");
+  EXPECT_EQ(this->tm_.name("test"), "test_mainSDhelloSDworldSDtest_0");
   this->tm_.createObj("test");
-  EXPECT_EQ(this->tm_.name("test"), "mainSDhelloSDworldSDtest_1");
+  EXPECT_EQ(this->tm_.name("test"), "test_mainSDhelloSDworldSDtest_1");
 }
 
 TEST_F(TypeMapTest, MapInserts) {

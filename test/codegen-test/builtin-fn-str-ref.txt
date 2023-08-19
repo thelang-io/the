@@ -105,9 +105,9 @@ void error_Error_free (struct error_Error *);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
 struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_a_0 (void *, void *);
-void __THE_1_b_0 (void *, void *);
-void __THE_1_c_0 (void *, void *);
+void __THE_1_test_a_0 (void *, void *);
+void __THE_1_test_b_0 (void *, void *);
+void __THE_1_test_c_0 (void *, void *);
 struct __THE_1_array_fn_sFRvoidFE __THE_1_array_fn_sFRvoidFE_alloc (size_t, ...);
 struct __THE_1_fn_sFRvoidFE *__THE_1_array_fn_sFRvoidFE_at (err_state_t *, int, int, struct __THE_1_array_fn_sFRvoidFE, int32_t);
 struct __THE_1_array_fn_sFRvoidFE __THE_1_array_fn_sFRvoidFE_copy (const struct __THE_1_array_fn_sFRvoidFE);
@@ -352,7 +352,7 @@ struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE n) {
   __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n);
   return str_alloc("[Function]");
 }
-void __THE_1_a_0 (void *px, void *pp) {
+void __THE_1_test_a_0 (void *px, void *pp) {
   struct __THE_1_fn_sFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "a", p->line, p->col);
@@ -360,7 +360,7 @@ void __THE_1_a_0 (void *px, void *pp) {
   error_stack_pop(fn_err_state);
   if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
-void __THE_1_b_0 (void *px, void *pp) {
+void __THE_1_test_b_0 (void *px, void *pp) {
   struct __THE_1_fn_sFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "b", p->line, p->col);
@@ -368,7 +368,7 @@ void __THE_1_b_0 (void *px, void *pp) {
   error_stack_pop(fn_err_state);
   if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
-void __THE_1_c_0 (void *px, void *pp) {
+void __THE_1_test_c_0 (void *px, void *pp) {
   struct __THE_1_fn_sFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "c", p->line, p->col);
@@ -414,10 +414,10 @@ size_t __THE_1_array_fn_sFRvoidFE_len (struct __THE_1_array_fn_sFRvoidFE n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn_sFRvoidFE __THE_0_a_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_a_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_b_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_b_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_c_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_c_0, NULL, 0};
-  const struct __THE_1_array_fn_sFRvoidFE __THE_0_arr_0 = __THE_1_array_fn_sFRvoidFE_alloc(3, __THE_1_fn_sFRvoidFE_copy(__THE_0_a_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_b_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_c_0));
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_a_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_a_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_b_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_b_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_c_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_c_0, NULL, 0};
+  const struct __THE_1_array_fn_sFRvoidFE __THE_0_arr_0 = __THE_1_array_fn_sFRvoidFE_alloc(3, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_a_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_test_b_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_test_c_0));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_fn_sFRvoidFE_len(__THE_1_array_fn_sFRvoidFE_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L5;
     print(stdout, "sz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(*__THE_1_array_fn_sFRvoidFE_at(&err_state, 9, 11, __THE_0_arr_0, __THE_0_i_0))), THE_EOL);

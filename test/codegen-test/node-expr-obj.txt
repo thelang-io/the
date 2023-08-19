@@ -52,9 +52,9 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_Test_0;
+struct __THE_1_test_Test_0;
 
-struct __THE_1_Test_0 {
+struct __THE_1_test_Test_0 {
   const int32_t __THE_0_a;
   const int32_t __THE_0_b;
 };
@@ -63,8 +63,8 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, int32_t);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (int32_t, int32_t);
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -84,19 +84,19 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, int32_t __THE_0_b) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_b};
-  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (int32_t __THE_0_a, int32_t __THE_0_b) {
+  struct __THE_1_test_Test_0 *r = alloc(sizeof(struct __THE_1_test_Test_0));
+  struct __THE_1_test_Test_0 s = {__THE_0_a, __THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *n) {
   free(n);
 }
 
 int main () {
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(0, 1));
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(0, 1));
+  __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_1_test_Test_0_alloc(0, 1));
+  __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_1_test_Test_0_alloc(0, 1));
 }
 ======= flags =======
 ======= stdout =======

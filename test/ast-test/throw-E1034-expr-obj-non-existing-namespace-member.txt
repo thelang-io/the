@@ -1,5 +1,5 @@
 ======= stdin =======
-import * as Package from "./test/fixtures/export-obj"
+import * as Package from "./fixtures/export-obj"
 
 main {
   test := Package.TestObject{a: 1}

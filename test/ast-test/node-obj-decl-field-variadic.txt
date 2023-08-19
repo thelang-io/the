@@ -24,7 +24,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="fieldTest1">
       <TypeFn name="fn_sFP4array_intFRvoidFE">
         <TypeFnParams>
@@ -60,7 +60,7 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
+    <Var name="test1" codeName="test_test1_0" frame="1">
       <TypeFn name="fn_sFP4array_intFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="a" variadic>
@@ -132,7 +132,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
+    <Var name="test2" codeName="test_test2_0" frame="1">
       <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
@@ -230,7 +230,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="fieldTest1">
             <TypeFn name="fn_sFP4array_intFRvoidFE">
               <TypeFnParams>
@@ -268,7 +268,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="fieldTest1">
               <TypeFn name="fn_sFP4array_intFRvoidFE">
                 <TypeFnParams>
@@ -322,7 +322,7 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="test1" codeName="test1_0" frame="1">
+                    <Var name="test1" codeName="test_test1_0" frame="1">
                       <TypeFn name="fn_sFP4array_intFRvoidFE">
                         <TypeFnParams>
                           <TypeFnParam name="a" variadic>
@@ -361,7 +361,7 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="test2" codeName="test2_0" frame="1">
+                    <Var name="test2" codeName="test_test2_0" frame="1">
                       <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                         <TypeFnParams>
                           <TypeFnParam name="a" required>
@@ -413,7 +413,7 @@ main {
               <ExprAccess prop="fieldTest1">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
                         <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
@@ -450,7 +450,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
                             <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
@@ -520,7 +520,7 @@ main {
               <ExprAccess prop="fieldTest1">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
                         <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
@@ -557,7 +557,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
                             <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
@@ -639,7 +639,7 @@ main {
               <ExprAccess prop="fieldTest1">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
                         <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
@@ -676,7 +676,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
                             <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
@@ -771,7 +771,7 @@ main {
               <ExprAccess prop="fieldTest2">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
                         <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
@@ -808,7 +808,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
                             <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
@@ -893,7 +893,7 @@ main {
               <ExprAccess prop="fieldTest2">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
                         <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
@@ -930,7 +930,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
                             <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
@@ -1025,7 +1025,7 @@ main {
               <ExprAccess prop="fieldTest2">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
                         <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
@@ -1062,7 +1062,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
                             <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>

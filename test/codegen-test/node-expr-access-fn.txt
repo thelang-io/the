@@ -17,19 +17,19 @@ struct __THE_1_fn_sFRvoidFE {
   size_t l;
 };
 
-void __THE_1_test1_0 (void *);
-void __THE_1_mainSDtest2_0 (void *);
+void __THE_1_test_test1_0 (void *);
+void __THE_1_test_mainSDtest2_0 (void *);
 
-void __THE_1_test1_0 (void *px) {
+void __THE_1_test_test1_0 (void *px) {
 }
-void __THE_1_mainSDtest2_0 (void *px) {
+void __THE_1_test_mainSDtest2_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
-  __THE_0_test1_0;
-  const struct __THE_1_fn_sFRvoidFE __THE_0_mainSDtest2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_mainSDtest2_0, NULL, 0};
-  __THE_0_mainSDtest2_0;
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  __THE_0_test_test1_0;
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_mainSDtest2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_mainSDtest2_0, NULL, 0};
+  __THE_0_test_mainSDtest2_0;
 }
 ======= flags =======
 ======= stdout =======

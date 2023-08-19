@@ -52,14 +52,14 @@ typedef struct {
 } err_state_t;
 
 struct __THE_1_fn_sFRvoidFE;
-struct __THE_1_Test_0;
+struct __THE_1_test_Test_0;
 
 struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_Test_0 {
+struct __THE_1_test_Test_0 {
   const struct __THE_1_fn_sFRvoidFE __THE_0_a;
 };
 
@@ -69,9 +69,9 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-void __THE_1_test_0 (void *);
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (struct __THE_1_fn_sFRvoidFE);
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *);
+void __THE_1_test_test_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -100,22 +100,22 @@ struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_s
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_sFRvoidFE __THE_0_a) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (struct __THE_1_fn_sFRvoidFE __THE_0_a) {
+  struct __THE_1_test_Test_0 *r = alloc(sizeof(struct __THE_1_test_Test_0));
+  struct __THE_1_test_Test_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *n) {
   __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n->__THE_0_a);
   free(n);
 }
-void __THE_1_test_0 (void *px) {
+void __THE_1_test_test_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_0)));
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_1_test_Test_0_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0)));
 }
 ======= flags =======
 ======= stdout =======

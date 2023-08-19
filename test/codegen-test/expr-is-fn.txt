@@ -140,7 +140,7 @@ struct str str_alloc (const char *);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
 struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_test_0 (void *);
+void __THE_1_test_test_0 (void *);
 struct any __THE_1_any_fn_sFRvoidFE_alloc (struct __THE_1_fn_sFRvoidFE);
 struct any __THE_1_any_fn_sFRvoidFE_copy (const struct any);
 void __THE_1_any_fn_sFRvoidFE_free (struct any);
@@ -322,7 +322,7 @@ struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE n) {
   __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n);
   return str_alloc("[Function]");
 }
-void __THE_1_test_0 (void *px) {
+void __THE_1_test_test_0 (void *px) {
 }
 struct any __THE_1_any_fn_sFRvoidFE_alloc (struct __THE_1_fn_sFRvoidFE d) {
   size_t l = sizeof(struct __THE_1_any_fn_sFRvoidFE);
@@ -375,8 +375,8 @@ struct __THE_1_union_fn_sFRvoidFEUSfloatUE __THE_1_union_fn_sFRvoidFEUSfloatUE_r
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  const struct any __THE_0_a_0 = __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_0));
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  const struct any __THE_0_a_0 = __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0));
   if (__THE_0_a_0.t == TYPE_fn_sFRvoidFE) {
     print(stdout, "sz", cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(((struct __THE_1_any_fn_sFRvoidFE *) __THE_0_a_0.d)->d))), THE_EOL);
   } else {
@@ -388,7 +388,7 @@ int main () {
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
-  const struct __THE_1_union_fn_sFRvoidFEUSfloatUE __THE_0_c_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_0));
+  const struct __THE_1_union_fn_sFRvoidFEUSfloatUE __THE_0_c_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0));
   if (__THE_0_c_0.t == TYPE_fn_sFRvoidFE) {
     print(stdout, "sz", cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_c_0.v2))), THE_EOL);
   } else {
@@ -400,8 +400,8 @@ int main () {
   } else {
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_d_0.v3)), THE_EOL);
   }
-  struct any __THE_0_e_0 = __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_0));
-  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_0)))).t == TYPE_fn_sFRvoidFE) {
+  struct any __THE_0_e_0 = __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0));
+  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0)))).t == TYPE_fn_sFRvoidFE) {
     print(stdout, "sz", cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(((struct __THE_1_any_fn_sFRvoidFE *) __THE_0_e_0.d)->d))), THE_EOL);
   } else {
     print(stdout, "zz", "any", THE_EOL);
@@ -412,8 +412,8 @@ int main () {
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
-  struct __THE_1_union_fn_sFRvoidFEUSfloatUE __THE_0_g_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_0));
-  if ((__THE_0_g_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_0)))).t == TYPE_fn_sFRvoidFE) {
+  struct __THE_1_union_fn_sFRvoidFEUSfloatUE __THE_0_g_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0));
+  if ((__THE_0_g_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0)))).t == TYPE_fn_sFRvoidFE) {
     print(stdout, "sz", cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_g_0.v2))), THE_EOL);
   } else {
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
@@ -428,9 +428,9 @@ int main () {
   print(stdout, "sz", (__THE_0_b_0.t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(((struct __THE_1_any_fn_sFRvoidFE *) __THE_0_b_0.d)->d))) : str_alloc("any"), THE_EOL);
   print(stdout, "sz", (__THE_0_c_0.t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_c_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_c_0.v3)), THE_EOL);
   print(stdout, "sz", (__THE_0_d_0.t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_d_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_d_0.v3)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_0)))).t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(((struct __THE_1_any_fn_sFRvoidFE *) __THE_0_e_0.d)->d))) : str_alloc("any"), THE_EOL);
+  print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0)))).t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(((struct __THE_1_any_fn_sFRvoidFE *) __THE_0_e_0.d)->d))) : str_alloc("any"), THE_EOL);
   print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(((struct __THE_1_any_fn_sFRvoidFE *) __THE_0_f_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_0)))).t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_g_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
+  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0)))).t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_g_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
   print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_fn_sFRvoidFEUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_fn_sFRvoidFEUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_fn_sFRvoidFE) ? cstr_concat_str("() -> void ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_h_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_h_0.v3)), THE_EOL);
   __THE_1_union_fn_sFRvoidFEUSfloatUE_free((struct __THE_1_union_fn_sFRvoidFEUSfloatUE) __THE_0_h_0);
   __THE_1_union_fn_sFRvoidFEUSfloatUE_free((struct __THE_1_union_fn_sFRvoidFEUSfloatUE) __THE_0_g_0);

@@ -124,7 +124,7 @@ struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE
 struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE_copy (const struct __THE_1_union_strUSintUScharUSboolUE);
 void __THE_1_union_strUSintUScharUSboolUE_free (struct __THE_1_union_strUSintUScharUSboolUE);
 struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE_realloc (struct __THE_1_union_strUSintUScharUSboolUE, struct __THE_1_union_strUSintUScharUSboolUE);
-void __THE_1_printTest_0 (void *, void *);
+void __THE_1_test_printTest_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -329,7 +329,7 @@ struct __THE_1_union_strUSintUScharUSboolUE __THE_1_union_strUSintUScharUSboolUE
   __THE_1_union_strUSintUScharUSboolUE_free((struct __THE_1_union_strUSintUScharUSboolUE) n1);
   return n2;
 }
-void __THE_1_printTest_0 (void *px, void *pp) {
+void __THE_1_test_printTest_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP *p = pp;
   const struct __THE_1_union_strUSintUScharUSboolUE __THE_0_test_0 = p->n0;
   if (__THE_0_test_0.t == TYPE_str) {
@@ -346,23 +346,23 @@ void __THE_1_printTest_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFE __THE_0_printTest_0 = (struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFE) {&__THE_1_printTest_0, NULL, 0};
+  const struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFE __THE_0_test_printTest_0 = (struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFE) {&__THE_1_test_printTest_0, NULL, 0};
   struct __THE_1_union_strUSintUScharUSboolUE __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_str, str_alloc(""));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_str, str_alloc("string")));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_int, 0));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_int, 10));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_char, '\0'));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_char, '\n'));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_bool, true));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_0_test_0 = __THE_1_union_strUSintUScharUSboolUE_realloc(__THE_0_test_0, __THE_1_union_strUSintUScharUSboolUE_alloc(TYPE_bool, false));
-  __THE_0_printTest_0.f(__THE_0_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
+  __THE_0_test_printTest_0.f(__THE_0_test_printTest_0.x, xalloc(&(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP) {__THE_1_union_strUSintUScharUSboolUE_copy(__THE_0_test_0)}, sizeof(struct __THE_1_fn_sFP3union_strUSintUScharUSboolUEFRvoidFEP)));
   __THE_1_union_strUSintUScharUSboolUE_free((struct __THE_1_union_strUSintUScharUSboolUE) __THE_0_test_0);
 }
 ======= flags =======

@@ -60,7 +60,7 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_mainSD$_0 (void *);
+void __THE_1_test_mainSD$_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -89,12 +89,12 @@ struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_s
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSD$_0 (void *px) {
+void __THE_1_test_mainSD$_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_mainSD$_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_mainSD$_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_a_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_mainSD$_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_mainSD$_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_mainSD$_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_a_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test_mainSD$_0);
   __THE_0_a_0.f(__THE_0_a_0.x);
   __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_a_0);
 }

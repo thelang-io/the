@@ -14,7 +14,7 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
+    <Var name="test1" codeName="test_test1_0" frame="1">
       <TypeFn name="fn_aFRvoidFE" async>
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -25,7 +25,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
+    <Var name="test2" codeName="test_test2_0" frame="1">
       <TypeFn name="fn_aFRintFE" async>
         <TypeFnReturnType>
           <BuiltinType name="int" />
@@ -70,7 +70,7 @@ main {
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
-                      <Var name="test1" codeName="test1_0" frame="1">
+                      <Var name="test1" codeName="test_test1_0" frame="1">
                         <TypeFn name="fn_aFRvoidFE" async>
                           <TypeFnReturnType>
                             <BuiltinType name="void" />
@@ -117,7 +117,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test2" codeName="test2_0" frame="1">
+                          <Var name="test2" codeName="test_test2_0" frame="1">
                             <TypeFn name="fn_aFRintFE" async>
                               <TypeFnReturnType>
                                 <BuiltinType name="int" />
@@ -166,7 +166,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test2" codeName="test2_0" frame="1">
+                          <Var name="test2" codeName="test_test2_0" frame="1">
                             <TypeFn name="fn_aFRintFE" async>
                               <TypeFnReturnType>
                                 <BuiltinType name="int" />

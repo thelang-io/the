@@ -85,7 +85,7 @@ void str_free (struct str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 size_t __THE_1_array_str_len (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
-void __THE_1_test_0 (void *);
+void __THE_1_test_test_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -291,7 +291,7 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return str_concat_cstr(r, "]");
 }
-void __THE_1_test_0 (void *px) {
+void __THE_1_test_test_0 (void *px) {
   print(stdout, "sz", __THE_1_array_str_str(process_args()), THE_EOL);
   print(stdout, "iz", __THE_1_array_str_len(process_args()), THE_EOL);
 }
@@ -299,8 +299,8 @@ void __THE_1_test_0 (void *px) {
 int main (int _argc_, char *_argv_[]) {
   argc = _argc_;
   argv = _argv_;
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  __THE_0_test_0.f(__THE_0_test_0.x);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  __THE_0_test_test_0.f(__THE_0_test_test_0.x);
 }
 ======= flags =======
 ======= stdout =======

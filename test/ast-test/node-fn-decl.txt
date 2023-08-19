@@ -38,7 +38,7 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
+    <Var name="test1" codeName="test_test1_0" frame="1">
       <TypeFn name="fn_sFP3strFP3strFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="p1" required>
@@ -149,7 +149,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
+    <Var name="test2" codeName="test_test2_0" frame="1">
       <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="p2">
@@ -278,7 +278,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test3" codeName="test3_0" frame="1">
+    <Var name="test3" codeName="test_test3_0" frame="1">
       <TypeFn name="fn_sFP3fn_sFP3intFP4array_intFRintFEFRintFE">
         <TypeFnParams>
           <TypeFnParam name="sum" required>
@@ -570,7 +570,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test3_sum" codeName="test3_sum_0" frame="1">
+    <Var name="test3_sum" codeName="test_test3_sum_0" frame="1">
       <TypeFn name="fn_sFP3intFP4array_intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
@@ -667,7 +667,7 @@ main {
 <NodeMain>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="test0" codeName="mainSDtest0_0" frame="2">
+      <Var name="test0" codeName="test_mainSDtest0_0" frame="2">
         <TypeFn name="fn_sFP3intFP1intFRintFE">
           <TypeFnParams>
             <TypeFnParam name="p0" required>
@@ -825,7 +825,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test1" codeName="test1_0" frame="1">
+                <Var name="test1" codeName="test_test1_0" frame="1">
                   <TypeFn name="fn_sFP3strFP3strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p1" required>
@@ -896,7 +896,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
+                <Var name="test2" codeName="test_test2_0" frame="1">
                   <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
@@ -947,7 +947,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
+                <Var name="test2" codeName="test_test2_0" frame="1">
                   <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
@@ -1010,7 +1010,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
+                <Var name="test2" codeName="test_test2_0" frame="1">
                   <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
@@ -1083,7 +1083,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
+                <Var name="test2" codeName="test_test2_0" frame="1">
                   <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
@@ -1205,7 +1205,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test3" codeName="test3_0" frame="1">
+                          <Var name="test3" codeName="test_test3_0" frame="1">
                             <TypeFn name="fn_sFP3fn_sFP3intFP4array_intFRintFEFRintFE">
                               <TypeFnParams>
                                 <TypeFnParam name="sum" required>
@@ -1257,7 +1257,7 @@ main {
                         </NodeExprType>
                         <NodeExprBody>
                           <ExprAccess>
-                            <Var name="test3_sum" codeName="test3_sum_0" frame="1">
+                            <Var name="test3_sum" codeName="test_test3_sum_0" frame="1">
                               <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                 <TypeFnParams>
                                   <TypeFnParam name="a" required>
@@ -1342,7 +1342,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test0" codeName="mainSDtest0_0" frame="2">
+                          <Var name="test0" codeName="test_mainSDtest0_0" frame="2">
                             <TypeFn name="fn_sFP3intFP1intFRintFE">
                               <TypeFnParams>
                                 <TypeFnParam name="p0" required>
@@ -1436,7 +1436,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test0" codeName="mainSDtest0_0" frame="2">
+                          <Var name="test0" codeName="test_mainSDtest0_0" frame="2">
                             <TypeFn name="fn_sFP3intFP1intFRintFE">
                               <TypeFnParams>
                                 <TypeFnParam name="p0" required>

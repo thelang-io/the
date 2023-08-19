@@ -16,14 +16,14 @@ struct __THE_1_fn_sFRvoidFE {
   size_t l;
 };
 
-void __THE_1_test_0 (void *);
+void __THE_1_test_test_0 (void *);
 
-void __THE_1_test_0 (void *px) {
+void __THE_1_test_test_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  __THE_0_test_0.f(__THE_0_test_0.x);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  __THE_0_test_test_0.f(__THE_0_test_test_0.x);
 }
 ======= flags =======
 ======= stdout =======

@@ -29,10 +29,10 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_Test_0 {
-  __THE_0_TestSDRed_0,
-  __THE_0_TestSDGreen_0,
-  __THE_0_TestSDBlue_0
+enum __THE_1_test_Test_0 {
+  __THE_0_test_TestSDRed_0,
+  __THE_0_test_TestSDGreen_0,
+  __THE_0_test_TestSDBlue_0
 };
 
 typedef struct err_buf {
@@ -67,7 +67,7 @@ struct __THE_1_map_strMSTestME;
 
 struct __THE_1_pair_strMSTestME {
   struct str f;
-  enum __THE_1_Test_0 s;
+  enum __THE_1_test_Test_0 s;
 };
 struct __THE_1_map_strMSTestME {
   struct __THE_1_pair_strMSTestME *d;
@@ -115,7 +115,7 @@ struct __THE_1_map_strMSTestME __THE_1_map_strMSTestME_alloc (int x, ...) {
   struct __THE_1_pair_strMSTestME *d = alloc(x * sizeof(struct __THE_1_pair_strMSTestME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSTestME) {va_arg(args, struct str), va_arg(args, enum __THE_1_Test_0)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSTestME) {va_arg(args, struct str), va_arg(args, enum __THE_1_test_Test_0)};
   va_end(args);
   return (struct __THE_1_map_strMSTestME) {d, x, x};
 }
@@ -127,8 +127,8 @@ void __THE_1_map_strMSTestME_free (struct __THE_1_map_strMSTestME n) {
 }
 
 int main () {
-  const struct __THE_1_map_strMSTestME __THE_0_a_0 = __THE_1_map_strMSTestME_alloc(3, str_alloc("key1"), __THE_0_TestSDRed_0, str_alloc("key2"), __THE_0_TestSDGreen_0, str_alloc("key3"), __THE_0_TestSDBlue_0);
-  const struct __THE_1_map_strMSTestME __THE_0_b_0 = __THE_1_map_strMSTestME_alloc(3, str_alloc("key1"), __THE_0_TestSDRed_0, str_alloc("key2"), __THE_0_TestSDGreen_0, str_alloc("key3"), __THE_0_TestSDBlue_0);
+  const struct __THE_1_map_strMSTestME __THE_0_a_0 = __THE_1_map_strMSTestME_alloc(3, str_alloc("key1"), __THE_0_test_TestSDRed_0, str_alloc("key2"), __THE_0_test_TestSDGreen_0, str_alloc("key3"), __THE_0_test_TestSDBlue_0);
+  const struct __THE_1_map_strMSTestME __THE_0_b_0 = __THE_1_map_strMSTestME_alloc(3, str_alloc("key1"), __THE_0_test_TestSDRed_0, str_alloc("key2"), __THE_0_test_TestSDGreen_0, str_alloc("key3"), __THE_0_test_TestSDBlue_0);
   __THE_1_map_strMSTestME_free((struct __THE_1_map_strMSTestME) __THE_0_b_0);
   __THE_1_map_strMSTestME_free((struct __THE_1_map_strMSTestME) __THE_0_a_0);
 }

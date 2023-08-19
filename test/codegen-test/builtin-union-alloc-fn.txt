@@ -85,10 +85,10 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_test1_0 (void *);
+void __THE_1_test_test1_0 (void *);
 struct __THE_1_fn_sFRintFE __THE_1_fn_sFRintFE_copy (const struct __THE_1_fn_sFRintFE);
 void __THE_1_fn_sFRintFE_free (struct __THE_1_fn_sFRintFE);
-int32_t __THE_1_test2_0 (void *);
+int32_t __THE_1_test_test2_0 (void *);
 struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_alloc (int, ...);
 void __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_free (struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE);
 
@@ -119,7 +119,7 @@ struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_s
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_test1_0 (void *px) {
+void __THE_1_test_test1_0 (void *px) {
   return;
 }
 struct __THE_1_fn_sFRintFE __THE_1_fn_sFRintFE_copy (const struct __THE_1_fn_sFRintFE n) {
@@ -131,7 +131,7 @@ struct __THE_1_fn_sFRintFE __THE_1_fn_sFRintFE_copy (const struct __THE_1_fn_sFR
 void __THE_1_fn_sFRintFE_free (struct __THE_1_fn_sFRintFE n) {
   if (n.x != NULL) free(n.x);
 }
-int32_t __THE_1_test2_0 (void *px) {
+int32_t __THE_1_test_test2_0 (void *px) {
   return 1;
 }
 struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_alloc (int t, ...) {
@@ -149,10 +149,10 @@ void __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_free (struct __THE_1_union_fn_sFR
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn_sFRintFE __THE_0_test2_0 = (struct __THE_1_fn_sFRintFE) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE __THE_0_g1_0 = __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test1_0));
-  const struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE __THE_0_g2_0 = __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_alloc(TYPE_fn_sFRintFE, __THE_1_fn_sFRintFE_copy(__THE_0_test2_0));
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRintFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFRintFE) {&__THE_1_test_test2_0, NULL, 0};
+  const struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE __THE_0_g1_0 = __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_alloc(TYPE_fn_sFRvoidFE, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_test1_0));
+  const struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE __THE_0_g2_0 = __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_alloc(TYPE_fn_sFRintFE, __THE_1_fn_sFRintFE_copy(__THE_0_test_test2_0));
   __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_free((struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE) __THE_0_g2_0);
   __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE_free((struct __THE_1_union_fn_sFRvoidFEUSfn_sFRintFEUE) __THE_0_g1_0);
 }

@@ -8,15 +8,15 @@ enum Color {
 const a: Color = .Red
 const b := Color.Green
 ======= code =======
-enum __THE_1_Color_0 {
-  __THE_0_ColorSDRed_0,
-  __THE_0_ColorSDGreen_0,
-  __THE_0_ColorSDBlue_0
+enum __THE_1_test_Color_0 {
+  __THE_0_test_ColorSDRed_0,
+  __THE_0_test_ColorSDGreen_0,
+  __THE_0_test_ColorSDBlue_0
 };
 
 int main () {
-  const enum __THE_1_Color_0 __THE_0_a_0 = __THE_0_ColorSDRed_0;
-  const enum __THE_1_Color_0 __THE_0_b_0 = __THE_0_ColorSDGreen_0;
+  const enum __THE_1_test_Color_0 __THE_0_a_0 = __THE_0_test_ColorSDRed_0;
+  const enum __THE_1_test_Color_0 __THE_0_b_0 = __THE_0_test_ColorSDGreen_0;
 }
 ======= flags =======
 ======= stdout =======

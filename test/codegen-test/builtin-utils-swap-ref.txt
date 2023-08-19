@@ -83,7 +83,7 @@ void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 void utils_swap (void *, void *, size_t);
 void *xalloc (void *, size_t);
-void __THE_1_printRefs_0 (void *, void *);
+void __THE_1_test_printRefs_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -230,7 +230,7 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_printRefs_0 (void *px, void *pp) {
+void __THE_1_test_printRefs_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3intFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
@@ -239,16 +239,16 @@ void __THE_1_printRefs_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3intFP3intFRvoidFE __THE_0_printRefs_0 = (struct __THE_1_fn_sFP3intFP3intFRvoidFE) {&__THE_1_printRefs_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFRvoidFE __THE_0_test_printRefs_0 = (struct __THE_1_fn_sFP3intFP3intFRvoidFE) {&__THE_1_test_printRefs_0, NULL, 0};
   const int32_t __THE_0_refA_0 = 1;
   const int32_t __THE_0_refB_0 = 2;
   int32_t *__THE_0_a_0 = &__THE_0_refA_0;
   int32_t *__THE_0_b_0 = &__THE_0_refB_0;
-  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRvoidFEP) {*__THE_0_a_0, *__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP3intFP3intFRvoidFEP)));
+  __THE_0_test_printRefs_0.f(__THE_0_test_printRefs_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRvoidFEP) {*__THE_0_a_0, *__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP3intFP3intFRvoidFEP)));
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(int32_t *));
-  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRvoidFEP) {*__THE_0_a_0, *__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP3intFP3intFRvoidFEP)));
+  __THE_0_test_printRefs_0.f(__THE_0_test_printRefs_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRvoidFEP) {*__THE_0_a_0, *__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP3intFP3intFRvoidFEP)));
   utils_swap(&__THE_0_a_0, &__THE_0_b_0, sizeof(int32_t *));
-  __THE_0_printRefs_0.f(__THE_0_printRefs_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRvoidFEP) {*__THE_0_a_0, *__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP3intFP3intFRvoidFEP)));
+  __THE_0_test_printRefs_0.f(__THE_0_test_printRefs_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRvoidFEP) {*__THE_0_a_0, *__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP3intFP3intFRvoidFEP)));
 }
 ======= flags =======
 ======= stdout =======

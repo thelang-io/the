@@ -98,8 +98,8 @@ void __THE_1_array_int_free (struct __THE_1_array_int);
 size_t __THE_1_array_int_len (struct __THE_1_array_int);
 void __THE_1_array_int_push (struct __THE_1_array_int *, struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
-struct __THE_1_array_int __THE_1_test1_0 (void *, void *);
-struct __THE_1_array_int __THE_1_test2_0 (void *, void *);
+struct __THE_1_array_int __THE_1_test_test1_0 (void *, void *);
+struct __THE_1_array_int __THE_1_test_test2_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -165,7 +165,7 @@ struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1,
   __THE_1_array_int_free((struct __THE_1_array_int) n1);
   return n2;
 }
-struct __THE_1_array_int __THE_1_test1_0 (void *px, void *pp) {
+struct __THE_1_array_int __THE_1_test_test1_0 (void *px, void *pp) {
   struct __THE_1_array_int v;
   struct __THE_1_fn_sFP5array_intFRarray_intFEP *p = pp;
   struct __THE_1_array_int __THE_0_a_0 = p->n0;
@@ -175,7 +175,7 @@ struct __THE_1_array_int __THE_1_test1_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
-struct __THE_1_array_int __THE_1_test2_0 (void *px, void *pp) {
+struct __THE_1_array_int __THE_1_test_test2_0 (void *px, void *pp) {
   struct __THE_1_array_int v;
   struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFEP *p = pp;
   struct __THE_1_array_int __THE_0_a_0 = p->n0;
@@ -190,10 +190,10 @@ struct __THE_1_array_int __THE_1_test2_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFP5array_intFRarray_intFE __THE_0_test1_0 = (struct __THE_1_fn_sFP5array_intFRarray_intFE) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFE __THE_0_test2_0 = (struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFE) {&__THE_1_test2_0, NULL, 0};
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5array_intFRarray_intFEP) {__THE_1_array_int_alloc(2, 0, 1)}, sizeof(struct __THE_1_fn_sFP5array_intFRarray_intFEP))));
-  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFEP) {__THE_1_array_int_alloc(2, 2, 3), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFEP))));
+  const struct __THE_1_fn_sFP5array_intFRarray_intFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFP5array_intFRarray_intFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFE) {&__THE_1_test_test2_0, NULL, 0};
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5array_intFRarray_intFEP) {__THE_1_array_int_alloc(2, 0, 1)}, sizeof(struct __THE_1_fn_sFP5array_intFRarray_intFEP))));
+  __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_test_test2_0.f(__THE_0_test_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFEP) {__THE_1_array_int_alloc(2, 2, 3), 0, (struct __THE_1_array_int) {}}, sizeof(struct __THE_1_fn_sFP5array_intFP2array_intFRarray_intFEP))));
 }
 ======= flags =======
 ======= stdout =======

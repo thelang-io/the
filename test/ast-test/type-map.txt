@@ -20,7 +20,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -49,7 +49,7 @@ main {
             <BuiltinType name="int" />
           </TypeMapKeyType>
           <TypeMapValueType>
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="a">
                 <BuiltinType name="int" />
               </TypeField>
@@ -176,7 +176,7 @@ main {
                 <BuiltinType name="int" />
               </TypeMapKeyType>
               <TypeMapValueType>
-                <TypeObj codeName="Test_0" name="Test">
+                <TypeObj codeName="test_Test_0" name="Test">
                   <TypeField name="a">
                     <BuiltinType name="int" />
                   </TypeField>

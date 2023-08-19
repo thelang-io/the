@@ -93,8 +93,8 @@ struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
 void *xalloc (void *, size_t);
-struct str __THE_1_test1_0 (void *, void *);
-struct str __THE_1_test2_0 (void *, void *);
+struct str __THE_1_test_test1_0 (void *, void *);
+struct str __THE_1_test_test2_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -138,7 +138,7 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-struct str __THE_1_test1_0 (void *px, void *pp) {
+struct str __THE_1_test_test1_0 (void *px, void *pp) {
   struct str v;
   struct __THE_1_fn_sFP5strFRAliasFEP *p = pp;
   struct str __THE_0_a_0 = p->n0;
@@ -148,7 +148,7 @@ struct str __THE_1_test1_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
-struct str __THE_1_test2_0 (void *px, void *pp) {
+struct str __THE_1_test_test2_0 (void *px, void *pp) {
   struct str v;
   struct __THE_1_fn_sFP5strFP2strFRAliasFEP *p = pp;
   struct str __THE_0_a_0 = p->n0;
@@ -163,10 +163,10 @@ struct str __THE_1_test2_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFP5strFRAliasFE __THE_0_test1_0 = (struct __THE_1_fn_sFP5strFRAliasFE) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn_sFP5strFP2strFRAliasFE __THE_0_test2_0 = (struct __THE_1_fn_sFP5strFP2strFRAliasFE) {&__THE_1_test2_0, NULL, 0};
-  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5strFRAliasFEP) {str_alloc("test0")}, sizeof(struct __THE_1_fn_sFP5strFRAliasFEP))));
-  str_free((struct str) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5strFP2strFRAliasFEP) {str_alloc("test4"), 0, (struct str) {}}, sizeof(struct __THE_1_fn_sFP5strFP2strFRAliasFEP))));
+  const struct __THE_1_fn_sFP5strFRAliasFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFP5strFRAliasFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFP5strFP2strFRAliasFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFP5strFP2strFRAliasFE) {&__THE_1_test_test2_0, NULL, 0};
+  str_free((struct str) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5strFRAliasFEP) {str_alloc("test0")}, sizeof(struct __THE_1_fn_sFP5strFRAliasFEP))));
+  str_free((struct str) __THE_0_test_test2_0.f(__THE_0_test_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5strFP2strFRAliasFEP) {str_alloc("test4"), 0, (struct str) {}}, sizeof(struct __THE_1_fn_sFP5strFP2strFRAliasFEP))));
 }
 ======= flags =======
 ======= stdout =======

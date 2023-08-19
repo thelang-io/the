@@ -110,7 +110,7 @@ struct __THE_1_fn_sFP5ref_intFRintFEP;
 struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFE;
 struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP;
 struct __THE_1_fn_sFRvoidFE;
-struct __THE_1_mainSDjobLocal1_0X;
+struct __THE_1_test_mainSDjobLocal1_0X;
 
 struct __THE_1_fn_sFP5ref_intFRref_intFE {
   int32_t *(*f) (void *, void *);
@@ -145,13 +145,13 @@ struct __THE_1_fn_sFRvoidFE {
   void *x;
   size_t l;
 };
-struct __THE_1_mainSDjobLocal1_0X {
+struct __THE_1_test_mainSDjobLocal1_0X {
   const struct __THE_1_fn_sFP5ref_intFRintFE **__THE_0_refJob2_0;
   const struct __THE_1_fn_sFP5ref_intFRref_intFE **__THE_0_refJob1_0;
   const int32_t **__THE_0_refA_0;
   int32_t *__THE_0_a_0;
-  const struct __THE_1_fn_sFP5ref_intFRintFE *__THE_0_job2_0;
-  const struct __THE_1_fn_sFP5ref_intFRref_intFE *__THE_0_job1_0;
+  const struct __THE_1_fn_sFP5ref_intFRintFE *__THE_0_test_job2_0;
+  const struct __THE_1_fn_sFP5ref_intFRref_intFE *__THE_0_test_job1_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -161,14 +161,14 @@ void error_alloc (err_state_t *, size_t);
 void *xalloc (void *, size_t);
 struct __THE_1_fn_sFP5ref_intFRref_intFE __THE_1_fn_sFP5ref_intFRref_intFE_copy (const struct __THE_1_fn_sFP5ref_intFRref_intFE);
 void __THE_1_fn_sFP5ref_intFRref_intFE_free (struct __THE_1_fn_sFP5ref_intFRref_intFE);
-int32_t *__THE_1_job1_0 (void *, void *);
+int32_t *__THE_1_test_job1_0 (void *, void *);
 struct __THE_1_fn_sFP5ref_intFRintFE __THE_1_fn_sFP5ref_intFRintFE_copy (const struct __THE_1_fn_sFP5ref_intFRintFE);
 void __THE_1_fn_sFP5ref_intFRintFE_free (struct __THE_1_fn_sFP5ref_intFRintFE);
-int32_t __THE_1_job2_0 (void *, void *);
-void __THE_1_job3_0 (void *, void *);
+int32_t __THE_1_test_job2_0 (void *, void *);
+void __THE_1_test_job3_0 (void *, void *);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_mainSDjobLocal1_0 (void *);
-void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn_sFRvoidFE *, struct __THE_1_mainSDjobLocal1_0X);
+void __THE_1_test_mainSDjobLocal1_0 (void *);
+void __THE_1_test_mainSDjobLocal1_0_alloc (struct __THE_1_fn_sFRvoidFE *, struct __THE_1_test_mainSDjobLocal1_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -203,7 +203,7 @@ struct __THE_1_fn_sFP5ref_intFRref_intFE __THE_1_fn_sFP5ref_intFRref_intFE_copy 
 void __THE_1_fn_sFP5ref_intFRref_intFE_free (struct __THE_1_fn_sFP5ref_intFRref_intFE n) {
   if (n.x != NULL) free(n.x);
 }
-int32_t *__THE_1_job1_0 (void *px, void *pp) {
+int32_t *__THE_1_test_job1_0 (void *px, void *pp) {
   int32_t *v;
   struct __THE_1_fn_sFP5ref_intFRref_intFEP *p = pp;
   int32_t *__THE_0_a_0 = p->n0;
@@ -221,7 +221,7 @@ struct __THE_1_fn_sFP5ref_intFRintFE __THE_1_fn_sFP5ref_intFRintFE_copy (const s
 void __THE_1_fn_sFP5ref_intFRintFE_free (struct __THE_1_fn_sFP5ref_intFRintFE n) {
   if (n.x != NULL) free(n.x);
 }
-int32_t __THE_1_job2_0 (void *px, void *pp) {
+int32_t __THE_1_test_job2_0 (void *px, void *pp) {
   int32_t v;
   struct __THE_1_fn_sFP5ref_intFRintFEP *p = pp;
   int32_t *__THE_0_a_0 = p->n0;
@@ -229,7 +229,7 @@ int32_t __THE_1_job2_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
-void __THE_1_job3_0 (void *px, void *pp) {
+void __THE_1_test_job3_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP *p = pp;
   int32_t *__THE_0_a_0 = p->n0;
   const struct __THE_1_fn_sFP5ref_intFRref_intFE __THE_0_fn1_0 = p->n1;
@@ -249,59 +249,59 @@ void __THE_1_job3_0 (void *px, void *pp) {
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDjobLocal1_0 (void *px) {
-  struct __THE_1_mainSDjobLocal1_0X *x = px;
+void __THE_1_test_mainSDjobLocal1_0 (void *px) {
+  struct __THE_1_test_mainSDjobLocal1_0X *x = px;
   const struct __THE_1_fn_sFP5ref_intFRintFE **__THE_0_refJob2_0 = x->__THE_0_refJob2_0;
   const struct __THE_1_fn_sFP5ref_intFRref_intFE **__THE_0_refJob1_0 = x->__THE_0_refJob1_0;
   const int32_t **__THE_0_refA_0 = x->__THE_0_refA_0;
   int32_t *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn_sFP5ref_intFRintFE *__THE_0_job2_0 = x->__THE_0_job2_0;
-  const struct __THE_1_fn_sFP5ref_intFRref_intFE *__THE_0_job1_0 = x->__THE_0_job1_0;
-  const int32_t __THE_0_v21_0 = *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) + (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const struct __THE_1_fn_sFP5ref_intFRintFE *__THE_0_test_job2_0 = x->__THE_0_test_job2_0;
+  const struct __THE_1_fn_sFP5ref_intFRref_intFE *__THE_0_test_job1_0 = x->__THE_0_test_job1_0;
+  const int32_t __THE_0_v21_0 = *(*__THE_0_test_job1_0).f((*__THE_0_test_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) + (*__THE_0_test_job2_0).f((*__THE_0_test_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
   const bool __THE_0_v22_0 = *(**__THE_0_refJob1_0).f((**__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) > (**__THE_0_refJob2_0).f((**__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
-  const int32_t __THE_0_v23_0 = *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) & *(**__THE_0_refJob1_0).f((**__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
-  const int32_t __THE_0_v24_0 = (**__THE_0_refJob2_0).f((**__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP))) - (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
-  const bool __THE_0_v26_0 = *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) > (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
-  const int32_t __THE_0_v27_0 = *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) & *(*__THE_0_job1_0).f((*__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
-  const int32_t __THE_0_v28_0 = (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP))) - (*__THE_0_job2_0).f((*__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const int32_t __THE_0_v23_0 = *(*__THE_0_test_job1_0).f((*__THE_0_test_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) & *(**__THE_0_refJob1_0).f((**__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
+  const int32_t __THE_0_v24_0 = (**__THE_0_refJob2_0).f((**__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP))) - (*__THE_0_test_job2_0).f((*__THE_0_test_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const bool __THE_0_v26_0 = *(*__THE_0_test_job1_0).f((*__THE_0_test_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) > (*__THE_0_test_job2_0).f((*__THE_0_test_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const int32_t __THE_0_v27_0 = *(*__THE_0_test_job1_0).f((*__THE_0_test_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP))) & *(*__THE_0_test_job1_0).f((*__THE_0_test_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
+  const int32_t __THE_0_v28_0 = (*__THE_0_test_job2_0).f((*__THE_0_test_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP))) - (*__THE_0_test_job2_0).f((*__THE_0_test_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {*__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
 }
-void __THE_1_mainSDjobLocal1_0_alloc (struct __THE_1_fn_sFRvoidFE *n, struct __THE_1_mainSDjobLocal1_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDjobLocal1_0X);
-  struct __THE_1_mainSDjobLocal1_0X *r = alloc(l);
+void __THE_1_test_mainSDjobLocal1_0_alloc (struct __THE_1_fn_sFRvoidFE *n, struct __THE_1_test_mainSDjobLocal1_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSDjobLocal1_0X);
+  struct __THE_1_test_mainSDjobLocal1_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDjobLocal1_0;
+  n->f = &__THE_1_test_mainSDjobLocal1_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
-  const struct __THE_1_fn_sFP5ref_intFRref_intFE __THE_0_job1_0 = (struct __THE_1_fn_sFP5ref_intFRref_intFE) {&__THE_1_job1_0, NULL, 0};
-  const struct __THE_1_fn_sFP5ref_intFRintFE __THE_0_job2_0 = (struct __THE_1_fn_sFP5ref_intFRintFE) {&__THE_1_job2_0, NULL, 0};
-  const struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFE __THE_0_job3_0 = (struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFE) {&__THE_1_job3_0, NULL, 0};
+  const struct __THE_1_fn_sFP5ref_intFRref_intFE __THE_0_test_job1_0 = (struct __THE_1_fn_sFP5ref_intFRref_intFE) {&__THE_1_test_job1_0, NULL, 0};
+  const struct __THE_1_fn_sFP5ref_intFRintFE __THE_0_test_job2_0 = (struct __THE_1_fn_sFP5ref_intFRintFE) {&__THE_1_test_job2_0, NULL, 0};
+  const struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFE __THE_0_test_job3_0 = (struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFE) {&__THE_1_test_job3_0, NULL, 0};
   int32_t __THE_0_a_0 = 0;
   const int32_t *__THE_0_refA_0 = &__THE_0_a_0;
-  const struct __THE_1_fn_sFP5ref_intFRref_intFE *__THE_0_refJob1_0 = &__THE_0_job1_0;
-  const struct __THE_1_fn_sFP5ref_intFRintFE *__THE_0_refJob2_0 = &__THE_0_job2_0;
-  const int32_t *__THE_0_v01_0 = __THE_0_job1_0.f(__THE_0_job1_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
-  const int32_t *__THE_0_v02_0 = __THE_0_job1_0.f(__THE_0_job1_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
-  const int32_t __THE_0_v03_0 = __THE_0_job2_0.f(__THE_0_job2_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
-  const int32_t __THE_0_v04_0 = __THE_0_job2_0.f(__THE_0_job2_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
-  const int32_t *__THE_0_v05_0 = (__THE_0_job1_0).f((__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
-  const int32_t *__THE_0_v06_0 = (__THE_0_job1_0).f((__THE_0_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
-  const int32_t __THE_0_v07_0 = (__THE_0_job2_0).f((__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
-  const int32_t __THE_0_v08_0 = (__THE_0_job2_0).f((__THE_0_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const struct __THE_1_fn_sFP5ref_intFRref_intFE *__THE_0_refJob1_0 = &__THE_0_test_job1_0;
+  const struct __THE_1_fn_sFP5ref_intFRintFE *__THE_0_refJob2_0 = &__THE_0_test_job2_0;
+  const int32_t *__THE_0_v01_0 = __THE_0_test_job1_0.f(__THE_0_test_job1_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
+  const int32_t *__THE_0_v02_0 = __THE_0_test_job1_0.f(__THE_0_test_job1_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
+  const int32_t __THE_0_v03_0 = __THE_0_test_job2_0.f(__THE_0_test_job2_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const int32_t __THE_0_v04_0 = __THE_0_test_job2_0.f(__THE_0_test_job2_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const int32_t *__THE_0_v05_0 = (__THE_0_test_job1_0).f((__THE_0_test_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
+  const int32_t *__THE_0_v06_0 = (__THE_0_test_job1_0).f((__THE_0_test_job1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
+  const int32_t __THE_0_v07_0 = (__THE_0_test_job2_0).f((__THE_0_test_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
+  const int32_t __THE_0_v08_0 = (__THE_0_test_job2_0).f((__THE_0_test_job2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
   const int32_t *__THE_0_v09_0 = (*__THE_0_refJob1_0).f((*__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
   const int32_t *__THE_0_v10_0 = (*__THE_0_refJob1_0).f((*__THE_0_refJob1_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRref_intFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRref_intFEP)));
   const int32_t __THE_0_v11_0 = (*__THE_0_refJob2_0).f((*__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
   const int32_t __THE_0_v12_0 = (*__THE_0_refJob2_0).f((*__THE_0_refJob2_0).x, xalloc(&(struct __THE_1_fn_sFP5ref_intFRintFEP) {__THE_0_refA_0}, sizeof(struct __THE_1_fn_sFP5ref_intFRintFEP)));
-  __THE_0_job3_0.f(__THE_0_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {&__THE_0_a_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(__THE_0_job1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(__THE_0_job2_0), &__THE_0_job1_0, &__THE_0_job2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
-  __THE_0_job3_0.f(__THE_0_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {&__THE_0_a_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(__THE_0_job1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(__THE_0_job2_0), &__THE_0_job1_0, &__THE_0_job2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
-  __THE_0_job3_0.f(__THE_0_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {__THE_0_refA_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(__THE_0_job1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(__THE_0_job2_0), __THE_0_refJob1_0, __THE_0_refJob2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
-  __THE_0_job3_0.f(__THE_0_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {__THE_0_refA_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(*__THE_0_refJob1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(*__THE_0_refJob2_0), __THE_0_refJob1_0, __THE_0_refJob2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
-  const struct __THE_1_fn_sFRvoidFE __THE_0_mainSDjobLocal1_0;
-  __THE_1_mainSDjobLocal1_0_alloc((struct __THE_1_fn_sFRvoidFE *) &__THE_0_mainSDjobLocal1_0, (struct __THE_1_mainSDjobLocal1_0X) {&__THE_0_refJob2_0, &__THE_0_refJob1_0, &__THE_0_refA_0, &__THE_0_a_0, &__THE_0_job2_0, &__THE_0_job1_0});
-  __THE_0_mainSDjobLocal1_0.f(__THE_0_mainSDjobLocal1_0.x);
-  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_mainSDjobLocal1_0);
+  __THE_0_test_job3_0.f(__THE_0_test_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {&__THE_0_a_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(__THE_0_test_job1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(__THE_0_test_job2_0), &__THE_0_test_job1_0, &__THE_0_test_job2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
+  __THE_0_test_job3_0.f(__THE_0_test_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {&__THE_0_a_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(__THE_0_test_job1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(__THE_0_test_job2_0), &__THE_0_test_job1_0, &__THE_0_test_job2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
+  __THE_0_test_job3_0.f(__THE_0_test_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {__THE_0_refA_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(__THE_0_test_job1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(__THE_0_test_job2_0), __THE_0_refJob1_0, __THE_0_refJob2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
+  __THE_0_test_job3_0.f(__THE_0_test_job3_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP) {__THE_0_refA_0, __THE_1_fn_sFP5ref_intFRref_intFE_copy(*__THE_0_refJob1_0), __THE_1_fn_sFP5ref_intFRintFE_copy(*__THE_0_refJob2_0), __THE_0_refJob1_0, __THE_0_refJob2_0}, sizeof(struct __THE_1_fn_sFP5ref_intFP3fn_sFP5ref_intFRref_intFEFP3fn_sFP5ref_intFRintFEFP3ref_fn_sFP5ref_intFRref_intFEFP3ref_fn_sFP5ref_intFRintFEFRvoidFEP)));
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_mainSDjobLocal1_0;
+  __THE_1_test_mainSDjobLocal1_0_alloc((struct __THE_1_fn_sFRvoidFE *) &__THE_0_test_mainSDjobLocal1_0, (struct __THE_1_test_mainSDjobLocal1_0X) {&__THE_0_refJob2_0, &__THE_0_refJob1_0, &__THE_0_refA_0, &__THE_0_a_0, &__THE_0_test_job2_0, &__THE_0_test_job1_0});
+  __THE_0_test_mainSDjobLocal1_0.f(__THE_0_test_mainSDjobLocal1_0.x);
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_test_mainSDjobLocal1_0);
 }
 ======= flags =======
 ======= stdout =======

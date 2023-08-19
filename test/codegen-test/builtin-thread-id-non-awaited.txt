@@ -160,7 +160,7 @@ threadpool_thread_t *threadpool_thread_init (threadpool_t *, threadpool_thread_t
 void threadpool_wait (threadpool_t *);
 void *threadpool_worker (void *);
 void *xalloc (void *, size_t);
-void __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -517,7 +517,7 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   job->init = 1;
   switch (step) {
     case 0: {
@@ -530,17 +530,17 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
 
 int main () {
   threadpool_t *tp = threadpool_init(5);
-  const struct __THE_1_fn_aFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
-  threadpool_add(tp, __THE_0_test_0.f, xalloc(__THE_0_test_0.x, __THE_0_test_0.l), NULL, NULL, NULL);
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
+  threadpool_add(tp, __THE_0_test_test_0.f, xalloc(__THE_0_test_test_0.x, __THE_0_test_test_0.l), NULL, NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);
 }

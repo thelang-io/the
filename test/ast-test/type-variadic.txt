@@ -11,7 +11,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -69,7 +69,7 @@ main {
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="a">
                 <BuiltinType name="int" />
               </TypeField>
@@ -94,7 +94,7 @@ main {
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="a">
                 <BuiltinType name="int" />
               </TypeField>

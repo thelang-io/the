@@ -46,7 +46,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Animal_0" name="Animal">
+  <TypeObj codeName="test_Animal_0" name="Animal">
     <TypeField name="age">
       <BuiltinType name="int" />
     </TypeField>
@@ -56,7 +56,7 @@ main {
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="sum">
       <TypeFn name="fn_sFP3intFP4array_intFRintFE">
         <TypeFnParams>
@@ -78,7 +78,7 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="testSum" codeName="testSum_0" frame="1">
+    <Var name="testSum" codeName="test_testSum_0" frame="1">
       <TypeFn name="fn_sFP3intFP4array_intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
@@ -173,7 +173,7 @@ main {
   </NodeFnDeclBody>
 </NodeFnDecl>
 <NodeObjDecl>
-  <TypeObj codeName="Callback_0" name="Callback">
+  <TypeObj codeName="test_Callback_0" name="Callback">
     <TypeField name="logic">
       <TypeFn name="fn_sFP3fn_sFRanyFEFRvoidFE">
         <TypeFnParams>
@@ -194,7 +194,7 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="callbackLogic" codeName="callbackLogic_0" frame="1">
+    <Var name="callbackLogic" codeName="test_callbackLogic_0" frame="1">
       <TypeFn name="fn_sFP3fn_sFRanyFEFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="cb" required>
@@ -260,7 +260,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="callbackLogicCb" codeName="callbackLogicCb_0" frame="1">
+    <Var name="callbackLogicCb" codeName="test_callbackLogicCb_0" frame="1">
       <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -306,7 +306,7 @@ main {
 </NodeFnDecl>
 <NodeMain>
   <NodeObjDecl>
-    <TypeObj codeName="mainSDCat_0" name="Cat">
+    <TypeObj codeName="test_mainSDCat_0" name="Cat">
       <TypeField name="breed">
         <BuiltinType name="str" />
       </TypeField>
@@ -317,7 +317,7 @@ main {
   </NodeObjDecl>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="createCat" codeName="mainSDcreateCat_0" frame="2">
+      <Var name="createCat" codeName="test_mainSDcreateCat_0" frame="2">
         <TypeFn name="fn_sFP3strFP3strFRCatFE">
           <TypeFnParams>
             <TypeFnParam name="breed" required>
@@ -328,7 +328,7 @@ main {
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeObj codeName="mainSDCat_0" name="Cat">
+            <TypeObj codeName="test_mainSDCat_0" name="Cat">
               <TypeField name="breed">
                 <BuiltinType name="str" />
               </TypeField>
@@ -360,7 +360,7 @@ main {
       <NodeReturn>
         <NodeExpr>
           <NodeExprType>
-            <TypeObj codeName="mainSDCat_0" name="Cat">
+            <TypeObj codeName="test_mainSDCat_0" name="Cat">
               <TypeField name="breed">
                 <BuiltinType name="str" />
               </TypeField>
@@ -408,7 +408,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="animal1" codeName="animal1_0" frame="2">
-        <TypeObj codeName="Animal_0" name="Animal">
+        <TypeObj codeName="test_Animal_0" name="Animal">
           <TypeField name="age">
             <BuiltinType name="int" />
           </TypeField>
@@ -421,7 +421,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Animal_0" name="Animal">
+          <TypeObj codeName="test_Animal_0" name="Animal">
             <TypeField name="age">
               <BuiltinType name="int" />
             </TypeField>
@@ -460,7 +460,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="cat1" codeName="cat1_0" frame="2">
-        <TypeObj codeName="mainSDCat_0" name="Cat">
+        <TypeObj codeName="test_mainSDCat_0" name="Cat">
           <TypeField name="breed">
             <BuiltinType name="str" />
           </TypeField>
@@ -473,7 +473,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="mainSDCat_0" name="Cat">
+          <TypeObj codeName="test_mainSDCat_0" name="Cat">
             <TypeField name="breed">
               <BuiltinType name="str" />
             </TypeField>
@@ -497,7 +497,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeObj codeName="mainSDCat_0" name="Cat">
+                      <TypeObj codeName="test_mainSDCat_0" name="Cat">
                         <TypeField name="breed">
                           <BuiltinType name="str" />
                         </TypeField>
@@ -510,7 +510,7 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="createCat" codeName="mainSDcreateCat_0" frame="2">
+                    <Var name="createCat" codeName="test_mainSDcreateCat_0" frame="2">
                       <TypeFn name="fn_sFP3strFP3strFRCatFE">
                         <TypeFnParams>
                           <TypeFnParam name="breed" required>
@@ -521,7 +521,7 @@ main {
                           </TypeFnParam>
                         </TypeFnParams>
                         <TypeFnReturnType>
-                          <TypeObj codeName="mainSDCat_0" name="Cat">
+                          <TypeObj codeName="test_mainSDCat_0" name="Cat">
                             <TypeField name="breed">
                               <BuiltinType name="str" />
                             </TypeField>
@@ -566,7 +566,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="sum">
             <TypeFn name="fn_sFP3intFP4array_intFRintFE">
               <TypeFnParams>
@@ -590,7 +590,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="sum">
               <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                 <TypeFnParams>
@@ -633,7 +633,7 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="testSum" codeName="testSum_0" frame="1">
+                    <Var name="testSum" codeName="test_testSum_0" frame="1">
                       <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                         <TypeFnParams>
                           <TypeFnParam name="a" required>
@@ -718,7 +718,7 @@ main {
                         <ExprAccess prop="sum">
                           <NodeExpr>
                             <NodeExprType>
-                              <TypeObj codeName="Test_0" name="Test">
+                              <TypeObj codeName="test_Test_0" name="Test">
                                 <TypeField name="sum">
                                   <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                     <TypeFnParams>
@@ -741,7 +741,7 @@ main {
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="test" codeName="test_0" frame="2">
-                                  <TypeObj codeName="Test_0" name="Test">
+                                  <TypeObj codeName="test_Test_0" name="Test">
                                     <TypeField name="sum">
                                       <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                         <TypeFnParams>
@@ -801,7 +801,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="callback" codeName="callback_0" frame="2">
-        <TypeObj codeName="Callback_0" name="Callback">
+        <TypeObj codeName="test_Callback_0" name="Callback">
           <TypeField name="logic">
             <TypeFn name="fn_sFP3fn_sFRanyFEFRvoidFE">
               <TypeFnParams>
@@ -824,7 +824,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Callback_0" name="Callback">
+          <TypeObj codeName="test_Callback_0" name="Callback">
             <TypeField name="logic">
               <TypeFn name="fn_sFP3fn_sFRanyFEFRvoidFE">
                 <TypeFnParams>
@@ -865,7 +865,7 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="callbackLogic" codeName="callbackLogic_0" frame="1">
+                    <Var name="callbackLogic" codeName="test_callbackLogic_0" frame="1">
                       <TypeFn name="fn_sFP3fn_sFRanyFEFRvoidFE">
                         <TypeFnParams>
                           <TypeFnParam name="cb" required>
@@ -918,7 +918,7 @@ main {
               <ExprAccess prop="logic">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Callback_0" name="Callback">
+                    <TypeObj codeName="test_Callback_0" name="Callback">
                       <TypeField name="logic">
                         <TypeFn name="fn_sFP3fn_sFRanyFEFRvoidFE">
                           <TypeFnParams>
@@ -940,7 +940,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="callback" codeName="callback_0" frame="2">
-                        <TypeObj codeName="Callback_0" name="Callback">
+                        <TypeObj codeName="test_Callback_0" name="Callback">
                           <TypeField name="logic">
                             <TypeFn name="fn_sFP3fn_sFRanyFEFRvoidFE">
                               <TypeFnParams>
@@ -978,7 +978,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="callbackLogicCb" codeName="callbackLogicCb_0" frame="1">
+                  <Var name="callbackLogicCb" codeName="test_callbackLogicCb_0" frame="1">
                     <TypeFn name="fn_sFRvoidFE">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />

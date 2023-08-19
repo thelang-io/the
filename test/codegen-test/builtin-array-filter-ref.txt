@@ -125,9 +125,9 @@ struct __THE_1_fn_sFP3strFRboolFE __THE_1_fn_sFP3strFRboolFE_copy (const struct 
 void __THE_1_fn_sFP3strFRboolFE_free (struct __THE_1_fn_sFP3strFRboolFE);
 struct __THE_1_array_str __THE_1_array_str_filter (err_state_t *, int, int, struct __THE_1_array_str, struct __THE_1_fn_sFP3strFRboolFE);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
-bool __THE_1_filterOne_0 (void *, void *);
-bool __THE_1_filterTwo_0 (void *, void *);
-bool __THE_1_filterTwoOrOne_0 (void *, void *);
+bool __THE_1_test_filterOne_0 (void *, void *);
+bool __THE_1_test_filterTwo_0 (void *, void *);
+bool __THE_1_test_filterTwoOrOne_0 (void *, void *);
 struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t, ...);
 struct __THE_1_array_str *__THE_1_array_array_str_at (err_state_t *, int, int, struct __THE_1_array_array_str, int32_t);
 struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_1_array_array_str);
@@ -464,7 +464,7 @@ struct str __THE_1_array_str_str (struct __THE_1_array_str n) {
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return str_concat_cstr(r, "]");
 }
-bool __THE_1_filterOne_0 (void *px, void *pp) {
+bool __THE_1_test_filterOne_0 (void *px, void *pp) {
   bool v;
   struct __THE_1_fn_sFP3strFRboolFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
@@ -477,7 +477,7 @@ bool __THE_1_filterOne_0 (void *px, void *pp) {
   if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   return v;
 }
-bool __THE_1_filterTwo_0 (void *px, void *pp) {
+bool __THE_1_test_filterTwo_0 (void *px, void *pp) {
   bool v;
   struct __THE_1_fn_sFP3strFRboolFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
@@ -490,7 +490,7 @@ bool __THE_1_filterTwo_0 (void *px, void *pp) {
   if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   return v;
 }
-bool __THE_1_filterTwoOrOne_0 (void *px, void *pp) {
+bool __THE_1_test_filterTwoOrOne_0 (void *px, void *pp) {
   bool v;
   struct __THE_1_fn_sFP3strFRboolFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
@@ -541,18 +541,18 @@ size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_filterOne_0 = (struct __THE_1_fn_sFP3strFRboolFE) {&__THE_1_filterOne_0, NULL, 0};
-  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_filterTwo_0 = (struct __THE_1_fn_sFP3strFRboolFE) {&__THE_1_filterTwo_0, NULL, 0};
-  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_filterTwoOrOne_0 = (struct __THE_1_fn_sFP3strFRboolFE) {&__THE_1_filterTwoOrOne_0, NULL, 0};
+  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_test_filterOne_0 = (struct __THE_1_fn_sFP3strFRboolFE) {&__THE_1_test_filterOne_0, NULL, 0};
+  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_test_filterTwo_0 = (struct __THE_1_fn_sFP3strFRboolFE) {&__THE_1_test_filterTwo_0, NULL, 0};
+  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_test_filterTwoOrOne_0 = (struct __THE_1_fn_sFP3strFRboolFE) {&__THE_1_test_filterTwoOrOne_0, NULL, 0};
   const struct __THE_1_array_str __THE_0_emptyArr_0 = __THE_1_array_str_alloc(0);
   const struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(4, __THE_1_array_str_copy(__THE_0_emptyArr_0), __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("4"), str_alloc("5"), str_alloc("6")));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L5;
-    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_filter(&err_state, 10, 11, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 10, 11, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFRboolFE_copy(__THE_0_filterOne_0))), THE_EOL);
+    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_filter(&err_state, 10, 11, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 10, 11, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFRboolFE_copy(__THE_0_test_filterOne_0))), THE_EOL);
     if (setjmp(err_state.buf_last->buf) != 0) goto L5;
-    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_filter(&err_state, 11, 11, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 11, 11, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFRboolFE_copy(__THE_0_filterTwo_0))), THE_EOL);
+    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_filter(&err_state, 11, 11, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 11, 11, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFRboolFE_copy(__THE_0_test_filterTwo_0))), THE_EOL);
     if (setjmp(err_state.buf_last->buf) != 0) goto L5;
-    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_filter(&err_state, 12, 11, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 12, 11, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFRboolFE_copy(__THE_0_filterTwoOrOne_0))), THE_EOL);
+    print(stdout, "sz", __THE_1_array_str_str(__THE_1_array_str_filter(&err_state, 12, 11, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 12, 11, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFRboolFE_copy(__THE_0_test_filterTwoOrOne_0))), THE_EOL);
 L5:
     error_buf_decrease(&err_state);
     if (err_state.id != -1) goto L4;

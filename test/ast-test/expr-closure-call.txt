@@ -48,7 +48,7 @@ main {
             <NodeExprBody>
               <ExprClosure>
                 <ExprClosureVar>
-                  <Var name="$" codeName="mainSD$_0" frame="3">
+                  <Var name="$" codeName="test_mainSD$_0" frame="3">
                     <TypeFn name="fn_sFP3intFRvoidFE">
                       <TypeFnParams>
                         <TypeFnParam name="v" required>

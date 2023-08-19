@@ -15,10 +15,24 @@
  */
 
 #include <gtest/gtest.h>
+#include <filesystem>
 #include "../src/Lexer.hpp"
 #include "../src/config.hpp"
 #include "MockReader.hpp"
 #include "utils.hpp"
+
+class LexerThrowTest : public testing::Test {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
+};
 
 TEST(LexerTest, LexUnknown) {
   auto reader = testing::NiceMock<MockReader>("∆");
@@ -98,15 +112,17 @@ TEST(LexerTest, LexMultilineBlockComment) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(3:13-3:13)");
 }
 
-TEST(LexerTest, ThrowsOnEmptyNotClosedBlockComment) {
+TEST_F(LexerThrowTest, EmptyNotClosedBlockComment) {
   auto reader = testing::NiceMock<MockReader>("/*");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), prepareTestOutput(std::string("/test:1:1: ") + E0001 + EOL "  1 | /*" EOL "    | ^~"));
 }
 
-TEST(LexerTest, ThrowsOnNotClosedBlockComment) {
+TEST_F(LexerThrowTest, NotClosedBlockComment) {
   auto reader = testing::NiceMock<MockReader>("/*Hello");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), prepareTestOutput(std::string("/test:1:1: ") + E0001 + EOL "  1 | /*Hello" EOL "    | ^~~~~~~"));
@@ -899,12 +915,12 @@ TEST(LexerTest, LexLitCharEof) {
   EXPECT_EQ(std::get<1>(l9.next()).str(), R"(LIT_CHAR(1:1-1:5): '\\')");
 }
 
-TEST(LexerTest, ThrowsOnNotClosedLitChar) {
+TEST_F(LexerThrowTest, NotClosedLitChar) {
   auto r1 = testing::NiceMock<MockReader>("'");
   auto r2 = testing::NiceMock<MockReader>(R"('a)");
   auto r3 = testing::NiceMock<MockReader>(R"('\)");
   auto r4 = testing::NiceMock<MockReader>(R"('\n)");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -916,19 +932,20 @@ TEST(LexerTest, ThrowsOnNotClosedLitChar) {
   EXPECT_THROW_WITH_MESSAGE(l4.next(), prepareTestOutput(std::string("/test:1:1: ") + E0002 + EOL "  1 | '\\n" EOL "    | ^~~"));
 }
 
-TEST(LexerTest, ThrowsOnEmptyLitChar) {
+TEST_F(LexerThrowTest, EmptyLitChar) {
   auto reader = testing::NiceMock<MockReader>("''");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), prepareTestOutput(std::string("/test:1:1: ") + E0004 + EOL "  1 | ''" EOL "    | ^~"));
 }
 
-TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
+TEST_F(LexerThrowTest, LitCharIllegalEscSeq) {
   auto r1 = testing::NiceMock<MockReader>(R"('\m)");
   auto r2 = testing::NiceMock<MockReader>(R"('\m')");
   auto r3 = testing::NiceMock<MockReader>(R"('\ma)");
   auto r4 = testing::NiceMock<MockReader>(R"('\ma')");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -940,10 +957,10 @@ TEST(LexerTest, ThrowsOnLitCharIllegalEscSeq) {
   EXPECT_THROW_WITH_MESSAGE(l4.next(), prepareTestOutput(std::string("/test:1:2: ") + E0005 + EOL "  1 | '\\ma'" EOL "    |  ^~"));
 }
 
-TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
+TEST_F(LexerThrowTest, LitCharTooManyCharacters) {
   auto r1 = testing::NiceMock<MockReader>(R"('ch)");
   auto r2 = testing::NiceMock<MockReader>(R"('char')");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
 
@@ -951,8 +968,9 @@ TEST(LexerTest, ThrowsOnLitCharTooManyCharacters) {
   EXPECT_THROW_WITH_MESSAGE(l2.next(), prepareTestOutput(std::string("/test:1:1: ") + E0006 + EOL "  1 | 'char'" EOL "    | ^~~~~~"));
 }
 
-TEST(LexerTest, ThrowsOnLitCharNewLineChar) {
+TEST_F(LexerThrowTest, LitCharNewLineChar) {
   auto r1 = testing::NiceMock<MockReader>("'" EOL "'");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
 
   EXPECT_THROW_WITH_MESSAGE(l1.next(), prepareTestOutput(std::string("/test:1:1: ") + E0017 + EOL "  1 | '" EOL "    | ^"));
@@ -1061,7 +1079,7 @@ TEST(LexerTest, LexLitFloatWhitespace) {
   EXPECT_EQ(std::get<1>(lexer.next()).str(), "EOF(1:315-1:315)");
 }
 
-TEST(LexerTest, ThrowsOnInvalidLitFloat) {
+TEST_F(LexerThrowTest, InvalidLitFloat) {
   auto r1 = testing::NiceMock<MockReader>(R"(1234.)");
   auto r2 = testing::NiceMock<MockReader>(R"(1234.a)");
   auto r3 = testing::NiceMock<MockReader>(R"(1234.aZ)");
@@ -1077,7 +1095,7 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
   auto r13 = testing::NiceMock<MockReader>(R"(1234e))");
   auto r14 = testing::NiceMock<MockReader>(R"(1234e+))");
   auto r15 = testing::NiceMock<MockReader>(R"(1234e-h))");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -1111,11 +1129,11 @@ TEST(LexerTest, ThrowsOnInvalidLitFloat) {
   EXPECT_THROW_WITH_MESSAGE(l15.next(), prepareTestOutput(std::string("/test:1:5: ") + E0013 + EOL "  1 | 1234e-h)" EOL "    |     ^~~"));
 }
 
-TEST(LexerTest, ThrowsOnNonDecLitFloat) {
+TEST_F(LexerThrowTest, NonDecLitFloat) {
   auto r1 = testing::NiceMock<MockReader>("0b1.0");
   auto r2 = testing::NiceMock<MockReader>("0xa.0");
   auto r3 = testing::NiceMock<MockReader>("0o1.0");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -1290,10 +1308,10 @@ TEST(LexerTest, LexLitIntegerEof) {
   EXPECT_EQ(std::get<1>(l17.next()).str(), "LIT_INT_OCT(1:1-1:24): 0o777777777777777777777");
 }
 
-TEST(LexerTest, ThrowsOnLitIntegerWithLeadingZero) {
+TEST_F(LexerThrowTest, LitIntegerWithLeadingZero) {
   auto r1 = testing::NiceMock<MockReader>("04");
   auto r2 = testing::NiceMock<MockReader>("0400e0");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
 
@@ -1301,7 +1319,7 @@ TEST(LexerTest, ThrowsOnLitIntegerWithLeadingZero) {
   EXPECT_THROW_WITH_MESSAGE(l2.next(), prepareTestOutput(std::string("/test:1:1: ") + E0007 + EOL "  1 | 0400e0" EOL "    | ^~~~~~"));
 }
 
-TEST(LexerTest, ThrowsOnInvalidLitInteger) {
+TEST_F(LexerThrowTest, InvalidLitInteger) {
   auto r1 = testing::NiceMock<MockReader>("0B");
   auto r2 = testing::NiceMock<MockReader>("0bG");
   auto r3 = testing::NiceMock<MockReader>("0bGz");
@@ -1323,7 +1341,7 @@ TEST(LexerTest, ThrowsOnInvalidLitInteger) {
   auto r19 = testing::NiceMock<MockReader>("0O1g");
   auto r20 = testing::NiceMock<MockReader>("0O1gZ");
   auto r21 = testing::NiceMock<MockReader>("0o1o2");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -1434,12 +1452,12 @@ TEST(LexerTest, LexLitStrEof) {
   EXPECT_EQ(std::get<1>(l5.next()).str(), R"(LIT_STR(1:1-1:34): ")" + complexEscapeSequence + R"(")");
 }
 
-TEST(LexerTest, ThrowsOnEmptyLitStr) {
+TEST_F(LexerThrowTest, EmptyLitStr) {
   auto r1 = testing::NiceMock<MockReader>(R"(")");
   auto r2 = testing::NiceMock<MockReader>(R"("text)");
   auto r3 = testing::NiceMock<MockReader>(R"("text\)");
   auto r4 = testing::NiceMock<MockReader>(R"("text\")");
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto l1 = Lexer(&r1);
   auto l2 = Lexer(&r2);
   auto l3 = Lexer(&r3);
@@ -1451,10 +1469,10 @@ TEST(LexerTest, ThrowsOnEmptyLitStr) {
   EXPECT_THROW_WITH_MESSAGE(l4.next(), prepareTestOutput(std::string("/test:1:1: ") + E0003 + EOL "  1 | \"text\\\"" EOL "    | ^~~~~~~"));
 }
 
-TEST(LexerTest, ThrowsOnLitStrIllegalEscSeq) {
+TEST_F(LexerThrowTest, LitStrIllegalEscSeq) {
   auto reader = testing::NiceMock<MockReader>(R"("Hello, \m World!")");
   auto lexer = Lexer(&reader);
-
+  std::filesystem::current_path(this->initialCwd_ / "test");
   EXPECT_THROW_WITH_MESSAGE(lexer.next(), prepareTestOutput(std::string("/test:1:9: ") + E0005 + EOL "  1 | \"Hello, \\m World!\"" EOL "    |         ^~"));
 }
 

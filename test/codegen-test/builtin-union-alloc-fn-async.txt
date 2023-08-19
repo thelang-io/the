@@ -118,9 +118,9 @@ typedef struct threadpool_thread {
 } threadpool_thread_t;
 
 struct __THE_1_fn_aFRvoidFE;
-struct __THE_1_test1_0X;
+struct __THE_1_test_test1_0X;
 struct __THE_1_fn_aFRintFE;
-struct __THE_1_test2_0X;
+struct __THE_1_test_test2_0X;
 struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE;
 
 struct __THE_1_fn_aFRvoidFE {
@@ -128,7 +128,7 @@ struct __THE_1_fn_aFRvoidFE {
   void *x;
   size_t l;
 };
-struct __THE_1_test1_0X {
+struct __THE_1_test_test1_0X {
   unsigned char r;
 };
 struct __THE_1_fn_aFRintFE {
@@ -136,7 +136,7 @@ struct __THE_1_fn_aFRintFE {
   void *x;
   size_t l;
 };
-struct __THE_1_test2_0X {
+struct __THE_1_test_test2_0X {
   unsigned char r;
 };
 struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE {
@@ -158,12 +158,12 @@ void threadpool_mutex_lock (threadpool_mutex_t *);
 void threadpool_mutex_unlock (threadpool_mutex_t *);
 struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_aFRvoidFE);
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
-void __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test1_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test1_0X);
+void __THE_1_test_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test1_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test1_0X);
 struct __THE_1_fn_aFRintFE __THE_1_fn_aFRintFE_copy (const struct __THE_1_fn_aFRintFE);
 void __THE_1_fn_aFRintFE_free (struct __THE_1_fn_aFRintFE);
-void __THE_1_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test2_0_alloc (struct __THE_1_fn_aFRintFE *, struct __THE_1_test2_0X);
+void __THE_1_test_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test2_0_alloc (struct __THE_1_fn_aFRintFE *, struct __THE_1_test_test2_0X);
 struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_alloc (int, ...);
 void __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_free (struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE);
 
@@ -233,8 +233,8 @@ struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_a
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test1_0X *x = px;
+void __THE_1_test_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test1_0X *x = px;
   unsigned char *r = &x->r;
   job->init = 1;
   switch (step) {
@@ -245,11 +245,11 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test1_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test1_0X x) {
-  size_t l = sizeof(struct __THE_1_test1_0X);
-  struct __THE_1_test1_0X *r = alloc(l);
+void __THE_1_test_test1_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test1_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test1_0X);
+  struct __THE_1_test_test1_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test1_0;
+  n->f = &__THE_1_test_test1_0;
   n->x = r;
   n->l = l;
 }
@@ -262,9 +262,9 @@ struct __THE_1_fn_aFRintFE __THE_1_fn_aFRintFE_copy (const struct __THE_1_fn_aFR
 void __THE_1_fn_aFRintFE_free (struct __THE_1_fn_aFRintFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   int32_t *v = pv;
-  struct __THE_1_test2_0X *x = px;
+  struct __THE_1_test_test2_0X *x = px;
   unsigned char *r = &x->r;
   job->init = 1;
   switch (step) {
@@ -277,11 +277,11 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test2_0_alloc (struct __THE_1_fn_aFRintFE *n, struct __THE_1_test2_0X x) {
-  size_t l = sizeof(struct __THE_1_test2_0X);
-  struct __THE_1_test2_0X *r = alloc(l);
+void __THE_1_test_test2_0_alloc (struct __THE_1_fn_aFRintFE *n, struct __THE_1_test_test2_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test2_0X);
+  struct __THE_1_test_test2_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test2_0;
+  n->f = &__THE_1_test_test2_0;
   n->x = r;
   n->l = l;
 }
@@ -300,16 +300,16 @@ void __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_free (struct __THE_1_union_fn_aFR
 }
 
 int main () {
-  const struct __THE_1_fn_aFRvoidFE __THE_0_test1_0;
-  const struct __THE_1_fn_aFRintFE __THE_0_test2_0;
-  __THE_1_test1_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {});
-  __THE_1_test2_0_alloc((struct __THE_1_fn_aFRintFE *) &__THE_0_test2_0, (struct __THE_1_test2_0X) {});
-  const struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE __THE_0_g1_0 = __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_alloc(TYPE_fn_aFRvoidFE, __THE_1_fn_aFRvoidFE_copy(__THE_0_test1_0));
-  const struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE __THE_0_g2_0 = __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_alloc(TYPE_fn_aFRintFE, __THE_1_fn_aFRintFE_copy(__THE_0_test2_0));
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test1_0;
+  const struct __THE_1_fn_aFRintFE __THE_0_test_test2_0;
+  __THE_1_test_test1_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test1_0, (struct __THE_1_test_test1_0X) {});
+  __THE_1_test_test2_0_alloc((struct __THE_1_fn_aFRintFE *) &__THE_0_test_test2_0, (struct __THE_1_test_test2_0X) {});
+  const struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE __THE_0_g1_0 = __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_alloc(TYPE_fn_aFRvoidFE, __THE_1_fn_aFRvoidFE_copy(__THE_0_test_test1_0));
+  const struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE __THE_0_g2_0 = __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_alloc(TYPE_fn_aFRintFE, __THE_1_fn_aFRintFE_copy(__THE_0_test_test2_0));
   __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_free((struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE) __THE_0_g2_0);
   __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE_free((struct __THE_1_union_fn_aFRvoidFEUSfn_aFRintFEUE) __THE_0_g1_0);
-  __THE_1_fn_aFRintFE_free((struct __THE_1_fn_aFRintFE) __THE_0_test2_0);
-  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test1_0);
+  __THE_1_fn_aFRintFE_free((struct __THE_1_fn_aFRintFE) __THE_0_test_test2_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test1_0);
 }
 ======= flags =======
 U:-pthread

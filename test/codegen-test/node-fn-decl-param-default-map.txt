@@ -83,7 +83,7 @@ struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strM
 struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP;
 struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE;
 struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP;
-struct __THE_1_mainSDtest2_0X;
+struct __THE_1_test_mainSDtest2_0X;
 
 struct __THE_1_pair_strMSintME {
   struct str f;
@@ -118,9 +118,9 @@ struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP 
   unsigned char o2;
   struct __THE_1_map_strMSintME n2;
 };
-struct __THE_1_mainSDtest2_0X {
+struct __THE_1_test_mainSDtest2_0X {
   struct __THE_1_map_strMSintME *__THE_0_a_0;
-  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE *__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE *__THE_0_test_test1_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -138,10 +138,10 @@ struct __THE_1_map_strMSintME __THE_1_map_strMSintME_copy (const struct __THE_1_
 void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
 struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_merge (struct __THE_1_map_strMSintME *, struct __THE_1_map_strMSintME);
 struct __THE_1_map_strMSintME __THE_1_map_strMSintME_realloc (struct __THE_1_map_strMSintME, struct __THE_1_map_strMSintME);
-struct __THE_1_map_strMSintME __THE_1_test1_0 (void *, void *);
+struct __THE_1_map_strMSintME __THE_1_test_test1_0 (void *, void *);
 void __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE_free (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE);
-void __THE_1_mainSDtest2_0 (void *, void *);
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE *, struct __THE_1_mainSDtest2_0X);
+void __THE_1_test_mainSDtest2_0 (void *, void *);
+void __THE_1_test_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE *, struct __THE_1_test_mainSDtest2_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -230,7 +230,7 @@ struct __THE_1_map_strMSintME __THE_1_map_strMSintME_realloc (struct __THE_1_map
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n1);
   return n2;
 }
-struct __THE_1_map_strMSintME __THE_1_test1_0 (void *px, void *pp) {
+struct __THE_1_map_strMSintME __THE_1_test_test1_0 (void *px, void *pp) {
   struct __THE_1_map_strMSintME v;
   struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP *p = pp;
   const struct __THE_1_map_strMSintME __THE_0_a_0 = p->n0;
@@ -247,49 +247,49 @@ struct __THE_1_map_strMSintME __THE_1_test1_0 (void *px, void *pp) {
 void __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE_free (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest2_0 (void *px, void *pp) {
+void __THE_1_test_mainSDtest2_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP *p = pp;
-  struct __THE_1_mainSDtest2_0X *x = px;
+  struct __THE_1_test_mainSDtest2_0X *x = px;
   struct __THE_1_map_strMSintME *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE *__THE_0_test_test1_0 = x->__THE_0_test_test1_0;
   const struct __THE_1_map_strMSintME __THE_0_a2_0 = p->n0;
   const struct __THE_1_map_strMSintME __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 13, str_alloc("key2"), 14, str_alloc("key3"), 15);
   const struct __THE_1_map_strMSintME __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 16, str_alloc("key2"), 17, str_alloc("key3"), 18);
-  *__THE_0_a_0 = __THE_1_map_strMSintME_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_copy(__THE_0_a2_0), 1, __THE_1_map_strMSintME_copy(__THE_0_b_0), 1, __THE_1_map_strMSintME_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  *__THE_0_a_0 = __THE_1_map_strMSintME_realloc(*__THE_0_a_0, (*__THE_0_test_test1_0).f((*__THE_0_test_test1_0).x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_copy(__THE_0_a2_0), 1, __THE_1_map_strMSintME_copy(__THE_0_b_0), 1, __THE_1_map_strMSintME_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_c_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_b_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a2_0);
   free(pp);
 }
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE *n, struct __THE_1_mainSDtest2_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
-  struct __THE_1_mainSDtest2_0X *r = alloc(l);
+void __THE_1_test_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE *n, struct __THE_1_test_mainSDtest2_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSDtest2_0X);
+  struct __THE_1_test_mainSDtest2_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtest2_0;
+  n->f = &__THE_1_test_mainSDtest2_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE __THE_0_test1_0 = (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE) {&__THE_1_test1_0, NULL, 0};
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 0, (struct __THE_1_map_strMSintME) {}, 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 0, (struct __THE_1_map_strMSintME) {}, 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFE) {&__THE_1_test_test1_0, NULL, 0};
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 0, (struct __THE_1_map_strMSintME) {}, 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 0, (struct __THE_1_map_strMSintME) {}, 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 4, str_alloc("key2"), 5, str_alloc("key3"), 6), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 7, str_alloc("key2"), 8, str_alloc("key3"), 9)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRmap_strMSintMEFEP))));
   struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 10, str_alloc("key2"), 11, str_alloc("key3"), 12);
-  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE __THE_0_mainSDtest2_0;
-  __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 0, (struct __THE_1_map_strMSintME) {}, 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 0, (struct __THE_1_map_strMSintME) {}, 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
-  __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE_free((struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE) __THE_0_mainSDtest2_0);
+  const struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE __THE_0_test_mainSDtest2_0;
+  __THE_1_test_mainSDtest2_0_alloc((struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE *) &__THE_0_test_mainSDtest2_0, (struct __THE_1_test_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test_test1_0});
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 0, (struct __THE_1_map_strMSintME) {}, 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 0, (struct __THE_1_map_strMSintME) {}, 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 19, str_alloc("key2"), 20, str_alloc("key3"), 21), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 22, str_alloc("key2"), 23, str_alloc("key3"), 24), 1, __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 25, str_alloc("key2"), 26, str_alloc("key3"), 27)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFEP)));
+  __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE_free((struct __THE_1_fn_sFP3map_strMSintMEFP1map_strMSintMEFP1map_strMSintMEFRvoidFE) __THE_0_test_mainSDtest2_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
 }
 ======= flags =======

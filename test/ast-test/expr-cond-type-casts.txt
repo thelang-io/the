@@ -30,7 +30,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField mut name="a">
       <TypeOptional name="opt_int">
         <BuiltinType name="int" />
@@ -827,7 +827,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test2" codeName="test2_0" mut frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField mut name="a">
             <TypeOptional name="opt_int">
               <BuiltinType name="int" />
@@ -839,7 +839,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField mut name="a">
               <TypeOptional name="opt_int">
                 <BuiltinType name="int" />
@@ -884,7 +884,7 @@ main {
                           <ExprAccess prop="a">
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeObj codeName="Test_0" name="Test">
+                                <TypeObj codeName="test_Test_0" name="Test">
                                   <TypeField mut name="a">
                                     <TypeOptional name="opt_int">
                                       <BuiltinType name="int" />
@@ -895,7 +895,7 @@ main {
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test2" codeName="test2_0" mut frame="2">
-                                    <TypeObj codeName="Test_0" name="Test">
+                                    <TypeObj codeName="test_Test_0" name="Test">
                                       <TypeField mut name="a">
                                         <TypeOptional name="opt_int">
                                           <BuiltinType name="int" />
@@ -945,7 +945,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -956,7 +956,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -1007,7 +1007,7 @@ main {
                           <ExprAccess prop="a">
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeObj codeName="Test_0" name="Test">
+                                <TypeObj codeName="test_Test_0" name="Test">
                                   <TypeField mut name="a">
                                     <TypeOptional name="opt_int">
                                       <BuiltinType name="int" />
@@ -1018,7 +1018,7 @@ main {
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test2" codeName="test2_0" mut frame="2">
-                                    <TypeObj codeName="Test_0" name="Test">
+                                    <TypeObj codeName="test_Test_0" name="Test">
                                       <TypeField mut name="a">
                                         <TypeOptional name="opt_int">
                                           <BuiltinType name="int" />
@@ -1058,7 +1058,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -1069,7 +1069,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -1142,7 +1142,7 @@ main {
                           <ExprAccess prop="a">
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeObj codeName="Test_0" name="Test">
+                                <TypeObj codeName="test_Test_0" name="Test">
                                   <TypeField mut name="a">
                                     <TypeOptional name="opt_int">
                                       <BuiltinType name="int" />
@@ -1153,7 +1153,7 @@ main {
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test2" codeName="test2_0" mut frame="2">
-                                    <TypeObj codeName="Test_0" name="Test">
+                                    <TypeObj codeName="test_Test_0" name="Test">
                                       <TypeField mut name="a">
                                         <TypeOptional name="opt_int">
                                           <BuiltinType name="int" />
@@ -1191,7 +1191,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -1202,7 +1202,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -1265,7 +1265,7 @@ main {
                           <ExprAccess prop="a">
                             <NodeExpr>
                               <NodeExprType>
-                                <TypeObj codeName="Test_0" name="Test">
+                                <TypeObj codeName="test_Test_0" name="Test">
                                   <TypeField mut name="a">
                                     <TypeOptional name="opt_int">
                                       <BuiltinType name="int" />
@@ -1276,7 +1276,7 @@ main {
                               <NodeExprBody>
                                 <ExprAccess>
                                   <Var name="test2" codeName="test2_0" mut frame="2">
-                                    <TypeObj codeName="Test_0" name="Test">
+                                    <TypeObj codeName="test_Test_0" name="Test">
                                       <TypeField mut name="a">
                                         <TypeOptional name="opt_int">
                                           <BuiltinType name="int" />
@@ -1304,7 +1304,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -1315,7 +1315,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -1385,7 +1385,7 @@ main {
                                   <ExprAccess prop="a">
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeObj codeName="Test_0" name="Test">
+                                        <TypeObj codeName="test_Test_0" name="Test">
                                           <TypeField mut name="a">
                                             <TypeOptional name="opt_int">
                                               <BuiltinType name="int" />
@@ -1396,7 +1396,7 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="test2" codeName="test2_0" mut frame="2">
-                                            <TypeObj codeName="Test_0" name="Test">
+                                            <TypeObj codeName="test_Test_0" name="Test">
                                               <TypeField mut name="a">
                                                 <TypeOptional name="opt_int">
                                                   <BuiltinType name="int" />
@@ -1460,7 +1460,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -1471,7 +1471,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -1531,7 +1531,7 @@ main {
                                   <ExprAccess prop="a">
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeObj codeName="Test_0" name="Test">
+                                        <TypeObj codeName="test_Test_0" name="Test">
                                           <TypeField mut name="a">
                                             <TypeOptional name="opt_int">
                                               <BuiltinType name="int" />
@@ -1542,7 +1542,7 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="test2" codeName="test2_0" mut frame="2">
-                                            <TypeObj codeName="Test_0" name="Test">
+                                            <TypeObj codeName="test_Test_0" name="Test">
                                               <TypeField mut name="a">
                                                 <TypeOptional name="opt_int">
                                                   <BuiltinType name="int" />
@@ -1598,7 +1598,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -1609,7 +1609,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -1691,7 +1691,7 @@ main {
                                   <ExprAccess prop="a">
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeObj codeName="Test_0" name="Test">
+                                        <TypeObj codeName="test_Test_0" name="Test">
                                           <TypeField mut name="a">
                                             <TypeOptional name="opt_int">
                                               <BuiltinType name="int" />
@@ -1702,7 +1702,7 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="test2" codeName="test2_0" mut frame="2">
-                                            <TypeObj codeName="Test_0" name="Test">
+                                            <TypeObj codeName="test_Test_0" name="Test">
                                               <TypeField mut name="a">
                                                 <TypeOptional name="opt_int">
                                                   <BuiltinType name="int" />
@@ -1756,7 +1756,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -1767,7 +1767,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -1839,7 +1839,7 @@ main {
                                   <ExprAccess prop="a">
                                     <NodeExpr>
                                       <NodeExprType>
-                                        <TypeObj codeName="Test_0" name="Test">
+                                        <TypeObj codeName="test_Test_0" name="Test">
                                           <TypeField mut name="a">
                                             <TypeOptional name="opt_int">
                                               <BuiltinType name="int" />
@@ -1850,7 +1850,7 @@ main {
                                       <NodeExprBody>
                                         <ExprAccess>
                                           <Var name="test2" codeName="test2_0" mut frame="2">
-                                            <TypeObj codeName="Test_0" name="Test">
+                                            <TypeObj codeName="test_Test_0" name="Test">
                                               <TypeField mut name="a">
                                                 <TypeOptional name="opt_int">
                                                   <BuiltinType name="int" />
@@ -1892,7 +1892,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField mut name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -1903,7 +1903,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test2" codeName="test2_0" mut frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField mut name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />

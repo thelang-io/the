@@ -89,8 +89,8 @@ void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 void *xalloc (void *, size_t);
-void __THE_1_test1_0 (void *);
-int32_t __THE_1_test2_0 (void *, void *);
+void __THE_1_test_test1_0 (void *);
+int32_t __THE_1_test_test2_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -230,10 +230,10 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_test1_0 (void *px) {
+void __THE_1_test_test1_0 (void *px) {
   print(stdout, "iz", 1, THE_EOL);
 }
-int32_t __THE_1_test2_0 (void *px, void *pp) {
+int32_t __THE_1_test_test2_0 (void *px, void *pp) {
   int32_t v;
   struct __THE_1_fn_sFP3intFP3intFRintFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
@@ -244,10 +244,10 @@ int32_t __THE_1_test2_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn_sFP3intFP3intFRintFE __THE_0_test2_0 = (struct __THE_1_fn_sFP3intFP3intFRintFE) {&__THE_1_test2_0, NULL, 0};
-  __THE_0_test1_0.f(__THE_0_test1_0.x);
-  print(stdout, "iz", __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRintFEP) {4, 2}, sizeof(struct __THE_1_fn_sFP3intFP3intFRintFEP))), THE_EOL);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFRintFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFP3intFP3intFRintFE) {&__THE_1_test_test2_0, NULL, 0};
+  __THE_0_test_test1_0.f(__THE_0_test_test1_0.x);
+  print(stdout, "iz", __THE_0_test_test2_0.f(__THE_0_test_test2_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRintFEP) {4, 2}, sizeof(struct __THE_1_fn_sFP3intFP3intFRintFEP))), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

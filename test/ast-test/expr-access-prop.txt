@@ -33,12 +33,12 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test1_0" name="Test1">
+  <TypeObj codeName="test_Test1_0" name="Test1">
     <TypeField name="b">
       <BuiltinType name="int" />
     </TypeField>
     <TypeField name="test2">
-      <TypeObj codeName="Test2_0" name="Test2">
+      <TypeObj codeName="test_Test2_0" name="Test2">
         <TypeField name="c">
           <BuiltinType name="str" />
         </TypeField>
@@ -47,7 +47,7 @@ main {
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
-  <TypeObj codeName="Test2_0" name="Test2">
+  <TypeObj codeName="test_Test2_0" name="Test2">
     <TypeField name="c">
       <BuiltinType name="str" />
     </TypeField>
@@ -55,7 +55,7 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test3" codeName="test3_0" frame="1">
+    <Var name="test3" codeName="test_test3_0" frame="1">
       <TypeFn name="fn_sFRstrFE">
         <TypeFnReturnType>
           <BuiltinType name="str" />
@@ -80,7 +80,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test2" codeName="test2_0" frame="2">
-        <TypeObj codeName="Test2_0" name="Test2">
+        <TypeObj codeName="test_Test2_0" name="Test2">
           <TypeField name="c">
             <BuiltinType name="str" />
           </TypeField>
@@ -90,7 +90,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test2_0" name="Test2">
+          <TypeObj codeName="test_Test2_0" name="Test2">
             <TypeField name="c">
               <BuiltinType name="str" />
             </TypeField>
@@ -116,12 +116,12 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test1" codeName="test1_0" frame="2">
-        <TypeObj codeName="Test1_0" name="Test1">
+        <TypeObj codeName="test_Test1_0" name="Test1">
           <TypeField name="b">
             <BuiltinType name="int" />
           </TypeField>
           <TypeField name="test2">
-            <TypeObj codeName="Test2_0" name="Test2">
+            <TypeObj codeName="test_Test2_0" name="Test2">
               <TypeField name="c">
                 <BuiltinType name="str" />
               </TypeField>
@@ -133,12 +133,12 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test1_0" name="Test1">
+          <TypeObj codeName="test_Test1_0" name="Test1">
             <TypeField name="b">
               <BuiltinType name="int" />
             </TypeField>
             <TypeField name="test2">
-              <TypeObj codeName="Test2_0" name="Test2">
+              <TypeObj codeName="test_Test2_0" name="Test2">
                 <TypeField name="c">
                   <BuiltinType name="str" />
                 </TypeField>
@@ -161,7 +161,7 @@ main {
             <ExprObjProp name="test2">
               <NodeExpr>
                 <NodeExprType>
-                  <TypeObj codeName="Test2_0" name="Test2">
+                  <TypeObj codeName="test_Test2_0" name="Test2">
                     <TypeField name="c">
                       <BuiltinType name="str" />
                     </TypeField>
@@ -170,7 +170,7 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test2" codeName="test2_0" frame="2">
-                      <TypeObj codeName="Test2_0" name="Test2">
+                      <TypeObj codeName="test_Test2_0" name="Test2">
                         <TypeField name="c">
                           <BuiltinType name="str" />
                         </TypeField>
@@ -200,12 +200,12 @@ main {
           <ExprAccess prop="b">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="Test1_0" name="Test1">
+                <TypeObj codeName="test_Test1_0" name="Test1">
                   <TypeField name="b">
                     <BuiltinType name="int" />
                   </TypeField>
                   <TypeField name="test2">
-                    <TypeObj codeName="Test2_0" name="Test2">
+                    <TypeObj codeName="test_Test2_0" name="Test2">
                       <TypeField name="c">
                         <BuiltinType name="str" />
                       </TypeField>
@@ -216,12 +216,12 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="test1" codeName="test1_0" frame="2">
-                    <TypeObj codeName="Test1_0" name="Test1">
+                    <TypeObj codeName="test_Test1_0" name="Test1">
                       <TypeField name="b">
                         <BuiltinType name="int" />
                       </TypeField>
                       <TypeField name="test2">
-                        <TypeObj codeName="Test2_0" name="Test2">
+                        <TypeObj codeName="test_Test2_0" name="Test2">
                           <TypeField name="c">
                             <BuiltinType name="str" />
                           </TypeField>
@@ -252,7 +252,7 @@ main {
           <ExprAccess prop="c">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="Test2_0" name="Test2">
+                <TypeObj codeName="test_Test2_0" name="Test2">
                   <TypeField name="c">
                     <BuiltinType name="str" />
                   </TypeField>
@@ -262,12 +262,12 @@ main {
                 <ExprAccess prop="test2">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeObj codeName="Test1_0" name="Test1">
+                      <TypeObj codeName="test_Test1_0" name="Test1">
                         <TypeField name="b">
                           <BuiltinType name="int" />
                         </TypeField>
                         <TypeField name="test2">
-                          <TypeObj codeName="Test2_0" name="Test2">
+                          <TypeObj codeName="test_Test2_0" name="Test2">
                             <TypeField name="c">
                               <BuiltinType name="str" />
                             </TypeField>
@@ -278,12 +278,12 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test1" codeName="test1_0" frame="2">
-                          <TypeObj codeName="Test1_0" name="Test1">
+                          <TypeObj codeName="test_Test1_0" name="Test1">
                             <TypeField name="b">
                               <BuiltinType name="int" />
                             </TypeField>
                             <TypeField name="test2">
-                              <TypeObj codeName="Test2_0" name="Test2">
+                              <TypeObj codeName="test_Test2_0" name="Test2">
                                 <TypeField name="c">
                                   <BuiltinType name="str" />
                                 </TypeField>
@@ -430,7 +430,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test3" codeName="test3_0" frame="1">
+                          <Var name="test3" codeName="test_test3_0" frame="1">
                             <TypeFn name="fn_sFRstrFE">
                               <TypeFnReturnType>
                                 <BuiltinType name="str" />

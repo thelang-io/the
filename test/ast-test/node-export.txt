@@ -1,5 +1,5 @@
 ======= stdin =======
-import TestObj from "./test/fixtures/export-obj"
+import TestObj from "./fixtures/export-obj"
 
 export TestObj
 export enum TestEnum { One, Two }
@@ -9,13 +9,13 @@ export type TestAlias = str
 export const TEST_CONST := 1
 export mut TEST_MUT := 2
 ======= stdout =======
-<NodeImportDeclsource="./test/fixtures/export-obj">
+<NodeImportDeclsource="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestObj" imported="TestObj" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
 <NodeExportDecl>
-  <TypeObj codeName="TestObj_1" name="TestObj">
+  <TypeObj codeName="test_TestObj_0" name="TestObj">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -27,10 +27,10 @@ export mut TEST_MUT := 2
 <NodeExportDecl>
   <NodeEnumDecl>
     <NodeEnumDeclType>
-      <Var name="TestEnum" codeName="TestEnum_0" ctxIgnored frame="1">
-        <TypeEnum codeName="TestEnum_0" name="TestEnum">
-          <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-          <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+      <Var name="TestEnum" codeName="test_TestEnum_0" ctxIgnored frame="1">
+        <TypeEnum codeName="test_TestEnum_0" name="TestEnum">
+          <TypeEnumerator codeName="test_TestEnumSDOne_0" name="One" />
+          <TypeEnumerator codeName="test_TestEnumSDTwo_0" name="Two" />
         </TypeEnum>
       </Var>
     </NodeEnumDeclType>
@@ -43,7 +43,7 @@ export mut TEST_MUT := 2
 <NodeExportDecl>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="testFn" codeName="testFn_0" frame="1">
+      <Var name="testFn" codeName="test_testFn_0" frame="1">
         <TypeFn name="fn_sFP3intFP3strFRstrFE">
           <TypeFnParams>
             <TypeFnParam name="a" required>
@@ -140,7 +140,7 @@ export mut TEST_MUT := 2
 </NodeExportDecl>
 <NodeExportDecl>
   <NodeObjDecl>
-    <TypeObj codeName="TestObj_1" name="TestObj">
+    <TypeObj codeName="test_TestObj_0" name="TestObj">
       <TypeField name="a">
         <BuiltinType name="int" />
       </TypeField>
@@ -152,7 +152,7 @@ export mut TEST_MUT := 2
 </NodeExportDecl>
 <NodeExportDecl>
   <NodeTypeDecl>
-    <TypeAlias codeName="TestAlias_0" name="TestAlias">
+    <TypeAlias codeName="test_TestAlias_0" name="TestAlias">
       <BuiltinType name="str" />
     </TypeAlias>
   </NodeTypeDecl>

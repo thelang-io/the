@@ -61,7 +61,7 @@ main {
   </NodeExpr>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="test1" codeName="mainSDtest1_0" frame="2">
+      <Var name="test1" codeName="test_mainSDtest1_0" frame="2">
         <TypeFn name="fn_sFRvoidFE">
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -102,7 +102,7 @@ main {
     </NodeLoopBody>
   </NodeLoop>
   <NodeObjDecl>
-    <TypeObj codeName="mainSDTest1_0" name="Test1">
+    <TypeObj codeName="test_mainSDTest1_0" name="Test1">
       <TypeField name="a">
         <BuiltinType name="int" />
       </TypeField>
@@ -127,7 +127,7 @@ main {
   </NodeVarDecl>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="testCtx" codeName="mainSDtestCtx_0" frame="2">
+      <Var name="testCtx" codeName="test_mainSDtestCtx_0" frame="2">
         <TypeFn name="fn_sFRvoidFE">
           <TypeFnReturnType>
             <BuiltinType name="void" />
@@ -167,7 +167,7 @@ main {
       </NodeExpr>
       <NodeFnDecl>
         <NodeFnDeclVar>
-          <Var name="test2" codeName="mainSDtestCtxSDtest2_0" frame="3">
+          <Var name="test2" codeName="test_mainSDtestCtxSDtest2_0" frame="3">
             <TypeFn name="fn_sFRvoidFE">
               <TypeFnReturnType>
                 <BuiltinType name="void" />
@@ -208,7 +208,7 @@ main {
         </NodeLoopBody>
       </NodeLoop>
       <NodeObjDecl>
-        <TypeObj codeName="mainSDtestCtxSDTest2_0" name="Test2">
+        <TypeObj codeName="test_mainSDtestCtxSDTest2_0" name="Test2">
           <TypeField name="a">
             <BuiltinType name="int" />
           </TypeField>
@@ -250,7 +250,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="testCtx" codeName="mainSDtestCtx_0" frame="2">
+                <Var name="testCtx" codeName="test_mainSDtestCtx_0" frame="2">
                   <TypeFn name="fn_sFRvoidFE">
                     <TypeFnReturnType>
                       <BuiltinType name="void" />

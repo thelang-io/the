@@ -32,10 +32,10 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_Color_0 {
-  __THE_0_ColorSDRed_0,
-  __THE_0_ColorSDGreen_0,
-  __THE_0_ColorSDBlue_0
+enum __THE_1_test_Color_0 {
+  __THE_0_test_ColorSDRed_0,
+  __THE_0_test_ColorSDGreen_0,
+  __THE_0_test_ColorSDBlue_0
 };
 
 typedef struct err_buf {
@@ -70,14 +70,14 @@ struct __THE_1_fn_sFP3ColorFRvoidFE {
   size_t l;
 };
 struct __THE_1_fn_sFP3ColorFRvoidFEP {
-  enum __THE_1_Color_0 n0;
+  enum __THE_1_test_Color_0 n0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void error_alloc (err_state_t *, size_t);
 void *xalloc (void *, size_t);
-void __THE_1_testCall_0 (void *, void *);
+void __THE_1_test_testCall_0 (void *, void *);
 
 void error_alloc (err_state_t *fn_err_state, size_t n1) {
   char d[4096];
@@ -98,17 +98,17 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_testCall_0 (void *px, void *pp) {
+void __THE_1_test_testCall_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3ColorFRvoidFEP *p = pp;
-  const enum __THE_1_Color_0 __THE_0_t_0 = p->n0;
+  const enum __THE_1_test_Color_0 __THE_0_t_0 = p->n0;
   free(pp);
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3ColorFRvoidFE __THE_0_testCall_0 = (struct __THE_1_fn_sFP3ColorFRvoidFE) {&__THE_1_testCall_0, NULL, 0};
-  enum __THE_1_Color_0 __THE_0_test1_0 = __THE_0_ColorSDRed_0;
-  __THE_0_test1_0 = __THE_0_ColorSDGreen_0;
-  __THE_0_testCall_0.f(__THE_0_testCall_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_ColorSDGreen_0}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
+  const struct __THE_1_fn_sFP3ColorFRvoidFE __THE_0_test_testCall_0 = (struct __THE_1_fn_sFP3ColorFRvoidFE) {&__THE_1_test_testCall_0, NULL, 0};
+  enum __THE_1_test_Color_0 __THE_0_test1_0 = __THE_0_test_ColorSDRed_0;
+  __THE_0_test1_0 = __THE_0_test_ColorSDGreen_0;
+  __THE_0_test_testCall_0.f(__THE_0_test_testCall_0.x, xalloc(&(struct __THE_1_fn_sFP3ColorFRvoidFEP) {__THE_0_test_ColorSDGreen_0}, sizeof(struct __THE_1_fn_sFP3ColorFRvoidFEP)));
 }
 ======= flags =======
 ======= stdout =======

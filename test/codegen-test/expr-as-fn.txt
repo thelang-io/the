@@ -75,7 +75,7 @@ struct str str_alloc (const char *);
 struct __THE_1_fn_sFP3intFRvoidFE __THE_1_fn_sFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3intFRvoidFE);
 void __THE_1_fn_sFP3intFRvoidFE_free (struct __THE_1_fn_sFP3intFRvoidFE);
 struct str __THE_1_fn_sFP3intFRvoidFE_str (struct __THE_1_fn_sFP3intFRvoidFE);
-void __THE_1_test_0 (void *, void *);
+void __THE_1_test_test_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -228,15 +228,15 @@ struct str __THE_1_fn_sFP3intFRvoidFE_str (struct __THE_1_fn_sFP3intFRvoidFE n) 
   __THE_1_fn_sFP3intFRvoidFE_free((struct __THE_1_fn_sFP3intFRvoidFE) n);
   return str_alloc("[Function]");
 }
-void __THE_1_test_0 (void *px, void *pp) {
+void __THE_1_test_test_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   free(pp);
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFP3intFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  print(stdout, "sz", __THE_1_fn_sFP3intFRvoidFE_str(__THE_1_fn_sFP3intFRvoidFE_copy((struct __THE_1_fn_sFP3intFRvoidFE) __THE_0_test_0)), THE_EOL);
+  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFP3intFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  print(stdout, "sz", __THE_1_fn_sFP3intFRvoidFE_str(__THE_1_fn_sFP3intFRvoidFE_copy((struct __THE_1_fn_sFP3intFRvoidFE) __THE_0_test_test_0)), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

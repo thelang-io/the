@@ -75,7 +75,7 @@ void any_free (struct any);
 void error_alloc (err_state_t *, size_t);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_testFn_0 (void *);
+void __THE_1_test_testFn_0 (void *);
 struct any __THE_1_any_fn_sFRvoidFE_alloc (struct __THE_1_fn_sFRvoidFE);
 struct any __THE_1_any_fn_sFRvoidFE_copy (const struct any);
 void __THE_1_any_fn_sFRvoidFE_free (struct any);
@@ -110,7 +110,7 @@ struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_s
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_testFn_0 (void *px) {
+void __THE_1_test_testFn_0 (void *px) {
 }
 struct any __THE_1_any_fn_sFRvoidFE_alloc (struct __THE_1_fn_sFRvoidFE d) {
   size_t l = sizeof(struct __THE_1_any_fn_sFRvoidFE);
@@ -131,8 +131,8 @@ void __THE_1_any_fn_sFRvoidFE_free (struct any _n) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_testFn_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_testFn_0, NULL, 0};
-  const struct any __THE_0_anyRawFn_0 = __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_testFn_0));
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_testFn_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_testFn_0, NULL, 0};
+  const struct any __THE_0_anyRawFn_0 = __THE_1_any_fn_sFRvoidFE_alloc(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_testFn_0));
   any_free((struct any) __THE_0_anyRawFn_0);
 }
 ======= flags =======

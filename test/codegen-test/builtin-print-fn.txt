@@ -62,7 +62,7 @@ struct str {
 
 struct __THE_1_fn_sFRvoidFE;
 struct __THE_1_fn_sFRfn_sFRvoidFEFE;
-struct __THE_1_testAnon_0X;
+struct __THE_1_test_testAnon_0X;
 
 struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
@@ -74,8 +74,8 @@ struct __THE_1_fn_sFRfn_sFRvoidFEFE {
   void *x;
   size_t l;
 };
-struct __THE_1_testAnon_0X {
-  const struct __THE_1_fn_sFRvoidFE *__THE_0_test_0;
+struct __THE_1_test_testAnon_0X {
+  const struct __THE_1_fn_sFRvoidFE *__THE_0_test_test_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -88,12 +88,12 @@ struct str str_alloc (const char *);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
 struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_test_0 (void *);
+void __THE_1_test_test_0 (void *);
 struct __THE_1_fn_sFRfn_sFRvoidFEFE __THE_1_fn_sFRfn_sFRvoidFEFE_copy (const struct __THE_1_fn_sFRfn_sFRvoidFEFE);
 void __THE_1_fn_sFRfn_sFRvoidFEFE_free (struct __THE_1_fn_sFRfn_sFRvoidFEFE);
 struct str __THE_1_fn_sFRfn_sFRvoidFEFE_str (struct __THE_1_fn_sFRfn_sFRvoidFEFE);
-struct __THE_1_fn_sFRvoidFE __THE_1_testAnon_0 (void *);
-void __THE_1_testAnon_0_alloc (struct __THE_1_fn_sFRfn_sFRvoidFEFE *, struct __THE_1_testAnon_0X);
+struct __THE_1_fn_sFRvoidFE __THE_1_test_testAnon_0 (void *);
+void __THE_1_test_testAnon_0_alloc (struct __THE_1_fn_sFRfn_sFRvoidFEFE *, struct __THE_1_test_testAnon_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -246,7 +246,7 @@ struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE n) {
   __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n);
   return str_alloc("[Function]");
 }
-void __THE_1_test_0 (void *px) {
+void __THE_1_test_test_0 (void *px) {
 }
 struct __THE_1_fn_sFRfn_sFRvoidFEFE __THE_1_fn_sFRfn_sFRvoidFEFE_copy (const struct __THE_1_fn_sFRfn_sFRvoidFEFE n) {
   if (n.x == NULL) return n;
@@ -261,29 +261,29 @@ struct str __THE_1_fn_sFRfn_sFRvoidFEFE_str (struct __THE_1_fn_sFRfn_sFRvoidFEFE
   __THE_1_fn_sFRfn_sFRvoidFEFE_free((struct __THE_1_fn_sFRfn_sFRvoidFEFE) n);
   return str_alloc("[Function]");
 }
-struct __THE_1_fn_sFRvoidFE __THE_1_testAnon_0 (void *px) {
-  struct __THE_1_testAnon_0X *x = px;
-  const struct __THE_1_fn_sFRvoidFE *__THE_0_test_0 = x->__THE_0_test_0;
-  return __THE_1_fn_sFRvoidFE_copy(*__THE_0_test_0);
+struct __THE_1_fn_sFRvoidFE __THE_1_test_testAnon_0 (void *px) {
+  struct __THE_1_test_testAnon_0X *x = px;
+  const struct __THE_1_fn_sFRvoidFE *__THE_0_test_test_0 = x->__THE_0_test_test_0;
+  return __THE_1_fn_sFRvoidFE_copy(*__THE_0_test_test_0);
 }
-void __THE_1_testAnon_0_alloc (struct __THE_1_fn_sFRfn_sFRvoidFEFE *n, struct __THE_1_testAnon_0X x) {
-  size_t l = sizeof(struct __THE_1_testAnon_0X);
-  struct __THE_1_testAnon_0X *r = alloc(l);
+void __THE_1_test_testAnon_0_alloc (struct __THE_1_fn_sFRfn_sFRvoidFEFE *n, struct __THE_1_test_testAnon_0X x) {
+  size_t l = sizeof(struct __THE_1_test_testAnon_0X);
+  struct __THE_1_test_testAnon_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_testAnon_0;
+  n->f = &__THE_1_test_testAnon_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  const struct __THE_1_fn_sFRfn_sFRvoidFEFE __THE_0_testAnon_0;
-  __THE_1_testAnon_0_alloc((struct __THE_1_fn_sFRfn_sFRvoidFEFE *) &__THE_0_testAnon_0, (struct __THE_1_testAnon_0X) {&__THE_0_test_0});
-  print(stdout, "szszsz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_0)), " ", __THE_1_fn_sFRfn_sFRvoidFEFE_str(__THE_1_fn_sFRfn_sFRvoidFEFE_copy(__THE_0_testAnon_0)), " ", __THE_1_fn_sFRvoidFE_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
-  print(stdout, "sz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_0)), THE_EOL);
-  print(stdout, "sz", __THE_1_fn_sFRfn_sFRvoidFEFE_str(__THE_1_fn_sFRfn_sFRvoidFEFE_copy(__THE_0_testAnon_0)), THE_EOL);
-  print(stdout, "sz", __THE_1_fn_sFRvoidFE_str(__THE_0_testAnon_0.f(__THE_0_testAnon_0.x)), THE_EOL);
-  __THE_1_fn_sFRfn_sFRvoidFEFE_free((struct __THE_1_fn_sFRfn_sFRvoidFEFE) __THE_0_testAnon_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  const struct __THE_1_fn_sFRfn_sFRvoidFEFE __THE_0_test_testAnon_0;
+  __THE_1_test_testAnon_0_alloc((struct __THE_1_fn_sFRfn_sFRvoidFEFE *) &__THE_0_test_testAnon_0, (struct __THE_1_test_testAnon_0X) {&__THE_0_test_test_0});
+  print(stdout, "szszsz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0)), " ", __THE_1_fn_sFRfn_sFRvoidFEFE_str(__THE_1_fn_sFRfn_sFRvoidFEFE_copy(__THE_0_test_testAnon_0)), " ", __THE_1_fn_sFRvoidFE_str(__THE_0_test_testAnon_0.f(__THE_0_test_testAnon_0.x)), THE_EOL);
+  print(stdout, "sz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_test_test_0)), THE_EOL);
+  print(stdout, "sz", __THE_1_fn_sFRfn_sFRvoidFEFE_str(__THE_1_fn_sFRfn_sFRvoidFEFE_copy(__THE_0_test_testAnon_0)), THE_EOL);
+  print(stdout, "sz", __THE_1_fn_sFRvoidFE_str(__THE_0_test_testAnon_0.f(__THE_0_test_testAnon_0.x)), THE_EOL);
+  __THE_1_fn_sFRfn_sFRvoidFEFE_free((struct __THE_1_fn_sFRfn_sFRvoidFEFE) __THE_0_test_testAnon_0);
 }
 ======= flags =======
 ======= stdout =======

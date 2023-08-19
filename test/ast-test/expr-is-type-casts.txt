@@ -44,7 +44,7 @@ main {
 }
 ======= stdout =======
 <NodeTypeDecl>
-  <TypeAlias codeName="Test1_0" name="Test1">
+  <TypeAlias codeName="test_Test1_0" name="Test1">
     <TypeUnion name="union_strUSintUE">
       <BuiltinType name="str" />
       <BuiltinType name="int" />
@@ -52,7 +52,7 @@ main {
   </TypeAlias>
 </NodeTypeDecl>
 <NodeTypeDecl>
-  <TypeAlias codeName="Test2_0" name="Test2">
+  <TypeAlias codeName="test_Test2_0" name="Test2">
     <TypeUnion name="union_strUSintUSboolUE">
       <BuiltinType name="str" />
       <BuiltinType name="int" />

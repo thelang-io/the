@@ -1,21 +1,21 @@
 ======= stdin =======
-import TestEnum from "./test/fixtures/export-enum"
-import TestFn from "./test/fixtures/export-fn"
-import TestObj from "./test/fixtures/export-obj"
-import TestAlias from "./test/fixtures/export-type"
-import TestConstVar, TestMutVar from "./test/fixtures/export-var"
+import TestEnum from "./fixtures/export-enum"
+import TestFn from "./fixtures/export-fn"
+import TestObj from "./fixtures/export-obj"
+import TestAlias from "./fixtures/export-type"
+import TestConstVar, TestMutVar from "./fixtures/export-var"
 
-import TestEnum as TestEnumLocal from "./test/fixtures/export-enum"
-import TestFn as TestFnLocal from "./test/fixtures/export-fn"
-import TestObj as TestObjLocal from "./test/fixtures/export-obj"
-import TestAlias as TestAliasLocal from "./test/fixtures/export-type"
+import TestEnum as TestEnumLocal from "./fixtures/export-enum"
+import TestFn as TestFnLocal from "./fixtures/export-fn"
+import TestObj as TestObjLocal from "./fixtures/export-obj"
+import TestAlias as TestAliasLocal from "./fixtures/export-type"
 import
   TestConstVar as TestConstVarLocal,
   TestMutVar as TestMutVarLocal
-from "./test/fixtures/export-var"
+from "./fixtures/export-var"
 
-import * as TestNamespace from "./test/fixtures/export-expr"
-import "./test/fixtures/export-expr"
+import * as TestNamespace from "./fixtures/export-expr"
+import "./fixtures/export-expr"
 
 main {
   a1 := TestEnum.One
@@ -46,98 +46,98 @@ main {
   print(TestNamespace.TestFn, TestNamespace.TestFn(1, "2"), TestNamespace.TestConstVar, TestNamespace.TestMutVar)
 }
 ======= stdout =======
-<NodeImportDeclsource="./test/fixtures/export-enum">
+<NodeImportDeclsource="./fixtures/export-enum">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestEnum" imported="TestEnum" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-fn">
+<NodeImportDeclsource="./fixtures/export-fn">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestFn" imported="TestFn" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-obj">
+<NodeImportDeclsource="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestObj" imported="TestObj" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-type">
+<NodeImportDeclsource="./fixtures/export-type">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestAlias" imported="TestAlias" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-var">
+<NodeImportDeclsource="./fixtures/export-var">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestConstVar" imported="TestConstVar" />
     <NodeImportDeclSpecifier local="TestMutVar" imported="TestMutVar" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-enum">
+<NodeImportDeclsource="./fixtures/export-enum">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestEnumLocal" imported="TestEnum" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-fn">
+<NodeImportDeclsource="./fixtures/export-fn">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestFnLocal" imported="TestFn" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-obj">
+<NodeImportDeclsource="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestObjLocal" imported="TestObj" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-type">
+<NodeImportDeclsource="./fixtures/export-type">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestAliasLocal" imported="TestAlias" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-var">
+<NodeImportDeclsource="./fixtures/export-var">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestConstVarLocal" imported="TestConstVar" />
     <NodeImportDeclSpecifier local="TestMutVarLocal" imported="TestMutVar" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-expr">
+<NodeImportDeclsource="./fixtures/export-expr">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestNamespace" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./test/fixtures/export-expr">
+<NodeImportDeclsource="./fixtures/export-expr">
 </NodeImportDecl>
 <NodeMain>
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a1" codeName="a1_0" frame="2">
-        <TypeEnum codeName="TestEnum_0" name="TestEnum">
-          <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-          <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+        <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+          <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+          <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
         </TypeEnum>
       </Var>
     </NodeVarDeclVar>
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeEnum codeName="TestEnum_0" name="TestEnum">
-            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+          <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
           </TypeEnum>
         </NodeExprType>
         <NodeExprBody>
           <ExprAccess prop="One">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                  <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                  <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestEnum" codeName="TestEnum_0" frame="1">
-                    <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                  <Var name="TestEnum" codeName="fixtures_export_enum_TestEnum_0" frame="1">
+                    <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                     </TypeEnum>
                   </Var>
                 </ExprAccess>
@@ -151,7 +151,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a2" codeName="a2_0" frame="2">
-        <TypeObj codeName="TestObj_0" name="TestObj">
+        <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
           <TypeField name="a">
             <BuiltinType name="int" />
           </TypeField>
@@ -161,7 +161,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="TestObj_0" name="TestObj">
+          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
             <TypeField name="a">
               <BuiltinType name="int" />
             </TypeField>
@@ -223,17 +223,17 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                  <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                  <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="a1" codeName="a1_0" frame="2">
-                    <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                    <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                     </TypeEnum>
                   </Var>
                 </ExprAccess>
@@ -243,7 +243,7 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="TestObj_0" name="TestObj">
+                <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                   <TypeField name="a">
                     <BuiltinType name="int" />
                   </TypeField>
@@ -252,7 +252,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="a2" codeName="a2_0" frame="2">
-                    <TypeObj codeName="TestObj_0" name="TestObj">
+                    <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                       <TypeField name="a">
                         <BuiltinType name="int" />
                       </TypeField>
@@ -318,7 +318,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestFn" codeName="TestFn_0" frame="1">
+                  <Var name="TestFn" codeName="fixtures_export_fn_TestFn_0" frame="1">
                     <TypeFn name="fn_sFP3intFP3strFRstrFE">
                       <TypeFnParams>
                         <TypeFnParam name="a" required>
@@ -363,7 +363,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="TestFn" codeName="TestFn_0" frame="1">
+                          <Var name="TestFn" codeName="fixtures_export_fn_TestFn_0" frame="1">
                             <TypeFn name="fn_sFP3intFP3strFRstrFE">
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -443,35 +443,35 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b1" codeName="b1_0" frame="2">
-        <TypeEnum codeName="TestEnum_0" name="TestEnum">
-          <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-          <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+        <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+          <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+          <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
         </TypeEnum>
       </Var>
     </NodeVarDeclVar>
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeEnum codeName="TestEnum_0" name="TestEnum">
-            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+          <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
           </TypeEnum>
         </NodeExprType>
         <NodeExprBody>
           <ExprAccess prop="One">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                  <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                  <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestEnumLocal" codeName="TestEnumLocal_0" frame="1">
-                    <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                  <Var name="TestEnumLocal" codeName="fixtures_export_enum_TestEnum_0" frame="1">
+                    <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                     </TypeEnum>
                   </Var>
                 </ExprAccess>
@@ -485,7 +485,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b2" codeName="b2_0" frame="2">
-        <TypeObj codeName="TestObj_0" name="TestObj">
+        <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
           <TypeField name="a">
             <BuiltinType name="int" />
           </TypeField>
@@ -495,8 +495,8 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeAlias codeName="TestObjLocal_0" name="TestObjLocal">
-            <TypeObj codeName="TestObj_0" name="TestObj">
+          <TypeAlias codeName="test_TestObjLocal_0" name="TestObjLocal">
+            <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
               <TypeField name="a">
                 <BuiltinType name="int" />
               </TypeField>
@@ -559,17 +559,17 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                  <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                  <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="b1" codeName="b1_0" frame="2">
-                    <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                    <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                     </TypeEnum>
                   </Var>
                 </ExprAccess>
@@ -579,7 +579,7 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="TestObj_0" name="TestObj">
+                <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                   <TypeField name="a">
                     <BuiltinType name="int" />
                   </TypeField>
@@ -588,7 +588,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="b2" codeName="b2_0" frame="2">
-                    <TypeObj codeName="TestObj_0" name="TestObj">
+                    <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                       <TypeField name="a">
                         <BuiltinType name="int" />
                       </TypeField>
@@ -654,7 +654,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestFnLocal" codeName="TestFnLocal_0" frame="1">
+                  <Var name="TestFnLocal" codeName="fixtures_export_fn_TestFn_0" frame="1">
                     <TypeFn name="fn_sFP3intFP3strFRstrFE">
                       <TypeFnParams>
                         <TypeFnParam name="a" required>
@@ -699,7 +699,7 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="TestFnLocal" codeName="TestFnLocal_0" frame="1">
+                          <Var name="TestFnLocal" codeName="fixtures_export_fn_TestFn_0" frame="1">
                             <TypeFn name="fn_sFP3intFP3strFRstrFE">
                               <TypeFnParams>
                                 <TypeFnParam name="a" required>
@@ -751,7 +751,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestConstVarLocal" codeName="TestConstVarLocal_0" frame="1">
+                  <Var name="TestConstVarLocal" codeName="TestConstVar_0" frame="1">
                     <BuiltinType name="int" />
                   </Var>
                 </ExprAccess>
@@ -765,7 +765,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestMutVarLocal" codeName="TestMutVarLocal_0" frame="1">
+                  <Var name="TestMutVarLocal" codeName="TestMutVar_0" frame="1">
                     <BuiltinType name="int" />
                   </Var>
                 </ExprAccess>
@@ -779,38 +779,38 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="c1" codeName="c1_0" frame="2">
-        <TypeEnum codeName="TestEnum_0" name="TestEnum">
-          <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-          <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+        <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+          <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+          <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
         </TypeEnum>
       </Var>
     </NodeVarDeclVar>
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeEnum codeName="TestEnum_0" name="TestEnum">
-            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+          <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
           </TypeEnum>
         </NodeExprType>
         <NodeExprBody>
           <ExprAccess prop="One">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                  <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                  <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess prop="TestEnum">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                      <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                         <TypeField name="TestEnum">
-                          <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                          <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
@@ -829,14 +829,14 @@ main {
                           </TypeFn>
                         </TypeField>
                         <TypeField name="TestObj">
-                          <TypeObj codeName="TestObj_0" name="TestObj">
+                          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                             <TypeField name="a">
                               <BuiltinType name="int" />
                             </TypeField>
                           </TypeObj>
                         </TypeField>
                         <TypeField name="TestAlias">
-                          <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                          <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                             <BuiltinType name="str" />
                           </TypeAlias>
                         </TypeField>
@@ -851,11 +851,11 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
-                          <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                          <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
-                              <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                                <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                                <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                              <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
@@ -874,14 +874,14 @@ main {
                               </TypeFn>
                             </TypeField>
                             <TypeField name="TestObj">
-                              <TypeObj codeName="TestObj_0" name="TestObj">
+                              <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                                 <TypeField name="a">
                                   <BuiltinType name="int" />
                                 </TypeField>
                               </TypeObj>
                             </TypeField>
                             <TypeField name="TestAlias">
-                              <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                              <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                                 <BuiltinType name="str" />
                               </TypeAlias>
                             </TypeField>
@@ -907,7 +907,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="c2" codeName="c2_0" frame="2">
-        <TypeObj codeName="TestObj_0" name="TestObj">
+        <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
           <TypeField name="a">
             <BuiltinType name="int" />
           </TypeField>
@@ -917,7 +917,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="TestObj_0" name="TestObj">
+          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
             <TypeField name="a">
               <BuiltinType name="int" />
             </TypeField>
@@ -979,17 +979,17 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                  <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                  <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="c1" codeName="c1_0" frame="2">
-                    <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                    <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                     </TypeEnum>
                   </Var>
                 </ExprAccess>
@@ -999,7 +999,7 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="TestObj_0" name="TestObj">
+                <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                   <TypeField name="a">
                     <BuiltinType name="int" />
                   </TypeField>
@@ -1008,7 +1008,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="c2" codeName="c2_0" frame="2">
-                    <TypeObj codeName="TestObj_0" name="TestObj">
+                    <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                       <TypeField name="a">
                         <BuiltinType name="int" />
                       </TypeField>
@@ -1076,11 +1076,11 @@ main {
                 <ExprAccess prop="TestFn">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                      <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                         <TypeField name="TestEnum">
-                          <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                          <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
@@ -1099,14 +1099,14 @@ main {
                           </TypeFn>
                         </TypeField>
                         <TypeField name="TestObj">
-                          <TypeObj codeName="TestObj_0" name="TestObj">
+                          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                             <TypeField name="a">
                               <BuiltinType name="int" />
                             </TypeField>
                           </TypeObj>
                         </TypeField>
                         <TypeField name="TestAlias">
-                          <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                          <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                             <BuiltinType name="str" />
                           </TypeAlias>
                         </TypeField>
@@ -1121,11 +1121,11 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
-                          <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                          <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
-                              <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                                <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                                <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                              <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
@@ -1144,14 +1144,14 @@ main {
                               </TypeFn>
                             </TypeField>
                             <TypeField name="TestObj">
-                              <TypeObj codeName="TestObj_0" name="TestObj">
+                              <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                                 <TypeField name="a">
                                   <BuiltinType name="int" />
                                 </TypeField>
                               </TypeObj>
                             </TypeField>
                             <TypeField name="TestAlias">
-                              <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                              <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                                 <BuiltinType name="str" />
                               </TypeAlias>
                             </TypeField>
@@ -1198,11 +1198,11 @@ main {
                         <ExprAccess prop="TestFn">
                           <NodeExpr>
                             <NodeExprType>
-                              <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                              <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                                 <TypeField name="TestEnum">
-                                  <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                                    <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                                    <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                                  <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                                    <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                                    <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                                   </TypeEnum>
                                 </TypeField>
                                 <TypeField name="TestFn">
@@ -1221,14 +1221,14 @@ main {
                                   </TypeFn>
                                 </TypeField>
                                 <TypeField name="TestObj">
-                                  <TypeObj codeName="TestObj_0" name="TestObj">
+                                  <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                                     <TypeField name="a">
                                       <BuiltinType name="int" />
                                     </TypeField>
                                   </TypeObj>
                                 </TypeField>
                                 <TypeField name="TestAlias">
-                                  <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                                  <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                                     <BuiltinType name="str" />
                                   </TypeAlias>
                                 </TypeField>
@@ -1243,11 +1243,11 @@ main {
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
-                                  <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                                  <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                                     <TypeField name="TestEnum">
-                                      <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                                        <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                                        <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                                      <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                                        <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                                        <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                                       </TypeEnum>
                                     </TypeField>
                                     <TypeField name="TestFn">
@@ -1266,14 +1266,14 @@ main {
                                       </TypeFn>
                                     </TypeField>
                                     <TypeField name="TestObj">
-                                      <TypeObj codeName="TestObj_0" name="TestObj">
+                                      <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                                         <TypeField name="a">
                                           <BuiltinType name="int" />
                                         </TypeField>
                                       </TypeObj>
                                     </TypeField>
                                     <TypeField name="TestAlias">
-                                      <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                                      <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                                         <BuiltinType name="str" />
                                       </TypeAlias>
                                     </TypeField>
@@ -1327,11 +1327,11 @@ main {
                 <ExprAccess prop="TestConstVar">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                      <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                         <TypeField name="TestEnum">
-                          <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                          <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
@@ -1350,14 +1350,14 @@ main {
                           </TypeFn>
                         </TypeField>
                         <TypeField name="TestObj">
-                          <TypeObj codeName="TestObj_0" name="TestObj">
+                          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                             <TypeField name="a">
                               <BuiltinType name="int" />
                             </TypeField>
                           </TypeObj>
                         </TypeField>
                         <TypeField name="TestAlias">
-                          <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                          <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                             <BuiltinType name="str" />
                           </TypeAlias>
                         </TypeField>
@@ -1372,11 +1372,11 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
-                          <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                          <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
-                              <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                                <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                                <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                              <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
@@ -1395,14 +1395,14 @@ main {
                               </TypeFn>
                             </TypeField>
                             <TypeField name="TestObj">
-                              <TypeObj codeName="TestObj_0" name="TestObj">
+                              <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                                 <TypeField name="a">
                                   <BuiltinType name="int" />
                                 </TypeField>
                               </TypeObj>
                             </TypeField>
                             <TypeField name="TestAlias">
-                              <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                              <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                                 <BuiltinType name="str" />
                               </TypeAlias>
                             </TypeField>
@@ -1430,11 +1430,11 @@ main {
                 <ExprAccess prop="TestMutVar">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                      <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                         <TypeField name="TestEnum">
-                          <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                          <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                            <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                           </TypeEnum>
                         </TypeField>
                         <TypeField name="TestFn">
@@ -1453,14 +1453,14 @@ main {
                           </TypeFn>
                         </TypeField>
                         <TypeField name="TestObj">
-                          <TypeObj codeName="TestObj_0" name="TestObj">
+                          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                             <TypeField name="a">
                               <BuiltinType name="int" />
                             </TypeField>
                           </TypeObj>
                         </TypeField>
                         <TypeField name="TestAlias">
-                          <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                          <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                             <BuiltinType name="str" />
                           </TypeAlias>
                         </TypeField>
@@ -1475,11 +1475,11 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
-                          <TypeObj codeName="TestNamespace_0" name="TestNamespace">
+                          <TypeObj codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
-                              <TypeEnum codeName="TestEnum_0" name="TestEnum">
-                                <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
-                                <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                              <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
+                                <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
                               </TypeEnum>
                             </TypeField>
                             <TypeField name="TestFn">
@@ -1498,14 +1498,14 @@ main {
                               </TypeFn>
                             </TypeField>
                             <TypeField name="TestObj">
-                              <TypeObj codeName="TestObj_0" name="TestObj">
+                              <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                                 <TypeField name="a">
                                   <BuiltinType name="int" />
                                 </TypeField>
                               </TypeObj>
                             </TypeField>
                             <TypeField name="TestAlias">
-                              <TypeAlias codeName="TestAlias_0" name="TestAlias">
+                              <TypeAlias codeName="fixtures_export_type_TestAlias_0" name="TestAlias">
                                 <BuiltinType name="str" />
                               </TypeAlias>
                             </TypeField>

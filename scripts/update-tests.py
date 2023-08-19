@@ -25,9 +25,8 @@ CORE_PATH = os.path.join(os.getcwd(), "build", "Debug", "the.exe") if os.name ==
 
 
 def update(directory: str, action: str):
-    fixtures_path = os.path.join(os.getcwd(), "test", "fixtures")
-    codegen_test_path = os.path.join(os.getcwd(), "test", "codegen-test")
-    app_path = os.path.join(os.getcwd(), "app")
+    test_path = os.path.join(os.getcwd(), "test")
+    app_path = os.path.join(test_path, "test")
     files = os.listdir(directory)
     code_sep = "======= code ======="
     flags_sep = "======= flags ======="
@@ -62,7 +61,7 @@ def update(directory: str, action: str):
 
         process = subprocess.Popen(
             [CORE_PATH, action, app_path],
-            cwd=fixtures_path,
+            cwd=test_path,
             stderr=subprocess.PIPE,
             stdout=subprocess.PIPE,
             text=True
@@ -73,7 +72,7 @@ def update(directory: str, action: str):
 
         if action == "codegen":
             result = stdout[148 + 7 * len(os.linesep):]
-            result = re.sub(re.escape(codegen_test_path) + r"[^.]+\.txt", "/test", result)
+            result = result.replace(app_path, "/test")
             f.write(stdin_sep + os.linesep + stdin + code_sep + os.linesep + result + trailing_code)
         elif is_error_file:
             result = "/test" + stderr[stderr.find(":", 10):]

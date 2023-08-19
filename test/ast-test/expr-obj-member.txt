@@ -1,12 +1,12 @@
 ======= stdin =======
-import * as Package from "./test/fixtures/export-obj"
+import * as Package from "./fixtures/export-obj"
 
 main {
   test := Package.TestObj{a: 1}
   print(test)
 }
 ======= stdout =======
-<NodeImportDeclsource="./test/fixtures/export-obj">
+<NodeImportDeclsource="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="Package" />
   </NodeImportDeclSpecifiers>
@@ -15,7 +15,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
-        <TypeObj codeName="TestObj_0" name="TestObj">
+        <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
           <TypeField name="a">
             <BuiltinType name="int" />
           </TypeField>
@@ -25,7 +25,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="TestObj_0" name="TestObj">
+          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
             <TypeField name="a">
               <BuiltinType name="int" />
             </TypeField>
@@ -70,7 +70,7 @@ main {
           <ExprCallArg id="items">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="TestObj_0" name="TestObj">
+                <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                   <TypeField name="a">
                     <BuiltinType name="int" />
                   </TypeField>
@@ -79,7 +79,7 @@ main {
               <NodeExprBody>
                 <ExprAccess>
                   <Var name="test" codeName="test_0" frame="2">
-                    <TypeObj codeName="TestObj_0" name="TestObj">
+                    <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
                       <TypeField name="a">
                         <BuiltinType name="int" />
                       </TypeField>

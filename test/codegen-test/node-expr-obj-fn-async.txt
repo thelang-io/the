@@ -112,14 +112,14 @@ typedef struct threadpool_thread {
 } threadpool_thread_t;
 
 struct __THE_1_fn_aFRvoidFE;
-struct __THE_1_Test_0;
+struct __THE_1_test_Test_0;
 
 struct __THE_1_fn_aFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_Test_0 {
+struct __THE_1_test_Test_0 {
   const struct __THE_1_fn_aFRvoidFE __THE_0_a;
 };
 
@@ -134,9 +134,9 @@ void threadpool_mutex_lock (threadpool_mutex_t *);
 void threadpool_mutex_unlock (threadpool_mutex_t *);
 struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_aFRvoidFE);
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_aFRvoidFE);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-void __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (struct __THE_1_fn_aFRvoidFE);
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *);
+void __THE_1_test_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -204,24 +204,24 @@ struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_a
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (struct __THE_1_fn_aFRvoidFE __THE_0_a) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (struct __THE_1_fn_aFRvoidFE __THE_0_a) {
+  struct __THE_1_test_Test_0 *r = alloc(sizeof(struct __THE_1_test_Test_0));
+  struct __THE_1_test_Test_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *n) {
   __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) n->__THE_0_a);
   free(n);
 }
-void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
 }
 
 int main () {
-  const struct __THE_1_fn_aFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_0, NULL, 0};
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_1_Test_0_alloc(__THE_1_fn_aFRvoidFE_copy(__THE_0_test_0)));
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_1_test_Test_0_alloc(__THE_1_fn_aFRvoidFE_copy(__THE_0_test_test_0)));
 }
 ======= flags =======
 U:-pthread

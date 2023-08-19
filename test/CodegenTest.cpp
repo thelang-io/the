@@ -182,12 +182,14 @@ TEST(CodegenTest, FilterAsyncDeclarationsSingleVar) {
 
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
+  std::filesystem::path initialCwd_;
   bool isPlatformDefault_ = true;
   bool testCompile_ = false;
   bool testMemcheck_ = false;
   std::string testPlatform_ = "default";
 
   void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
     auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
     auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
@@ -200,16 +202,22 @@ class CodegenPassTest : public testing::TestWithParam<const char *> {
       this->isPlatformDefault_ = this->testPlatform_ == "default";
     }
   }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 class CodegenThrowTest : public testing::TestWithParam<const char *> {
  protected:
+  std::filesystem::path initialCwd_;
   bool isPlatformDefault_ = true;
   bool testCompile_ = false;
   bool testMemcheck_ = false;
   std::string testPlatform_ = "default";
 
   void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
     auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
     auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
@@ -221,6 +229,10 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
       this->testPlatform_ = *testPlatform;
       this->isPlatformDefault_ = this->testPlatform_ == "default";
     }
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
   }
 };
 
@@ -228,6 +240,7 @@ TEST_P(CodegenPassTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stdout"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
@@ -241,6 +254,7 @@ TEST_P(CodegenPassTest, Passes) {
     return;
   }
 
+  std::filesystem::current_path(this->initialCwd_);
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
   Codegen::compile(filePath, result, this->testPlatform_, true);
@@ -293,6 +307,7 @@ TEST_P(CodegenThrowTest, Throws) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stderr"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
@@ -306,6 +321,7 @@ TEST_P(CodegenThrowTest, Throws) {
     return;
   }
 
+  std::filesystem::current_path(this->initialCwd_);
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
   Codegen::compile(filePath, result, this->testPlatform_, true);

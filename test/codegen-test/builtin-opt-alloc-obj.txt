@@ -54,9 +54,9 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_TestObj_0;
+struct __THE_1_test_TestObj_0;
 
-struct __THE_1_TestObj_0 {
+struct __THE_1_test_TestObj_0 {
   const int32_t __THE_0_a;
 };
 
@@ -64,11 +64,11 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *);
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *);
-struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_TestObj_0 *);
-void __THE_1_opt_TestObj_free (struct __THE_1_TestObj_0 **);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *);
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *);
+struct __THE_1_test_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_test_TestObj_0 *);
+void __THE_1_opt_TestObj_free (struct __THE_1_test_TestObj_0 **);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -88,43 +88,43 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *n) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {n->__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *n) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {n->__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *n) {
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *n) {
   free(n);
 }
-struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_TestObj_0 *n) {
-  struct __THE_1_TestObj_0 **r = alloc(sizeof(struct __THE_1_TestObj_0 *));
+struct __THE_1_test_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_test_TestObj_0 *n) {
+  struct __THE_1_test_TestObj_0 **r = alloc(sizeof(struct __THE_1_test_TestObj_0 *));
   *r = n;
   return r;
 }
-void __THE_1_opt_TestObj_free (struct __THE_1_TestObj_0 **n) {
+void __THE_1_opt_TestObj_free (struct __THE_1_test_TestObj_0 **n) {
   if (n == NULL) return;
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) *n);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) *n);
   free(n);
 }
 
 int main () {
-  const struct __THE_1_TestObj_0 *__THE_0_testObj_0 = __THE_1_TestObj_0_alloc(1);
-  const struct __THE_1_TestObj_0 **__THE_0_optObj_0 = NULL;
-  const struct __THE_1_TestObj_0 **__THE_0_optObjNilInit_0 = NULL;
-  const struct __THE_1_TestObj_0 **__THE_0_optObjValInit_0 = __THE_1_opt_TestObj_alloc(__THE_1_TestObj_0_alloc(1));
-  const struct __THE_1_TestObj_0 **__THE_0_optObjValCopy_0 = __THE_1_opt_TestObj_alloc(__THE_1_TestObj_0_copy(__THE_0_testObj_0));
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObjValCopy_0);
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObjValInit_0);
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObjNilInit_0);
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObj_0);
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) __THE_0_testObj_0);
+  const struct __THE_1_test_TestObj_0 *__THE_0_testObj_0 = __THE_1_test_TestObj_0_alloc(1);
+  const struct __THE_1_test_TestObj_0 **__THE_0_optObj_0 = NULL;
+  const struct __THE_1_test_TestObj_0 **__THE_0_optObjNilInit_0 = NULL;
+  const struct __THE_1_test_TestObj_0 **__THE_0_optObjValInit_0 = __THE_1_opt_TestObj_alloc(__THE_1_test_TestObj_0_alloc(1));
+  const struct __THE_1_test_TestObj_0 **__THE_0_optObjValCopy_0 = __THE_1_opt_TestObj_alloc(__THE_1_test_TestObj_0_copy(__THE_0_testObj_0));
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) __THE_0_optObjValCopy_0);
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) __THE_0_optObjValInit_0);
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) __THE_0_optObjNilInit_0);
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) __THE_0_optObj_0);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) __THE_0_testObj_0);
 }
 ======= flags =======
 ======= stdout =======

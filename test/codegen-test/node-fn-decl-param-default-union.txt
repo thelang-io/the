@@ -90,7 +90,7 @@ struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRun
 struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP;
 struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE;
 struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP;
-struct __THE_1_mainSDtest2_0X;
+struct __THE_1_test_mainSDtest2_0X;
 
 struct __THE_1_union_intUSstrUE {
   int t;
@@ -123,9 +123,9 @@ struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvo
   unsigned char o2;
   struct __THE_1_union_intUSstrUE n2;
 };
-struct __THE_1_mainSDtest2_0X {
+struct __THE_1_test_mainSDtest2_0X {
   struct __THE_1_union_intUSstrUE *__THE_0_a_0;
-  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE *__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE *__THE_0_test_test1_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -143,10 +143,10 @@ struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int, ...);
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_copy (const struct __THE_1_union_intUSstrUE);
 void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE);
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_realloc (struct __THE_1_union_intUSstrUE, struct __THE_1_union_intUSstrUE);
-struct __THE_1_union_intUSstrUE __THE_1_test1_0 (void *, void *);
+struct __THE_1_union_intUSstrUE __THE_1_test_test1_0 (void *, void *);
 void __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE_free (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE);
-void __THE_1_mainSDtest2_0 (void *, void *);
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE *, struct __THE_1_mainSDtest2_0X);
+void __THE_1_test_mainSDtest2_0 (void *, void *);
+void __THE_1_test_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE *, struct __THE_1_test_mainSDtest2_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -226,7 +226,7 @@ struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_realloc (struct __THE_1
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) n1);
   return n2;
 }
-struct __THE_1_union_intUSstrUE __THE_1_test1_0 (void *px, void *pp) {
+struct __THE_1_union_intUSstrUE __THE_1_test_test1_0 (void *px, void *pp) {
   struct __THE_1_union_intUSstrUE v;
   struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP *p = pp;
   const struct __THE_1_union_intUSstrUE __THE_0_a_0 = p->n0;
@@ -259,49 +259,49 @@ struct __THE_1_union_intUSstrUE __THE_1_test1_0 (void *px, void *pp) {
 void __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE_free (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest2_0 (void *px, void *pp) {
+void __THE_1_test_mainSDtest2_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP *p = pp;
-  struct __THE_1_mainSDtest2_0X *x = px;
+  struct __THE_1_test_mainSDtest2_0X *x = px;
   struct __THE_1_union_intUSstrUE *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE *__THE_0_test_test1_0 = x->__THE_0_test_test1_0;
   const struct __THE_1_union_intUSstrUE __THE_0_a2_0 = p->n0;
   const struct __THE_1_union_intUSstrUE __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_union_intUSstrUE_alloc(TYPE_int, 5);
   const struct __THE_1_union_intUSstrUE __THE_0_c_0 = p->o2 == 1 ? p->n2 : __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test6"));
-  *__THE_0_a_0 = __THE_1_union_intUSstrUE_realloc(*__THE_0_a_0, (*__THE_0_test1_0).f((*__THE_0_test1_0).x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_copy(__THE_0_a2_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_b_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  *__THE_0_a_0 = __THE_1_union_intUSstrUE_realloc(*__THE_0_a_0, (*__THE_0_test_test1_0).f((*__THE_0_test_test1_0).x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_copy(__THE_0_a2_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_b_0), 1, __THE_1_union_intUSstrUE_copy(__THE_0_c_0)}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_c_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_b_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_a2_0);
   free(pp);
 }
-void __THE_1_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE *n, struct __THE_1_mainSDtest2_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtest2_0X);
-  struct __THE_1_mainSDtest2_0X *r = alloc(l);
+void __THE_1_test_mainSDtest2_0_alloc (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE *n, struct __THE_1_test_mainSDtest2_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSDtest2_0X);
+  struct __THE_1_test_mainSDtest2_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtest2_0;
+  n->f = &__THE_1_test_mainSDtest2_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE __THE_0_test1_0 = (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE) {&__THE_1_test1_0, NULL, 0};
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
-  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFE) {&__THE_1_test_test1_0, NULL, 0};
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
+  __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test1")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 2), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test3"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRunion_intUSstrUEFEP))));
   struct __THE_1_union_intUSstrUE __THE_0_a_0 = __THE_1_union_intUSstrUE_alloc(TYPE_int, 1);
-  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE __THE_0_mainSDtest2_0;
-  __THE_1_mainSDtest2_0_alloc((struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE *) &__THE_0_mainSDtest2_0, (struct __THE_1_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test1_0});
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
-  __THE_0_mainSDtest2_0.f(__THE_0_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
-  __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE_free((struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE) __THE_0_mainSDtest2_0);
+  const struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE __THE_0_test_mainSDtest2_0;
+  __THE_1_test_mainSDtest2_0_alloc((struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE *) &__THE_0_test_mainSDtest2_0, (struct __THE_1_test_mainSDtest2_0X) {&__THE_0_a_0, &__THE_0_test_test1_0});
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 0, (struct __THE_1_union_intUSstrUE) {}}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 0, (struct __THE_1_union_intUSstrUE) {}, 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
+  __THE_0_test_mainSDtest2_0.f(__THE_0_test_mainSDtest2_0.x, xalloc(&(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP) {__THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test7")), 1, __THE_1_union_intUSstrUE_alloc(TYPE_int, 8), 1, __THE_1_union_intUSstrUE_alloc(TYPE_str, str_alloc("test9"))}, sizeof(struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFEP)));
+  __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE_free((struct __THE_1_fn_sFP3union_intUSstrUEFP1union_intUSstrUEFP1union_intUSstrUEFRvoidFE) __THE_0_test_mainSDtest2_0);
   __THE_1_union_intUSstrUE_free((struct __THE_1_union_intUSstrUE) __THE_0_a_0);
 }
 ======= flags =======

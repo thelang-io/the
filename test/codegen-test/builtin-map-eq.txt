@@ -78,7 +78,7 @@ struct str {
 
 struct __THE_1_pair_strMSstrME;
 struct __THE_1_map_strMSstrME;
-struct __THE_1_TestObj_0;
+struct __THE_1_test_TestObj_0;
 struct __THE_1_array_int;
 struct __THE_1_pair_strMSarray_intME;
 struct __THE_1_map_strMSarray_intME;
@@ -106,7 +106,7 @@ struct __THE_1_map_strMSstrME {
   size_t c;
   size_t l;
 };
-struct __THE_1_TestObj_0 {
+struct __THE_1_test_TestObj_0 {
   const int32_t __THE_0_a;
 };
 struct __THE_1_array_int {
@@ -160,7 +160,7 @@ struct __THE_1_map_strMSintME {
 };
 struct __THE_1_pair_strMSTestObjME {
   struct str f;
-  struct __THE_1_TestObj_0 *s;
+  struct __THE_1_test_TestObj_0 *s;
 };
 struct __THE_1_map_strMSTestObjME {
   struct __THE_1_pair_strMSTestObjME *d;
@@ -200,10 +200,10 @@ struct __THE_1_map_strMSstrME __THE_1_map_strMSstrME_alloc (int, ...);
 bool __THE_1_map_strMSstrME_eq (struct __THE_1_map_strMSstrME, struct __THE_1_map_strMSstrME);
 void __THE_1_map_strMSstrME_free (struct __THE_1_map_strMSstrME);
 bool __THE_1_map_strMSstrME_ne (struct __THE_1_map_strMSstrME, struct __THE_1_map_strMSstrME);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *);
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *);
-bool __THE_1_TestObj_0_ne (struct __THE_1_TestObj_0 *, struct __THE_1_TestObj_0 *);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *);
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *);
+bool __THE_1_test_TestObj_0_ne (struct __THE_1_test_TestObj_0 *, struct __THE_1_test_TestObj_0 *);
 int32_t *__THE_1_opt_int_alloc (int32_t);
 int32_t *__THE_1_opt_int_copy (const int32_t *);
 void __THE_1_opt_int_free (int32_t *);
@@ -440,25 +440,25 @@ bool __THE_1_map_strMSstrME_ne (struct __THE_1_map_strMSstrME n1, struct __THE_1
   __THE_1_map_strMSstrME_free((struct __THE_1_map_strMSstrME) n2);
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *n) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {n->__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *n) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {n->__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *n) {
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *n) {
   free(n);
 }
-bool __THE_1_TestObj_0_ne (struct __THE_1_TestObj_0 *n1, struct __THE_1_TestObj_0 *n2) {
+bool __THE_1_test_TestObj_0_ne (struct __THE_1_test_TestObj_0 *n1, struct __THE_1_test_TestObj_0 *n2) {
   bool r = n1->__THE_0_a != n2->__THE_0_a;
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n1);
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n2);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n1);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n2);
   return r;
 }
 int32_t *__THE_1_opt_int_alloc (int32_t n) {
@@ -729,7 +729,7 @@ struct __THE_1_map_strMSTestObjME __THE_1_map_strMSTestObjME_alloc (int x, ...) 
   struct __THE_1_pair_strMSTestObjME *d = alloc(x * sizeof(struct __THE_1_pair_strMSTestObjME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSTestObjME) {va_arg(args, struct str), va_arg(args, struct __THE_1_TestObj_0 *)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSTestObjME) {va_arg(args, struct str), va_arg(args, struct __THE_1_test_TestObj_0 *)};
   va_end(args);
   return (struct __THE_1_map_strMSTestObjME) {d, x, x};
 }
@@ -737,7 +737,7 @@ bool __THE_1_map_strMSTestObjME_eq (struct __THE_1_map_strMSTestObjME n1, struct
   bool r = n1.l == n2.l;
   if (r) {
     for (size_t i = 0; i < n1.l; i++) {
-      if (str_ne_str(str_copy(n1.d[i].f), str_copy(n2.d[i].f)) || __THE_1_TestObj_0_ne(__THE_1_TestObj_0_copy(n1.d[i].s), __THE_1_TestObj_0_copy(n2.d[i].s))) {
+      if (str_ne_str(str_copy(n1.d[i].f), str_copy(n2.d[i].f)) || __THE_1_test_TestObj_0_ne(__THE_1_test_TestObj_0_copy(n1.d[i].s), __THE_1_test_TestObj_0_copy(n2.d[i].s))) {
         r = false;
         break;
       }
@@ -750,7 +750,7 @@ bool __THE_1_map_strMSTestObjME_eq (struct __THE_1_map_strMSTestObjME n1, struct
 void __THE_1_map_strMSTestObjME_free (struct __THE_1_map_strMSTestObjME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
-    __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n.d[i].s);
+    __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n.d[i].s);
   }
   free(n.d);
 }
@@ -758,7 +758,7 @@ bool __THE_1_map_strMSTestObjME_ne (struct __THE_1_map_strMSTestObjME n1, struct
   bool r = n1.l != n2.l;
   if (!r) {
     for (size_t i = 0; i < n1.l; i++) {
-      if (str_ne_str(str_copy(n1.d[i].f), str_copy(n2.d[i].f)) || __THE_1_TestObj_0_ne(__THE_1_TestObj_0_copy(n1.d[i].s), __THE_1_TestObj_0_copy(n2.d[i].s))) {
+      if (str_ne_str(str_copy(n1.d[i].f), str_copy(n2.d[i].f)) || __THE_1_test_TestObj_0_ne(__THE_1_test_TestObj_0_copy(n1.d[i].s), __THE_1_test_TestObj_0_copy(n2.d[i].s))) {
         r = true;
         break;
       }
@@ -869,8 +869,8 @@ int main () {
   print(stdout, "zztz", "{ \"key\": 3.14 } != { \"key\": 2.16 }:", " ", __THE_1_map_strMSfloatME_ne(__THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14), __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 2.16)), THE_EOL);
   print(stdout, "zztz", "{ \"key\": 1 } == { \"key\": 1 }:", " ", __THE_1_map_strMSintME_eq(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1)), THE_EOL);
   print(stdout, "zztz", "{ \"key\": 1 } != { \"key\": 0 }:", " ", __THE_1_map_strMSintME_ne(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 0)), THE_EOL);
-  print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } == { \"key\": TestObj{a: 1} }:", " ", __THE_1_map_strMSTestObjME_eq(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1))), THE_EOL);
-  print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } != { \"key\": TestObj{a: 2} }:", " ", __THE_1_map_strMSTestObjME_ne(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_TestObj_0_alloc(2))), THE_EOL);
+  print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } == { \"key\": TestObj{a: 1} }:", " ", __THE_1_map_strMSTestObjME_eq(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1))), THE_EOL);
+  print(stdout, "zztz", "{ \"key\": TestObj{a: 1} } != { \"key\": TestObj{a: 2} }:", " ", __THE_1_map_strMSTestObjME_ne(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(2))), THE_EOL);
   print(stdout, "zztz", "{ \"key\": optIntA } == { \"key\": optIntA }:", " ", __THE_1_map_strMSopt_intME_eq(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0))), THE_EOL);
   print(stdout, "zztz", "{ \"key\": optIntA } != { \"key\": optIntB }:", " ", __THE_1_map_strMSopt_intME_ne(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntB_0))), THE_EOL);
   print(stdout, "zztz", "{ \"key\": ref intA } == { \"key\": ref intA }:", " ", __THE_1_map_strMSref_intME_eq(__THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0), __THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0)), THE_EOL);

@@ -117,7 +117,7 @@ size_t __THE_1_map_strMSintME_len (struct __THE_1_map_strMSintME);
 struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_reserve (struct __THE_1_map_strMSintME *, int32_t);
 struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_shrink (struct __THE_1_map_strMSintME *);
 struct str __THE_1_map_strMSintME_str (struct __THE_1_map_strMSintME);
-void __THE_1_printMap_0 (void *, void *);
+void __THE_1_test_printMap_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -369,7 +369,7 @@ struct str __THE_1_map_strMSintME_str (struct __THE_1_map_strMSintME n) {
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n);
   return str_concat_cstr(r, "}");
 }
-void __THE_1_printMap_0 (void *px, void *pp) {
+void __THE_1_test_printMap_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP *p = pp;
   const struct __THE_1_map_strMSintME __THE_0_m_0 = p->n0;
   print(stdout, "szsz", str_concat_str(str_concat_cstr(int_str(__THE_1_map_strMSintME_cap(__THE_1_map_strMSintME_copy(__THE_0_m_0))), "|"), int_str(__THE_1_map_strMSintME_len(__THE_1_map_strMSintME_copy(__THE_0_m_0)))), " ", __THE_1_map_strMSintME_str(__THE_1_map_strMSintME_copy(__THE_0_m_0)), THE_EOL);
@@ -378,22 +378,22 @@ void __THE_1_printMap_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE __THE_0_printMap_0 = (struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE) {&__THE_1_printMap_0, NULL, 0};
+  const struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE __THE_0_test_printMap_0 = (struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE) {&__THE_1_test_printMap_0, NULL, 0};
   struct __THE_1_map_strMSintME __THE_0_test1_0 = __THE_1_map_strMSintME_alloc(0);
   __THE_1_map_strMSintME_reserve(&__THE_0_test1_0, 100);
   struct __THE_1_map_strMSintME __THE_0_test2_0 = __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1);
   __THE_1_map_strMSintME_reserve(&__THE_0_test2_0, 100);
   struct __THE_1_map_strMSintME __THE_0_test3_0 = __THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 1, str_alloc("key2"), 2);
   __THE_1_map_strMSintME_reserve(&__THE_0_test3_0, 100);
-  __THE_0_printMap_0.f(__THE_0_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test1_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
+  __THE_0_test_printMap_0.f(__THE_0_test_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test1_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
   __THE_1_map_strMSintME_shrink(&__THE_0_test1_0);
-  __THE_0_printMap_0.f(__THE_0_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test1_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
-  __THE_0_printMap_0.f(__THE_0_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test2_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
+  __THE_0_test_printMap_0.f(__THE_0_test_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test1_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
+  __THE_0_test_printMap_0.f(__THE_0_test_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test2_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
   __THE_1_map_strMSintME_shrink(&__THE_0_test2_0);
-  __THE_0_printMap_0.f(__THE_0_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test2_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
-  __THE_0_printMap_0.f(__THE_0_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test3_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
+  __THE_0_test_printMap_0.f(__THE_0_test_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test2_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
+  __THE_0_test_printMap_0.f(__THE_0_test_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test3_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
   __THE_1_map_strMSintME_shrink(&__THE_0_test3_0);
-  __THE_0_printMap_0.f(__THE_0_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test3_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
+  __THE_0_test_printMap_0.f(__THE_0_test_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_copy(__THE_0_test3_0)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test3_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test2_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0);

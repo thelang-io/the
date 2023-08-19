@@ -137,9 +137,9 @@ void threadpool_mutex_unlock (threadpool_mutex_t *);
 struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_aFRvoidFE);
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
 struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_realloc (struct __THE_1_fn_aFRvoidFE, struct __THE_1_fn_aFRvoidFE);
-void __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test3_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test3_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -211,29 +211,29 @@ struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_realloc (struct __THE_1_fn_aFRv
   __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) n1);
   return n2;
 }
-void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
 }
-void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
 }
-void __THE_1_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
 }
 
 int main () {
-  const struct __THE_1_fn_aFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn_aFRvoidFE __THE_0_test2_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn_aFRvoidFE __THE_0_test3_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test3_0, NULL, 0};
-  const struct __THE_1_fn_aFRvoidFE __THE_0_a_0 = __THE_1_fn_aFRvoidFE_copy(__THE_0_test1_0);
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test2_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_test2_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test3_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_test3_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_a_0 = __THE_1_fn_aFRvoidFE_copy(__THE_0_test_test1_0);
   struct __THE_1_fn_aFRvoidFE __THE_0_b_0 = __THE_1_fn_aFRvoidFE_copy(__THE_0_a_0);
   __THE_0_b_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_b_0, __THE_1_fn_aFRvoidFE_copy(__THE_0_a_0));
-  struct __THE_1_fn_aFRvoidFE __THE_0_c_0 = __THE_1_fn_aFRvoidFE_copy(__THE_0_test2_0);
+  struct __THE_1_fn_aFRvoidFE __THE_0_c_0 = __THE_1_fn_aFRvoidFE_copy(__THE_0_test_test2_0);
   __THE_0_c_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_c_0, __THE_1_fn_aFRvoidFE_copy(__THE_0_b_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_b_0, __THE_1_fn_aFRvoidFE_copy(__THE_0_a_0))));
-  struct __THE_1_fn_aFRvoidFE __THE_0_d_0 = __THE_1_fn_aFRvoidFE_copy(__THE_0_test3_0);
+  struct __THE_1_fn_aFRvoidFE __THE_0_d_0 = __THE_1_fn_aFRvoidFE_copy(__THE_0_test_test3_0);
   __THE_0_d_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_d_0, __THE_1_fn_aFRvoidFE_copy(__THE_0_c_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_c_0, __THE_1_fn_aFRvoidFE_copy(__THE_0_b_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_b_0, __THE_1_fn_aFRvoidFE_copy(__THE_0_a_0))))));
   __THE_0_d_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_d_0, true ? __THE_1_fn_aFRvoidFE_copy(__THE_0_b_0) : __THE_1_fn_aFRvoidFE_copy(__THE_0_a_0));
   __THE_0_d_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_d_0, true ? __THE_1_fn_aFRvoidFE_copy(__THE_0_b_0 = __THE_1_fn_aFRvoidFE_realloc(__THE_0_b_0, __THE_1_fn_aFRvoidFE_copy(__THE_0_c_0))) : __THE_1_fn_aFRvoidFE_copy(__THE_0_a_0));

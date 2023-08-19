@@ -44,7 +44,7 @@ TEST(UtilsTest, StrLines) {
 
 TEST(UtilsTest, ParsePackageYamlMain) {
   auto cwd = std::filesystem::current_path();
-  std::filesystem::current_path(cwd / "test" / "fixtures");
+  std::filesystem::current_path(cwd / "test");
 
   EXPECT_EQ(
     *parse_package_yaml_main("test/package"),
@@ -56,7 +56,7 @@ TEST(UtilsTest, ParsePackageYamlMain) {
 
 TEST(UtilsTest, ParsePackageYamlMainNonExisting) {
   auto cwd = std::filesystem::current_path();
-  std::filesystem::current_path(cwd / "test" / "fixtures");
+  std::filesystem::current_path(cwd / "test");
 
   EXPECT_EQ(parse_package_yaml_main("test/no-package"), std::nullopt);
 
@@ -65,7 +65,7 @@ TEST(UtilsTest, ParsePackageYamlMainNonExisting) {
 
 TEST(UtilsTest, ParsePackageYamlMainWithoutMain) {
   auto cwd = std::filesystem::current_path();
-  std::filesystem::current_path(cwd / "test" / "fixtures");
+  std::filesystem::current_path(cwd / "test");
 
   EXPECT_EQ(parse_package_yaml_main("test/without-name"), std::nullopt);
 
@@ -74,7 +74,7 @@ TEST(UtilsTest, ParsePackageYamlMainWithoutMain) {
 
 TEST(UtilsTest, ParsePackageYamlMainPackageFileIsDirectory) {
   auto cwd = std::filesystem::current_path();
-  std::filesystem::current_path(cwd / "test" / "fixtures");
+  std::filesystem::current_path(cwd / "test");
 
   EXPECT_EQ(parse_package_yaml_main("test/package-file-is-directory"), std::nullopt);
 

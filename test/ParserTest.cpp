@@ -15,20 +15,42 @@
  */
 
 #include <gtest/gtest.h>
+#include <filesystem>
 #include "../src/Parser.hpp"
 #include "MockLexer.hpp"
 #include "utils.hpp"
 
 class ParserPassTest : public testing::TestWithParam<const char *> {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 class ParserThrowTest : public testing::TestWithParam<const char *> {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 TEST_P(ParserPassTest, Passes) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("parser", param, {"stdin", "stdout"});
   auto lexer = testing::NiceMock<MockLexer>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto parser = Parser(&lexer);
 
   EXPECT_EQ(sections["stdout"], prepareTestOutputFrom(parser.xml()));
@@ -38,6 +60,7 @@ TEST_P(ParserThrowTest, Throws) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("parser", param, {"stdin", "stderr"});
   auto lexer = testing::NiceMock<MockLexer>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto parser = Parser(&lexer);
 
   EXPECT_THROW_WITH_MESSAGE(parser.xml(), prepareTestOutput(sections["stderr"]));

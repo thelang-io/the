@@ -55,7 +55,7 @@ main {
         <NodeExprBody>
           <ExprClosure>
             <ExprClosureVar>
-              <Var name="$" codeName="mainSD$_0" frame="3">
+              <Var name="$" codeName="test_mainSD$_0" frame="3">
                 <TypeFn name="fn_sFRvoidFE">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
@@ -131,7 +131,7 @@ main {
         <NodeExprBody>
           <ExprClosure>
             <ExprClosureVar>
-              <Var name="$" codeName="mainSD$_1" frame="3">
+              <Var name="$" codeName="test_mainSD$_1" frame="3">
                 <TypeFn name="fn_sFP3intFRvoidFE">
                   <TypeFnParams>
                     <TypeFnParam name="a" required>
@@ -288,7 +288,7 @@ main {
         <NodeExprBody>
           <ExprClosure>
             <ExprClosureVar>
-              <Var name="$" codeName="mainSD$_2" frame="3">
+              <Var name="$" codeName="test_mainSD$_2" frame="3">
                 <TypeFn name="fn_sFP5intFP3strFRstrFE">
                   <TypeFnParams>
                     <TypeFnParam name="a" mut required>
@@ -554,7 +554,7 @@ main {
         <NodeExprBody>
           <ExprClosure>
             <ExprClosureVar>
-              <Var name="$" codeName="mainSD$_3" frame="3">
+              <Var name="$" codeName="test_mainSD$_3" frame="3">
                 <TypeFn name="fn_aFP5intFP1strFP4array_intFRvoidFE" async>
                   <TypeFnParams>
                     <TypeFnParam name="a" mut required>
@@ -1179,7 +1179,7 @@ main {
         <NodeExprBody>
           <ExprClosure>
             <ExprClosureVar>
-              <Var name="$" codeName="mainSD$_4" frame="3">
+              <Var name="$" codeName="test_mainSD$_4" frame="3">
                 <TypeFn name="fn_sFP5intFP1strFP1opt_strFRvoidFE">
                   <TypeFnParams>
                     <TypeFnParam name="a" mut required>

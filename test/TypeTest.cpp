@@ -346,7 +346,7 @@ TEST_F(TypeTest, FieldNthReturnsNull) {
 }
 
 TEST_F(TypeTest, GetsEnumerator) {
-  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
+  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "test_TestEnumSDRed_0");
 }
 
 TEST_F(TypeTest, GetsNonExistingEnumerator) {

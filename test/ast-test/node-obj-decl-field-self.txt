@@ -11,10 +11,10 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <TypeOptional name="opt_Test">
-        <TypeObj codeName="Test_0" name="Test" />
+        <TypeObj codeName="test_Test_0" name="Test" />
       </TypeOptional>
     </TypeField>
   </TypeObj>
@@ -23,10 +23,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test1" codeName="test1_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <TypeOptional name="opt_Test">
-              <TypeObj codeName="Test_0" name="Test" />
+              <TypeObj codeName="test_Test_0" name="Test" />
             </TypeOptional>
           </TypeField>
         </TypeObj>
@@ -35,10 +35,10 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <TypeOptional name="opt_Test">
-                <TypeObj codeName="Test_0" name="Test" />
+                <TypeObj codeName="test_Test_0" name="Test" />
               </TypeOptional>
             </TypeField>
           </TypeObj>
@@ -52,10 +52,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test2" codeName="test2_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <TypeOptional name="opt_Test">
-              <TypeObj codeName="Test_0" name="Test" />
+              <TypeObj codeName="test_Test_0" name="Test" />
             </TypeOptional>
           </TypeField>
         </TypeObj>
@@ -64,10 +64,10 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <TypeOptional name="opt_Test">
-                <TypeObj codeName="Test_0" name="Test" />
+                <TypeObj codeName="test_Test_0" name="Test" />
               </TypeOptional>
             </TypeField>
           </TypeObj>
@@ -77,10 +77,10 @@ main {
             <ExprObjProp name="a">
               <NodeExpr>
                 <NodeExprType>
-                  <TypeObj codeName="Test_0" name="Test">
+                  <TypeObj codeName="test_Test_0" name="Test">
                     <TypeField name="a">
                       <TypeOptional name="opt_Test">
-                        <TypeObj codeName="Test_0" name="Test" />
+                        <TypeObj codeName="test_Test_0" name="Test" />
                       </TypeOptional>
                     </TypeField>
                   </TypeObj>
@@ -88,10 +88,10 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test1" codeName="test1_0" frame="2">
-                      <TypeObj codeName="Test_0" name="Test">
+                      <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <TypeOptional name="opt_Test">
-                            <TypeObj codeName="Test_0" name="Test" />
+                            <TypeObj codeName="test_Test_0" name="Test" />
                           </TypeOptional>
                         </TypeField>
                       </TypeObj>
@@ -108,10 +108,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test3" codeName="test3_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <TypeOptional name="opt_Test">
-              <TypeObj codeName="Test_0" name="Test" />
+              <TypeObj codeName="test_Test_0" name="Test" />
             </TypeOptional>
           </TypeField>
         </TypeObj>
@@ -120,10 +120,10 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <TypeOptional name="opt_Test">
-                <TypeObj codeName="Test_0" name="Test" />
+                <TypeObj codeName="test_Test_0" name="Test" />
               </TypeOptional>
             </TypeField>
           </TypeObj>
@@ -133,10 +133,10 @@ main {
             <ExprObjProp name="a">
               <NodeExpr>
                 <NodeExprType>
-                  <TypeObj codeName="Test_0" name="Test">
+                  <TypeObj codeName="test_Test_0" name="Test">
                     <TypeField name="a">
                       <TypeOptional name="opt_Test">
-                        <TypeObj codeName="Test_0" name="Test" />
+                        <TypeObj codeName="test_Test_0" name="Test" />
                       </TypeOptional>
                     </TypeField>
                   </TypeObj>
@@ -144,10 +144,10 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test2" codeName="test2_0" frame="2">
-                      <TypeObj codeName="Test_0" name="Test">
+                      <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <TypeOptional name="opt_Test">
-                            <TypeObj codeName="Test_0" name="Test" />
+                            <TypeObj codeName="test_Test_0" name="Test" />
                           </TypeOptional>
                         </TypeField>
                       </TypeObj>
@@ -164,10 +164,10 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test4" codeName="test4_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <TypeOptional name="opt_Test">
-              <TypeObj codeName="Test_0" name="Test" />
+              <TypeObj codeName="test_Test_0" name="Test" />
             </TypeOptional>
           </TypeField>
         </TypeObj>
@@ -176,10 +176,10 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <TypeOptional name="opt_Test">
-                <TypeObj codeName="Test_0" name="Test" />
+                <TypeObj codeName="test_Test_0" name="Test" />
               </TypeOptional>
             </TypeField>
           </TypeObj>
@@ -189,10 +189,10 @@ main {
             <ExprObjProp name="a">
               <NodeExpr>
                 <NodeExprType>
-                  <TypeObj codeName="Test_0" name="Test">
+                  <TypeObj codeName="test_Test_0" name="Test">
                     <TypeField name="a">
                       <TypeOptional name="opt_Test">
-                        <TypeObj codeName="Test_0" name="Test" />
+                        <TypeObj codeName="test_Test_0" name="Test" />
                       </TypeOptional>
                     </TypeField>
                   </TypeObj>
@@ -200,10 +200,10 @@ main {
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="test3" codeName="test3_0" frame="2">
-                      <TypeObj codeName="Test_0" name="Test">
+                      <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <TypeOptional name="opt_Test">
-                            <TypeObj codeName="Test_0" name="Test" />
+                            <TypeObj codeName="test_Test_0" name="Test" />
                           </TypeOptional>
                         </TypeField>
                       </TypeObj>

@@ -351,8 +351,10 @@ bool TypeMap::isSelf (Type *type) {
 std::string TypeMap::name (const std::string &n) const {
   auto fullName = std::string();
 
-  for (const auto &item : this->stack) {
-    fullName += item + "SD";
+  for (auto i = static_cast<std::size_t>(0); i < this->stack.size(); i++) {
+    auto item = this->stack[i];
+    auto delimiter = std::string(i == 0 ? "_" : "SD");
+    fullName += item + delimiter;
   }
 
   fullName += n + "_";

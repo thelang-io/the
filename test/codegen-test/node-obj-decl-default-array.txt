@@ -56,18 +56,18 @@ typedef struct {
 } err_state_t;
 
 struct __THE_1_array_int;
-struct __THE_1_Item_0;
-struct __THE_1_Items_0;
+struct __THE_1_test_Item_0;
+struct __THE_1_test_Items_0;
 
 struct __THE_1_array_int {
   int32_t *d;
   size_t l;
 };
-struct __THE_1_Item_0 {
+struct __THE_1_test_Item_0 {
   const struct __THE_1_array_int __THE_0_a;
 };
-struct __THE_1_Items_0 {
-  const struct __THE_1_Item_0 *__THE_0_d;
+struct __THE_1_test_Items_0 {
+  const struct __THE_1_test_Item_0 *__THE_0_d;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -76,10 +76,10 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 void __THE_1_array_int_free (struct __THE_1_array_int);
-struct __THE_1_Item_0 *__THE_1_Item_0_alloc (struct __THE_1_array_int);
-void __THE_1_Item_0_free (struct __THE_1_Item_0 *);
-struct __THE_1_Items_0 *__THE_1_Items_0_alloc (struct __THE_1_Item_0 *);
-void __THE_1_Items_0_free (struct __THE_1_Items_0 *);
+struct __THE_1_test_Item_0 *__THE_1_test_Item_0_alloc (struct __THE_1_array_int);
+void __THE_1_test_Item_0_free (struct __THE_1_test_Item_0 *);
+struct __THE_1_test_Items_0 *__THE_1_test_Items_0_alloc (struct __THE_1_test_Item_0 *);
+void __THE_1_test_Items_0_free (struct __THE_1_test_Items_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -111,30 +111,30 @@ struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
 void __THE_1_array_int_free (struct __THE_1_array_int n) {
   free(n.d);
 }
-struct __THE_1_Item_0 *__THE_1_Item_0_alloc (struct __THE_1_array_int __THE_0_a) {
-  struct __THE_1_Item_0 *r = alloc(sizeof(struct __THE_1_Item_0));
-  struct __THE_1_Item_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_Item_0));
+struct __THE_1_test_Item_0 *__THE_1_test_Item_0_alloc (struct __THE_1_array_int __THE_0_a) {
+  struct __THE_1_test_Item_0 *r = alloc(sizeof(struct __THE_1_test_Item_0));
+  struct __THE_1_test_Item_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Item_0));
   return r;
 }
-void __THE_1_Item_0_free (struct __THE_1_Item_0 *n) {
+void __THE_1_test_Item_0_free (struct __THE_1_test_Item_0 *n) {
   __THE_1_array_int_free((struct __THE_1_array_int) n->__THE_0_a);
   free(n);
 }
-struct __THE_1_Items_0 *__THE_1_Items_0_alloc (struct __THE_1_Item_0 *__THE_0_d) {
-  struct __THE_1_Items_0 *r = alloc(sizeof(struct __THE_1_Items_0));
-  struct __THE_1_Items_0 s = {__THE_0_d};
-  memcpy(r, &s, sizeof(struct __THE_1_Items_0));
+struct __THE_1_test_Items_0 *__THE_1_test_Items_0_alloc (struct __THE_1_test_Item_0 *__THE_0_d) {
+  struct __THE_1_test_Items_0 *r = alloc(sizeof(struct __THE_1_test_Items_0));
+  struct __THE_1_test_Items_0 s = {__THE_0_d};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Items_0));
   return r;
 }
-void __THE_1_Items_0_free (struct __THE_1_Items_0 *n) {
-  __THE_1_Item_0_free((struct __THE_1_Item_0 *) n->__THE_0_d);
+void __THE_1_test_Items_0_free (struct __THE_1_test_Items_0 *n) {
+  __THE_1_test_Item_0_free((struct __THE_1_test_Item_0 *) n->__THE_0_d);
   free(n);
 }
 
 int main () {
-  const struct __THE_1_Items_0 *__THE_0_items_0 = __THE_1_Items_0_alloc(__THE_1_Item_0_alloc(__THE_1_array_int_alloc(0)));
-  __THE_1_Items_0_free((struct __THE_1_Items_0 *) __THE_0_items_0);
+  const struct __THE_1_test_Items_0 *__THE_0_items_0 = __THE_1_test_Items_0_alloc(__THE_1_test_Item_0_alloc(__THE_1_array_int_alloc(0)));
+  __THE_1_test_Items_0_free((struct __THE_1_test_Items_0 *) __THE_0_items_0);
 }
 ======= flags =======
 ======= stdout =======

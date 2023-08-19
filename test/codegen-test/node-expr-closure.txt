@@ -13,14 +13,14 @@ struct __THE_1_fn_sFRvoidFE {
   size_t l;
 };
 
-void __THE_1_mainSD$_0 (void *);
+void __THE_1_test_mainSD$_0 (void *);
 
-void __THE_1_mainSD$_0 (void *px) {
+void __THE_1_test_mainSD$_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_mainSD$_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_mainSD$_0, NULL, 0};
-  __THE_0_mainSD$_0;
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_mainSD$_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_mainSD$_0, NULL, 0};
+  __THE_0_test_mainSD$_0;
 }
 ======= flags =======
 ======= stdout =======

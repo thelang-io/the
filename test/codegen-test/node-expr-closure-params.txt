@@ -129,17 +129,17 @@ struct str str_copy (const struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
-void __THE_1_mainSD$_0 (void *, void *);
-void __THE_1_mainSD$_1 (void *, void *);
+void __THE_1_test_mainSD$_0 (void *, void *);
+void __THE_1_test_mainSD$_1 (void *, void *);
 struct str *__THE_1_opt_str_alloc (struct str);
 struct str *__THE_1_opt_str_copy (const struct str *);
 void __THE_1_opt_str_free (struct str *);
 struct str __THE_1_opt_str_str (struct str *);
-void __THE_1_mainSD$_2 (void *, void *);
+void __THE_1_test_mainSD$_2 (void *, void *);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
 struct str __THE_1_array_int_str (struct __THE_1_array_int);
-void __THE_1_mainSD$_3 (void *, void *);
+void __THE_1_test_mainSD$_3 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -334,13 +334,13 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-void __THE_1_mainSD$_0 (void *px, void *pp) {
+void __THE_1_test_mainSD$_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_param1_0 = p->n0;
   print(stdout, "iz", __THE_0_param1_0, THE_EOL);
   free(pp);
 }
-void __THE_1_mainSD$_1 (void *px, void *pp) {
+void __THE_1_test_mainSD$_1 (void *px, void *pp) {
   struct __THE_1_fn_sFP3intFP5strFRvoidFEP *p = pp;
   const int32_t __THE_0_param1_0 = p->n0;
   struct str __THE_0_param2_0 = p->n1;
@@ -373,7 +373,7 @@ struct str __THE_1_opt_str_str (struct str *n) {
   __THE_1_opt_str_free((struct str *) n);
   return r;
 }
-void __THE_1_mainSD$_2 (void *px, void *pp) {
+void __THE_1_test_mainSD$_2 (void *px, void *pp) {
   struct __THE_1_fn_sFP1intFP1opt_strFRvoidFEP *p = pp;
   const int32_t __THE_0_param1_0 = p->o0 == 1 ? p->n0 : 10;
   const struct str *__THE_0_param2_0 = p->o1 == 1 ? p->n1 : __THE_1_opt_str_alloc(str_alloc("test"));
@@ -399,7 +399,7 @@ struct str __THE_1_array_int_str (struct __THE_1_array_int n) {
   __THE_1_array_int_free((struct __THE_1_array_int) n);
   return str_concat_cstr(r, "]");
 }
-void __THE_1_mainSD$_3 (void *px, void *pp) {
+void __THE_1_test_mainSD$_3 (void *px, void *pp) {
   struct __THE_1_fn_sFP3intFP4array_intFRvoidFEP *p = pp;
   const int32_t __THE_0_param1_0 = p->n0;
   const struct __THE_1_array_int __THE_0_param2_0 = p->n1;
@@ -409,14 +409,14 @@ void __THE_1_mainSD$_3 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_mainSD$_0 = (struct __THE_1_fn_sFP3intFRvoidFE) {&__THE_1_mainSD$_0, NULL, 0};
-  __THE_0_mainSD$_0;
-  const struct __THE_1_fn_sFP3intFP5strFRvoidFE __THE_0_mainSD$_1 = (struct __THE_1_fn_sFP3intFP5strFRvoidFE) {&__THE_1_mainSD$_1, NULL, 0};
-  __THE_0_mainSD$_1;
-  const struct __THE_1_fn_sFP1intFP1opt_strFRvoidFE __THE_0_mainSD$_2 = (struct __THE_1_fn_sFP1intFP1opt_strFRvoidFE) {&__THE_1_mainSD$_2, NULL, 0};
-  __THE_0_mainSD$_2;
-  const struct __THE_1_fn_sFP3intFP4array_intFRvoidFE __THE_0_mainSD$_3 = (struct __THE_1_fn_sFP3intFP4array_intFRvoidFE) {&__THE_1_mainSD$_3, NULL, 0};
-  __THE_0_mainSD$_3;
+  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_test_mainSD$_0 = (struct __THE_1_fn_sFP3intFRvoidFE) {&__THE_1_test_mainSD$_0, NULL, 0};
+  __THE_0_test_mainSD$_0;
+  const struct __THE_1_fn_sFP3intFP5strFRvoidFE __THE_0_test_mainSD$_1 = (struct __THE_1_fn_sFP3intFP5strFRvoidFE) {&__THE_1_test_mainSD$_1, NULL, 0};
+  __THE_0_test_mainSD$_1;
+  const struct __THE_1_fn_sFP1intFP1opt_strFRvoidFE __THE_0_test_mainSD$_2 = (struct __THE_1_fn_sFP1intFP1opt_strFRvoidFE) {&__THE_1_test_mainSD$_2, NULL, 0};
+  __THE_0_test_mainSD$_2;
+  const struct __THE_1_fn_sFP3intFP4array_intFRvoidFE __THE_0_test_mainSD$_3 = (struct __THE_1_fn_sFP3intFP4array_intFRvoidFE) {&__THE_1_test_mainSD$_3, NULL, 0};
+  __THE_0_test_mainSD$_3;
 }
 ======= flags =======
 ======= stdout =======

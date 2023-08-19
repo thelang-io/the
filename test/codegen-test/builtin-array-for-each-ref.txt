@@ -116,7 +116,7 @@ void __THE_1_array_str_free (struct __THE_1_array_str);
 struct __THE_1_fn_sFP3strFP3intFRvoidFE __THE_1_fn_sFP3strFP3intFRvoidFE_copy (const struct __THE_1_fn_sFP3strFP3intFRvoidFE);
 void __THE_1_fn_sFP3strFP3intFRvoidFE_free (struct __THE_1_fn_sFP3strFP3intFRvoidFE);
 void __THE_1_array_str_forEach (err_state_t *, int, int, struct __THE_1_array_str, struct __THE_1_fn_sFP3strFP3intFRvoidFE);
-void __THE_1_forEachPrint_0 (void *, void *);
+void __THE_1_test_forEachPrint_0 (void *, void *);
 struct __THE_1_array_array_str __THE_1_array_array_str_alloc (size_t, ...);
 struct __THE_1_array_str *__THE_1_array_array_str_at (err_state_t *, int, int, struct __THE_1_array_array_str, int32_t);
 struct __THE_1_array_array_str __THE_1_array_array_str_copy (const struct __THE_1_array_array_str);
@@ -394,7 +394,7 @@ void __THE_1_array_str_forEach (err_state_t *fn_err_state, int line, int col, st
   __THE_1_fn_sFP3strFP3intFRvoidFE_free((struct __THE_1_fn_sFP3strFP3intFRvoidFE) n1);
   __THE_1_array_str_free((struct __THE_1_array_str) self);
 }
-void __THE_1_forEachPrint_0 (void *px, void *pp) {
+void __THE_1_test_forEachPrint_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3strFP3intFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "forEachPrint", p->line, p->col);
@@ -447,12 +447,12 @@ size_t __THE_1_array_array_str_len (struct __THE_1_array_array_str n) {
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn_sFP3strFP3intFRvoidFE __THE_0_forEachPrint_0 = (struct __THE_1_fn_sFP3strFP3intFRvoidFE) {&__THE_1_forEachPrint_0, NULL, 0};
+  const struct __THE_1_fn_sFP3strFP3intFRvoidFE __THE_0_test_forEachPrint_0 = (struct __THE_1_fn_sFP3strFP3intFRvoidFE) {&__THE_1_test_forEachPrint_0, NULL, 0};
   const struct __THE_1_array_str __THE_0_emptyArr_0 = __THE_1_array_str_alloc(0);
   const struct __THE_1_array_array_str __THE_0_arr_0 = __THE_1_array_array_str_alloc(4, __THE_1_array_str_copy(__THE_0_emptyArr_0), __THE_1_array_str_alloc(1, str_alloc("1")), __THE_1_array_str_alloc(2, str_alloc("2"), str_alloc("3")), __THE_1_array_str_alloc(3, str_alloc("4"), str_alloc("5"), str_alloc("6")));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_array_str_len(__THE_1_array_array_str_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L3;
-    __THE_1_array_str_forEach(&err_state, 8, 5, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 8, 5, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFP3intFRvoidFE_copy(__THE_0_forEachPrint_0));
+    __THE_1_array_str_forEach(&err_state, 8, 5, __THE_1_array_str_copy(*__THE_1_array_array_str_at(&err_state, 8, 5, __THE_0_arr_0, __THE_0_i_0)), __THE_1_fn_sFP3strFP3intFRvoidFE_copy(__THE_0_test_forEachPrint_0));
 L3:
     error_buf_decrease(&err_state);
     if (err_state.id != -1) goto L2;

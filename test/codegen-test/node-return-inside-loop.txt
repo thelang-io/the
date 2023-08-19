@@ -91,9 +91,9 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
-void __THE_1_test1_0 (void *);
-void __THE_1_test2_0 (void *);
-void __THE_1_test3_0 (void *);
+void __THE_1_test_test1_0 (void *);
+void __THE_1_test_test2_0 (void *);
+void __THE_1_test_test3_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -227,7 +227,7 @@ void *re_alloc (void *n1, size_t n2) {
   if (r == NULL) error_alloc(&err_state, n2);
   return r;
 }
-void __THE_1_test1_0 (void *px) {
+void __THE_1_test_test1_0 (void *px) {
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     print(stdout, "zziz", "1 start", " ", __THE_0_i_0, THE_EOL);
     if (__THE_0_i_0 == 5) {
@@ -236,7 +236,7 @@ void __THE_1_test1_0 (void *px) {
     print(stdout, "zziz", "1 end", " ", __THE_0_i_0, THE_EOL);
   }
 }
-void __THE_1_test2_0 (void *px) {
+void __THE_1_test_test2_0 (void *px) {
   for (int32_t __THE_0_j_0 = 0; __THE_0_j_0 < 10; __THE_0_j_0++) {
     print(stdout, "zziz", "2 start", " ", __THE_0_j_0, THE_EOL);
     if (__THE_0_j_0 == 5) {
@@ -245,7 +245,7 @@ void __THE_1_test2_0 (void *px) {
     print(stdout, "zziz", "2 end", " ", __THE_0_j_0, THE_EOL);
   }
 }
-void __THE_1_test3_0 (void *px) {
+void __THE_1_test_test3_0 (void *px) {
   for (int32_t __THE_0_k_0 = 0; __THE_0_k_0 < 10; __THE_0_k_0++) {
     print(stdout, "zziz", "3 start", " ", __THE_0_k_0, THE_EOL);
     if (__THE_0_k_0 == 5) {
@@ -256,12 +256,12 @@ void __THE_1_test3_0 (void *px) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test3_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test3_0, NULL, 0};
-  __THE_0_test1_0.f(__THE_0_test1_0.x);
-  __THE_0_test2_0.f(__THE_0_test2_0.x);
-  __THE_0_test3_0.f(__THE_0_test3_0.x);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test2_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test3_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test3_0, NULL, 0};
+  __THE_0_test_test1_0.f(__THE_0_test_test1_0.x);
+  __THE_0_test_test2_0.f(__THE_0_test_test2_0.x);
+  __THE_0_test_test3_0.f(__THE_0_test_test3_0.x);
 }
 ======= flags =======
 ======= stdout =======

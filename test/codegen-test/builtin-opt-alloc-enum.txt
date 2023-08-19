@@ -31,10 +31,10 @@ main {
 #include <stdio.h>
 #include <stdlib.h>
 
-enum __THE_1_Color_0 {
-  __THE_0_ColorSDRed_0,
-  __THE_0_ColorSDGreen_0,
-  __THE_0_ColorSDBlue_0
+enum __THE_1_test_Color_0 {
+  __THE_0_test_ColorSDRed_0,
+  __THE_0_test_ColorSDGreen_0,
+  __THE_0_test_ColorSDBlue_0
 };
 
 typedef struct err_buf {
@@ -64,8 +64,8 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-enum __THE_1_Color_0 *__THE_1_opt_Color_alloc (enum __THE_1_Color_0);
-void __THE_1_opt_Color_free (enum __THE_1_Color_0 *);
+enum __THE_1_test_Color_0 *__THE_1_opt_Color_alloc (enum __THE_1_test_Color_0);
+void __THE_1_opt_Color_free (enum __THE_1_test_Color_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -85,26 +85,26 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-enum __THE_1_Color_0 *__THE_1_opt_Color_alloc (enum __THE_1_Color_0 n) {
-  enum __THE_1_Color_0 *r = alloc(sizeof(enum __THE_1_Color_0));
+enum __THE_1_test_Color_0 *__THE_1_opt_Color_alloc (enum __THE_1_test_Color_0 n) {
+  enum __THE_1_test_Color_0 *r = alloc(sizeof(enum __THE_1_test_Color_0));
   *r = n;
   return r;
 }
-void __THE_1_opt_Color_free (enum __THE_1_Color_0 *n) {
+void __THE_1_opt_Color_free (enum __THE_1_test_Color_0 *n) {
   if (n == NULL) return;
   free(n);
 }
 
 int main () {
-  const enum __THE_1_Color_0 __THE_0_testEnum_0 = __THE_0_ColorSDRed_0;
-  const enum __THE_1_Color_0 *__THE_0_optEnum_0 = NULL;
-  const enum __THE_1_Color_0 *__THE_0_optEnumNilInit_0 = NULL;
-  const enum __THE_1_Color_0 *__THE_0_optEnumValInit_0 = __THE_1_opt_Color_alloc(__THE_0_ColorSDRed_0);
-  const enum __THE_1_Color_0 *__THE_0_optEnumValCopy_0 = __THE_1_opt_Color_alloc(__THE_0_testEnum_0);
-  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnumValCopy_0);
-  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnumValInit_0);
-  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnumNilInit_0);
-  __THE_1_opt_Color_free((enum __THE_1_Color_0 *) __THE_0_optEnum_0);
+  const enum __THE_1_test_Color_0 __THE_0_testEnum_0 = __THE_0_test_ColorSDRed_0;
+  const enum __THE_1_test_Color_0 *__THE_0_optEnum_0 = NULL;
+  const enum __THE_1_test_Color_0 *__THE_0_optEnumNilInit_0 = NULL;
+  const enum __THE_1_test_Color_0 *__THE_0_optEnumValInit_0 = __THE_1_opt_Color_alloc(__THE_0_test_ColorSDRed_0);
+  const enum __THE_1_test_Color_0 *__THE_0_optEnumValCopy_0 = __THE_1_opt_Color_alloc(__THE_0_testEnum_0);
+  __THE_1_opt_Color_free((enum __THE_1_test_Color_0 *) __THE_0_optEnumValCopy_0);
+  __THE_1_opt_Color_free((enum __THE_1_test_Color_0 *) __THE_0_optEnumValInit_0);
+  __THE_1_opt_Color_free((enum __THE_1_test_Color_0 *) __THE_0_optEnumNilInit_0);
+  __THE_1_opt_Color_free((enum __THE_1_test_Color_0 *) __THE_0_optEnum_0);
 }
 ======= flags =======
 ======= stdout =======

@@ -16,7 +16,7 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="job1" codeName="job1_0" frame="1">
+    <Var name="job1" codeName="test_job1_0" frame="1">
       <TypeFn name="fn_sFRintFE">
         <TypeFnReturnType>
           <BuiltinType name="int" />
@@ -39,7 +39,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="job2" codeName="job2_0" frame="1">
+    <Var name="job2" codeName="test_job2_0" frame="1">
       <TypeFn name="fn_sFRintFE">
         <TypeFnReturnType>
           <BuiltinType name="int" />
@@ -96,7 +96,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="job1" codeName="job1_0" frame="1">
+                  <Var name="job1" codeName="test_job1_0" frame="1">
                     <TypeFn name="fn_sFRintFE">
                       <TypeFnReturnType>
                         <BuiltinType name="int" />
@@ -207,7 +207,7 @@ main {
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
-                      <Var name="job2" codeName="job2_0" frame="1">
+                      <Var name="job2" codeName="test_job2_0" frame="1">
                         <TypeFn name="fn_sFRintFE">
                           <TypeFnReturnType>
                             <BuiltinType name="int" />

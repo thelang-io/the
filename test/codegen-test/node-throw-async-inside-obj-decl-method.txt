@@ -125,7 +125,7 @@ typedef struct threadpool_thread {
 } threadpool_thread_t;
 
 struct error_Error;
-struct __THE_1_Test_0;
+struct __THE_1_test_Test_0;
 struct __THE_1_fn_aFRvoidFE;
 struct __THE_1_fn_aFRvoidFEP;
 struct __THE_1_async_mainX;
@@ -134,7 +134,7 @@ struct error_Error {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
-struct __THE_1_Test_0 {
+struct __THE_1_test_Test_0 {
   void *_;
 };
 struct __THE_1_fn_aFRvoidFE {
@@ -148,8 +148,8 @@ struct __THE_1_fn_aFRvoidFEP {
   int col;
 };
 struct __THE_1_async_mainX {
-  const struct __THE_1_fn_aFRvoidFE *__THE_0_TestSDtest_0;
-  struct __THE_1_Test_0 *__THE_0_test_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_TestSDtest_0;
+  struct __THE_1_test_Test_0 *__THE_0_test_0;
   struct error_Error *__THE_0_err_0;
 };
 
@@ -195,10 +195,10 @@ void *threadpool_worker (void *);
 void *xalloc (void *, size_t);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc ();
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc ();
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *);
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
-void __THE_1_TestSDtest_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_TestSDtest_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_async_mainX);
 
@@ -663,19 +663,19 @@ void error_Error_free (struct error_Error *n) {
   str_free((struct str) n->__THE_0_stack);
   free(n);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc () {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {NULL};
-  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc () {
+  struct __THE_1_test_Test_0 *r = alloc(sizeof(struct __THE_1_test_Test_0));
+  struct __THE_1_test_Test_0 s = {NULL};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *n) {
   free(n);
 }
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_TestSDtest_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_TestSDtest_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_fn_aFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   job->init = 1;
@@ -700,21 +700,21 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
   struct __THE_1_fn_aFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   struct __THE_1_async_mainX *x = px;
-  const struct __THE_1_fn_aFRvoidFE *__THE_0_TestSDtest_0 = x->__THE_0_TestSDtest_0;
-  struct __THE_1_Test_0 **__THE_0_test_0 = &x->__THE_0_test_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_TestSDtest_0 = x->__THE_0_test_TestSDtest_0;
+  struct __THE_1_test_Test_0 **__THE_0_test_0 = &x->__THE_0_test_0;
   struct error_Error **__THE_0_err_0 = &x->__THE_0_err_0;
   job->init = 1;
   switch (step) {
     case 0: {
-      *__THE_0_test_0 = __THE_1_Test_0_alloc();
+      *__THE_0_test_0 = __THE_1_test_Test_0_alloc();
       job->step = 1;
-      return threadpool_add(tp, (*__THE_0_TestSDtest_0).f, xalloc((*__THE_0_TestSDtest_0).x, (*__THE_0_TestSDtest_0).l), xalloc(&(struct __THE_1_fn_aFRvoidFEP) {xalloc(fn_err_state, sizeof(err_state_t)), 10, 11}, sizeof(struct __THE_1_fn_aFRvoidFEP)), NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_TestSDtest_0).f, xalloc((*__THE_0_test_TestSDtest_0).x, (*__THE_0_test_TestSDtest_0).l), xalloc(&(struct __THE_1_fn_aFRvoidFEP) {xalloc(fn_err_state, sizeof(err_state_t)), 10, 11}, sizeof(struct __THE_1_fn_aFRvoidFEP)), NULL, job);
     }
     case 1: {
       if (fn_err_state->id != -1) return threadpool_insert(tp, threadpool_job_step(job, 2));
     }
     case 2: {
-      __THE_1_Test_0_free((struct __THE_1_Test_0 *) *__THE_0_test_0);
+      __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) *__THE_0_test_0);
       if (fn_err_state->id != -1) return threadpool_insert(tp, threadpool_job_step(job, 3));
       return threadpool_insert(tp, threadpool_job_step(job, 6));
     }
@@ -757,9 +757,9 @@ void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_as
 int main () {
   threadpool_t *tp = threadpool_init(5);
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn_aFRvoidFE __THE_0_TestSDtest_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_TestSDtest_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_TestSDtest_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_TestSDtest_0, NULL, 0};
   const struct __THE_1_fn_aFRvoidFE async_main;
-  __THE_1_async_main_alloc((struct __THE_1_fn_aFRvoidFE *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_TestSDtest_0});
+  __THE_1_async_main_alloc((struct __THE_1_fn_aFRvoidFE *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_TestSDtest_0});
   threadpool_add(tp, async_main.f, xalloc(async_main.x, async_main.l), xalloc(&(struct __THE_1_fn_aFRvoidFEP) {xalloc(&err_state, sizeof(err_state_t))}, sizeof(struct __THE_1_fn_aFRvoidFEP)), NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);

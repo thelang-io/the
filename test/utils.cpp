@@ -85,11 +85,10 @@ std::optional<std::string> getEnvVar (const std::string &name) {
   #endif
 }
 
-std::string prepareTestOutput (const std::string &output, bool insideFixtures) {
+std::string prepareTestOutput (const std::string &output) {
   auto result = output;
   auto from = std::string("/test");
-  auto toFixtures = insideFixtures ? std::filesystem::path("..") / ".." : std::filesystem::path("");
-  auto to = (std::filesystem::canonical(std::filesystem::current_path() / toFixtures) / "app").string();
+  auto to = (std::filesystem::current_path() / "test").string();
   auto startPos = static_cast<std::size_t>(0);
 
   while ((startPos = result.find(from, startPos)) != std::string::npos) {
@@ -107,7 +106,7 @@ std::string prepareTestOutput (const std::string &output, bool insideFixtures) {
   }
 
   from = std::string("/fixtures/");
-  to = std::filesystem::current_path().string() + OS_PATH_SEP;
+  to = (std::filesystem::current_path() / "fixtures").string() + OS_PATH_SEP;
   startPos = 0;
 
   while ((startPos = result.find(from, startPos)) != std::string::npos) {
@@ -127,7 +126,7 @@ std::string prepareTestOutput (const std::string &output, bool insideFixtures) {
 
 std::string prepareTestOutputFrom (const std::string &output) {
   auto result = output;
-  auto from = (std::filesystem::current_path() / "app").string();
+  auto from = (std::filesystem::current_path() / "test").string();
   auto to = std::string("/test");
   auto startPos = static_cast<std::size_t>(0);
 

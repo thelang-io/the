@@ -15,7 +15,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="TestObj_0" name="TestObj">
+  <TypeObj codeName="test_TestObj_0" name="TestObj">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -23,7 +23,7 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="testFn" codeName="testFn_0" frame="1">
+    <Var name="testFn" codeName="test_testFn_0" frame="1">
       <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -131,7 +131,7 @@ main {
           </NodeExprType>
           <NodeExprBody>
             <ExprAccess>
-              <Var name="testFn" codeName="testFn_0" frame="1">
+              <Var name="testFn" codeName="test_testFn_0" frame="1">
                 <TypeFn name="fn_sFRvoidFE">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
@@ -147,7 +147,7 @@ main {
   <NodeExpr>
     <NodeExprType>
       <TypeArray name="array_TestObj">
-        <TypeObj codeName="TestObj_0" name="TestObj">
+        <TypeObj codeName="test_TestObj_0" name="TestObj">
           <TypeField name="a">
             <BuiltinType name="int" />
           </TypeField>
@@ -158,7 +158,7 @@ main {
       <ExprArray>
         <NodeExpr>
           <NodeExprType>
-            <TypeObj codeName="TestObj_0" name="TestObj">
+            <TypeObj codeName="test_TestObj_0" name="TestObj">
               <TypeField name="a">
                 <BuiltinType name="int" />
               </TypeField>

@@ -28,7 +28,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="TestFunction" codeName="TestFunction_0" frame="1">
+                <Var name="TestFunction" codeName="packages_test_package_package_TestFunction_0" frame="1">
                   <TypeFn name="fn_sFRvoidFE">
                     <TypeFnReturnType>
                       <BuiltinType name="void" />

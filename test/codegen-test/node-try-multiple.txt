@@ -44,7 +44,7 @@ main {
 #include <string.h>
 
 #define TYPE_error_Error 1
-#define TYPE_ErrorTest_0 2
+#define TYPE_test_ErrorTest_0 2
 
 typedef struct err_buf {
   jmp_buf buf;
@@ -74,13 +74,13 @@ struct str {
 };
 
 struct error_Error;
-struct __THE_1_ErrorTest_0;
+struct __THE_1_test_ErrorTest_0;
 
 struct error_Error {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
-struct __THE_1_ErrorTest_0 {
+struct __THE_1_test_ErrorTest_0 {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
@@ -105,8 +105,8 @@ struct str str_copy (const struct str);
 void str_free (struct str);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
-struct __THE_1_ErrorTest_0 *__THE_1_ErrorTest_0_alloc (struct str, struct str);
-void __THE_1_ErrorTest_0_free (struct __THE_1_ErrorTest_0 *);
+struct __THE_1_test_ErrorTest_0 *__THE_1_test_ErrorTest_0_alloc (struct str, struct str);
+void __THE_1_test_ErrorTest_0_free (struct __THE_1_test_ErrorTest_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -345,13 +345,13 @@ void error_Error_free (struct error_Error *n) {
   str_free((struct str) n->__THE_0_stack);
   free(n);
 }
-struct __THE_1_ErrorTest_0 *__THE_1_ErrorTest_0_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
-  struct __THE_1_ErrorTest_0 *r = alloc(sizeof(struct __THE_1_ErrorTest_0));
-  struct __THE_1_ErrorTest_0 s = {__THE_0_message, __THE_0_stack};
-  memcpy(r, &s, sizeof(struct __THE_1_ErrorTest_0));
+struct __THE_1_test_ErrorTest_0 *__THE_1_test_ErrorTest_0_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct __THE_1_test_ErrorTest_0 *r = alloc(sizeof(struct __THE_1_test_ErrorTest_0));
+  struct __THE_1_test_ErrorTest_0 s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct __THE_1_test_ErrorTest_0));
   return r;
 }
-void __THE_1_ErrorTest_0_free (struct __THE_1_ErrorTest_0 *n) {
+void __THE_1_test_ErrorTest_0_free (struct __THE_1_test_ErrorTest_0 *n) {
   str_free((struct str) n->__THE_0_message);
   str_free((struct str) n->__THE_0_stack);
   free(n);
@@ -380,15 +380,15 @@ L2:
       if (err_state.id != -1) goto L0;
       break;
     }
-    case TYPE_ErrorTest_0: {
+    case TYPE_test_ErrorTest_0: {
       error_buf_decrease(&err_state);
       error_unset(&err_state);
-      const struct __THE_1_ErrorTest_0 *__THE_0_err_0 = (struct __THE_1_ErrorTest_0 *) err_state.ctx;
+      const struct __THE_1_test_ErrorTest_0 *__THE_0_err_0 = (struct __THE_1_test_ErrorTest_0 *) err_state.ctx;
       if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L3;
       print(stdout, "zzsz", "ErrorTest:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
 L3:
       error_buf_decrease(&err_state);
-      __THE_1_ErrorTest_0_free((struct __THE_1_ErrorTest_0 *) __THE_0_err_0);
+      __THE_1_test_ErrorTest_0_free((struct __THE_1_test_ErrorTest_0 *) __THE_0_err_0);
       if (err_state.id != -1) goto L0;
       break;
     }
@@ -399,7 +399,7 @@ L3:
   }
   switch (setjmp(error_buf_increase(&err_state)->buf)) {
     case 0: {
-      error_assign(&err_state, TYPE_ErrorTest_0, (void *) __THE_1_ErrorTest_0_alloc(str_alloc("test"), str_alloc("")), (void (*) (void *)) &__THE_1_ErrorTest_0_free, 16, 5);
+      error_assign(&err_state, TYPE_test_ErrorTest_0, (void *) __THE_1_test_ErrorTest_0_alloc(str_alloc("test"), str_alloc("")), (void (*) (void *)) &__THE_1_test_ErrorTest_0_free, 16, 5);
       goto L4;
 L4:
       if (err_state.id != -1) longjmp(err_state.buf_last->buf, err_state.id);
@@ -418,15 +418,15 @@ L5:
       if (err_state.id != -1) goto L0;
       break;
     }
-    case TYPE_ErrorTest_0: {
+    case TYPE_test_ErrorTest_0: {
       error_buf_decrease(&err_state);
       error_unset(&err_state);
-      const struct __THE_1_ErrorTest_0 *__THE_0_err_0 = (struct __THE_1_ErrorTest_0 *) err_state.ctx;
+      const struct __THE_1_test_ErrorTest_0 *__THE_0_err_0 = (struct __THE_1_test_ErrorTest_0 *) err_state.ctx;
       if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L6;
       print(stdout, "zzsz", "ErrorTest:", " ", str_copy(__THE_0_err_0->__THE_0_stack), THE_EOL);
 L6:
       error_buf_decrease(&err_state);
-      __THE_1_ErrorTest_0_free((struct __THE_1_ErrorTest_0 *) __THE_0_err_0);
+      __THE_1_test_ErrorTest_0_free((struct __THE_1_test_ErrorTest_0 *) __THE_0_err_0);
       if (err_state.id != -1) goto L0;
       break;
     }

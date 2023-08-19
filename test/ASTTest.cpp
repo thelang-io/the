@@ -50,7 +50,7 @@ TEST_P(ASTPassTest, Passes) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("ast", param, {"stdin", "stdout"});
   auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
-  std::filesystem::current_path(this->initialCwd_ / "test" / "fixtures");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto ast = AST(&parser);
 
   EXPECT_EQ(sections["stdout"], prepareTestOutputFrom(ast.xml()));
@@ -60,10 +60,10 @@ TEST_P(ASTThrowTest, Throws) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("ast", param, {"stdin", "stderr"});
   auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
-  std::filesystem::current_path(this->initialCwd_ / "test" / "fixtures");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto ast = AST(&parser);
 
-  EXPECT_THROW_WITH_MESSAGE(ast.xml(), prepareTestOutput(sections["stderr"], true));
+  EXPECT_THROW_WITH_MESSAGE(ast.xml(), prepareTestOutput(sections["stderr"]));
 }
 
 INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(

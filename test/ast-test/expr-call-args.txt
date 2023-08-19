@@ -73,7 +73,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="i">
       <BuiltinType name="int" />
     </TypeField>
@@ -81,7 +81,7 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="job" codeName="job_0" frame="1">
+    <Var name="job" codeName="test_job_0" frame="1">
       <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -92,7 +92,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
+    <Var name="test1" codeName="test_test1_0" frame="1">
       <TypeFn name="fn_sFP3boolFP3byteFP3charFP3f32FP3f64FP3floatFP3i8FP3i16FP3i32FP3i64FP3intFP3strFP3u8FP3u16FP3u32FP3u64FP3TestFP3fn_sFRvoidFEFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="t" required>
@@ -144,7 +144,7 @@ main {
             <BuiltinType name="u64" />
           </TypeFnParam>
           <TypeFnParam name="v1" required>
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="i">
                 <BuiltinType name="int" />
               </TypeField>
@@ -280,7 +280,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="v1" codeName="v1_0" frame="2">
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="i">
               <BuiltinType name="int" />
             </TypeField>
@@ -303,7 +303,7 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
+    <Var name="test2" codeName="test_test2_0" frame="1">
       <TypeFn name="fn_sFP1boolFP1byteFP1charFP1f32FP1f64FP1floatFP1i8FP1i16FP1i32FP1i64FP1intFP1strFP1u8FP1u16FP1u32FP1u64FP1TestFP1fn_sFRvoidFEFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="t">
@@ -355,7 +355,7 @@ main {
             <BuiltinType name="u64" />
           </TypeFnParam>
           <TypeFnParam name="v1">
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="i">
                 <BuiltinType name="int" />
               </TypeField>
@@ -376,7 +376,7 @@ main {
     </Var>
   </NodeFnDeclVar>
   <NodeFnDeclCtx>
-    <Var name="job" codeName="job_0" frame="1">
+    <Var name="job" codeName="test_job_0" frame="1">
       <TypeFn name="fn_sFRvoidFE">
         <TypeFnReturnType>
           <BuiltinType name="void" />
@@ -660,7 +660,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="v1" codeName="v1_0" frame="2">
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="i">
               <BuiltinType name="int" />
             </TypeField>
@@ -670,7 +670,7 @@ main {
       <FnDeclParamInit>
         <NodeExpr>
           <NodeExprType>
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="i">
                 <BuiltinType name="int" />
               </TypeField>
@@ -714,7 +714,7 @@ main {
           </NodeExprType>
           <NodeExprBody>
             <ExprAccess>
-              <Var name="job" codeName="job_0" frame="1">
+              <Var name="job" codeName="test_job_0" frame="1">
                 <TypeFn name="fn_sFRvoidFE">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
@@ -789,7 +789,7 @@ main {
                     <BuiltinType name="u64" />
                   </TypeFnParam>
                   <TypeFnParam name="v1" required>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="i">
                         <BuiltinType name="int" />
                       </TypeField>
@@ -810,7 +810,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test1" codeName="test1_0" frame="1">
+                <Var name="test1" codeName="test_test1_0" frame="1">
                   <TypeFn name="fn_sFP3boolFP3byteFP3charFP3f32FP3f64FP3floatFP3i8FP3i16FP3i32FP3i64FP3intFP3strFP3u8FP3u16FP3u32FP3u64FP3TestFP3fn_sFRvoidFEFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="t" required>
@@ -862,7 +862,7 @@ main {
                         <BuiltinType name="u64" />
                       </TypeFnParam>
                       <TypeFnParam name="v1" required>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="i">
                             <BuiltinType name="int" />
                           </TypeField>
@@ -1049,7 +1049,7 @@ main {
           <ExprCallArg id="v1">
             <NodeExpr>
               <NodeExprType>
-                <TypeObj codeName="Test_0" name="Test">
+                <TypeObj codeName="test_Test_0" name="Test">
                   <TypeField name="i">
                     <BuiltinType name="int" />
                   </TypeField>
@@ -1082,7 +1082,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="job" codeName="job_0" frame="1">
+                  <Var name="job" codeName="test_job_0" frame="1">
                     <TypeFn name="fn_sFRvoidFE">
                       <TypeFnReturnType>
                         <BuiltinType name="void" />
@@ -1157,7 +1157,7 @@ main {
                     <BuiltinType name="u64" />
                   </TypeFnParam>
                   <TypeFnParam name="v1">
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="i">
                         <BuiltinType name="int" />
                       </TypeField>
@@ -1178,7 +1178,7 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
+                <Var name="test2" codeName="test_test2_0" frame="1">
                   <TypeFn name="fn_sFP1boolFP1byteFP1charFP1f32FP1f64FP1floatFP1i8FP1i16FP1i32FP1i64FP1intFP1strFP1u8FP1u16FP1u32FP1u64FP1TestFP1fn_sFRvoidFEFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="t">
@@ -1230,7 +1230,7 @@ main {
                         <BuiltinType name="u64" />
                       </TypeFnParam>
                       <TypeFnParam name="v1">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="i">
                             <BuiltinType name="int" />
                           </TypeField>

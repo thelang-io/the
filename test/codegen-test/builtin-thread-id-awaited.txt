@@ -135,7 +135,7 @@ struct __THE_1_fn_aFRvoidFE {
   size_t l;
 };
 struct __THE_1_async_mainX {
-  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -165,7 +165,7 @@ void threadpool_wait (threadpool_t *);
 void *threadpool_worker (void *);
 void *xalloc (void *, size_t);
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
-void __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_async_mainX);
 
@@ -527,7 +527,7 @@ void *xalloc (void *n1, size_t n2) {
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   job->init = 1;
   switch (step) {
     case 0: {
@@ -539,48 +539,48 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
 }
 void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_async_mainX *x = px;
-  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_0 = x->__THE_0_test_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test_0 = x->__THE_0_test_test_0;
   job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 1: {
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 2: {
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 3: {
       job->step = 4;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 4: {
       job->step = 5;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 5: {
       job->step = 6;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 6: {
       job->step = 7;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 7: {
       job->step = 8;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 8: {
       job->step = 9;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 9: {
       job->step = 10;
-      return threadpool_add(tp, (*__THE_0_test_0).f, xalloc((*__THE_0_test_0).x, (*__THE_0_test_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test_0).f, xalloc((*__THE_0_test_test_0).x, (*__THE_0_test_test_0).l), NULL, NULL, job);
     }
     case 10: {
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
@@ -599,9 +599,9 @@ void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_as
 
 int main () {
   threadpool_t *tp = threadpool_init(5);
-  const struct __THE_1_fn_aFRvoidFE __THE_0_test_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
   const struct __THE_1_fn_aFRvoidFE async_main;
-  __THE_1_async_main_alloc((struct __THE_1_fn_aFRvoidFE *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_0});
+  __THE_1_async_main_alloc((struct __THE_1_fn_aFRvoidFE *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_test_0});
   threadpool_add(tp, async_main.f, xalloc(async_main.x, async_main.l), NULL, NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);

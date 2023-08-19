@@ -98,7 +98,7 @@ struct str {
 };
 
 struct __THE_1_array_str;
-struct __THE_1_TestObj_0;
+struct __THE_1_test_TestObj_0;
 struct __THE_1_fn_sFRvoidFE;
 struct __THE_1_array_int;
 struct __THE_1_array_array_int;
@@ -110,7 +110,7 @@ struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_TestObj_0 {
+struct __THE_1_test_TestObj_0 {
   const int32_t __THE_0_a;
 };
 struct __THE_1_fn_sFRvoidFE {
@@ -131,7 +131,7 @@ struct __THE_1_array_fn_sFRvoidFE {
   size_t l;
 };
 struct __THE_1_array_TestObj {
-  struct __THE_1_TestObj_0 **d;
+  struct __THE_1_test_TestObj_0 **d;
   size_t l;
 };
 struct __THE_1_array_ref_int {
@@ -155,16 +155,16 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
 struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 struct str __THE_1_array_str_join (struct __THE_1_array_str, unsigned char, struct str);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *);
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *);
-struct str __THE_1_TestObj_0_str (struct __THE_1_TestObj_0 *);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *);
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *);
+struct str __THE_1_test_TestObj_0_str (struct __THE_1_test_TestObj_0 *);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
 struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_fn1_0 (void *);
-void __THE_1_fn2_0 (void *);
-void __THE_1_fn3_0 (void *);
+void __THE_1_test_fn1_0 (void *);
+void __THE_1_test_fn2_0 (void *);
+void __THE_1_test_fn3_0 (void *);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
@@ -385,26 +385,26 @@ struct str __THE_1_array_str_join (struct __THE_1_array_str n, unsigned char o1,
   __THE_1_array_str_free((struct __THE_1_array_str) n);
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *n) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {n->__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *n) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {n->__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *n) {
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *n) {
   free(n);
 }
-struct str __THE_1_TestObj_0_str (struct __THE_1_TestObj_0 *n) {
+struct str __THE_1_test_TestObj_0_str (struct __THE_1_test_TestObj_0 *n) {
   struct str r = str_alloc("TestObj{");
   r = str_concat_cstr(r, "a: ");
   r = str_concat_str(r, int_str(n->__THE_0_a));
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n);
   return str_concat_cstr(r, "}");
 }
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE n) {
@@ -420,11 +420,11 @@ struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE n) {
   __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n);
   return str_alloc("[Function]");
 }
-void __THE_1_fn1_0 (void *px) {
+void __THE_1_test_fn1_0 (void *px) {
 }
-void __THE_1_fn2_0 (void *px) {
+void __THE_1_test_fn2_0 (void *px) {
 }
-void __THE_1_fn3_0 (void *px) {
+void __THE_1_test_fn3_0 (void *px) {
 }
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_int) {NULL, 0};
@@ -526,21 +526,21 @@ struct str __THE_1_array_fn_sFRvoidFE_join (struct __THE_1_array_fn_sFRvoidFE n,
 }
 struct __THE_1_array_TestObj __THE_1_array_TestObj_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_TestObj) {NULL, 0};
-  struct __THE_1_TestObj_0 **d = alloc(x * sizeof(struct __THE_1_TestObj_0 *));
+  struct __THE_1_test_TestObj_0 **d = alloc(x * sizeof(struct __THE_1_test_TestObj_0 *));
   va_list args;
   va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_TestObj_0 *);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_test_TestObj_0 *);
   va_end(args);
   return (struct __THE_1_array_TestObj) {d, x};
 }
 struct __THE_1_array_TestObj __THE_1_array_TestObj_copy (const struct __THE_1_array_TestObj n) {
   if (n.l == 0) return (struct __THE_1_array_TestObj) {NULL, 0};
-  struct __THE_1_TestObj_0 **d = alloc(n.l * sizeof(struct __THE_1_TestObj_0 *));
-  for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_TestObj_0_copy(n.d[i]);
+  struct __THE_1_test_TestObj_0 **d = alloc(n.l * sizeof(struct __THE_1_test_TestObj_0 *));
+  for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_test_TestObj_0_copy(n.d[i]);
   return (struct __THE_1_array_TestObj) {d, n.l};
 }
 void __THE_1_array_TestObj_free (struct __THE_1_array_TestObj n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n.d[i]);
   free(n.d);
 }
 struct str __THE_1_array_TestObj_join (struct __THE_1_array_TestObj n, unsigned char o1, struct str n1) {
@@ -548,7 +548,7 @@ struct str __THE_1_array_TestObj_join (struct __THE_1_array_TestObj n, unsigned 
   struct str r = str_alloc("");
   for (size_t i = 0; i < n.l; i++) {
     if (i != 0) r = str_concat_str(r, str_copy(x));
-    r = str_concat_str(r, __THE_1_TestObj_0_str(__THE_1_TestObj_0_copy(n.d[i])));
+    r = str_concat_str(r, __THE_1_test_TestObj_0_str(__THE_1_test_TestObj_0_copy(n.d[i])));
   }
   str_free((struct str) x);
   __THE_1_array_TestObj_free((struct __THE_1_array_TestObj) n);
@@ -585,9 +585,9 @@ struct str __THE_1_array_ref_int_join (struct __THE_1_array_ref_int n, unsigned 
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_fn1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_fn1_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_fn2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_fn2_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_fn3_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_fn3_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_fn1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_fn1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_fn2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_fn2_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_fn3_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_fn3_0, NULL, 0};
   const int32_t __THE_0_int1_0 = 1;
   const int32_t __THE_0_int2_0 = 2;
   const int32_t __THE_0_int3_0 = 3;
@@ -601,14 +601,14 @@ int main () {
   const struct __THE_1_array_ref_int __THE_0_testEmptyRefInt_0 = __THE_1_array_ref_int_alloc(0);
   const struct __THE_1_array_int __THE_0_testEmptyInt_0 = __THE_1_array_int_alloc(0);
   const struct __THE_1_array_array_int __THE_0_testOneArrayInt_0 = __THE_1_array_array_int_alloc(1, __THE_1_array_int_alloc(3, 0, 1, 2));
-  const struct __THE_1_array_fn_sFRvoidFE __THE_0_testOneFn_0 = __THE_1_array_fn_sFRvoidFE_alloc(1, __THE_1_fn_sFRvoidFE_copy(__THE_0_fn1_0));
-  const struct __THE_1_array_TestObj __THE_0_testOneObj_0 = __THE_1_array_TestObj_alloc(1, __THE_1_TestObj_0_alloc(1));
+  const struct __THE_1_array_fn_sFRvoidFE __THE_0_testOneFn_0 = __THE_1_array_fn_sFRvoidFE_alloc(1, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_fn1_0));
+  const struct __THE_1_array_TestObj __THE_0_testOneObj_0 = __THE_1_array_TestObj_alloc(1, __THE_1_test_TestObj_0_alloc(1));
   const struct __THE_1_array_str __THE_0_testOneStr_0 = __THE_1_array_str_alloc(1, str_alloc("test1"));
   const struct __THE_1_array_ref_int __THE_0_testOneRefInt_0 = __THE_1_array_ref_int_alloc(1, __THE_0_refInt1_0);
   const struct __THE_1_array_int __THE_0_testOneInt_0 = __THE_1_array_int_alloc(1, 1);
   const struct __THE_1_array_array_int __THE_0_testMultipleArrayInt_0 = __THE_1_array_array_int_alloc(3, __THE_1_array_int_alloc(3, 0, 1, 2), __THE_1_array_int_alloc(3, 3, 4, 5), __THE_1_array_int_alloc(3, 6, 7, 8));
-  const struct __THE_1_array_fn_sFRvoidFE __THE_0_testMultipleFn_0 = __THE_1_array_fn_sFRvoidFE_alloc(3, __THE_1_fn_sFRvoidFE_copy(__THE_0_fn1_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_fn2_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_fn3_0));
-  const struct __THE_1_array_TestObj __THE_0_testMultipleObj_0 = __THE_1_array_TestObj_alloc(3, __THE_1_TestObj_0_alloc(1), __THE_1_TestObj_0_alloc(2), __THE_1_TestObj_0_alloc(3));
+  const struct __THE_1_array_fn_sFRvoidFE __THE_0_testMultipleFn_0 = __THE_1_array_fn_sFRvoidFE_alloc(3, __THE_1_fn_sFRvoidFE_copy(__THE_0_test_fn1_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_test_fn2_0), __THE_1_fn_sFRvoidFE_copy(__THE_0_test_fn3_0));
+  const struct __THE_1_array_TestObj __THE_0_testMultipleObj_0 = __THE_1_array_TestObj_alloc(3, __THE_1_test_TestObj_0_alloc(1), __THE_1_test_TestObj_0_alloc(2), __THE_1_test_TestObj_0_alloc(3));
   const struct __THE_1_array_str __THE_0_testMultipleStr_0 = __THE_1_array_str_alloc(3, str_alloc("test1"), str_alloc("test2"), str_alloc("test3"));
   const struct __THE_1_array_ref_int __THE_0_testMultipleRefInt_0 = __THE_1_array_ref_int_alloc(3, __THE_0_refInt1_0, __THE_0_refInt2_0, __THE_0_refInt3_0);
   const struct __THE_1_array_int __THE_0_testMultipleInt_0 = __THE_1_array_int_alloc(3, 1, 2, 3);

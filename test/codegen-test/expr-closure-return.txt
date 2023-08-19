@@ -93,10 +93,10 @@ void __THE_1_array_str_free (struct __THE_1_array_str);
 struct str __THE_1_array_str_str (struct __THE_1_array_str);
 struct __THE_1_fn_sFRstrFE __THE_1_fn_sFRstrFE_copy (const struct __THE_1_fn_sFRstrFE);
 void __THE_1_fn_sFRstrFE_free (struct __THE_1_fn_sFRstrFE);
-struct str __THE_1_mainSD$_0 (void *);
+struct str __THE_1_test_mainSD$_0 (void *);
 struct __THE_1_fn_sFRarray_strFE __THE_1_fn_sFRarray_strFE_copy (const struct __THE_1_fn_sFRarray_strFE);
 void __THE_1_fn_sFRarray_strFE_free (struct __THE_1_fn_sFRarray_strFE);
-struct __THE_1_array_str __THE_1_mainSD$_1 (void *);
+struct __THE_1_array_str __THE_1_test_mainSD$_1 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -310,7 +310,7 @@ struct __THE_1_fn_sFRstrFE __THE_1_fn_sFRstrFE_copy (const struct __THE_1_fn_sFR
 void __THE_1_fn_sFRstrFE_free (struct __THE_1_fn_sFRstrFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct str __THE_1_mainSD$_0 (void *px) {
+struct str __THE_1_test_mainSD$_0 (void *px) {
   return str_alloc("test");
 }
 struct __THE_1_fn_sFRarray_strFE __THE_1_fn_sFRarray_strFE_copy (const struct __THE_1_fn_sFRarray_strFE n) {
@@ -322,15 +322,15 @@ struct __THE_1_fn_sFRarray_strFE __THE_1_fn_sFRarray_strFE_copy (const struct __
 void __THE_1_fn_sFRarray_strFE_free (struct __THE_1_fn_sFRarray_strFE n) {
   if (n.x != NULL) free(n.x);
 }
-struct __THE_1_array_str __THE_1_mainSD$_1 (void *px) {
+struct __THE_1_array_str __THE_1_test_mainSD$_1 (void *px) {
   return __THE_1_array_str_alloc(1, str_alloc("test"));
 }
 
 int main () {
-  const struct __THE_1_fn_sFRstrFE __THE_0_mainSD$_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_mainSD$_0, NULL, 0};
-  const struct __THE_1_fn_sFRstrFE __THE_0_a_0 = __THE_1_fn_sFRstrFE_copy(__THE_0_mainSD$_0);
-  const struct __THE_1_fn_sFRarray_strFE __THE_0_mainSD$_1 = (struct __THE_1_fn_sFRarray_strFE) {&__THE_1_mainSD$_1, NULL, 0};
-  const struct __THE_1_fn_sFRarray_strFE __THE_0_b_0 = __THE_1_fn_sFRarray_strFE_copy(__THE_0_mainSD$_1);
+  const struct __THE_1_fn_sFRstrFE __THE_0_test_mainSD$_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_test_mainSD$_0, NULL, 0};
+  const struct __THE_1_fn_sFRstrFE __THE_0_a_0 = __THE_1_fn_sFRstrFE_copy(__THE_0_test_mainSD$_0);
+  const struct __THE_1_fn_sFRarray_strFE __THE_0_test_mainSD$_1 = (struct __THE_1_fn_sFRarray_strFE) {&__THE_1_test_mainSD$_1, NULL, 0};
+  const struct __THE_1_fn_sFRarray_strFE __THE_0_b_0 = __THE_1_fn_sFRarray_strFE_copy(__THE_0_test_mainSD$_1);
   print(stdout, "sz", __THE_0_a_0.f(__THE_0_a_0.x), THE_EOL);
   print(stdout, "sz", __THE_1_array_str_str(__THE_0_b_0.f(__THE_0_b_0.x)), THE_EOL);
   __THE_1_fn_sFRarray_strFE_free((struct __THE_1_fn_sFRarray_strFE) __THE_0_b_0);

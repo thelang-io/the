@@ -80,8 +80,8 @@ void utils_swap (void *, void *, size_t);
 struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
 void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
 struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE);
-void __THE_1_test1_0 (void *);
-void __THE_1_test2_0 (void *);
+void __THE_1_test_test1_0 (void *);
+void __THE_1_test_test2_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -241,18 +241,18 @@ struct str __THE_1_fn_sFRvoidFE_str (struct __THE_1_fn_sFRvoidFE n) {
   __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) n);
   return str_alloc("[Function]");
 }
-void __THE_1_test1_0 (void *px) {
+void __THE_1_test_test1_0 (void *px) {
   print(stdout, "zz", "test1", THE_EOL);
 }
-void __THE_1_test2_0 (void *px) {
+void __THE_1_test_test2_0 (void *px) {
   print(stdout, "zz", "test2", THE_EOL);
 }
 
 int main () {
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn_sFRvoidFE __THE_0_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test2_0, NULL, 0};
-  struct __THE_1_fn_sFRvoidFE __THE_0_a_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test1_0);
-  struct __THE_1_fn_sFRvoidFE __THE_0_b_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test2_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test2_0, NULL, 0};
+  struct __THE_1_fn_sFRvoidFE __THE_0_a_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test_test1_0);
+  struct __THE_1_fn_sFRvoidFE __THE_0_b_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test_test2_0);
   print(stdout, "szsz", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_a_0)), " ", __THE_1_fn_sFRvoidFE_str(__THE_1_fn_sFRvoidFE_copy(__THE_0_b_0)), THE_EOL);
   __THE_0_a_0.f(__THE_0_a_0.x);
   __THE_0_b_0.f(__THE_0_b_0.x);

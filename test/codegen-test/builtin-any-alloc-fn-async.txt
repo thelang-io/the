@@ -140,7 +140,7 @@ void threadpool_mutex_lock (threadpool_mutex_t *);
 void threadpool_mutex_unlock (threadpool_mutex_t *);
 struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_aFRvoidFE);
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
-void __THE_1_testFn_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_testFn_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 struct any __THE_1_any_fn_aFRvoidFE_alloc (struct __THE_1_fn_aFRvoidFE);
 struct any __THE_1_any_fn_aFRvoidFE_copy (const struct any);
 void __THE_1_any_fn_aFRvoidFE_free (struct any);
@@ -214,7 +214,7 @@ struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_a
 void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_testFn_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_testFn_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
 }
@@ -237,8 +237,8 @@ void __THE_1_any_fn_aFRvoidFE_free (struct any _n) {
 }
 
 int main () {
-  const struct __THE_1_fn_aFRvoidFE __THE_0_testFn_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_testFn_0, NULL, 0};
-  const struct any __THE_0_anyRawFn_0 = __THE_1_any_fn_aFRvoidFE_alloc(__THE_1_fn_aFRvoidFE_copy(__THE_0_testFn_0));
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_testFn_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_testFn_0, NULL, 0};
+  const struct any __THE_0_anyRawFn_0 = __THE_1_any_fn_aFRvoidFE_alloc(__THE_1_fn_aFRvoidFE_copy(__THE_0_test_testFn_0));
   any_free((struct any) __THE_0_anyRawFn_0);
 }
 ======= flags =======

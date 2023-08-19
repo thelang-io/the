@@ -38,41 +38,41 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_mainSDWeekday_0 {
-  __THE_0_mainSDWeekdaySDMonday_0,
-  __THE_0_mainSDWeekdaySDTuesday_0,
-  __THE_0_mainSDWeekdaySDWednesday_0,
-  __THE_0_mainSDWeekdaySDThursday_0,
-  __THE_0_mainSDWeekdaySDFriday_0,
-  __THE_0_mainSDWeekdaySDSaturday_0,
-  __THE_0_mainSDWeekdaySDSunday_0
+enum __THE_1_test_mainSDWeekday_0 {
+  __THE_0_test_mainSDWeekdaySDMonday_0,
+  __THE_0_test_mainSDWeekdaySDTuesday_0,
+  __THE_0_test_mainSDWeekdaySDWednesday_0,
+  __THE_0_test_mainSDWeekdaySDThursday_0,
+  __THE_0_test_mainSDWeekdaySDFriday_0,
+  __THE_0_test_mainSDWeekdaySDSaturday_0,
+  __THE_0_test_mainSDWeekdaySDSunday_0
 };
-enum __THE_1_mainSDWeekday_1 {
-  __THE_0_mainSDWeekdaySDMonday_1 = 1,
-  __THE_0_mainSDWeekdaySDTuesday_1,
-  __THE_0_mainSDWeekdaySDWednesday_1,
-  __THE_0_mainSDWeekdaySDThursday_1,
-  __THE_0_mainSDWeekdaySDFriday_1,
-  __THE_0_mainSDWeekdaySDSaturday_1,
-  __THE_0_mainSDWeekdaySDSunday_1
+enum __THE_1_test_mainSDWeekday_1 {
+  __THE_0_test_mainSDWeekdaySDMonday_1 = 1,
+  __THE_0_test_mainSDWeekdaySDTuesday_1,
+  __THE_0_test_mainSDWeekdaySDWednesday_1,
+  __THE_0_test_mainSDWeekdaySDThursday_1,
+  __THE_0_test_mainSDWeekdaySDFriday_1,
+  __THE_0_test_mainSDWeekdaySDSaturday_1,
+  __THE_0_test_mainSDWeekdaySDSunday_1
 };
-enum __THE_1_mainSDWeekday_2 {
-  __THE_0_mainSDWeekdaySDMonday_2,
-  __THE_0_mainSDWeekdaySDTuesday_2,
-  __THE_0_mainSDWeekdaySDWednesday_2,
-  __THE_0_mainSDWeekdaySDThursday_2,
-  __THE_0_mainSDWeekdaySDFriday_2,
-  __THE_0_mainSDWeekdaySDSaturday_2,
-  __THE_0_mainSDWeekdaySDSunday_2
+enum __THE_1_test_mainSDWeekday_2 {
+  __THE_0_test_mainSDWeekdaySDMonday_2,
+  __THE_0_test_mainSDWeekdaySDTuesday_2,
+  __THE_0_test_mainSDWeekdaySDWednesday_2,
+  __THE_0_test_mainSDWeekdaySDThursday_2,
+  __THE_0_test_mainSDWeekdaySDFriday_2,
+  __THE_0_test_mainSDWeekdaySDSaturday_2,
+  __THE_0_test_mainSDWeekdaySDSunday_2
 };
-enum __THE_1_mainSDWeekday_3 {
-  __THE_0_mainSDWeekdaySDMonday_3 = 1,
-  __THE_0_mainSDWeekdaySDTuesday_3,
-  __THE_0_mainSDWeekdaySDWednesday_3,
-  __THE_0_mainSDWeekdaySDThursday_3,
-  __THE_0_mainSDWeekdaySDFriday_3,
-  __THE_0_mainSDWeekdaySDSaturday_3,
-  __THE_0_mainSDWeekdaySDSunday_3
+enum __THE_1_test_mainSDWeekday_3 {
+  __THE_0_test_mainSDWeekdaySDMonday_3 = 1,
+  __THE_0_test_mainSDWeekdaySDTuesday_3,
+  __THE_0_test_mainSDWeekdaySDWednesday_3,
+  __THE_0_test_mainSDWeekdaySDThursday_3,
+  __THE_0_test_mainSDWeekdaySDFriday_3,
+  __THE_0_test_mainSDWeekdaySDSaturday_3,
+  __THE_0_test_mainSDWeekdaySDSunday_3
 };
 
 typedef struct err_buf {
@@ -257,14 +257,14 @@ struct str str_alloc (const char *r) {
 
 int main () {
   if (true) {
-    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_0), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_test_mainSDWeekdaySDMonday_0), THE_EOL);
   } else {
-    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_1), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_test_mainSDWeekdaySDMonday_1), THE_EOL);
   }
   if (false) {
-    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_2), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_test_mainSDWeekdaySDMonday_2), THE_EOL);
   } else {
-    print(stdout, "sz", enum_str(__THE_0_mainSDWeekdaySDMonday_3), THE_EOL);
+    print(stdout, "sz", enum_str(__THE_0_test_mainSDWeekdaySDMonday_3), THE_EOL);
   }
 }
 ======= flags =======

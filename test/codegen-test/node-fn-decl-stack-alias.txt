@@ -58,7 +58,7 @@ struct str {
 
 struct __THE_1_fn_sFP3strFRvoidFE;
 struct __THE_1_fn_sFP3strFRvoidFEP;
-struct __THE_1_mainSDtest_0X;
+struct __THE_1_test_mainSDtest_0X;
 
 struct __THE_1_fn_sFP3strFRvoidFE {
   void (*f) (void *, void *);
@@ -68,7 +68,7 @@ struct __THE_1_fn_sFP3strFRvoidFE {
 struct __THE_1_fn_sFP3strFRvoidFEP {
   struct str n0;
 };
-struct __THE_1_mainSDtest_0X {
+struct __THE_1_test_mainSDtest_0X {
   struct str *__THE_0_a_0;
 };
 
@@ -82,8 +82,8 @@ void str_free (struct str);
 struct str str_realloc (struct str, struct str);
 void *xalloc (void *, size_t);
 void __THE_1_fn_sFP3strFRvoidFE_free (struct __THE_1_fn_sFP3strFRvoidFE);
-void __THE_1_mainSDtest_0 (void *, void *);
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn_sFP3strFRvoidFE *, struct __THE_1_mainSDtest_0X);
+void __THE_1_test_mainSDtest_0 (void *, void *);
+void __THE_1_test_mainSDtest_0_alloc (struct __THE_1_fn_sFP3strFRvoidFE *, struct __THE_1_test_mainSDtest_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -130,30 +130,30 @@ void *xalloc (void *n1, size_t n2) {
 void __THE_1_fn_sFP3strFRvoidFE_free (struct __THE_1_fn_sFP3strFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest_0 (void *px, void *pp) {
+void __THE_1_test_mainSDtest_0 (void *px, void *pp) {
   struct __THE_1_fn_sFP3strFRvoidFEP *p = pp;
-  struct __THE_1_mainSDtest_0X *x = px;
+  struct __THE_1_test_mainSDtest_0X *x = px;
   struct str *__THE_0_a_0 = x->__THE_0_a_0;
   const struct str __THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = str_realloc(*__THE_0_a_0, str_copy(__THE_0_newA_0));
   str_free((struct str) __THE_0_newA_0);
   free(pp);
 }
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn_sFP3strFRvoidFE *n, struct __THE_1_mainSDtest_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtest_0X);
-  struct __THE_1_mainSDtest_0X *r = alloc(l);
+void __THE_1_test_mainSDtest_0_alloc (struct __THE_1_fn_sFP3strFRvoidFE *n, struct __THE_1_test_mainSDtest_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSDtest_0X);
+  struct __THE_1_test_mainSDtest_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtest_0;
+  n->f = &__THE_1_test_mainSDtest_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
   struct str __THE_0_a_0 = str_alloc("test");
-  const struct __THE_1_fn_sFP3strFRvoidFE __THE_0_mainSDtest_0;
-  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn_sFP3strFRvoidFE *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn_sFP3strFRvoidFEP) {str_alloc("")}, sizeof(struct __THE_1_fn_sFP3strFRvoidFEP)));
-  __THE_1_fn_sFP3strFRvoidFE_free((struct __THE_1_fn_sFP3strFRvoidFE) __THE_0_mainSDtest_0);
+  const struct __THE_1_fn_sFP3strFRvoidFE __THE_0_test_mainSDtest_0;
+  __THE_1_test_mainSDtest_0_alloc((struct __THE_1_fn_sFP3strFRvoidFE *) &__THE_0_test_mainSDtest_0, (struct __THE_1_test_mainSDtest_0X) {&__THE_0_a_0});
+  __THE_0_test_mainSDtest_0.f(__THE_0_test_mainSDtest_0.x, xalloc(&(struct __THE_1_fn_sFP3strFRvoidFEP) {str_alloc("")}, sizeof(struct __THE_1_fn_sFP3strFRvoidFEP)));
+  __THE_1_fn_sFP3strFRvoidFE_free((struct __THE_1_fn_sFP3strFRvoidFE) __THE_0_test_mainSDtest_0);
   str_free((struct str) __THE_0_a_0);
 }
 ======= flags =======
