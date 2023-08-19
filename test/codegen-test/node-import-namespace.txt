@@ -1,0 +1,18 @@
+======= stdin =======
+import * as NS1 from "./fixtures/export-enum"
+import * as NS2 from "./fixtures/export-fn"
+import * as NS3 from "./fixtures/export-obj"
+import * as NS4 from "./fixtures/export-type"
+import * as NS5 from "./fixtures/export-var"
+
+main {
+  t1 := NS1.TestEnum.One
+  t2 := NS3.TestObj{a: 1}
+  t3: NS4.TestAlias = "test3"
+
+  print(t1, t2, t3, NS5.TestConstVar, NS5.TestMutVar)
+  print(NS2.TestFn(1, "2"))
+}
+======= code =======
+======= flags =======
+======= stdout =======

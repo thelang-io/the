@@ -1,0 +1,10 @@
+======= stdin =======
+import * as Test1, * as Test2 from "./fixtures/export-var"
+
+main {
+  print(Test1.TestConstVar, Test2.TestConstVar)
+  print(Test1.TestMutVar, Test2.TestMutVar)
+}
+======= code =======
+======= flags =======
+======= stdout =======

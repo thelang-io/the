@@ -1210,6 +1210,19 @@ INSTANTIATE_TEST_SUITE_P(NodeEnumDecl, CodegenPassTest, testing::Values(
   "node-enum-decl-hoisting"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeExport, CodegenPassTest, testing::Values(
+  "node-export",
+  "node-export-enum-decl",
+  "node-export-expr",
+  "node-export-fn-decl",
+  "node-export-namespace",
+  "node-export-obj-decl",
+  "node-export-type-decl",
+  "node-export-var-decl-const",
+  "node-export-var-decl-mut",
+  "node-export-re-export"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-access",
   "node-expr-access-alias",
@@ -1437,6 +1450,22 @@ INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if-async-with-cleanup",
   "node-if-async-nested",
   "node-if-async-nested-with-cleanup"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeImport, CodegenPassTest, testing::Values(
+  "node-import",
+  "node-import-enum-decl",
+  "node-import-expr",
+  "node-import-fn-decl",
+  "node-import-obj-decl",
+  "node-import-type-decl",
+  "node-import-var-decl-const",
+  "node-import-var-decl-mut",
+  "node-import-with-rename",
+  "node-import-namespace",
+  "node-import-multiple-namespaces",
+  "node-import-empty-specifiers",
+  "node-import-package"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(

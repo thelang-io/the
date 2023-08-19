@@ -1,0 +1,11 @@
+======= stdin =======
+import "./fixtures/export-var"
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_TestConstVar_0 = 1;
+  int32_t __THE_0_TestMutVar_0 = 2;
+}
+======= flags =======
+======= stdout =======
