@@ -3,7 +3,7 @@ export enum TestEnum { One, Two }
 
 main {
   t := TestEnum.One
-  print(t)
+  print(t, TestEnum.Two)
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -214,8 +214,8 @@ struct str str_alloc (const char *r) {
 
 int main () {
   const enum __THE_1_test_TestEnum_0 __THE_0_t_0 = __THE_0_test_TestEnumSDOne_0;
-  print(stdout, "sz", enum_str(__THE_0_t_0), THE_EOL);
+  print(stdout, "szsz", enum_str(__THE_0_t_0), " ", enum_str(__THE_0_test_TestEnumSDTwo_0), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======
-0
+0 1

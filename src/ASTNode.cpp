@@ -88,7 +88,7 @@ std::string ASTNode::xml (std::size_t indent) const {
 
     result += std::string(indent, ' ') + "<NodeEnumDecl>" EOL;
     result += std::string(indent + 2, ' ') + "<NodeEnumDeclType>" EOL;
-    result += nodeEnumDecl.var->xml(indent + 4) + EOL;
+    result += nodeEnumDecl.type->xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</NodeEnumDeclType>" EOL;
     result += std::string(indent + 2, ' ') + "<NodeEnumDeclMembers>" EOL;
 

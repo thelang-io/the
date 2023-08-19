@@ -318,7 +318,6 @@ int main () {
   const int32_t __THE_0_TestConstVar_0 = 1;
   int32_t __THE_0_TestMutVar_0 = 2;
   const struct __THE_1_fn_sFP3intFP3strFRstrFE __THE_0_fixtures_export_fn_TestFn_0 = (struct __THE_1_fn_sFP3intFP3strFRstrFE) {&__THE_1_fixtures_export_fn_TestFn_0, NULL, 0};
-  __THE_0_fixtures_export_enum_TestEnum_0;
   __THE_0_fixtures_export_fn_TestFn_0;
   __THE_0_TestConstVar_0;
   __THE_0_TestMutVar_0;
@@ -332,3 +331,5 @@ int main () {
 }
 ======= flags =======
 ======= stdout =======
+0 TestObj{a: 1} test3 1 2
+12

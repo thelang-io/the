@@ -21,8 +21,8 @@
 void Codegen::_nodeEnumDecl ([[maybe_unused]] std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
   auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
   auto members = nodeEnumDecl.members;
-  auto typeName = Codegen::typeName(nodeEnumDecl.var->type->codeName);
-  auto enumType = std::get<TypeEnum>(nodeEnumDecl.var->type->body);
+  auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
+  auto enumType = std::get<TypeEnum>(nodeEnumDecl.type->body);
 
   if (phase != CODEGEN_PHASE_ALLOC && phase != CODEGEN_PHASE_FULL) {
     return;
@@ -60,7 +60,7 @@ void Codegen::_nodeEnumDecl ([[maybe_unused]] std::shared_ptr<CodegenASTStmt> *c
   });
 
   this->_apiEntity(typeName + "_rawValue", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
-    auto typeInfo = this->_typeInfo(nodeEnumDecl.var->type);
+    auto typeInfo = this->_typeInfo(nodeEnumDecl.type);
 
     decl += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCodeTrimmed + ");";
     def += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCode + "n) {" EOL;

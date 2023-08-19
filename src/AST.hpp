@@ -286,7 +286,7 @@ struct ASTNodeEnumDeclMember {
 };
 
 struct ASTNodeEnumDecl {
-  std::shared_ptr<Var> var;
+  Type *type;
   std::vector<ASTNodeEnumDeclMember> members;
 };
 

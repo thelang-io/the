@@ -214,6 +214,11 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
           break;
         }
       }
+    } else if (exprAccess.prop != std::nullopt && objTypeInfo.realType->isNamespace()) {
+      auto namespaceType = std::get<TypeNamespace>(objTypeInfo.realType->body);
+      (void) namespaceType;
+      // todo
+      expr = CodegenASTExprNull::create();
     } else if (exprAccess.prop != std::nullopt) {
       auto cObj = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, parent, c, true);
 
