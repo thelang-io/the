@@ -174,7 +174,13 @@ class Codegen {
   bool async = false;
   bool throws = false;
 
-  static void compile (const std::string &, const std::tuple<std::string, std::vector<std::string>> &, const std::string &, bool = false);
+  static void compile (
+    const std::string &,
+    const std::tuple<std::string, std::vector<std::string>> &,
+    const std::string &,
+    const std::string &,
+    bool = false
+  );
 
   template <typename T>
   static std::size_t countAsyncLoopDepth (const std::vector<ASTNode> &nodes, std::size_t prevDepth) {

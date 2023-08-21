@@ -30,9 +30,11 @@ const auto banner = std::string(
   EOL
 );
 
-std::string getCompilerFromPlatform (const std::string &platform) {
-  if (platform == "macos") {
+std::string getCompilerFromPlatform (const std::string &arch, const std::string &platform) {
+  if (arch == "x86_64" && platform == "macos") {
     return "o64-clang";
+  } else if (arch == "arm64" && platform == "macos") {
+    return "oa64-clang";
   } else if (platform == "windows") {
     return "x86_64-w64-mingw32-gcc";
   }
@@ -59,6 +61,7 @@ std::string getOSFromPlatform (const std::string &platform) {
 void Codegen::compile (
   const std::string &path,
   const std::tuple<std::string, std::vector<std::string>> &result,
+  const std::string &arch,
   const std::string &platform,
   bool debug
 ) {
@@ -70,7 +73,7 @@ void Codegen::compile (
   f.close();
 
   auto depsDir = Codegen::getEnvVar("DEPS_DIR");
-  auto compiler = getCompilerFromPlatform(platform);
+  auto compiler = getCompilerFromPlatform(arch, platform);
   auto flagsStr = std::string();
   auto libraries = std::string();
 
