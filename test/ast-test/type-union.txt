@@ -60,12 +60,10 @@ main {
 </NodeObjDecl>
 <NodeEnumDecl>
   <NodeEnumDeclType>
-    <Var name="Test2" codeName="test_Test2_0" ctxIgnored frame="1">
-      <TypeEnum codeName="test_Test2_0" name="Test2">
-        <TypeEnumerator codeName="test_Test2SDRed_0" name="Red" />
-        <TypeEnumerator codeName="test_Test2SDGreen_0" name="Green" />
-      </TypeEnum>
-    </Var>
+    <TypeEnum codeName="test_Test2_0" name="Test2">
+      <TypeEnumerator codeName="test_Test2SDRed_0" name="Red" />
+      <TypeEnumerator codeName="test_Test2SDGreen_0" name="Green" />
+    </TypeEnum>
   </NodeEnumDeclType>
   <NodeEnumDeclMembers>
     <NodeEnumDeclMember id="Red" />

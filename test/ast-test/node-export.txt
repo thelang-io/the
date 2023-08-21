@@ -27,12 +27,10 @@ export mut TEST_MUT := 2
 <NodeExportDecl>
   <NodeEnumDecl>
     <NodeEnumDeclType>
-      <Var name="TestEnum" codeName="test_TestEnum_0" ctxIgnored frame="1">
-        <TypeEnum codeName="test_TestEnum_0" name="TestEnum">
-          <TypeEnumerator codeName="test_TestEnumSDOne_0" name="One" />
-          <TypeEnumerator codeName="test_TestEnumSDTwo_0" name="Two" />
-        </TypeEnum>
-      </Var>
+      <TypeEnum codeName="test_TestEnum_0" name="TestEnum">
+        <TypeEnumerator codeName="test_TestEnumSDOne_0" name="One" />
+        <TypeEnumerator codeName="test_TestEnumSDTwo_0" name="Two" />
+      </TypeEnum>
     </NodeEnumDeclType>
     <NodeEnumDeclMembers>
       <NodeEnumDeclMember id="One" />

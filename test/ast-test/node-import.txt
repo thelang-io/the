@@ -134,7 +134,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestEnum" codeName="fixtures_export_enum_TestEnum_0" frame="1">
+                  <Var name="TestEnum" codeName="fixtures_export_enum_TestEnum_0" ctxIgnored frame="1">
                     <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
                       <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
                       <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />
@@ -468,7 +468,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestEnumLocal" codeName="fixtures_export_enum_TestEnum_0" frame="1">
+                  <Var name="TestEnumLocal" codeName="fixtures_export_enum_TestEnum_0" ctxIgnored frame="1">
                     <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
                       <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDOne_0" name="One" />
                       <TypeEnumerator codeName="fixtures_export_enum_TestEnumSDTwo_0" name="Two" />

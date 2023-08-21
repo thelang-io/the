@@ -47,7 +47,10 @@ jobs:
           sudo apt-get install ninja-build valgrind
       - if: runner.os == 'macOS'
         run: brew install ninja
-      - run: the run scripts/pre-process-codegen
+      - if: runner.os == 'macOS'
+        run: the run scripts/pre-process-codegen --arch=x86_64 # todo remove after 0.14
+      - if: runner.os != 'macOS'
+        run: the run scripts/pre-process-codegen
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
       - run: tar -xzf deps.tar.gz the/native/${{ matrix.config.platform }}
       - if: runner.os == 'Linux'

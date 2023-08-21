@@ -31,10 +31,10 @@ const auto banner = std::string(
 );
 
 std::string getCompilerFromPlatform (const std::string &arch, const std::string &platform) {
-  if (arch == "x86_64" && platform == "macos") {
-    return "o64-clang";
-  } else if (arch == "arm64" && platform == "macos") {
+  if (arch == "arm64" && platform == "macos") {
     return "oa64-clang";
+  } else if (platform == "macos") {
+    return "o64-clang";
   } else if (platform == "windows") {
     return "x86_64-w64-mingw32-gcc";
   }
