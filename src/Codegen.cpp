@@ -60,9 +60,11 @@ bool isHoistingFriendlyNode (const ASTNode &node) {
     std::holds_alternative<ASTNodeTypeDecl>(*node.body);
 }
 
-std::string getCompilerFromPlatform (const std::string &platform) {
-  if (platform == "macos") {
+std::string getCompilerFromPlatform (const std::string &arch, const std::string &platform) {
+  if (arch == "x86_64" && platform == "macos") {
     return "o64-clang";
+  } else if (arch == "arm64" && platform == "macos") {
+    return "oa64-clang";
   } else if (platform == "windows") {
     return "x86_64-w64-mingw32-gcc";
   }
@@ -101,7 +103,7 @@ void Codegen::compile (
   f.close();
 
   auto depsDir = Codegen::getEnvVar("DEPS_DIR");
-  auto compiler = getCompilerFromPlatform(platform);
+  auto compiler = getCompilerFromPlatform(arch, platform);
   auto flagsStr = std::string();
   auto libraries = std::string();
 
@@ -125,7 +127,6 @@ void Codegen::compile (
   }
 
   auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g" : "");
-  cmd += targetOS == "macos" && !arch.empty() ? " -arch " + arch : "";
   auto returnCode = std::system(cmd.c_str());
 
   std::filesystem::remove(path + ".c");
