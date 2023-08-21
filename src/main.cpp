@@ -32,6 +32,7 @@ int main (int argc, char *argv[]) {
     auto isParse = false;
     auto fileName = std::optional<std::string>{};
     auto output = std::string("build/a.out");
+    auto arch = std::string("");
     auto platform = std::string("default");
 
     for (auto i = 1; i < argc; i++) {
@@ -58,7 +59,13 @@ int main (int argc, char *argv[]) {
         auto optName = arg.substr(2, arg.find('=') - 2);
         auto optVal = arg.substr(arg.find('=') + 1);
 
-        if (optName == "output") {
+        if (optName == "arch") {
+          if (std::set<std::string>{"", "arm64", "x86_64"}.contains(optVal)) {
+            arch = optVal;
+          } else {
+            throw Error("unsupported platform " + optVal);
+          }
+        } else if (optName == "output") {
           output = optVal;
         } else if (optName == "platform") {
           if (std::set<std::string>{"linux", "macos", "windows"}.contains(optVal)) {
@@ -125,7 +132,7 @@ int main (int argc, char *argv[]) {
       return EXIT_SUCCESS;
     }
 
-    Codegen::compile(output, result, platform);
+    Codegen::compile(output, result, arch, platform);
     return EXIT_SUCCESS;
   } catch (const Error &err) {
     std::cerr << "Error: " << err.what() << std::endl;

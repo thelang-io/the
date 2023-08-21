@@ -110,7 +110,7 @@ TEST_P(CodegenPassTest, Passes) {
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
-  Codegen::compile(filePath, result, this->testPlatform_, true);
+  Codegen::compile(filePath, result, this->testPlatform_, "x86_64", true);
 
   if (!this->isPlatformDefault_) {
     std::filesystem::remove(filePath);
@@ -174,7 +174,7 @@ TEST_P(CodegenThrowTest, Throws) {
 
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
-  Codegen::compile(filePath, result, this->testPlatform_, true);
+  Codegen::compile(filePath, result, this->testPlatform_, "x86_64", true);
 
   if (!this->isPlatformDefault_) {
     std::filesystem::remove(filePath);

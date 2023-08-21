@@ -156,6 +156,7 @@ class Codegen {
     const std::string &,
     const std::tuple<std::string, std::vector<std::string>> &,
     const std::string &,
+    const std::string &,
     bool = false
   );
   static std::string getEnvVar (const std::string &);

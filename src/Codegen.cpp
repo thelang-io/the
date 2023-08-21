@@ -89,6 +89,7 @@ std::string getOSFromPlatform (const std::string &platform) {
 void Codegen::compile (
   const std::string &path,
   const std::tuple<std::string, std::vector<std::string>> &result,
+  const std::string &arch,
   const std::string &platform,
   bool debug
 ) {
@@ -124,6 +125,7 @@ void Codegen::compile (
   }
 
   auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr + (debug ? " -g" : "");
+  cmd += targetOS == "macos" && !arch.empty() ? " -arch " + arch : "";
   auto returnCode = std::system(cmd.c_str());
 
   std::filesystem::remove(path + ".c");
