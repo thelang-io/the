@@ -46,7 +46,7 @@ obj Args {
     mut message: str
 
     if self._usage.len > 0 {
-      message += message.empty() ? os_EOL : ""
+      message += message.empty ? os_EOL : ""
       message += "  Usage:" + os_EOL
       message += os_EOL
 
@@ -58,7 +58,7 @@ obj Args {
     }
 
     if self._state.hasCommands {
-      message += message.empty() ? os_EOL : ""
+      message += message.empty ? os_EOL : ""
       message += "  Commands:" + os_EOL
       message += os_EOL
 
@@ -76,7 +76,7 @@ obj Args {
     }
 
     if self._state.hasOptions {
-      message += message.empty() ? os_EOL : ""
+      message += message.empty ? os_EOL : ""
       message += "  Options:" + os_EOL
       message += os_EOL
 
@@ -94,7 +94,7 @@ obj Args {
     }
 
     if self._examples.len > 0 {
-      message += message.empty() ? os_EOL : ""
+      message += message.empty ? os_EOL : ""
       message += "  Examples:" + os_EOL
       message += os_EOL
 
@@ -150,10 +150,14 @@ obj Args {
       self._parseArg(arg)
     }
 
-    loop i := 1; i < self._config.len; i++ {
+    loop i := 0; i < self._config.len; i++ {
       item := self._config[i]
 
-      if item.default.empty() || self._existsDataValue(item.t, item.name) {
+      if (
+        item.default.empty ||
+        item.t == ArgType_Command ||
+        self._existsDataValue(item.t, item.name)
+      ) {
         continue
       }
 
@@ -200,7 +204,7 @@ obj Args {
       }
     }
 
-    leftColActualMaxLen: u32 = self.lineLength * 0.4
+    leftColActualMaxLen: int = self.lineLength * 0.4
 
     if self._state.leftColMaxLen > leftColActualMaxLen {
       self._state.leftColMaxLen = leftColActualMaxLen
@@ -215,20 +219,20 @@ obj Args {
 
     eqPos := arg.find("=")
 
-    if arg.len >= 3 && arg.slice(0, 2) == "--" && arg[2].isAlphaNum() {
+    if arg.len >= 3 && arg.slice(0, 2) == "--" && arg[2].isLetterOrDigit {
       name := eqPos > 0 ? arg.slice(2, eqPos) : arg.slice(2)
       value := eqPos < 0 ? "" : arg.slice(eqPos + 1)
 
       self._parseArgOption(arg, name, value)
       return
-    } elif arg.len >= 2 && arg[1].isAlphaNum() && eqPos > 0 {
+    } elif arg.len >= 2 && arg[1].isLetterOrDigit && eqPos > 0 {
       name := eqPos > 0 ? arg.slice(1, eqPos) : arg.slice(1)
       value := eqPos < 0 ? "" : arg.slice(eqPos + 1)
 
       self._parseArgOption(arg, name, value)
       return
-    } elif arg.len >= 2 && arg[1].isAlphaNum() {
-      noValueOptions := str_split(arg.slice(1))
+    } elif arg.len >= 2 && arg[1].isLetterOrDigit {
+      noValueOptions := arg.slice(1).split()
 
       loop i := 0; i < noValueOptions.len; i++ {
         noValueOption := noValueOptions[i]
@@ -282,9 +286,9 @@ obj Args {
         continue
       }
 
-      if !item.hasValue && !value.empty() {
+      if !item.hasValue && !value.empty {
         value = ""
-      } elif item.hasValue && value.empty() {
+      } elif item.hasValue && value.empty {
         self._state.nextArgIsValue = true
         self._state.nextArgValueFor = item.name
         self._state.nextArgValueForType = ArgType_Option

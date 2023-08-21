@@ -20,6 +20,7 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,33 +32,72 @@ main {
   #include <windows.h>
 #endif
 #ifndef THE_OS_WINDOWS
-  #include <fcntl.h>
   #include <dirent.h>
+  #include <fcntl.h>
   #include <unistd.h>
 #endif
 
+#define TYPE_error_Error 1
+
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
 struct __THE_1_array_str;
 
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
 
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
-void fs_copyDirectorySync (struct str, struct str);
-void fs_copyFileSync (struct str, struct str);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_buf_decrease (err_state_t *);
+err_buf_t *error_buf_increase (err_state_t *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
+void error_stack_str (err_state_t *);
+void fs_copyDirectorySync (err_state_t *, int, int, struct str, struct str);
+void fs_copyFileSync (err_state_t *, int, int, struct str, struct str);
 bool fs_existsSync (struct str);
 bool fs_isDirectorySync (struct str);
-void fs_mkdirSync (struct str);
-void fs_rmSync (struct str);
-void fs_rmdirSync (struct str);
-struct __THE_1_array_str fs_scandirSync (struct str);
+void fs_mkdirSync (err_state_t *, int, int, struct str);
+void fs_rmSync (err_state_t *, int, int, struct str);
+void fs_rmdirSync (err_state_t *, int, int, struct str);
+struct __THE_1_array_str fs_scandirSync (err_state_t *, int, int, struct str);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
@@ -65,14 +105,13 @@ struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 void __THE_1_array_str_free (struct __THE_1_array_str);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 struct str cstr_concat_str (const char *r, struct str s) {
@@ -83,12 +122,99 @@ struct str cstr_concat_str (const char *r, struct str s) {
   free(s.d);
   return (struct str) {d, l};
 }
-void fs_copyDirectorySync (struct str n1, struct str n2) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
+}
+void error_buf_decrease (err_state_t *fn_err_state) {
+  err_buf_t *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  free(buf);
+}
+err_buf_t *error_buf_increase (err_state_t *fn_err_state) {
+  err_buf_t *buf = alloc(sizeof(err_buf_t));
+  buf->next = NULL;
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == NULL) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != NULL) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
+void error_stack_pop (err_state_t *fn_err_state) {
+  err_stack_t *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  free(stack);
+}
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
+}
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  error_stack_pos(fn_err_state, line, col);
+  err_stack_t *stack = alloc(sizeof(err_stack_t));
+  stack->file = file;
+  stack->name = name;
+  stack->next = NULL;
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == NULL) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != NULL) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
+}
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
+  stack->l = message.l;
+  stack->d = re_alloc(stack->d, stack->l);
+  memcpy(stack->d, message.d, stack->l);
+  int i = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    size_t z;
+    char *fmt;
+    if (it->col == 0 && it->line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->d = re_alloc(stack->d, stack->l + z + 1);
+    if (it->col == 0 && it->line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
+    } else {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->l += z;
+    i++;
+  }
+}
+void fs_copyDirectorySync (err_state_t *fn_err_state, int line, int col, struct str n1, struct str n2) {
+  if (setjmp(error_buf_increase(fn_err_state)) != 0) goto fs_copyDirectorySync_cleanup1;
   if (fs_existsSync(str_copy(n2))) {
     if (fs_isDirectorySync(str_copy(n2))) {
-      fs_rmdirSync(str_copy(n2));
+      fs_rmdirSync(fn_err_state, line, col, str_copy(n2));
     } else {
-      fs_rmSync(str_copy(n2));
+      fs_rmSync(fn_err_state, line, col, str_copy(n2));
     }
   }
   if (n1.l > 0 && n1.d[n1.l - 1] != (THE_PATH_SEP)[0] && n1.d[n1.l - 1] != '/') {
@@ -99,93 +225,146 @@ void fs_copyDirectorySync (struct str n1, struct str n2) {
     n2.d = re_alloc(n2.d, ++n2.l);
     n2.d[n2.l - 1] = (THE_PATH_SEP)[0];
   }
-  struct __THE_1_array_str files = fs_scandirSync(str_copy(n1));
-  fs_mkdirSync(str_copy(n2));
+  struct __THE_1_array_str files = fs_scandirSync(fn_err_state, line, col, str_copy(n1));
+  if (setjmp(fn_err_state->buf_last->buf) != 0) goto fs_copyDirectorySync_cleanup2;
+  fs_mkdirSync(fn_err_state, line, col, str_copy(n2));
   for (size_t i = 0; i < files.l; i++) {
     struct str file = str_concat_str(str_copy(n1), str_copy(files.d[i]));
     if (fs_isDirectorySync(str_copy(file))) {
-      fs_copyDirectorySync(file, str_concat_str(str_copy(n2), str_copy(files.d[i])));
+      fs_copyDirectorySync(fn_err_state, line, col, file, str_concat_str(str_copy(n2), str_copy(files.d[i])));
     } else {
-      fs_copyFileSync(file, str_concat_str(str_copy(n2), str_copy(files.d[i])));
+      fs_copyFileSync(fn_err_state, line, col, file, str_concat_str(str_copy(n2), str_copy(files.d[i])));
     }
   }
+fs_copyDirectorySync_cleanup2:
   __THE_1_array_str_free(files);
+fs_copyDirectorySync_cleanup1:
+  error_buf_decrease(fn_err_state);
   str_free(n2);
   str_free(n1);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
-void fs_copyFileSync (struct str n1, struct str n2) {
+void fs_copyFileSync (err_state_t *fn_err_state, int line, int col, struct str n1, struct str n2) {
   char *c1 = str_cstr(n1);
   char *c2 = str_cstr(n2);
   #ifdef THE_OS_WINDOWS
     if (CopyFile(c1, c2, 0) == 0) {
-      fprintf(stderr, "Error: failed to copy file from `%s` to `%s`" THE_EOL, c1, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to copy file from `%s` to `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1, c2);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c1, c2);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup1;
     }
   #else
+    size_t buf_len = 8192;
+    char buf[buf_len];
     int fd1 = open(c1, O_RDONLY);
     if (fd1 < 0) {
-      fprintf(stderr, "Error: failed to open file descriptor of `%s`" THE_EOL, c1);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open file descriptor of `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c1);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup1;
     }
     struct stat sb1;
     if (fstat(fd1, &sb1) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c1);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c1);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup2;
     }
     if ((sb1.st_mode & S_IFMT) != S_IFREG) {
-      fprintf(stderr, "Error: cannot copy non-file `%s`" THE_EOL, c1);
-      exit(EXIT_FAILURE);
+      const char *fmt = "cannot copy non-file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c1);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c1);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup2;
     }
     int fd2 = open(c2, O_WRONLY | O_CREAT);
     if (fd2 < 0) {
-      fprintf(stderr, "Error: failed to open file descriptor of `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open file descriptor of `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c2);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup2;
     }
     struct stat sb2;
     if (fstat(fd2, &sb2) != 0) {
-      fprintf(stderr, "Error: failed to stat file `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to stat file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c2);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup3;
     }
     if (sb1.st_dev == sb2.st_dev && sb1.st_ino == sb2.st_ino) {
-      fprintf(stderr, "Error: can't copy same file" THE_EOL);
-      exit(EXIT_FAILURE);
+      const char *fmt = "can't copy same file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c2);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup3;
     }
     if (sb2.st_size > 0 && ftruncate(fd2, 0) != 0) {
-      fprintf(stderr, "Error: failed to truncate file `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to truncate file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c2);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup3;
     }
     if (fchmod(fd2, sb1.st_mode) != 0) {
-      fprintf(stderr, "Error: failed to chmod file `%s`" THE_EOL, c2);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to chmod file `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c2);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c2);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_copyFileSync_cleanup3;
     }
     size_t bytes = sb1.st_size;
-    size_t buf_len = 8192;
-    char buf[buf_len];
     while (bytes != 0) {
       ssize_t read_bytes_raw = read(fd1, buf, bytes > buf_len ? buf_len : bytes);
       if (read_bytes_raw <= 0) {
-        fprintf(stderr, "Error: failed to read data from file `%s`" THE_EOL, c1);
-        exit(EXIT_FAILURE);
+        const char *fmt = "failed to read data from file `%s`";
+        size_t z = snprintf(NULL, 0, fmt, c1);
+        char *d = alloc(z + 1);
+        sprintf(d, fmt, c1);
+        error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+        goto fs_copyFileSync_cleanup3;
       }
       size_t read_bytes = read_bytes_raw;
       size_t written_bytes = 0;
       while (written_bytes != read_bytes) {
         ssize_t written_bytes_raw = write(fd2, &buf[written_bytes], read_bytes - written_bytes);
         if (written_bytes_raw <= 0) {
-          fprintf(stderr, "Error: failed to write data to file `%s`" THE_EOL, c2);
-          exit(EXIT_FAILURE);
+          const char *fmt = "failed to write data to file `%s`";
+          size_t z = snprintf(NULL, 0, fmt, c2);
+          char *d = alloc(z + 1);
+          sprintf(d, fmt, c2);
+          error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+          goto fs_copyFileSync_cleanup3;
         }
         written_bytes += (size_t) written_bytes_raw;
       }
       bytes -= written_bytes;
     }
+fs_copyFileSync_cleanup3:
     close(fd2);
+fs_copyFileSync_cleanup2:
     close(fd1);
   #endif
+fs_copyFileSync_cleanup1:
   free(c2);
   free(c1);
   str_free(n2);
   str_free(n1);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
 bool fs_existsSync (struct str s) {
   char *c = str_cstr(s);
@@ -216,7 +395,7 @@ bool fs_isDirectorySync (struct str s) {
   str_free(s);
   return b;
 }
-void fs_mkdirSync (struct str s) {
+void fs_mkdirSync (err_state_t *fn_err_state, int line, int col, struct str s) {
   char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
     bool r = CreateDirectory(c, NULL);
@@ -224,22 +403,34 @@ void fs_mkdirSync (struct str s) {
     bool r = mkdir(c, 0777) == 0;
   #endif
   if (!r) {
-    fprintf(stderr, "Error: failed to create directory `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to create directory `%s`";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, c);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto fs_mkdirSync_cleanup;
   }
+fs_mkdirSync_cleanup:
   free(c);
   str_free(s);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
-void fs_rmSync (struct str s) {
+void fs_rmSync (err_state_t *fn_err_state, int line, int col, struct str s) {
   char *c = str_cstr(s);
   if (remove(c) != 0) {
-    fprintf(stderr, "Error: failed to remove file `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to remove file `%s`";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, c);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto fs_rmSync_cleanup;
   }
+fs_rmSync_cleanup:
   free(c);
   str_free(s);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
-void fs_rmdirSync (struct str s) {
+void fs_rmdirSync (err_state_t *fn_err_state, int line, int col, struct str s) {
   char *c = str_cstr(s);
   #ifdef THE_OS_WINDOWS
     bool r = RemoveDirectory(c);
@@ -247,35 +438,53 @@ void fs_rmdirSync (struct str s) {
     bool r = rmdir(c) == 0;
   #endif
   if (!r) {
-    fprintf(stderr, "Error: failed to remove directory `%s`" THE_EOL, c);
-    exit(EXIT_FAILURE);
+    const char *fmt = "failed to remove directory `%s`";
+    size_t z = snprintf(NULL, 0, fmt, c);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, c);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto fs_rmdirSync_cleanup;
   }
+fs_rmdirSync_cleanup:
   free(c);
   str_free(s);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
 }
-struct __THE_1_array_str fs_scandirSync (struct str s) {
+struct __THE_1_array_str fs_scandirSync (err_state_t *fn_err_state, int line, int col, struct str s) {
   char *c = str_cstr(s);
   struct str *r = NULL;
   size_t l = 0;
   #ifdef THE_OS_WINDOWS
     if (GetFileAttributes(c) == INVALID_FILE_ATTRIBUTES) {
-      fprintf(stderr, "Error: directory `%s` doesn't exist" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "directory `%s` doesn't exist";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_scandirSync_cleanup1;
     } else if (!(GetFileAttributes(c) & FILE_ATTRIBUTE_DIRECTORY)) {
-      fprintf(stderr, "Error: failed to scan non-directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to scan non-directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_scandirSync_cleanup1;
     }
     const char *fmt = s.l == 0 ? "./*" : ((s.d[s.l - 1] == '/' || s.d[s.l - 1] == '\\') ? "%s*" : "%s\\*");
     char *b = alloc(s.l + 4);
-    _snprintf(b, s.l + 3, fmt, c);
+    snprintf(b, s.l + 3, fmt, c);
     WIN32_FIND_DATA m;
     HANDLE h = FindFirstFile(b, &m);
     free(b);
     if (h == INVALID_HANDLE_VALUE && GetLastError() != ERROR_FILE_NOT_FOUND) {
-      fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_scandirSync_cleanup1;
     } else if (h == INVALID_HANDLE_VALUE) {
-      goto fs_scandirSync_cleanup;
+      goto fs_scandirSync_cleanup1;
     }
     WIN32_FIND_DATA *n = &m;
     while (true) {
@@ -287,24 +496,41 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
       if (!g && GetLastError() == ERROR_NO_MORE_FILES) {
         break;
       } else if (!g) {
-        fprintf(stderr, "Error: failed to scan next file of directory `%s`" THE_EOL, c);
-        exit(EXIT_FAILURE);
+        const char *fmt = "failed to scan next file of directory `%s`";
+        size_t z = snprintf(NULL, 0, fmt, c);
+        char *d = alloc(z + 1);
+        sprintf(d, fmt, c);
+        error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+        goto fs_scandirSync_cleanup2;
       }
     }
+fs_scandirSync_cleanup2:
     FindClose(h);
   #else
     struct stat sb;
     if (stat(c, &sb) != 0) {
-      fprintf(stderr, "Error: directory `%s` doesn't exist" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "directory `%s` doesn't exist";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_scandirSync_cleanup1;
     } else if ((sb.st_mode & S_IFMT) != S_IFDIR) {
-      fprintf(stderr, "Error: failed to scan non-directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to scan non-directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_scandirSync_cleanup1;
     }
     DIR *f = opendir(c);
     if (f == NULL) {
-      fprintf(stderr, "Error: failed to open directory `%s`" THE_EOL, c);
-      exit(EXIT_FAILURE);
+      const char *fmt = "failed to open directory `%s`";
+      size_t z = snprintf(NULL, 0, fmt, c);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, c);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto fs_scandirSync_cleanup1;
     }
     struct dirent *a;
     while ((a = readdir(f)) != NULL) {
@@ -314,9 +540,6 @@ struct __THE_1_array_str fs_scandirSync (struct str s) {
     }
     closedir(f);
   #endif
-fs_scandirSync_cleanup:
-  free(c);
-  str_free(s);
   for (size_t j = 0; j < l; j++) {
     for (size_t k = j + 1; k < l; k++) {
       if (memcmp(r[j].d, r[k].d, r[j].l > r[k].l ? r[k].l : r[j].l) > 0) {
@@ -326,14 +549,15 @@ fs_scandirSync_cleanup:
       }
     }
   }
+fs_scandirSync_cleanup1:
+  free(c);
+  str_free(s);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   return (struct __THE_1_array_str) {r, l};
 }
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
   return r;
 }
 struct str str_alloc (const char *r) {
@@ -373,14 +597,37 @@ char *str_cstr (const struct str s) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
 void __THE_1_array_str_free (struct __THE_1_array_str n) {
   for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
   free(n.d);
 }
 
 int main () {
-  fs_copyDirectorySync(str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "fake"), str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "real"));
+  error_stack_push(&err_state, "/test", "main", 0, 0);
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L1;
+  fs_copyDirectorySync(&err_state, 2, 3, str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "fake"), str_concat_cstr(str_concat_str(str_concat_cstr(cstr_concat_str("test", str_alloc(THE_PATH_SEP)), "fixtures"), str_alloc(THE_PATH_SEP)), "real"));
+L1:
+  error_buf_decrease(&err_state);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 ======= stderr =======
-Error: directory `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}fake{{ (\/|\\) }}` doesn't exist
+Uncaught Error: directory `test{{ (\/|\\) }}fixtures{{ (\/|\\) }}fake{{ (\/|\\) }}` doesn't exist
+  at main (/test:2:3)

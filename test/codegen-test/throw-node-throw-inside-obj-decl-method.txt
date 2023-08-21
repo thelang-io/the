@@ -1,0 +1,273 @@
+======= stdin =======
+obj Test {
+  fn test () {
+    throw error_NewError("test")
+  }
+}
+
+main {
+  test := Test{}
+  test.test()
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_error_Error 1
+
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+struct __THE_1_Test_0;
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+struct __THE_1_Test_0 {
+  void *_;
+};
+struct __THE_1_fn$1000 {
+  void (*f) (void *, void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1000P {
+  err_state_t *err_state;
+  int line;
+  int col;
+};
+
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
+void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_buf_decrease (err_state_t *);
+err_buf_t *error_buf_increase (err_state_t *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
+void error_stack_str (err_state_t *);
+struct error_Error *new_error (struct str);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+void str_free (struct str);
+void *xalloc (void *, size_t);
+struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc ();
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+void __THE_1_TestSDtest_0 (void *, void *);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
+}
+void error_buf_decrease (err_state_t *fn_err_state) {
+  err_buf_t *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  free(buf);
+}
+err_buf_t *error_buf_increase (err_state_t *fn_err_state) {
+  err_buf_t *buf = alloc(sizeof(err_buf_t));
+  buf->next = NULL;
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == NULL) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != NULL) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
+void error_stack_pop (err_state_t *fn_err_state) {
+  err_stack_t *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  free(stack);
+}
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
+}
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  error_stack_pos(fn_err_state, line, col);
+  err_stack_t *stack = alloc(sizeof(err_stack_t));
+  stack->file = file;
+  stack->name = name;
+  stack->next = NULL;
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == NULL) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != NULL) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
+}
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
+  stack->l = message.l;
+  stack->d = re_alloc(stack->d, stack->l);
+  memcpy(stack->d, message.d, stack->l);
+  int i = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    size_t z;
+    char *fmt;
+    if (it->col == 0 && it->line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->d = re_alloc(stack->d, stack->l + z + 1);
+    if (it->col == 0 && it->line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
+    } else {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->l += z;
+    i++;
+  }
+}
+struct error_Error *new_error (struct str n1) {
+  return error_Error_alloc(n1, (struct str) {NULL, 0});
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
+struct __THE_1_Test_0 *__THE_1_Test_0_alloc () {
+  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
+  struct __THE_1_Test_0 s = {NULL};
+  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+  return r;
+}
+void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+  free(n);
+}
+void __THE_1_TestSDtest_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  err_state_t *fn_err_state = p->err_state;
+  error_stack_push(fn_err_state, "/test", "Test.test", p->line, p->col);
+  error_assign(fn_err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 3, 5);
+  goto L1;
+L1:
+  free(pp);
+  error_stack_pop(fn_err_state);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+}
+
+int main () {
+  error_stack_push(&err_state, "/test", "main", 0, 0);
+  const struct __THE_1_fn$1000 __THE_0_TestSDtest_0 = (struct __THE_1_fn$1000) {&__THE_1_TestSDtest_0, NULL, 0};
+  const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc();
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L2;
+  __THE_0_TestSDtest_0.f(__THE_0_TestSDtest_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 9, 3}, sizeof(struct __THE_1_fn$1000P)));
+L2:
+  error_buf_decrease(&err_state);
+  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
+}
+======= flags =======
+======= stderr =======
+Uncaught Error: test
+  at Test.test (/test:3:5)
+  at main (/test:9:3)

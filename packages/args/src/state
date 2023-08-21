@@ -6,7 +6,7 @@
 obj ArgsState {
   mut hasCommands: bool
   mut hasOptions: bool
-  mut leftColMaxLen: u32
+  mut leftColMaxLen: int
   mut nextArgIsValue: bool
   mut nextArgValueFor: str
   mut nextArgValueForType: int

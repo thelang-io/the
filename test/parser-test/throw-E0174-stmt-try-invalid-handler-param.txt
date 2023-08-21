@@ -1,0 +1,8 @@
+======= stdin =======
+try {
+  a := "test"
+}
+======= stderr =======
+/test:1:1: E0174 - Try statement requires at least one catch clause to be present
+  1 | try {
+    | ^~~~~

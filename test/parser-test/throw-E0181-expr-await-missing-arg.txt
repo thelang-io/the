@@ -1,0 +1,6 @@
+======= stdin =======
+await;
+======= stderr =======
+/test:1:6: E0181 - Expected expression after `await` keyword
+  1 | await;
+    |      ^

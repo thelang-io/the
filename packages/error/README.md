@@ -1,2 +1,2 @@
 # the/error
-The Programming Language error
+The programming language error

@@ -5,7 +5,12 @@
 
 type TestBody = () -> void
 
-mut testingState: TestState
+mut TEST_FAILED := false
+
+fn FAIL_TEST (message: str) {
+  TEST_FAILED = true
+  print("Failure: " + message, to: "stderr")
+}
 
 obj Test {
   name: str
@@ -13,7 +18,7 @@ obj Test {
 }
 
 obj Tests {
-  _tests: Test[]
+  mut _tests: Test[]
 
   fn register (mut self: ref Self, name: str, body: TestBody) ref Self {
     self._tests.push(Test{name: name, body: body})
@@ -24,44 +29,51 @@ obj Tests {
     mut totalTime := 0
     mut failedTests: str[]
 
-    print("[==========] Running", self._tests.len, "tests")
+    print("[==========] Running", self._tests.len, self.word(self._tests.len), to: "stderr")
 
     loop i := 0; i < self._tests.len; i++ {
       test := self._tests[i]
 
-      print("[ RUN      ]", test.name)
-      timeStart := time_now()
+      print("[ RUN      ]", test.name, to: "stderr")
+      timeStart := date_now()
       test.body()
-      timeDelta := time_now() - timeStart
-      testStatus := testingState.failed ? "[  FAILED  ]" : "[       OK ]"
-      print(testStatus, test.name, "(" + timeDelta + " ms)")
+      timeDelta := date_now() - timeStart
+      testStatus := TEST_FAILED ? "[  FAILED  ]" : "[       OK ]"
+      print(testStatus, test.name, "(" + timeDelta.str() + " ms)", to: "stderr")
 
-      if testingState.failed {
+      if TEST_FAILED {
         failedTests.push(test.name)
       }
 
       totalTime += timeDelta
-      testingState = TestState{}
+      TEST_FAILED = false
     }
 
     print(
       "[==========]",
       self._tests.len,
-      "tests ran (" + totalTime + " ms total)"
+      self.word(self._tests.len) + " ran (" + totalTime.str() + " ms total)",
+      to: "stderr"
     )
 
-    print("[  PASSED  ]", self._tests.len - failedTests.len, "tests")
+    passedTestsNum := self._tests.len - failedTests.len
+    print("[  PASSED  ]", passedTestsNum, self.word(passedTestsNum), to: "stderr")
 
-    if !failedTests.empty() {
-      print("[  FAILED  ]", failedTests.len, "tests, listed below:")
+    if !failedTests.empty {
+      print("[  FAILED  ]", failedTests.len, self.word(failedTests.len) + ", listed below:", to: "stderr")
 
       loop i := 0; i < failedTests.len; i++ {
         failedTest: str = failedTests[i]
-        print("[  FAILED  ]", failedTest)
+        print("[  FAILED  ]", failedTest, to: "stderr")
       }
 
-      print()
-      print(" " + failedTests.len + " FAILED TESTS")
+      print(to: "stderr")
+      print(" " + failedTests.len.str() + " FAILED", self.word(failedTests.len).upper, to: "stderr")
+      process_exit(1)
     }
+  }
+
+  fn word (n: int) str {
+    return n == 1 ? "test" : "tests"
   }
 }

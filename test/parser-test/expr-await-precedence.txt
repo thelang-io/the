@@ -1,0 +1,37 @@
+======= stdin =======
+a := await test1() + await test2()
+======= stdout =======
+<StmtVarDecl start="1:1" end="1:35">
+  <StmtVarDeclId>
+    <Token type="ID" val="a" start="1:1" end="1:2" />
+  </StmtVarDeclId>
+  <StmtVarDeclInit>
+    <ExprBinary start="1:6" end="1:35">
+      <ExprBinaryLeft>
+        <ExprAwait start="1:6" end="1:19">
+          <ExprCall start="1:12" end="1:19">
+            <ExprCallCallee>
+              <ExprAccess start="1:12" end="1:17">
+                <Token type="ID" val="test1" start="1:12" end="1:17" />
+              </ExprAccess>
+            </ExprCallCallee>
+          </ExprCall>
+        </ExprAwait>
+      </ExprBinaryLeft>
+      <ExprBinaryOp>
+        <Token type="OP_PLUS" val="+" start="1:20" end="1:21" />
+      </ExprBinaryOp>
+      <ExprBinaryRight>
+        <ExprAwait start="1:22" end="1:35">
+          <ExprCall start="1:28" end="1:35">
+            <ExprCallCallee>
+              <ExprAccess start="1:28" end="1:33">
+                <Token type="ID" val="test2" start="1:28" end="1:33" />
+              </ExprAccess>
+            </ExprCallCallee>
+          </ExprCall>
+        </ExprAwait>
+      </ExprBinaryRight>
+    </ExprBinary>
+  </StmtVarDeclInit>
+</StmtVarDecl>

@@ -4,5 +4,248 @@
  */
 
 obj YAML {
-  // todo
+  content: str
+  mut tokens: YAMLToken[]
+  mut nodes: YAMLNode[]
+  mut state: YAMLState
+
+  fn hasNext (self: ref Self) bool {
+    return self.state.pos < self.nodes.len
+  }
+
+  fn next (mut self: ref Self) YAMLNode {
+    return self.nodes[self.state.pos++]
+  }
+
+  fn reset (mut self: ref Self) {
+    self.state = YAMLState{}
+  }
+
+  fn stringify (self: ref Self) str {
+    mut code := ""
+
+    loop i := 0; i < self.nodes.len; i++ {
+      code += YAMLNode_stringify(self.nodes[i])
+    }
+
+    return code
+  }
+
+  fn _hasNextTk (self: ref Self) bool {
+    mut pos := self.state.pos
+    tokensLen := self.tokens.len
+
+    loop pos < tokensLen && self.tokens[pos].t == .Whitespace {
+      pos++
+    }
+
+    return pos < tokensLen
+  }
+
+  fn _nextTk (mut self: ref Self) YAMLToken {
+    tokensLen := self.tokens.len
+
+    loop (
+      self.state.pos < tokensLen &&
+      self.tokens[self.state.pos].t == .Whitespace
+    ) {
+      self.state.pos++
+    }
+
+    return self.tokens[self.state.pos++]
+  }
+
+  fn _nextTkIndent (self: ref Self) int {
+    loop self._nextTkIs(.EOL) {}
+
+    mut indent := 0
+    if !self._hasNextTk() { return indent }
+    tk := self.tokens[self.state.pos]
+
+    if tk.t == .Whitespace {
+      tkValLen := tk.val.len
+
+      loop i := 0; i < tkValLen && tk.val[i] == ' '; i++ {
+        indent += 1
+      }
+    }
+
+    return indent
+  }
+
+  fn _nextTkIs (mut self: ref Self, t: YAMLTokenType) bool {
+    if !self._hasNextTk() { return false }
+    pos := self.state.pos
+    tk := self._nextTk()
+
+    if tk.t == t {
+      return true
+    }
+
+    self.state.pos = pos
+    return false
+  }
+
+  fn _tokenize (mut self: ref Self) {
+    textStopChars := [':', '-', '[', ']', '{', '}', ',']
+    contentLen := self.content.len
+
+    loop i := 0; i < contentLen; i++ {
+      ch := self.content[i]
+
+      if ch == ':' {
+        self.tokens.push(YAMLToken{t: .Colon, val: ch.str()})
+      } elif ch == '-' {
+        self.tokens.push(YAMLToken{t: .Minus, val: ch.str()})
+      } elif ch == '[' {
+        self.tokens.push(YAMLToken{t: .LBrack, val: ch.str()})
+      } elif ch == ']' {
+        self.tokens.push(YAMLToken{t: .RBrack, val: ch.str()})
+      } elif ch == '{' {
+        self.tokens.push(YAMLToken{t: .LBrace, val: ch.str()})
+      } elif ch == '}' {
+        self.tokens.push(YAMLToken{t: .RBrace, val: ch.str()})
+      } elif ch == ',' {
+        self.tokens.push(YAMLToken{t: .Comma, val: ch.str()})
+      } elif ch == '#' {
+        loop i + 1 < contentLen && self.content[i + 1] != '\n' {
+          i++
+        }
+      } elif ch == '\r' || ch == '\n' {
+        startIdx := i
+
+        if ch == '\r' && i + 1 < contentLen && self.content[i + 1] == '\n' {
+          i++
+        }
+
+        self.tokens.push(YAMLToken{
+          t: .EOL,
+          val: self.content.slice(startIdx, i + 1)
+        })
+      } elif ch.isWhitespace {
+        startIdx := i
+
+        loop (
+          i + 1 < contentLen &&
+          self.content[i + 1].isWhitespace &&
+          self.content[i + 1] != '\r' &&
+          self.content[i + 1] != '\n'
+        ) {
+          i++
+        }
+
+        self.tokens.push(YAMLToken{
+          t: .Whitespace,
+          val: self.content.slice(startIdx, i + 1)
+        })
+      } else {
+        startIdx := i
+
+        loop i + 1 < contentLen {
+          ch := self.content[i + 1]
+
+          if ch.isWhitespace || textStopChars.contains(ch) {
+            break
+          }
+
+          i++
+        }
+
+        self.tokens.push(YAMLToken{
+          t: .Text,
+          val: self.content.slice(startIdx, i + 1)
+        })
+      }
+    }
+  }
+
+  fn _parse (mut self: ref Self, indent := 0) YAMLNode? {
+    mut node: YAMLNode?
+    tk := self._nextTk()
+
+    if tk.t == .Minus {
+      value := self._stringifyTill(.EOL)
+      n: YAMLNode = YAMLNodeScalar{value: value.trim()}
+      return n
+    }
+
+    if tk.t == .Text {
+      key := tk.val + self._stringifyTill(.Colon)
+      if !self._nextTkIs(.Colon) { continue }
+      value := self._stringifyTill(.EOL)
+      keyNode: YAMLNode = YAMLNodeScalar{value: key.trim()}
+
+      if !value.empty {
+        valueNode: YAMLNode = YAMLNodeScalar{value: value.trim()}
+        n: YAMLNode = YAMLNodeMapping{key: keyNode, value: valueNode}
+        return n
+      }
+
+      nexTkIndent := self._nextTkIndent()
+      mut mappings: YAMLNodeMapping[]
+      mut nodes: YAMLNode[]
+      mut mappingsOnly := true
+
+      if nexTkIndent > indent {
+        loop self._nextTkIndent() >= nexTkIndent {
+          childNode := self._parse(nexTkIndent)
+
+          if childNode != nil {
+            actualChildNode := childNode
+            nodes.push(actualChildNode)
+
+            if actualChildNode is YAMLNodeMapping {
+              mappings.push(actualChildNode)
+            } else {
+              mappingsOnly = false
+            }
+          }
+        }
+      }
+
+      if nodes.empty {
+        n: YAMLNode = YAMLNodeMapping{key: keyNode}
+        return n
+      } elif mappingsOnly {
+        n1: YAMLNode = YAMLNodeMap{mappings: mappings}
+        n2: YAMLNode = YAMLNodeMapping{key: keyNode, value: n1}
+        return n2
+      } else {
+        n1: YAMLNode = YAMLNodeSeq{items: nodes}
+        n2: YAMLNode = YAMLNodeMapping{key: keyNode, value: n1}
+        return n2
+      }
+    }
+
+    return nil
+  }
+
+  fn _stringifyTill (mut self: ref Self, t: YAMLTokenType) str {
+    tokensLen := self.tokens.len
+    mut result := ""
+
+    loop ; self.state.pos < tokensLen; self.state.pos++ {
+      if (
+        self.tokens[self.state.pos].t == t ||
+        self.tokens[self.state.pos].t == .EOL
+      ) {
+        break
+      }
+      tk := self.tokens[self.state.pos]
+      result += tk.val
+    }
+
+    return result
+  }
+}
+
+fn YAML_parse (content: str) YAML {
+  mut result := YAML{content: content}
+  result._tokenize()
+  loop result._hasNextTk() {
+    node := result._parse()
+    if node != nil { result.nodes.push(node) }
+  }
+  result.reset()
+  return result
 }

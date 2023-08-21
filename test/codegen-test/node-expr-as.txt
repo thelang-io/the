@@ -1,0 +1,92 @@
+======= stdin =======
+main {
+  a: i8 = 10;
+  a as i16;
+  a as i32;
+  a as int;
+  a as i64;
+  a as float;
+  a as f32;
+  a as f64;
+
+  b: u8 = 10;
+  b as u16;
+  b as u32;
+  b as u64;
+  b as float;
+  b as f32;
+  b as f64;
+
+  c := 10;
+  c as i32;
+  c as i64;
+  c as float;
+  c as f32;
+  c as f64;
+
+  d: byte = 65;
+  d as i8;
+  d as u8;
+  d as char;
+  d as int;
+  d as float;
+
+  e := 'a';
+  e as i8;
+  e as u8;
+  e as byte;
+  e as int;
+  e as float;
+
+  f := true;
+  f as i8;
+  f as u8;
+  f as int;
+  f as float;
+}
+======= code =======
+#include <stdbool.h>
+#include <stdint.h>
+
+int main () {
+  const int8_t __THE_0_a_0 = 10;
+  (int16_t) __THE_0_a_0;
+  (int32_t) __THE_0_a_0;
+  (int32_t) __THE_0_a_0;
+  (int64_t) __THE_0_a_0;
+  (double) __THE_0_a_0;
+  (float) __THE_0_a_0;
+  (double) __THE_0_a_0;
+  const uint8_t __THE_0_b_0 = 10;
+  (uint16_t) __THE_0_b_0;
+  (uint32_t) __THE_0_b_0;
+  (uint64_t) __THE_0_b_0;
+  (double) __THE_0_b_0;
+  (float) __THE_0_b_0;
+  (double) __THE_0_b_0;
+  const int32_t __THE_0_c_0 = 10;
+  (int32_t) __THE_0_c_0;
+  (int64_t) __THE_0_c_0;
+  (double) __THE_0_c_0;
+  (float) __THE_0_c_0;
+  (double) __THE_0_c_0;
+  const unsigned char __THE_0_d_0 = 65;
+  (int8_t) __THE_0_d_0;
+  (uint8_t) __THE_0_d_0;
+  (char) __THE_0_d_0;
+  (int32_t) __THE_0_d_0;
+  (double) __THE_0_d_0;
+  const char __THE_0_e_0 = 'a';
+  (int8_t) __THE_0_e_0;
+  (uint8_t) __THE_0_e_0;
+  (unsigned char) __THE_0_e_0;
+  (int32_t) __THE_0_e_0;
+  (double) __THE_0_e_0;
+  const bool __THE_0_f_0 = true;
+  (int8_t) __THE_0_f_0;
+  (uint8_t) __THE_0_f_0;
+  (int32_t) __THE_0_f_0;
+  (double) __THE_0_f_0;
+}
+======= flags =======
+======= stdout =======

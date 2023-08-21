@@ -55,6 +55,7 @@ struct TypeCallInfo {
   std::string selfCodeName = "";
   Type *selfType = nullptr;
   bool isSelfMut = false;
+  bool throws = false;
 
   bool empty () const;
   std::string xml (std::size_t = 0, std::set<std::string> = {}) const;
@@ -94,8 +95,10 @@ struct TypeFnParam {
 struct TypeFn {
   Type *returnType;
   std::vector<TypeFnParam> params = {};
-  bool isMethod = false;
-  TypeCallInfo callInfo = {};
+  bool throws;
+  bool isMethod;
+  TypeCallInfo callInfo;
+  bool async;
 };
 
 struct TypeBodyMap {
@@ -129,6 +132,8 @@ struct Type {
   static Type *real (Type *);
   static Type *largest (Type *, Type *);
 
+  bool canBeCast (Type *);
+  std::optional<TypeField> fieldNth (std::size_t) const;
   Type *getEnumerator (const std::string &) const;
   TypeField getField (const std::string &) const;
   Type *getProp (const std::string &) const;

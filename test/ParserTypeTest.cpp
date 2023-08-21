@@ -15,7 +15,7 @@
  */
 
 #include <gtest/gtest.h>
-#include "../src/ParserType.hpp"
+#include "../src/Parser.hpp"
 #include "../src/config.hpp"
 #include "MockParser.hpp"
 

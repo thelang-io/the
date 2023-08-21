@@ -1,0 +1,10 @@
+======= stdin =======
+main {
+  testInt := 10
+  testRef := ref testInt
+  testRef as str
+}
+======= stderr =======
+/test:4:3: E1031 - Type casting is not possible in this case
+  4 |   testRef as str
+    |   ^~~~~~~~~~~~~~

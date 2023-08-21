@@ -69,7 +69,8 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
   "stmt-fn-decl-param-mut",
   "stmt-fn-decl-param-mut-obj",
   "stmt-fn-decl-param-mut-fn",
-  "stmt-fn-decl-variadic"
+  "stmt-fn-decl-variadic",
+  "stmt-fn-decl-async"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
@@ -117,6 +118,14 @@ INSTANTIATE_TEST_SUITE_P(StmtReturn, ParserPassTest, testing::Values(
   "stmt-return-no-arg"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtThrow, ParserPassTest, testing::Values(
+  "stmt-throw"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtTry, ParserPassTest, testing::Values(
+  "stmt-try"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserPassTest, testing::Values(
   "stmt-type-decl"
 ));
@@ -139,11 +148,17 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-access-member",
   "expr-access-associativity",
   "expr-array",
+  "expr-as",
+  "expr-as-precedence",
+  "expr-as-associativity",
   "expr-assign",
   "expr-assign-member",
   "expr-assign-op",
   "expr-assign-precedence",
   "expr-assign-associativity",
+  "expr-await",
+  "expr-await-precedence",
+  "expr-await-associativity",
   "expr-binary",
   "expr-binary-str",
   "expr-binary-nested",
@@ -152,11 +167,15 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-call",
   "expr-call-member",
   "expr-call-precedence",
+  "expr-closure",
+  "expr-closure-precedence",
   "expr-cond",
   "expr-cond-nested",
   "expr-cond-precedence",
   "expr-cond-associativity",
   "expr-is",
+  "expr-is-precedence",
+  "expr-is-associativity",
   "expr-lit",
   "expr-lit-esc",
   "expr-lit-nil",
@@ -178,6 +197,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type",
   "type-array",
   "type-fn",
+  "type-fn-async",
   "type-map",
   "type-optional",
   "type-ref",
@@ -250,6 +270,16 @@ INSTANTIATE_TEST_SUITE_P(StmtObjDecl, ParserThrowTest, testing::Values(
   "throw-E0173-stmt-obj-decl-unexpected-field-short"
 ));
 
+INSTANTIATE_TEST_SUITE_P(StmtThrow, ParserThrowTest, testing::Values(
+  "throw-E0178-stmt-throw-missing-arg"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtTry, ParserThrowTest, testing::Values(
+  "throw-E0174-stmt-try-invalid-handler-param",
+  "throw-E0176-stmt-try-missing-handler",
+  "throw-E0177-stmt-try-mutable-handler-param"
+));
+
 INSTANTIATE_TEST_SUITE_P(StmtTypeDecl, ParserThrowTest, testing::Values(
   "throw-E0160-stmt-type-decl-missing-id",
   "throw-E0161-stmt-type-decl-missing-eq",
@@ -310,7 +340,11 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserThrowTest, testing::Values(
   "throw-E0164-expr-is-missing-type",
   "throw-E0168-expr-map-missing-name",
   "throw-E0169-expr-map-missing-colon",
-  "throw-E0170-expr-map-missing-initializer"
+  "throw-E0170-expr-map-missing-initializer",
+  "throw-E0181-expr-await-missing-arg",
+  "throw-E0182-expr-as-missing-type",
+  "throw-E0183-expr-closure-missing-arrow",
+  "throw-E0184-expr-closure-missing-return-type"
 ));
 
 INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
@@ -320,5 +354,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
   "throw-E0151-type-array-missing-rbrack",
   "throw-E0163-type-union-missing-subtype",
   "throw-E0171-type-map-illegal-key-type",
-  "throw-E0172-type-map-missing-rbrack"
+  "throw-E0172-type-map-missing-rbrack",
+  "throw-E0180-type-fn-async-missing-type",
+  "throw-E0180-type-fn-async-invalid-type"
 ));

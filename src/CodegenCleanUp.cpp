@@ -14,31 +14,40 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include "CodegenCleanUp.hpp"
 #include "Error.hpp"
-#include "config.hpp"
 
-CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p) {
+CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool isAsync) {
   this->type = t;
-  this->parent = p;
-  this->labelIdx = this->parent->labelIdx;
-  this->breakVarIdx = this->parent->breakVarIdx;
+  this->async = isAsync;
+
+  if (p != nullptr) {
+    this->parent = p;
+    this->labelIdx = this->parent->labelIdx;
+    this->breakVarIdx = this->parent->breakVarIdx;
+    this->continueVarIdx = this->parent->continueVarIdx;
+  }
 }
 
-void CodegenCleanUp::add (const std::string &content) {
+void CodegenCleanUp::add (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (this->empty() || this->_data.back().labelUsed) {
-    this->_data.push_back({"L" + std::to_string(this->labelIdx), content});
-    this->labelIdx += 1;
+    if (this->async) {
+      this->_data.push_back({"", {}, false, std::make_shared<std::size_t>(1)});
+    } else {
+      this->_data.push_back({"L" + std::to_string(this->labelIdx)});
+      this->labelIdx += 1;
 
-    auto p = this->parent;
+      auto p = this->parent;
 
-    while (p != nullptr) {
-      p->labelIdx = this->labelIdx;
-      p = p->parent;
+      while (p != nullptr) {
+        p->labelIdx = this->labelIdx;
+        p = p->parent;
+      }
     }
-  } else {
-    this->_data.back().content.insert(0, content + EOL);
   }
+
+  this->_data.back().content.insert(this->_data.back().content.begin(), stmt);
 }
 
 std::string CodegenCleanUp::currentBreakVar () {
@@ -53,12 +62,20 @@ std::string CodegenCleanUp::currentBreakVar () {
   return this->parent->currentBreakVar();
 }
 
+std::string CodegenCleanUp::currentContinueVar () {
+  this->continueVarUsed = true;
+
+  if (this->type == CODEGEN_CLEANUP_LOOP) {
+    return "c" + std::to_string(this->continueVarIdx);
+  } else if (this->parent == nullptr) {
+    throw Error("tried getting continue var on nullptr in CodegenCleanUp");
+  }
+
+  return this->parent->currentContinueVar();
+}
+
 std::string CodegenCleanUp::currentLabel () {
   this->valueVarUsed = true;
-
-  if (this->type == CODEGEN_CLEANUP_FN && this->empty()) {
-    this->add("");
-  }
 
   if (!this->empty()) {
     this->_data.back().labelUsed = true;
@@ -68,6 +85,19 @@ std::string CodegenCleanUp::currentLabel () {
   }
 
   return this->parent->currentLabel();
+}
+
+std::shared_ptr<std::size_t> CodegenCleanUp::currentLabelAsync () {
+  this->valueVarUsed = true;
+
+  if (!this->empty()) {
+    this->_data.back().labelUsed = true;
+    return this->_data.back().asyncCounter;
+  } else if (this->parent == nullptr) {
+    throw Error("tried getting current label async on nullptr in CodegenCleanUp");
+  }
+
+  return this->parent->currentLabelAsync();
 }
 
 std::string CodegenCleanUp::currentReturnVar () {
@@ -95,43 +125,72 @@ std::string CodegenCleanUp::currentValueVar () {
 }
 
 bool CodegenCleanUp::empty () const {
-  return this->_data.empty();
-}
-
-std::string CodegenCleanUp::gen (std::size_t indent) const {
   if (this->_data.empty()) {
-    return "";
+    return true;
   }
 
-  auto result = std::string();
+  return std::all_of(this->_data.begin(), this->_data.end(), [&] (const auto &it) -> bool {
+    return CodegenASTStmt::emptyVector(it.content);
+  });
+}
+
+void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {
+  if (this->_data.empty()) {
+    return;
+  }
 
   for (auto idx = this->_data.size() - 1;; idx--) {
     auto item = this->_data[idx];
 
     if (item.labelUsed) {
-      result += item.label + ":" EOL;
+      (*c)->append(CodegenASTStmtLabel::create(item.label));
     }
 
     if (!item.content.empty()) {
-      auto next = static_cast<std::size_t>(0);
-      auto last = static_cast<std::size_t>(0);
-
-      while ((next = item.content.find(EOL, last)) != std::string::npos) {
-        result += std::string(indent, ' ') + item.content.substr(last, next - last) + EOL;
-        last = next + std::string(EOL).size();
-      }
-
-      result += std::string(indent, ' ') + item.content.substr(last) + EOL;
+      (*c)->merge(item.content);
     }
 
     if (idx == 0) {
       break;
     }
   }
+}
 
-  return result;
+void CodegenCleanUp::genAsync (std::shared_ptr<CodegenASTStmt> *c, std::size_t &counter) const {
+  if (this->_data.empty()) {
+    return;
+  }
+
+  for (auto idx = this->_data.size() - 1;; idx--) {
+    auto item = this->_data[idx];
+
+    if (item.labelUsed) {
+      *c = (*c)->increaseAsyncCounter(counter);
+      *item.asyncCounter = counter;
+    }
+
+    if (!item.content.empty()) {
+      (*c)->merge(item.content);
+    }
+
+    if (idx == 0) {
+      break;
+    }
+  }
 }
 
 bool CodegenCleanUp::hasCleanUp (CodegenCleanUpType t) const {
   return !this->empty() || (this->type != t && this->parent != nullptr && this->parent->hasCleanUp(t));
+}
+
+void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
+  if (stmt->isCompound()) {
+    auto stmtCompound = stmt->asCompound();
+
+    for (auto it = stmtCompound.body.rbegin(); it != stmtCompound.body.rend(); it++) {
+      this->add(*it);
+    }
+  } else {
+    this->add(stmt);
+  }
 }

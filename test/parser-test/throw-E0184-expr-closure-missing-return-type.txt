@@ -1,0 +1,6 @@
+======= stdin =======
+(mut a: int, b: str) -> ;
+======= stderr =======
+/test:1:24: E0184 - Expected return type after closure expression arrow
+  1 | (mut a: int, b: str) -> ;
+    |                        ^

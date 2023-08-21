@@ -1,0 +1,741 @@
+======= stdin =======
+enum TestEnum { One, Two, Three }
+fn testFn (a: int) {}
+
+main {
+  testAny: any
+  testBool := true
+  testByte: byte = 0xA
+  testChar := 'a'
+  testEnum := TestEnum.One
+  testInt := 10
+  testFloat := 3.14
+  testOpt: int? = testInt
+  testRef := ref testInt
+  testUnion: i8 | int = testInt
+
+  a := testAny as int
+  c := testBool as int
+  d := testByte as char
+  e := testChar as byte
+  f := testEnum as int
+  g := testFn as (int) -> void
+  h := testInt as i64
+  i := testFloat as f64
+  j := testOpt as int
+  k := testRef as int
+  l := testUnion as int
+}
+======= stdout =======
+<NodeEnumDecl>
+  <NodeEnumDeclType>
+    <TypeEnum codeName="TestEnum_0" name="TestEnum">
+      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+      <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+    </TypeEnum>
+  </NodeEnumDeclType>
+  <NodeEnumDeclMembers>
+    <NodeEnumDeclMember id="One" />
+    <NodeEnumDeclMember id="Two" />
+    <NodeEnumDeclMember id="Three" />
+  </NodeEnumDeclMembers>
+</NodeEnumDecl>
+<NodeFnDecl>
+  <NodeFnDeclVar>
+    <Var name="testFn" codeName="testFn_0" frame="1">
+      <TypeFn name="fn$1000">
+        <TypeFnParams>
+          <TypeFnParam name="a" required>
+            <BuiltinType name="int" />
+          </TypeFnParam>
+        </TypeFnParams>
+        <TypeFnReturnType>
+          <BuiltinType name="void" />
+        </TypeFnReturnType>
+      </TypeFn>
+    </Var>
+  </NodeFnDeclVar>
+  <FnDeclParams>
+    <FnDeclParam>
+      <FnDeclParamVar>
+        <Var name="a" codeName="a_0" frame="2">
+          <BuiltinType name="int" />
+        </Var>
+      </FnDeclParamVar>
+    </FnDeclParam>
+  </FnDeclParams>
+</NodeFnDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testAny" codeName="testAny_0" frame="2">
+        <BuiltinType name="any" />
+      </Var>
+    </NodeVarDeclVar>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testBool" codeName="testBool_0" frame="2">
+        <BuiltinType name="bool" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="bool" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="BOOL" value="true" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testByte" codeName="testByte_0" frame="2">
+        <BuiltinType name="byte" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="byte" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_HEX" value="0xA" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testChar" codeName="testChar_0" frame="2">
+        <BuiltinType name="char" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="char" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="CHAR" value="'a'" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testEnum" codeName="testEnum_0" frame="2">
+        <TypeEnum codeName="TestEnum_0" name="TestEnum">
+          <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+          <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+          <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+        </TypeEnum>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeEnum codeName="TestEnum_0" name="TestEnum">
+            <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+            <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+            <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+          </TypeEnum>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess prop="One">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeEnum codeName="TestEnum_0" name="TestEnum">
+                  <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                  <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+                </TypeEnum>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="TestEnum" codeName="TestEnum_0" ctxIgnored frame="1">
+                    <TypeEnum codeName="TestEnum_0" name="TestEnum">
+                      <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                      <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+                    </TypeEnum>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testInt" codeName="testInt_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="10" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testFloat" codeName="testFloat_0" frame="2">
+        <BuiltinType name="float" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="float" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="FLOAT" value="3.14" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testOpt" codeName="testOpt_0" frame="2">
+        <TypeOptional name="opt_int">
+          <BuiltinType name="int" />
+        </TypeOptional>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess>
+            <Var name="testInt" codeName="testInt_0" frame="2">
+              <BuiltinType name="int" />
+            </Var>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testRef" codeName="testRef_0" frame="2">
+        <TypeRef name="ref_int">
+          <BuiltinType name="int" />
+        </TypeRef>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeRef name="ref_int">
+            <BuiltinType name="int" />
+          </TypeRef>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprRef>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="int" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="testInt" codeName="testInt_0" frame="2">
+                    <BuiltinType name="int" />
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprRef>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="testUnion" codeName="testUnion_0" frame="2">
+        <TypeUnion name="union_i8USintUE">
+          <BuiltinType name="i8" />
+          <BuiltinType name="int" />
+        </TypeUnion>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess>
+            <Var name="testInt" codeName="testInt_0" frame="2">
+              <BuiltinType name="int" />
+            </Var>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a" codeName="a_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="any" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testAny" codeName="testAny_0" frame="2">
+                      <BuiltinType name="any" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="int" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="c" codeName="c_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="bool" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testBool" codeName="testBool_0" frame="2">
+                      <BuiltinType name="bool" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="int" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="d" codeName="d_0" frame="2">
+        <BuiltinType name="char" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="char" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="byte" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testByte" codeName="testByte_0" frame="2">
+                      <BuiltinType name="byte" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="char" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="e" codeName="e_0" frame="2">
+        <BuiltinType name="byte" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="byte" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="char" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testChar" codeName="testChar_0" frame="2">
+                      <BuiltinType name="char" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="byte" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="f" codeName="f_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeEnum codeName="TestEnum_0" name="TestEnum">
+                    <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+                    <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                    <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+                  </TypeEnum>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testEnum" codeName="testEnum_0" frame="2">
+                      <TypeEnum codeName="TestEnum_0" name="TestEnum">
+                        <TypeEnumerator codeName="TestEnumSDOne_0" name="One" />
+                        <TypeEnumerator codeName="TestEnumSDTwo_0" name="Two" />
+                        <TypeEnumerator codeName="TestEnumSDThree_0" name="Three" />
+                      </TypeEnum>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="int" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="g" codeName="g_0" frame="2">
+        <TypeFn name="fn$1000">
+          <TypeFnParams>
+            <TypeFnParam required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="void" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeFn name="fn$1000">
+            <TypeFnParams>
+              <TypeFnParam required>
+                <BuiltinType name="int" />
+              </TypeFnParam>
+            </TypeFnParams>
+            <TypeFnReturnType>
+              <BuiltinType name="void" />
+            </TypeFnReturnType>
+          </TypeFn>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeFn name="fn$1000">
+                    <TypeFnParams>
+                      <TypeFnParam name="a" required>
+                        <BuiltinType name="int" />
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testFn" codeName="testFn_0" frame="1">
+                      <TypeFn name="fn$1000">
+                        <TypeFnParams>
+                          <TypeFnParam name="a" required>
+                            <BuiltinType name="int" />
+                          </TypeFnParam>
+                        </TypeFnParams>
+                        <TypeFnReturnType>
+                          <BuiltinType name="void" />
+                        </TypeFnReturnType>
+                      </TypeFn>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <TypeFn name="fn$1000">
+                <TypeFnParams>
+                  <TypeFnParam required>
+                    <BuiltinType name="int" />
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="h" codeName="h_0" frame="2">
+        <BuiltinType name="i64" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="i64" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testInt" codeName="testInt_0" frame="2">
+                      <BuiltinType name="int" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="i64" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="i" codeName="i_0" frame="2">
+        <BuiltinType name="f64" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="f64" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="float" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testFloat" codeName="testFloat_0" frame="2">
+                      <BuiltinType name="float" />
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="f64" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="j" codeName="j_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeOptional name="opt_int">
+                    <BuiltinType name="int" />
+                  </TypeOptional>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testOpt" codeName="testOpt_0" frame="2">
+                      <TypeOptional name="opt_int">
+                        <BuiltinType name="int" />
+                      </TypeOptional>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="int" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="k" codeName="k_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeRef name="ref_int">
+                    <BuiltinType name="int" />
+                  </TypeRef>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testRef" codeName="testRef_0" frame="2">
+                      <TypeRef name="ref_int">
+                        <BuiltinType name="int" />
+                      </TypeRef>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="int" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="l" codeName="l_0" frame="2">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAs>
+            <ExprAsExpr>
+              <NodeExpr>
+                <NodeExprType>
+                  <TypeUnion name="union_i8USintUE">
+                    <BuiltinType name="i8" />
+                    <BuiltinType name="int" />
+                  </TypeUnion>
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprAccess>
+                    <Var name="testUnion" codeName="testUnion_0" frame="2">
+                      <TypeUnion name="union_i8USintUE">
+                        <BuiltinType name="i8" />
+                        <BuiltinType name="int" />
+                      </TypeUnion>
+                    </Var>
+                  </ExprAccess>
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprAsExpr>
+            <ExprAsType>
+              <BuiltinType name="int" />
+            </ExprAsType>
+          </ExprAs>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeMain>

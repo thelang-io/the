@@ -1,0 +1,10 @@
+======= stdin =======
+fn testFn () {}
+
+main {
+  testFn as (int) -> void
+}
+======= stderr =======
+/test:4:3: E1031 - Type casting is not possible in this case
+  4 |   testFn as (int) -> void
+    |   ^~~~~~~~~~~~~~~~~~~~~~~

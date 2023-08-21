@@ -25,6 +25,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_ID: return "ID";
     case TK_COMMENT_BLOCK: return "COMMENT_BLOCK";
     case TK_COMMENT_LINE: return "COMMENT_LINE";
+    case TK_KW_AS: return "KW_AS";
     case TK_KW_ASYNC: return "KW_ASYNC";
     case TK_KW_AWAIT: return "KW_AWAIT";
     case TK_KW_BREAK: return "KW_BREAK";
@@ -35,6 +36,7 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_ELSE: return "KW_ELSE";
     case TK_KW_ENUM: return "KW_ENUM";
     case TK_KW_FALSE: return "KW_FALSE";
+    case TK_KW_FINALLY: return "KW_FINALLY";
     case TK_KW_FN: return "KW_FN";
     case TK_KW_FROM: return "KW_FROM";
     case TK_KW_IF: return "KW_IF";
@@ -198,7 +200,7 @@ std::string Token::upperFirst (const std::string &str) {
 
 TokenAssociativity Token::associativity (bool unary) const {
   if (
-    this->type == TK_KW_IS || this->type == TK_KW_REF ||
+    this->type == TK_KW_AS || this->type == TK_KW_AWAIT || this->type == TK_KW_IS || this->type == TK_KW_REF ||
     this->type == TK_OP_LBRACE || this->type == TK_OP_RBRACE ||
     this->type == TK_OP_LPAR || this->type == TK_OP_RPAR ||
     this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS ||
@@ -247,7 +249,7 @@ int Token::precedence (bool isUnary) const {
     return 17;
   } else if (this->type == TK_OP_MINUS_MINUS || this->type == TK_OP_PLUS_PLUS) {
     return 16;
-  } else if (this->type == TK_KW_REF) {
+  } else if (this->type == TK_KW_AWAIT || this->type == TK_KW_REF) {
     return 15;
   } else if (isUnary && (this->type == TK_OP_EXCL || this->type == TK_OP_MINUS || this->type == TK_OP_PLUS || this->type == TK_OP_TILDE)) {
     return 14;
@@ -257,7 +259,7 @@ int Token::precedence (bool isUnary) const {
     return 11;
   } else if (this->type == TK_OP_LSHIFT || this->type == TK_OP_RSHIFT) {
     return 10;
-  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ || this->type == TK_KW_IS) {
+  } else if (this->type == TK_OP_GT || this->type == TK_OP_GT_EQ || this->type == TK_OP_LT || this->type == TK_OP_LT_EQ || this->type == TK_KW_AS || this->type == TK_KW_IS) {
     return 9;
   } else if (this->type == TK_OP_EQ_EQ || this->type == TK_OP_EXCL_EQ) {
     return 8;

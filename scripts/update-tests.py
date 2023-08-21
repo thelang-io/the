@@ -17,6 +17,7 @@
 #
 
 import os
+import re
 import subprocess
 import sys
 
@@ -24,6 +25,7 @@ CORE_PATH = "build\\Debug\\the.exe" if os.name == "nt" else "build/the"
 
 
 def update(directory: str, action: str):
+    codegen_test_path = os.path.join(os.getcwd(), "test", "codegen-test")
     files = os.listdir(directory)
     code_sep = "======= code ======="
     flags_sep = "======= flags ======="
@@ -35,7 +37,7 @@ def update(directory: str, action: str):
         if file.startswith("."):
             continue
 
-        filepath = directory + "/" + file
+        filepath = os.path.join(directory, file)
         is_error_file = file.startswith("throw-")
 
         f = open(filepath, "r")
@@ -67,10 +69,9 @@ def update(directory: str, action: str):
         f = open(filepath, "w")
 
         if action == "codegen":
-            f.write(
-                stdin_sep + os.linesep + stdin + code_sep + os.linesep + stdout[148 + 7 * len(os.linesep):] +
-                trailing_code
-            )
+            result = stdout[148 + 7 * len(os.linesep):]
+            result = re.sub(re.escape(codegen_test_path) + r"[^.]+\.txt", "/test", result)
+            f.write(stdin_sep + os.linesep + stdin + code_sep + os.linesep + result + trailing_code)
         elif is_error_file:
             result = "/test" + stderr[stderr.find(":", 10):]
             f.write(stdin_sep + os.linesep + stdin + stderr_sep + os.linesep + result)
@@ -82,15 +83,15 @@ def update(directory: str, action: str):
 
 def main():
     if sys.argv[1] == "ast":
-        update("test/ast-test", "ast")
+        update(os.path.join("test", "ast-test"), "ast")
     elif sys.argv[1] == "codegen":
-        update("test/codegen-test", "codegen")
+        update(os.path.join("test", "codegen-test"), "codegen")
     elif sys.argv[1] == "parser":
-        update("test/parser-test", "parse")
+        update(os.path.join("test", "parser-test"), "parse")
     else:
-        update("test/parser-test", "parse")
-        update("test/ast-test", "ast")
-        update("test/codegen-test", "codegen")
+        update(os.path.join("test", "parser-test"), "parse")
+        update(os.path.join("test", "ast-test"), "ast")
+        update(os.path.join("test", "codegen-test"), "codegen")
 
 
 if __name__ == "__main__":

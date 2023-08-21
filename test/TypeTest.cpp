@@ -48,10 +48,10 @@ class TypeTest : public testing::Test {
     this->fn_ = this->tm_.createFn({
       TypeFnParam{"a", this->tm_.get("int"), false, true, false},
       TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-    }, this->tm_.get("int"));
+    }, this->tm_.get("int"), false);
 
     this->map_ = this->tm_.createMap(this->tm_.get("str"), this->tm_.get("str"));
-    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
+    auto objMethod = this->tm_.createMethod({}, this->tm_.get("void"), false, TypeCallInfo{"TestSDm_0", false, "", nullptr, false});
 
     this->obj_ = this->tm_.createObj("Test", "Test_0", {
       TypeField{"a", this->tm_.get("int"), false, false},
@@ -63,6 +63,21 @@ class TypeTest : public testing::Test {
     this->union_ = this->tm_.createUnion({this->tm_.get("int"), this->tm_.get("str")});
   }
 };
+
+TEST_F(TypeTest, TypeCallInfoEmpty) {
+  EXPECT_TRUE(TypeCallInfo{}.empty());
+  EXPECT_FALSE(TypeCallInfo{"name"}.empty());
+  auto typeCallInfo2 = TypeCallInfo{"", true};
+  EXPECT_FALSE(typeCallInfo2.empty());
+  auto typeCallInfo3 = TypeCallInfo{"", false, "self_0"};
+  EXPECT_FALSE(typeCallInfo3.empty());
+  auto typeCallInfo4 = TypeCallInfo{"", false, "", this->obj_};
+  EXPECT_FALSE(typeCallInfo4.empty());
+  auto typeCallInfo5 = TypeCallInfo{"", false, "", nullptr, true};
+  EXPECT_FALSE(typeCallInfo5.empty());
+  auto typeCallInfo6 = TypeCallInfo{"", false, "", nullptr, false, true};
+  EXPECT_FALSE(typeCallInfo6.empty());
+}
 
 TEST_F(TypeTest, LargestNumbers) {
   EXPECT_TRUE(Type::largest(this->tm_.get("f64"), this->tm_.get("f64"))->isF64());
@@ -251,6 +266,99 @@ TEST_F(TypeTest, RealOnRef) {
   EXPECT_EQ(Type::real(this->ref_), this->tm_.get("int"));
 }
 
+TEST_F(TypeTest, CanBeCast) {
+  auto fn1 = this->tm_.createFn({
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false},
+    TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
+  }, this->tm_.get("int"), false);
+
+  EXPECT_TRUE(this->alias_->canBeCast(this->tm_.get("i64")));
+  EXPECT_TRUE(this->tm_.get("any")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("bool")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("bool")->canBeCast(this->tm_.get("float")));
+  EXPECT_TRUE(this->tm_.get("byte")->canBeCast(this->tm_.get("char")));
+  EXPECT_TRUE(this->tm_.get("byte")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("byte")->canBeCast(this->tm_.get("float")));
+  EXPECT_TRUE(this->tm_.get("char")->canBeCast(this->tm_.get("byte")));
+  EXPECT_TRUE(this->tm_.get("char")->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.get("char")->canBeCast(this->tm_.get("float")));
+  EXPECT_TRUE(this->enum_->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->fn_->canBeCast(fn1));
+  EXPECT_TRUE(this->tm_.get("int")->canBeCast(this->tm_.get("i64")));
+  EXPECT_TRUE(this->tm_.get("float")->canBeCast(this->tm_.get("f64")));
+  EXPECT_TRUE(this->opt_->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->ref_->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->tm_.createRef(this->tm_.get("str"))->canBeCast(this->tm_.get("int")));
+  EXPECT_TRUE(this->union_->canBeCast(this->tm_.get("int")));
+}
+
+TEST_F(TypeTest, CanNotBeCast) {
+  auto fn1 = this->tm_.createFn({
+    TypeFnParam{"a", this->tm_.get("i64"), false, true, false}
+  }, this->tm_.get("int"), false);
+
+  EXPECT_FALSE(this->alias_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("int")->canBeCast(this->tm_.get("any")));
+  EXPECT_FALSE(this->tm_.get("bool")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("byte")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("char")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->enum_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->fn_->canBeCast(fn1));
+  EXPECT_FALSE(this->tm_.get("int")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->tm_.get("float")->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->opt_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->ref_->canBeCast(this->tm_.get("str")));
+  EXPECT_FALSE(this->union_->canBeCast(this->tm_.get("char")));
+}
+
+TEST_F(TypeTest, FieldNthGetsZero) {
+  auto type1 = this->tm_.createAlias("Test", this->obj_);
+  auto type2 = this->tm_.createRef(this->obj_);
+
+  EXPECT_EQ(this->obj_->fieldNth(0)->name, "a");
+  EXPECT_EQ(type1->fieldNth(0)->name, "a");
+  EXPECT_EQ(type2->fieldNth(0)->name, "a");
+}
+
+TEST_F(TypeTest, FieldNthGetsOne) {
+  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {
+    TypeField{"a", this->tm_.get("int"), false, false},
+    TypeField{"b", this->tm_.get("int"), false, false}
+  });
+
+  auto type2 = this->tm_.createAlias("Test", type1);
+  auto type3 = this->tm_.createRef(type1);
+
+  EXPECT_EQ(type1->fieldNth(1)->name, "b");
+  EXPECT_EQ(type2->fieldNth(1)->name, "b");
+  EXPECT_EQ(type3->fieldNth(1)->name, "b");
+}
+
+TEST_F(TypeTest, FieldNthReturnsNull) {
+  auto type1 = this->tm_.createObj("Test1", this->tm_.name("Test1"), {});
+  auto type2 = this->tm_.createAlias("Test", type1);
+  auto type3 = this->tm_.createRef(type2);
+
+  EXPECT_EQ(type1->fieldNth(0), std::nullopt);
+  EXPECT_EQ(type2->fieldNth(0), std::nullopt);
+  EXPECT_EQ(type3->fieldNth(0), std::nullopt);
+  EXPECT_EQ(this->obj_->fieldNth(1), std::nullopt);
+}
+
+TEST_F(TypeTest, GetsEnumerator) {
+  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
+}
+
+TEST_F(TypeTest, GetsNonExistingEnumerator) {
+  EXPECT_THROW_WITH_MESSAGE({
+    this->any_->getEnumerator("a");
+  }, "tried to get a member of non-enum");
+
+  EXPECT_THROW_WITH_MESSAGE({
+    this->enum_->getEnumerator("White");
+  }, "tried to get non-existing enum member");
+}
+
 TEST_F(TypeTest, GetsField) {
   EXPECT_EQ(this->alias_->getField("str").name, "str");
   EXPECT_EQ(this->any_->getField("str").name, "str");
@@ -268,65 +376,51 @@ TEST_F(TypeTest, GetsField) {
 TEST_F(TypeTest, GetsNonExistingField) {
   EXPECT_THROW_WITH_MESSAGE({
     this->alias_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->any_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->arr_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->enum_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->fn_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->map_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->obj_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->opt_->getField("b");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `b`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->ref_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->union_->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("int")->getField("a");
-  }, "tried to get non-existing field");
+  }, "tried to get non-existing field `a`");
 
   EXPECT_THROW_WITH_MESSAGE({
     this->tm_.get("str")->getField("a");
-  }, "tried to get non-existing field");
-}
-
-TEST_F(TypeTest, GetsEnumerator) {
-  EXPECT_EQ(this->enum_->getEnumerator("Red")->codeName, "TestEnumSDRed_0");
-}
-
-TEST_F(TypeTest, GetsNonExistingEnumerator) {
-  EXPECT_THROW_WITH_MESSAGE({
-    this->any_->getEnumerator("a");
-  }, "tried to get a member of non-enum");
-
-  EXPECT_THROW_WITH_MESSAGE({
-    this->enum_->getEnumerator("White");
-  }, "tried to get non-existing enum member");
+  }, "tried to get non-existing field `a`");
 }
 
 TEST_F(TypeTest, GetsProp) {
@@ -706,27 +800,27 @@ TEST_F(TypeTest, CheckIfNotFloatNumber) {
 }
 
 TEST_F(TypeTest, CheckIfFn) {
-  auto type1 = this->tm_.createFn({}, this->tm_.get("int"));
+  auto type1 = this->tm_.createFn({}, this->tm_.get("int"), false);
 
   auto type2 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("int"));
+  }, this->tm_.get("int"), false);
 
   auto type3 = this->tm_.createFn({
     TypeFnParam{"a", this->tm_.get("str"), false, false, false},
     TypeFnParam{"b", this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"));
+  }, this->tm_.get("str"), false);
 
-  auto type4 = this->tm_.createFn({}, this->tm_.get("void"));
+  auto type4 = this->tm_.createFn({}, this->tm_.get("void"), false);
 
   auto type5 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, true, false}
-  }, this->tm_.get("void"));
+  }, this->tm_.get("void"), false);
 
   auto type6 = this->tm_.createFn({
     TypeFnParam{std::nullopt, this->tm_.get("str"), false, false, false},
     TypeFnParam{std::nullopt, this->tm_.get("int"), false, false, true}
-  }, this->tm_.get("str"));
+  }, this->tm_.get("str"), false);
 
   EXPECT_TRUE(this->fn_->isFn());
   EXPECT_TRUE(type1->isFn());
@@ -1221,6 +1315,7 @@ TEST_F(TypeTest, ShouldBeFreed) {
   EXPECT_TRUE(this->arr_->shouldBeFreed());
   EXPECT_FALSE(this->enum_->shouldBeFreed());
   EXPECT_TRUE(this->fn_->shouldBeFreed());
+  EXPECT_FALSE(this->tm_.get("request_open")->shouldBeFreed());
   EXPECT_TRUE(this->map_->shouldBeFreed());
   EXPECT_TRUE(this->obj_->shouldBeFreed());
   EXPECT_TRUE(this->opt_->shouldBeFreed());

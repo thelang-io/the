@@ -1,0 +1,6 @@
+======= stdin =======
+(mut a: int, b: str) ;
+======= stderr =======
+/test:1:22: E0183 - Expected arrow after closure expression parameters list
+  1 | (mut a: int, b: str) ;
+    |                      ^

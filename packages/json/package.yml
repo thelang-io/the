@@ -1,11 +1,8 @@
 name: the/json
-version: 0.1.1
+version: 0.1.2
 description: JSON parser
 license: MIT
 main: src/json
 
 files:
   - src/json
-
-scripts:
-  test: the build && the run build/result

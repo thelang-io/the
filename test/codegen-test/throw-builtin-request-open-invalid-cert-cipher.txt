@@ -1,0 +1,682 @@
+======= stdin =======
+main {
+  request_open("GET", "https://null.badssl.com")
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <ctype.h>
+#include <openssl/ssl.h>
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#ifdef THE_OS_WINDOWS
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+  #include <windows.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <netdb.h>
+  #include <netinet/in.h>
+  #include <sys/socket.h>
+  #include <unistd.h>
+#endif
+
+#define TYPE_error_Error 1
+
+struct buffer {
+  unsigned char *d;
+  size_t l;
+};
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
+struct request {
+  #ifdef THE_OS_WINDOWS
+    SOCKET fd;
+  #else
+    int fd;
+  #endif
+  SSL_CTX *ctx;
+  SSL *ssl;
+};
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+struct request_Header;
+struct request_Request;
+struct __THE_1_array_request_Header;
+struct url_URL;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+struct request_Header {
+  const struct str __THE_0_name;
+  const struct str __THE_0_value;
+};
+struct request_Request {
+  void *_;
+};
+struct __THE_1_array_request_Header {
+  struct request_Header **d;
+  size_t l;
+};
+struct url_URL {
+  const struct str __THE_0_origin;
+  const struct str __THE_0_protocol;
+  const struct str __THE_0_host;
+  const struct str __THE_0_hostname;
+  const struct str __THE_0_port;
+  const struct str __THE_0_path;
+  const struct str __THE_0_pathname;
+  const struct str __THE_0_search;
+  const struct str __THE_0_hash;
+};
+
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+bool lib_openssl_init = false;
+bool lib_ws2_init = false;
+
+void *alloc (size_t);
+void buffer_free (struct buffer);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_buf_decrease (err_state_t *);
+err_buf_t *error_buf_increase (err_state_t *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
+void error_stack_str (err_state_t *);
+void *re_alloc (void *, size_t);
+void request_close (struct request_Request **);
+struct request_Request *request_open (err_state_t *, int, int, struct str, struct str, unsigned char, struct buffer, unsigned char, struct __THE_1_array_request_Header);
+char *request_stringifyHeaders (struct __THE_1_array_request_Header, struct url_URL *, struct buffer);
+struct str str_alloc (const char *);
+char *str_cstr (const struct str);
+void str_free (struct str);
+struct url_URL *url_parse (err_state_t *, int, int, struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
+void request_Header_free (struct request_Header *);
+void request_Request_free (struct request_Request *);
+void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header);
+struct url_URL *url_URL_alloc (struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str);
+void url_URL_free (struct url_URL *);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void buffer_free (struct buffer o) {
+  free(o.d);
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
+}
+void error_buf_decrease (err_state_t *fn_err_state) {
+  err_buf_t *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  free(buf);
+}
+err_buf_t *error_buf_increase (err_state_t *fn_err_state) {
+  err_buf_t *buf = alloc(sizeof(err_buf_t));
+  buf->next = NULL;
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == NULL) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != NULL) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
+void error_stack_pop (err_state_t *fn_err_state) {
+  err_stack_t *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  free(stack);
+}
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
+}
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  error_stack_pos(fn_err_state, line, col);
+  err_stack_t *stack = alloc(sizeof(err_stack_t));
+  stack->file = file;
+  stack->name = name;
+  stack->next = NULL;
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == NULL) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != NULL) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
+}
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
+  stack->l = message.l;
+  stack->d = re_alloc(stack->d, stack->l);
+  memcpy(stack->d, message.d, stack->l);
+  int i = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    size_t z;
+    char *fmt;
+    if (it->col == 0 && it->line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->d = re_alloc(stack->d, stack->l + z + 1);
+    if (it->col == 0 && it->line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
+    } else {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->l += z;
+    i++;
+  }
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
+}
+void request_close (struct request_Request **r) {
+  struct request *req = (void *) *r;
+  if (req->ssl != NULL) {
+    SSL_CTX_free(req->ctx);
+    SSL_free(req->ssl);
+  } else if (req->fd != 0) {
+    #ifdef THE_OS_WINDOWS
+      closesocket(req->fd);
+    #else
+      close(req->fd);
+    #endif
+  }
+  req->fd = 0;
+  req->ctx = NULL;
+  req->ssl = NULL;
+}
+struct request_Request *request_open (err_state_t *fn_err_state, int line, int col, struct str method, struct str u, unsigned char o1, struct buffer data, unsigned char o2, struct __THE_1_array_request_Header headers) {
+  struct url_URL *url = url_parse(fn_err_state, line, col, u);
+  if (
+    !(url->__THE_0_protocol.l == 5 && memcmp(url->__THE_0_protocol.d, "http:", 5) == 0) &&
+    !(url->__THE_0_protocol.l == 6 && memcmp(url->__THE_0_protocol.d, "https:", 6) == 0)
+  ) {
+    char *protocol = str_cstr(url->__THE_0_protocol);
+    const char *fmt = "can't perform request with protocol `%s`";
+    size_t z = snprintf(NULL, 0, fmt, protocol);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, protocol);
+    free(protocol);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto request_open_cleanup1;
+  } else if (url->__THE_0_port.l >= 6) {
+    char *port = str_cstr(url->__THE_0_port);
+    const char *fmt = "invalid port `%s`";
+    size_t z = snprintf(NULL, 0, fmt, port);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, port);
+    free(port);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto request_open_cleanup1;
+  }
+  char port[6];
+  if (url->__THE_0_port.l != 0) {
+    memcpy(port, url->__THE_0_port.d, url->__THE_0_port.l);
+    port[url->__THE_0_port.l] = '\0';
+    unsigned long p = strtoul(port, NULL, 10);
+    if (p > 65535) {
+      const char *fmt = "invalid port `%s`";
+      size_t z = snprintf(NULL, 0, fmt, port);
+      char *d = alloc(z + 1);
+      sprintf(d, fmt, port);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto request_open_cleanup1;
+    }
+  } else {
+    memcpy(port, url->__THE_0_protocol.l == 6 ? "443" : "80", url->__THE_0_protocol.l == 6 ? 3 : 2);
+    port[url->__THE_0_protocol.l == 6 ? 3 : 2] = '\0';
+  }
+  #ifdef THE_OS_WINDOWS
+    if (!lib_ws2_init) {
+      WSADATA w;
+      if (WSAStartup(MAKEWORD(2, 2), &w) != 0) {
+        error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to initialize use of Windows Sockets DLL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+        goto request_open_cleanup1;
+      }
+      lib_ws2_init = true;
+    }
+  #endif
+  char *hostname = str_cstr(url->__THE_0_hostname);
+  struct addrinfo *addr = NULL;
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_protocol = IPPROTO_TCP;
+  if (getaddrinfo(hostname, port, &hints, &addr) != 0) {
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to resolve hostname address"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto request_open_cleanup2;
+  }
+  unsigned char req_free = 0;
+  struct request *req = alloc(sizeof(struct request));
+  req->fd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+  req->ctx = NULL;
+  req->ssl = NULL;
+  #ifdef THE_OS_WINDOWS
+    bool socket_res = req->fd != INVALID_SOCKET;
+  #else
+    bool socket_res = req->fd != -1;
+  #endif
+  if (!socket_res) {
+    req_free = 1;
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto request_open_cleanup3;
+  }
+  #ifdef THE_OS_WINDOWS
+    bool connect_res = connect(req->fd, addr->ai_addr, (int) addr->ai_addrlen) != SOCKET_ERROR;
+  #else
+    bool connect_res = connect(req->fd, addr->ai_addr, addr->ai_addrlen) != -1;
+  #endif
+  if (!connect_res) {
+    char *origin = str_cstr(url->__THE_0_origin);
+    const char *fmt = "failed to connect to `%s`";
+    size_t z = snprintf(NULL, 0, fmt, origin);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, origin);
+    free(origin);
+    req_free = 1;
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    goto request_open_cleanup4;
+  }
+  if (strcmp(port, "443") == 0) {
+    if (!lib_openssl_init) {
+      SSL_library_init();
+      lib_openssl_init = true;
+    }
+    req->ctx = SSL_CTX_new(TLS_client_method());
+    if (req->ctx == NULL) {
+      req_free = 1;
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create SSL context"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto request_open_cleanup4;
+    }
+    req->ssl = SSL_new(req->ctx);
+    SSL_set_fd(req->ssl, (int) req->fd);
+    SSL_set_tlsext_host_name(req->ssl, hostname);
+    if (SSL_connect(req->ssl) != 1) {
+      req_free = 1;
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to connect to socket with SSL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto request_open_cleanup5;
+    }
+  }
+  char *req_headers = request_stringifyHeaders(headers, url, data);
+  char *req_method = str_cstr(method);
+  char *req_path = str_cstr(url->__THE_0_path);
+  char *fmt = "%s %s HTTP/1.1\r\n%s\r\n";
+  size_t req_len = snprintf(NULL, 0, fmt, req_method, req_path, req_headers);
+  char *request = alloc(req_len + (data.l == 0 ? 0 : data.l + 2) + 1);
+  sprintf(request, fmt, req_method, req_path, req_headers);
+  if (data.l != 0) {
+    memcpy(&request[req_len], data.d, data.l);
+    req_len += data.l;
+    memcpy(&request[req_len], "\r\n", 3);
+    req_len += 2;
+  }
+  size_t y = 0;
+  while (y < req_len) {
+    int z = req->ssl == NULL ? (int) send(req->fd, &request[y], req_len - y, 0) : SSL_write(req->ssl, &request[y], (int) (req_len - y));
+    if (z < 0) {
+      req_free = 1;
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to write to socket"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      goto request_open_cleanup6;
+    }
+    y += (size_t) z;
+  }
+request_open_cleanup6:
+  free(request);
+  free(req_path);
+  free(req_method);
+  free(req_headers);
+request_open_cleanup5:
+  if (req_free == 1 && req->ssl != NULL) {
+    SSL_free(req->ssl);
+    SSL_CTX_free(req->ctx);
+    goto request_open_cleanup3;
+  }
+request_open_cleanup4:
+  #ifdef THE_OS_WINDOWS
+    if (req_free == 1) closesocket(req->fd);
+  #else
+    if (req_free == 1) close(req->fd);
+  #endif
+request_open_cleanup3:
+  if (req_free == 1) free(req);
+  freeaddrinfo(addr);
+request_open_cleanup2:
+  free(hostname);
+request_open_cleanup1:
+  url_URL_free(url);
+  __THE_1_array_request_Header_free(headers);
+  buffer_free(data);
+  str_free(method);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+  return (struct request_Request *) req;
+}
+char *request_stringifyHeaders (struct __THE_1_array_request_Header headers, struct url_URL *url, struct buffer data) {
+  bool has_content_length = false;
+  bool has_host = false;
+  char *d = NULL;
+  size_t l = 0;
+  for (size_t i = 0; i < headers.l; i++) {
+    struct request_Header *h = headers.d[i];
+    char *name = str_cstr(h->__THE_0_name);
+    for (size_t j = 0; j < h->__THE_0_name.l; j++) name[j] = (char) tolower(name[j]);
+    if (strcmp(name, "content-length") == 0) has_content_length = true;
+    else if (strcmp(name, "host") == 0) has_host = true;
+    free(name);
+    d = re_alloc(d, l + h->__THE_0_name.l + 2 + h->__THE_0_value.l + 3);
+    memcpy(&d[l], h->__THE_0_name.d, h->__THE_0_name.l);
+    memcpy(&d[l + h->__THE_0_name.l], ": ", 2);
+    memcpy(&d[l + h->__THE_0_name.l + 2], h->__THE_0_value.d, h->__THE_0_value.l);
+    memcpy(&d[l + h->__THE_0_name.l + 2 + h->__THE_0_value.l], "\r\n", 3);
+    l += h->__THE_0_name.l + 2 + h->__THE_0_value.l + 2;
+  }
+  if (!has_host) {
+    char *h = str_cstr(url->__THE_0_hostname);
+    size_t z = snprintf(NULL, 0, "Host: %s\r\n", h);
+    d = re_alloc(d, l + z + 1);
+    sprintf(&d[l], "Host: %s\r\n", h);
+    l += z;
+    free(h);
+  }
+  if (!has_content_length) {
+    size_t z = snprintf(NULL, 0, "Content-Length: %zu\r\n", data.l);
+    d = re_alloc(d, l + z + 1);
+    sprintf(&d[l], "Content-Length: %zu\r\n", data.l);
+    l += z;
+  }
+  return d;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+char *str_cstr (const struct str s) {
+  char *d = alloc(s.l + 1);
+  memcpy(d, s.d, s.l);
+  d[s.l] = '\0';
+  return d;
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+struct url_URL *url_parse (err_state_t *fn_err_state, int line, int col, struct str s) {
+  if (s.l == 0) {
+    str_free(s);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  size_t i = 0;
+  for (;; i++) {
+    char ch = s.d[i];
+    if (ch == ':' && i != 0) {
+      i++;
+      break;
+    } else if (!isalnum(ch) && ch != '.' && ch != '-' && ch != '+') {
+      str_free(s);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL protocol"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+    } else if (i == s.l - 1) {
+      str_free(s);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+    }
+  }
+  struct str protocol;
+  protocol.l = i;
+  protocol.d = alloc(protocol.l);
+  memcpy(protocol.d, s.d, protocol.l);
+  while (i < s.l && s.d[i] == '/') i++;
+  if (i == s.l) {
+    str_free(s);
+    return url_URL_alloc(str_alloc(""), protocol, str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""), str_alloc(""));
+  }
+  size_t protocol_end = i;
+  if ((protocol_end - protocol.l) < 2) {
+    i = protocol.l;
+    protocol_end = i;
+  }
+  size_t hostname_start = protocol.l == protocol_end ? 0 : i;
+  size_t port_start = 0;
+  size_t pathname_start = protocol.l == protocol_end ? i : 0;
+  size_t search_start = 0;
+  size_t hash_start = 0;
+  for (;; i++) {
+    char ch = s.d[i];
+    if (ch == '@' && hostname_start != 0 && pathname_start == 0) {
+      str_free(protocol);
+      str_free(s);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL auth is not supported"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+    } else if (ch == ':' && port_start != 0 && (pathname_start == 0 || search_start == 0 || hash_start == 0)) {
+      str_free(protocol);
+      str_free(s);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL port"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+    }
+    if (ch == ':' && hostname_start != 0 && pathname_start == 0) port_start = i;
+    else if (ch == '/' && pathname_start == 0) pathname_start = i;
+    else if (ch == '?' && search_start == 0) search_start = i;
+    else if (ch == '#' && hash_start == 0) hash_start = i;
+    if (i == s.l - 1) break;
+  }
+  struct str hostname = str_alloc("");
+  size_t hostname_end = port_start != 0 ? port_start : pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
+  if (hostname_start != 0 && hostname_start == hostname_end) {
+    str_free(hostname);
+    str_free(protocol);
+    str_free(s);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("invalid URL hostname"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (hostname_start != 0 && hostname_start != hostname_end) {
+    hostname.l = hostname_end - hostname_start;
+    hostname.d = re_alloc(hostname.d, hostname.l);
+    memcpy(hostname.d, &s.d[hostname_start], hostname.l);
+  }
+  struct str port = str_alloc("");
+  size_t port_end = pathname_start != 0 ? pathname_start : search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
+  if (port_start != 0 && port_start + 1 != port_end) {
+    port.l = port_end - port_start - 1;
+    port.d = re_alloc(port.d, port.l);
+    memcpy(port.d, &s.d[port_start + 1], port.l);
+  }
+  struct str host = str_alloc("");
+  if (hostname.l != 0) {
+    host.l = hostname.l + (port.l == 0 ? 0 : port.l + 1);
+    host.d = re_alloc(host.d, host.l);
+    memcpy(host.d, hostname.d, hostname.l);
+    if (port.l != 0) {
+      memcpy(&host.d[hostname.l], ":", 1);
+      memcpy(&host.d[hostname.l + 1], port.d, port.l);
+    }
+  }
+  struct str origin = str_alloc("");
+  if (memcmp(protocol.d, "ftp:", 4) == 0 || memcmp(protocol.d, "http:", 5) == 0 || memcmp(protocol.d, "https:", 6) == 0 || memcmp(protocol.d, "ws:", 3) == 0 || memcmp(protocol.d, "wss:", 4) == 0) {
+    if (host.l == 0) {
+      str_free(origin);
+      str_free(host);
+      str_free(port);
+      str_free(hostname);
+      str_free(protocol);
+      str_free(s);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("URL origin is not present"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+    }
+    origin.l = protocol.l + 2 + host.l;
+    origin.d = re_alloc(origin.d, origin.l);
+    memcpy(origin.d, protocol.d, protocol.l);
+    memcpy(&origin.d[protocol.l], "//", 2);
+    memcpy(&origin.d[protocol.l + 2], host.d, host.l);
+  }
+  struct str pathname = str_alloc("");
+  size_t pathname_end = search_start != 0 ? search_start : hash_start != 0 ? hash_start : s.l;
+  if (pathname_start != 0 && pathname_start != pathname_end) {
+    pathname.l = pathname_end - pathname_start;
+    pathname.d = re_alloc(pathname.d, pathname.l);
+    memcpy(pathname.d, &s.d[pathname_start], pathname.l);
+  } else if (memcmp(protocol.d, "ftp:", 4) == 0 || memcmp(protocol.d, "http:", 5) == 0 || memcmp(protocol.d, "https:", 6) == 0 || memcmp(protocol.d, "ws:", 3) == 0 || memcmp(protocol.d, "wss:", 4) == 0) {
+    pathname.l = 1;
+    pathname.d = re_alloc(pathname.d, pathname.l);
+    memcpy(pathname.d, "/", pathname.l);
+  }
+  struct str search = str_alloc("");
+  size_t search_end = hash_start != 0 ? hash_start : s.l;
+  if (search_start != 0 && search_start != search_end) {
+    search.l = search_end - search_start;
+    search.d = re_alloc(search.d, search.l);
+    memcpy(search.d, &s.d[search_start], search.l);
+  }
+  struct str path = str_alloc("");
+  if (pathname.l != 0 || search.l != 0) {
+    path.l = pathname.l + search.l;
+    path.d = re_alloc(path.d, path.l);
+    if (pathname.l != 0) {
+      memcpy(path.d, pathname.d, pathname.l);
+      if (search.l != 0) memcpy(&path.d[pathname.l], search.d, search.l);
+    } else if (search.l != 0) {
+      memcpy(path.d, search.d, search.l);
+    }
+  }
+  struct str hash = str_alloc("");
+  if (hash_start != 0) {
+    hash.l = s.l - hash_start;
+    hash.d = re_alloc(hash.d, hash.l);
+    memcpy(hash.d, &s.d[hash_start], hash.l);
+  }
+  str_free(s);
+  return url_URL_alloc(origin, protocol, host, hostname, port, path, pathname, search, hash);
+}
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
+void request_Header_free (struct request_Header *n) {
+  str_free((struct str) n->__THE_0_name);
+  str_free((struct str) n->__THE_0_value);
+  free(n);
+}
+void request_Request_free (struct request_Request *n) {
+  request_close(&n);
+  free(n);
+}
+void __THE_1_array_request_Header_free (struct __THE_1_array_request_Header n) {
+  for (size_t i = 0; i < n.l; i++) request_Header_free((struct request_Header *) n.d[i]);
+  free(n.d);
+}
+struct url_URL *url_URL_alloc (struct str __THE_0_origin, struct str __THE_0_protocol, struct str __THE_0_host, struct str __THE_0_hostname, struct str __THE_0_port, struct str __THE_0_path, struct str __THE_0_pathname, struct str __THE_0_search, struct str __THE_0_hash) {
+  struct url_URL *r = alloc(sizeof(struct url_URL));
+  struct url_URL s = {__THE_0_origin, __THE_0_protocol, __THE_0_host, __THE_0_hostname, __THE_0_port, __THE_0_path, __THE_0_pathname, __THE_0_search, __THE_0_hash};
+  memcpy(r, &s, sizeof(struct url_URL));
+  return r;
+}
+void url_URL_free (struct url_URL *n) {
+  str_free((struct str) n->__THE_0_origin);
+  str_free((struct str) n->__THE_0_protocol);
+  str_free((struct str) n->__THE_0_host);
+  str_free((struct str) n->__THE_0_hostname);
+  str_free((struct str) n->__THE_0_port);
+  str_free((struct str) n->__THE_0_path);
+  str_free((struct str) n->__THE_0_pathname);
+  str_free((struct str) n->__THE_0_search);
+  str_free((struct str) n->__THE_0_hash);
+  free(n);
+}
+
+int main () {
+  error_stack_push(&err_state, "/test", "main", 0, 0);
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L1;
+  request_Request_free((struct request_Request *) request_open(&err_state, 2, 3, str_alloc("GET"), str_alloc("https://null.badssl.com"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {}));
+L1:
+  error_buf_decrease(&err_state);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
+}
+======= flags =======
+A:-lssl A:-lcrypto W:-lws2_32 W:-lgdi32 W:-ladvapi32 W:-lcrypt32 W:-luser32
+======= stderr =======
+Uncaught Error: failed to connect to socket with SSL
+  at main (/test:2:3)

@@ -48,10 +48,33 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
@@ -83,7 +106,10 @@ struct __THE_1_mainSDtestCtx_0X {
   const struct __THE_1_fn$1000 *__THE_0_testCall_0;
 };
 
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
 void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
 struct str float_str (double);
 struct str str_alloc (const char *);
 void str_free (struct str);
@@ -94,13 +120,23 @@ void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
 void __THE_1_mainSDtestCtx_0 (void *);
 void __THE_1_mainSDtestCtx_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSDtestCtx_0X);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
 }
 struct str float_str (double f) {
   char buf[512];
@@ -140,9 +176,9 @@ void __THE_1_mainSDtestCtx_0 (void *px) {
   const struct __THE_1_fn$1000 *__THE_0_testCall_0 = x->__THE_0_testCall_0;
   const struct str __THE_0_v101_0 = float_str(*__THE_0_test_0);
   const struct str __THE_0_v102_0 = float_str((*__THE_0_test1_0)->__THE_0_f);
-  const struct str __THE_0_v103_0 = float_str(*__THE_0_test2_0 = 3.14);
+  const struct str __THE_0_v103_0 = float_str((*__THE_0_test2_0 = 3.14));
   const struct str __THE_0_v104_0 = float_str((*__THE_0_testCall_0).f((*__THE_0_testCall_0).x));
-  const struct str __THE_0_v105_0 = float_str(*__THE_0_test_0);
+  const struct str __THE_0_v105_0 = float_str((*__THE_0_test_0));
   const struct str __THE_0_v106_0 = float_str(**__THE_0_refTest_0);
   str_free((struct str) __THE_0_v106_0);
   str_free((struct str) __THE_0_v105_0);
@@ -168,14 +204,14 @@ int main () {
   double __THE_0_test2_0 = 4.56;
   const struct str __THE_0_v01_0 = float_str(__THE_0_test_0);
   const struct str __THE_0_v02_0 = float_str(__THE_0_test1_0->__THE_0_f);
-  const struct str __THE_0_v03_0 = float_str(__THE_0_test2_0 = 5.67);
-  const struct str __THE_0_v04_0 = float_str(6.78 + 7.89);
+  const struct str __THE_0_v03_0 = float_str((__THE_0_test2_0 = 5.67));
+  const struct str __THE_0_v04_0 = float_str((6.78 + 7.89));
   const struct str __THE_0_v05_0 = float_str(__THE_0_testCall_0.f(__THE_0_testCall_0.x));
-  const struct str __THE_0_v06_0 = float_str(1 > 2 ? 8.90 : 9.01);
-  const struct str __THE_0_v07_0 = float_str(3.14);
-  const struct str __THE_0_v08_0 = float_str(__THE_0_test_0);
+  const struct str __THE_0_v06_0 = float_str((1 > 2 ? 8.90 : 9.01));
+  const struct str __THE_0_v07_0 = float_str((3.14));
+  const struct str __THE_0_v08_0 = float_str((__THE_0_test_0));
   const struct str __THE_0_v09_0 = float_str(*__THE_0_refTest_0);
-  const struct str __THE_0_v10_0 = float_str(-3.14);
+  const struct str __THE_0_v10_0 = float_str((-3.14));
   const struct __THE_1_fn$1001 __THE_0_mainSDtestCtx_0;
   __THE_1_mainSDtestCtx_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSDtestCtx_0, (struct __THE_1_mainSDtestCtx_0X) {&__THE_0_test2_0, &__THE_0_test1_0, &__THE_0_refTest_0, &__THE_0_test_0, &__THE_0_testCall_0});
   __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSDtestCtx_0);

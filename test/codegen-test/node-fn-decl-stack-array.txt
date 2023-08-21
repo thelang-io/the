@@ -23,11 +23,35 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
 
 struct __THE_1_array_int;
 struct __THE_1_fn$1003;
@@ -39,7 +63,7 @@ struct __THE_1_array_int {
   size_t l;
 };
 struct __THE_1_fn$1003 {
-  void (*f) (void *, struct __THE_1_fn$1003P);
+  void (*f) (void *, void *);
   void *x;
   size_t l;
 };
@@ -50,21 +74,41 @@ struct __THE_1_mainSDtest_0X {
   struct __THE_1_array_int *__THE_0_a_0;
 };
 
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
 void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
+void *xalloc (void *, size_t);
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
 void __THE_1_fn$1003_free (struct __THE_1_fn$1003);
-void __THE_1_mainSDtest_0 (void *, struct __THE_1_fn$1003P);
+void __THE_1_mainSDtest_0 (void *, void *);
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1003 *, struct __THE_1_mainSDtest_0X);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
   }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
   return r;
 }
 struct __THE_1_array_int __THE_1_array_int_alloc (size_t x, ...) {
@@ -92,12 +136,14 @@ struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1,
 void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest_0 (void *px, struct __THE_1_fn$1003P p) {
+void __THE_1_mainSDtest_0 (void *px, void *pp) {
+  struct __THE_1_fn$1003P *p = pp;
   struct __THE_1_mainSDtest_0X *x = px;
   struct __THE_1_array_int *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_array_int __THE_0_newA_0 = p.n0;
+  const struct __THE_1_array_int __THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = __THE_1_array_int_realloc(*__THE_0_a_0, __THE_1_array_int_copy(__THE_0_newA_0));
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_newA_0);
+  free(pp);
 }
 void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_mainSDtest_0X x) {
   size_t l = sizeof(struct __THE_1_mainSDtest_0X);
@@ -112,7 +158,7 @@ int main () {
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
   const struct __THE_1_fn$1003 __THE_0_mainSDtest_0;
   __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, (struct __THE_1_fn$1003P) {__THE_1_array_int_alloc(3, 4, 5, 6)});
+  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn$1003P) {__THE_1_array_int_alloc(3, 4, 5, 6)}, sizeof(struct __THE_1_fn$1003P)));
   __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_mainSDtest_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
 }

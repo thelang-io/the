@@ -1,0 +1,148 @@
+======= stdin =======
+main {
+  async () -> void {}
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <stdbool.h>
+#include <stdlib.h>
+#ifdef THE_OS_WINDOWS
+  #include <windows.h>
+#endif
+#ifndef THE_OS_WINDOWS
+  #include <pthread.h>
+#endif
+
+struct threadpool_cond;
+struct threadpool_mutex;
+struct threadpool;
+struct threadpool_job;
+struct threadpool_thread;
+
+typedef struct threadpool_cond {
+  #ifdef THE_OS_WINDOWS
+    CONDITION_VARIABLE v;
+  #else
+    pthread_cond_t v;
+  #endif
+} threadpool_cond_t;
+typedef struct threadpool_mutex {
+  #ifdef THE_OS_WINDOWS
+    CRITICAL_SECTION v;
+  #else
+    pthread_mutex_t v;
+  #endif
+} threadpool_mutex_t;
+typedef struct threadpool {
+  bool active;
+  struct threadpool_cond cond1;
+  struct threadpool_cond cond2;
+  struct threadpool_job *jobs;
+  struct threadpool_job *jobs_tail;
+  struct threadpool_mutex lock1;
+  struct threadpool_mutex lock2;
+  struct threadpool_mutex lock3;
+  struct threadpool_thread *threads;
+  int working_threads;
+  int alive_threads;
+} threadpool_t;
+typedef void (*threadpool_func_t) (struct threadpool *, struct threadpool_job *, void *, void *, void *, int);
+typedef struct threadpool_job {
+  struct threadpool_job *parent;
+  threadpool_func_t func;
+  void *ctx;
+  void *params;
+  void *ret;
+  int step;
+  unsigned char init;
+  struct threadpool_job *next;
+} threadpool_job_t;
+typedef struct threadpool_thread {
+  #ifdef THE_OS_WINDOWS
+    HANDLE id;
+  #else
+    pthread_t id;
+  #endif
+  struct threadpool *tp;
+  struct threadpool_thread *next;
+} threadpool_thread_t;
+
+struct __THE_1_fn$1000;
+
+struct __THE_1_fn$1000 {
+  void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+  void *x;
+  size_t l;
+};
+
+void threadpool_cond_signal (threadpool_cond_t *);
+void threadpool_insert (threadpool_t *, threadpool_job_t *);
+void threadpool_job_deinit (threadpool_job_t *);
+void threadpool_mutex_lock (threadpool_mutex_t *);
+void threadpool_mutex_unlock (threadpool_mutex_t *);
+void __THE_1_mainSD$_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+
+void threadpool_cond_signal (threadpool_cond_t *self) {
+  #ifdef THE_OS_WINDOWS
+    WakeConditionVariable(&self->v);
+  #else
+    pthread_cond_signal(&self->v);
+  #endif
+}
+void threadpool_insert (threadpool_t *self, threadpool_job_t *job) {
+  threadpool_mutex_lock(&self->lock2);
+  if (self->jobs == NULL) {
+    self->jobs = job;
+    self->jobs_tail = job;
+  } else {
+    self->jobs_tail->next = job;
+    self->jobs_tail = self->jobs_tail->next;
+  }
+  threadpool_mutex_lock(&self->lock3);
+  threadpool_cond_signal(&self->cond2);
+  threadpool_mutex_unlock(&self->lock3);
+  threadpool_mutex_unlock(&self->lock2);
+}
+void threadpool_job_deinit (threadpool_job_t *self) {
+  if (self->ctx != NULL) free(self->ctx);
+  free(self);
+}
+void threadpool_mutex_lock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    EnterCriticalSection(&self->v);
+  #else
+    pthread_mutex_lock(&self->v);
+  #endif
+}
+void threadpool_mutex_unlock (threadpool_mutex_t *self) {
+  #ifdef THE_OS_WINDOWS
+    LeaveCriticalSection(&self->v);
+  #else
+    pthread_mutex_unlock(&self->v);
+  #endif
+}
+void __THE_1_mainSD$_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  if (job->parent != NULL) threadpool_insert(tp, job->parent);
+  threadpool_job_deinit(job);
+}
+
+int main () {
+  const struct __THE_1_fn$1000 __THE_0_mainSD$_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSD$_0, NULL, 0};
+  __THE_0_mainSD$_0;
+}
+======= flags =======
+U:-pthread
+======= stdout =======

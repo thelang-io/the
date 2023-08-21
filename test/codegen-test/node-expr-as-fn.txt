@@ -1,0 +1,36 @@
+======= stdin =======
+fn test (a: int) {}
+
+main {
+  test as (int) -> void;
+}
+======= code =======
+#include <stdint.h>
+#include <stdlib.h>
+
+struct __THE_1_fn$1000;
+struct __THE_1_fn$1000P;
+
+struct __THE_1_fn$1000 {
+  void (*f) (void *, void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn$1000P {
+  int32_t n0;
+};
+
+void __THE_1_test_0 (void *, void *);
+
+void __THE_1_test_0 (void *px, void *pp) {
+  struct __THE_1_fn$1000P *p = pp;
+  const int32_t __THE_0_a_0 = p->n0;
+  free(pp);
+}
+
+int main () {
+  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
+  (struct __THE_1_fn$1000) __THE_0_test_0;
+}
+======= flags =======
+======= stdout =======

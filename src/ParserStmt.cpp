@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "ParserStmt.hpp"
+#include "Parser.hpp"
 #include <sstream>
 #include "ParserComment.hpp"
 #include "utils.hpp"
@@ -40,7 +40,7 @@ std::string normalizeNote (const std::string &note) {
   return result;
 }
 
-bool paramIsSelf (const std::string &prefix, const ParserStmtFnDeclParam &param) {
+bool paramIsSelf (const std::string &prefix, const ParserFnParam &param) {
   if (prefix.empty() || param.type == std::nullopt) {
     return false;
   }
@@ -51,7 +51,7 @@ bool paramIsSelf (const std::string &prefix, const ParserStmtFnDeclParam &param)
 
 std::string fnDeclDocParams (
   const std::string &prefix,
-  const std::vector<ParserStmtFnDeclParam> &params,
+  const std::vector<ParserFnParam> &params,
   const std::string &trailing,
   const std::string &separator
 ) {
@@ -77,6 +77,21 @@ std::string fnDeclDocParams (
   }
 
   return code;
+}
+
+std::string ParserCatchClause::xml (std::size_t indent) const {
+  auto result = std::string();
+
+  result += std::string(indent, ' ') + "<CatchClause>" EOL;
+  result += std::string(indent + 2, ' ') + "<CatchClauseParam>" EOL;
+  result += this->param.xml(indent + 4) + EOL;
+  result += std::string(indent + 2, ' ') + "</CatchClauseParam>" EOL;
+  result += std::string(indent + 2, ' ') + "<CatchClauseBody>" EOL;
+  result += blockToXml(this->body, indent + 4);
+  result += std::string(indent + 2, ' ') + "</CatchClauseBody>" EOL;
+  result += std::string(indent, ' ') + "</CatchClause>";
+
+  return result;
 }
 
 std::string ParserStmt::doc (const std::string &prefix) const {
@@ -113,10 +128,12 @@ std::string ParserStmt::doc (const std::string &prefix) const {
     }
 
     auto returnTypeCode = stmtFnDecl.returnType->stringify();
-    auto actualFnCode = "fn " + fullName + " (" + fnDeclDocParams(prefix, stmtFnDecl.params, "", ", ") + ") " + returnTypeCode;
+    auto actualFnCode = std::string(stmtFnDecl.async ? "async " : "");
+    actualFnCode += "fn " + fullName + " (" + fnDeclDocParams(prefix, stmtFnDecl.params, "", ", ") + ") " + returnTypeCode;
 
     if (actualFnCode.size() > 80) {
-      actualFnCode = "fn " + fullName + " (" EOL + fnDeclDocParams(prefix, stmtFnDecl.params, "  ", "," EOL) + EOL ") " + returnTypeCode;
+      actualFnCode = std::string(stmtFnDecl.async ? "async " : "");
+      actualFnCode += "fn " + fullName + " (" EOL + fnDeclDocParams(prefix, stmtFnDecl.params, "  ", "," EOL) + EOL ") " + returnTypeCode;
     }
 
     result += "## `" + fullName + "()`" EOL;
@@ -363,6 +380,7 @@ std::string ParserStmt::xml (std::size_t indent) const {
   } else if (std::holds_alternative<ParserStmtFnDecl>(*this->body)) {
     auto stmtFnDecl = std::get<ParserStmtFnDecl>(*this->body);
 
+    attrs += stmtFnDecl.async ? " async" : "";
     result += std::string(indent, ' ') + "<StmtFnDecl" + attrs + ">" EOL;
     result += std::string(indent + 2, ' ') + "<StmtFnDeclId>" EOL;
     result += stmtFnDecl.id.xml(indent + 4) + EOL;
@@ -513,6 +531,31 @@ std::string ParserStmt::xml (std::size_t indent) const {
       result += stmtReturn.body->xml(indent + 2) + EOL;
       result += std::string(indent, ' ') + "</StmtReturn>";
     }
+  } else if (std::holds_alternative<ParserStmtThrow>(*this->body)) {
+    auto stmtThrow = std::get<ParserStmtThrow>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtThrow" + attrs + ">" EOL;
+    result += stmtThrow.arg.xml(indent + 2) + EOL;
+    result += std::string(indent, ' ') + "</StmtThrow>";
+  } else if (std::holds_alternative<ParserStmtTry>(*this->body)) {
+    auto stmtTry = std::get<ParserStmtTry>(*this->body);
+
+    result += std::string(indent, ' ') + "<StmtTry" + attrs + ">" EOL;
+
+    if (!stmtTry.body.empty()) {
+      result += std::string(indent + 2, ' ') + "<StmtTryBody>" EOL;
+      result += blockToXml(stmtTry.body, indent + 4);
+      result += std::string(indent + 2, ' ') + "</StmtTryBody>" EOL;
+    }
+
+    result += std::string(indent + 2, ' ') + "<StmtTryHandlers>" EOL;
+
+    for (const auto &handler : stmtTry.handlers) {
+      result += handler.xml(indent + 4) + EOL;
+    }
+
+    result += std::string(indent + 2, ' ') + "</StmtTryHandlers>" EOL;
+    result += std::string(indent, ' ') + "</StmtTry>";
   } else if (std::holds_alternative<ParserStmtTypeDecl>(*this->body)) {
     auto stmtTypeDecl = std::get<ParserStmtTypeDecl>(*this->body);
 

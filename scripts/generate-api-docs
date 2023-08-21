@@ -1,0 +1,74 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+const ARGS := process_args
+const SCRIPT_DIR := path_dirname(fs_isAbsoluteSync(ARGS[0]) ? ARGS[0] : process_cwd() + path_SEP + ARGS[0])
+const ROOT_DIR := fs_realpathSync(SCRIPT_DIR + path_SEP + "..")
+const API_PATH := ROOT_DIR + path_SEP + "src" + path_SEP + "api"
+
+fn removeDirectorySync (path: str) {
+  entries := fs_scandirSync(path)
+
+  loop i := 0; i < entries.len; i++ {
+    entryPath := path + path_SEP + entries[i]
+
+    if fs_isDirectorySync(entryPath) {
+      removeDirectorySync(entryPath)
+    } else {
+      fs_rmSync(entryPath)
+    }
+  }
+
+  fs_rmdirSync(path)
+}
+
+main {
+  docDir := ROOT_DIR + path_SEP + "build" + path_SEP + "doc"
+
+  if fs_existsSync(docDir) {
+    removeDirectorySync(docDir)
+  }
+
+  fs_mkdirSync(docDir)
+  entries := fs_scandirSync(API_PATH)
+  entriesLen := entries.len
+
+  loop i := 0; i < entriesLen; i++ {
+    entry := API_PATH + path_SEP + entries[i]
+    name := path_basename(entry)
+    cmd := "\"" + ROOT_DIR + path_SEP + "build" + path_SEP + "the\" doc \"" + entry + "\""
+    mut result := process_runSync(cmd).str().trim()
+
+    if name == "arr" {
+      result = result.slice(52)
+    } elif name == "map" {
+      result = result.slice(80)
+    }
+
+    entryLines := fs_readFileSync(entry).str().lines()
+    titleRaw := entryLines[0]
+    title := titleRaw.slice(3)
+
+    hero := "---" + os_EOL +
+      "layout: page" + os_EOL +
+      "title: " + title + os_EOL +
+      "---" + os_EOL + os_EOL +
+      "# {{ page.title }}" + os_EOL + os_EOL
+
+    content := hero + result + os_EOL
+    fs_writeFileSync(docDir + path_SEP + name + ".md", content.toBuffer())
+  }
+}

@@ -1,0 +1,25 @@
+======= stdin =======
+// description
+async fn function () void
+
+/*
+ * Description
+ */
+async fn veryLongFunctionName (veryLongFirstParameterName: int, veryLongSecondParameterName := 2) int
+======= stdout =======
+## `function()`
+description
+
+```the
+async fn function () void
+```
+
+## `veryLongFunctionName()`
+Description
+
+```the
+async fn veryLongFunctionName (
+  veryLongFirstParameterName: int,
+  veryLongSecondParameterName := 2
+) int
+```

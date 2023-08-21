@@ -3,13 +3,15 @@ name: Release
 on:
   workflow_dispatch:
   release:
-    types: [published]
+    types: ['published']
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
+      - uses: thelang-io/setup-the@v1
+      - run: the run scripts/pre-process-codegen
       - run: cmake -B ./build -D CMAKE_BUILD_TYPE=Release
       - run: cmake --build build
       - uses: aws-actions/configure-aws-credentials@v1

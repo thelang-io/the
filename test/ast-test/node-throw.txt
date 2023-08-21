@@ -1,0 +1,42 @@
+======= stdin =======
+main {
+  throw error_NewError("Test")
+}
+======= stdout =======
+<NodeMain>
+  <NodeThrow>
+    <NodeExpr>
+      <NodeExprType>
+        <BuiltinType name="error_Error" />
+      </NodeExprType>
+      <NodeExprBody>
+        <ExprCall>
+          <ExprCallCallee>
+            <NodeExpr>
+              <NodeExprType>
+                <BuiltinType name="error_NewError" />
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <BuiltinVar name="error_NewError" />
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallCallee>
+          <ExprCallArgs>
+            <ExprCallArg id="message">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="str" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="STR" value="\"Test\"" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprCallArg>
+          </ExprCallArgs>
+        </ExprCall>
+      </NodeExprBody>
+    </NodeExpr>
+  </NodeThrow>
+</NodeMain>

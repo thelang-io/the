@@ -1,0 +1,23 @@
+======= stdin =======
+type Alias1 = int
+type Alias2 = ref Alias1
+
+main {
+  a: Alias1 = 10;
+  b: Alias2 = ref a;
+  a as i64;
+  b as Alias1;
+  b as int;
+}
+======= code =======
+#include <stdint.h>
+
+int main () {
+  const int32_t __THE_0_a_0 = 10;
+  const int32_t *__THE_0_b_0 = &__THE_0_a_0;
+  (int64_t) __THE_0_a_0;
+  *__THE_0_b_0;
+  *__THE_0_b_0;
+}
+======= flags =======
+======= stdout =======

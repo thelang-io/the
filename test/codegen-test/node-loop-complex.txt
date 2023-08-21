@@ -76,12 +76,35 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
@@ -95,8 +118,11 @@ struct __THE_1_fn$1000 {
   size_t l;
 };
 
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
 void *alloc (size_t);
 struct str cstr_concat_str (const char *, struct str);
+void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 struct str str_concat_cstr (struct str, const char *);
 struct str str_copy (const struct str);
@@ -106,12 +132,9 @@ bool str_ne_cstr (struct str, const char *);
 struct str str_realloc (struct str, struct str);
 int32_t __THE_1_test_0 (void *);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 struct str cstr_concat_str (const char *r, struct str s) {
@@ -121,6 +144,19 @@ struct str cstr_concat_str (const char *r, struct str s) {
   memcpy(&d[l - s.l], s.d, s.l);
   free(s.d);
   return (struct str) {d, l};
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -166,16 +202,18 @@ int32_t __THE_1_test_0 (void *px) {
     struct str __THE_0_i_0 = str_alloc("");
     for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
       unsigned char b1 = 0;
+      unsigned char c1 = 0;
       const struct str __THE_0_j_0 = cstr_concat_str("b", str_copy(__THE_0_i_0));
       if (str_eq_cstr(str_copy(__THE_0_j_0), "ba")) {
         __THE_0_result_0 = 1;
-        goto L1;
+        c1 = 1;
+        if (c1 == 1) goto L1;
       }
       const struct str __THE_0_k_0 = str_concat_cstr(str_copy(__THE_0_j_0), "a");
       if (str_eq_cstr(str_copy(__THE_0_k_0), "ba")) {
         __THE_0_result_0 = 2;
         b1 = 1;
-        goto L2;
+        if (b1 == 1) goto L2;
       }
       const struct str __THE_0_l_0 = str_concat_cstr(str_copy(__THE_0_k_0), "a");
       if (str_eq_cstr(str_copy(__THE_0_l_0), "ba")) {
@@ -194,7 +232,7 @@ L1:
     }
 L0:
     str_free((struct str) __THE_0_i_0);
-    if (r == 1) goto L4;
+    if (r == 1) return v;
   }
   {
     struct str __THE_0_i_0 = str_alloc("");
@@ -202,10 +240,10 @@ L0:
       unsigned char b1 = 0;
       const struct str __THE_0_j_0 = cstr_concat_str("b", str_copy(__THE_0_i_0));
       b1 = 1;
-      goto L6;
+      goto L5;
       const struct str __THE_0_k_0 = str_concat_cstr(str_copy(__THE_0_j_0), "a");
       str_free((struct str) __THE_0_k_0);
-L6:
+L5:
       str_free((struct str) __THE_0_j_0);
       if (b1 == 1) break;
     }
@@ -215,10 +253,10 @@ L6:
     struct str __THE_0_i_0 = str_alloc("");
     for (; str_ne_cstr(str_copy(__THE_0_i_0), "aaa"); __THE_0_i_0 = str_realloc(__THE_0_i_0, str_concat_cstr(str_copy(__THE_0_i_0), "a"))) {
       const struct str __THE_0_j_0 = cstr_concat_str("b", str_copy(__THE_0_i_0));
-      goto L9;
+      goto L8;
       const struct str __THE_0_k_0 = str_concat_cstr(str_copy(__THE_0_j_0), "a");
       str_free((struct str) __THE_0_k_0);
-L9:
+L8:
       str_free((struct str) __THE_0_j_0);
     }
     str_free((struct str) __THE_0_i_0);
@@ -232,9 +270,7 @@ L9:
   if (__THE_0_result_0 == 2) {
     __THE_0_result_0 = 4;
   } else if (__THE_0_result_0 == 1) {
-    r = 1;
-    v = -1;
-    goto L4;
+    return -1;
   }
   while (1) {
     unsigned char b1 = 0;
@@ -244,7 +280,6 @@ L9:
     if (b1 == 1) break;
   }
   v = __THE_0_result_0;
-L4:
   return v;
 }
 

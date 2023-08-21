@@ -28,14 +28,15 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_int 1
-#define TYPE_char 2
-#define TYPE_str 3
+#define TYPE_int 2
+#define TYPE_char 3
+#define TYPE_str 4
 
 struct any {
   int t;
@@ -44,6 +45,28 @@ struct any {
   struct any (*_copy) (const struct any);
   void (*_free) (struct any);
 };
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
@@ -58,7 +81,7 @@ struct __THE_1_any_char;
 struct __THE_1_any_str;
 
 struct __THE_1_fn$1000 {
-  struct any (*f) (void *, struct __THE_1_fn$1000P);
+  struct any (*f) (void *, void *);
   void *x;
   size_t l;
 };
@@ -69,7 +92,7 @@ struct __THE_1_any_int {
   int32_t d;
 };
 struct __THE_1_fn$1001 {
-  struct any (*f) (void *, struct __THE_1_fn$1001P);
+  struct any (*f) (void *, void *);
   void *x;
   size_t l;
 };
@@ -85,18 +108,22 @@ struct __THE_1_any_str {
   struct str d;
 };
 
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
 void *alloc (size_t);
 struct any any_copy (const struct any);
 void any_free (struct any);
 struct any any_realloc (struct any, struct any);
+void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
+void *xalloc (void *, size_t);
 struct any __THE_1_any_int_alloc (int32_t);
 struct any __THE_1_any_int_copy (const struct any);
 void __THE_1_any_int_free (struct any);
-struct any __THE_1_test1_0 (void *, struct __THE_1_fn$1000P);
-struct any __THE_1_test2_0 (void *, struct __THE_1_fn$1001P);
+struct any __THE_1_test1_0 (void *, void *);
+struct any __THE_1_test2_0 (void *, void *);
 struct any __THE_1_any_char_alloc (char);
 struct any __THE_1_any_char_copy (const struct any);
 void __THE_1_any_char_free (struct any);
@@ -104,12 +131,9 @@ struct any __THE_1_any_str_alloc (struct str);
 struct any __THE_1_any_str_copy (const struct any);
 void __THE_1_any_str_free (struct any);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
 struct any any_copy (const struct any n) {
@@ -121,6 +145,19 @@ void any_free (struct any n) {
 struct any any_realloc (struct any n1, struct any n2) {
   if (n1.d != NULL) n1._free(n1);
   return n2;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -135,6 +172,12 @@ struct str str_copy (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.d);
+}
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
 }
 struct any __THE_1_any_int_alloc (int32_t d) {
   size_t l = sizeof(struct __THE_1_any_int);
@@ -152,23 +195,27 @@ void __THE_1_any_int_free (struct any _n) {
   struct __THE_1_any_int *n = _n.d;
   free(n);
 }
-struct any __THE_1_test1_0 (void *px, struct __THE_1_fn$1000P p) {
+struct any __THE_1_test1_0 (void *px, void *pp) {
   struct any v;
-  struct any __THE_0_a_0 = p.n0;
+  struct __THE_1_fn$1000P *p = pp;
+  struct any __THE_0_a_0 = p->n0;
   __THE_0_a_0 = any_realloc(__THE_0_a_0, __THE_1_any_int_alloc(2));
   v = any_copy(__THE_0_a_0);
   any_free((struct any) __THE_0_a_0);
+  free(pp);
   return v;
 }
-struct any __THE_1_test2_0 (void *px, struct __THE_1_fn$1001P p) {
+struct any __THE_1_test2_0 (void *px, void *pp) {
   struct any v;
-  struct any __THE_0_a_0 = p.n0;
-  struct any __THE_0_b_0 = p.o1 == 1 ? p.n1 : __THE_1_any_int_alloc(3);
+  struct __THE_1_fn$1001P *p = pp;
+  struct any __THE_0_a_0 = p->n0;
+  struct any __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_any_int_alloc(3);
   __THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_a_0));
   __THE_0_a_0 = any_realloc(__THE_0_a_0, any_copy(__THE_0_b_0));
   v = any_copy(__THE_0_a_0);
   any_free((struct any) __THE_0_b_0);
   any_free((struct any) __THE_0_a_0);
+  free(pp);
   return v;
 }
 struct any __THE_1_any_char_alloc (char d) {
@@ -208,9 +255,9 @@ void __THE_1_any_str_free (struct any _n) {
 int main () {
   const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
   const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, (struct __THE_1_fn$1000P) {__THE_1_any_int_alloc(0)}));
-  any_free((struct any) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_any_int_alloc(2), 0, (struct any) {}}));
-  any_free((struct any) __THE_0_test2_0.f(__THE_0_test2_0.x, (struct __THE_1_fn$1001P) {__THE_1_any_char_alloc('2'), 1, __THE_1_any_str_alloc(str_alloc("test"))}));
+  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_any_int_alloc(0)}, sizeof(struct __THE_1_fn$1000P))));
+  any_free((struct any) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_1_any_int_alloc(2), 0, (struct any) {}}, sizeof(struct __THE_1_fn$1001P))));
+  any_free((struct any) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_1_any_char_alloc('2'), 1, __THE_1_any_str_alloc(str_alloc("test"))}, sizeof(struct __THE_1_fn$1001P))));
 }
 ======= flags =======
 ======= stdout =======

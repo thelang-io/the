@@ -38,42 +38,66 @@ endif ()
 set(
   sources
 
-  src/codegen/any.cpp src/codegen/any.hpp
-  src/codegen/bool.cpp src/codegen/bool.hpp
-  src/codegen/buffer.cpp src/codegen/buffer.hpp
-  src/codegen/byte.cpp src/codegen/byte.hpp
-  src/codegen/char.cpp src/codegen/char.hpp
-  src/codegen/date.cpp src/codegen/date.hpp
-  src/codegen/enum.cpp src/codegen/enum.hpp
-  src/codegen/float.cpp src/codegen/float.hpp
-  src/codegen/fs.cpp src/codegen/fs.hpp
-  src/codegen/globals.cpp src/codegen/globals.hpp
-  src/codegen/int.cpp src/codegen/int.hpp
-  src/codegen/metadata.hpp
-  src/codegen/os.cpp src/codegen/os.hpp
-  src/codegen/path.cpp src/codegen/path.hpp
-  src/codegen/process.cpp src/codegen/process.hpp
-  src/codegen/random.cpp src/codegen/random.hpp
-  src/codegen/request.cpp src/codegen/request.hpp
-  src/codegen/str.cpp src/codegen/str.hpp
-  src/codegen/thread.cpp src/codegen/thread.hpp
-  src/codegen/url.cpp src/codegen/url.hpp
-  src/codegen/utils.cpp src/codegen/utils.hpp
+  src/codegen/block.cpp
+  src/codegen/expr-access.cpp
+  src/codegen/expr-array.cpp
+  src/codegen/expr-as.cpp
+  src/codegen/expr-assign.cpp
+  src/codegen/expr-await.cpp
+  src/codegen/expr-binary.cpp
+  src/codegen/expr-call.cpp
+  src/codegen/expr-closure.cpp
+  src/codegen/expr-cond.cpp
+  src/codegen/expr-is.cpp
+  src/codegen/expr-lit.cpp
+  src/codegen/expr-map.cpp
+  src/codegen/expr-obj.cpp
+  src/codegen/expr-ref.cpp
+  src/codegen/expr-unary.cpp
+  src/codegen/fn-decl.cpp
+  src/codegen/helpers.cpp
+  src/codegen/node-break.cpp
+  src/codegen/node-continue.cpp
+  src/codegen/node-enum-decl.cpp
+  src/codegen/node-expr.cpp
+  src/codegen/node-fn-decl.cpp
+  src/codegen/node-if.cpp
+  src/codegen/node-loop.cpp
+  src/codegen/node-main.cpp
+  src/codegen/node-obj-decl.cpp
+  src/codegen/node-return.cpp
+  src/codegen/node-throw.cpp
+  src/codegen/node-try.cpp
+  src/codegen/node-var-decl.cpp
+  src/codegen/type.cpp
+  src/codegen/type-any.cpp
+  src/codegen/type-array.cpp
+  src/codegen/type-fn.cpp
+  src/codegen/type-map.cpp
+  src/codegen/type-obj.cpp
+  src/codegen/type-opt.cpp
+  src/codegen/type-union.cpp
+
+  src/codegen-ast/CodegenAST.hpp
+  src/codegen-ast/CodegenASTExpr.cpp
+  src/codegen-ast/CodegenASTStmt.cpp
+  src/codegen-ast/CodegenASTType.cpp
 
   src/AST.cpp src/AST.hpp
   src/ASTChecker.hpp
-  src/ASTExpr.cpp src/ASTExpr.hpp
-  src/ASTNode.cpp src/ASTNode.hpp
+  src/ASTExpr.cpp
+  src/ASTNode.cpp
   src/Codegen.cpp src/Codegen.hpp
+  src/CodegenAPIItem.hpp
   src/CodegenCleanUp.cpp src/CodegenCleanUp.hpp
   src/CParser.cpp src/CParser.hpp
   src/Error.cpp src/Error.hpp
   src/Lexer.cpp src/Lexer.hpp
   src/Parser.cpp src/Parser.hpp
   src/ParserComment.cpp src/ParserComment.hpp
-  src/ParserExpr.cpp src/ParserExpr.hpp
-  src/ParserStmt.cpp src/ParserStmt.hpp
-  src/ParserType.cpp src/ParserType.hpp
+  src/ParserExpr.cpp
+  src/ParserStmt.cpp
+  src/ParserType.cpp
   src/Reader.cpp src/Reader.hpp
   src/Token.cpp src/Token.hpp
   src/Type.cpp src/Type.hpp
@@ -81,6 +105,8 @@ set(
   src/Var.cpp src/Var.hpp
   src/VarMap.cpp src/VarMap.hpp
   src/VarStack.cpp src/VarStack.hpp
+  src/codegen-api.hpp
+  src/codegen-metadata.hpp
   src/config.hpp
   src/utils.hpp
 )
@@ -126,6 +152,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     test/ASTCheckerTest.cpp
     test/ASTExprTest.cpp
     test/CodegenTest.cpp
+    test/CodegenASTTest.cpp
     test/CodegenCleanUpTest.cpp
     test/CParserTest.cpp
     test/ErrorTest.cpp
@@ -162,4 +189,11 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
     ENVIRONMENT "TEST_CODEGEN_MEMCHECK=${TEST_CODEGEN_MEMCHECK}"
     ENVIRONMENT "TEST_CODEGEN_PLATFORM=${TEST_CODEGEN_PLATFORM}"
   )
+endif ()
+
+if (EXISTS "${PROJECT_SOURCE_DIR}/lab")
+  add_executable(lab lab/lab.c)
+  target_include_directories(lab PRIVATE "$ENV{DEPS_DIR}/include")
+  target_link_directories(lab PRIVATE "$ENV{DEPS_DIR}/lib")
+  target_link_libraries(lab PRIVATE crypto ssl)
 endif ()

@@ -1,0 +1,125 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+obj exec_ExecOutput {
+  code: int
+  stderr: str
+  stdout: str
+}
+
+obj exec_Exec {
+  _args: str[]
+  _script: str
+
+  fn and (mut self: ref Self, other: str) ref Self {
+    parts := exec_parse(other)
+
+    if !parts.empty {
+      self._args.push("&&")
+      self._args.merge(parts)
+    }
+
+    return self
+  }
+
+  fn or (mut self: ref Self, other: str) ref Self {
+    parts := exec_parse(other)
+
+    if !parts.empty {
+      self._args.push("||")
+      self._args.merge(parts)
+    }
+
+    return self
+  }
+
+  fn pipe (mut self: ref Self, other: str) ref Self {
+    parts := exec_parse(other)
+
+    if !parts.empty {
+      self._args.push("|")
+      self._args.merge(parts)
+    }
+
+    return self
+  }
+
+  fn run (self: ref Self) exec_ExecOutput {
+    mut code := 0
+    args := (self._args.len == 0 ? "" : " ") + self._args.join(" ")
+    cmd := self._script + args
+
+    // todo find a way to catch stderr
+    // todo try/catch here and update code, parse from "Process exited with status code"
+    stdout := process_runSync(cmd).str().trimEnd()
+
+    return exec_ExecOutput{stdout: stdout, code: code}
+  }
+}
+
+fn exec_parse (cmd: str) str[] {
+  actualCmd := cmd.trim()
+  actualCmdLen := actualCmd.len
+
+  if actualCmd.empty {
+    return []
+  }
+
+  mut parts: str[]
+
+  loop i := 0; i < actualCmdLen; i++ {
+    ch := actualCmd[i]
+    partStart := i
+    mut part: str
+
+    if ch == '\'' || ch == '"' {
+      quote := ch
+      mut foundLastQuote := false
+
+      loop i + 1 < actualCmdLen {
+        i++
+
+        if actualCmd[i] == quote && actualCmd[i - 1] != '\\' {
+          foundLastQuote = true
+          break
+        }
+      }
+
+      part = actualCmd.slice(partStart, i + 1)
+
+      if !foundLastQuote {
+        part += quote.str()
+      }
+    } else {
+      loop i + 1 < actualCmdLen && !actualCmd[i + 1].isWhitespace {
+        i++
+      }
+
+      part = actualCmd.slice(partStart, i + 1)
+    }
+
+    loop i + 1 < actualCmdLen && actualCmd[i + 1].isWhitespace {
+      i++
+    }
+
+    parts.push(part)
+  }
+
+  return parts
+}
+
+fn exec_exec (cmd: str) exec_Exec {
+  mut parts := exec_parse(cmd)
+
+  if parts.empty {
+    // todo throw
+    // throw NewError("Exec input is empty")
+  }
+
+  script: str = parts[0]
+  parts.remove(0)
+
+  return exec_Exec{_script: script, _args: parts}
+}

@@ -32,7 +32,7 @@ main {
   ap: () -> str | () -> int
   aq: (() -> str) | (() -> int) | (() -> char)
   ar: () -> str | () -> int | () -> char
-  as: (() -> str) | (() -> int) | (() -> char) | (() -> bool)
+  as2: (() -> str) | (() -> int) | (() -> char) | (() -> bool)
   at: () -> str | () -> int | () -> char | () -> bool
 
   au: str? | int?
@@ -358,7 +358,7 @@ main {
   </NodeVarDecl>
   <NodeVarDecl>
     <NodeVarDeclVar>
-      <Var name="as" codeName="as_0" frame="2">
+      <Var name="as2" codeName="as2_0" frame="2">
         <TypeUnion name="union_fn$1009USfn$1010USfn$1012USfn$1015UE">
           <TypeFn name="fn$1009">
             <TypeFnReturnType>

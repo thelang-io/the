@@ -3,18 +3,440 @@
  * Licensed under the MIT License
  */
 
-fn matcherIntToInt (val1: int, val2: int) {
-  if val1 != val2 {
-    print("Expected equality of these values:")
-    print("  ", val1.str())
-    print("  ", val2.str())
-    testingState.failed = true
+fn MATCH_ANY (a: any, b: any) {
+  if (a is any) && (b is any) { MATCH_ANY(a, b) }
+  elif (a is bool) && (b is bool) { MATCH_BOOL(a, b) }
+  elif (a is byte) && (b is byte) { MATCH_BYTE(a, b) }
+  elif (a is char) && (b is char) { MATCH_CHAR(a, b) }
+  elif (a is float) && (b is float) { MATCH_FLOAT(a, b) }
+  elif (a is int) && (b is int) { MATCH_INT(a, b) }
+  elif (a is str) && (b is str) { MATCH_STR(a, b) }
+  elif (a is bool[]) && (b is bool[]) { MATCH_ARRAY_BOOL(a, b) }
+  elif (a is byte[]) && (b is byte[]) { MATCH_ARRAY_BYTE(a, b) }
+  elif (a is char[]) && (b is char[]) { MATCH_ARRAY_CHAR(a, b) }
+  elif (a is float[]) && (b is float[]) { MATCH_ARRAY_FLOAT(a, b) }
+  elif (a is int[]) && (b is int[]) { MATCH_ARRAY_INT(a, b) }
+  elif (a is str[]) && (b is str[]) { MATCH_ARRAY_STR(a, b) }
+  elif (a is bool[int]) && (b is bool[int]) { MATCH_MAP_BOOL_INT(a, b) }
+  elif (a is byte[int]) && (b is byte[int]) { MATCH_MAP_BYTE_INT(a, b) }
+  elif (a is char[int]) && (b is char[int]) { MATCH_MAP_CHAR_INT(a, b) }
+  elif (a is float[int]) && (b is float[int]) { MATCH_MAP_FLOAT_INT(a, b) }
+  elif (a is int[int]) && (b is int[int]) { MATCH_MAP_INT_INT(a, b) }
+  elif (a is str[int]) && (b is str[int]) { MATCH_MAP_STR_INT(a, b) }
+  elif (a is bool[str]) && (b is bool[str]) { MATCH_MAP_BOOL_STR(a, b) }
+  elif (a is byte[str]) && (b is byte[str]) { MATCH_MAP_BYTE_STR(a, b) }
+  elif (a is char[str]) && (b is char[str]) { MATCH_MAP_CHAR_STR(a, b) }
+  elif (a is float[str]) && (b is float[str]) { MATCH_MAP_FLOAT_STR(a, b) }
+  elif (a is int[str]) && (b is int[str]) { MATCH_MAP_INT_STR(a, b) }
+  elif (a is str[str]) && (b is str[str]) { MATCH_MAP_STR_STR(a, b) }
+  elif (a is bool?) && (b is bool?) { MATCH_OPTIONAL_BOOL(a, b) }
+  elif (a is byte?) && (b is byte?) { MATCH_OPTIONAL_BYTE(a, b) }
+  elif (a is char?) && (b is char?) { MATCH_OPTIONAL_CHAR(a, b) }
+  elif (a is float?) && (b is float?) { MATCH_OPTIONAL_FLOAT(a, b) }
+  elif (a is int?) && (b is int?) { MATCH_OPTIONAL_INT(a, b) }
+  elif (a is str?) && (b is str?) { MATCH_OPTIONAL_STR(a, b) }
+  elif (a is ref bool) && (b is ref bool) { MATCH_REF_BOOL(a, b) }
+  elif (a is ref byte) && (b is ref byte) { MATCH_REF_BYTE(a, b) }
+  elif (a is ref char) && (b is ref char) { MATCH_REF_CHAR(a, b) }
+  elif (a is ref float) && (b is ref float) { MATCH_REF_FLOAT(a, b) }
+  elif (a is ref int) && (b is ref int) { MATCH_REF_INT(a, b) }
+  elif (a is ref str) && (b is ref str) { MATCH_REF_STR(a, b) }
+  elif (a is any) || (b is any) { FAIL_TEST("`any` type parameters mismatch") }
+  elif (a is bool) || (b is bool) { FAIL_TEST("`bool` type parameters mismatch") }
+  elif (a is byte) || (b is byte) { FAIL_TEST("`byte` type parameters mismatch") }
+  elif (a is char) || (b is char) { FAIL_TEST("`char` type parameters mismatch") }
+  elif (a is float) || (b is float) { FAIL_TEST("`float` type parameters mismatch") }
+  elif (a is int) || (b is int) { FAIL_TEST("`int` type parameters mismatch") }
+  elif (a is str) || (b is str) { FAIL_TEST("`str` type parameters mismatch") }
+  elif (a is bool[]) || (b is bool[]) { FAIL_TEST("`bool[]` type parameters mismatch") }
+  elif (a is byte[]) || (b is byte[]) { FAIL_TEST("`byte[]` type parameters mismatch") }
+  elif (a is char[]) || (b is char[]) { FAIL_TEST("`char[]` type parameters mismatch") }
+  elif (a is float[]) || (b is float[]) { FAIL_TEST("`float[]` type parameters mismatch") }
+  elif (a is int[]) || (b is int[]) { FAIL_TEST("`int[]` type parameters mismatch") }
+  elif (a is str[]) || (b is str[]) { FAIL_TEST("`str[]` type parameters mismatch") }
+  elif (a is bool[int]) || (b is bool[int]) { FAIL_TEST("`bool[int]` type parameters mismatch") }
+  elif (a is byte[int]) || (b is byte[int]) { FAIL_TEST("`byte[int]` type parameters mismatch") }
+  elif (a is char[int]) || (b is char[int]) { FAIL_TEST("`char[int]` type parameters mismatch") }
+  elif (a is float[int]) || (b is float[int]) { FAIL_TEST("`float[int]` type parameters mismatch") }
+  elif (a is int[int]) || (b is int[int]) { FAIL_TEST("`int[int]` type parameters mismatch") }
+  elif (a is str[int]) || (b is str[int]) { FAIL_TEST("`str[int]` type parameters mismatch") }
+  elif (a is bool[str]) || (b is bool[str]) { FAIL_TEST("`bool[str]` type parameters mismatch") }
+  elif (a is byte[str]) || (b is byte[str]) { FAIL_TEST("`byte[str]` type parameters mismatch") }
+  elif (a is char[str]) || (b is char[str]) { FAIL_TEST("`char[str]` type parameters mismatch") }
+  elif (a is float[str]) || (b is float[str]) { FAIL_TEST("`float[str]` type parameters mismatch") }
+  elif (a is int[str]) || (b is int[str]) { FAIL_TEST("`int[str]` type parameters mismatch") }
+  elif (a is str[str]) || (b is str[str]) { FAIL_TEST("`str[str]` type parameters mismatch") }
+  elif (a is bool?) || (b is bool?) { FAIL_TEST("`bool?` type parameters mismatch") }
+  elif (a is byte?) || (b is byte?) { FAIL_TEST("`byte?` type parameters mismatch") }
+  elif (a is char?) || (b is char?) { FAIL_TEST("`char?` type parameters mismatch") }
+  elif (a is float?) || (b is float?) { FAIL_TEST("`float?` type parameters mismatch") }
+  elif (a is int?) || (b is int?) { FAIL_TEST("`int?` type parameters mismatch") }
+  elif (a is str?) || (b is str?) { FAIL_TEST("`str?` type parameters mismatch") }
+  elif (a is ref bool) || (b is ref bool) { FAIL_TEST("`ref bool` type parameters mismatch") }
+  elif (a is ref byte) || (b is ref byte) { FAIL_TEST("`ref byte` type parameters mismatch") }
+  elif (a is ref char) || (b is ref char) { FAIL_TEST("`ref char` type parameters mismatch") }
+  elif (a is ref float) || (b is ref float) { FAIL_TEST("`ref float` type parameters mismatch") }
+  elif (a is ref int) || (b is ref int) { FAIL_TEST("`ref int` type parameters mismatch") }
+  elif (a is ref str) || (b is ref str) { FAIL_TEST("`ref str` type parameters mismatch") }
+  else { FAIL_TEST("Matcher for this type doesn't exist") }
+}
+
+fn MATCH_BOOL (a: bool, b: bool) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
   }
 }
 
-fn matcherTypeMismatch (val1: any, val2: any) {
-  print("Expected variables be of the same type:")
-  print("  ", val1.str())
-  print("  ", val2.str())
-  testingState.failed = true
+fn MATCH_BYTE (a: byte, b: byte) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_CHAR (a: char, b: char) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_FLOAT (a: float, b: float) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_INT (a: int, b: int) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_STR (a: str, b: str) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a + os_EOL +
+      "  " + b
+    )
+  }
+}
+
+fn MATCH_ARRAY_BOOL (a: bool[], b: bool[]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_ARRAY_BYTE (a: byte[], b: byte[]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_ARRAY_CHAR (a: char[], b: char[]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_ARRAY_FLOAT (a: float[], b: float[]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_ARRAY_INT (a: int[], b: int[]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_ARRAY_STR (a: str[], b: str[]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_BOOL_INT (a: bool[int], b: bool[int]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_BYTE_INT (a: byte[int], b: byte[int]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_CHAR_INT (a: char[int], b: char[int]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_FLOAT_INT (a: float[int], b: float[int]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_INT_INT (a: int[int], b: int[int]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_STR_INT (a: str[int], b: str[int]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_BOOL_STR (a: bool[str], b: bool[str]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_BYTE_STR (a: byte[str], b: byte[str]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_CHAR_STR (a: char[str], b: char[str]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_FLOAT_STR (a: float[str], b: float[str]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_INT_STR (a: int[str], b: int[str]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_MAP_STR_STR (a: str[str], b: str[str]) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_OPTIONAL_BOOL (a: bool?, b: bool?) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_OPTIONAL_BYTE (a: byte?, b: byte?) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_OPTIONAL_CHAR (a: char?, b: char?) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_OPTIONAL_FLOAT (a: float?, b: float?) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_OPTIONAL_INT (a: int?, b: int?) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_OPTIONAL_STR (a: str?, b: str?) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_REF_BOOL (a: ref bool, b: ref bool) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_REF_BYTE (a: ref byte, b: ref byte) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_REF_CHAR (a: ref char, b: ref char) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_REF_FLOAT (a: ref float, b: ref float) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_REF_INT (a: ref int, b: ref int) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a.str() + os_EOL +
+      "  " + b.str()
+    )
+  }
+}
+
+fn MATCH_REF_STR (a: ref str, b: ref str) {
+  if a != b {
+    FAIL_TEST(
+      "Expected equality of these values:" + os_EOL +
+      "  " + a + os_EOL +
+      "  " + b
+    )
+  }
 }

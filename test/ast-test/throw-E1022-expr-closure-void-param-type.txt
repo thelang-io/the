@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  test := (a: void) -> void {
+  }
+}
+======= stderr =======
+/test:2:15: E1022 - Void type can only be used as function return type
+  2 |   test := (a: void) -> void {
+    |               ^~~~

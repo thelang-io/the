@@ -1,0 +1,534 @@
+======= stdin =======
+obj Error1 {
+  message: str
+  stack: str
+}
+
+obj Error2 {
+  message: str
+  stack: str
+}
+
+obj Error3 {
+  message: str
+  stack: str
+}
+
+main {
+  try {
+  } catch err: error_Error {
+  }
+
+  try {
+    req := request_open("GET", "localhost")
+  } catch err: error_Error {
+  }
+
+  try {
+  } catch err: error_Error {
+    print(err.stack, to: "stderr")
+  }
+
+  try {
+  } catch err1: Error1 {
+    print("Error1:", err1.stack, to: "stderr")
+  } catch err2: Error2 {
+    print("Error2:", err2.stack, to: "stderr")
+  } catch err3: Error3 {
+    print("Error3:", err3.stack, to: "stderr")
+  }
+}
+======= stdout =======
+<NodeObjDecl>
+  <TypeObj codeName="Error1_0" name="Error1">
+    <TypeField name="message">
+      <BuiltinType name="str" />
+    </TypeField>
+    <TypeField name="stack">
+      <BuiltinType name="str" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeObjDecl>
+  <TypeObj codeName="Error2_0" name="Error2">
+    <TypeField name="message">
+      <BuiltinType name="str" />
+    </TypeField>
+    <TypeField name="stack">
+      <BuiltinType name="str" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeObjDecl>
+  <TypeObj codeName="Error3_0" name="Error3">
+    <TypeField name="message">
+      <BuiltinType name="str" />
+    </TypeField>
+    <TypeField name="stack">
+      <BuiltinType name="str" />
+    </TypeField>
+  </TypeObj>
+</NodeObjDecl>
+<NodeMain>
+  <NodeTry>
+    <NodeTryHandlers>
+      <CatchClause>
+        <CatchClauseParam>
+          <NodeVarDecl>
+            <NodeVarDeclVar>
+              <Var name="err" codeName="err_0" frame="3">
+                <BuiltinType name="error_Error" />
+              </Var>
+            </NodeVarDeclVar>
+          </NodeVarDecl>
+        </CatchClauseParam>
+      </CatchClause>
+    </NodeTryHandlers>
+  </NodeTry>
+  <NodeTry>
+    <NodeTryBody>
+      <NodeVarDecl>
+        <NodeVarDeclVar>
+          <Var name="req" codeName="req_0" frame="2">
+            <BuiltinType name="request_Request" />
+          </Var>
+        </NodeVarDeclVar>
+        <NodeVarDeclInit>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="request_Request" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprCall>
+                <ExprCallCallee>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="request_open" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <BuiltinVar name="request_open" />
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallCallee>
+                <ExprCallArgs>
+                  <ExprCallArg id="method">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"GET\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="url">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"localhost\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                </ExprCallArgs>
+              </ExprCall>
+            </NodeExprBody>
+          </NodeExpr>
+        </NodeVarDeclInit>
+      </NodeVarDecl>
+    </NodeTryBody>
+    <NodeTryHandlers>
+      <CatchClause>
+        <CatchClauseParam>
+          <NodeVarDecl>
+            <NodeVarDeclVar>
+              <Var name="err" codeName="err_0" frame="3">
+                <BuiltinType name="error_Error" />
+              </Var>
+            </NodeVarDeclVar>
+          </NodeVarDecl>
+        </CatchClauseParam>
+      </CatchClause>
+    </NodeTryHandlers>
+  </NodeTry>
+  <NodeTry>
+    <NodeTryHandlers>
+      <CatchClause>
+        <CatchClauseParam>
+          <NodeVarDecl>
+            <NodeVarDeclVar>
+              <Var name="err" codeName="err_0" frame="3">
+                <BuiltinType name="error_Error" />
+              </Var>
+            </NodeVarDeclVar>
+          </NodeVarDecl>
+        </CatchClauseParam>
+        <CatchClauseBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="void" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprCall>
+                <ExprCallCallee>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="print" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <BuiltinVar name="print" />
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallCallee>
+                <ExprCallArgs>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess prop="stack">
+                          <NodeExpr>
+                            <NodeExprType>
+                              <BuiltinType name="error_Error" />
+                            </NodeExprType>
+                            <NodeExprBody>
+                              <ExprAccess>
+                                <Var name="err" codeName="err_0" frame="3">
+                                  <BuiltinType name="error_Error" />
+                                </Var>
+                              </ExprAccess>
+                            </NodeExprBody>
+                          </NodeExpr>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="to">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"stderr\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                </ExprCallArgs>
+              </ExprCall>
+            </NodeExprBody>
+          </NodeExpr>
+        </CatchClauseBody>
+      </CatchClause>
+    </NodeTryHandlers>
+  </NodeTry>
+  <NodeTry>
+    <NodeTryHandlers>
+      <CatchClause>
+        <CatchClauseParam>
+          <NodeVarDecl>
+            <NodeVarDeclVar>
+              <Var name="err1" codeName="err1_0" frame="3">
+                <TypeObj codeName="Error1_0" name="Error1">
+                  <TypeField name="message">
+                    <BuiltinType name="str" />
+                  </TypeField>
+                  <TypeField name="stack">
+                    <BuiltinType name="str" />
+                  </TypeField>
+                </TypeObj>
+              </Var>
+            </NodeVarDeclVar>
+          </NodeVarDecl>
+        </CatchClauseParam>
+        <CatchClauseBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="void" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprCall>
+                <ExprCallCallee>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="print" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <BuiltinVar name="print" />
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallCallee>
+                <ExprCallArgs>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"Error1:\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess prop="stack">
+                          <NodeExpr>
+                            <NodeExprType>
+                              <TypeObj codeName="Error1_0" name="Error1">
+                                <TypeField name="message">
+                                  <BuiltinType name="str" />
+                                </TypeField>
+                                <TypeField name="stack">
+                                  <BuiltinType name="str" />
+                                </TypeField>
+                              </TypeObj>
+                            </NodeExprType>
+                            <NodeExprBody>
+                              <ExprAccess>
+                                <Var name="err1" codeName="err1_0" frame="3">
+                                  <TypeObj codeName="Error1_0" name="Error1">
+                                    <TypeField name="message">
+                                      <BuiltinType name="str" />
+                                    </TypeField>
+                                    <TypeField name="stack">
+                                      <BuiltinType name="str" />
+                                    </TypeField>
+                                  </TypeObj>
+                                </Var>
+                              </ExprAccess>
+                            </NodeExprBody>
+                          </NodeExpr>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="to">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"stderr\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                </ExprCallArgs>
+              </ExprCall>
+            </NodeExprBody>
+          </NodeExpr>
+        </CatchClauseBody>
+      </CatchClause>
+      <CatchClause>
+        <CatchClauseParam>
+          <NodeVarDecl>
+            <NodeVarDeclVar>
+              <Var name="err2" codeName="err2_0" frame="3">
+                <TypeObj codeName="Error2_0" name="Error2">
+                  <TypeField name="message">
+                    <BuiltinType name="str" />
+                  </TypeField>
+                  <TypeField name="stack">
+                    <BuiltinType name="str" />
+                  </TypeField>
+                </TypeObj>
+              </Var>
+            </NodeVarDeclVar>
+          </NodeVarDecl>
+        </CatchClauseParam>
+        <CatchClauseBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="void" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprCall>
+                <ExprCallCallee>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="print" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <BuiltinVar name="print" />
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallCallee>
+                <ExprCallArgs>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"Error2:\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess prop="stack">
+                          <NodeExpr>
+                            <NodeExprType>
+                              <TypeObj codeName="Error2_0" name="Error2">
+                                <TypeField name="message">
+                                  <BuiltinType name="str" />
+                                </TypeField>
+                                <TypeField name="stack">
+                                  <BuiltinType name="str" />
+                                </TypeField>
+                              </TypeObj>
+                            </NodeExprType>
+                            <NodeExprBody>
+                              <ExprAccess>
+                                <Var name="err2" codeName="err2_0" frame="3">
+                                  <TypeObj codeName="Error2_0" name="Error2">
+                                    <TypeField name="message">
+                                      <BuiltinType name="str" />
+                                    </TypeField>
+                                    <TypeField name="stack">
+                                      <BuiltinType name="str" />
+                                    </TypeField>
+                                  </TypeObj>
+                                </Var>
+                              </ExprAccess>
+                            </NodeExprBody>
+                          </NodeExpr>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="to">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"stderr\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                </ExprCallArgs>
+              </ExprCall>
+            </NodeExprBody>
+          </NodeExpr>
+        </CatchClauseBody>
+      </CatchClause>
+      <CatchClause>
+        <CatchClauseParam>
+          <NodeVarDecl>
+            <NodeVarDeclVar>
+              <Var name="err3" codeName="err3_0" frame="3">
+                <TypeObj codeName="Error3_0" name="Error3">
+                  <TypeField name="message">
+                    <BuiltinType name="str" />
+                  </TypeField>
+                  <TypeField name="stack">
+                    <BuiltinType name="str" />
+                  </TypeField>
+                </TypeObj>
+              </Var>
+            </NodeVarDeclVar>
+          </NodeVarDecl>
+        </CatchClauseParam>
+        <CatchClauseBody>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="void" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprCall>
+                <ExprCallCallee>
+                  <NodeExpr>
+                    <NodeExprType>
+                      <BuiltinType name="print" />
+                    </NodeExprType>
+                    <NodeExprBody>
+                      <ExprAccess>
+                        <BuiltinVar name="print" />
+                      </ExprAccess>
+                    </NodeExprBody>
+                  </NodeExpr>
+                </ExprCallCallee>
+                <ExprCallArgs>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"Error3:\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="items">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprAccess prop="stack">
+                          <NodeExpr>
+                            <NodeExprType>
+                              <TypeObj codeName="Error3_0" name="Error3">
+                                <TypeField name="message">
+                                  <BuiltinType name="str" />
+                                </TypeField>
+                                <TypeField name="stack">
+                                  <BuiltinType name="str" />
+                                </TypeField>
+                              </TypeObj>
+                            </NodeExprType>
+                            <NodeExprBody>
+                              <ExprAccess>
+                                <Var name="err3" codeName="err3_0" frame="3">
+                                  <TypeObj codeName="Error3_0" name="Error3">
+                                    <TypeField name="message">
+                                      <BuiltinType name="str" />
+                                    </TypeField>
+                                    <TypeField name="stack">
+                                      <BuiltinType name="str" />
+                                    </TypeField>
+                                  </TypeObj>
+                                </Var>
+                              </ExprAccess>
+                            </NodeExprBody>
+                          </NodeExpr>
+                        </ExprAccess>
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                  <ExprCallArg id="to">
+                    <NodeExpr>
+                      <NodeExprType>
+                        <BuiltinType name="str" />
+                      </NodeExprType>
+                      <NodeExprBody>
+                        <ExprLit type="STR" value="\"stderr\"" />
+                      </NodeExprBody>
+                    </NodeExpr>
+                  </ExprCallArg>
+                </ExprCallArgs>
+              </ExprCall>
+            </NodeExprBody>
+          </NodeExpr>
+        </CatchClauseBody>
+      </CatchClause>
+    </NodeTryHandlers>
+  </NodeTry>
+</NodeMain>

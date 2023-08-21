@@ -1,0 +1,6 @@
+======= stdin =======
+test as 1
+======= stderr =======
+/test:1:8: E0182 - Expected type after `as` keyword
+  1 | test as 1
+    |        ^

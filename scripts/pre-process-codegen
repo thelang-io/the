@@ -1,0 +1,542 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+enum CParserTokenType {
+  Id,
+  Replacement,
+  Whitespace,
+  OpStar,
+  OpLPar,
+  OpRPar,
+  OpComma,
+  OpDotDotDot
+}
+
+obj APIItem {
+  mut name: str
+  mut decl: str
+  mut def: str
+  mut fileDependencies: str[]
+  mut dependencies: str[]
+  mut entityDependencies: str[]
+  mut throws: bool
+  mut usesAdvancedEscaping: bool
+}
+
+obj CParserToken {
+  t: CParserTokenType
+  val: str
+}
+
+obj CParser {
+  mut name: str
+  mut returnType: str
+  mut params: CParserParam[]
+
+  fn decl (self: ref Self) str {
+    paramsLen := self.params.len
+    mut params: str[]
+
+    loop i := 0; i < paramsLen; i++ {
+      params.push(self.params[i].t.trimEnd())
+    }
+
+    return self.returnType + self.name + " (" + params.join(", ") + ");"
+  }
+}
+
+obj CParserParam {
+  name: str
+  t: str
+}
+
+const BANNER := "/*!" + os_EOL +
+  " * Copyright (c) 2018 Aaron Delasy" + os_EOL +
+  " *" + os_EOL +
+  " * Licensed under the Apache License, Version 2.0 (the \"License\");" + os_EOL +
+  " * you may not use this file except in compliance with the License." + os_EOL +
+  " * You may obtain a copy of the License at" + os_EOL +
+  " *" + os_EOL +
+  " *     http://www.apache.org/licenses/LICENSE-2.0" + os_EOL +
+  " *" + os_EOL +
+  " * Unless required by applicable law or agreed to in writing, software" + os_EOL +
+  " * distributed under the License is distributed on an \"AS IS\" BASIS," + os_EOL +
+  " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied." + os_EOL +
+  " * See the License for the specific language governing permissions and" + os_EOL +
+  " * limitations under the License." + os_EOL +
+  " */" + os_EOL
+
+const ENTITIES_TRANSFORMER := {
+  "array_request_Header": "__THE_1_array_request_Header",
+  "array_request_Header_free": "__THE_1_array_request_Header_free",
+  "array_str": "__THE_1_array_str",
+  "array_str_free": "__THE_1_array_str_free",
+  "map_str_str": "__THE_1_map_strMSstrME",
+  "pair_str_str": "__THE_1_pair_strMSstrME"
+}
+
+const SRC_DIR := fs_realpathSync(process_cwd() + path_SEP + "src")
+const CODEGEN_DIR := SRC_DIR + path_SEP + "codegen-api"
+
+fn filterStrEmpty (it: str) bool {
+  return !it.empty
+}
+
+fn filterStrFileCPP (it: str) bool {
+  return it.slice(-4) == ".cpp"
+}
+
+fn mapStrTrim (arr: str[]) str[] {
+  mut result: str[]
+  arrLen := arr.len
+
+  loop i := 0; i < arrLen; i++ {
+    it := arr[i]
+    result.push(it.trim())
+  }
+
+  return result
+}
+
+fn mapStrDoubleQuote (arr: str[]) str[] {
+  mut result: str[]
+  arrLen := arr.len
+
+  loop i := 0; i < arrLen; i++ {
+    it := arr[i]
+    result.push("\"" + it + "\"")
+  }
+
+  return result
+}
+
+fn sortStrAsc (a: str, b: str) int {
+  if a.len == 0 && b.len == 0 {
+    return 0
+  } elif a.len == 0 || b.len == 0 {
+    return a.len == 0 ? -1 : 1
+  }
+
+  len := a.len > b.len ? b.len : a.len
+
+  loop i := 0; i < len; i++ {
+    if a[i] != b[i] {
+      return a[i].byte > b[i].byte ? 1 : -1
+    }
+  }
+
+  return a.len == b.len ? 0 : a.len > b.len ? 1 : -1
+}
+
+fn panic (message: str) {
+  print(message, to: "stderr")
+  process_exit(1)
+}
+
+fn cParserExtractDecl (s: str) str {
+  l := s.len
+  mut result := ""
+
+  loop i := 0; i < l; i++ {
+    if s[i] == '\n' || (s[i] == '\r' && i + 1 < l && s[i + 1] == '\n') {
+      break
+    } else {
+      result += s[i].str()
+    }
+  }
+
+  return result.slice(0, -2)
+}
+
+fn cParserTokenize (s: str) CParserToken[] {
+  l := s.len
+  mut result: CParserToken[]
+
+  loop i := 0; i < l; i++ {
+    valStart := i
+
+    if s[i].isWhitespace {
+      loop i + 1 < l && s[i + 1].isWhitespace { i++ }
+      result.push(CParserToken{t: .Whitespace, val: s.slice(valStart, i + 1)})
+    } elif s[i] == '_' && i + 1 < l && s[i + 1] == '{' {
+      loop i + 1 < l {
+        i++
+        if s[i] == '}' { break }
+      }
+
+      result.push(CParserToken{t: .Replacement, val: s.slice(valStart, i + 1)})
+    } elif s[i].isLetter || s[i] == '_' {
+      loop i + 1 < l && (s[i + 1].isLetterOrDigit || s[i + 1] == '_' || s[i + 1] == '$') { i++ }
+      result.push(CParserToken{t: .Id, val: s.slice(valStart, i + 1)})
+    } elif s[i] == '.' && i + 2 < l && s[i + 1] == '.' && s[i + 2] == '.' {
+      i += 2
+      result.push(CParserToken{t: .OpDotDotDot, val: s.slice(valStart, i + 1)})
+    } elif s[i] == '(' {
+      result.push(CParserToken{t: .OpLPar, val: s.slice(valStart, i + 1)})
+    } elif s[i] == ')' {
+      result.push(CParserToken{t: .OpRPar, val: s.slice(valStart, i + 1)})
+    } elif s[i] == '*' {
+      result.push(CParserToken{t: .OpStar, val: s.slice(valStart, i + 1)})
+    } elif s[i] == ',' {
+      result.push(CParserToken{t: .OpComma, val: s.slice(valStart, i + 1)})
+    } else {
+      panic("unexpected token `" + s[i].str() + "` in parser in position " + i.str())
+    }
+  }
+
+  return result
+}
+
+fn cParserTkLookahead (tokens: CParserToken[], i: int, t: CParserTokenType) int {
+  tokensLen := tokens.len
+  mut j := i
+  loop j + 1 < tokensLen && tokens[j + 1].t == .Whitespace { j++ }
+  return j + 1 < tokensLen && tokens[j + 1].t == t ? j : i
+}
+
+fn cParserTkBehind (tokens: CParserToken[], mut i: int) int {
+  loop i != 0 && tokens[i].t == .Whitespace { i-- }
+  return i
+}
+
+fn cParse (s: str) CParser {
+  decl := cParserExtractDecl(s)
+  tokens := cParserTokenize(decl)
+  tokensLen := tokens.len
+  mut result: CParser
+  mut i := 0
+
+  loop i < tokensLen {
+    saveIdx := i
+
+    if saveIdx != (i = cParserTkLookahead(tokens, i, .OpLPar)) {
+      result.name = tokens[cParserTkBehind(tokens, i)].val
+      break
+    }
+
+    result.returnType += tokens[i].val
+    i++
+  }
+
+  i += 2
+
+  if result.name.empty {
+    panic("position of name not found in `" + decl + "`")
+  }
+
+  mut blocks := 0
+  mut paramType := ""
+
+  if tokens[i].t != .OpRPar {
+    loop i < tokensLen {
+      if tokens[i].t == .OpRPar && blocks == 0 {
+        if tokens[i - 1].t == .Id && tokens[i - 1].val != paramType {
+          result.params.push(CParserParam{name: tokens[i - 1].val, t: paramType.slice(0, paramType.len - tokens[i - 1].val.len)})
+        } else {
+          result.params.push(CParserParam{name: "", t: paramType})
+        }
+
+        break
+      } elif tokens[i].t == .OpComma && blocks == 0 {
+        if tokens[i - 1].t == .Id && tokens[i - 1].val != paramType {
+          result.params.push(CParserParam{name: tokens[i - 1].val, t: paramType.slice(0, paramType.len - tokens[i - 1].val.len)})
+        } else {
+          result.params.push(CParserParam{name: "", t: paramType})
+        }
+
+        paramType = ""
+        i += 1
+        loop i + 1 < tokensLen && tokens[i].t == .Whitespace { i++ }
+        continue
+      } elif tokens[i].t == .OpLPar {
+        blocks++
+      } elif tokens[i].t == .OpRPar {
+        blocks--
+      }
+
+      paramType += tokens[i].val
+      i++
+    }
+  }
+
+  return result
+}
+
+fn parseMetadataLines (data: str[]) str[] {
+  mut result: str[]
+  dataLen := data.len
+
+  loop i := 0; i < dataLen; i++ {
+    it := data[i]
+    result.push(it.trim().slice(45))
+  }
+
+  return result
+}
+
+fn parseMetadataLibs (s: str) str[] {
+  libsSplit := s.split(",")
+  libsSplitLen := libsSplit.len
+  mut result: str[]
+
+  loop i := 0; i < libsSplitLen; i++ {
+    it := libsSplit[i]
+    result.push(it.trim().slice(1, -1))
+  }
+
+  return result
+}
+
+fn parseMetadata () str[][str] {
+  content := fs_readFileSync(SRC_DIR + path_SEP + "codegen-metadata.hpp").str()
+  data := content.slice(content.find(" = {" + os_EOL) + 4, content.find(os_EOL + "};" + os_EOL)).trim()
+  lines := parseMetadataLines(data.split(os_EOL)).filter(filterStrEmpty)
+  linesLen := lines.len
+  mut result: str[][str]
+
+  loop i := 0; i < linesLen; i++ {
+    line := lines[i]
+    lineSliced := line.slice(2)
+    name := lineSliced.slice(0, lineSliced.find("\""))
+    libs := lineSliced.slice(lineSliced.find("\"") + 4, lineSliced.find("}"))
+
+    result.set(name, parseMetadataLibs(libs))
+  }
+
+  return result
+}
+
+fn apiItemEval (mut item: ref APIItem, code: str) str {
+  codeLen := code.len
+  mut name := ""
+  mut isName := false
+  mut result := ""
+
+  loop i := 0; i < codeLen; i++ {
+    ch := code[i]
+
+    if ch == '_' && i + 1 < codeLen && code[i + 1] == '{' {
+      isName = true
+      i += 1
+    } elif isName && ch == '}' {
+      if name != item.name && !item.fileDependencies.contains(name) {
+        item.fileDependencies.push(name)
+      }
+
+      if ENTITIES_TRANSFORMER.has(name) {
+        result += ENTITIES_TRANSFORMER.get(name)
+      } else {
+        result += name
+      }
+
+      isName = false
+      name = ""
+    } elif isName {
+      name += ch.str()
+    } else {
+      result += ch.str()
+    }
+  }
+
+  return result
+}
+
+main {
+  metadata := parseMetadata()
+  entries := fs_scandirSync(CODEGEN_DIR).filter(filterStrFileCPP)
+  entriesLen := entries.len
+  mut api: APIItem[str]
+
+  loop i := 0; i < entriesLen; i++ {
+    entry := entries[i]
+    content := fs_readFileSync(CODEGEN_DIR + path_SEP + entry).str()
+    functionsContent := content.slice(content.find(" = {" + os_EOL) + 4, content.find("};" + os_EOL)).trim()
+    functions := mapStrTrim(functionsContent.split("," + os_EOL + os_EOL))
+    functionsLen := functions.len
+
+    loop j := 0; j < functionsLen; j++ {
+      func := functions[j]
+      linesRaw := mapStrTrim(func.split(os_EOL))
+      linesRawLen := linesRaw.len
+      mut lines: str[]
+      mut usesAdvancedEscaping := false
+
+      loop k := 0; k < linesRawLen; k++ {
+        line := linesRaw[k]
+        mut result: str = line
+
+        if line.slice(0, 3) == "R\"(" {
+          result = result.slice(3)
+        } elif line.slice(0, 4) == "R\"~(" {
+          usesAdvancedEscaping = true
+          result = result.slice(4)
+        }
+        if line.slice(-6) == ")\" EOL" {
+          result = result.slice(0, -6)
+        }
+        if line.slice(-7) == ")~\" EOL" {
+          usesAdvancedEscaping = true
+          result = result.slice(0, -7)
+        }
+
+        lines.push(result)
+      }
+
+      fnContent := lines.join(os_EOL)
+      parsed := cParse(fnContent)
+
+      mut item := APIItem{
+        name: parsed.name,
+        decl: parsed.decl(),
+        def: fnContent,
+        fileDependencies: [],
+        dependencies: [],
+        entityDependencies: [],
+        throws: false,
+        usesAdvancedEscaping: usesAdvancedEscaping
+      }
+
+      item.decl = apiItemEval(ref item, item.decl)
+      item.def = apiItemEval(ref item, item.def)
+
+      api.set(parsed.name, item)
+    }
+  }
+
+  apiKeys := api.keys
+  keys := apiKeys.sort(sortStrAsc)
+  keysLen := keys.len
+
+  loop i := 0; i < keysLen; i++ {
+    key := keys[i]
+    mut item := api.get(key)
+    apiKeyFileDependenciesLen := item.fileDependencies.len
+
+    loop j := 0; j < apiKeyFileDependenciesLen; j++ {
+      dependency := item.fileDependencies[j]
+
+      if api.has(dependency) {
+        if !item.dependencies.contains(dependency) {
+          item.dependencies.push(dependency)
+        }
+      } elif metadata.has(dependency) {
+        metadataItem := metadata.get(dependency)
+        metadataDependencyLen := metadataItem.len
+
+        loop k := 0; k < metadataDependencyLen; k++ {
+          lib := metadataItem[k]
+          if !item.dependencies.contains(lib) {
+            item.dependencies.push(lib)
+          }
+        }
+      } else {
+        if !item.entityDependencies.contains(dependency) {
+          item.entityDependencies.push(dependency)
+        }
+      }
+    }
+
+    api.set(key, item)
+  }
+
+  loop {
+    mut hasChanges := false
+
+    loop i := 0; i < keysLen; i++ {
+      key := keys[i]
+      mut item := api.get(key)
+
+      if item.throws {
+        continue
+      }
+
+      mut throws := item.fileDependencies.contains("error_assign")
+
+      if !throws {
+        itemFileDependenciesLen := item.fileDependencies.len
+
+        loop j := 0; j < itemFileDependenciesLen; j++ {
+          dependency := item.fileDependencies[j]
+
+          if metadata.has(dependency) {
+            continue
+          }
+
+          if api.has(dependency) {
+            apiDep := api.get(dependency)
+            if apiDep.throws {
+              throws = true
+              break
+            }
+          }
+        }
+      }
+
+      if throws {
+        item.throws = throws
+        api.set(key, item)
+        hasChanges = true
+      }
+    }
+
+    if !hasChanges {
+      break
+    }
+  }
+
+  mut output := BANNER + os_EOL
+  output += "#ifndef SRC_CODEGEN_API_HPP" + os_EOL
+  output += "#define SRC_CODEGEN_API_HPP" + os_EOL + os_EOL
+  output += "#include <map>" + os_EOL
+  output += "#include \"CodegenAPIItem.hpp\"" + os_EOL
+  output += "#include \"config.hpp\"" + os_EOL + os_EOL
+  output += "extern inline const std::map<std::string, CodegenAPIItem> codegenAPI = {" + os_EOL
+
+  loop i := 0; i < keysLen; i++ {
+    key := keys[i]
+    item := api.get(key)
+    defLines := item.def.split(os_EOL)
+    defLinesLen := defLines.len
+
+    output += "  {\"" + item.name + "\", {" + os_EOL
+    output += "    false," + os_EOL
+    output += "    \"" + item.name + "\"," + os_EOL
+    output += "    \"" + item.decl + "\" EOL," + os_EOL
+
+    loop j := 0; j < defLinesLen; j++ {
+      line := defLines[j]
+      escapeStart := item.usesAdvancedEscaping ? "R\"~(" : "R\"("
+      escapeEnd := item.usesAdvancedEscaping ? ")~\"" : ")\""
+
+      output += "    " + escapeStart + line + escapeEnd + " EOL" + (j == defLinesLen - 1 ? "," : "") + os_EOL
+    }
+
+    output += "    {" + mapStrDoubleQuote(item.dependencies.sort(sortStrAsc)).join(", ") + "}," + os_EOL
+    output += "    {" + mapStrDoubleQuote(item.entityDependencies.sort(sortStrAsc)).join(", ") + "}," + os_EOL
+    output += "    " + (item.throws ? "true" : "false") + os_EOL
+
+    if i != keysLen - 1 {
+      output += "  }}," + os_EOL + os_EOL
+    } else {
+      output += "  }}" + os_EOL
+    }
+  }
+
+  output += "};" + os_EOL + os_EOL
+  output += "#endif" + os_EOL
+
+  fs_writeFileSync(SRC_DIR + path_SEP + "codegen-api.hpp", output.toBuffer())
+}

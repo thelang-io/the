@@ -20,15 +20,38 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_int 1
-#define TYPE_str 2
+#define TYPE_int 2
+#define TYPE_str 3
 
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
@@ -40,8 +63,8 @@ struct __THE_1_array_union_intUSstrUE;
 struct __THE_1_union_intUSstrUE {
   int t;
   union {
-    int32_t v1;
-    struct str v2;
+    int32_t v2;
+    struct str v3;
   };
 };
 struct __THE_1_array_union_intUSstrUE {
@@ -49,7 +72,10 @@ struct __THE_1_array_union_intUSstrUE {
   size_t l;
 };
 
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
 void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
@@ -59,13 +85,23 @@ void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE);
 struct __THE_1_array_union_intUSstrUE __THE_1_array_union_intUSstrUE_alloc (size_t, ...);
 void __THE_1_array_union_intUSstrUE_free (struct __THE_1_array_union_intUSstrUE);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
 }
 struct str str_alloc (const char *r) {
   size_t l = strlen(r);
@@ -85,19 +121,19 @@ struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_alloc (int t, ...) {
   struct __THE_1_union_intUSstrUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_int) r.v1 = va_arg(args, int32_t);
-  if (t == TYPE_str) r.v2 = va_arg(args, struct str);
+  if (t == TYPE_int) r.v2 = va_arg(args, int32_t);
+  if (t == TYPE_str) r.v3 = va_arg(args, struct str);
   va_end(args);
   return r;
 }
 struct __THE_1_union_intUSstrUE __THE_1_union_intUSstrUE_copy (const struct __THE_1_union_intUSstrUE n) {
   struct __THE_1_union_intUSstrUE r = {n.t};
-  if (n.t == TYPE_int) r.v1 = n.v1;
-  if (n.t == TYPE_str) r.v2 = str_copy(n.v2);
+  if (n.t == TYPE_int) r.v2 = n.v2;
+  if (n.t == TYPE_str) r.v3 = str_copy(n.v3);
   return r;
 }
 void __THE_1_union_intUSstrUE_free (struct __THE_1_union_intUSstrUE n) {
-  if (n.t == TYPE_str) str_free((struct str) n.v2);
+  if (n.t == TYPE_str) str_free((struct str) n.v3);
 }
 struct __THE_1_array_union_intUSstrUE __THE_1_array_union_intUSstrUE_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_union_intUSstrUE) {NULL, 0};

@@ -1,0 +1,76 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+const ARGS := process_args
+const SCRIPT_PATH := fs_isAbsoluteSync(ARGS[0]) ? ARGS[0] : process_cwd() + path_SEP + ARGS[0]
+const TESTS_DIR := fs_realpathSync(path_dirname(SCRIPT_PATH) + path_SEP + ".." + path_SEP + "test")
+const VALID_DIRS := ["parser", "parser-doc", "ast", "codegen"]
+
+mut hasErrors := false
+
+fn screamCase (s: str) str {
+  mut result := ""
+  l := s.len
+  mut nextIsUpper := true
+
+  loop i := 0; i < l; i++ {
+    if !s[i].isLetterOrDigit {
+      nextIsUpper = true
+    } elif nextIsUpper {
+      result += s[i].upper.str()
+      nextIsUpper = false
+    } else {
+      result += s[i].str()
+    }
+  }
+
+  return result
+}
+
+fn validateTestsRegistered (it: str, idx: int) {
+  dirPath := TESTS_DIR + path_SEP + it + "-test"
+  testPath := TESTS_DIR + path_SEP + screamCase(it) + "Test.cpp"
+  tests := fs_scandirSync(dirPath)
+  testsLen := tests.len
+  content := fs_readFileSync(testPath).str()
+
+  loop i := 0; i < testsLen; i++ {
+    test := tests[i]
+
+    if test.slice(0, 1) == "." {
+      continue
+    }
+
+    testName := "\"" + test.slice(0, -4) + "\""
+
+    if !content.contains(testName) {
+      print("Error: test " + testName + " of `" + dirPath + "` doesn't exists", to: "stderr")
+      hasErrors = true
+    }
+  }
+}
+
+main {
+  if ARGS.len <= 1 || !VALID_DIRS.contains(ARGS[1]) {
+    VALID_DIRS.forEach(validateTestsRegistered)
+  } else {
+    validateTestsRegistered(ARGS[1], 0)
+  }
+
+  if hasErrors {
+    process_exit(1)
+  }
+}

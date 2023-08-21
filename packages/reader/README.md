@@ -1,2 +1,2 @@
 # the/reader
-The Programming Language reader
+The programming language reader

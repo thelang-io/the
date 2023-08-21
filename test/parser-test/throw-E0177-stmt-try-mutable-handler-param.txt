@@ -1,0 +1,10 @@
+======= stdin =======
+try {
+  a := "test"
+} catch mut err: error_Error {
+  print(err.stack)
+}
+======= stderr =======
+/test:3:9: E0177 - Catch clause parameter can't be mutable
+  3 | } catch mut err: error_Error {
+    |         ^~~~~~~~~~~~~~~~~~~~

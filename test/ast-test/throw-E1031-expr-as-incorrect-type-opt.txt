@@ -1,0 +1,9 @@
+======= stdin =======
+main {
+  testOpt: int? = 10
+  testOpt as str
+}
+======= stderr =======
+/test:3:3: E1031 - Type casting is not possible in this case
+  3 |   testOpt as str
+    |   ^~~~~~~~~~~~~~

@@ -17,6 +17,7 @@ main {
   #define THE_PATH_SEP "/"
 #endif
 
+#include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,33 +32,159 @@ main {
   extern unsigned char NTAPI SystemFunction036 (void *, unsigned long);
 #endif
 
+#define TYPE_error_Error 1
+
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
 struct str {
   char *d;
   size_t l;
 };
 
+struct error_Error;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
 void *alloc (size_t);
-char *path_mktemp (unsigned char (*f) (char *));
-struct str path_tempFile ();
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_buf_decrease (err_state_t *);
+err_buf_t *error_buf_increase (err_state_t *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
+void error_stack_str (err_state_t *);
+char *path_mktemp (err_state_t *, int, int, unsigned char (*f) (char *));
+struct str path_tempFile (err_state_t *, int, int);
 unsigned char path_tempFileFunctor (char *);
-char *path_tmpdir ();
+char *path_tmpdir (err_state_t *, int, int);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
+struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
 
-void *alloc (size_t l) {
-  void *r = malloc(l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to allocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
   return r;
 }
-char *path_mktemp (unsigned char (*f) (char *)) {
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
+}
+void error_buf_decrease (err_state_t *fn_err_state) {
+  err_buf_t *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  free(buf);
+}
+err_buf_t *error_buf_increase (err_state_t *fn_err_state) {
+  err_buf_t *buf = alloc(sizeof(err_buf_t));
+  buf->next = NULL;
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == NULL) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != NULL) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
+void error_stack_pop (err_state_t *fn_err_state) {
+  err_stack_t *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  free(stack);
+}
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
+}
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  error_stack_pos(fn_err_state, line, col);
+  err_stack_t *stack = alloc(sizeof(err_stack_t));
+  stack->file = file;
+  stack->name = name;
+  stack->next = NULL;
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == NULL) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != NULL) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
+}
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
+  stack->l = message.l;
+  stack->d = re_alloc(stack->d, stack->l);
+  memcpy(stack->d, message.d, stack->l);
+  int i = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    size_t z;
+    char *fmt;
+    if (it->col == 0 && it->line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->d = re_alloc(stack->d, stack->l + z + 1);
+    if (it->col == 0 && it->line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
+    } else {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->l += z;
+    i++;
+  }
+}
+char *path_mktemp (err_state_t *fn_err_state, int line, int col, unsigned char (*f) (char *)) {
   static const char *chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   static const size_t chars_len = 62;
   static const size_t x = 6;
-  char *d = path_tmpdir();
+  char *d = path_tmpdir(fn_err_state, line, col);
   size_t l = strlen(d) + x;
   d = re_alloc(d, l + 1);
   memcpy(&d[l - x], "XXXXXX", x + 1);
@@ -66,8 +193,9 @@ char *path_mktemp (unsigned char (*f) (char *)) {
     unsigned long long v;
     do {
       if (!SystemFunction036((void *) &v, sizeof(v))) {
-        fprintf(stderr, "Error: failed to generate random with `SystemFunction036`" THE_EOL);
-        exit(EXIT_FAILURE);
+        free(d);
+        error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to generate random with `SystemFunction036`"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+        longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
       }
       char *p = &d[l - x];
       for (size_t i = 0; i < x; i++) {
@@ -86,11 +214,11 @@ char *path_mktemp (unsigned char (*f) (char *)) {
     return d;
   #endif
 }
-struct str path_tempFile () {
-  char *d = path_mktemp(path_tempFileFunctor);
+struct str path_tempFile (err_state_t *fn_err_state, int line, int col) {
+  char *d = path_mktemp(fn_err_state, line, col, path_tempFileFunctor);
   if (d == NULL) {
-    fprintf(stderr, "Error: failed to create temporary file" THE_EOL);
-    exit(EXIT_FAILURE);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to create temporary file"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
   }
   struct str r = str_alloc(d);
   free(d);
@@ -105,19 +233,20 @@ unsigned char path_tempFileFunctor (char *c) {
     return fd == -1 ? 0 : 1;
   #endif
 }
-char *path_tmpdir () {
+char *path_tmpdir (err_state_t *fn_err_state, int line, int col) {
   char *d;
   #ifdef THE_OS_WINDOWS
     size_t l = GetTempPath(0, NULL);
     if (l == 0) {
-      fprintf(stderr, "Error: failed to get temporary path" THE_EOL);
-      exit(EXIT_FAILURE);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
     }
     l -= 1;
     d = alloc(l + 1);
     if (GetTempPath(l + 1, d) == 0) {
-      fprintf(stderr, "Error: failed to get temporary path" THE_EOL);
-      exit(EXIT_FAILURE);
+      free(d);
+      error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get temporary path"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+      longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
     }
     if (d[l - 1] != '\\' && d[l - 1] != '/') {
       d[l] = '\\';
@@ -145,12 +274,9 @@ char *path_tmpdir () {
   #endif
   return d;
 }
-void *re_alloc (void *d, size_t l) {
-  void *r = realloc(d, l);
-  if (r == NULL) {
-    fprintf(stderr, "Error: failed to reallocate %zu bytes" THE_EOL, l);
-    exit(EXIT_FAILURE);
-  }
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
   return r;
 }
 struct str str_alloc (const char *r) {
@@ -162,9 +288,31 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
 
 int main () {
-  str_free((struct str) path_tempFile());
+  error_stack_push(&err_state, "/test", "main", 0, 0);
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L1;
+  str_free((struct str) path_tempFile(&err_state, 2, 3));
+L1:
+  error_buf_decrease(&err_state);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
 }
 ======= flags =======
 W:-ladvapi32

@@ -118,6 +118,18 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     return this->_wrapStmt(false, ParserStmtEmpty{}, tok0.start);
   }
 
+  if (tok0.type == TK_KW_ASYNC) {
+    auto [loc1, tok1] = this->lexer->next();
+    this->lexer->seek(loc1);
+
+    if (tok1.type == TK_KW_FN) {
+      auto stmt = this->next(false);
+      auto stmtFnDecl = std::get<ParserStmtFnDecl>(*stmt.body);
+      stmtFnDecl.async = true;
+      return this->_wrapStmt(allowSemi, stmtFnDecl, tok0.start);
+    }
+  }
+
   if (tok0.type == TK_KW_CONST) {
     auto [loc1, tok1] = this->lexer->next();
 
@@ -216,97 +228,19 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
       throw Error(this->reader, tok1.start, E0115);
     }
 
-    auto [_2, tok2] = this->lexer->next();
-
-    if (tok2.type != TK_OP_LPAR) {
-      throw Error(this->reader, tok2.start, E0116);
-    }
-
-    auto [_3, tok3] = this->lexer->next();
-    auto fnDeclParams = std::vector<ParserStmtFnDeclParam>{};
-
-    while (tok3.type != TK_OP_RPAR) {
-      auto fnDeclParamMut = tok3.type == TK_KW_MUT;
-
-      if (tok3.type == TK_KW_MUT) {
-        std::tie(_3, tok3) = this->lexer->next();
-      }
-
-      if (tok3.type != TK_ID) {
-        throw Error(this->reader, tok3.start, E0117);
-      }
-
-      auto fnDeclParamType = std::optional<ParserType>{};
-      auto fnDeclParamVariadic = false;
-      auto fnDeclParamInit = std::optional<ParserStmtExpr>{};
-      auto [_4, tok4] = this->lexer->next();
-
-      if (tok4.type == TK_OP_COLON) {
-        auto typeTest1 = this->_type();
-
-        if (typeTest1 == std::nullopt) {
-          throw Error(this->reader, this->lexer->loc, E0118);
-        }
-
-        fnDeclParamType = typeTest1;
-        auto [loc5, tok5] = this->lexer->next();
-
-        if (tok5.type == TK_OP_EQ) {
-          fnDeclParamInit = this->_stmtExpr();
-
-          if (fnDeclParamInit == std::nullopt) {
-            throw Error(this->reader, this->lexer->loc, E0130);
-          }
-        } else if (tok5.type == TK_OP_DOT_DOT_DOT) {
-          fnDeclParamVariadic = true;
-          auto [loc6, tok6] = this->lexer->next();
-
-          if (tok6.type == TK_OP_EQ) {
-            this->_stmtExpr();
-            throw Error(this->reader, tok6.start, E0128);
-          } else {
-            this->lexer->seek(loc6);
-          }
-        } else {
-          this->lexer->seek(loc5);
-        }
-      } else if (tok4.type == TK_OP_COLON_EQ) {
-        fnDeclParamInit = this->_stmtExpr();
-
-        if (fnDeclParamInit == std::nullopt) {
-          throw Error(this->reader, this->lexer->loc, E0130);
-        }
-      } else {
-        throw Error(this->reader, tok4.start, E0119);
-      }
-
-      fnDeclParams.push_back(ParserStmtFnDeclParam{
-        tok3,
-        fnDeclParamType,
-        fnDeclParamMut,
-        fnDeclParamVariadic,
-        fnDeclParamInit
-      });
-
-      std::tie(_3, tok3) = this->lexer->next();
-
-      if (tok3.type == TK_OP_COMMA) {
-        std::tie(_3, tok3) = this->lexer->next();
-      }
-    }
-
+    auto fnDeclParams = this->_fnParamList();
     auto typeTest2 = this->_type();
     auto fnDeclReturnType = typeTest2 == std::nullopt ? std::optional<ParserType>{} : typeTest2;
-    auto loc7 = this->lexer->loc;
+    auto loc2 = this->lexer->loc;
     auto fnDeclBody = std::optional<ParserBlock>{};
 
     try {
       fnDeclBody = this->_block(keepComments);
     } catch (const Error &) {
-      this->lexer->seek(loc7);
+      this->lexer->seek(loc2);
     }
 
-    return this->_wrapStmt(allowSemi, ParserStmtFnDecl{tok1, fnDeclParams, fnDeclReturnType, fnDeclBody}, tok0.start);
+    return this->_wrapStmt(allowSemi, ParserStmtFnDecl{tok1, fnDeclParams, fnDeclReturnType, fnDeclBody, false}, tok0.start);
   }
 
   if (tok0.type == TK_KW_IF || tok0.type == TK_KW_ELIF) {
@@ -357,11 +291,11 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     auto [loc1, tok1] = this->lexer->next();
 
     if (tok1.type == TK_OP_LPAR) {
-      return _wrapStmtLoop(allowSemi, tok0, true, keepComments);
+      return this->_wrapStmtLoop(allowSemi, tok0, true, keepComments);
     }
 
     this->lexer->seek(loc1);
-    return _wrapStmtLoop(allowSemi, tok0, false, keepComments);
+    return this->_wrapStmtLoop(allowSemi, tok0, false, keepComments);
   }
 
   if (tok0.type == TK_KW_MUT) {
@@ -449,6 +383,47 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     }
 
     return this->_wrapStmt(allowSemi, ParserStmtObjDecl{tok1, objDeclMembers}, tok0.start);
+  }
+
+  if (tok0.type == TK_KW_THROW) {
+    auto throwArg = this->_stmtExpr();
+
+    if (throwArg == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0178);
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtThrow{*throwArg}, tok0.start);
+  }
+
+  if (tok0.type == TK_KW_TRY) {
+    auto tryBody = this->_block(keepComments);
+    auto tryCatchClauses = std::vector<ParserCatchClause>{};
+
+    while (true) {
+      auto [loc2, tok2] = this->lexer->next();
+
+      if (tok2.type != TK_KW_CATCH) {
+        this->lexer->seek(loc2);
+        break;
+      }
+
+      auto catchClauseParam = this->next(false);
+
+      if (!std::holds_alternative<ParserStmtVarDecl>(*catchClauseParam.body)) {
+        throw Error(this->reader, catchClauseParam.start, E0176);
+      } else if (std::holds_alternative<ParserStmtVarDecl>(*catchClauseParam.body) && std::get<ParserStmtVarDecl>(*catchClauseParam.body).mut) {
+        throw Error(this->reader, catchClauseParam.start, E0177);
+      }
+
+      auto catchClauseBody = this->_block(keepComments);
+      tryCatchClauses.push_back(ParserCatchClause{catchClauseParam, catchClauseBody});
+    }
+
+    if (tryCatchClauses.empty()) {
+      throw Error(this->reader, tok0.start, E0174);
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtTry{tryBody, tryCatchClauses}, tok0.start);
   }
 
   if (tok0.type == TK_KW_TYPE) {
@@ -566,8 +541,126 @@ ParserBlock Parser::_block (bool keepComments) {
   return block;
 }
 
+ParserStmtExpr Parser::_exprClosure (bool root, const Token &tok1, bool async) {
+  auto params = this->_fnParamList();
+  auto [_2, tok2] = this->lexer->next();
+
+  if (tok2.type != TK_OP_ARROW) {
+    throw Error(this->reader, tok2.start, E0183);
+  }
+
+  auto returnType = this->_type();
+
+  if (returnType == std::nullopt) {
+    throw Error(this->reader, this->lexer->loc, E0184);
+  }
+
+  auto body = this->_block();
+  auto exprClosure = ParserExprClosure{params, *returnType, body, async};
+  auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprClosure), false, tok1.start, this->lexer->loc};
+
+  return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
+}
+
+std::vector<ParserFnParam> Parser::_fnParamList () {
+  auto [_1, tok1] = this->lexer->next();
+
+  if (tok1.type != TK_OP_LPAR) {
+    throw Error(this->reader, tok1.start, E0116);
+  }
+
+  auto [_2, tok2] = this->lexer->next();
+  auto params = std::vector<ParserFnParam>{};
+
+  while (tok2.type != TK_OP_RPAR) {
+    auto param = ParserFnParam{tok2};
+    param.mut = tok2.type == TK_KW_MUT;
+
+    if (tok2.type == TK_KW_MUT) {
+      std::tie(_2, tok2) = this->lexer->next();
+      param.id = tok2;
+    }
+
+    if (tok2.type != TK_ID) {
+      throw Error(this->reader, tok2.start, E0117);
+    }
+
+    auto [_3, tok3] = this->lexer->next();
+
+    if (tok3.type == TK_OP_COLON) {
+      auto typeTest1 = this->_type();
+
+      if (typeTest1 == std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0118);
+      }
+
+      param.type = typeTest1;
+      auto [loc4, tok4] = this->lexer->next();
+
+      if (tok4.type == TK_OP_EQ) {
+        param.init = this->_stmtExpr();
+
+        if (param.init == std::nullopt) {
+          throw Error(this->reader, this->lexer->loc, E0130);
+        }
+      } else if (tok4.type == TK_OP_DOT_DOT_DOT) {
+        param.variadic = true;
+        auto [loc5, tok5] = this->lexer->next();
+
+        if (tok5.type == TK_OP_EQ) {
+          this->_stmtExpr();
+          throw Error(this->reader, tok5.start, E0128);
+        } else {
+          this->lexer->seek(loc5);
+        }
+      } else {
+        this->lexer->seek(loc4);
+      }
+    } else if (tok3.type == TK_OP_COLON_EQ) {
+      param.init = this->_stmtExpr();
+
+      if (param.init == std::nullopt) {
+        throw Error(this->reader, this->lexer->loc, E0130);
+      }
+    } else {
+      throw Error(this->reader, tok3.start, E0119);
+    }
+
+    params.push_back(param);
+    std::tie(_2, tok2) = this->lexer->next();
+
+    if (tok2.type == TK_OP_COMMA) {
+      std::tie(_2, tok2) = this->lexer->next();
+    }
+  }
+
+  return params;
+}
+
 std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
   auto [loc1, tok1] = this->lexer->next();
+
+  if (tok1.type == TK_KW_ASYNC) {
+    auto [loc2, tok2] = this->lexer->next();
+    this->lexer->seek(loc2);
+
+    if (tok2.type == TK_OP_LPAR) {
+      return this->_exprClosure(root, tok1, true);
+    }
+  }
+
+  if (tok1.type == TK_KW_AWAIT) {
+    auto exprAwaitArg = this->_stmtExpr(false);
+
+    if (exprAwaitArg == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0181);
+    }
+
+    auto exprAwait = ParserExprAwait{*exprAwaitArg};
+    auto stmtExpr = ParserStmtExpr{std::make_shared<ParserExpr>(exprAwait), false, tok1.start, this->lexer->loc};
+
+    return root ? this->_wrapStmtExpr(stmtExpr) : stmtExpr;
+  }
 
   if (
     tok1.type == TK_KW_FALSE ||
@@ -721,13 +814,35 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
     auto stmtExpr = this->_stmtExpr();
 
     if (stmtExpr == std::nullopt) {
+      auto [loc2, tok2] = this->lexer->next();
+
+      if (tok2.type == TK_KW_MUT) {
+        this->lexer->seek(loc1);
+        return this->_exprClosure(root, tok1);
+      } else if (tok2.type == TK_OP_RPAR) {
+        auto [_3, tok3] = this->lexer->next();
+
+        if (tok3.type == TK_OP_ARROW) {
+          this->lexer->seek(loc1);
+          return this->_exprClosure(root, tok1);
+        }
+      }
+
+      this->lexer->seek(loc2);
       throw Error(this->reader, this->lexer->loc, E0136);
     }
 
-    auto [_2, tok2] = this->lexer->next();
+    auto [_4, tok4] = this->lexer->next();
 
-    if (tok2.type != TK_OP_RPAR) {
-      throw Error(this->reader, tok2.start, E0109);
+    if (
+      std::holds_alternative<ParserExprAccess>(*stmtExpr->body) &&
+      std::holds_alternative<Token>(*std::get<ParserExprAccess>(*stmtExpr->body).expr) &&
+      (tok4.type == TK_OP_COLON || tok4.type == TK_OP_COLON_EQ)
+    ) {
+      this->lexer->seek(loc1);
+      return this->_exprClosure(root, tok1);
+    } else if (tok4.type != TK_OP_RPAR) {
+      throw Error(this->reader, tok4.start, E0109);
     }
 
     auto newStmtExpr = ParserStmtExpr{stmtExpr->body, true, tok1.start, this->lexer->loc};
@@ -828,11 +943,23 @@ std::optional<ParserType> Parser::_type () {
       throw Error(this->reader, this->lexer->loc, E0120);
     }
 
-    auto typeFn = ParserTypeFn{fnParams, *fnReturnType};
+    auto typeFn = ParserTypeFn{fnParams, *fnReturnType, false};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_ID) {
     auto typeId = ParserTypeId{tok1};
     return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeId), false, tok1.start, this->lexer->loc});
+  } else if (tok1.type == TK_KW_ASYNC) {
+    auto type = this->_type();
+
+    if (type == std::nullopt) {
+      throw Error(this->reader, this->lexer->loc, E0180);
+    } else if (!std::holds_alternative<ParserTypeFn>(*type->body)) {
+      throw Error(this->reader, type->start, type->end, E0180);
+    }
+
+    auto typeFn = std::get<ParserTypeFn>(*type->body);
+    typeFn.async = true;
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeFn), false, tok1.start, this->lexer->loc});
   } else if (tok1.type == TK_KW_REF) {
     auto type = this->_type();
 
@@ -868,6 +995,17 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExpr (
       auto newExpr = std::make_shared<ParserExpr>(newExprAssign);
 
       return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprAssign.right.end}, shouldWrap);
+    }
+  } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body) && !stmtExpr.parenthesized) {
+    auto exprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
+    auto tkAwait = Token{TK_KW_AWAIT};
+
+    if (tkAwait.precedence() < precedence) {
+      auto [newStmtExpr, shouldWrap] = this->_wrapExpr(exprAwait.arg, loc, tok, precedence, wrap);
+      auto newExprAwait = ParserExprAwait{newStmtExpr};
+      auto newExpr = std::make_shared<ParserExpr>(newExprAwait);
+
+      return std::make_tuple(ParserStmtExpr{newExpr, false, stmtExpr.start, newExprAwait.arg.end}, shouldWrap);
     }
   } else if (std::holds_alternative<ParserExprBinary>(*stmtExpr.body) && !stmtExpr.parenthesized) {
     auto exprBinary = std::get<ParserExprBinary>(*stmtExpr.body);
@@ -953,6 +1091,21 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAccess (const ParserStmtExpr &
   }
 
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, stmtExpr.start, this->lexer->loc}, true);
+}
+
+std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAs (
+  const ParserStmtExpr &stmtExpr,
+  [[maybe_unused]] ReaderLocation loc,
+  [[maybe_unused]] const Token &tok
+) {
+  auto exprAsRight = this->_type();
+
+  if (exprAsRight == std::nullopt) {
+    throw Error(this->reader, this->lexer->loc, E0182);
+  }
+
+  auto exprAs = ParserExprAs{stmtExpr, *exprAsRight};
+  return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprAs), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprAssign (const ParserStmtExpr &stmtExpr, [[maybe_unused]] ReaderLocation loc, const Token &tok) {
@@ -1176,7 +1329,13 @@ ParserStmt Parser::_wrapStmt (bool allowSemi, const ParserStmtBody &body, Reader
 ParserStmtExpr Parser::_wrapStmtExpr (const ParserStmtExpr &stmtExpr) {
   auto [loc, tok] = this->lexer->next();
 
-  if (tok.type == TK_KW_IS) {
+  if (tok.type == TK_KW_AS) {
+    auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
+      return this->_wrapExprAs(_1, _2, _3);
+    });
+
+    return this->_wrapStmtExpr(newStmtExpr);
+  } else if (tok.type == TK_KW_IS) {
     auto [newStmtExpr, _] = this->_wrapExpr(stmtExpr, loc, tok, tok.precedence(), [&] (auto _1, auto _2, auto _3) {
       return this->_wrapExprIs(_1, _2, _3);
     });
