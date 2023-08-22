@@ -63,7 +63,7 @@ int main (int argc, char *argv[]) {
           if (std::set<std::string>{"", "arm64", "x86_64"}.contains(optVal)) {
             arch = optVal;
           } else {
-            throw Error("unsupported platform " + optVal);
+            throw Error("unsupported arch " + optVal);
           }
         } else if (optName == "output") {
           output = optVal;
