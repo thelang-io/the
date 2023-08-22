@@ -29,9 +29,19 @@ std::string genFnTypeBodyParamId (const TypeFnParam &param) {
   else return "FP1";
 }
 
-std::tuple<std::string, std::string> genFnTypeBody (const std::vector<TypeFnParam> &params, Type *returnType, bool async) {
+std::tuple<std::string, std::string> genFnTypeBody (
+  const std::vector<TypeFnParam> &params,
+  Type *returnType,
+  bool async,
+  const std::optional<Type *> &selfParam = std::nullopt
+) {
   auto name = "fn_" + std::string(async ? "a" : "s");
   auto codeName = "@" + name;
+
+  if (selfParam != std::nullopt) {
+    name += "FS" + (*selfParam)->name;
+    codeName += "FS" + (*selfParam)->codeName;
+  }
 
   for (const auto &param : params) {
     auto paramType = Type::actual(param.type);
@@ -202,7 +212,13 @@ Type *TypeMap::createMethod (
   bool async,
   TypeCallInfo callInfo
 ) {
-  auto [n, codeName] = genFnTypeBody(params, returnType, async);
+  auto [n, codeName] = genFnTypeBody(
+    params,
+    returnType,
+    async,
+    callInfo.isSelfFirst ? callInfo.selfType : std::optional<Type *>{}
+  );
+
   auto typeBody = TypeFn{returnType, params, false, true, std::move(callInfo), async};
   auto newType = Type{n, codeName, typeBody};
 

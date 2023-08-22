@@ -63,7 +63,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="run">
-        <TypeMethod name="fn_sFRvoidFE">
+        <TypeMethod name="fn_sFSref_AnimalFRvoidFE">
           <TypeCallInfo codeName="test_AnimalSDrun_0" selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Animal">
               <TypeObj codeName="test_Animal_0" name="Animal" />
@@ -92,7 +92,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Animal.run" codeName="test_AnimalSDrun_0" frame="1">
-          <TypeMethod name="fn_sFRvoidFE">
+          <TypeMethod name="fn_sFSref_AnimalFRvoidFE">
             <TypeCallInfo codeName="test_AnimalSDrun_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Animal">
                 <TypeObj codeName="test_Animal_0" name="Animal">
@@ -108,7 +108,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="run">
-                    <TypeMethod name="fn_sFRvoidFE">
+                    <TypeMethod name="fn_sFSref_AnimalFRvoidFE">
                       <TypeCallInfo codeName="test_AnimalSDrun_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Animal">
                           <TypeObj codeName="test_Animal_0" name="Animal" />
@@ -146,7 +146,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="walk">
-        <TypeMethod name="fn_sFRvoidFE">
+        <TypeMethod name="fn_sFSref_HumanFRvoidFE">
           <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Human">
               <TypeObj codeName="test_Human_0" name="Human" />
@@ -175,7 +175,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Human.walk" codeName="test_HumanSDwalk_0" frame="1">
-          <TypeMethod name="fn_sFRvoidFE">
+          <TypeMethod name="fn_sFSref_HumanFRvoidFE">
             <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Human">
                 <TypeObj codeName="test_Human_0" name="Human">
@@ -191,7 +191,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="walk">
-                    <TypeMethod name="fn_sFRvoidFE">
+                    <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                       <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Human">
                           <TypeObj codeName="test_Human_0" name="Human" />
@@ -262,7 +262,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Human.walk" codeName="test_HumanSDwalk_0" frame="1">
-          <TypeMethod name="fn_sFRvoidFE">
+          <TypeMethod name="fn_sFSref_HumanFRvoidFE">
             <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Human">
                 <TypeObj codeName="test_Human_0" name="Human">
@@ -278,7 +278,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="walk">
-                    <TypeMethod name="fn_sFRvoidFE">
+                    <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                       <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Human">
                           <TypeObj codeName="test_Human_0" name="Human" />
@@ -328,7 +328,7 @@ main {
                                 </TypeMethod>
                               </TypeField>
                               <TypeField name="walk">
-                                <TypeMethod name="fn_sFRvoidFE">
+                                <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                                   <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                     <TypeRef name="ref_Human">
                                       <TypeObj codeName="test_Human_0" name="Human" />
@@ -359,7 +359,7 @@ main {
                                     </TypeMethod>
                                   </TypeField>
                                   <TypeField name="walk">
-                                    <TypeMethod name="fn_sFRvoidFE">
+                                    <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                                       <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                         <TypeRef name="ref_Human">
                                           <TypeObj codeName="test_Human_0" name="Human" />
@@ -412,7 +412,7 @@ main {
         </TypeMethod>
       </TypeField>
       <TypeField name="travel">
-        <TypeMethod name="fn_sFRvoidFE">
+        <TypeMethod name="fn_sFSref_AlienFRvoidFE">
           <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
             <TypeRef name="ref_Alien">
               <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -476,7 +476,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Alien.travel" codeName="test_AlienSDtravel_0" frame="1">
-          <TypeMethod name="fn_sFRvoidFE">
+          <TypeMethod name="fn_sFSref_AlienFRvoidFE">
             <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Alien">
                 <TypeObj codeName="test_Alien_0" name="Alien">
@@ -492,7 +492,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="travel">
-                    <TypeMethod name="fn_sFRvoidFE">
+                    <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                       <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Alien">
                           <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -542,7 +542,7 @@ main {
                                 </TypeMethod>
                               </TypeField>
                               <TypeField name="travel">
-                                <TypeMethod name="fn_sFRvoidFE">
+                                <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                                   <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                     <TypeRef name="ref_Alien">
                                       <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -573,7 +573,7 @@ main {
                                     </TypeMethod>
                                   </TypeField>
                                   <TypeField name="travel">
-                                    <TypeMethod name="fn_sFRvoidFE">
+                                    <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                                       <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                         <TypeRef name="ref_Alien">
                                           <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -624,7 +624,7 @@ main {
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
         <Var name="Alien.travel" codeName="test_AlienSDtravel_0" frame="1">
-          <TypeMethod name="fn_sFRvoidFE">
+          <TypeMethod name="fn_sFSref_AlienFRvoidFE">
             <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Alien">
                 <TypeObj codeName="test_Alien_0" name="Alien">
@@ -640,7 +640,7 @@ main {
                     </TypeMethod>
                   </TypeField>
                   <TypeField name="travel">
-                    <TypeMethod name="fn_sFRvoidFE">
+                    <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                       <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                         <TypeRef name="ref_Alien">
                           <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -680,7 +680,7 @@ main {
             </TypeMethod>
           </TypeField>
           <TypeField name="walk">
-            <TypeMethod name="fn_sFRvoidFE">
+            <TypeMethod name="fn_sFSref_HumanFRvoidFE">
               <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                 <TypeRef name="ref_Human">
                   <TypeObj codeName="test_Human_0" name="Human" />
@@ -710,7 +710,7 @@ main {
               </TypeMethod>
             </TypeField>
             <TypeField name="walk">
-              <TypeMethod name="fn_sFRvoidFE">
+              <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                 <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Human">
                     <TypeObj codeName="test_Human_0" name="Human" />
@@ -762,7 +762,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                           <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="test_Human_0" name="Human" />
@@ -791,7 +791,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="walk">
-                            <TypeMethod name="fn_sFRvoidFE">
+                            <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                               <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Human">
                                   <TypeObj codeName="test_Human_0" name="Human" />
@@ -823,7 +823,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn_sFRvoidFE">
+              <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                 <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Human">
                     <TypeObj codeName="test_Human_0" name="Human">
@@ -839,7 +839,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                           <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="test_Human_0" name="Human" />
@@ -875,7 +875,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                           <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="test_Human_0" name="Human" />
@@ -904,7 +904,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="walk">
-                            <TypeMethod name="fn_sFRvoidFE">
+                            <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                               <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Human">
                                   <TypeObj codeName="test_Human_0" name="Human" />
@@ -960,7 +960,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="walk">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                           <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Human">
                               <TypeObj codeName="test_Human_0" name="Human" />
@@ -989,7 +989,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="walk">
-                            <TypeMethod name="fn_sFRvoidFE">
+                            <TypeMethod name="fn_sFSref_HumanFRvoidFE">
                               <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Human">
                                   <TypeObj codeName="test_Human_0" name="Human" />
@@ -1028,7 +1028,7 @@ main {
             </TypeMethod>
           </TypeField>
           <TypeField name="travel">
-            <TypeMethod name="fn_sFRvoidFE">
+            <TypeMethod name="fn_sFSref_AlienFRvoidFE">
               <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                 <TypeRef name="ref_Alien">
                   <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1058,7 +1058,7 @@ main {
               </TypeMethod>
             </TypeField>
             <TypeField name="travel">
-              <TypeMethod name="fn_sFRvoidFE">
+              <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                 <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Alien">
                     <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1110,7 +1110,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                           <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1139,7 +1139,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="travel">
-                            <TypeMethod name="fn_sFRvoidFE">
+                            <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                               <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Alien">
                                   <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1171,7 +1171,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeMethod name="fn_sFRvoidFE">
+              <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                 <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                   <TypeRef name="ref_Alien">
                     <TypeObj codeName="test_Alien_0" name="Alien">
@@ -1187,7 +1187,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                           <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1223,7 +1223,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                           <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1252,7 +1252,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="travel">
-                            <TypeMethod name="fn_sFRvoidFE">
+                            <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                               <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Alien">
                                   <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1308,7 +1308,7 @@ main {
                         </TypeMethod>
                       </TypeField>
                       <TypeField name="travel">
-                        <TypeMethod name="fn_sFRvoidFE">
+                        <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                           <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                             <TypeRef name="ref_Alien">
                               <TypeObj codeName="test_Alien_0" name="Alien" />
@@ -1337,7 +1337,7 @@ main {
                             </TypeMethod>
                           </TypeField>
                           <TypeField name="travel">
-                            <TypeMethod name="fn_sFRvoidFE">
+                            <TypeMethod name="fn_sFSref_AlienFRvoidFE">
                               <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
                                 <TypeRef name="ref_Alien">
                                   <TypeObj codeName="test_Alien_0" name="Alien" />
