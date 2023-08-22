@@ -15,13 +15,12 @@
  */
 
 #include <algorithm>
-#include <ranges>
 #include "CodegenCleanUp.hpp"
 #include "Error.hpp"
 
-CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool isAsync) {
+CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool a) {
   this->type = t;
-  this->async = isAsync;
+  this->async = a;
 
   if (p != nullptr) {
     this->parent = p;
@@ -140,13 +139,13 @@ void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {
     return;
   }
 
-  for (const auto &it : std::ranges::reverse_view(this->_data)) {
-    if (it.labelUsed) {
-      (*c)->append(CodegenASTStmtLabel::create(it.label));
+  for (auto it = this->_data.rbegin(); it != this->_data.rend(); it++) {
+    if (it->labelUsed) {
+      (*c)->append(CodegenASTStmtLabel::create(it->label));
     }
 
-    if (!it.content.empty()) {
-      (*c)->merge(it.content);
+    if (!it->content.empty()) {
+      (*c)->merge(it->content);
     }
   }
 }
@@ -156,14 +155,14 @@ void CodegenCleanUp::genAsync (std::shared_ptr<CodegenASTStmt> *c, std::size_t &
     return;
   }
 
-  for (const auto &it : std::ranges::reverse_view(this->_data)) {
-    if (it.labelUsed) {
+  for (auto it = this->_data.rbegin(); it != this->_data.rend(); it++) {
+    if (it->labelUsed) {
       *c = (*c)->increaseAsyncCounter(counter);
-      *it.asyncCounter = counter;
+      *it->asyncCounter = counter;
     }
 
-    if (!it.content.empty()) {
-      (*c)->merge(it.content);
+    if (!it->content.empty()) {
+      (*c)->merge(it->content);
     }
   }
 }
@@ -176,8 +175,8 @@ void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (stmt->isCompound()) {
     auto stmtCompound = stmt->asCompound();
 
-    for (const auto &it : std::ranges::reverse_view(stmtCompound.body)) {
-      this->add(it);
+    for (auto it = stmtCompound.body.rbegin(); it != stmtCompound.body.rend(); it++) {
+      this->add(*it);
     }
   } else {
     this->add(stmt);

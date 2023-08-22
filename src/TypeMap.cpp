@@ -17,7 +17,6 @@
 #include "TypeMap.hpp"
 #include <algorithm>
 #include <limits>
-#include <ranges>
 #include <utility>
 #include "codegen-api.hpp"
 
@@ -324,9 +323,9 @@ Type *TypeMap::get (const std::string &n) {
     return this->self == std::nullopt ? nullptr : *this->self;
   }
 
-  for (const auto &it : std::ranges::reverse_view(this->_items)) {
-    if (it->name == n) {
-      return it.get();
+  for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
+    if ((*it)->name == n) {
+      return it->get();
     }
   }
 

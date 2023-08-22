@@ -17,7 +17,6 @@
 #include "Codegen.hpp"
 #include <filesystem>
 #include <fstream>
-#include <ranges>
 #include "codegen-api.hpp"
 #include "config.hpp"
 
@@ -242,8 +241,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     );
   }
 
-  for (const auto &it : std::ranges::reverse_view(*this->ast->imports)) {
-    this->_block(&cMain, it.nodes, false);
+  for (auto it = this->ast->imports->rbegin(); it != this->ast->imports->rend(); it++) {
+    this->_block(&cMain, it->nodes, false);
   }
 
   this->_block(&cMain, nodes, false);

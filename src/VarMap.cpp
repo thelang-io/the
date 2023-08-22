@@ -16,7 +16,6 @@
 
 #include "VarMap.hpp"
 #include <algorithm>
-#include <ranges>
 #include "Error.hpp"
 
 std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &codeName, Type *type, bool mut, bool constant, bool ctxIgnored) {
@@ -31,9 +30,9 @@ std::shared_ptr<Var> VarMap::addNamespace (const std::string &name, Type *type) 
 }
 
 std::shared_ptr<Var> VarMap::get (const std::string &name) {
-  for (const auto &it : std::ranges::reverse_view(this->_items)) {
-    if (it->name == name) {
-      return it;
+  for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
+    if ((*it)->name == name) {
+      return *it;
     }
   }
 
@@ -172,14 +171,14 @@ VarStack VarMap::varStack () const {
 
   auto result = std::vector<std::shared_ptr<Var>>{};
 
-  for (const auto &it : std::ranges::reverse_view(this->_items)) {
-    if (!it->builtin && !it->ctxIgnored) {
+  for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
+    if (!(*it)->builtin && !(*it)->ctxIgnored) {
       auto stackVar = std::find_if(result.begin(), result.end(), [&] (const auto &it2) -> bool {
-        return it2->name == it->name;
+        return it2->name == (*it)->name;
       });
 
       if (stackVar == result.end()) {
-        result.push_back(it);
+        result.push_back(*it);
       }
     }
   }
