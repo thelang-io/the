@@ -16,6 +16,7 @@
 
 #include "VarMap.hpp"
 #include <algorithm>
+#include <ranges>
 #include "Error.hpp"
 
 std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &codeName, Type *type, bool mut, bool constant, bool ctxIgnored) {
@@ -30,17 +31,9 @@ std::shared_ptr<Var> VarMap::addNamespace (const std::string &name, Type *type) 
 }
 
 std::shared_ptr<Var> VarMap::get (const std::string &name) {
-  if (this->_items.empty()) {
-    return nullptr;
-  }
-
-  for (auto idx = this->_items.size() - 1;; idx--) {
-    auto item = this->_items[idx];
-
-    if (item->name == name) {
-      return item;
-    } else if (idx == 0) {
-      break;
+  for (const auto &it : std::ranges::reverse_view(this->_items)) {
+    if (it->name == name) {
+      return it;
     }
   }
 
@@ -48,7 +41,7 @@ std::shared_ptr<Var> VarMap::get (const std::string &name) {
 }
 
 bool VarMap::has (const std::string &name) const {
-  return std::any_of(this->_items.begin(), this->_items.end(), [&name] (const auto &it) -> bool {
+  return std::any_of(this->_items.begin(), this->_items.end(), [&] (const auto &it) -> bool {
     return it->name == name;
   });
 }
@@ -136,12 +129,12 @@ std::shared_ptr<Var> VarMap::insert (const std::shared_ptr<Var> &var) {
 std::string VarMap::name (const std::string &name) const {
   auto fullName = name + "_";
 
-  for (auto idx = static_cast<std::size_t>(0);; idx++) {
-    auto fullNameTest = fullName + std::to_string(idx);
+  for (auto i = static_cast<std::size_t>(0);; i++) {
+    auto fullNameTest = fullName + std::to_string(i);
     auto exists = false;
 
-    for (const auto &item : this->_items) {
-      if (item->codeName == fullNameTest) {
+    for (const auto &it : this->_items) {
+      if (it->codeName == fullNameTest) {
         exists = true;
         break;
       }
@@ -154,15 +147,15 @@ std::string VarMap::name (const std::string &name) const {
 }
 
 void VarMap::restore () {
-  for (auto idx = static_cast<std::size_t>(0); idx < this->_items.size();) {
-    auto item = this->_items[idx];
+  for (auto i = static_cast<std::size_t>(0); i < this->_items.size();) {
+    auto item = this->_items[i];
 
     if (item->frame == this->_frame) {
-      this->_items.erase(this->_items.begin() + static_cast<std::ptrdiff_t>(idx));
+      this->_items.erase(this->_items.begin() + static_cast<std::ptrdiff_t>(i));
       continue;
     }
 
-    idx++;
+    i++;
   }
 
   this->_frame--;
@@ -179,21 +172,15 @@ VarStack VarMap::varStack () const {
 
   auto result = std::vector<std::shared_ptr<Var>>{};
 
-  for (auto idx = this->_items.size() - 1;; idx--) {
-    auto item = this->_items[idx];
-
-    if (!item->builtin && !item->ctxIgnored) {
-      auto stackVar = std::find_if(result.begin(), result.end(), [&item] (const auto &it2) -> bool {
-        return it2->name == item->name;
+  for (const auto &it : std::ranges::reverse_view(this->_items)) {
+    if (!it->builtin && !it->ctxIgnored) {
+      auto stackVar = std::find_if(result.begin(), result.end(), [&] (const auto &it2) -> bool {
+        return it2->name == it->name;
       });
 
       if (stackVar == result.end()) {
-        result.push_back(item);
+        result.push_back(it);
       }
-    }
-
-    if (idx == 0) {
-      break;
     }
   }
 

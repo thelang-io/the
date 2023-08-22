@@ -19,7 +19,6 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
-#include "config.hpp"
 
 // todo
 std::optional<std::string> convert_path_to_namespace (const std::string &p) {
@@ -86,9 +85,9 @@ std::vector<std::string> str_lines (const std::string &str) {
         i++;
       }
 
-      result.push_back("");
+      result.emplace_back("");
     } else if (ch == '\n') {
-      result.push_back("");
+      result.emplace_back("");
     } else {
       result.back() += ch;
     }

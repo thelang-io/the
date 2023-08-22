@@ -124,10 +124,10 @@ std::shared_ptr<Var> AST::getExportVar (const ASTNode &node) {
 }
 
 void AST::populateExprAwaitId (ASTBlock &nodes) {
-  auto exprs = ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(nodes));
+  auto expressions = ASTChecker::flattenExpr(ASTChecker::flattenNodeExprs(nodes));
   auto exprId = static_cast<std::size_t>(0);
 
-  for (auto &expr : exprs) {
+  for (const auto &expr : expressions) {
     if (std::holds_alternative<ASTExprAwait>(*expr.body) && !expr.type->isVoid()) {
       std::get<ASTExprAwait>(*expr.body).id = ++exprId;
     }
@@ -1317,7 +1317,7 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
           throw Error(this->reader, parserExprCallArg.id->start, parserExprCallArg.expr.end, E1005);
         }
 
-        for (auto &calleeFnParam : exprCallCalleeFnType.params) {
+        for (const auto &calleeFnParam : exprCallCalleeFnType.params) {
           if (calleeFnParam.name != std::nullopt && calleeFnParam.name == exprCallArgName) {
             foundParam = calleeFnParam;
             break;

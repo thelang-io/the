@@ -124,14 +124,14 @@ std::string Token::escape (const std::string &val, bool insideAttr) {
   auto result = std::string();
   result.reserve(val.size());
 
-  for (auto idx = static_cast<std::size_t>(0); idx < val.size(); idx++) {
-    if (val[idx] == '\f') result += R"(\f)";
-    else if (val[idx] == '\n') result += R"(\n)";
-    else if (val[idx] == '\r') result += R"(\r)";
-    else if (val[idx] == '\t') result += R"(\t)";
-    else if (val[idx] == '\v') result += R"(\v)";
-    else if (val[idx] == '"' && insideAttr) result += R"(\")";
-    else result += val[idx];
+  for (const auto &ch : val) {
+    if (ch == '\f') result += R"(\f)";
+    else if (ch == '\n') result += R"(\n)";
+    else if (ch == '\r') result += R"(\r)";
+    else if (ch == '\t') result += R"(\t)";
+    else if (ch == '\v') result += R"(\v)";
+    else if (ch == '"' && insideAttr) result += R"(\")";
+    else result += ch;
   }
 
   return result;

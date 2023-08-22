@@ -17,6 +17,7 @@
 #include "Codegen.hpp"
 #include <filesystem>
 #include <fstream>
+#include <ranges>
 #include "codegen-api.hpp"
 #include "config.hpp"
 
@@ -75,7 +76,6 @@ void Codegen::compile (
   auto depsDir = Codegen::getEnvVar("DEPS_DIR");
   auto compiler = getCompilerFromPlatform(arch, platform);
   auto flagsStr = std::string();
-  auto libraries = std::string();
 
   if (!depsDir.empty()) {
     flagsStr += " -I\"" + depsDir + "/include\"";
@@ -96,8 +96,8 @@ void Codegen::compile (
     }
   }
 
-  auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr + " -O0 -g";
-  cmd += targetOS == "linux" && debug ? "dwarf-4" : "";
+  auto cmd = compiler + " " + path + ".c -O0 -w -o " + path + flagsStr;
+  cmd += targetOS == "linux" && debug ? " -gdwarf-4" : " -g";
   auto returnCode = std::system(cmd.c_str());
   std::filesystem::remove(path + ".c");
 
@@ -112,11 +112,11 @@ std::string Codegen::name (const std::string &name) {
 
 std::string Codegen::stringifyFlags (const std::vector<std::string> &flags) {
   auto result = std::string();
-  auto idx = static_cast<std::size_t>(0);
+  auto i = static_cast<std::size_t>(0);
 
   for (const auto &flag : flags) {
     if (!flag.empty()) {
-      result += (idx++ == 0 ? "" : " ") + flag;
+      result += (i++ == 0 ? "" : " ") + flag;
     }
   }
 
@@ -242,8 +242,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     );
   }
 
-  for (auto it = this->ast->imports->rbegin(); it != this->ast->imports->rend(); it++) {
-    this->_block(&cMain, it->nodes, false);
+  for (const auto &it : std::ranges::reverse_view(*this->ast->imports)) {
+    this->_block(&cMain, it.nodes, false);
   }
 
   this->_block(&cMain, nodes, false);

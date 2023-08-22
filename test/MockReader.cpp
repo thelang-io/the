@@ -22,15 +22,15 @@ MockReader::MockReader (const std::string &c) : Reader("CMakeLists.txt") {
   this->content = c;
   this->size = this->content.length();
 
-  ON_CALL(*this, eof).WillByDefault([this] () {
+  ON_CALL(*this, eof).WillByDefault([&] () {
     return this->Reader::eof();
   });
 
-  ON_CALL(*this, next).WillByDefault([this] () {
+  ON_CALL(*this, next).WillByDefault([&] () {
     return this->Reader::next();
   });
 
-  ON_CALL(*this, seek).WillByDefault([this] (ReaderLocation l) {
+  ON_CALL(*this, seek).WillByDefault([&] (ReaderLocation l) {
     return this->Reader::seek(l);
   });
 }

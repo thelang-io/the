@@ -158,7 +158,7 @@ bool CodegenASTStmt::emptyVector (const std::vector<std::shared_ptr<CodegenASTSt
     return true;
   }
 
-  return std::all_of(vec.begin(), vec.end(), [&] (const auto &it) -> bool {
+  return std::all_of(vec.begin(), vec.end(), [] (const auto &it) -> bool {
     return it->isNullable();
   });
 }
@@ -246,8 +246,8 @@ std::shared_ptr<CodegenASTStmt> CodegenASTStmt::getBody () {
 }
 
 void CodegenASTStmt::merge (const std::vector<std::shared_ptr<CodegenASTStmt>> &items) {
-  for (const auto &item : items) {
-    this->append(item);
+  for (const auto &it : items) {
+    this->append(it);
   }
 }
 

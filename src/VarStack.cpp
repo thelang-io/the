@@ -19,23 +19,23 @@
 VarStack::VarStack (const std::vector<std::shared_ptr<Var>> &items) {
   this->_items.reserve(items.size());
 
-  for (const auto &item : items) {
-    this->_items.emplace_back(item, false);
+  for (const auto &it : items) {
+    this->_items.emplace_back(it, false);
   }
 }
 
 void VarStack::mark (const std::string &codeName) {
-  for (auto &item : this->_items) {
-    if (std::get<0>(item)->codeName == codeName) {
-      std::get<1>(item) = true;
+  for (auto &it : this->_items) {
+    if (std::get<0>(it)->codeName == codeName) {
+      std::get<1>(it) = true;
     }
   }
 }
 
 void VarStack::mark (const std::shared_ptr<Var> &var) {
-  for (auto &item : this->_items) {
-    if (std::get<0>(item)->codeName == var->codeName) {
-      std::get<1>(item) = true;
+  for (auto &it : this->_items) {
+    if (std::get<0>(it)->codeName == var->codeName) {
+      std::get<1>(it) = true;
     }
   }
 }
@@ -49,9 +49,9 @@ void VarStack::mark (const std::vector<std::shared_ptr<Var>> &vars) {
 std::vector<std::shared_ptr<Var>> VarStack::snapshot () const {
   auto result = std::vector<std::shared_ptr<Var>>{};
 
-  for (const auto &item : this->_items) {
-    if (std::get<1>(item)) {
-      result.push_back(std::get<0>(item));
+  for (const auto &it : this->_items) {
+    if (std::get<1>(it)) {
+      result.push_back(std::get<0>(it));
     }
   }
 

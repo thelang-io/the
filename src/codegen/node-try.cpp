@@ -194,14 +194,14 @@ void Codegen::_nodeTryAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &
   (*c)->append(this->_genAsyncReturn(initialStateCleanUp.currentLabelAsync()));
   *c = (*c)->increaseAsyncCounter(this->state.asyncCounter);
 
-  for (auto idx = static_cast<std::size_t>(0); idx < nodeTry.handlers.size(); idx++) {
-    auto handler = nodeTry.handlers[idx];
+  for (auto i = static_cast<std::size_t>(0); i < nodeTry.handlers.size(); i++) {
+    auto handler = nodeTry.handlers[i];
     auto handlerVarDecl = std::get<ASTNodeVarDecl>(*handler.param.body);
     auto handlerTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
     auto handlerCodeName = Codegen::name(handlerVarDecl.var->codeName);
     auto cHandlerFree = CodegenASTExprUnary::create("*", CodegenASTExprAccess::create(handlerCodeName));
 
-    *handlersAsyncCounters[idx] = this->state.asyncCounter;
+    *handlersAsyncCounters[i] = this->state.asyncCounter;
 
     (*c)->append(
       CodegenASTExprCall::create(

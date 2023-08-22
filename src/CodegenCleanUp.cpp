@@ -15,6 +15,7 @@
  */
 
 #include <algorithm>
+#include <ranges>
 #include "CodegenCleanUp.hpp"
 #include "Error.hpp"
 
@@ -129,7 +130,7 @@ bool CodegenCleanUp::empty () const {
     return true;
   }
 
-  return std::all_of(this->_data.begin(), this->_data.end(), [&] (const auto &it) -> bool {
+  return std::all_of(this->_data.begin(), this->_data.end(), [] (const auto &it) -> bool {
     return CodegenASTStmt::emptyVector(it.content);
   });
 }
@@ -139,19 +140,13 @@ void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {
     return;
   }
 
-  for (auto idx = this->_data.size() - 1;; idx--) {
-    auto item = this->_data[idx];
-
-    if (item.labelUsed) {
-      (*c)->append(CodegenASTStmtLabel::create(item.label));
+  for (const auto &it : std::ranges::reverse_view(this->_data)) {
+    if (it.labelUsed) {
+      (*c)->append(CodegenASTStmtLabel::create(it.label));
     }
 
-    if (!item.content.empty()) {
-      (*c)->merge(item.content);
-    }
-
-    if (idx == 0) {
-      break;
+    if (!it.content.empty()) {
+      (*c)->merge(it.content);
     }
   }
 }
@@ -161,20 +156,14 @@ void CodegenCleanUp::genAsync (std::shared_ptr<CodegenASTStmt> *c, std::size_t &
     return;
   }
 
-  for (auto idx = this->_data.size() - 1;; idx--) {
-    auto item = this->_data[idx];
-
-    if (item.labelUsed) {
+  for (const auto &it : std::ranges::reverse_view(this->_data)) {
+    if (it.labelUsed) {
       *c = (*c)->increaseAsyncCounter(counter);
-      *item.asyncCounter = counter;
+      *it.asyncCounter = counter;
     }
 
-    if (!item.content.empty()) {
-      (*c)->merge(item.content);
-    }
-
-    if (idx == 0) {
-      break;
+    if (!it.content.empty()) {
+      (*c)->merge(it.content);
     }
   }
 }
@@ -187,8 +176,8 @@ void CodegenCleanUp::merge (const std::shared_ptr<CodegenASTStmt> &stmt) {
   if (stmt->isCompound()) {
     auto stmtCompound = stmt->asCompound();
 
-    for (auto it = stmtCompound.body.rbegin(); it != stmtCompound.body.rend(); it++) {
-      this->add(*it);
+    for (const auto &it : std::ranges::reverse_view(stmtCompound.body)) {
+      this->add(it);
     }
   } else {
     this->add(stmt);

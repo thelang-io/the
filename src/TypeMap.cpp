@@ -17,6 +17,7 @@
 #include "TypeMap.hpp"
 #include <algorithm>
 #include <limits>
+#include <ranges>
 #include <utility>
 #include "codegen-api.hpp"
 
@@ -116,13 +117,13 @@ Type *TypeMap::createArr (Type *elementType) {
 
   auto newType = Type{"array_" + elementType->name, "@array_" + elementType->name, TypeArray{elementType}};
 
-  for (const auto &item : this->_items) {
+  for (const auto &it : this->_items) {
     if (
-      item->isArray() &&
-      std::get<TypeArray>(item->body).elementType->builtin == elementType->builtin &&
-      item->matchStrict(&newType, true)
+      it->isArray() &&
+      std::get<TypeArray>(it->body).elementType->builtin == elementType->builtin &&
+      it->matchStrict(&newType, true)
     ) {
-      return item.get();
+      return it.get();
     }
   }
 
@@ -160,9 +161,9 @@ Type *TypeMap::createFn (
   auto typeBody = TypeFn{returnType, params, false, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo, async};
   auto newType = Type{n, codeName, typeBody};
 
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (!it->builtin && it->isFn() && it->matchStrict(&newType, true)) {
+      return it.get();
     }
   }
 
@@ -182,9 +183,9 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   auto codeName = "@map_" + actualKeyType->codeName + "MS" + actualValueType->codeName + "ME";
   auto newType = Type{n, codeName, TypeBodyMap{actualKeyType, actualValueType}};
 
-  for (const auto &item : this->_items) {
-    if (item->codeName == newType.codeName) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (it->codeName == newType.codeName) {
+      return it.get();
     }
   }
 
@@ -206,9 +207,9 @@ Type *TypeMap::createMethod (
   auto typeBody = TypeFn{returnType, params, false, true, std::move(callInfo), async};
   auto newType = Type{n, codeName, typeBody};
 
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (!it->builtin && it->isFn() && it->matchStrict(&newType, true)) {
+      return it.get();
     }
   }
 
@@ -244,13 +245,13 @@ Type *TypeMap::createOpt (Type *type) {
 
   auto newType = Type{"opt_" + type->name, "@opt_" + type->name, TypeOptional{type}};
 
-  for (const auto &item : this->_items) {
+  for (const auto &it : this->_items) {
     if (
-      item->isOpt() &&
-      std::get<TypeOptional>(item->body).type->builtin == type->builtin &&
-      item->matchStrict(&newType, true)
+      it->isOpt() &&
+      std::get<TypeOptional>(it->body).type->builtin == type->builtin &&
+      it->matchStrict(&newType, true)
     ) {
-      return item.get();
+      return it.get();
     }
   }
 
@@ -269,13 +270,13 @@ Type *TypeMap::createRef (Type *refType) {
 
   auto newType = Type{"ref_" + refType->name, "@ref_" + refType->name, TypeRef{refType}};
 
-  for (const auto &item : this->_items) {
+  for (const auto &it : this->_items) {
     if (
-      item->isRef() &&
-      std::get<TypeRef>(item->body).refType->builtin == refType->builtin &&
-      item->matchStrict(&newType, true)
+      it->isRef() &&
+      std::get<TypeRef>(it->body).refType->builtin == refType->builtin &&
+      it->matchStrict(&newType, true)
     ) {
-      return item.get();
+      return it.get();
     }
   }
 
@@ -298,9 +299,9 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   codeName = codeName.substr(0, codeName.size() - 2) + "UE";
   auto newType = Type{n, codeName, TypeUnion{actualSubTypes}};
 
-  for (const auto &item : this->_items) {
-    if (item->codeName == newType.codeName) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (it->codeName == newType.codeName) {
+      return it.get();
     }
   }
 
@@ -323,11 +324,9 @@ Type *TypeMap::get (const std::string &n) {
     return this->self == std::nullopt ? nullptr : *this->self;
   }
 
-  for (auto idx = this->_items.size() - 1;; idx--) {
-    if (this->_items[idx]->name == n) {
-      return this->_items[idx].get();
-    } else if (idx == 0) {
-      break;
+  for (const auto &it : std::ranges::reverse_view(this->_items)) {
+    if (it->name == n) {
+      return it.get();
     }
   }
 
@@ -339,7 +338,7 @@ bool TypeMap::has (const std::string &n) {
     return this->self != std::nullopt;
   }
 
-  return std::any_of(this->_items.begin(), this->_items.end(), [&n] (const auto &it) -> bool {
+  return std::any_of(this->_items.begin(), this->_items.end(), [&] (const auto &it) -> bool {
     return it->name == n;
   });
 }
@@ -352,19 +351,18 @@ std::string TypeMap::name (const std::string &n) const {
   auto fullName = std::string();
 
   for (auto i = static_cast<std::size_t>(0); i < this->stack.size(); i++) {
-    auto item = this->stack[i];
     auto delimiter = std::string(i == 0 ? "_" : "SD");
-    fullName += item + delimiter;
+    fullName += this->stack[i] + delimiter;
   }
 
   fullName += n + "_";
 
-  for (auto idx = static_cast<std::size_t>(0);; idx++) {
-    auto fullNameTest = fullName + std::to_string(idx);
+  for (auto i = static_cast<std::size_t>(0);; i++) {
+    auto fullNameTest = fullName + std::to_string(i);
     auto exists = false;
 
-    for (const auto &item : this->_items) {
-      if (item->codeName == fullNameTest) {
+    for (const auto &it : this->_items) {
+      if (it->codeName == fullNameTest) {
         exists = true;
         break;
       }

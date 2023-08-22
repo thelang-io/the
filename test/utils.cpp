@@ -25,7 +25,7 @@
 std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const std::string &tmpName) {
   auto returnCode = -1;
 
-  auto pcloseWrapper = [&returnCode] (FILE *fd) {
+  auto pcloseWrapper = [&] (FILE *fd) {
     #if defined(OS_WINDOWS)
       returnCode = _pclose(fd);
     #else
@@ -202,13 +202,13 @@ std::map<std::string, std::string> readTestFile (
     {"stderr", true}
   };
 
-  for (auto &item : sections) {
-    if (std::find(allowedSections.begin(), allowedSections.end(), item.first) == allowedSections.end()) {
-      throw Error("Error: passed unknown " + testName + R"( section ")" + item.first + R"(")");
+  for (auto &it : sections) {
+    if (std::find(allowedSections.begin(), allowedSections.end(), it.first) == allowedSections.end()) {
+      throw Error("Error: passed unknown " + testName + R"( section ")" + it.first + R"(")");
     }
 
-    if (eraseEolSections.contains(item.first) && !item.second.empty()) {
-      item.second.erase(item.second.size() - eolSize, eolSize);
+    if (eraseEolSections.contains(it.first) && !it.second.empty()) {
+      it.second.erase(it.second.size() - eolSize, eolSize);
     }
   }
 

@@ -151,11 +151,11 @@ bool Type::canBeCast (Type *t) {
     (t1->isUnion() && t1->hasSubType(t2));
 }
 
-std::optional<TypeField> Type::fieldNth (std::size_t idx) const {
+std::optional<TypeField> Type::fieldNth (std::size_t i) const {
   if (this->isAlias()) {
-    return std::get<TypeAlias>(this->body).type->fieldNth(idx);
+    return std::get<TypeAlias>(this->body).type->fieldNth(i);
   } else if (this->isRef()) {
-    return std::get<TypeRef>(this->body).refType->fieldNth(idx);
+    return std::get<TypeRef>(this->body).refType->fieldNth(i);
   }
 
   auto result = std::vector<TypeField>{};
@@ -167,7 +167,7 @@ std::optional<TypeField> Type::fieldNth (std::size_t idx) const {
     result.push_back(field);
   }
 
-  return idx >= result.size() ? std::optional<TypeField>{} : result[idx];
+  return i >= result.size() ? std::optional<TypeField>{} : result[i];
 }
 
 Type *Type::getEnumerator (const std::string &memberName) const {
@@ -177,7 +177,7 @@ Type *Type::getEnumerator (const std::string &memberName) const {
 
   auto enumType = std::get<TypeEnum>(this->body);
 
-  auto typeMember = std::find_if(enumType.members.begin(), enumType.members.end(), [&memberName] (const auto &it) -> bool {
+  auto typeMember = std::find_if(enumType.members.begin(), enumType.members.end(), [&] (const auto &it) -> bool {
     return it->name == memberName;
   });
 
@@ -195,7 +195,7 @@ TypeField Type::getField (const std::string &fieldName) const {
     return std::get<TypeRef>(this->body).refType->getField(fieldName);
   }
 
-  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&] (const auto &it) -> bool {
     return it.name == fieldName;
   });
 
@@ -213,7 +213,7 @@ Type *Type::getProp (const std::string &propName) const {
     return std::get<TypeRef>(this->body).refType->getProp(propName);
   }
 
-  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&propName] (const auto &it) -> bool {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&] (const auto &it) -> bool {
     return it.name == propName;
   });
 
@@ -231,7 +231,7 @@ bool Type::hasEnumerator (const std::string &memberName) const {
 
   auto enumType = std::get<TypeEnum>(this->body);
 
-  auto typeMember = std::find_if(enumType.members.begin(), enumType.members.end(), [&memberName] (const auto &it) -> bool {
+  auto typeMember = std::find_if(enumType.members.begin(), enumType.members.end(), [&] (const auto &it) -> bool {
     return it->name == memberName;
   });
 
@@ -245,7 +245,7 @@ bool Type::hasField (const std::string &fieldName) const {
     return std::get<TypeRef>(this->body).refType->hasField(fieldName);
   }
 
-  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&fieldName] (const auto &it) -> bool {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&] (const auto &it) -> bool {
     return it.name == fieldName;
   });
 
@@ -259,7 +259,7 @@ bool Type::hasProp (const std::string &propName) const {
     return std::get<TypeRef>(this->body).refType->hasProp(propName);
   }
 
-  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&propName] (const auto &it) -> bool {
+  auto typeField = std::find_if(this->fields.begin(), this->fields.end(), [&] (const auto &it) -> bool {
     return it.name == propName;
   });
 
@@ -592,7 +592,7 @@ bool Type::matchNice (const Type *type) const {
       return false;
     }
 
-    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&type] (const auto &it) -> bool {
+    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&] (const auto &it) -> bool {
       return type->hasSubType(it);
     });
   }
@@ -699,7 +699,7 @@ bool Type::matchStrict (const Type *type, bool exact) const {
       return false;
     }
 
-    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&type] (const auto &it) -> bool {
+    return std::all_of(lhsUnion.subTypes.begin(), lhsUnion.subTypes.end(), [&] (const auto &it) -> bool {
       return type->hasSubType(it);
     });
   }

@@ -19,11 +19,11 @@
 MockAST::MockAST (const std::string &content) : AST(&this->_p), _p(content)  {
   this->reader = this->_p.reader;
 
-  ON_CALL(*this, gen).WillByDefault([this] () {
+  ON_CALL(*this, gen).WillByDefault([&] () {
     return this->AST::gen();
   });
 
-  ON_CALL(*this, xml).WillByDefault([this] () {
+  ON_CALL(*this, xml).WillByDefault([&] () {
     return this->AST::xml();
   });
 }
