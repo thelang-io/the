@@ -65,15 +65,11 @@ void Codegen::compile (
   const std::string &platform,
   bool debug
 ) {
-  auto code = std::get<0>(result);
-  auto flags = std::get<1>(result);
   auto f = std::ofstream(path + ".c");
-
-  f << code;
+  f << std::get<0>(result);
   f.close();
 
   auto depsDir = Codegen::getEnvVar("DEPS_DIR");
-  auto compiler = getCompilerFromPlatform(arch, platform);
   auto flagsStr = std::string();
 
   if (!depsDir.empty()) {
@@ -81,6 +77,7 @@ void Codegen::compile (
     flagsStr += " -L\"" + depsDir + "/lib\"";
   }
 
+  auto flags = std::get<1>(result);
   auto targetOS = getOSFromPlatform(platform);
 
   for (const auto &flag : flags) {
@@ -95,6 +92,7 @@ void Codegen::compile (
     }
   }
 
+  auto compiler = getCompilerFromPlatform(arch, platform);
   auto cmd = compiler + " " + path + ".c -O0 -w -o " + path + flagsStr;
   cmd += targetOS == "linux" && debug ? " -gdwarf-4" : " -g";
   auto returnCode = std::system(cmd.c_str());
