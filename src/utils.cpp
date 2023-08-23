@@ -20,7 +20,7 @@
 #include <fstream>
 #include <sstream>
 
-// todo
+// todo test
 std::optional<std::string> convert_path_to_namespace (const std::string &p) {
   auto cwd = std::filesystem::current_path().string();
 

@@ -357,8 +357,6 @@ int main () {
   const struct __THE_1_fn_sFP3intFP3strFRstrFE __THE_0_test_TestFn_0 = (struct __THE_1_fn_sFP3intFP3strFRstrFE) {&__THE_1_test_TestFn_0, NULL, 0};
   const int32_t __THE_0_TestConstVar_0 = 1;
   const int32_t __THE_0_TestMutVar_0 = 2;
-  __THE_0_TestConstVar_0;
-  __THE_0_TestMutVar_0;
   const enum __THE_1_test_TestEnum_0 __THE_0_t1_0 = __THE_0_test_TestEnumSDOne_0;
   const struct __THE_1_test_TestObj_0 *__THE_0_t2_0 = __THE_1_test_TestObj_0_alloc(1, str_alloc(""));
   const struct str __THE_0_t3_0 = str_alloc("test3");

@@ -270,6 +270,7 @@ class Codegen {
   void _nodeFnDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
   void _nodeIf (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   void _nodeIfAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeImportDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
   void _nodeLoop (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   void _nodeLoopAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   void _nodeMain (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);

@@ -262,7 +262,6 @@ L0:
 
 int main () {
   const struct __THE_1_fn_sFP3intFP3strFRstrFE __THE_0_fixtures_export_fn_TestFn_0 = (struct __THE_1_fn_sFP3intFP3strFRstrFE) {&__THE_1_fixtures_export_fn_TestFn_0, NULL, 0};
-  __THE_0_fixtures_export_fn_TestFn_0;
   print(stdout, "sz", __THE_0_fixtures_export_fn_TestFn_0.f(__THE_0_fixtures_export_fn_TestFn_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3strFRstrFEP) {1, str_alloc("2")}, sizeof(struct __THE_1_fn_sFP3intFP3strFRstrFEP))), THE_EOL);
 }
 ======= flags =======

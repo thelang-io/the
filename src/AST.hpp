@@ -394,6 +394,7 @@ class AST {
   ASTState state;
   std::map<std::string, Type *> typeCasts = {};
 
+  static std::string getExportCodeName (const ASTNode &);
   static std::string getExportName (const ASTNode &);
   static Type *getExportType (const ASTNode &);
   static std::shared_ptr<Var> getExportVar (const ASTNode &);

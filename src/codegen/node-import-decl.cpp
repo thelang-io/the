@@ -16,13 +16,9 @@
 
 #include "../Codegen.hpp"
 
-void Codegen::_nodeExportDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
-  auto nodeExportDecl = std::get<ASTNodeExportDecl>(*node.body);
-
-  if (
-    nodeExportDecl.declaration != std::nullopt &&
-    !std::holds_alternative<ASTNodeExpr>(*nodeExportDecl.declaration->body)
-  ) {
-    return this->_node(c, *nodeExportDecl.declaration, phase);
-  }
+void Codegen::_nodeImportDecl (
+  [[maybe_unused]] std::shared_ptr<CodegenASTStmt> *c,
+  [[maybe_unused]] const ASTNode &node,
+  [[maybe_unused]] CodegenPhase phase
+) {
 }

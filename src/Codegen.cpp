@@ -664,6 +664,8 @@ void Codegen::_node (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, Co
     return this->_nodeFnDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     return this->_nodeIf(c, node);
+  } else if (std::holds_alternative<ASTNodeImportDecl>(*node.body)) {
+    return this->_nodeImportDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
     return this->_nodeLoop(c, node);
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {

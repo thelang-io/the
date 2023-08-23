@@ -63,6 +63,7 @@ set(
   src/codegen/node-expr.cpp
   src/codegen/node-fn-decl.cpp
   src/codegen/node-if.cpp
+  src/codegen/node-import-decl.cpp
   src/codegen/node-loop.cpp
   src/codegen/node-main.cpp
   src/codegen/node-obj-decl.cpp

@@ -238,7 +238,7 @@ Type *TypeMap::createMethod (
 
 // todo test
 Type *TypeMap::createNamespace (const std::string &n, const std::vector<TypeField> &fields) {
-  auto newType = Type{n, this->name(n), TypeObj{}, fields, false};
+  auto newType = Type{n, this->name(n), TypeNamespace{}, fields, false};
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
   return selfType;

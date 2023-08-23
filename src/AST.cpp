@@ -58,27 +58,27 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
 }
 
 // todo test
-std::string AST::getExportName (const ASTNode &node) {
-  if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
-    return std::get<ASTNodeEnumDecl>(*node.body).type->name;
-  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
-    return std::get<std::shared_ptr<Var>>(*std::get<ASTExprAccess>(*std::get<ASTNodeExpr>(*node.body).body).expr)->name;
-  } else if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
-    auto nodeExportDecl = std::get<ASTNodeExportDecl>(*node.body);
-    return nodeExportDecl.declarationType != nullptr
-      ? nodeExportDecl.declarationType->name
-      : AST::getExportName(*nodeExportDecl.declaration);
-  } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
-    return std::get<ASTNodeFnDecl>(*node.body).var->name;
-  } else if (std::holds_alternative<ASTNodeObjDecl>(*node.body)) {
-    return std::get<ASTNodeObjDecl>(*node.body).type->name;
-  } else if (std::holds_alternative<ASTNodeTypeDecl>(*node.body)) {
-    return std::get<ASTNodeTypeDecl>(*node.body).type->name;
-  } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-    return std::get<ASTNodeVarDecl>(*node.body).var->name;
+std::string AST::getExportCodeName (const ASTNode &node) {
+  auto var = AST::getExportVar(node);
+
+  if (var != nullptr) {
+    return var->codeName;
   }
 
-  return "";
+  auto type = AST::getExportType(node);
+  return type->codeName;
+}
+
+// todo test
+std::string AST::getExportName (const ASTNode &node) {
+  auto var = AST::getExportVar(node);
+
+  if (var != nullptr) {
+    return var->name;
+  }
+
+  auto type = AST::getExportType(node);
+  return type->name;
 }
 
 // todo test
@@ -622,7 +622,13 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto namespaceFields = std::vector<TypeField>{};
 
             for (const auto &node : importNodesExports) {
-              namespaceFields.push_back(TypeField{AST::getExportName(node), AST::getExportType(node), false, false});
+              namespaceFields.push_back(TypeField{
+                AST::getExportName(node),
+                AST::getExportType(node),
+                false,
+                false,
+                TypeCallInfo{AST::getExportCodeName(node)}
+              });
             }
 
             auto namespaceType = this->typeMap.createNamespace(specifierLocal, namespaceFields);
