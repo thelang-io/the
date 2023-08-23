@@ -20,6 +20,93 @@
 #include "MockParser.hpp"
 #include "utils.hpp"
 
+class ASTTest : public testing::Test {
+ protected:
+  std::shared_ptr<AST> ast_;
+
+  ASTNode node_ (const std::string &code) {
+    auto p = testing::NiceMock<MockParser>("const TestExpr := 0; type Alias = str; " + code);
+    this->ast_ = std::make_shared<AST>(&p);
+    return this->ast_->gen()[2];
+  }
+};
+
+TEST_F(ASTTest, GetExportCodeName) {
+  EXPECT_EQ(AST::getExportCodeName(this->node_("1")), "");
+
+  EXPECT_EQ(AST::getExportCodeName(this->node_("enum Test1 { One, Two, Three }")), "test_test_Test1_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("TestExpr")), "TestExpr_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("fn test3 () {}")), "test_test_test3_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("obj Test4 { a: int }")), "test_test_Test4_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("type Test5 = str")), "test_test_Test5_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("const a: int")), "a_0");
+
+  EXPECT_EQ(AST::getExportCodeName(this->node_("export enum Test1 { One, Two, Three }")), "test_test_Test1_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("export TestExpr")), "TestExpr_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("export Alias")), "test_test_Alias_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("export fn test3 () {}")), "test_test_test3_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("export obj Test4 { a: int }")), "test_test_Test4_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("export type Test5 = str")), "test_test_Test5_0");
+  EXPECT_EQ(AST::getExportCodeName(this->node_("export const a: int")), "a_0");
+}
+
+TEST_F(ASTTest, GetExportName) {
+  EXPECT_EQ(AST::getExportName(this->node_("1")), "");
+
+  EXPECT_EQ(AST::getExportName(this->node_("enum Test1 { One, Two, Three }")), "Test1");
+  EXPECT_EQ(AST::getExportName(this->node_("TestExpr")), "TestExpr");
+  EXPECT_EQ(AST::getExportName(this->node_("fn test3 () {}")), "test3");
+  EXPECT_EQ(AST::getExportName(this->node_("obj Test4 { a: int }")), "Test4");
+  EXPECT_EQ(AST::getExportName(this->node_("type Test5 = str")), "Test5");
+  EXPECT_EQ(AST::getExportName(this->node_("const a: int")), "a");
+
+  EXPECT_EQ(AST::getExportName(this->node_("export enum Test1 { One, Two, Three }")), "Test1");
+  EXPECT_EQ(AST::getExportName(this->node_("export TestExpr")), "TestExpr");
+  EXPECT_EQ(AST::getExportName(this->node_("export Alias")), "Alias");
+  EXPECT_EQ(AST::getExportName(this->node_("export fn test3 () {}")), "test3");
+  EXPECT_EQ(AST::getExportName(this->node_("export obj Test4 { a: int }")), "Test4");
+  EXPECT_EQ(AST::getExportName(this->node_("export type Test5 = str")), "Test5");
+  EXPECT_EQ(AST::getExportName(this->node_("export const a: int")), "a");
+}
+
+TEST_F(ASTTest, GetExportType) {
+  EXPECT_EQ(AST::getExportType(this->node_("1")), nullptr);
+
+  EXPECT_EQ(AST::getExportType(this->node_("enum Test1 { One, Two, Three }"))->name, "Test1");
+  EXPECT_EQ(AST::getExportType(this->node_("TestExpr"))->name, "int");
+  EXPECT_EQ(AST::getExportType(this->node_("fn test3 () {}"))->name, "fn_sFRvoidFE");
+  EXPECT_EQ(AST::getExportType(this->node_("obj Test4 { a: int }"))->name, "Test4");
+  EXPECT_EQ(AST::getExportType(this->node_("type Test5 = str"))->name, "Test5");
+  EXPECT_EQ(AST::getExportType(this->node_("const a: int"))->name, "int");
+
+  EXPECT_EQ(AST::getExportType(this->node_("export enum Test1 { One, Two, Three }"))->name, "Test1");
+  EXPECT_EQ(AST::getExportType(this->node_("export TestExpr"))->name, "int");
+  EXPECT_EQ(AST::getExportType(this->node_("export Alias"))->name, "Alias");
+  EXPECT_EQ(AST::getExportType(this->node_("export fn test3 () {}"))->name, "fn_sFRvoidFE");
+  EXPECT_EQ(AST::getExportType(this->node_("export obj Test4 { a: int }"))->name, "Test4");
+  EXPECT_EQ(AST::getExportType(this->node_("export type Test5 = str"))->name, "Test5");
+  EXPECT_EQ(AST::getExportType(this->node_("export const a: int"))->name, "int");
+}
+
+TEST_F(ASTTest, GetExportVar) {
+  EXPECT_EQ(AST::getExportVar(this->node_("1")), nullptr);
+  EXPECT_EQ(AST::getExportVar(this->node_("enum Test1 { One, Two, Three }")), nullptr);
+  EXPECT_EQ(AST::getExportVar(this->node_("obj Test4 { a: int }")), nullptr);
+  EXPECT_EQ(AST::getExportVar(this->node_("type Test5 = str")), nullptr);
+  EXPECT_EQ(AST::getExportVar(this->node_("export enum Test1 { One, Two, Three }")), nullptr);
+  EXPECT_EQ(AST::getExportVar(this->node_("export Alias")), nullptr);
+  EXPECT_EQ(AST::getExportVar(this->node_("export obj Test4 { a: int }")), nullptr);
+  EXPECT_EQ(AST::getExportVar(this->node_("export type Test5 = str")), nullptr);
+
+  EXPECT_EQ(AST::getExportVar(this->node_("TestExpr"))->name, "TestExpr");
+  EXPECT_EQ(AST::getExportVar(this->node_("fn test3 () {}"))->name, "test3");
+  EXPECT_EQ(AST::getExportVar(this->node_("const a: int"))->name, "a");
+
+  EXPECT_EQ(AST::getExportVar(this->node_("export TestExpr"))->name, "TestExpr");
+  EXPECT_EQ(AST::getExportVar(this->node_("export fn test3 () {}"))->name, "test3");
+  EXPECT_EQ(AST::getExportVar(this->node_("export const a: int"))->name, "a");
+}
+
 class ASTPassTest : public testing::TestWithParam<const char *> {
  protected:
   std::filesystem::path initialCwd_;
@@ -234,5 +321,6 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1032-node-import-circular",
   "throw-E1033-node-import-not-exported",
   "throw-E1034-expr-obj-non-existing-namespace-member",
-  "throw-E1035-node-import-non-existing-package"
+  "throw-E1035-node-import-non-existing-package",
+  "throw-E1036-node-import-outside-cwd"
 ));

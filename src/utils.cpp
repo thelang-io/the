@@ -20,7 +20,6 @@
 #include <fstream>
 #include <sstream>
 
-// todo test
 std::optional<std::string> convert_path_to_namespace (const std::string &p) {
   auto cwd = std::filesystem::current_path().string();
 
@@ -49,11 +48,11 @@ std::optional<std::string> convert_path_to_namespace (const std::string &p) {
 
   s.erase(iterator, s.end());
 
-  if (s.starts_with('_') && s.ends_with('_')) {
-    s = s.substr(1, s.size() - 2);
-  } else if (s.starts_with('_')) {
+  if (s.starts_with('_')) {
     s = s.substr(1);
-  } else if (s.starts_with('_')) {
+  }
+
+  if (s.ends_with('_')) {
     s = s.substr(0, s.size() - 1);
   }
 

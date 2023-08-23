@@ -57,7 +57,6 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
   throw Error("Tried stringify non lvalue expr access");
 }
 
-// todo test
 std::string AST::getExportCodeName (const ASTNode &node) {
   auto var = AST::getExportVar(node);
 
@@ -66,10 +65,9 @@ std::string AST::getExportCodeName (const ASTNode &node) {
   }
 
   auto type = AST::getExportType(node);
-  return type->codeName;
+  return type == nullptr ? "" : type->codeName;
 }
 
-// todo test
 std::string AST::getExportName (const ASTNode &node) {
   auto var = AST::getExportVar(node);
 
@@ -78,14 +76,17 @@ std::string AST::getExportName (const ASTNode &node) {
   }
 
   auto type = AST::getExportType(node);
-  return type->name;
+  return type == nullptr ? "" : type->name;
 }
 
-// todo test
 Type *AST::getExportType (const ASTNode &node) {
   if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
     return std::get<ASTNodeEnumDecl>(*node.body).type;
-  } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
+  } else if (
+    std::holds_alternative<ASTNodeExpr>(*node.body) &&
+    std::holds_alternative<ASTExprAccess>(*std::get<ASTNodeExpr>(*node.body).body) &&
+    std::holds_alternative<std::shared_ptr<Var>>(*std::get<ASTExprAccess>(*std::get<ASTNodeExpr>(*node.body).body).expr)
+  ) {
     return std::get<std::shared_ptr<Var>>(*std::get<ASTExprAccess>(*std::get<ASTNodeExpr>(*node.body).body).expr)->type;
   } else if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
     auto nodeExportDecl = std::get<ASTNodeExportDecl>(*node.body);
@@ -105,9 +106,12 @@ Type *AST::getExportType (const ASTNode &node) {
   return nullptr;
 }
 
-// todo test
 std::shared_ptr<Var> AST::getExportVar (const ASTNode &node) {
-  if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
+  if (
+    std::holds_alternative<ASTNodeExpr>(*node.body) &&
+    std::holds_alternative<ASTExprAccess>(*std::get<ASTNodeExpr>(*node.body).body) &&
+    std::holds_alternative<std::shared_ptr<Var>>(*std::get<ASTExprAccess>(*std::get<ASTNodeExpr>(*node.body).body).expr)
+  ) {
     return std::get<std::shared_ptr<Var>>(*std::get<ASTExprAccess>(*std::get<ASTNodeExpr>(*node.body).body).expr);
   } else if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
     auto nodeExportDecl = std::get<ASTNodeExportDecl>(*node.body);
@@ -307,7 +311,6 @@ ASTBlock AST::gen () {
   auto typeMapNamespace = convert_path_to_namespace(this->reader->path);
 
   if (typeMapNamespace == std::nullopt) {
-    // todo test
     throw Error(this->reader, ReaderLocation{}, E1036);
   }
 

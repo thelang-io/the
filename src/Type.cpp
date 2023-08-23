@@ -371,7 +371,6 @@ bool Type::isMethod () const {
   return std::holds_alternative<TypeFn>(this->body) && std::get<TypeFn>(this->body).isMethod;
 }
 
-// todo test
 bool Type::isNamespace () const {
   return std::holds_alternative<TypeNamespace>(this->body);
 }
@@ -392,7 +391,7 @@ bool Type::isObj () const {
     !this->isNumber() &&
     !this->isFn() &&
     !this->isMap() &&
-    !this->isNamespace() && // todo test
+    !this->isNamespace() &&
     !this->isOpt() &&
     !this->isRef() &&
     !this->isStr() &&
@@ -568,6 +567,8 @@ bool Type::matchNice (const Type *type) const {
     }
 
     return true;
+  } else if (this->isNamespace()) {
+    return type->isNamespace() && this->name == type->name;
   } else if (this->isObj()) {
     return type->isObj() && this->name == type->name;
   } else if (this->isOpt()) {
@@ -834,7 +835,6 @@ std::string Type::xml (std::size_t indent, std::set<std::string> parentTypes) co
     result += mapType.valueType->xml(indent + 4, parentTypes) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeMapValueType>" EOL;
   } else if (this->isNamespace()) {
-    // todo test
     parentTypes.insert(this->codeName);
 
     for (const auto &field : this->fields) {

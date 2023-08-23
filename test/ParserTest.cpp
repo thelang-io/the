@@ -20,6 +20,43 @@
 #include "MockLexer.hpp"
 #include "utils.hpp"
 
+ParserStmtExpr parserTestGenExpr (const std::string &input) {
+  auto l = testing::NiceMock<MockLexer>(input);
+  auto p = Parser(&l);
+  auto n = p.next();
+  return std::get<ParserStmtExpr>(*n.body);
+}
+
+ParserType parserTestGenType (const std::string &input) {
+  auto l = testing::NiceMock<MockLexer>("a: " + input);
+  auto p = Parser(&l);
+  auto n = p.next();
+  return *std::get<ParserStmtVarDecl>(*n.body).type;
+}
+
+TEST(ParserTest, IsValidExprObjId) {
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr("1")));
+  EXPECT_TRUE(Parser::isValidExprObjId(parserTestGenExpr("a")));
+  EXPECT_TRUE(Parser::isValidExprObjId(parserTestGenExpr("a.b")));
+  EXPECT_TRUE(Parser::isValidExprObjId(parserTestGenExpr("test1.test2.test3")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr("a[1]")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr("a[1].test")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr(".test")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr(".test1.test2")));
+}
+
+TEST(ParserTest, TransformExprToType) {
+  EXPECT_EQ(Parser::transformExprToType(parserTestGenExpr("a")).stringify(), "a");
+  EXPECT_EQ(Parser::transformExprToType(parserTestGenExpr("a.b")).stringify(), "a.b");
+  EXPECT_EQ(Parser::transformExprToType(parserTestGenExpr("test1.test2.test3")).stringify(), "test1.test2.test3");
+}
+
+TEST(ParserTest, transformTypeToExpr) {
+  EXPECT_EQ(Parser::transformTypeToExpr(parserTestGenType("a")).stringify(), "a");
+  EXPECT_EQ(Parser::transformTypeToExpr(parserTestGenType("a.b")).stringify(), "a.b");
+  EXPECT_EQ(Parser::transformTypeToExpr(parserTestGenType("test1.test2.test3")).stringify(), "test1.test2.test3");
+}
+
 class ParserPassTest : public testing::TestWithParam<const char *> {
  protected:
   std::filesystem::path initialCwd_;

@@ -23,7 +23,6 @@ std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &co
   return this->_items.back();
 }
 
-// todo test
 std::shared_ptr<Var> VarMap::addNamespace (const std::string &name, Type *type) {
   this->_items.push_back(std::make_shared<Var>(Var{name, this->name(name), type, false, false, false, false, this->_frame}));
   return this->_items.back();
@@ -119,7 +118,6 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"utils_swap", "@utils_swap", typeMap.get("utils_swap"), false, false, true, false, this->_frame}));
 }
 
-// todo test
 std::shared_ptr<Var> VarMap::insert (const std::shared_ptr<Var> &var) {
   this->_items.push_back(std::make_shared<Var>(*var));
   return this->_items.back();

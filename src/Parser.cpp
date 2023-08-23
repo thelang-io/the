@@ -56,21 +56,6 @@ void bindSiblings (ParserBlock &block) {
   }
 }
 
-bool isValidExprObjId (const ParserStmtExpr &stmtExpr) {
-  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
-    return false;
-  }
-
-  auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
-
-  if (exprAccess.expr == std::nullopt || exprAccess.elem != std::nullopt) {
-    return false;
-  }
-
-  return std::holds_alternative<Token>(*exprAccess.expr) ||
-    isValidExprObjId(std::get<ParserStmtExpr>(*exprAccess.expr));
-}
-
 ParserStmtExpr &stmtExprLastChild (ParserStmtExpr &stmtExpr) {
   if (std::holds_alternative<ParserExprAssign>(*stmtExpr.body)) {
     return stmtExprLastChild(std::get<ParserExprAssign>(*stmtExpr.body).right);
@@ -83,7 +68,21 @@ ParserStmtExpr &stmtExprLastChild (ParserStmtExpr &stmtExpr) {
   return stmtExpr;
 }
 
-// todo test
+bool Parser::isValidExprObjId (const ParserStmtExpr &stmtExpr) {
+  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
+    return false;
+  }
+
+  auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
+
+  if (exprAccess.expr == std::nullopt || exprAccess.elem != std::nullopt) {
+    return false;
+  }
+
+  return std::holds_alternative<Token>(*exprAccess.expr) ||
+    Parser::isValidExprObjId(std::get<ParserStmtExpr>(*exprAccess.expr));
+}
+
 ParserType Parser::transformExprToType (const ParserStmtExpr &stmtExpr) {
   auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
   auto body = ParserTypeBody{};
@@ -97,7 +96,6 @@ ParserType Parser::transformExprToType (const ParserStmtExpr &stmtExpr) {
   return ParserType{std::make_shared<ParserTypeBody>(body), stmtExpr.parenthesized, stmtExpr.start, stmtExpr.end};
 }
 
-// todo test
 ParserStmtExpr Parser::transformTypeToExpr (const ParserType &type) {
   auto body = ParserExpr{};
 
@@ -1376,7 +1374,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprIs (
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
-  if (!isValidExprObjId(stmtExpr)) {
+  if (!Parser::isValidExprObjId(stmtExpr)) {
     this->lexer->seek(loc);
     return std::make_tuple(stmtExpr, false);
   }

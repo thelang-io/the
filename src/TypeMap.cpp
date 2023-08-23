@@ -236,7 +236,6 @@ Type *TypeMap::createMethod (
   return selfType;
 }
 
-// todo test
 Type *TypeMap::createNamespace (const std::string &n, const std::vector<TypeField> &fields) {
   auto newType = Type{n, this->name(n), TypeNamespace{}, fields, false};
   this->_items.push_back(std::make_unique<Type>(newType));
@@ -328,7 +327,6 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   return selfType;
 }
 
-// todo test
 Type *TypeMap::insert (Type *t) {
   this->_items.push_back(std::make_unique<Type>(*t));
   return this->_items.back().get();

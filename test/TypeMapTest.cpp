@@ -29,19 +29,25 @@ class TypeMapTest : public testing::Test {
 TEST_F(TypeMapTest, AliasInserts) {
   auto type1 = this->tm_.createAlias("Test1", this->tm_.get("int"));
   auto type2 = this->tm_.createAlias("Test2", this->tm_.get("str"));
+  auto type3 = this->tm_.createAlias("Test3", type2);
 
   EXPECT_NE(this->tm_.get("Test1"), nullptr);
   EXPECT_NE(this->tm_.get("Test2"), nullptr);
+  EXPECT_NE(this->tm_.get("Test3"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_FALSE(type2->builtin);
+  EXPECT_FALSE(type3->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeAlias>(type1->body));
   EXPECT_TRUE(std::holds_alternative<TypeAlias>(type2->body));
+  EXPECT_TRUE(std::holds_alternative<TypeAlias>(type3->body));
 
   auto alias1Body = std::get<TypeAlias>(type1->body);
   auto alias2Body = std::get<TypeAlias>(type2->body);
+  auto alias3Body = std::get<TypeAlias>(type3->body);
 
   EXPECT_TRUE(this->tm_.get("int")->matchStrict(alias1Body.type));
   EXPECT_TRUE(this->tm_.get("str")->matchStrict(alias2Body.type));
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(alias3Body.type));
 }
 
 TEST_F(TypeMapTest, ArrayInserts) {
@@ -145,11 +151,21 @@ TEST_F(TypeMapTest, FunctionInserts) {
   auto type5 = this->tm_.createFn({}, this->tm_.get("any"), false);
   auto type6 = this->tm_.createFn({}, this->tm_.get("void"), true);
 
+  this->tm_.createFn({
+    TypeFnParam{"a", this->tm_.get("int"), true, true, false},
+    TypeFnParam{"b", this->tm_.get("int"), true, false, true},
+    TypeFnParam{"c", this->tm_.get("int"), true, false, false},
+    TypeFnParam{"d", this->tm_.get("int"), false, true, false},
+    TypeFnParam{"e", this->tm_.get("int"), false, false, true},
+    TypeFnParam{"f", this->tm_.get("int"), false, false, false}
+  }, this->tm_.get("void"), false);
+
   EXPECT_NE(this->tm_.get("fn_sFRvoidFE"), nullptr);
   EXPECT_NE(this->tm_.get("fn_sFP3intFRvoidFE"), nullptr);
   EXPECT_NE(this->tm_.get("fn_sFP1intFP4strFRstrFE"), nullptr);
   EXPECT_NE(this->tm_.get("fn_sFRanyFE"), nullptr);
   EXPECT_NE(this->tm_.get("fn_aFRvoidFE"), nullptr);
+  EXPECT_NE(this->tm_.get("fn_sFP5intFP6intFP2intFP3intFP4intFP1intFRvoidFE"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeFn>(type1->body));
 
@@ -345,6 +361,12 @@ TEST_F(TypeMapTest, MethodDoesNotInsertSimilar) {
   EXPECT_EQ(type1->codeName, type2->codeName);
 }
 
+TEST_F(TypeMapTest, InsertsItem) {
+  auto type1 = Type{"Test5", this->tm_.name("Test5"), TypeAlias{this->tm_.get("int")}};
+  this->tm_.insert(&type1);
+  EXPECT_TRUE(this->tm_.has("Test5"));
+}
+
 TEST_F(TypeMapTest, GetReturnsItem) {
   this->tm_.createFn({}, this->tm_.get("void"), false);
   this->tm_.createObj("Test");
@@ -455,6 +477,41 @@ TEST_F(TypeMapTest, MapDoesNotInsertExact) {
   EXPECT_EQ(type1->name, "map_intMSintME");
   EXPECT_EQ(type1->name, type2->name);
   EXPECT_EQ(type1, type2);
+}
+
+TEST_F(TypeMapTest, NamespaceInserts) {
+  auto type1 = this->tm_.createNamespace("Test1", {});
+
+  auto type2 = this->tm_.createNamespace("Test2", {
+    TypeField{"a", this->tm_.get("int"), false, false}
+  });
+
+  auto type3 = this->tm_.createNamespace("Test3", {
+    TypeField{"b", this->tm_.get("any"), false, false},
+    TypeField{"c", this->tm_.get("str"), false, false}
+  });
+
+  EXPECT_NE(this->tm_.get("Test1"), nullptr);
+  EXPECT_NE(this->tm_.get("Test2"), nullptr);
+  EXPECT_NE(this->tm_.get("Test3"), nullptr);
+  EXPECT_EQ(type1->name, "Test1");
+  EXPECT_EQ(type2->name, "Test2");
+  EXPECT_EQ(type3->name, "Test3");
+  EXPECT_FALSE(type1->builtin);
+  EXPECT_FALSE(type2->builtin);
+  EXPECT_FALSE(type3->builtin);
+  EXPECT_TRUE(std::holds_alternative<TypeNamespace>(type1->body));
+  EXPECT_TRUE(std::holds_alternative<TypeNamespace>(type2->body));
+  EXPECT_TRUE(std::holds_alternative<TypeNamespace>(type3->body));
+  EXPECT_EQ(type1->fields.size(), 0);
+  EXPECT_EQ(type2->fields.size(), 1);
+  EXPECT_EQ(type3->fields.size(), 2);
+  EXPECT_EQ(type2->fields[0].name, "a");
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(type2->fields[0].type));
+  EXPECT_EQ(type3->fields[0].name, "b");
+  EXPECT_TRUE(this->tm_.get("any")->matchStrict(type3->fields[0].type));
+  EXPECT_EQ(type3->fields[1].name, "c");
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(type3->fields[1].type));
 }
 
 TEST_F(TypeMapTest, ObjectInserts) {

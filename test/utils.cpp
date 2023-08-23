@@ -121,6 +121,22 @@ std::string prepareTestOutput (const std::string &output) {
     }
   }
 
+  from = std::string("/src/");
+  to = std::filesystem::canonical(std::filesystem::current_path() / ".." / "src").string() + OS_PATH_SEP;
+  startPos = 0;
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    if (
+      startPos <= 0 ||
+      (result[startPos - 1] != '.' && result[startPos - 1] != '/' && !std::isalnum(result[startPos - 1]))
+    ) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    } else {
+      startPos += from.length();
+    }
+  }
+
   return result;
 }
 

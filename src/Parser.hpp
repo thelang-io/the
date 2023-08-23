@@ -402,6 +402,7 @@ class Parser {
   Lexer *lexer;
   Reader *reader;
 
+  static bool isValidExprObjId (const ParserStmtExpr &);
   static ParserType transformExprToType (const ParserStmtExpr &);
   static ParserStmtExpr transformTypeToExpr (const ParserType &);
 
