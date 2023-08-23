@@ -24,9 +24,9 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="fieldTest1">
-      <TypeFn name="fn$1003">
+      <TypeFn name="fn_sFP4array_intFRvoidFE">
         <TypeFnParams>
           <TypeFnParam variadic>
             <TypeArray name="array_int">
@@ -40,7 +40,7 @@ main {
       </TypeFn>
     </TypeField>
     <TypeField name="fieldTest2">
-      <TypeFn name="fn$1004">
+      <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
         <TypeFnParams>
           <TypeFnParam required>
             <BuiltinType name="int" />
@@ -60,8 +60,8 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$1003">
+    <Var name="test1" codeName="test_test1_0" frame="1">
+      <TypeFn name="fn_sFP4array_intFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="a" variadic>
             <TypeArray name="array_int">
@@ -132,8 +132,8 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$1004">
+    <Var name="test2" codeName="test_test2_0" frame="1">
+      <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />
@@ -230,9 +230,9 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="fieldTest1">
-            <TypeFn name="fn$1003">
+            <TypeFn name="fn_sFP4array_intFRvoidFE">
               <TypeFnParams>
                 <TypeFnParam variadic>
                   <TypeArray name="array_int">
@@ -246,7 +246,7 @@ main {
             </TypeFn>
           </TypeField>
           <TypeField name="fieldTest2">
-            <TypeFn name="fn$1004">
+            <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
               <TypeFnParams>
                 <TypeFnParam required>
                   <BuiltinType name="int" />
@@ -268,9 +268,9 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="fieldTest1">
-              <TypeFn name="fn$1003">
+              <TypeFn name="fn_sFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam variadic>
                     <TypeArray name="array_int">
@@ -284,7 +284,7 @@ main {
               </TypeFn>
             </TypeField>
             <TypeField name="fieldTest2">
-              <TypeFn name="fn$1004">
+              <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <BuiltinType name="int" />
@@ -307,7 +307,7 @@ main {
             <ExprObjProp name="fieldTest1">
               <NodeExpr>
                 <NodeExprType>
-                  <TypeFn name="fn$1003">
+                  <TypeFn name="fn_sFP4array_intFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" variadic>
                         <TypeArray name="array_int">
@@ -322,8 +322,8 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="test1" codeName="test1_0" frame="1">
-                      <TypeFn name="fn$1003">
+                    <Var name="test1" codeName="test_test1_0" frame="1">
+                      <TypeFn name="fn_sFP4array_intFRvoidFE">
                         <TypeFnParams>
                           <TypeFnParam name="a" variadic>
                             <TypeArray name="array_int">
@@ -343,7 +343,7 @@ main {
             <ExprObjProp name="fieldTest2">
               <NodeExpr>
                 <NodeExprType>
-                  <TypeFn name="fn$1004">
+                  <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <BuiltinType name="int" />
@@ -361,8 +361,8 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="test2" codeName="test2_0" frame="1">
-                      <TypeFn name="fn$1004">
+                    <Var name="test2" codeName="test_test2_0" frame="1">
+                      <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                         <TypeFnParams>
                           <TypeFnParam name="a" required>
                             <BuiltinType name="int" />
@@ -396,7 +396,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1003">
+              <TypeFn name="fn_sFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam variadic>
                     <TypeArray name="array_int">
@@ -413,9 +413,9 @@ main {
               <ExprAccess prop="fieldTest1">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
-                        <TypeFn name="fn$1003">
+                        <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam variadic>
                               <TypeArray name="array_int">
@@ -429,7 +429,7 @@ main {
                         </TypeFn>
                       </TypeField>
                       <TypeField name="fieldTest2">
-                        <TypeFn name="fn$1004">
+                        <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam required>
                               <BuiltinType name="int" />
@@ -450,9 +450,9 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
-                            <TypeFn name="fn$1003">
+                            <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam variadic>
                                   <TypeArray name="array_int">
@@ -466,7 +466,7 @@ main {
                             </TypeFn>
                           </TypeField>
                           <TypeField name="fieldTest2">
-                            <TypeFn name="fn$1004">
+                            <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam required>
                                   <BuiltinType name="int" />
@@ -503,7 +503,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1003">
+              <TypeFn name="fn_sFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam variadic>
                     <TypeArray name="array_int">
@@ -520,9 +520,9 @@ main {
               <ExprAccess prop="fieldTest1">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
-                        <TypeFn name="fn$1003">
+                        <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam variadic>
                               <TypeArray name="array_int">
@@ -536,7 +536,7 @@ main {
                         </TypeFn>
                       </TypeField>
                       <TypeField name="fieldTest2">
-                        <TypeFn name="fn$1004">
+                        <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam required>
                               <BuiltinType name="int" />
@@ -557,9 +557,9 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
-                            <TypeFn name="fn$1003">
+                            <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam variadic>
                                   <TypeArray name="array_int">
@@ -573,7 +573,7 @@ main {
                             </TypeFn>
                           </TypeField>
                           <TypeField name="fieldTest2">
-                            <TypeFn name="fn$1004">
+                            <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam required>
                                   <BuiltinType name="int" />
@@ -622,7 +622,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1003">
+              <TypeFn name="fn_sFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam variadic>
                     <TypeArray name="array_int">
@@ -639,9 +639,9 @@ main {
               <ExprAccess prop="fieldTest1">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
-                        <TypeFn name="fn$1003">
+                        <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam variadic>
                               <TypeArray name="array_int">
@@ -655,7 +655,7 @@ main {
                         </TypeFn>
                       </TypeField>
                       <TypeField name="fieldTest2">
-                        <TypeFn name="fn$1004">
+                        <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam required>
                               <BuiltinType name="int" />
@@ -676,9 +676,9 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
-                            <TypeFn name="fn$1003">
+                            <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam variadic>
                                   <TypeArray name="array_int">
@@ -692,7 +692,7 @@ main {
                             </TypeFn>
                           </TypeField>
                           <TypeField name="fieldTest2">
-                            <TypeFn name="fn$1004">
+                            <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam required>
                                   <BuiltinType name="int" />
@@ -751,7 +751,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1004">
+              <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <BuiltinType name="int" />
@@ -771,9 +771,9 @@ main {
               <ExprAccess prop="fieldTest2">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
-                        <TypeFn name="fn$1003">
+                        <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam variadic>
                               <TypeArray name="array_int">
@@ -787,7 +787,7 @@ main {
                         </TypeFn>
                       </TypeField>
                       <TypeField name="fieldTest2">
-                        <TypeFn name="fn$1004">
+                        <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam required>
                               <BuiltinType name="int" />
@@ -808,9 +808,9 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
-                            <TypeFn name="fn$1003">
+                            <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam variadic>
                                   <TypeArray name="array_int">
@@ -824,7 +824,7 @@ main {
                             </TypeFn>
                           </TypeField>
                           <TypeField name="fieldTest2">
-                            <TypeFn name="fn$1004">
+                            <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam required>
                                   <BuiltinType name="int" />
@@ -873,7 +873,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1004">
+              <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <BuiltinType name="int" />
@@ -893,9 +893,9 @@ main {
               <ExprAccess prop="fieldTest2">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
-                        <TypeFn name="fn$1003">
+                        <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam variadic>
                               <TypeArray name="array_int">
@@ -909,7 +909,7 @@ main {
                         </TypeFn>
                       </TypeField>
                       <TypeField name="fieldTest2">
-                        <TypeFn name="fn$1004">
+                        <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam required>
                               <BuiltinType name="int" />
@@ -930,9 +930,9 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
-                            <TypeFn name="fn$1003">
+                            <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam variadic>
                                   <TypeArray name="array_int">
@@ -946,7 +946,7 @@ main {
                             </TypeFn>
                           </TypeField>
                           <TypeField name="fieldTest2">
-                            <TypeFn name="fn$1004">
+                            <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam required>
                                   <BuiltinType name="int" />
@@ -1005,7 +1005,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1004">
+              <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <BuiltinType name="int" />
@@ -1025,9 +1025,9 @@ main {
               <ExprAccess prop="fieldTest2">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Test_0" name="Test">
+                    <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="fieldTest1">
-                        <TypeFn name="fn$1003">
+                        <TypeFn name="fn_sFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam variadic>
                               <TypeArray name="array_int">
@@ -1041,7 +1041,7 @@ main {
                         </TypeFn>
                       </TypeField>
                       <TypeField name="fieldTest2">
-                        <TypeFn name="fn$1004">
+                        <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                           <TypeFnParams>
                             <TypeFnParam required>
                               <BuiltinType name="int" />
@@ -1062,9 +1062,9 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="test" codeName="test_0" frame="2">
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="fieldTest1">
-                            <TypeFn name="fn$1003">
+                            <TypeFn name="fn_sFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam variadic>
                                   <TypeArray name="array_int">
@@ -1078,7 +1078,7 @@ main {
                             </TypeFn>
                           </TypeField>
                           <TypeField name="fieldTest2">
-                            <TypeFn name="fn$1004">
+                            <TypeFn name="fn_sFP3intFP4array_intFRvoidFE">
                               <TypeFnParams>
                                 <TypeFnParam required>
                                   <BuiltinType name="int" />

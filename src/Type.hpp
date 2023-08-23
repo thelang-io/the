@@ -31,6 +31,7 @@ struct TypeEnum;
 struct TypeEnumerator;
 struct TypeFn;
 struct TypeBodyMap;
+struct TypeNamespace;
 struct TypeObj;
 struct TypeOptional;
 struct TypeRef;
@@ -43,6 +44,7 @@ using TypeBody = std::variant<
   TypeEnumerator,
   TypeFn,
   TypeBodyMap,
+  TypeNamespace,
   TypeObj,
   TypeOptional,
   TypeRef,
@@ -106,6 +108,9 @@ struct TypeBodyMap {
   Type *valueType;
 };
 
+struct TypeNamespace {
+};
+
 struct TypeObj {
 };
 
@@ -162,6 +167,7 @@ struct Type {
   bool isIntNumber () const;
   bool isMap () const;
   bool isMethod () const;
+  bool isNamespace () const;
   bool isNumber () const;
   bool isObj () const;
   bool isOpt () const;

@@ -52,15 +52,15 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_Test_0;
+struct __THE_1_test_Test_0;
 struct __THE_1_array_Test;
 
-struct __THE_1_Test_0 {
+struct __THE_1_test_Test_0 {
   const int32_t __THE_0_a;
   const int32_t __THE_0_b;
 };
 struct __THE_1_array_Test {
-  struct __THE_1_Test_0 **d;
+  struct __THE_1_test_Test_0 **d;
   size_t l;
 };
 
@@ -68,8 +68,8 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t, int32_t);
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (int32_t, int32_t);
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *);
 struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t, ...);
 void __THE_1_array_Test_free (struct __THE_1_array_Test);
 
@@ -91,32 +91,32 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc (int32_t __THE_0_a, int32_t __THE_0_b) {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {__THE_0_a, __THE_0_b};
-  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (int32_t __THE_0_a, int32_t __THE_0_b) {
+  struct __THE_1_test_Test_0 *r = alloc(sizeof(struct __THE_1_test_Test_0));
+  struct __THE_1_test_Test_0 s = {__THE_0_a, __THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *n) {
   free(n);
 }
 struct __THE_1_array_Test __THE_1_array_Test_alloc (size_t x, ...) {
   if (x == 0) return (struct __THE_1_array_Test) {NULL, 0};
-  struct __THE_1_Test_0 **d = alloc(x * sizeof(struct __THE_1_Test_0 *));
+  struct __THE_1_test_Test_0 **d = alloc(x * sizeof(struct __THE_1_test_Test_0 *));
   va_list args;
   va_start(args, x);
-  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_Test_0 *);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_test_Test_0 *);
   va_end(args);
   return (struct __THE_1_array_Test) {d, x};
 }
 void __THE_1_array_Test_free (struct __THE_1_array_Test n) {
-  for (size_t i = 0; i < n.l; i++) __THE_1_Test_0_free((struct __THE_1_Test_0 *) n.d[i]);
+  for (size_t i = 0; i < n.l; i++) __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) n.d[i]);
   free(n.d);
 }
 
 int main () {
-  __THE_1_array_Test_free((struct __THE_1_array_Test) __THE_1_array_Test_alloc(3, __THE_1_Test_0_alloc(0, 0), __THE_1_Test_0_alloc(1, 0), __THE_1_Test_0_alloc(2, 3)));
-  __THE_1_array_Test_free((struct __THE_1_array_Test) __THE_1_array_Test_alloc(3, __THE_1_Test_0_alloc(0, 0), __THE_1_Test_0_alloc(1, 0), __THE_1_Test_0_alloc(2, 3)));
+  __THE_1_array_Test_free((struct __THE_1_array_Test) __THE_1_array_Test_alloc(3, __THE_1_test_Test_0_alloc(0, 0), __THE_1_test_Test_0_alloc(1, 0), __THE_1_test_Test_0_alloc(2, 3)));
+  __THE_1_array_Test_free((struct __THE_1_array_Test) __THE_1_array_Test_alloc(3, __THE_1_test_Test_0_alloc(0, 0), __THE_1_test_Test_0_alloc(1, 0), __THE_1_test_Test_0_alloc(2, 3)));
 }
 ======= flags =======
 ======= stdout =======

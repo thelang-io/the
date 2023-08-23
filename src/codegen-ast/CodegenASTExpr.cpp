@@ -61,8 +61,8 @@ void exprVectorParent (
   std::vector<std::shared_ptr<CodegenASTExpr>> &items,
   const std::shared_ptr<CodegenASTExpr> &parent
 ) {
-  for (auto &item : items) {
-    item->parent = parent;
+  for (auto &it : items) {
+    it->parent = parent;
   }
 }
 

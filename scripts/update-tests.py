@@ -21,11 +21,12 @@ import re
 import subprocess
 import sys
 
-CORE_PATH = "build\\Debug\\the.exe" if os.name == "nt" else "build/the"
+CORE_PATH = os.path.join(os.getcwd(), "build", "Debug", "the.exe") if os.name == "nt" else os.path.join(os.getcwd(), "build", "the")
 
 
 def update(directory: str, action: str):
-    codegen_test_path = os.path.join(os.getcwd(), "test", "codegen-test")
+    test_path = os.path.join(os.getcwd(), "test")
+    app_path = os.path.join(test_path, "test")
     files = os.listdir(directory)
     code_sep = "======= code ======="
     flags_sep = "======= flags ======="
@@ -54,12 +55,13 @@ def update(directory: str, action: str):
 
         f.close()
 
-        f = open(filepath, "w")
+        f = open(app_path, "w")
         f.write(stdin[0:-1])
         f.close()
 
         process = subprocess.Popen(
-            [CORE_PATH, action, filepath],
+            [CORE_PATH, action, app_path],
+            cwd=test_path,
             stderr=subprocess.PIPE,
             stdout=subprocess.PIPE,
             text=True
@@ -70,7 +72,7 @@ def update(directory: str, action: str):
 
         if action == "codegen":
             result = stdout[148 + 7 * len(os.linesep):]
-            result = re.sub(re.escape(codegen_test_path) + r"[^.]+\.txt", "/test", result)
+            result = result.replace(app_path, "/test")
             f.write(stdin_sep + os.linesep + stdin + code_sep + os.linesep + result + trailing_code)
         elif is_error_file:
             result = "/test" + stderr[stderr.find(":", 10):]
@@ -79,6 +81,7 @@ def update(directory: str, action: str):
             f.write(stdin_sep + os.linesep + stdin + stdout_sep + os.linesep + stdout)
 
         f.close()
+        os.remove(app_path)
 
 
 def main():

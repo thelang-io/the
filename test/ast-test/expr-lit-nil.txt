@@ -23,7 +23,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <TypeOptional name="opt_int">
         <BuiltinType name="int" />
@@ -33,8 +33,8 @@ main {
 </NodeObjDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="testCall" codeName="testCall_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="testCall" codeName="test_testCall_0" frame="1">
+      <TypeFn name="fn_sFP3opt_intFRopt_intFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <TypeOptional name="opt_int">
@@ -297,7 +297,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test" codeName="test_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <TypeOptional name="opt_int">
               <BuiltinType name="int" />
@@ -309,7 +309,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <TypeOptional name="opt_int">
                 <BuiltinType name="int" />
@@ -360,7 +360,7 @@ main {
                   <ExprAccess prop="a">
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeObj codeName="Test_0" name="Test">
+                        <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <TypeOptional name="opt_int">
                               <BuiltinType name="int" />
@@ -371,7 +371,7 @@ main {
                       <NodeExprBody>
                         <ExprAccess>
                           <Var name="test" codeName="test_0" frame="2">
-                            <TypeObj codeName="Test_0" name="Test">
+                            <TypeObj codeName="test_Test_0" name="Test">
                               <TypeField name="a">
                                 <TypeOptional name="opt_int">
                                   <BuiltinType name="int" />
@@ -423,7 +423,7 @@ main {
             <ExprCallCallee>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeFn name="fn$1000">
+                  <TypeFn name="fn_sFP3opt_intFRopt_intFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeOptional name="opt_int">
@@ -440,8 +440,8 @@ main {
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
-                    <Var name="testCall" codeName="testCall_0" frame="1">
-                      <TypeFn name="fn$1000">
+                    <Var name="testCall" codeName="test_testCall_0" frame="1">
+                      <TypeFn name="fn_sFP3opt_intFRopt_intFE">
                         <TypeFnParams>
                           <TypeFnParam name="a" required>
                             <TypeOptional name="opt_int">

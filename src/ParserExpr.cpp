@@ -71,21 +71,18 @@ std::string ParserStmtExpr::stringify () const {
     code += ")";
   } else if (std::holds_alternative<ParserExprClosure>(*this->body)) {
     auto exprBody = std::get<ParserExprClosure>(*this->body);
-    auto paramIdx = static_cast<std::size_t>(0);
-
     code += std::string(exprBody.async ? "async " : "") + "(";
 
     for (auto i = static_cast<std::size_t>(0); i < exprBody.params.size(); i++) {
       auto param = exprBody.params[i];
 
-      code += paramIdx == 0 ? "" : ", ";
+      code += i == 0 ? "" : ", ";
       code += param.mut ? "mut " : "";
       code += param.id.val;
       code += param.type == std::nullopt ? " := " : (": " + param.type->stringify());
       code += param.variadic ? "..." : "";
       code += param.type != std::nullopt && param.init != std::nullopt ? " = " : "";
       code += param.init == std::nullopt ? "" : param.init->stringify();
-      paramIdx++;
     }
 
     code += ") -> " + exprBody.returnType.stringify();
@@ -110,7 +107,7 @@ std::string ParserStmtExpr::stringify () const {
     code += "}";
   } else if (std::holds_alternative<ParserExprObj>(*this->body)) {
     auto exprBody = std::get<ParserExprObj>(*this->body);
-    code += exprBody.id.val + "{";
+    code += exprBody.id.stringify() + "{";
 
     for (auto i = static_cast<std::size_t>(0); i < exprBody.props.size(); i++) {
       auto prop = exprBody.props[i];

@@ -1,0 +1,96 @@
+======= stdin =======
+import * as Package from "./fixtures/export-obj"
+
+main {
+  test := Package.TestObj{a: 1}
+  print(test)
+}
+======= stdout =======
+<NodeImportDeclsource="./fixtures/export-obj">
+  <NodeImportDeclSpecifiers>
+    <NodeImportDeclSpecifier local="Package" />
+  </NodeImportDeclSpecifiers>
+</NodeImportDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="test" codeName="test_0" frame="2">
+        <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
+          <TypeField name="a">
+            <BuiltinType name="int" />
+          </TypeField>
+        </TypeObj>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
+            <TypeField name="a">
+              <BuiltinType name="int" />
+            </TypeField>
+          </TypeObj>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprObj>
+            <ExprObjProp name="a">
+              <NodeExpr>
+                <NodeExprType>
+                  <BuiltinType name="int" />
+                </NodeExprType>
+                <NodeExprBody>
+                  <ExprLit type="INT_DEC" value="1" />
+                </NodeExprBody>
+              </NodeExpr>
+            </ExprObjProp>
+          </ExprObj>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <BuiltinType name="print" />
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <BuiltinVar name="print" />
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="items">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
+                  <TypeField name="a">
+                    <BuiltinType name="int" />
+                  </TypeField>
+                </TypeObj>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="test" codeName="test_0" frame="2">
+                    <TypeObj codeName="fixtures_export_obj_TestObj_0" name="TestObj">
+                      <TypeField name="a">
+                        <BuiltinType name="int" />
+                      </TypeField>
+                    </TypeObj>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

@@ -109,9 +109,9 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_aFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
@@ -126,11 +126,11 @@ void threadpool_insert (threadpool_t *, threadpool_job_t *);
 void threadpool_job_deinit (threadpool_job_t *);
 void threadpool_mutex_lock (threadpool_mutex_t *);
 void threadpool_mutex_unlock (threadpool_mutex_t *);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_testFn_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-struct __THE_1_fn$1000 *__THE_1_opt_fn$1000_alloc (struct __THE_1_fn$1000);
-void __THE_1_opt_fn$1000_free (struct __THE_1_fn$1000 *);
+struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_aFRvoidFE);
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
+void __THE_1_test_testFn_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+struct __THE_1_fn_aFRvoidFE *__THE_1_opt_fn_aFRvoidFE_alloc (struct __THE_1_fn_aFRvoidFE);
+void __THE_1_opt_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -189,38 +189,38 @@ void threadpool_mutex_unlock (threadpool_mutex_t *self) {
     pthread_mutex_unlock(&self->v);
   #endif
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_aFRvoidFE __THE_1_fn_aFRvoidFE_copy (const struct __THE_1_fn_aFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_aFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_testFn_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_testFn_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
 }
-struct __THE_1_fn$1000 *__THE_1_opt_fn$1000_alloc (struct __THE_1_fn$1000 n) {
-  struct __THE_1_fn$1000 *r = alloc(sizeof(struct __THE_1_fn$1000));
+struct __THE_1_fn_aFRvoidFE *__THE_1_opt_fn_aFRvoidFE_alloc (struct __THE_1_fn_aFRvoidFE n) {
+  struct __THE_1_fn_aFRvoidFE *r = alloc(sizeof(struct __THE_1_fn_aFRvoidFE));
   *r = n;
   return r;
 }
-void __THE_1_opt_fn$1000_free (struct __THE_1_fn$1000 *n) {
+void __THE_1_opt_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE *n) {
   if (n == NULL) return;
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) *n);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) *n);
   free(n);
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_testFn_0 = (struct __THE_1_fn$1000) {&__THE_1_testFn_0, NULL, 0};
-  const struct __THE_1_fn$1000 *__THE_0_optFn_0 = NULL;
-  const struct __THE_1_fn$1000 *__THE_0_optFnNilInit_0 = NULL;
-  const struct __THE_1_fn$1000 *__THE_0_optFnValCopy_0 = __THE_1_opt_fn$1000_alloc(__THE_1_fn$1000_copy(__THE_0_testFn_0));
-  __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFnValCopy_0);
-  __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFnNilInit_0);
-  __THE_1_opt_fn$1000_free((struct __THE_1_fn$1000 *) __THE_0_optFn_0);
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_testFn_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_testFn_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_optFn_0 = NULL;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_optFnNilInit_0 = NULL;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_optFnValCopy_0 = __THE_1_opt_fn_aFRvoidFE_alloc(__THE_1_fn_aFRvoidFE_copy(__THE_0_test_testFn_0));
+  __THE_1_opt_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE *) __THE_0_optFnValCopy_0);
+  __THE_1_opt_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE *) __THE_0_optFnNilInit_0);
+  __THE_1_opt_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE *) __THE_0_optFn_0);
 }
 ======= flags =======
 U:-pthread

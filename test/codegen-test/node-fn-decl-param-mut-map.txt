@@ -64,10 +64,10 @@ struct str {
 
 struct __THE_1_pair_strMSintME;
 struct __THE_1_map_strMSintME;
-struct __THE_1_fn$1003;
-struct __THE_1_fn$1003P;
-struct __THE_1_fn$1004;
-struct __THE_1_fn$1004P;
+struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFE;
+struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFEP;
+struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFE;
+struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFEP;
 
 struct __THE_1_pair_strMSintME {
   struct str f;
@@ -78,20 +78,20 @@ struct __THE_1_map_strMSintME {
   size_t c;
   size_t l;
 };
-struct __THE_1_fn$1003 {
+struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFE {
   struct __THE_1_map_strMSintME (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1003P {
+struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFEP {
   struct __THE_1_map_strMSintME n0;
 };
-struct __THE_1_fn$1004 {
+struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFE {
   struct __THE_1_map_strMSintME (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1004P {
+struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFEP {
   struct __THE_1_map_strMSintME n0;
   unsigned char o1;
   struct __THE_1_map_strMSintME n1;
@@ -113,8 +113,8 @@ void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
 size_t __THE_1_map_strMSintME_len (struct __THE_1_map_strMSintME);
 struct __THE_1_map_strMSintME __THE_1_map_strMSintME_realloc (struct __THE_1_map_strMSintME, struct __THE_1_map_strMSintME);
 struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_set (struct __THE_1_map_strMSintME *, struct str, int32_t);
-struct __THE_1_map_strMSintME __THE_1_test1_0 (void *, void *);
-struct __THE_1_map_strMSintME __THE_1_test2_0 (void *, void *);
+struct __THE_1_map_strMSintME __THE_1_test_test1_0 (void *, void *);
+struct __THE_1_map_strMSintME __THE_1_test_test2_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -205,9 +205,9 @@ struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_set (struct __THE_1_map_st
   n->d[n->l++] = (struct __THE_1_pair_strMSintME) {k, v};
   return n;
 }
-struct __THE_1_map_strMSintME __THE_1_test1_0 (void *px, void *pp) {
+struct __THE_1_map_strMSintME __THE_1_test_test1_0 (void *px, void *pp) {
   struct __THE_1_map_strMSintME v;
-  struct __THE_1_fn$1003P *p = pp;
+  struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFEP *p = pp;
   struct __THE_1_map_strMSintME __THE_0_a_0 = p->n0;
   __THE_1_map_strMSintME_set(&__THE_0_a_0, str_alloc("key4"), 2);
   v = __THE_1_map_strMSintME_copy(__THE_0_a_0);
@@ -215,9 +215,9 @@ struct __THE_1_map_strMSintME __THE_1_test1_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
-struct __THE_1_map_strMSintME __THE_1_test2_0 (void *px, void *pp) {
+struct __THE_1_map_strMSintME __THE_1_test_test2_0 (void *px, void *pp) {
   struct __THE_1_map_strMSintME v;
-  struct __THE_1_fn$1004P *p = pp;
+  struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFEP *p = pp;
   struct __THE_1_map_strMSintME __THE_0_a_0 = p->n0;
   struct __THE_1_map_strMSintME __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6);
   __THE_0_b_0 = __THE_1_map_strMSintME_realloc(__THE_0_b_0, __THE_1_map_strMSintME_copy(__THE_0_a_0));
@@ -230,10 +230,10 @@ struct __THE_1_map_strMSintME __THE_1_test2_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn$1003 __THE_0_test1_0 = (struct __THE_1_fn$1003) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1004 __THE_0_test2_0 = (struct __THE_1_fn$1004) {&__THE_1_test2_0, NULL, 0};
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1003P) {__THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 0, str_alloc("key2"), 1)}, sizeof(struct __THE_1_fn$1003P))));
-  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1004P) {__THE_1_map_strMSintME_alloc(2, str_alloc("key3"), 2, str_alloc("key4"), 3), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn$1004P))));
+  const struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFE) {&__THE_1_test_test2_0, NULL, 0};
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 0, str_alloc("key2"), 1)}, sizeof(struct __THE_1_fn_sFP5map_strMSintMEFRmap_strMSintMEFEP))));
+  __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_test_test2_0.f(__THE_0_test_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFEP) {__THE_1_map_strMSintME_alloc(2, str_alloc("key3"), 2, str_alloc("key4"), 3), 0, (struct __THE_1_map_strMSintME) {}}, sizeof(struct __THE_1_fn_sFP5map_strMSintMEFP2map_strMSintMEFRmap_strMSintMEFEP))));
 }
 ======= flags =======
 ======= stdout =======

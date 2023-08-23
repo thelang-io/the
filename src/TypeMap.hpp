@@ -32,25 +32,26 @@ class TypeMap {
 
   Type *createAlias (const std::string &, Type *);
   Type *createArr (Type *);
-  Type *createEnum (const std::string &, const std::string &, const std::vector<Type *> &);
-  Type *createEnumerator (const std::string &, const std::string &);
+  Type *createEnum (const std::string &, const std::vector<Type *> &);
+  Type *createEnumerator (const std::string &);
   Type *createFn (const std::vector<TypeFnParam> &, Type *, bool, const std::optional<TypeCallInfo> & = std::nullopt);
   Type *createMap (Type *, Type *);
   Type *createMethod (const std::vector<TypeFnParam> &, Type *, bool, TypeCallInfo);
-  Type *createObj (const std::string &, const std::string &, const std::vector<TypeField> & = {}, bool = false);
+  Type *createNamespace (const std::string &, const std::vector<TypeField> & = {});
+  Type *createObj (const std::string &, const std::vector<TypeField> & = {}, bool = false);
   Type *createOpt (Type *);
   Type *createRef (Type *);
   Type *createUnion (const std::vector<Type *> &);
   Type *get (const std::string &);
+  Type *insert (Type *);
   bool has (const std::string &);
-  void init ();
+  void init (const std::string &);
   bool isSelf (Type *);
   std::string name (const std::string &) const;
   Type *unionAdd (Type *, Type *);
   Type *unionSub (const Type *, const Type *);
 
  private:
-  std::size_t _fnIdx = 0;
   std::vector<std::unique_ptr<Type>> _items;
 
   void _initType (const std::string &, TypeMapPhase, const std::optional<std::function<void (Type *, Type *)>> & = std::nullopt);

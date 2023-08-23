@@ -1,0 +1,45 @@
+======= stdin =======
+import TestFunction from "test/package"
+
+main {
+  TestFunction()
+}
+======= stdout =======
+<NodeImportDeclsource="test/package">
+  <NodeImportDeclSpecifiers>
+    <NodeImportDeclSpecifier local="TestFunction" imported="TestFunction" />
+  </NodeImportDeclSpecifiers>
+</NodeImportDecl>
+<NodeMain>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn_sFRvoidFE">
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="TestFunction" codeName="packages_test_package_package_TestFunction_0" frame="1">
+                  <TypeFn name="fn_sFRvoidFE">
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

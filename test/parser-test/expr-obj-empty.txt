@@ -17,7 +17,9 @@ main {
     <StmtVarDeclInit>
       <ExprObj start="2:8" end="2:14">
         <ExprObjId>
-          <Token type="ID" val="Test" start="2:8" end="2:12" />
+          <TypeId start="2:8" end="2:12">
+            <Token type="ID" val="Test" start="2:8" end="2:12" />
+          </TypeId>
         </ExprObjId>
       </ExprObj>
     </StmtVarDeclInit>
@@ -28,7 +30,9 @@ main {
         <ExprBinaryLeft>
           <ExprObj start="4:6" end="4:12">
             <ExprObjId>
-              <Token type="ID" val="Test" start="4:6" end="4:10" />
+              <TypeId start="4:6" end="4:10">
+                <Token type="ID" val="Test" start="4:6" end="4:10" />
+              </TypeId>
             </ExprObjId>
           </ExprObj>
         </ExprBinaryLeft>
@@ -38,7 +42,9 @@ main {
         <ExprBinaryRight>
           <ExprObj start="4:16" end="4:22">
             <ExprObjId>
-              <Token type="ID" val="Test" start="4:16" end="4:20" />
+              <TypeId start="4:16" end="4:20">
+                <Token type="ID" val="Test" start="4:16" end="4:20" />
+              </TypeId>
             </ExprObjId>
           </ExprObj>
         </ExprBinaryRight>
@@ -51,7 +57,9 @@ main {
         <ExprBinaryLeft>
           <ExprObj start="7:8" end="7:14">
             <ExprObjId>
-              <Token type="ID" val="Test" start="7:8" end="7:12" />
+              <TypeId start="7:8" end="7:12">
+                <Token type="ID" val="Test" start="7:8" end="7:12" />
+              </TypeId>
             </ExprObjId>
           </ExprObj>
         </ExprBinaryLeft>
@@ -61,7 +69,9 @@ main {
         <ExprBinaryRight>
           <ExprObj start="7:18" end="7:24">
             <ExprObjId>
-              <Token type="ID" val="Test" start="7:18" end="7:22" />
+              <TypeId start="7:18" end="7:22">
+                <Token type="ID" val="Test" start="7:18" end="7:22" />
+              </TypeId>
             </ExprObjId>
           </ExprObj>
         </ExprBinaryRight>

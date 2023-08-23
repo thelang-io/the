@@ -35,10 +35,10 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_Color_0 {
-  __THE_0_ColorSDRed_0,
-  __THE_0_ColorSDGreen_0,
-  __THE_0_ColorSDBlue_0
+enum __THE_1_test_Color_0 {
+  __THE_0_test_ColorSDRed_0,
+  __THE_0_test_ColorSDGreen_0,
+  __THE_0_test_ColorSDBlue_0
 };
 
 typedef struct err_buf {
@@ -222,8 +222,8 @@ struct str str_alloc (const char *r) {
 }
 
 int main () {
-  const enum __THE_1_Color_0 __THE_0_a_0 = 0;
-  const enum __THE_1_Color_0 __THE_0_b_0 = __THE_0_ColorSDGreen_0;
+  const enum __THE_1_test_Color_0 __THE_0_a_0 = 0;
+  const enum __THE_1_test_Color_0 __THE_0_b_0 = __THE_0_test_ColorSDGreen_0;
   print(stdout, "szsz", enum_str(__THE_0_a_0), " ", enum_str(__THE_0_b_0), THE_EOL);
   print(stdout, "sz", enum_str(__THE_0_a_0), THE_EOL);
   print(stdout, "sz", enum_str(__THE_0_b_0), THE_EOL);

@@ -12,41 +12,41 @@ main {
 #include <stddef.h>
 #include <stdint.h>
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1001;
+struct __THE_1_fn_sFRvoidFE;
+struct __THE_1_fn_sFRintFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFRintFE {
   int32_t (*f) (void *);
   void *x;
   size_t l;
 };
 
-void __THE_1_test1_0 (void *);
-void __THE_1_test2_0 (void *);
-int32_t __THE_1_test3_0 (void *);
+void __THE_1_test_test1_0 (void *);
+void __THE_1_test_test2_0 (void *);
+int32_t __THE_1_test_test3_0 (void *);
 
-void __THE_1_test1_0 (void *px) {
+void __THE_1_test_test1_0 (void *px) {
   return;
 }
-void __THE_1_test2_0 (void *px) {
+void __THE_1_test_test2_0 (void *px) {
   return;
 }
-int32_t __THE_1_test3_0 (void *px) {
+int32_t __THE_1_test_test3_0 (void *px) {
   return 1;
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test3_0 = (struct __THE_1_fn$1001) {&__THE_1_test3_0, NULL, 0};
-  __THE_0_test1_0.f(__THE_0_test1_0.x);
-  __THE_0_test2_0.f(__THE_0_test2_0.x);
-  __THE_0_test3_0.f(__THE_0_test3_0.x);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test2_0, NULL, 0};
+  const struct __THE_1_fn_sFRintFE __THE_0_test_test3_0 = (struct __THE_1_fn_sFRintFE) {&__THE_1_test_test3_0, NULL, 0};
+  __THE_0_test_test1_0.f(__THE_0_test_test1_0.x);
+  __THE_0_test_test2_0.f(__THE_0_test_test2_0.x);
+  __THE_0_test_test3_0.f(__THE_0_test_test3_0.x);
 }
 ======= flags =======
 ======= stdout =======

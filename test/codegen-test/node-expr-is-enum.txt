@@ -60,13 +60,13 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-#define TYPE_Color_0 2
+#define TYPE_test_Color_0 2
 #define TYPE_float 3
 
-enum __THE_1_Color_0 {
-  __THE_0_ColorSDRed_0,
-  __THE_0_ColorSDGreen_0,
-  __THE_0_ColorSDBlue_0
+enum __THE_1_test_Color_0 {
+  __THE_0_test_ColorSDRed_0,
+  __THE_0_test_ColorSDGreen_0,
+  __THE_0_test_ColorSDBlue_0
 };
 
 struct any {
@@ -103,12 +103,12 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_any_Color_0;
+struct __THE_1_any_test_Color_0;
 struct __THE_1_any_float;
 struct __THE_1_union_ColorUSfloatUE;
 
-struct __THE_1_any_Color_0 {
-  enum __THE_1_Color_0 d;
+struct __THE_1_any_test_Color_0 {
+  enum __THE_1_test_Color_0 d;
 };
 struct __THE_1_any_float {
   double d;
@@ -116,7 +116,7 @@ struct __THE_1_any_float {
 struct __THE_1_union_ColorUSfloatUE {
   int t;
   union {
-    enum __THE_1_Color_0 v2;
+    enum __THE_1_test_Color_0 v2;
     double v3;
   };
 };
@@ -131,10 +131,10 @@ void error_alloc (err_state_t *, size_t);
 struct str float_str (double);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0);
-struct any __THE_1_any_Color_0_alloc (enum __THE_1_Color_0);
-struct any __THE_1_any_Color_0_copy (const struct any);
-void __THE_1_any_Color_0_free (struct any);
+struct str __THE_1_test_Color_0_rawValue (enum __THE_1_test_Color_0);
+struct any __THE_1_any_test_Color_0_alloc (enum __THE_1_test_Color_0);
+struct any __THE_1_any_test_Color_0_copy (const struct any);
+void __THE_1_any_test_Color_0_free (struct any);
 struct any __THE_1_any_float_alloc (double);
 struct any __THE_1_any_float_copy (const struct any);
 void __THE_1_any_float_free (struct any);
@@ -189,25 +189,25 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct str __THE_1_Color_0_rawValue (enum __THE_1_Color_0 n) {
-  if (n == __THE_0_ColorSDRed_0) return str_alloc("Red");
-  if (n == __THE_0_ColorSDGreen_0) return str_alloc("Green");
-  if (n == __THE_0_ColorSDBlue_0) return str_alloc("Blue");
+struct str __THE_1_test_Color_0_rawValue (enum __THE_1_test_Color_0 n) {
+  if (n == __THE_0_test_ColorSDRed_0) return str_alloc("Red");
+  if (n == __THE_0_test_ColorSDGreen_0) return str_alloc("Green");
+  if (n == __THE_0_test_ColorSDBlue_0) return str_alloc("Blue");
 }
-struct any __THE_1_any_Color_0_alloc (enum __THE_1_Color_0 d) {
-  size_t l = sizeof(struct __THE_1_any_Color_0);
-  struct __THE_1_any_Color_0 *r = alloc(l);
+struct any __THE_1_any_test_Color_0_alloc (enum __THE_1_test_Color_0 d) {
+  size_t l = sizeof(struct __THE_1_any_test_Color_0);
+  struct __THE_1_any_test_Color_0 *r = alloc(l);
   r->d = d;
-  return (struct any) {TYPE_Color_0, r, l, &__THE_1_any_Color_0_copy, &__THE_1_any_Color_0_free};
+  return (struct any) {TYPE_test_Color_0, r, l, &__THE_1_any_test_Color_0_copy, &__THE_1_any_test_Color_0_free};
 }
-struct any __THE_1_any_Color_0_copy (const struct any n) {
-  struct __THE_1_any_Color_0 *o = n.d;
-  struct __THE_1_any_Color_0 *r = alloc(n.l);
+struct any __THE_1_any_test_Color_0_copy (const struct any n) {
+  struct __THE_1_any_test_Color_0 *o = n.d;
+  struct __THE_1_any_test_Color_0 *r = alloc(n.l);
   r->d = o->d;
   return (struct any) {n.t, r, n.l, n._copy, n._free};
 }
-void __THE_1_any_Color_0_free (struct any _n) {
-  struct __THE_1_any_Color_0 *n = _n.d;
+void __THE_1_any_test_Color_0_free (struct any _n) {
+  struct __THE_1_any_test_Color_0 *n = _n.d;
   free(n);
 }
 struct any __THE_1_any_float_alloc (double d) {
@@ -230,7 +230,7 @@ struct __THE_1_union_ColorUSfloatUE __THE_1_union_ColorUSfloatUE_alloc (int t, .
   struct __THE_1_union_ColorUSfloatUE r = {t};
   va_list args;
   va_start(args, t);
-  if (t == TYPE_Color_0) r.v2 = va_arg(args, enum __THE_1_Color_0);
+  if (t == TYPE_test_Color_0) r.v2 = va_arg(args, enum __THE_1_test_Color_0);
   if (t == TYPE_float) r.v3 = va_arg(args, double);
   va_end(args);
   return r;
@@ -243,54 +243,54 @@ struct __THE_1_union_ColorUSfloatUE __THE_1_union_ColorUSfloatUE_realloc (struct
 }
 
 int main () {
-  const struct any __THE_0_a_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDRed_0);
-  if (__THE_0_a_0.t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_a_0.d)->d)));
+  const struct any __THE_0_a_0 = __THE_1_any_test_Color_0_alloc(__THE_0_test_ColorSDRed_0);
+  if (__THE_0_a_0.t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_a_0.d)->d)));
   }
   const struct any __THE_0_b_0 = __THE_1_any_float_alloc(3.14);
-  if (__THE_0_b_0.t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_b_0.d)->d)));
+  if (__THE_0_b_0.t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_b_0.d)->d)));
   }
-  const struct __THE_1_union_ColorUSfloatUE __THE_0_c_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDGreen_0);
-  if (__THE_0_c_0.t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_c_0.v2)));
+  const struct __THE_1_union_ColorUSfloatUE __THE_0_c_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_test_Color_0, __THE_0_test_ColorSDGreen_0);
+  if (__THE_0_c_0.t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_c_0.v2)));
   } else {
     str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_c_0.v3)));
   }
   const struct __THE_1_union_ColorUSfloatUE __THE_0_d_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14);
-  if (__THE_0_d_0.t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_d_0.v2)));
+  if (__THE_0_d_0.t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_d_0.v2)));
   } else {
     str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_d_0.v3)));
   }
-  struct any __THE_0_e_0 = __THE_1_any_Color_0_alloc(__THE_0_ColorSDBlue_0);
-  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_Color_0_alloc(__THE_0_ColorSDBlue_0))).t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_e_0.d)->d)));
+  struct any __THE_0_e_0 = __THE_1_any_test_Color_0_alloc(__THE_0_test_ColorSDBlue_0);
+  if ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_test_Color_0_alloc(__THE_0_test_ColorSDBlue_0))).t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_e_0.d)->d)));
   }
   struct any __THE_0_f_0 = __THE_1_any_float_alloc(3.14);
-  if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_f_0.d)->d)));
+  if ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_f_0.d)->d)));
   }
-  struct __THE_1_union_ColorUSfloatUE __THE_0_g_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDRed_0);
-  if ((__THE_0_g_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDRed_0))).t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_g_0.v2)));
+  struct __THE_1_union_ColorUSfloatUE __THE_0_g_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_test_Color_0, __THE_0_test_ColorSDRed_0);
+  if ((__THE_0_g_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_test_Color_0, __THE_0_test_ColorSDRed_0))).t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_g_0.v2)));
   } else {
     str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_g_0.v3)));
   }
   struct __THE_1_union_ColorUSfloatUE __THE_0_h_0 = __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14);
-  if ((__THE_0_h_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_Color_0) {
-    str_free((struct str) cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_h_0.v2)));
+  if ((__THE_0_h_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_test_Color_0) {
+    str_free((struct str) cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_h_0.v2)));
   } else {
     str_free((struct str) cstr_concat_str("float ", float_str(__THE_0_h_0.v3)));
   }
-  str_free((struct str) ((__THE_0_a_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_a_0.d)->d)) : str_alloc("any")));
-  str_free((struct str) ((__THE_0_b_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_b_0.d)->d)) : str_alloc("any")));
-  str_free((struct str) ((__THE_0_c_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_c_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_c_0.v3))));
-  str_free((struct str) ((__THE_0_d_0.t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_d_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_d_0.v3))));
-  str_free((struct str) (((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_Color_0_alloc(__THE_0_ColorSDGreen_0))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_e_0.d)->d)) : str_alloc("any")));
-  str_free((struct str) (((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(((struct __THE_1_any_Color_0 *) __THE_0_f_0.d)->d)) : str_alloc("any")));
-  str_free((struct str) (((__THE_0_g_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_Color_0, __THE_0_ColorSDBlue_0))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_g_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_g_0.v3))));
-  str_free((struct str) (((__THE_0_h_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_Color_0) ? cstr_concat_str("Color.", __THE_1_Color_0_rawValue(__THE_0_h_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_h_0.v3))));
+  str_free((struct str) ((__THE_0_a_0.t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_a_0.d)->d)) : str_alloc("any")));
+  str_free((struct str) ((__THE_0_b_0.t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_b_0.d)->d)) : str_alloc("any")));
+  str_free((struct str) ((__THE_0_c_0.t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_c_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_c_0.v3))));
+  str_free((struct str) ((__THE_0_d_0.t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_d_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_d_0.v3))));
+  str_free((struct str) (((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_test_Color_0_alloc(__THE_0_test_ColorSDGreen_0))).t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_e_0.d)->d)) : str_alloc("any")));
+  str_free((struct str) (((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(((struct __THE_1_any_test_Color_0 *) __THE_0_f_0.d)->d)) : str_alloc("any")));
+  str_free((struct str) (((__THE_0_g_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_test_Color_0, __THE_0_test_ColorSDBlue_0))).t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_g_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_g_0.v3))));
+  str_free((struct str) (((__THE_0_h_0 = __THE_1_union_ColorUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_ColorUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_test_Color_0) ? cstr_concat_str("Color.", __THE_1_test_Color_0_rawValue(__THE_0_h_0.v2)) : cstr_concat_str("float ", float_str(__THE_0_h_0.v3))));
   any_free((struct any) __THE_0_f_0);
   any_free((struct any) __THE_0_e_0);
   any_free((struct any) __THE_0_b_0);

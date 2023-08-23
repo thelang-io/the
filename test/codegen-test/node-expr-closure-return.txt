@@ -56,19 +56,19 @@ struct str {
 };
 
 struct __THE_1_array_str;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1001;
+struct __THE_1_fn_sFRstrFE;
+struct __THE_1_fn_sFRarray_strFE;
 
 struct __THE_1_array_str {
   struct str *d;
   size_t l;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRstrFE {
   struct str (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFRarray_strFE {
   struct __THE_1_array_str (*f) (void *);
   void *x;
   size_t l;
@@ -80,8 +80,8 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
-struct str __THE_1_mainSD$_0 (void *);
-struct __THE_1_array_str __THE_1_mainSD$_1 (void *);
+struct str __THE_1_test_mainSD$_0 (void *);
+struct __THE_1_array_str __THE_1_test_mainSD$_1 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -116,18 +116,18 @@ struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
   va_end(args);
   return (struct __THE_1_array_str) {d, x};
 }
-struct str __THE_1_mainSD$_0 (void *px) {
+struct str __THE_1_test_mainSD$_0 (void *px) {
   return str_alloc("test");
 }
-struct __THE_1_array_str __THE_1_mainSD$_1 (void *px) {
+struct __THE_1_array_str __THE_1_test_mainSD$_1 (void *px) {
   return __THE_1_array_str_alloc(1, str_alloc("test"));
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_mainSD$_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSD$_0, NULL, 0};
-  __THE_0_mainSD$_0;
-  const struct __THE_1_fn$1001 __THE_0_mainSD$_1 = (struct __THE_1_fn$1001) {&__THE_1_mainSD$_1, NULL, 0};
-  __THE_0_mainSD$_1;
+  const struct __THE_1_fn_sFRstrFE __THE_0_test_mainSD$_0 = (struct __THE_1_fn_sFRstrFE) {&__THE_1_test_mainSD$_0, NULL, 0};
+  __THE_0_test_mainSD$_0;
+  const struct __THE_1_fn_sFRarray_strFE __THE_0_test_mainSD$_1 = (struct __THE_1_fn_sFRarray_strFE) {&__THE_1_test_mainSD$_1, NULL, 0};
+  __THE_0_test_mainSD$_1;
 }
 ======= flags =======
 ======= stdout =======

@@ -126,11 +126,13 @@ std::tuple<ReaderLocation, Token> Lexer::next (bool keepComments) {
     else if (this->val == "elif") return {startLoc, this->_tok(TK_KW_ELIF)};
     else if (this->val == "else") return {startLoc, this->_tok(TK_KW_ELSE)};
     else if (this->val == "enum") return {startLoc, this->_tok(TK_KW_ENUM)};
+    else if (this->val == "export") return {startLoc, this->_tok(TK_KW_EXPORT)};
     else if (this->val == "false") return {startLoc, this->_tok(TK_KW_FALSE)};
     else if (this->val == "finally") return {startLoc, this->_tok(TK_KW_FINALLY)};
     else if (this->val == "fn") return {startLoc, this->_tok(TK_KW_FN)};
     else if (this->val == "from") return {startLoc, this->_tok(TK_KW_FROM)};
     else if (this->val == "if") return {startLoc, this->_tok(TK_KW_IF)};
+    else if (this->val == "import") return {startLoc, this->_tok(TK_KW_IMPORT)};
     else if (this->val == "is") return {startLoc, this->_tok(TK_KW_IS)};
     else if (this->val == "loop") return {startLoc, this->_tok(TK_KW_LOOP)};
     else if (this->val == "main") return {startLoc, this->_tok(TK_KW_MAIN)};

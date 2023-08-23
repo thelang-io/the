@@ -46,14 +46,14 @@ Error::Error (Reader *reader, ReaderLocation start, ReaderLocation end, const st
 
   this->message_ += reader->path + ':' + start.str() + ": " + message + EOL;
   this->message_ += "  " + lineNumStr + " | " + line + EOL;
-  this->message_ += "  " + std::string(lineNumStr.length(), ' ') + " | " + std::string(start.col, ' ') + '^';
+  this->message_ += "  " + std::string(lineNumStr.size(), ' ') + " | " + std::string(start.col, ' ') + '^';
 
   auto underlineLen = static_cast<std::size_t>(0);
 
-  if (start.line == end.line && line.length() > end.col) {
+  if (start.line == end.line && line.size() > end.col) {
     underlineLen = end.col - start.col;
-  } else if (line.length() > start.col) {
-    underlineLen = line.length() - start.col;
+  } else if (line.size() > start.col) {
+    underlineLen = line.size() - start.col;
   }
 
   if (underlineLen != 0) {

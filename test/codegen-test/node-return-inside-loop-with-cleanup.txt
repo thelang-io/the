@@ -259,9 +259,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -280,22 +280,22 @@ bool str_eq_cstr (struct str, const char *);
 void str_free (struct str);
 bool str_ne_cstr (struct str, const char *);
 struct str str_realloc (struct str, struct str);
-void __THE_1_test1_0 (void *);
-void __THE_1_test2_0 (void *);
-void __THE_1_test3_0 (void *);
-void __THE_1_test4_0 (void *);
-void __THE_1_test5_0 (void *);
-void __THE_1_test6_0 (void *);
-void __THE_1_test7_0 (void *);
-void __THE_1_test8_0 (void *);
-void __THE_1_test9_0 (void *);
-void __THE_1_test10_0 (void *);
-void __THE_1_test11_0 (void *);
-void __THE_1_test12_0 (void *);
-void __THE_1_test13_0 (void *);
-void __THE_1_test14_0 (void *);
-void __THE_1_test15_0 (void *);
-void __THE_1_test16_0 (void *);
+void __THE_1_test_test1_0 (void *);
+void __THE_1_test_test2_0 (void *);
+void __THE_1_test_test3_0 (void *);
+void __THE_1_test_test4_0 (void *);
+void __THE_1_test_test5_0 (void *);
+void __THE_1_test_test6_0 (void *);
+void __THE_1_test_test7_0 (void *);
+void __THE_1_test_test8_0 (void *);
+void __THE_1_test_test9_0 (void *);
+void __THE_1_test_test10_0 (void *);
+void __THE_1_test_test11_0 (void *);
+void __THE_1_test_test12_0 (void *);
+void __THE_1_test_test13_0 (void *);
+void __THE_1_test_test14_0 (void *);
+void __THE_1_test_test15_0 (void *);
+void __THE_1_test_test16_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -465,7 +465,7 @@ struct str str_realloc (struct str s1, struct str s2) {
   free(s1.d);
   return s2;
 }
-void __THE_1_test1_0 (void *px) {
+void __THE_1_test_test1_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
@@ -493,7 +493,7 @@ L1:
 L0:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test2_0 (void *px) {
+void __THE_1_test_test2_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
@@ -509,7 +509,7 @@ void __THE_1_test2_0 (void *px) {
 L4:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test3_0 (void *px) {
+void __THE_1_test_test3_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
@@ -527,7 +527,7 @@ L7:
 L6:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test4_0 (void *px) {
+void __THE_1_test_test4_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
@@ -541,7 +541,7 @@ void __THE_1_test4_0 (void *px) {
 L8:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test5_0 (void *px) {
+void __THE_1_test_test5_0 (void *px) {
   unsigned char r = 0;
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     const struct str __THE_0_v2_0 = str_alloc("test2");
@@ -566,7 +566,7 @@ L9:
     if (r == 1) return;
   }
 }
-void __THE_1_test6_0 (void *px) {
+void __THE_1_test_test6_0 (void *px) {
   unsigned char r = 0;
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     print(stdout, "zziz", "2 start", " ", __THE_0_i_0, THE_EOL);
@@ -579,7 +579,7 @@ void __THE_1_test6_0 (void *px) {
     print(stdout, "zziz", "2 end", " ", __THE_0_i_0, THE_EOL);
   }
 }
-void __THE_1_test7_0 (void *px) {
+void __THE_1_test_test7_0 (void *px) {
   unsigned char r = 0;
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     const struct str __THE_0_v2_0 = str_alloc("test1");
@@ -594,7 +594,7 @@ L13:
     if (r == 1) return;
   }
 }
-void __THE_1_test8_0 (void *px) {
+void __THE_1_test_test8_0 (void *px) {
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < 10; __THE_0_i_0++) {
     print(stdout, "zziz", "4 start", " ", __THE_0_i_0, THE_EOL);
     if (__THE_0_i_0 == 5) {
@@ -603,7 +603,7 @@ void __THE_1_test8_0 (void *px) {
     print(stdout, "zziz", "4 end", " ", __THE_0_i_0, THE_EOL);
   }
 }
-void __THE_1_test9_0 (void *px) {
+void __THE_1_test_test9_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   {
@@ -637,7 +637,7 @@ L15:
 L14:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test10_0 (void *px) {
+void __THE_1_test_test10_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   {
@@ -659,7 +659,7 @@ L20:
 L19:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test11_0 (void *px) {
+void __THE_1_test_test11_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   {
@@ -683,7 +683,7 @@ L23:
 L22:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test12_0 (void *px) {
+void __THE_1_test_test12_0 (void *px) {
   unsigned char r = 0;
   const struct str __THE_0_v1_0 = str_alloc("test1");
   {
@@ -703,7 +703,7 @@ L26:
 L25:
   str_free((struct str) __THE_0_v1_0);
 }
-void __THE_1_test13_0 (void *px) {
+void __THE_1_test_test13_0 (void *px) {
   unsigned char r = 0;
   {
     struct str __THE_0_i_0 = str_alloc("1");
@@ -734,7 +734,7 @@ L27:
     if (r == 1) return;
   }
 }
-void __THE_1_test14_0 (void *px) {
+void __THE_1_test_test14_0 (void *px) {
   unsigned char r = 0;
   {
     struct str __THE_0_i_0 = str_alloc("1");
@@ -753,7 +753,7 @@ L31:
     if (r == 1) return;
   }
 }
-void __THE_1_test15_0 (void *px) {
+void __THE_1_test_test15_0 (void *px) {
   unsigned char r = 0;
   {
     struct str __THE_0_i_0 = str_alloc("1");
@@ -774,7 +774,7 @@ L33:
     if (r == 1) return;
   }
 }
-void __THE_1_test16_0 (void *px) {
+void __THE_1_test_test16_0 (void *px) {
   unsigned char r = 0;
   {
     struct str __THE_0_i_0 = str_alloc("1");
@@ -793,38 +793,38 @@ L35:
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test2_0 = (struct __THE_1_fn$1000) {&__THE_1_test2_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test3_0 = (struct __THE_1_fn$1000) {&__THE_1_test3_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test4_0 = (struct __THE_1_fn$1000) {&__THE_1_test4_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test5_0 = (struct __THE_1_fn$1000) {&__THE_1_test5_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test6_0 = (struct __THE_1_fn$1000) {&__THE_1_test6_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test7_0 = (struct __THE_1_fn$1000) {&__THE_1_test7_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test8_0 = (struct __THE_1_fn$1000) {&__THE_1_test8_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test9_0 = (struct __THE_1_fn$1000) {&__THE_1_test9_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test10_0 = (struct __THE_1_fn$1000) {&__THE_1_test10_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test11_0 = (struct __THE_1_fn$1000) {&__THE_1_test11_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test12_0 = (struct __THE_1_fn$1000) {&__THE_1_test12_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test13_0 = (struct __THE_1_fn$1000) {&__THE_1_test13_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test14_0 = (struct __THE_1_fn$1000) {&__THE_1_test14_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test15_0 = (struct __THE_1_fn$1000) {&__THE_1_test15_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test16_0 = (struct __THE_1_fn$1000) {&__THE_1_test16_0, NULL, 0};
-  __THE_0_test1_0.f(__THE_0_test1_0.x);
-  __THE_0_test2_0.f(__THE_0_test2_0.x);
-  __THE_0_test3_0.f(__THE_0_test3_0.x);
-  __THE_0_test4_0.f(__THE_0_test4_0.x);
-  __THE_0_test5_0.f(__THE_0_test5_0.x);
-  __THE_0_test6_0.f(__THE_0_test6_0.x);
-  __THE_0_test7_0.f(__THE_0_test7_0.x);
-  __THE_0_test8_0.f(__THE_0_test8_0.x);
-  __THE_0_test9_0.f(__THE_0_test9_0.x);
-  __THE_0_test10_0.f(__THE_0_test10_0.x);
-  __THE_0_test11_0.f(__THE_0_test11_0.x);
-  __THE_0_test12_0.f(__THE_0_test12_0.x);
-  __THE_0_test13_0.f(__THE_0_test13_0.x);
-  __THE_0_test14_0.f(__THE_0_test14_0.x);
-  __THE_0_test15_0.f(__THE_0_test15_0.x);
-  __THE_0_test16_0.f(__THE_0_test16_0.x);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test2_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test3_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test3_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test4_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test4_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test5_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test5_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test6_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test6_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test7_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test7_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test8_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test8_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test9_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test9_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test10_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test10_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test11_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test11_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test12_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test12_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test13_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test13_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test14_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test14_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test15_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test15_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_test16_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_test16_0, NULL, 0};
+  __THE_0_test_test1_0.f(__THE_0_test_test1_0.x);
+  __THE_0_test_test2_0.f(__THE_0_test_test2_0.x);
+  __THE_0_test_test3_0.f(__THE_0_test_test3_0.x);
+  __THE_0_test_test4_0.f(__THE_0_test_test4_0.x);
+  __THE_0_test_test5_0.f(__THE_0_test_test5_0.x);
+  __THE_0_test_test6_0.f(__THE_0_test_test6_0.x);
+  __THE_0_test_test7_0.f(__THE_0_test_test7_0.x);
+  __THE_0_test_test8_0.f(__THE_0_test_test8_0.x);
+  __THE_0_test_test9_0.f(__THE_0_test_test9_0.x);
+  __THE_0_test_test10_0.f(__THE_0_test_test10_0.x);
+  __THE_0_test_test11_0.f(__THE_0_test_test11_0.x);
+  __THE_0_test_test12_0.f(__THE_0_test_test12_0.x);
+  __THE_0_test_test13_0.f(__THE_0_test_test13_0.x);
+  __THE_0_test_test14_0.f(__THE_0_test_test14_0.x);
+  __THE_0_test_test15_0.f(__THE_0_test_test15_0.x);
+  __THE_0_test_test16_0.f(__THE_0_test_test16_0.x);
 }
 ======= flags =======
 ======= stdout =======

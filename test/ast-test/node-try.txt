@@ -40,7 +40,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Error1_0" name="Error1">
+  <TypeObj codeName="test_Error1_0" name="Error1">
     <TypeField name="message">
       <BuiltinType name="str" />
     </TypeField>
@@ -50,7 +50,7 @@ main {
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
-  <TypeObj codeName="Error2_0" name="Error2">
+  <TypeObj codeName="test_Error2_0" name="Error2">
     <TypeField name="message">
       <BuiltinType name="str" />
     </TypeField>
@@ -60,7 +60,7 @@ main {
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
-  <TypeObj codeName="Error3_0" name="Error3">
+  <TypeObj codeName="test_Error3_0" name="Error3">
     <TypeField name="message">
       <BuiltinType name="str" />
     </TypeField>
@@ -234,7 +234,7 @@ main {
           <NodeVarDecl>
             <NodeVarDeclVar>
               <Var name="err1" codeName="err1_0" frame="3">
-                <TypeObj codeName="Error1_0" name="Error1">
+                <TypeObj codeName="test_Error1_0" name="Error1">
                   <TypeField name="message">
                     <BuiltinType name="str" />
                   </TypeField>
@@ -285,7 +285,7 @@ main {
                         <ExprAccess prop="stack">
                           <NodeExpr>
                             <NodeExprType>
-                              <TypeObj codeName="Error1_0" name="Error1">
+                              <TypeObj codeName="test_Error1_0" name="Error1">
                                 <TypeField name="message">
                                   <BuiltinType name="str" />
                                 </TypeField>
@@ -297,7 +297,7 @@ main {
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="err1" codeName="err1_0" frame="3">
-                                  <TypeObj codeName="Error1_0" name="Error1">
+                                  <TypeObj codeName="test_Error1_0" name="Error1">
                                     <TypeField name="message">
                                       <BuiltinType name="str" />
                                     </TypeField>
@@ -334,7 +334,7 @@ main {
           <NodeVarDecl>
             <NodeVarDeclVar>
               <Var name="err2" codeName="err2_0" frame="3">
-                <TypeObj codeName="Error2_0" name="Error2">
+                <TypeObj codeName="test_Error2_0" name="Error2">
                   <TypeField name="message">
                     <BuiltinType name="str" />
                   </TypeField>
@@ -385,7 +385,7 @@ main {
                         <ExprAccess prop="stack">
                           <NodeExpr>
                             <NodeExprType>
-                              <TypeObj codeName="Error2_0" name="Error2">
+                              <TypeObj codeName="test_Error2_0" name="Error2">
                                 <TypeField name="message">
                                   <BuiltinType name="str" />
                                 </TypeField>
@@ -397,7 +397,7 @@ main {
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="err2" codeName="err2_0" frame="3">
-                                  <TypeObj codeName="Error2_0" name="Error2">
+                                  <TypeObj codeName="test_Error2_0" name="Error2">
                                     <TypeField name="message">
                                       <BuiltinType name="str" />
                                     </TypeField>
@@ -434,7 +434,7 @@ main {
           <NodeVarDecl>
             <NodeVarDeclVar>
               <Var name="err3" codeName="err3_0" frame="3">
-                <TypeObj codeName="Error3_0" name="Error3">
+                <TypeObj codeName="test_Error3_0" name="Error3">
                   <TypeField name="message">
                     <BuiltinType name="str" />
                   </TypeField>
@@ -485,7 +485,7 @@ main {
                         <ExprAccess prop="stack">
                           <NodeExpr>
                             <NodeExprType>
-                              <TypeObj codeName="Error3_0" name="Error3">
+                              <TypeObj codeName="test_Error3_0" name="Error3">
                                 <TypeField name="message">
                                   <BuiltinType name="str" />
                                 </TypeField>
@@ -497,7 +497,7 @@ main {
                             <NodeExprBody>
                               <ExprAccess>
                                 <Var name="err3" codeName="err3_0" frame="3">
-                                  <TypeObj codeName="Error3_0" name="Error3">
+                                  <TypeObj codeName="test_Error3_0" name="Error3">
                                     <TypeField name="message">
                                       <BuiltinType name="str" />
                                     </TypeField>

@@ -59,25 +59,25 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_Test1_0;
-struct __THE_1_Test2_0;
+struct __THE_1_test_Test1_0;
+struct __THE_1_test_Test2_0;
 
-struct __THE_1_Test1_0 {
+struct __THE_1_test_Test1_0 {
   const int32_t __THE_0_a;
 };
-struct __THE_1_Test2_0 {
-  const struct __THE_1_Test1_0 *__THE_0_b;
+struct __THE_1_test_Test2_0 {
+  const struct __THE_1_test_Test1_0 *__THE_0_b;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_Test1_0 *);
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *);
+struct __THE_1_test_Test1_0 *__THE_1_test_Test1_0_alloc (int32_t);
+struct __THE_1_test_Test1_0 *__THE_1_test_Test1_0_copy (const struct __THE_1_test_Test1_0 *);
+void __THE_1_test_Test1_0_free (struct __THE_1_test_Test1_0 *);
+struct __THE_1_test_Test2_0 *__THE_1_test_Test2_0_alloc (struct __THE_1_test_Test1_0 *);
+void __THE_1_test_Test2_0_free (struct __THE_1_test_Test2_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -97,41 +97,41 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (int32_t __THE_0_a) {
-  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  struct __THE_1_Test1_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
+struct __THE_1_test_Test1_0 *__THE_1_test_Test1_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_test_Test1_0 *r = alloc(sizeof(struct __THE_1_test_Test1_0));
+  struct __THE_1_test_Test1_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test1_0));
   return r;
 }
-struct __THE_1_Test1_0 *__THE_1_Test1_0_copy (const struct __THE_1_Test1_0 *n) {
-  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  struct __THE_1_Test1_0 s = {n->__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
+struct __THE_1_test_Test1_0 *__THE_1_test_Test1_0_copy (const struct __THE_1_test_Test1_0 *n) {
+  struct __THE_1_test_Test1_0 *r = alloc(sizeof(struct __THE_1_test_Test1_0));
+  struct __THE_1_test_Test1_0 s = {n->__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+void __THE_1_test_Test1_0_free (struct __THE_1_test_Test1_0 *n) {
   free(n);
 }
-struct __THE_1_Test2_0 *__THE_1_Test2_0_alloc (struct __THE_1_Test1_0 *__THE_0_b) {
-  struct __THE_1_Test2_0 *r = alloc(sizeof(struct __THE_1_Test2_0));
-  struct __THE_1_Test2_0 s = {__THE_0_b};
-  memcpy(r, &s, sizeof(struct __THE_1_Test2_0));
+struct __THE_1_test_Test2_0 *__THE_1_test_Test2_0_alloc (struct __THE_1_test_Test1_0 *__THE_0_b) {
+  struct __THE_1_test_Test2_0 *r = alloc(sizeof(struct __THE_1_test_Test2_0));
+  struct __THE_1_test_Test2_0 s = {__THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test2_0));
   return r;
 }
-void __THE_1_Test2_0_free (struct __THE_1_Test2_0 *n) {
-  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) n->__THE_0_b);
+void __THE_1_test_Test2_0_free (struct __THE_1_test_Test2_0 *n) {
+  __THE_1_test_Test1_0_free((struct __THE_1_test_Test1_0 *) n->__THE_0_b);
   free(n);
 }
 
 int main () {
-  const struct __THE_1_Test1_0 *__THE_0_o1_0 = __THE_1_Test1_0_alloc(1);
+  const struct __THE_1_test_Test1_0 *__THE_0_o1_0 = __THE_1_test_Test1_0_alloc(1);
   __THE_0_o1_0;
   __THE_0_o1_0->__THE_0_a;
-  const struct __THE_1_Test2_0 *__THE_0_o2_0 = __THE_1_Test2_0_alloc(__THE_1_Test1_0_copy(__THE_0_o1_0));
+  const struct __THE_1_test_Test2_0 *__THE_0_o2_0 = __THE_1_test_Test2_0_alloc(__THE_1_test_Test1_0_copy(__THE_0_o1_0));
   __THE_0_o2_0;
   __THE_0_o2_0->__THE_0_b;
-  __THE_1_Test2_0_free((struct __THE_1_Test2_0 *) __THE_0_o2_0);
-  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_0_o1_0);
+  __THE_1_test_Test2_0_free((struct __THE_1_test_Test2_0 *) __THE_0_o2_0);
+  __THE_1_test_Test1_0_free((struct __THE_1_test_Test1_0 *) __THE_0_o1_0);
 }
 ======= flags =======
 ======= stdout =======

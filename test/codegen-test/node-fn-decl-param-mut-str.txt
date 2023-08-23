@@ -59,25 +59,25 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
+struct __THE_1_fn_sFP5strFRstrFE;
+struct __THE_1_fn_sFP5strFRstrFEP;
+struct __THE_1_fn_sFP5strFP2strFRstrFE;
+struct __THE_1_fn_sFP5strFP2strFRstrFEP;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP5strFRstrFE {
   struct str (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP5strFRstrFEP {
   struct str n0;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFP5strFP2strFRstrFE {
   struct str (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_sFP5strFP2strFRstrFEP {
   struct str n0;
   unsigned char o1;
   struct str n1;
@@ -94,8 +94,8 @@ struct str str_copy (const struct str);
 void str_free (struct str);
 struct str str_realloc (struct str, struct str);
 void *xalloc (void *, size_t);
-struct str __THE_1_test1_0 (void *, void *);
-struct str __THE_1_test2_0 (void *, void *);
+struct str __THE_1_test_test1_0 (void *, void *);
+struct str __THE_1_test_test2_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -156,9 +156,9 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-struct str __THE_1_test1_0 (void *px, void *pp) {
+struct str __THE_1_test_test1_0 (void *px, void *pp) {
   struct str v;
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP5strFRstrFEP *p = pp;
   struct str __THE_0_a_0 = p->n0;
   __THE_0_a_0 = str_realloc(__THE_0_a_0, str_concat_cstr(str_copy(__THE_0_a_0), "str"));
   v = str_copy(__THE_0_a_0);
@@ -166,9 +166,9 @@ struct str __THE_1_test1_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
-struct str __THE_1_test2_0 (void *px, void *pp) {
+struct str __THE_1_test_test2_0 (void *px, void *pp) {
   struct str v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP5strFP2strFRstrFEP *p = pp;
   struct str __THE_0_a_0 = p->n0;
   struct str __THE_0_b_0 = p->o1 == 1 ? p->n1 : str_alloc("test");
   __THE_0_b_0 = str_realloc(__THE_0_b_0, str_copy(__THE_0_a_0));
@@ -181,10 +181,10 @@ struct str __THE_1_test2_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
-  str_free((struct str) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1000P) {str_alloc("string1")}, sizeof(struct __THE_1_fn$1000P))));
-  str_free((struct str) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1001P) {str_alloc("string2"), 0, (struct str) {}}, sizeof(struct __THE_1_fn$1001P))));
+  const struct __THE_1_fn_sFP5strFRstrFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFP5strFRstrFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFP5strFP2strFRstrFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFP5strFP2strFRstrFE) {&__THE_1_test_test2_0, NULL, 0};
+  str_free((struct str) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5strFRstrFEP) {str_alloc("string1")}, sizeof(struct __THE_1_fn_sFP5strFRstrFEP))));
+  str_free((struct str) __THE_0_test_test2_0.f(__THE_0_test_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5strFP2strFRstrFEP) {str_alloc("string2"), 0, (struct str) {}}, sizeof(struct __THE_1_fn_sFP5strFP2strFRstrFEP))));
 }
 ======= flags =======
 ======= stdout =======

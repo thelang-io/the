@@ -1,0 +1,2 @@
+import TestObject2 from "./export-circular"
+export obj TestObject { a: int }

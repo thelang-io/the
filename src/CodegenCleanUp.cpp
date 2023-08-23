@@ -18,9 +18,9 @@
 #include "CodegenCleanUp.hpp"
 #include "Error.hpp"
 
-CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool isAsync) {
+CodegenCleanUp::CodegenCleanUp (CodegenCleanUpType t, CodegenCleanUp *p, bool a) {
   this->type = t;
-  this->async = isAsync;
+  this->async = a;
 
   if (p != nullptr) {
     this->parent = p;
@@ -129,7 +129,7 @@ bool CodegenCleanUp::empty () const {
     return true;
   }
 
-  return std::all_of(this->_data.begin(), this->_data.end(), [&] (const auto &it) -> bool {
+  return std::all_of(this->_data.begin(), this->_data.end(), [] (const auto &it) -> bool {
     return CodegenASTStmt::emptyVector(it.content);
   });
 }
@@ -139,19 +139,13 @@ void CodegenCleanUp::gen (std::shared_ptr<CodegenASTStmt> *c) const {
     return;
   }
 
-  for (auto idx = this->_data.size() - 1;; idx--) {
-    auto item = this->_data[idx];
-
-    if (item.labelUsed) {
-      (*c)->append(CodegenASTStmtLabel::create(item.label));
+  for (auto it = this->_data.rbegin(); it != this->_data.rend(); it++) {
+    if (it->labelUsed) {
+      (*c)->append(CodegenASTStmtLabel::create(it->label));
     }
 
-    if (!item.content.empty()) {
-      (*c)->merge(item.content);
-    }
-
-    if (idx == 0) {
-      break;
+    if (!it->content.empty()) {
+      (*c)->merge(it->content);
     }
   }
 }
@@ -161,20 +155,14 @@ void CodegenCleanUp::genAsync (std::shared_ptr<CodegenASTStmt> *c, std::size_t &
     return;
   }
 
-  for (auto idx = this->_data.size() - 1;; idx--) {
-    auto item = this->_data[idx];
-
-    if (item.labelUsed) {
+  for (auto it = this->_data.rbegin(); it != this->_data.rend(); it++) {
+    if (it->labelUsed) {
       *c = (*c)->increaseAsyncCounter(counter);
-      *item.asyncCounter = counter;
+      *it->asyncCounter = counter;
     }
 
-    if (!item.content.empty()) {
-      (*c)->merge(item.content);
-    }
-
-    if (idx == 0) {
-      break;
+    if (!it->content.empty()) {
+      (*c)->merge(it->content);
     }
   }
 }

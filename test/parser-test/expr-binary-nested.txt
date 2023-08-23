@@ -447,7 +447,9 @@ o := 1 + Test{a: 1} + i++
           <ExprBinaryRight>
             <ExprObj start="14:10" end="14:20">
               <ExprObjId>
-                <Token type="ID" val="Test" start="14:10" end="14:14" />
+                <TypeId start="14:10" end="14:14">
+                  <Token type="ID" val="Test" start="14:10" end="14:14" />
+                </TypeId>
               </ExprObjId>
               <ExprObjProps>
                 <ExprObjProp>

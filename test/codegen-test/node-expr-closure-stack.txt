@@ -58,27 +58,27 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
-struct __THE_1_fn$1001;
-struct __THE_1_mainSD$_0X;
+struct __THE_1_fn_sFP3intFRvoidFE;
+struct __THE_1_fn_sFP3intFRvoidFEP;
+struct __THE_1_fn_sFRvoidFE;
+struct __THE_1_test_mainSD$_0X;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP3intFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP3intFRvoidFEP {
   int32_t n0;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_mainSD$_0X {
+struct __THE_1_test_mainSD$_0X {
   const int32_t *__THE_0_a_0;
-  const struct __THE_1_fn$1000 *__THE_0_test_0;
+  const struct __THE_1_fn_sFP3intFRvoidFE *__THE_0_test_test_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -88,10 +88,10 @@ void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 void *xalloc (void *, size_t);
-void __THE_1_test_0 (void *, void *);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
-void __THE_1_mainSD$_0 (void *);
-void __THE_1_mainSD$_0_alloc (struct __THE_1_fn$1001 *, struct __THE_1_mainSD$_0X);
+void __THE_1_test_test_0 (void *, void *);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
+void __THE_1_test_mainSD$_0 (void *);
+void __THE_1_test_mainSD$_0_alloc (struct __THE_1_fn_sFRvoidFE *, struct __THE_1_test_mainSD$_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -231,37 +231,37 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_test_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+void __THE_1_test_test_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFP3intFRvoidFEP *p = pp;
   const int32_t __THE_0_v_0 = p->n0;
   print(stdout, "iz", __THE_0_v_0, THE_EOL);
   free(pp);
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSD$_0 (void *px) {
-  struct __THE_1_mainSD$_0X *x = px;
+void __THE_1_test_mainSD$_0 (void *px) {
+  struct __THE_1_test_mainSD$_0X *x = px;
   const int32_t *__THE_0_a_0 = x->__THE_0_a_0;
-  const struct __THE_1_fn$1000 *__THE_0_test_0 = x->__THE_0_test_0;
-  (*__THE_0_test_0).f((*__THE_0_test_0).x, xalloc(&(struct __THE_1_fn$1000P) {*__THE_0_a_0}, sizeof(struct __THE_1_fn$1000P)));
+  const struct __THE_1_fn_sFP3intFRvoidFE *__THE_0_test_test_0 = x->__THE_0_test_test_0;
+  (*__THE_0_test_test_0).f((*__THE_0_test_test_0).x, xalloc(&(struct __THE_1_fn_sFP3intFRvoidFEP) {*__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP3intFRvoidFEP)));
 }
-void __THE_1_mainSD$_0_alloc (struct __THE_1_fn$1001 *n, struct __THE_1_mainSD$_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSD$_0X);
-  struct __THE_1_mainSD$_0X *r = alloc(l);
+void __THE_1_test_mainSD$_0_alloc (struct __THE_1_fn_sFRvoidFE *n, struct __THE_1_test_mainSD$_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSD$_0X);
+  struct __THE_1_test_mainSD$_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSD$_0;
+  n->f = &__THE_1_test_mainSD$_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFP3intFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
   const int32_t __THE_0_a_0 = 10;
-  const struct __THE_1_fn$1001 __THE_0_mainSD$_0;
-  __THE_1_mainSD$_0_alloc((struct __THE_1_fn$1001 *) &__THE_0_mainSD$_0, (struct __THE_1_mainSD$_0X) {&__THE_0_a_0, &__THE_0_test_0});
-  __THE_0_mainSD$_0;
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_mainSD$_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_mainSD$_0;
+  __THE_1_test_mainSD$_0_alloc((struct __THE_1_fn_sFRvoidFE *) &__THE_0_test_mainSD$_0, (struct __THE_1_test_mainSD$_0X) {&__THE_0_a_0, &__THE_0_test_test_0});
+  __THE_0_test_mainSD$_0;
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_test_mainSD$_0);
 }
 ======= flags =======
 ======= stdout =======

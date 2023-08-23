@@ -21,6 +21,7 @@
 #include "Parser.hpp"
 #include "VarMap.hpp"
 
+class AST;
 struct ASTExprAccess;
 struct ASTExprArray;
 struct ASTExprAs;
@@ -39,8 +40,10 @@ struct ASTExprUnary;
 struct ASTNodeBreak;
 struct ASTNodeContinue;
 struct ASTNodeEnumDecl;
+struct ASTNodeExportDecl;
 struct ASTNodeFnDecl;
 struct ASTNodeIf;
+struct ASTNodeImportDecl;
 struct ASTNodeLoop;
 struct ASTNodeMain;
 struct ASTNodeObjDecl;
@@ -85,9 +88,11 @@ using ASTNodeBody = std::variant<
   ASTNodeBreak,
   ASTNodeContinue,
   ASTNodeEnumDecl,
+  ASTNodeExportDecl,
   ASTNodeExpr,
   ASTNodeFnDecl,
   ASTNodeIf,
+  ASTNodeImportDecl,
   ASTNodeLoop,
   ASTNodeMain,
   ASTNodeObjDecl,
@@ -285,6 +290,11 @@ struct ASTNodeEnumDecl {
   std::vector<ASTNodeEnumDeclMember> members;
 };
 
+struct ASTNodeExportDecl {
+  std::optional<ASTNode> declaration;
+  Type *declarationType;
+};
+
 struct ASTNodeFnDecl {
   std::shared_ptr<Var> var;
   std::vector<std::shared_ptr<Var>> stack;
@@ -296,6 +306,16 @@ struct ASTNodeIf {
   ASTNodeExpr cond;
   ASTBlock body;
   std::optional<std::variant<ASTBlock, ASTNode>> alt;
+};
+
+struct ASTNodeImportDeclSpecifier {
+  std::optional<std::string> imported;
+  std::string local;
+};
+
+struct ASTNodeImportDecl {
+  std::vector<ASTNodeImportDeclSpecifier> specifiers;
+  std::string source;
 };
 
 struct ASTNodeLoop {
@@ -356,21 +376,35 @@ struct ASTState {
   Type *returnType = nullptr;
 };
 
+struct ASTImport {
+  std::shared_ptr<Reader> reader;
+  std::shared_ptr<Lexer> lexer;
+  std::shared_ptr<Parser> parser;
+  std::shared_ptr<AST> ast;
+  ASTBlock nodes = {};
+};
+
 class AST {
  public:
   Parser *parser;
   Reader *reader;
+  std::shared_ptr<std::vector<ASTImport>> imports;
   TypeMap typeMap;
   VarMap varMap;
   ASTState state;
   std::map<std::string, Type *> typeCasts = {};
 
+  static std::string getExportCodeName (const ASTNode &);
+  static std::string getExportName (const ASTNode &);
+  static Type *getExportType (const ASTNode &);
+  static std::shared_ptr<Var> getExportVar (const ASTNode &);
   static void populateExprAwaitId (ASTBlock &);
   static void populateParent (ASTNode &, ASTNode *);
   static void populateParentExpr (ASTNodeExpr &, ASTNodeExpr *, ASTNode *);
   static void populateParents (ASTBlock &, ASTNode * = nullptr);
 
-  explicit AST (Parser *);
+  explicit AST (Parser *, const std::shared_ptr<std::vector<ASTImport>> & = nullptr);
+  virtual ~AST () = default;
 
   virtual ASTBlock gen ();
   virtual std::string xml ();

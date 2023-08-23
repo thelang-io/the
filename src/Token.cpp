@@ -35,11 +35,13 @@ std::string tokenTypeToStr (TokenType type) {
     case TK_KW_ELIF: return "KW_ELIF";
     case TK_KW_ELSE: return "KW_ELSE";
     case TK_KW_ENUM: return "KW_ENUM";
+    case TK_KW_EXPORT: return "KW_EXPORT";
     case TK_KW_FALSE: return "KW_FALSE";
     case TK_KW_FINALLY: return "KW_FINALLY";
     case TK_KW_FN: return "KW_FN";
     case TK_KW_FROM: return "KW_FROM";
     case TK_KW_IF: return "KW_IF";
+    case TK_KW_IMPORT: return "KW_IMPORT";
     case TK_KW_IS: return "KW_IS";
     case TK_KW_LOOP: return "KW_LOOP";
     case TK_KW_MAIN: return "KW_MAIN";
@@ -122,14 +124,14 @@ std::string Token::escape (const std::string &val, bool insideAttr) {
   auto result = std::string();
   result.reserve(val.size());
 
-  for (auto idx = static_cast<std::size_t>(0); idx < val.size(); idx++) {
-    if (val[idx] == '\f') result += R"(\f)";
-    else if (val[idx] == '\n') result += R"(\n)";
-    else if (val[idx] == '\r') result += R"(\r)";
-    else if (val[idx] == '\t') result += R"(\t)";
-    else if (val[idx] == '\v') result += R"(\v)";
-    else if (val[idx] == '"' && insideAttr) result += R"(\")";
-    else result += val[idx];
+  for (const auto &ch : val) {
+    if (ch == '\f') result += R"(\f)";
+    else if (ch == '\n') result += R"(\n)";
+    else if (ch == '\r') result += R"(\r)";
+    else if (ch == '\t') result += R"(\t)";
+    else if (ch == '\v') result += R"(\v)";
+    else if (ch == '"' && insideAttr) result += R"(\")";
+    else result += ch;
   }
 
   return result;

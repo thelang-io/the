@@ -123,6 +123,14 @@
 #define E0182 "E0182 - Expected type after `as` keyword"
 #define E0183 "E0183 - Expected arrow after closure expression parameters list"
 #define E0184 "E0184 - Expected return type after closure expression arrow"
+#define E0185 "E0185 - Expected `as` keyword after importing namespace"
+#define E0186 "E0186 - Expected identifier after `as` keyword"
+#define E0187 "E0187 - Expected import specifier"
+#define E0188 "E0188 - Expected `from` keyword"
+#define E0189 "E0189 - Expected import source after `from` keyword"
+#define E0190 "E0190 - Only declarations can be exported"
+#define E0191 "E0191 - Member type allowed only on id or another member type"
+#define E0192 "E0192 - Expected type member after dot"
 
 #define E1001 "E1001 - Tried accessing non-existing object property"
 #define E1002 "E1002 - Extraneous argument passed in call expression"
@@ -155,6 +163,11 @@
 #define E1029 "E1029 - Catch block can only catch object with first field string `message` and second field string `stack`"
 #define E1030 "E1030 - Awaiting is only possible on asynchronous functions"
 #define E1031 "E1031 - Type casting is not possible in this case"
+#define E1032 "E1032 - Circular imports are not allowed"
+#define E1033 "E1033 - Object is not exported"
+#define E1034 "E1034 - Namespace member doesn't exists"
+#define E1035 "E1035 - Package not installed"
+#define E1036 "E1036 - Referencing files outside of current working directory is not supported"
 
 class Error : public std::exception {
  public:

@@ -1,0 +1,6 @@
+======= stdin =======
+import TestObject from "test/non-existing"
+======= stderr =======
+/test:1:24: E1035 - Package not installed
+  1 | import TestObject from "test/non-existing"
+    |                        ^~~~~~~~~~~~~~~~~~~

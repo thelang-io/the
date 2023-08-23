@@ -54,9 +54,9 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
+struct __THE_1_fn_sFRvoidFE;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
@@ -68,9 +68,9 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_mainSD$_0 (void *);
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
+void __THE_1_test_mainSD$_0 (void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -204,24 +204,24 @@ void *re_alloc (void *n1, size_t n2) {
   if (r == NULL) error_alloc(&err_state, n2);
   return r;
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSD$_0 (void *px) {
+void __THE_1_test_mainSD$_0 (void *px) {
   print(stdout, "zz", "expr-closure-body", THE_EOL);
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_mainSD$_0 = (struct __THE_1_fn$1000) {&__THE_1_mainSD$_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_a_0 = __THE_1_fn$1000_copy(__THE_0_mainSD$_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_mainSD$_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_mainSD$_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_a_0 = __THE_1_fn_sFRvoidFE_copy(__THE_0_test_mainSD$_0);
   __THE_0_a_0.f(__THE_0_a_0.x);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_a_0);
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_a_0);
 }
 ======= flags =======
 ======= stdout =======

@@ -6,8 +6,8 @@ fn test1 (p1 := "1", p2 := p1) {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="test1" codeName="test_test1_0" frame="1">
+      <TypeFn name="fn_sFP1strFP1strFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="p1">
             <BuiltinType name="str" />

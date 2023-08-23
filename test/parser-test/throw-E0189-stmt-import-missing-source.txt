@@ -1,0 +1,6 @@
+======= stdin =======
+import id from test
+======= stderr =======
+/test:1:16: E0189 - Expected import source after `from` keyword
+  1 | import id from test
+    |                ^~~~

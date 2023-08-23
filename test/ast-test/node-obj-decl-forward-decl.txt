@@ -18,9 +18,9 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test2_0" name="Test2">
+  <TypeObj codeName="test_Test2_0" name="Test2">
     <TypeField name="a">
-      <TypeObj codeName="Test1_0" name="Test1">
+      <TypeObj codeName="test_Test1_0" name="Test1">
         <TypeField name="b">
           <BuiltinType name="int" />
         </TypeField>
@@ -29,7 +29,7 @@ main {
   </TypeObj>
 </NodeObjDecl>
 <NodeObjDecl>
-  <TypeObj codeName="Test1_0" name="Test1">
+  <TypeObj codeName="test_Test1_0" name="Test1">
     <TypeField name="b">
       <BuiltinType name="int" />
     </TypeField>
@@ -37,13 +37,13 @@ main {
 </NodeObjDecl>
 <NodeMain>
   <NodeObjDecl>
-    <TypeObj codeName="mainSDTest4_0" name="Test4">
+    <TypeObj codeName="test_mainSDTest4_0" name="Test4">
       <TypeField name="c">
-        <TypeObj codeName="mainSDTest3_0" name="Test3">
+        <TypeObj codeName="test_mainSDTest3_0" name="Test3">
           <TypeField name="d">
-            <TypeObj codeName="Test2_0" name="Test2">
+            <TypeObj codeName="test_Test2_0" name="Test2">
               <TypeField name="a">
-                <TypeObj codeName="Test1_0" name="Test1">
+                <TypeObj codeName="test_Test1_0" name="Test1">
                   <TypeField name="b">
                     <BuiltinType name="int" />
                   </TypeField>
@@ -56,11 +56,11 @@ main {
     </TypeObj>
   </NodeObjDecl>
   <NodeObjDecl>
-    <TypeObj codeName="mainSDTest3_0" name="Test3">
+    <TypeObj codeName="test_mainSDTest3_0" name="Test3">
       <TypeField name="d">
-        <TypeObj codeName="Test2_0" name="Test2">
+        <TypeObj codeName="test_Test2_0" name="Test2">
           <TypeField name="a">
-            <TypeObj codeName="Test1_0" name="Test1">
+            <TypeObj codeName="test_Test1_0" name="Test1">
               <TypeField name="b">
                 <BuiltinType name="int" />
               </TypeField>

@@ -11,7 +11,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -21,7 +21,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a1" codeName="a1_0" frame="2">
-        <TypeFn name="fn$1003">
+        <TypeFn name="fn_sFP4array_intFRintFE">
           <TypeFnParams>
             <TypeFnParam variadic>
               <TypeArray name="array_int">
@@ -39,7 +39,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a2" codeName="a2_0" frame="2">
-        <TypeFn name="fn$1003">
+        <TypeFn name="fn_sFP4array_intFRintFE">
           <TypeFnParams>
             <TypeFnParam variadic>
               <TypeArray name="array_int">
@@ -57,7 +57,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a3" codeName="a3_0" frame="2">
-        <TypeFn name="fn$1004">
+        <TypeFn name="fn_sFP3intFP4array_intFRTestFE">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -69,7 +69,7 @@ main {
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="a">
                 <BuiltinType name="int" />
               </TypeField>
@@ -82,7 +82,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a4" codeName="a4_0" frame="2">
-        <TypeFn name="fn$1004">
+        <TypeFn name="fn_sFP3intFP4array_intFRTestFE">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -94,7 +94,7 @@ main {
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeObj codeName="Test_0" name="Test">
+            <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="a">
                 <BuiltinType name="int" />
               </TypeField>
@@ -107,14 +107,14 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a5" codeName="a5_0" frame="2">
-        <TypeFn name="fn$1008">
+        <TypeFn name="fn_sFP3intFP4array_fn_sFP4array_intFRintFEFRintFE">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
             </TypeFnParam>
             <TypeFnParam variadic>
-              <TypeArray name="array_fn$1003">
-                <TypeFn name="fn$1003">
+              <TypeArray name="array_fn_sFP4array_intFRintFE">
+                <TypeFn name="fn_sFP4array_intFRintFE">
                   <TypeFnParams>
                     <TypeFnParam variadic>
                       <TypeArray name="array_int">
@@ -139,14 +139,14 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a6" codeName="a6_0" frame="2">
-        <TypeFn name="fn$1013">
+        <TypeFn name="fn_sFP3intFP4array_fn_sFP3intFP4array_intFRintFEFRintFE">
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
             </TypeFnParam>
             <TypeFnParam variadic>
-              <TypeArray name="array_fn$1009">
-                <TypeFn name="fn$1009">
+              <TypeArray name="array_fn_sFP3intFP4array_intFRintFE">
+                <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                   <TypeFnParams>
                     <TypeFnParam required>
                       <BuiltinType name="int" />

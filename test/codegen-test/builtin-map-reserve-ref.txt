@@ -64,17 +64,17 @@ struct str {
 };
 
 struct error_Error;
-struct __THE_1_fn$1003;
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE;
 struct __THE_1_pair_strMSintME;
 struct __THE_1_map_strMSintME;
-struct __THE_1_fn$1003P;
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP;
 struct __THE_1_array_map_strMSintME;
 
 struct error_Error {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
-struct __THE_1_fn$1003 {
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
@@ -88,7 +88,7 @@ struct __THE_1_map_strMSintME {
   size_t c;
   size_t l;
 };
-struct __THE_1_fn$1003P {
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP {
   err_state_t *err_state;
   int line;
   int col;
@@ -129,7 +129,7 @@ void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
 size_t __THE_1_map_strMSintME_len (struct __THE_1_map_strMSintME);
 struct __THE_1_map_strMSintME *__THE_1_map_strMSintME_reserve (struct __THE_1_map_strMSintME *, int32_t);
 struct str __THE_1_map_strMSintME_str (struct __THE_1_map_strMSintME);
-void __THE_1_printMap_0 (void *, void *);
+void __THE_1_test_printMap_0 (void *, void *);
 struct __THE_1_array_map_strMSintME __THE_1_array_map_strMSintME_alloc (size_t, ...);
 struct __THE_1_map_strMSintME *__THE_1_array_map_strMSintME_at (err_state_t *, int, int, struct __THE_1_array_map_strMSintME, int32_t);
 struct __THE_1_array_map_strMSintME __THE_1_array_map_strMSintME_copy (const struct __THE_1_array_map_strMSintME);
@@ -460,8 +460,8 @@ struct str __THE_1_map_strMSintME_str (struct __THE_1_map_strMSintME n) {
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n);
   return str_concat_cstr(r, "}");
 }
-void __THE_1_printMap_0 (void *px, void *pp) {
-  struct __THE_1_fn$1003P *p = pp;
+void __THE_1_test_printMap_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "printMap", p->line, p->col);
   const struct __THE_1_map_strMSintME __THE_0_m_0 = p->n0;
@@ -512,14 +512,14 @@ size_t __THE_1_array_map_strMSintME_len (struct __THE_1_array_map_strMSintME n) 
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn$1003 __THE_0_printMap_0 = (struct __THE_1_fn$1003) {&__THE_1_printMap_0, NULL, 0};
+  const struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE __THE_0_test_printMap_0 = (struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE) {&__THE_1_test_printMap_0, NULL, 0};
   const struct __THE_1_map_strMSintME __THE_0_emptyMap_0 = __THE_1_map_strMSintME_alloc(0);
   struct __THE_1_array_map_strMSintME __THE_0_arr_0 = __THE_1_array_map_strMSintME_alloc(4, __THE_1_map_strMSintME_copy(__THE_0_emptyMap_0), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(2, str_alloc("key1"), 2, str_alloc("key2"), 3), __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 6, str_alloc("key2"), 7, str_alloc("key3"), 8));
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_map_strMSintME_len(__THE_1_array_map_strMSintME_copy(__THE_0_arr_0)); __THE_0_i_0++) {
     if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L3;
     __THE_1_map_strMSintME_reserve(__THE_1_array_map_strMSintME_at(&err_state, 10, 5, __THE_0_arr_0, __THE_0_i_0), 100);
     if (setjmp(err_state.buf_last->buf) != 0) goto L3;
-    __THE_0_printMap_0.f(__THE_0_printMap_0.x, xalloc(&(struct __THE_1_fn$1003P) {&err_state, 11, 5, __THE_1_map_strMSintME_copy(*__THE_1_array_map_strMSintME_at(&err_state, 11, 14, __THE_0_arr_0, __THE_0_i_0))}, sizeof(struct __THE_1_fn$1003P)));
+    __THE_0_test_printMap_0.f(__THE_0_test_printMap_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {&err_state, 11, 5, __THE_1_map_strMSintME_copy(*__THE_1_array_map_strMSintME_at(&err_state, 11, 14, __THE_0_arr_0, __THE_0_i_0))}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
 L3:
     error_buf_decrease(&err_state);
     if (err_state.id != -1) goto L2;

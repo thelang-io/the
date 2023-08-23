@@ -12,7 +12,9 @@ b := Test2{
   <StmtVarDeclInit>
     <ExprObj start="1:6" end="1:17">
       <ExprObjId>
-        <Token type="ID" val="Test1" start="1:6" end="1:11" />
+        <TypeId start="1:6" end="1:11">
+          <Token type="ID" val="Test1" start="1:6" end="1:11" />
+        </TypeId>
       </ExprObjId>
       <ExprObjProps>
         <ExprObjProp>
@@ -36,7 +38,9 @@ b := Test2{
   <StmtVarDeclInit>
     <ExprObj start="2:6" end="5:2">
       <ExprObjId>
-        <Token type="ID" val="Test2" start="2:6" end="2:11" />
+        <TypeId start="2:6" end="2:11">
+          <Token type="ID" val="Test2" start="2:6" end="2:11" />
+        </TypeId>
       </ExprObjId>
       <ExprObjProps>
         <ExprObjProp>

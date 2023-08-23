@@ -25,7 +25,7 @@
 std::tuple<std::string, std::string, int> execCmd (const std::string &cmd, const std::string &tmpName) {
   auto returnCode = -1;
 
-  auto pcloseWrapper = [&returnCode] (FILE *fd) {
+  auto pcloseWrapper = [&] (FILE *fd) {
     #if defined(OS_WINDOWS)
       returnCode = _pclose(fd);
     #else
@@ -85,6 +85,91 @@ std::optional<std::string> getEnvVar (const std::string &name) {
   #endif
 }
 
+std::string prepareTestOutput (const std::string &output) {
+  auto result = output;
+  auto from = std::string("/test");
+  auto to = (std::filesystem::current_path() / "test").string();
+  auto startPos = static_cast<std::size_t>(0);
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    if (
+      (startPos <= 0 || (result[startPos - 1] != '.' && result[startPos - 1] != '/')) &&
+      std::isalnum(result[startPos + from.length()]) == 0 &&
+      result[startPos + from.length()] != '.' &&
+      result[startPos + from.length()] != '/'
+    ) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    } else {
+      startPos += from.length();
+    }
+  }
+
+  from = std::string("/fixtures/");
+  to = (std::filesystem::current_path() / "fixtures").string() + OS_PATH_SEP;
+  startPos = 0;
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    if (
+      startPos <= 0 ||
+      (result[startPos - 1] != '.' && result[startPos - 1] != '/' && !std::isalnum(result[startPos - 1]))
+    ) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    } else {
+      startPos += from.length();
+    }
+  }
+
+  from = std::string("/src/");
+  to = std::filesystem::canonical(std::filesystem::current_path() / ".." / "src").string() + OS_PATH_SEP;
+  startPos = 0;
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    if (
+      startPos <= 0 ||
+      (result[startPos - 1] != '.' && result[startPos - 1] != '/' && !std::isalnum(result[startPos - 1]))
+    ) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    } else {
+      startPos += from.length();
+    }
+  }
+
+  return result;
+}
+
+std::string prepareTestOutputFrom (const std::string &output) {
+  auto result = output;
+  auto from = (std::filesystem::current_path() / "test").string();
+  auto to = std::string("/test");
+  auto startPos = static_cast<std::size_t>(0);
+
+  while ((startPos = result.find(from, startPos)) != std::string::npos) {
+    result.replace(startPos, from.length(), to);
+    startPos += to.length();
+  }
+
+  if (from.find('\\') != std::string::npos) {
+    auto fromPos = static_cast<std::size_t>(0);
+
+    while ((fromPos = from.find('\\', fromPos)) != std::string::npos) {
+      from.replace(fromPos, 1, "\\\\");
+      fromPos += 2;
+    }
+
+    startPos = 0;
+
+    while ((startPos = result.find(from, startPos)) != std::string::npos) {
+      result.replace(startPos, from.length(), to);
+      startPos += to.length();
+    }
+  }
+
+  return result;
+}
+
 std::map<std::string, std::string> readTestFile (
   const std::string &testName,
   const std::string &filepath,
@@ -97,10 +182,10 @@ std::map<std::string, std::string> readTestFile (
     throw Error("Error: unable to open " + testName + R"( test file ")" + path + R"(")");
   }
 
-  auto size = static_cast<std::ptrdiff_t>(std::filesystem::file_size(path));
+  auto size = std::filesystem::file_size(path);
   auto content = std::string(size, '\0');
 
-  file.read(content.data(), size);
+  file.read(content.data(), static_cast<std::ptrdiff_t>(size));
   file.close();
 
   if (!content.starts_with("======= ")) {
@@ -133,13 +218,13 @@ std::map<std::string, std::string> readTestFile (
     {"stderr", true}
   };
 
-  for (auto &item : sections) {
-    if (std::find(allowedSections.begin(), allowedSections.end(), item.first) == allowedSections.end()) {
-      throw Error("Error: passed unknown " + testName + R"( section ")" + item.first + R"(")");
+  for (auto &it : sections) {
+    if (std::find(allowedSections.begin(), allowedSections.end(), it.first) == allowedSections.end()) {
+      throw Error("Error: passed unknown " + testName + R"( section ")" + it.first + R"(")");
     }
 
-    if (eraseEolSections.contains(item.first) && !item.second.empty()) {
-      item.second.erase(item.second.size() - eolSize, eolSize);
+    if (eraseEolSections.contains(it.first) && !it.second.empty()) {
+      it.second.erase(it.second.size() - eolSize, eolSize);
     }
   }
 

@@ -33,8 +33,8 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="sum" codeName="sum_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="sum" codeName="test_sum_0" frame="1">
+      <TypeFn name="fn_sFP3intFP3intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />
@@ -68,8 +68,8 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="sum" codeName="sum_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="sum" codeName="test_sum_0" frame="1">
+      <TypeFn name="fn_sFP3intFP3intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />
@@ -144,8 +144,8 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="sub" codeName="sub_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="sub" codeName="test_sub_0" frame="1">
+      <TypeFn name="fn_sFP3intFP3intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />
@@ -220,8 +220,8 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="sub" codeName="sub_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="sub" codeName="test_sub_0" frame="1">
+      <TypeFn name="fn_sFP3intFP3intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />
@@ -263,7 +263,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3intFP3intFRintFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -279,8 +279,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="sum" codeName="sum_0" frame="1">
-                  <TypeFn name="fn$1000">
+                <Var name="sum" codeName="test_sum_0" frame="1">
+                  <TypeFn name="fn_sFP3intFP3intFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <BuiltinType name="int" />
@@ -332,7 +332,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3intFP3intFRintFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -348,8 +348,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="sub" codeName="sub_0" frame="1">
-                  <TypeFn name="fn$1000">
+                <Var name="sub" codeName="test_sub_0" frame="1">
+                  <TypeFn name="fn_sFP3intFP3intFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <BuiltinType name="int" />
@@ -394,8 +394,8 @@ main {
   </NodeExpr>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="mul" codeName="mainSDmul_0" frame="2">
-        <TypeFn name="fn$1000">
+      <Var name="mul" codeName="test_mainSDmul_0" frame="2">
+        <TypeFn name="fn_sFP3intFP3intFRintFE">
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -429,8 +429,8 @@ main {
   </NodeFnDecl>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="mul" codeName="mainSDmul_0" frame="2">
-        <TypeFn name="fn$1000">
+      <Var name="mul" codeName="test_mainSDmul_0" frame="2">
+        <TypeFn name="fn_sFP3intFP3intFRintFE">
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -505,8 +505,8 @@ main {
   </NodeFnDecl>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="div" codeName="mainSDdiv_0" frame="2">
-        <TypeFn name="fn$1000">
+      <Var name="div" codeName="test_mainSDdiv_0" frame="2">
+        <TypeFn name="fn_sFP3intFP3intFRintFE">
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -581,8 +581,8 @@ main {
   </NodeFnDecl>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="div" codeName="mainSDdiv_0" frame="2">
-        <TypeFn name="fn$1000">
+      <Var name="div" codeName="test_mainSDdiv_0" frame="2">
+        <TypeFn name="fn_sFP3intFP3intFRintFE">
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -623,7 +623,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3intFP3intFRintFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -639,8 +639,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="mul" codeName="mainSDmul_0" frame="2">
-                  <TypeFn name="fn$1000">
+                <Var name="mul" codeName="test_mainSDmul_0" frame="2">
+                  <TypeFn name="fn_sFP3intFP3intFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <BuiltinType name="int" />
@@ -692,7 +692,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3intFP3intFRintFE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <BuiltinType name="int" />
@@ -708,8 +708,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="div" codeName="mainSDdiv_0" frame="2">
-                  <TypeFn name="fn$1000">
+                <Var name="div" codeName="test_mainSDdiv_0" frame="2">
+                  <TypeFn name="fn_sFP3intFP3intFRintFE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <BuiltinType name="int" />

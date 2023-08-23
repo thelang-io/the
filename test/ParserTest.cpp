@@ -15,32 +15,92 @@
  */
 
 #include <gtest/gtest.h>
+#include <filesystem>
 #include "../src/Parser.hpp"
 #include "MockLexer.hpp"
 #include "utils.hpp"
 
+ParserStmtExpr parserTestGenExpr (const std::string &input) {
+  auto l = testing::NiceMock<MockLexer>(input);
+  auto p = Parser(&l);
+  auto n = p.next();
+  return std::get<ParserStmtExpr>(*n.body);
+}
+
+ParserType parserTestGenType (const std::string &input) {
+  auto l = testing::NiceMock<MockLexer>("a: " + input);
+  auto p = Parser(&l);
+  auto n = p.next();
+  return *std::get<ParserStmtVarDecl>(*n.body).type;
+}
+
+TEST(ParserTest, IsValidExprObjId) {
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr("1")));
+  EXPECT_TRUE(Parser::isValidExprObjId(parserTestGenExpr("a")));
+  EXPECT_TRUE(Parser::isValidExprObjId(parserTestGenExpr("a.b")));
+  EXPECT_TRUE(Parser::isValidExprObjId(parserTestGenExpr("test1.test2.test3")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr("a[1]")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr("a[1].test")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr(".test")));
+  EXPECT_FALSE(Parser::isValidExprObjId(parserTestGenExpr(".test1.test2")));
+}
+
+TEST(ParserTest, TransformExprToType) {
+  EXPECT_EQ(Parser::transformExprToType(parserTestGenExpr("a")).stringify(), "a");
+  EXPECT_EQ(Parser::transformExprToType(parserTestGenExpr("a.b")).stringify(), "a.b");
+  EXPECT_EQ(Parser::transformExprToType(parserTestGenExpr("test1.test2.test3")).stringify(), "test1.test2.test3");
+}
+
+TEST(ParserTest, transformTypeToExpr) {
+  EXPECT_EQ(Parser::transformTypeToExpr(parserTestGenType("a")).stringify(), "a");
+  EXPECT_EQ(Parser::transformTypeToExpr(parserTestGenType("a.b")).stringify(), "a.b");
+  EXPECT_EQ(Parser::transformTypeToExpr(parserTestGenType("test1.test2.test3")).stringify(), "test1.test2.test3");
+}
+
 class ParserPassTest : public testing::TestWithParam<const char *> {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 class ParserThrowTest : public testing::TestWithParam<const char *> {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 TEST_P(ParserPassTest, Passes) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("parser", param, {"stdin", "stdout"});
   auto lexer = testing::NiceMock<MockLexer>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto parser = Parser(&lexer);
 
-  EXPECT_EQ(sections["stdout"], parser.xml());
+  EXPECT_EQ(sections["stdout"], prepareTestOutputFrom(parser.xml()));
 }
 
 TEST_P(ParserThrowTest, Throws) {
   auto param = testing::TestWithParam<const char *>::GetParam();
   auto sections = readTestFile("parser", param, {"stdin", "stderr"});
   auto lexer = testing::NiceMock<MockLexer>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto parser = Parser(&lexer);
 
-  EXPECT_THROW_WITH_MESSAGE(parser.xml(), sections["stderr"]);
+  EXPECT_THROW_WITH_MESSAGE(parser.xml(), prepareTestOutput(sections["stderr"]));
 }
 
 INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
@@ -54,6 +114,10 @@ INSTANTIATE_TEST_SUITE_P(General, ParserPassTest, testing::Values(
 
 INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserPassTest, testing::Values(
   "stmt-enum-decl"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtExport, ParserPassTest, testing::Values(
+  "stmt-export"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserPassTest, testing::Values(
@@ -81,6 +145,15 @@ INSTANTIATE_TEST_SUITE_P(StmtIf, ParserPassTest, testing::Values(
   "stmt-if-multi-elif",
   "stmt-if-nested",
   "stmt-if-complex"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtImport, ParserPassTest, testing::Values(
+  "stmt-import",
+  "stmt-import-namespace",
+  "stmt-import-no-specifiers",
+  "stmt-import-multiple-specifiers",
+  "stmt-import-multiple-namespaces",
+  "stmt-import-mixed"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserPassTest, testing::Values(
@@ -183,6 +256,7 @@ INSTANTIATE_TEST_SUITE_P(Expr, ParserPassTest, testing::Values(
   "expr-map-nested",
   "expr-map-precedence",
   "expr-obj",
+  "expr-obj-type-member",
   "expr-obj-empty",
   "expr-obj-nested",
   "expr-obj-precedence",
@@ -199,6 +273,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserPassTest, testing::Values(
   "type-fn",
   "type-fn-async",
   "type-map",
+  "type-member",
   "type-optional",
   "type-ref",
   "type-union",
@@ -219,6 +294,10 @@ INSTANTIATE_TEST_SUITE_P(StmtEnumDecl, ParserThrowTest, testing::Values(
   "throw-E0156-stmt-enum-decl-missing-member-name",
   "throw-E0157-stmt-enum-decl-missing-member-init",
   "throw-E0158-stmt-enum-decl-empty"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtExport, ParserThrowTest, testing::Values(
+  "throw-E0190-stmt-export-invalid-declaration"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
@@ -243,6 +322,15 @@ INSTANTIATE_TEST_SUITE_P(StmtFnDecl, ParserThrowTest, testing::Values(
 INSTANTIATE_TEST_SUITE_P(StmtIf, ParserThrowTest, testing::Values(
   "throw-E0103-stmt-if-missing-lbrace",
   "throw-E0143-stmt-if-expected-expr"
+));
+
+INSTANTIATE_TEST_SUITE_P(StmtImport, ParserThrowTest, testing::Values(
+  "throw-E0185-stmt-import-missing-as-after-namespace",
+  "throw-E0186-stmt-import-missing-id-after-namespace-as",
+  "throw-E0186-stmt-import-missing-id-after-specifier-as",
+  "throw-E0187-stmt-import-missing-specifier",
+  "throw-E0188-stmt-import-missing-from",
+  "throw-E0189-stmt-import-missing-source"
 ));
 
 INSTANTIATE_TEST_SUITE_P(StmtLoop, ParserThrowTest, testing::Values(
@@ -356,5 +444,7 @@ INSTANTIATE_TEST_SUITE_P(Type, ParserThrowTest, testing::Values(
   "throw-E0171-type-map-illegal-key-type",
   "throw-E0172-type-map-missing-rbrack",
   "throw-E0180-type-fn-async-missing-type",
-  "throw-E0180-type-fn-async-invalid-type"
+  "throw-E0180-type-fn-async-invalid-type",
+  "throw-E0191-type-member-invalid-id",
+  "throw-E0192-type-member-missing-member"
 ));

@@ -1,0 +1,195 @@
+======= stdin =======
+import TestObj from "./fixtures/export-obj"
+
+export TestObj
+export enum TestEnum { One, Two }
+export fn testFn (a: int, b: str) str { return a.str() + b }
+export obj TestObj { a: int; b: str }
+export type TestAlias = str
+export const TEST_CONST := 1
+export mut TEST_MUT := 2
+======= stdout =======
+<NodeImportDeclsource="./fixtures/export-obj">
+  <NodeImportDeclSpecifiers>
+    <NodeImportDeclSpecifier local="TestObj" imported="TestObj" />
+  </NodeImportDeclSpecifiers>
+</NodeImportDecl>
+<NodeExportDecl>
+  <TypeObj codeName="test_TestObj_0" name="TestObj">
+    <TypeField name="a">
+      <BuiltinType name="int" />
+    </TypeField>
+    <TypeField name="b">
+      <BuiltinType name="str" />
+    </TypeField>
+  </TypeObj>
+</NodeExportDecl>
+<NodeExportDecl>
+  <NodeEnumDecl>
+    <NodeEnumDeclType>
+      <TypeEnum codeName="test_TestEnum_0" name="TestEnum">
+        <TypeEnumerator codeName="test_TestEnumSDOne_0" name="One" />
+        <TypeEnumerator codeName="test_TestEnumSDTwo_0" name="Two" />
+      </TypeEnum>
+    </NodeEnumDeclType>
+    <NodeEnumDeclMembers>
+      <NodeEnumDeclMember id="One" />
+      <NodeEnumDeclMember id="Two" />
+    </NodeEnumDeclMembers>
+  </NodeEnumDecl>
+</NodeExportDecl>
+<NodeExportDecl>
+  <NodeFnDecl>
+    <NodeFnDeclVar>
+      <Var name="testFn" codeName="test_testFn_0" frame="1">
+        <TypeFn name="fn_sFP3intFP3strFRstrFE">
+          <TypeFnParams>
+            <TypeFnParam name="a" required>
+              <BuiltinType name="int" />
+            </TypeFnParam>
+            <TypeFnParam name="b" required>
+              <BuiltinType name="str" />
+            </TypeFnParam>
+          </TypeFnParams>
+          <TypeFnReturnType>
+            <BuiltinType name="str" />
+          </TypeFnReturnType>
+        </TypeFn>
+      </Var>
+    </NodeFnDeclVar>
+    <FnDeclParams>
+      <FnDeclParam>
+        <FnDeclParamVar>
+          <Var name="a" codeName="a_0" frame="2">
+            <BuiltinType name="int" />
+          </Var>
+        </FnDeclParamVar>
+      </FnDeclParam>
+      <FnDeclParam>
+        <FnDeclParamVar>
+          <Var name="b" codeName="b_0" frame="2">
+            <BuiltinType name="str" />
+          </Var>
+        </FnDeclParamVar>
+      </FnDeclParam>
+    </FnDeclParams>
+    <NodeFnDeclBody>
+      <NodeReturn>
+        <NodeExpr>
+          <NodeExprType>
+            <BuiltinType name="str" />
+          </NodeExprType>
+          <NodeExprBody>
+            <ExprBinary op="ADD">
+              <ExprBinaryLeft>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprCall>
+                      <ExprCallCallee>
+                        <NodeExpr>
+                          <NodeExprType>
+                            <BuiltinType name="int.str" />
+                          </NodeExprType>
+                          <NodeExprBody>
+                            <ExprAccess prop="str">
+                              <NodeExpr>
+                                <NodeExprType>
+                                  <BuiltinType name="int" />
+                                </NodeExprType>
+                                <NodeExprBody>
+                                  <ExprAccess>
+                                    <Var name="a" codeName="a_0" frame="2">
+                                      <BuiltinType name="int" />
+                                    </Var>
+                                  </ExprAccess>
+                                </NodeExprBody>
+                              </NodeExpr>
+                            </ExprAccess>
+                          </NodeExprBody>
+                        </NodeExpr>
+                      </ExprCallCallee>
+                    </ExprCall>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryLeft>
+              <ExprBinaryRight>
+                <NodeExpr>
+                  <NodeExprType>
+                    <BuiltinType name="str" />
+                  </NodeExprType>
+                  <NodeExprBody>
+                    <ExprAccess>
+                      <Var name="b" codeName="b_0" frame="2">
+                        <BuiltinType name="str" />
+                      </Var>
+                    </ExprAccess>
+                  </NodeExprBody>
+                </NodeExpr>
+              </ExprBinaryRight>
+            </ExprBinary>
+          </NodeExprBody>
+        </NodeExpr>
+      </NodeReturn>
+    </NodeFnDeclBody>
+  </NodeFnDecl>
+</NodeExportDecl>
+<NodeExportDecl>
+  <NodeObjDecl>
+    <TypeObj codeName="test_TestObj_0" name="TestObj">
+      <TypeField name="a">
+        <BuiltinType name="int" />
+      </TypeField>
+      <TypeField name="b">
+        <BuiltinType name="str" />
+      </TypeField>
+    </TypeObj>
+  </NodeObjDecl>
+</NodeExportDecl>
+<NodeExportDecl>
+  <NodeTypeDecl>
+    <TypeAlias codeName="test_TestAlias_0" name="TestAlias">
+      <BuiltinType name="str" />
+    </TypeAlias>
+  </NodeTypeDecl>
+</NodeExportDecl>
+<NodeExportDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="TEST_CONST" codeName="TEST_CONST_0" const frame="1">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="1" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeExportDecl>
+<NodeExportDecl>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="TEST_MUT" codeName="TEST_MUT_0" mut frame="1">
+        <BuiltinType name="int" />
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <BuiltinType name="int" />
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprLit type="INT_DEC" value="2" />
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+</NodeExportDecl>

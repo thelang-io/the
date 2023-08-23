@@ -36,6 +36,7 @@ class Reader {
   std::size_t size;
 
   explicit Reader (const std::string &);
+  virtual ~Reader () = default;
 
   virtual bool eof () const;
   virtual std::tuple<ReaderLocation, char> next ();

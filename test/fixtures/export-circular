@@ -1,0 +1,2 @@
+import TestObject as TestObject2 from "./import-circular"
+export TestObject2

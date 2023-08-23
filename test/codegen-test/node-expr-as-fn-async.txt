@@ -83,15 +83,15 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_aFP3intFRvoidFE;
+struct __THE_1_fn_aFP3intFRvoidFEP;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFP3intFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_aFP3intFRvoidFEP {
   int32_t n0;
 };
 
@@ -100,7 +100,7 @@ void threadpool_insert (threadpool_t *, threadpool_job_t *);
 void threadpool_job_deinit (threadpool_job_t *);
 void threadpool_mutex_lock (threadpool_mutex_t *);
 void threadpool_mutex_unlock (threadpool_mutex_t *);
-void __THE_1_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
 
 void threadpool_cond_signal (threadpool_cond_t *self) {
   #ifdef THE_OS_WINDOWS
@@ -141,8 +141,8 @@ void threadpool_mutex_unlock (threadpool_mutex_t *self) {
     pthread_mutex_unlock(&self->v);
   #endif
 }
-void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_fn$1000P *p = pp;
+void __THE_1_test_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_fn_aFP3intFRvoidFEP *p = pp;
   const int32_t *__THE_0_a_0 = &p->n0;
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
@@ -150,8 +150,8 @@ void __THE_1_test_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test_0 = (struct __THE_1_fn$1000) {&__THE_1_test_0, NULL, 0};
-  (struct __THE_1_fn$1000) __THE_0_test_0;
+  const struct __THE_1_fn_aFP3intFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_aFP3intFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  (struct __THE_1_fn_aFP3intFRvoidFE) __THE_0_test_test_0;
 }
 ======= flags =======
 U:-pthread

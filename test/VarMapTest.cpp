@@ -23,7 +23,7 @@ class VarMapTest : public testing::Test {
   TypeMap tm_;
 
   void SetUp () override {
-    this->tm_.init();
+    this->tm_.init("test");
     this->vm_.init(this->tm_);
   }
 };
@@ -88,6 +88,21 @@ TEST_F(VarMapTest, AddInsertsVar) {
   EXPECT_EQ(this->vm_.get("test1")->frame, 1);
 }
 
+TEST_F(VarMapTest, AddsNamespace) {
+  auto typeNamespace = this->tm_.createNamespace("TestNamespace", {});
+  this->vm_.addNamespace("Test", typeNamespace);
+
+  EXPECT_NO_THROW(this->vm_.get("Test"));
+  EXPECT_EQ(this->vm_.get("Test")->name, "Test");
+  EXPECT_EQ(this->vm_.get("Test")->codeName, "Test_0");
+  EXPECT_TRUE(typeNamespace->matchStrict(this->vm_.get("Test")->type));
+  EXPECT_FALSE(this->vm_.get("Test")->mut);
+  EXPECT_FALSE(this->vm_.get("Test")->constant);
+  EXPECT_FALSE(this->vm_.get("Test")->builtin);
+  EXPECT_FALSE(this->vm_.get("Test")->ctxIgnored);
+  EXPECT_EQ(this->vm_.get("Test")->frame, 0);
+}
+
 TEST_F(VarMapTest, GetThrowOnEmpty) {
   auto vm = VarMap();
   EXPECT_EQ(vm.get("test1"), nullptr);
@@ -116,6 +131,72 @@ TEST_F(VarMapTest, HasWorks) {
   this->vm_.add("test1", "test1_1", this->tm_.get("int"), false);
   EXPECT_TRUE(this->vm_.has("test1"));
   EXPECT_FALSE(this->vm_.has("test2"));
+}
+
+TEST_F(VarMapTest, InsertsVar) {
+  auto var1 = std::make_shared<Var>(Var{"test1", "test1_0", this->tm_.get("int"), false, false, false, false, 0});
+  auto var2 = std::make_shared<Var>(Var{"test2", "test2_0", this->tm_.get("any"), true, false, false, false, 0});
+  auto var3 = std::make_shared<Var>(Var{"test3", "test3_0", this->tm_.get("str"), false, true, false, false, 0});
+  auto var4 = std::make_shared<Var>(Var{"test4", "test4_0", this->tm_.get("float"), false, false, false, true, 0});
+
+  this->vm_.insert(var1);
+  this->vm_.insert(var2);
+  this->vm_.insert(var3);
+  this->vm_.insert(var4);
+
+  EXPECT_NO_THROW(this->vm_.get("test1"));
+  EXPECT_NO_THROW(this->vm_.get("test2"));
+  EXPECT_NO_THROW(this->vm_.get("test3"));
+  EXPECT_NO_THROW(this->vm_.get("test4"));
+
+  EXPECT_EQ(this->vm_.get("test1")->name, "test1");
+  EXPECT_EQ(this->vm_.get("test1")->codeName, "test1_0");
+  EXPECT_TRUE(this->tm_.get("int")->matchStrict(this->vm_.get("test1")->type));
+  EXPECT_FALSE(this->vm_.get("test1")->mut);
+  EXPECT_FALSE(this->vm_.get("test1")->constant);
+  EXPECT_FALSE(this->vm_.get("test1")->builtin);
+  EXPECT_FALSE(this->vm_.get("test1")->ctxIgnored);
+  EXPECT_EQ(this->vm_.get("test1")->frame, 0);
+
+  EXPECT_EQ(this->vm_.get("test2")->name, "test2");
+  EXPECT_EQ(this->vm_.get("test2")->codeName, "test2_0");
+  EXPECT_TRUE(this->tm_.get("any")->matchStrict(this->vm_.get("test2")->type));
+  EXPECT_TRUE(this->vm_.get("test2")->mut);
+  EXPECT_FALSE(this->vm_.get("test2")->constant);
+  EXPECT_FALSE(this->vm_.get("test2")->builtin);
+  EXPECT_FALSE(this->vm_.get("test2")->ctxIgnored);
+  EXPECT_EQ(this->vm_.get("test2")->frame, 0);
+
+  EXPECT_EQ(this->vm_.get("test3")->name, "test3");
+  EXPECT_EQ(this->vm_.get("test3")->codeName, "test3_0");
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(this->vm_.get("test3")->type));
+  EXPECT_FALSE(this->vm_.get("test3")->mut);
+  EXPECT_TRUE(this->vm_.get("test3")->constant);
+  EXPECT_FALSE(this->vm_.get("test3")->builtin);
+  EXPECT_FALSE(this->vm_.get("test3")->ctxIgnored);
+  EXPECT_EQ(this->vm_.get("test3")->frame, 0);
+
+  EXPECT_EQ(this->vm_.get("test4")->name, "test4");
+  EXPECT_EQ(this->vm_.get("test4")->codeName, "test4_0");
+  EXPECT_TRUE(this->tm_.get("float")->matchStrict(this->vm_.get("test4")->type));
+  EXPECT_FALSE(this->vm_.get("test4")->mut);
+  EXPECT_FALSE(this->vm_.get("test4")->constant);
+  EXPECT_FALSE(this->vm_.get("test4")->builtin);
+  EXPECT_TRUE(this->vm_.get("test4")->ctxIgnored);
+  EXPECT_EQ(this->vm_.get("test4")->frame, 0);
+
+  this->vm_.save();
+  auto var5 = std::make_shared<Var>(Var{"test1", "test1_1", this->tm_.get("str"), true, false, false, false, 1});
+  this->vm_.insert(var5);
+
+  EXPECT_NO_THROW(this->vm_.get("test1"));
+
+  EXPECT_EQ(this->vm_.get("test1")->name, "test1");
+  EXPECT_EQ(this->vm_.get("test1")->codeName, "test1_1");
+  EXPECT_TRUE(this->tm_.get("str")->matchStrict(this->vm_.get("test1")->type));
+  EXPECT_TRUE(this->vm_.get("test1")->mut);
+  EXPECT_FALSE(this->vm_.get("test1")->builtin);
+  EXPECT_EQ(this->vm_.get("test1")->frame, 1);
 }
 
 TEST_F(VarMapTest, NameGeneratesValid) {

@@ -59,23 +59,23 @@ struct str {
 };
 
 struct error_Error;
-struct __THE_1_Test_0;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_test_Test_0;
+struct __THE_1_fn_sFRvoidFE;
+struct __THE_1_fn_sFRvoidFEP;
 
 struct error_Error {
   const struct str __THE_0_message;
   const struct str __THE_0_stack;
 };
-struct __THE_1_Test_0 {
+struct __THE_1_test_Test_0 {
   void *_;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFRvoidFEP {
   err_state_t *err_state;
   int line;
   int col;
@@ -99,9 +99,9 @@ void str_free (struct str);
 void *xalloc (void *, size_t);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc ();
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *);
-void __THE_1_TestSDtest_0 (void *, void *);
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc ();
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *);
+void __THE_1_test_TestSDtest_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -228,17 +228,17 @@ void error_Error_free (struct error_Error *n) {
   str_free((struct str) n->__THE_0_stack);
   free(n);
 }
-struct __THE_1_Test_0 *__THE_1_Test_0_alloc () {
-  struct __THE_1_Test_0 *r = alloc(sizeof(struct __THE_1_Test_0));
-  struct __THE_1_Test_0 s = {NULL};
-  memcpy(r, &s, sizeof(struct __THE_1_Test_0));
+struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc () {
+  struct __THE_1_test_Test_0 *r = alloc(sizeof(struct __THE_1_test_Test_0));
+  struct __THE_1_test_Test_0 s = {NULL};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test_0));
   return r;
 }
-void __THE_1_Test_0_free (struct __THE_1_Test_0 *n) {
+void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *n) {
   free(n);
 }
-void __THE_1_TestSDtest_0 (void *px, void *pp) {
-  struct __THE_1_fn$1000P *p = pp;
+void __THE_1_test_TestSDtest_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "Test.test", p->line, p->col);
   error_assign(fn_err_state, TYPE_error_Error, (void *) new_error(str_alloc("test")), (void (*) (void *)) &error_Error_free, 3, 5);
@@ -251,13 +251,13 @@ L1:
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_fn$1000 __THE_0_TestSDtest_0 = (struct __THE_1_fn$1000) {&__THE_1_TestSDtest_0, NULL, 0};
-  const struct __THE_1_Test_0 *__THE_0_test_0 = __THE_1_Test_0_alloc();
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_TestSDtest_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_TestSDtest_0, NULL, 0};
+  const struct __THE_1_test_Test_0 *__THE_0_test_0 = __THE_1_test_Test_0_alloc();
   if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L2;
-  __THE_0_TestSDtest_0.f(__THE_0_TestSDtest_0.x, xalloc(&(struct __THE_1_fn$1000P) {&err_state, 9, 3}, sizeof(struct __THE_1_fn$1000P)));
+  __THE_0_test_TestSDtest_0.f(__THE_0_test_TestSDtest_0.x, xalloc(&(struct __THE_1_fn_sFRvoidFEP) {&err_state, 9, 3}, sizeof(struct __THE_1_fn_sFRvoidFEP)));
 L2:
   error_buf_decrease(&err_state);
-  __THE_1_Test_0_free((struct __THE_1_Test_0 *) __THE_0_test_0);
+  __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_0_test_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;

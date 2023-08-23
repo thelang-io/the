@@ -59,9 +59,11 @@ set(
   src/codegen/node-break.cpp
   src/codegen/node-continue.cpp
   src/codegen/node-enum-decl.cpp
+  src/codegen/node-export-decl.cpp
   src/codegen/node-expr.cpp
   src/codegen/node-fn-decl.cpp
   src/codegen/node-if.cpp
+  src/codegen/node-import-decl.cpp
   src/codegen/node-loop.cpp
   src/codegen/node-main.cpp
   src/codegen/node-obj-decl.cpp
@@ -108,7 +110,7 @@ set(
   src/codegen-api.hpp
   src/codegen-metadata.hpp
   src/config.hpp
-  src/utils.hpp
+  src/utils.cpp src/utils.hpp
 )
 
 function (the_target_add_flags target)
@@ -178,6 +180,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTS)
   )
 
   add_executable(${PROJECT_NAME}-tests ${tests})
+  the_target_add_flags(${PROJECT_NAME}-tests)
   target_link_libraries(${PROJECT_NAME}-tests gmock_main ${PROJECT_NAME}-lib)
 
   gtest_discover_tests(

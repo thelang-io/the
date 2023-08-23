@@ -485,7 +485,7 @@ class ASTChecker {
   bool _hasNode (const std::vector<ASTNode> &nodes) const {
     auto flattenNodes = ASTChecker::flattenNode(nodes);
 
-    return std::any_of(flattenNodes.begin(), flattenNodes.end(), [&] (const auto &it) -> bool {
+    return std::any_of(flattenNodes.begin(), flattenNodes.end(), [] (const auto &it) -> bool {
       return std::holds_alternative<T>(*it.body);
     });
   }
@@ -561,7 +561,7 @@ class ASTChecker {
   bool _throwsExpr (const std::vector<ASTNodeExpr> &exprs, bool localScope) const {
     auto result = ASTChecker::flattenExpr(exprs, localScope);
 
-    return std::any_of(result.begin(), result.end(), [&] (const auto &it) -> bool {
+    return std::any_of(result.begin(), result.end(), [] (const auto &it) -> bool {
       if (std::holds_alternative<ASTExprAccess>(*it.body)) {
         auto exprBody = std::get<ASTExprAccess>(*it.body);
 
@@ -606,7 +606,7 @@ class ASTChecker {
   bool _throwsPossibleExpr (const std::vector<ASTNodeExpr> &exprs) const {
     auto result = ASTChecker::flattenExpr(exprs);
 
-    return std::any_of(result.begin(), result.end(), [&] (const auto &it) -> bool {
+    return std::any_of(result.begin(), result.end(), [] (const auto &it) -> bool {
       if (std::holds_alternative<ASTExprAccess>(*it.body)) {
         auto exprBody = std::get<ASTExprAccess>(*it.body);
 

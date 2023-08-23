@@ -23,9 +23,11 @@
 class VarMap {
  public:
   std::shared_ptr<Var> add (const std::string &, const std::string &, Type *, bool = false, bool = false, bool = false);
+  std::shared_ptr<Var> addNamespace (const std::string &, Type *);
   std::shared_ptr<Var> get (const std::string &);
   bool has (const std::string &) const;
   void init (TypeMap &);
+  std::shared_ptr<Var> insert (const std::shared_ptr<Var> &);
   std::string name (const std::string &) const;
   void restore ();
   void save ();

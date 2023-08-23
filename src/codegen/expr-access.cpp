@@ -214,6 +214,13 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
           break;
         }
       }
+    } else if (exprAccess.prop != std::nullopt && objTypeInfo.realType->isNamespace()) {
+      if (!objTypeInfo.realType->hasField(*exprAccess.prop)) {
+        throw Error("tried access expression on non-existing namespace member");
+      }
+
+      auto typeField = objTypeInfo.realType->getField(*exprAccess.prop);
+      expr = CodegenASTExprAccess::create(Codegen::name(typeField.callInfo.codeName));
     } else if (exprAccess.prop != std::nullopt) {
       auto cObj = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, parent, c, true);
 

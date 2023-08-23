@@ -16,6 +16,7 @@
 
 #include "ParserComment.hpp"
 #include <algorithm>
+#include "config.hpp"
 #include "utils.hpp"
 
 std::vector<std::string> splitContentByLines (const std::string &str) {

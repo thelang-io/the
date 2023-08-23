@@ -1,0 +1,96 @@
+======= stdin =======
+export enum Color { Red, Green, Blue }
+export fn compute () {}
+export async fn computeAsync () {}
+export obj Base {}
+export type Alias = str
+export const TEST := 10
+export mut available := true
+export test
+======= stdout =======
+<StmtExportDecl start="1:1" end="1:39">
+  <StmtEnumDecl start="1:8" end="1:39">
+    <StmtEnumDeclId>
+      <Token type="ID" val="Color" start="1:13" end="1:18" />
+    </StmtEnumDeclId>
+    <StmtEnumDeclMembers>
+      <StmtEnumDeclMember>
+        <StmtEnumDeclMemberId>
+          <Token type="ID" val="Red" start="1:21" end="1:24" />
+        </StmtEnumDeclMemberId>
+      </StmtEnumDeclMember>
+      <StmtEnumDeclMember>
+        <StmtEnumDeclMemberId>
+          <Token type="ID" val="Green" start="1:26" end="1:31" />
+        </StmtEnumDeclMemberId>
+      </StmtEnumDeclMember>
+      <StmtEnumDeclMember>
+        <StmtEnumDeclMemberId>
+          <Token type="ID" val="Blue" start="1:33" end="1:37" />
+        </StmtEnumDeclMemberId>
+      </StmtEnumDeclMember>
+    </StmtEnumDeclMembers>
+  </StmtEnumDecl>
+</StmtExportDecl>
+<StmtExportDecl start="2:1" end="2:24">
+  <StmtFnDecl start="2:8" end="2:24">
+    <StmtFnDeclId>
+      <Token type="ID" val="compute" start="2:11" end="2:18" />
+    </StmtFnDeclId>
+  </StmtFnDecl>
+</StmtExportDecl>
+<StmtExportDecl start="3:1" end="3:35">
+  <StmtFnDecl start="3:8" end="3:35" async>
+    <StmtFnDeclId>
+      <Token type="ID" val="computeAsync" start="3:17" end="3:29" />
+    </StmtFnDeclId>
+  </StmtFnDecl>
+</StmtExportDecl>
+<StmtExportDecl start="4:1" end="4:19">
+  <StmtObjDecl start="4:8" end="4:19">
+    <StmtObjDeclId>
+      <Token type="ID" val="Base" start="4:12" end="4:16" />
+    </StmtObjDeclId>
+  </StmtObjDecl>
+</StmtExportDecl>
+<StmtExportDecl start="5:1" end="5:24">
+  <StmtTypeDecl start="5:8" end="5:24">
+    <StmtTypeDeclId>
+      <Token type="ID" val="Alias" start="5:13" end="5:18" />
+    </StmtTypeDeclId>
+    <StmtTypeDeclType>
+      <TypeId start="5:21" end="5:24">
+        <Token type="ID" val="str" start="5:21" end="5:24" />
+      </TypeId>
+    </StmtTypeDeclType>
+  </StmtTypeDecl>
+</StmtExportDecl>
+<StmtExportDecl start="6:1" end="6:24">
+  <StmtVarDecl start="6:8" end="6:24" const>
+    <StmtVarDeclId>
+      <Token type="ID" val="TEST" start="6:14" end="6:18" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprLit start="6:22" end="6:24">
+        <Token type="LIT_INT_DEC" val="10" start="6:22" end="6:24" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+</StmtExportDecl>
+<StmtExportDecl start="7:1" end="7:29">
+  <StmtVarDecl start="7:8" end="7:29" mut>
+    <StmtVarDeclId>
+      <Token type="ID" val="available" start="7:12" end="7:21" />
+    </StmtVarDeclId>
+    <StmtVarDeclInit>
+      <ExprLit start="7:25" end="7:29">
+        <Token type="KW_TRUE" val="true" start="7:25" end="7:29" />
+      </ExprLit>
+    </StmtVarDeclInit>
+  </StmtVarDecl>
+</StmtExportDecl>
+<StmtExportDecl start="8:1" end="8:12">
+  <ExprAccess start="8:8" end="8:12">
+    <Token type="ID" val="test" start="8:8" end="8:12" />
+  </ExprAccess>
+</StmtExportDecl>

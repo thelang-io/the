@@ -9,7 +9,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Point_0" name="Point">
+  <TypeObj codeName="test_Point_0" name="Point">
     <TypeField name="x">
       <BuiltinType name="float" />
     </TypeField>
@@ -22,7 +22,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a" codeName="a_0" frame="2">
-        <TypeObj codeName="Point_0" name="Point">
+        <TypeObj codeName="test_Point_0" name="Point">
           <TypeField name="x">
             <BuiltinType name="float" />
           </TypeField>
@@ -35,7 +35,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Point_0" name="Point">
+          <TypeObj codeName="test_Point_0" name="Point">
             <TypeField name="x">
               <BuiltinType name="float" />
             </TypeField>

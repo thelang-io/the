@@ -11,7 +11,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="float" />
     </TypeField>
@@ -38,7 +38,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="test2" codeName="test2_0" frame="2">
-        <TypeObj codeName="Test_0" name="Test">
+        <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <BuiltinType name="float" />
           </TypeField>
@@ -48,7 +48,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <BuiltinType name="float" />
             </TypeField>
@@ -113,7 +113,7 @@ main {
                 <ExprAccess prop="a">
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeObj codeName="Test_0" name="Test">
+                      <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <BuiltinType name="float" />
                         </TypeField>
@@ -122,7 +122,7 @@ main {
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="test2" codeName="test2_0" frame="2">
-                          <TypeObj codeName="Test_0" name="Test">
+                          <TypeObj codeName="test_Test_0" name="Test">
                             <TypeField name="a">
                               <BuiltinType name="float" />
                             </TypeField>

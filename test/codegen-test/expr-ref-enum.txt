@@ -43,10 +43,10 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_Test_0 {
-  __THE_0_TestSDRed_0,
-  __THE_0_TestSDGreen_0,
-  __THE_0_TestSDBlue_0
+enum __THE_1_test_Test_0 {
+  __THE_0_test_TestSDRed_0,
+  __THE_0_test_TestSDGreen_0,
+  __THE_0_test_TestSDBlue_0
 };
 
 typedef struct err_buf {
@@ -84,7 +84,7 @@ void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
-struct str __THE_1_Test_0_rawValue (enum __THE_1_Test_0);
+struct str __THE_1_test_Test_0_rawValue (enum __THE_1_test_Test_0);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -229,22 +229,22 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-struct str __THE_1_Test_0_rawValue (enum __THE_1_Test_0 n) {
-  if (n == __THE_0_TestSDRed_0) return str_alloc("Red");
-  if (n == __THE_0_TestSDGreen_0) return str_alloc("Green");
-  if (n == __THE_0_TestSDBlue_0) return str_alloc("Blue");
+struct str __THE_1_test_Test_0_rawValue (enum __THE_1_test_Test_0 n) {
+  if (n == __THE_0_test_TestSDRed_0) return str_alloc("Red");
+  if (n == __THE_0_test_TestSDGreen_0) return str_alloc("Green");
+  if (n == __THE_0_test_TestSDBlue_0) return str_alloc("Blue");
 }
 
 int main () {
-  enum __THE_1_Test_0 __THE_0_a_0 = __THE_0_TestSDRed_0;
-  enum __THE_1_Test_0 __THE_0_b_0 = __THE_0_TestSDGreen_0;
-  enum __THE_1_Test_0 *__THE_0_ref1_0 = &__THE_0_a_0;
-  print(stdout, "szsz", enum_str(*__THE_0_ref1_0), " ", __THE_1_Test_0_rawValue(*__THE_0_ref1_0), THE_EOL);
+  enum __THE_1_test_Test_0 __THE_0_a_0 = __THE_0_test_TestSDRed_0;
+  enum __THE_1_test_Test_0 __THE_0_b_0 = __THE_0_test_TestSDGreen_0;
+  enum __THE_1_test_Test_0 *__THE_0_ref1_0 = &__THE_0_a_0;
+  print(stdout, "szsz", enum_str(*__THE_0_ref1_0), " ", __THE_1_test_Test_0_rawValue(*__THE_0_ref1_0), THE_EOL);
   __THE_0_ref1_0 = &__THE_0_b_0;
-  print(stdout, "szsz", enum_str(*__THE_0_ref1_0), " ", __THE_1_Test_0_rawValue(*__THE_0_ref1_0), THE_EOL);
-  const enum __THE_1_Test_0 __THE_0_v4_0 = true ? __THE_0_a_0 : *__THE_0_ref1_0;
-  const enum __THE_1_Test_0 __THE_0_v5_0 = false ? *__THE_0_ref1_0 : __THE_0_b_0;
-  const enum __THE_1_Test_0 *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
+  print(stdout, "szsz", enum_str(*__THE_0_ref1_0), " ", __THE_1_test_Test_0_rawValue(*__THE_0_ref1_0), THE_EOL);
+  const enum __THE_1_test_Test_0 __THE_0_v4_0 = true ? __THE_0_a_0 : *__THE_0_ref1_0;
+  const enum __THE_1_test_Test_0 __THE_0_v5_0 = false ? *__THE_0_ref1_0 : __THE_0_b_0;
+  const enum __THE_1_test_Test_0 *__THE_0_v6_0 = false ? __THE_0_ref1_0 : __THE_0_ref1_0;
   print(stdout, "szszsz", enum_str(__THE_0_v4_0), " ", enum_str(__THE_0_v5_0), " ", enum_str(*__THE_0_v6_0), THE_EOL);
 }
 ======= flags =======

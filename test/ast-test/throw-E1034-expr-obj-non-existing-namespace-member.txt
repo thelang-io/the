@@ -1,0 +1,10 @@
+======= stdin =======
+import * as Package from "./fixtures/export-obj"
+
+main {
+  test := Package.TestObject{a: 1}
+}
+======= stderr =======
+/test:4:19: E1034 - Namespace member doesn't exists
+  4 |   test := Package.TestObject{a: 1}
+    |                   ^~~~~~~~~~

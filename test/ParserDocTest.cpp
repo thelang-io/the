@@ -16,6 +16,7 @@
 
 #include <gtest/gtest.h>
 #include "../src/Parser.hpp"
+#include "../src/config.hpp"
 #include "../src/utils.hpp"
 #include "MockLexer.hpp"
 #include "utils.hpp"

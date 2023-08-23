@@ -20,12 +20,50 @@
 #include <utility>
 #include "codegen-api.hpp"
 
+std::string genFnTypeBodyParamId (const TypeFnParam &param) {
+  if (param.mut && param.required) return "FP5";
+  else if (param.mut && param.variadic) return "FP6";
+  else if (param.mut) return "FP2";
+  else if (param.required) return "FP3";
+  else if (param.variadic) return "FP4";
+  else return "FP1";
+}
+
+std::tuple<std::string, std::string> genFnTypeBody (
+  const std::vector<TypeFnParam> &params,
+  Type *returnType,
+  bool async,
+  const std::optional<Type *> &selfParam = std::nullopt
+) {
+  auto name = "fn_" + std::string(async ? "a" : "s");
+  auto codeName = "@" + name;
+
+  if (selfParam != std::nullopt) {
+    name += "FS" + (*selfParam)->name;
+    codeName += "FS" + (*selfParam)->codeName;
+  }
+
+  for (const auto &param : params) {
+    auto paramType = Type::actual(param.type);
+
+    name += genFnTypeBodyParamId(param) + paramType->name;
+    codeName += genFnTypeBodyParamId(param) + paramType->codeName;
+  }
+
+  name += "FR" + returnType->name + "FE";
+  codeName += "FR" + returnType->codeName + "FE";
+
+  return std::make_tuple(name, codeName);
+}
+
 std::string typeName (const std::string &name) {
   return "__THE_1_" + name;
 }
 
-void TypeMap::init () {
+void TypeMap::init (const std::string &ns) {
   this->stack.reserve(std::numeric_limits<short>::max());
+  this->stack.push_back(ns);
+
   this->_anyType(TYPE_MAP_DECL);
   this->_boolType(TYPE_MAP_DECL);
   this->_byteType(TYPE_MAP_DECL);
@@ -69,12 +107,14 @@ void TypeMap::init () {
   this->_threadModule(TYPE_MAP_DEF);
   this->_urlModule(TYPE_MAP_DEF);
   this->_utilsModule(TYPE_MAP_DEF);
-
-  this->_fnIdx = 1000;
 }
 
-Type *TypeMap::createAlias (const std::string &name, Type *type) {
-  auto newType = Type{name, this->name(name), TypeAlias{type}};
+Type *TypeMap::createAlias (const std::string &n, Type *type) {
+  if (type->isAlias()) {
+    return this->createAlias(n, std::get<TypeAlias>(type->body).type);
+  }
+
+  auto newType = Type{n, this->name(n), TypeAlias{type}};
   this->_items.push_back(std::make_unique<Type>(newType));
   return this->_items.back().get();
 }
@@ -86,13 +126,13 @@ Type *TypeMap::createArr (Type *elementType) {
 
   auto newType = Type{"array_" + elementType->name, "@array_" + elementType->name, TypeArray{elementType}};
 
-  for (const auto &item : this->_items) {
+  for (const auto &it : this->_items) {
     if (
-      item->isArray() &&
-      std::get<TypeArray>(item->body).elementType->builtin == elementType->builtin &&
-      item->matchStrict(&newType, true)
+      it->isArray() &&
+      std::get<TypeArray>(it->body).elementType->builtin == elementType->builtin &&
+      it->matchStrict(&newType, true)
     ) {
-      return item.get();
+      return it.get();
     }
   }
 
@@ -105,32 +145,17 @@ Type *TypeMap::createArr (Type *elementType) {
   return selfType;
 }
 
-Type *TypeMap::createEnum (const std::string &name, const std::string &codeName, const std::vector<Type *> &members) {
-  auto newType = Type{name, codeName, TypeEnum{members}};
-
-  for (const auto &item : this->_items) {
-    if (item->isEnum() && item->codeName == newType.codeName) {
-      return item.get();
-    }
-  }
-
+Type *TypeMap::createEnum (const std::string &n, const std::vector<Type *> &members) {
+  auto newType = Type{n, this->name(n), TypeEnum{members}};
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
   auto refSelfType = this->createRef(selfType);
-
   this->_enumTypeDef(selfType, refSelfType);
   return selfType;
 }
 
-Type *TypeMap::createEnumerator (const std::string &enumeratorName, const std::string &enumeratorCodeName) {
-  auto newType = Type{enumeratorName, enumeratorCodeName, TypeEnumerator{}};
-
-  for (const auto &item : this->_items) {
-    if (item->isEnumerator() && item->codeName == newType.codeName) {
-      return item.get();
-    }
-  }
-
+Type *TypeMap::createEnumerator (const std::string &n) {
+  auto newType = Type{n, this->name(n), TypeEnumerator{}};
   this->_items.push_back(std::make_unique<Type>(newType));
   return this->_items.back().get();
 }
@@ -141,26 +166,14 @@ Type *TypeMap::createFn (
   bool async,
   const std::optional<TypeCallInfo> &callInfo
 ) {
+  auto [n, codeName] = genFnTypeBody(params, returnType, async);
   auto typeBody = TypeFn{returnType, params, false, false, callInfo == std::nullopt ? TypeCallInfo{} : *callInfo, async};
-  auto newType = Type{"", "", typeBody};
+  auto newType = Type{n, codeName, typeBody};
 
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (!it->builtin && it->isFn() && it->matchStrict(&newType, true)) {
+      return it.get();
     }
-  }
-
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType)) {
-      newType.name = item->name;
-      newType.codeName = item->codeName;
-      break;
-    }
-  }
-
-  if (newType.name.empty()) {
-    newType.name = "fn$" + std::to_string(this->_fnIdx++);
-    newType.codeName = "@" + newType.name;
   }
 
   this->_items.push_back(std::make_unique<Type>(newType));
@@ -175,13 +188,13 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   auto actualKeyType = Type::actual(keyType);
   auto actualValueType = Type::actual(valueType);
 
-  auto name = "map_" + actualKeyType->name + "MS" + actualValueType->name + "ME";
+  auto n = "map_" + actualKeyType->name + "MS" + actualValueType->name + "ME";
   auto codeName = "@map_" + actualKeyType->codeName + "MS" + actualValueType->codeName + "ME";
-  auto newType = Type{name, codeName, TypeBodyMap{actualKeyType, actualValueType}};
+  auto newType = Type{n, codeName, TypeBodyMap{actualKeyType, actualValueType}};
 
-  for (const auto &item : this->_items) {
-    if (item->codeName == newType.codeName) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (it->codeName == newType.codeName) {
+      return it.get();
     }
   }
 
@@ -199,26 +212,20 @@ Type *TypeMap::createMethod (
   bool async,
   TypeCallInfo callInfo
 ) {
+  auto [n, codeName] = genFnTypeBody(
+    params,
+    returnType,
+    async,
+    callInfo.isSelfFirst ? callInfo.selfType : std::optional<Type *>{}
+  );
+
   auto typeBody = TypeFn{returnType, params, false, true, std::move(callInfo), async};
-  auto newType = Type{"", "", typeBody};
+  auto newType = Type{n, codeName, typeBody};
 
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType, true)) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (!it->builtin && it->isFn() && it->matchStrict(&newType, true)) {
+      return it.get();
     }
-  }
-
-  for (const auto &item : this->_items) {
-    if (!item->builtin && item->isFn() && item->matchStrict(&newType)) {
-      newType.name = item->name;
-      newType.codeName = item->codeName;
-      break;
-    }
-  }
-
-  if (newType.name.empty()) {
-    newType.name = "fn$" + std::to_string(this->_fnIdx++);
-    newType.codeName = "@" + newType.name;
   }
 
   this->_items.push_back(std::make_unique<Type>(newType));
@@ -229,19 +236,18 @@ Type *TypeMap::createMethod (
   return selfType;
 }
 
-Type *TypeMap::createObj (const std::string &name, const std::string &codeName, const std::vector<TypeField> &fields, bool builtin) {
-  auto newType = Type{name, codeName, TypeObj{}, fields, builtin};
+Type *TypeMap::createNamespace (const std::string &n, const std::vector<TypeField> &fields) {
+  auto newType = Type{n, this->name(n), TypeNamespace{}, fields, false};
+  this->_items.push_back(std::make_unique<Type>(newType));
+  auto selfType = this->_items.back().get();
+  return selfType;
+}
 
-  for (const auto &item : this->_items) {
-    if (item->codeName == newType.codeName) {
-      return item.get();
-    }
-  }
-
+Type *TypeMap::createObj (const std::string &n, const std::vector<TypeField> &fields, bool builtin) {
+  auto newType = Type{n, this->name(n), TypeObj{}, fields, builtin};
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
   auto refSelfType = this->createRef(selfType);
-
   this->_objTypeDef(selfType, refSelfType);
   return selfType;
 }
@@ -253,13 +259,13 @@ Type *TypeMap::createOpt (Type *type) {
 
   auto newType = Type{"opt_" + type->name, "@opt_" + type->name, TypeOptional{type}};
 
-  for (const auto &item : this->_items) {
+  for (const auto &it : this->_items) {
     if (
-      item->isOpt() &&
-      std::get<TypeOptional>(item->body).type->builtin == type->builtin &&
-      item->matchStrict(&newType, true)
+      it->isOpt() &&
+      std::get<TypeOptional>(it->body).type->builtin == type->builtin &&
+      it->matchStrict(&newType, true)
     ) {
-      return item.get();
+      return it.get();
     }
   }
 
@@ -278,13 +284,13 @@ Type *TypeMap::createRef (Type *refType) {
 
   auto newType = Type{"ref_" + refType->name, "@ref_" + refType->name, TypeRef{refType}};
 
-  for (const auto &item : this->_items) {
+  for (const auto &it : this->_items) {
     if (
-      item->isRef() &&
-      std::get<TypeRef>(item->body).refType->builtin == refType->builtin &&
-      item->matchStrict(&newType, true)
+      it->isRef() &&
+      std::get<TypeRef>(it->body).refType->builtin == refType->builtin &&
+      it->matchStrict(&newType, true)
     ) {
-      return item.get();
+      return it.get();
     }
   }
 
@@ -294,22 +300,22 @@ Type *TypeMap::createRef (Type *refType) {
 
 Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   auto actualSubTypes = std::vector<Type *>{};
-  auto name = std::string("union_");
+  auto n = std::string("union_");
   auto codeName = std::string("@union_");
 
   for (const auto &subType : subTypes) {
     actualSubTypes.push_back(Type::actual(subType));
-    name += actualSubTypes.back()->name + "US";
+    n += actualSubTypes.back()->name + "US";
     codeName += actualSubTypes.back()->codeName + "US";
   }
 
-  name = name.substr(0, name.size() - 2) + "UE";
+  n = n.substr(0, n.size() - 2) + "UE";
   codeName = codeName.substr(0, codeName.size() - 2) + "UE";
-  auto newType = Type{name, codeName, TypeUnion{actualSubTypes}};
+  auto newType = Type{n, codeName, TypeUnion{actualSubTypes}};
 
-  for (const auto &item : this->_items) {
-    if (item->codeName == newType.codeName) {
-      return item.get();
+  for (const auto &it : this->_items) {
+    if (it->codeName == newType.codeName) {
+      return it.get();
     }
   }
 
@@ -321,29 +327,32 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
   return selfType;
 }
 
-Type *TypeMap::get (const std::string &name) {
-  if (name == "Self") {
+Type *TypeMap::insert (Type *t) {
+  this->_items.push_back(std::make_unique<Type>(*t));
+  return this->_items.back().get();
+}
+
+Type *TypeMap::get (const std::string &n) {
+  if (n == "Self") {
     return this->self == std::nullopt ? nullptr : *this->self;
   }
 
-  for (auto idx = this->_items.size() - 1;; idx--) {
-    if (this->_items[idx]->name == name) {
-      return this->_items[idx].get();
-    } else if (idx == 0) {
-      break;
+  for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
+    if ((*it)->name == n) {
+      return it->get();
     }
   }
 
   return nullptr;
 }
 
-bool TypeMap::has (const std::string &name) {
-  if (name == "Self") {
+bool TypeMap::has (const std::string &n) {
+  if (n == "Self") {
     return this->self != std::nullopt;
   }
 
-  return std::any_of(this->_items.begin(), this->_items.end(), [&name] (const auto &it) -> bool {
-    return it->name == name;
+  return std::any_of(this->_items.begin(), this->_items.end(), [&] (const auto &it) -> bool {
+    return it->name == n;
   });
 }
 
@@ -351,21 +360,22 @@ bool TypeMap::isSelf (Type *type) {
   return this->self != std::nullopt && Type::real(type)->codeName == (*this->self)->codeName;
 }
 
-std::string TypeMap::name (const std::string &name) const {
+std::string TypeMap::name (const std::string &n) const {
   auto fullName = std::string();
 
-  for (const auto &item : this->stack) {
-    fullName += item + "SD";
+  for (auto i = static_cast<std::size_t>(0); i < this->stack.size(); i++) {
+    auto delimiter = std::string(i == 0 ? "_" : "SD");
+    fullName += this->stack[i] + delimiter;
   }
 
-  fullName += name + "_";
+  fullName += n + "_";
 
-  for (auto idx = static_cast<std::size_t>(0);; idx++) {
-    auto fullNameTest = fullName + std::to_string(idx);
+  for (auto i = static_cast<std::size_t>(0);; i++) {
+    auto fullNameTest = fullName + std::to_string(i);
     auto exists = false;
 
-    for (const auto &item : this->_items) {
-      if (item->codeName == fullNameTest) {
+    for (const auto &it : this->_items) {
+      if (it->codeName == fullNameTest) {
         exists = true;
         break;
       }
@@ -722,7 +732,7 @@ void TypeMap::_dateModule (TypeMapPhase phase) {
 
 void TypeMap::_errorModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
-    this->createObj("error_Error", this->name("error_Error"), {
+    this->createObj("error_Error", {
       TypeField{"message", this->get("str"), false, false},
       TypeField{"stack", this->get("str"), false, false}
     }, true);
@@ -736,7 +746,7 @@ void TypeMap::_errorModule (TypeMapPhase phase) {
 
 void TypeMap::_fsModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
-    this->createObj("fs_Stats", this->name("fs_Stats"), {
+    this->createObj("fs_Stats", {
       TypeField{"dev", this->get("u64"), false, false},
       TypeField{"mode", this->get("u32"), false, false},
       TypeField{"nlink", this->get("i64"), false, false},
@@ -959,12 +969,12 @@ void TypeMap::_randomModule (TypeMapPhase phase) {
 
 void TypeMap::_requestModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
-    this->createObj("request_Header", this->name("request_Header"), {
+    this->createObj("request_Header", {
       TypeField{"name", this->get("str"), false, false},
       TypeField{"value", this->get("str"), false, false}
     }, true);
-    this->createObj("request_Request", this->name("request_Request"), {}, true);
-    this->createObj("request_Response", this->name("request_Response"), {
+    this->createObj("request_Request", {}, true);
+    this->createObj("request_Response", {
       TypeField{"data", this->get("buffer_Buffer"), false, false},
       TypeField{"status", this->get("int"), false, false},
       TypeField{"headers", this->createArr(this->get("request_Header")), false, false}
@@ -1005,7 +1015,7 @@ void TypeMap::_threadModule (TypeMapPhase phase) {
 
 void TypeMap::_urlModule (TypeMapPhase phase) {
   if (phase == TYPE_MAP_DEF) {
-    this->createObj("url_URL", this->name("url_URL"), {
+    this->createObj("url_URL", {
       TypeField{"origin", this->get("str"), false, false},
       TypeField{"protocol", this->get("str"), false, false},
       TypeField{"host", this->get("str"), false, false},

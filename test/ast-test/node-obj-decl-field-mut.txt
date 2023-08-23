@@ -14,7 +14,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Animal_0" name="Animal">
+  <TypeObj codeName="test_Animal_0" name="Animal">
     <TypeField mut name="age">
       <BuiltinType name="int" />
     </TypeField>
@@ -27,7 +27,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="animal" codeName="animal_0" frame="2">
-        <TypeObj codeName="Animal_0" name="Animal">
+        <TypeObj codeName="test_Animal_0" name="Animal">
           <TypeField mut name="age">
             <BuiltinType name="int" />
           </TypeField>
@@ -40,7 +40,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeObj codeName="Animal_0" name="Animal">
+          <TypeObj codeName="test_Animal_0" name="Animal">
             <TypeField mut name="age">
               <BuiltinType name="int" />
             </TypeField>
@@ -91,7 +91,7 @@ main {
               <ExprAccess prop="age">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeObj codeName="Animal_0" name="Animal">
+                    <TypeObj codeName="test_Animal_0" name="Animal">
                       <TypeField mut name="age">
                         <BuiltinType name="int" />
                       </TypeField>
@@ -103,7 +103,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="animal" codeName="animal_0" frame="2">
-                        <TypeObj codeName="Animal_0" name="Animal">
+                        <TypeObj codeName="test_Animal_0" name="Animal">
                           <TypeField mut name="age">
                             <BuiltinType name="int" />
                           </TypeField>

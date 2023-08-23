@@ -16,7 +16,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -26,7 +26,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a01" codeName="a01_0" frame="2">
-        <TypeFn name="fn$1000" async>
+        <TypeFn name="fn_aFRvoidFE" async>
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
@@ -37,7 +37,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a02" codeName="a02_0" frame="2">
-        <TypeFn name="fn$1001" async>
+        <TypeFn name="fn_aFP3intFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -53,7 +53,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a03" codeName="a03_0" frame="2">
-        <TypeFn name="fn$1001" async>
+        <TypeFn name="fn_aFP3intFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -69,7 +69,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a04" codeName="a04_0" frame="2">
-        <TypeFn name="fn$1002" async>
+        <TypeFn name="fn_aFP5intFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam name="a" mut required>
               <BuiltinType name="int" />
@@ -85,7 +85,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a05" codeName="a05_0" frame="2">
-        <TypeFn name="fn$1001" async>
+        <TypeFn name="fn_aFP3intFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -101,7 +101,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a06" codeName="a06_0" frame="2">
-        <TypeFn name="fn$1003" async>
+        <TypeFn name="fn_aFP3intFP3floatFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -120,7 +120,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a07" codeName="a07_0" frame="2">
-        <TypeFn name="fn$1004" async>
+        <TypeFn name="fn_aFP3intFP5floatFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -139,7 +139,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a08" codeName="a08_0" frame="2">
-        <TypeFn name="fn$1003" async>
+        <TypeFn name="fn_aFP3intFP3floatFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -158,7 +158,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a09" codeName="a09_0" frame="2">
-        <TypeFn name="fn$1005" async>
+        <TypeFn name="fn_aFP3intFP3floatFP3TestFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -167,7 +167,7 @@ main {
               <BuiltinType name="float" />
             </TypeFnParam>
             <TypeFnParam required>
-              <TypeObj codeName="Test_0" name="Test">
+              <TypeObj codeName="test_Test_0" name="Test">
                 <TypeField name="a">
                   <BuiltinType name="int" />
                 </TypeField>
@@ -184,7 +184,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a10" codeName="a10_0" frame="2">
-        <TypeFn name="fn$1006" async>
+        <TypeFn name="fn_aFP3intFP5floatFP3TestFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam name="a" required>
               <BuiltinType name="int" />
@@ -193,7 +193,7 @@ main {
               <BuiltinType name="float" />
             </TypeFnParam>
             <TypeFnParam name="c" required>
-              <TypeObj codeName="Test_0" name="Test">
+              <TypeObj codeName="test_Test_0" name="Test">
                 <TypeField name="a">
                   <BuiltinType name="int" />
                 </TypeField>
@@ -210,7 +210,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a11" codeName="a11_0" frame="2">
-        <TypeFn name="fn$1005" async>
+        <TypeFn name="fn_aFP3intFP3floatFP3TestFRvoidFE" async>
           <TypeFnParams>
             <TypeFnParam required>
               <BuiltinType name="int" />
@@ -219,7 +219,7 @@ main {
               <BuiltinType name="float" />
             </TypeFnParam>
             <TypeFnParam required>
-              <TypeObj codeName="Test_0" name="Test">
+              <TypeObj codeName="test_Test_0" name="Test">
                 <TypeField name="a">
                   <BuiltinType name="int" />
                 </TypeField>

@@ -182,12 +182,14 @@ TEST(CodegenTest, FilterAsyncDeclarationsSingleVar) {
 
 class CodegenPassTest : public testing::TestWithParam<const char *> {
  protected:
+  std::filesystem::path initialCwd_;
   bool isPlatformDefault_ = true;
   bool testCompile_ = false;
   bool testMemcheck_ = false;
   std::string testPlatform_ = "default";
 
   void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
     auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
     auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
@@ -200,16 +202,22 @@ class CodegenPassTest : public testing::TestWithParam<const char *> {
       this->isPlatformDefault_ = this->testPlatform_ == "default";
     }
   }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
 };
 
 class CodegenThrowTest : public testing::TestWithParam<const char *> {
  protected:
+  std::filesystem::path initialCwd_;
   bool isPlatformDefault_ = true;
   bool testCompile_ = false;
   bool testMemcheck_ = false;
   std::string testPlatform_ = "default";
 
   void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
     auto testCompile = getEnvVar("TEST_CODEGEN_COMPILE");
     auto testMemcheck = getEnvVar("TEST_CODEGEN_MEMCHECK");
     auto testPlatform = getEnvVar("TEST_CODEGEN_PLATFORM");
@@ -221,6 +229,10 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
       this->testPlatform_ = *testPlatform;
       this->isPlatformDefault_ = this->testPlatform_ == "default";
     }
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
   }
 };
 
@@ -228,10 +240,12 @@ TEST_P(CodegenPassTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stdout"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
   auto expectedOutput = sections["stdout"];
+  std::get<0>(result) = prepareTestOutputFrom(std::get<0>(result));
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
@@ -240,9 +254,10 @@ TEST_P(CodegenPassTest, Passes) {
     return;
   }
 
+  std::filesystem::current_path(this->initialCwd_);
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
-  Codegen::compile(filePath, result, this->testPlatform_, "x86_64", true);
+  Codegen::compile(filePath, result, "", this->testPlatform_, true);
 
   if (!this->isPlatformDefault_) {
     std::filesystem::remove(filePath);
@@ -271,7 +286,7 @@ TEST_P(CodegenPassTest, Passes) {
     auto match = std::smatch();
     std::regex_search(actualStdoutSlice, match, placeholderRegex);
 
-    auto placeholderValue = actualStdout.substr(placeholderStart, match[0].length());
+    auto placeholderValue = actualStdout.substr(placeholderStart, static_cast<std::size_t>(match[0].length()));
     expectedOutput.replace(placeholderStart, placeholderLen, placeholderValue);
   }
 
@@ -292,10 +307,12 @@ TEST_P(CodegenThrowTest, Throws) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stderr"});
   auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
   auto expectedStderr = sections["stderr"];
+  std::get<0>(result) = prepareTestOutputFrom(std::get<0>(result));
 
   ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
   ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
@@ -304,9 +321,10 @@ TEST_P(CodegenThrowTest, Throws) {
     return;
   }
 
+  std::filesystem::current_path(this->initialCwd_);
   auto fileName = std::string("build") + OS_PATH_SEP + param;
   auto filePath = fileName + OS_FILE_EXT;
-  Codegen::compile(filePath, result, this->testPlatform_, "x86_64", true);
+  Codegen::compile(filePath, result, "", this->testPlatform_, true);
 
   if (!this->isPlatformDefault_) {
     std::filesystem::remove(filePath);
@@ -337,7 +355,7 @@ TEST_P(CodegenThrowTest, Throws) {
     auto match = std::smatch();
     std::regex_search(actualStderrSlice, match, placeholderRegex);
 
-    auto placeholderValue = actualStderr.substr(placeholderStart, match[0].length());
+    auto placeholderValue = actualStderr.substr(placeholderStart, static_cast<std::size_t>(match[0].length()));
     expectedStderr.replace(placeholderStart, placeholderLen, placeholderValue);
   }
 
@@ -1192,6 +1210,19 @@ INSTANTIATE_TEST_SUITE_P(NodeEnumDecl, CodegenPassTest, testing::Values(
   "node-enum-decl-hoisting"
 ));
 
+INSTANTIATE_TEST_SUITE_P(NodeExport, CodegenPassTest, testing::Values(
+  "node-export",
+  "node-export-enum-decl",
+  "node-export-expr",
+  "node-export-fn-decl",
+  "node-export-namespace",
+  "node-export-obj-decl",
+  "node-export-type-decl",
+  "node-export-var-decl-const",
+  "node-export-var-decl-mut",
+  "node-export-re-export"
+));
+
 INSTANTIATE_TEST_SUITE_P(NodeExpr, CodegenPassTest, testing::Values(
   "node-expr-access",
   "node-expr-access-alias",
@@ -1419,6 +1450,22 @@ INSTANTIATE_TEST_SUITE_P(NodeIf, CodegenPassTest, testing::Values(
   "node-if-async-with-cleanup",
   "node-if-async-nested",
   "node-if-async-nested-with-cleanup"
+));
+
+INSTANTIATE_TEST_SUITE_P(NodeImport, CodegenPassTest, testing::Values(
+  "node-import",
+  "node-import-enum-decl",
+  "node-import-expr",
+  "node-import-fn-decl",
+  "node-import-obj-decl",
+  "node-import-type-decl",
+  "node-import-var-decl-const",
+  "node-import-var-decl-mut",
+  "node-import-with-rename",
+  "node-import-namespace",
+  "node-import-multiple-namespaces",
+  "node-import-empty-specifiers",
+  "node-import-package"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(

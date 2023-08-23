@@ -27,7 +27,7 @@ main {
 }
 ======= stdout =======
 <NodeObjDecl>
-  <TypeObj codeName="Test_0" name="Test">
+  <TypeObj codeName="test_Test_0" name="Test">
     <TypeField name="a">
       <BuiltinType name="int" />
     </TypeField>
@@ -148,7 +148,7 @@ main {
     <NodeVarDeclVar>
       <Var name="p" codeName="p_0" frame="2">
         <TypeOptional name="opt_Test">
-          <TypeObj codeName="Test_0" name="Test">
+          <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <BuiltinType name="int" />
             </TypeField>
@@ -227,7 +227,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="x" codeName="x_0" frame="2">
-        <TypeFn name="fn$1003">
+        <TypeFn name="fn_sFRopt_voidFE">
           <TypeFnReturnType>
             <TypeOptional name="opt_void">
               <BuiltinType name="void" />
@@ -240,8 +240,8 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="y" codeName="y_0" frame="2">
-        <TypeOptional name="opt_fn$1004">
-          <TypeFn name="fn$1004">
+        <TypeOptional name="opt_fn_sFRvoidFE">
+          <TypeFn name="fn_sFRvoidFE">
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>

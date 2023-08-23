@@ -23,7 +23,7 @@ class VarStackTest : public testing::Test {
   TypeMap tm_;
 
   void SetUp () override {
-    this->tm_.init();
+    this->tm_.init("test");
     this->vm_.init(this->tm_);
   }
 };

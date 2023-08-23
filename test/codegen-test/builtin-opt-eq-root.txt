@@ -90,10 +90,10 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_TestObj_0;
+struct __THE_1_test_TestObj_0;
 struct __THE_1_array_int;
 
-struct __THE_1_TestObj_0 {
+struct __THE_1_test_TestObj_0 {
   const int32_t __THE_0_a;
 };
 struct __THE_1_array_int {
@@ -110,11 +110,11 @@ struct str str_copy (const struct str);
 bool str_eq_str (struct str, struct str);
 void str_free (struct str);
 bool str_ne_str (struct str, struct str);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t);
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *);
-bool __THE_1_TestObj_0_eq (struct __THE_1_TestObj_0 *, struct __THE_1_TestObj_0 *);
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *);
-bool __THE_1_TestObj_0_ne (struct __THE_1_TestObj_0 *, struct __THE_1_TestObj_0 *);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t);
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *);
+bool __THE_1_test_TestObj_0_eq (struct __THE_1_test_TestObj_0 *, struct __THE_1_test_TestObj_0 *);
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *);
+bool __THE_1_test_TestObj_0_ne (struct __THE_1_test_TestObj_0 *, struct __THE_1_test_TestObj_0 *);
 int32_t *__THE_1_opt_int_alloc (int32_t);
 int32_t *__THE_1_opt_int_copy (const int32_t *);
 bool __THE_1_opt_int_eq (int32_t *, int32_t *);
@@ -150,11 +150,11 @@ double *__THE_1_opt_float_copy (const double *);
 bool __THE_1_opt_float_eq (double *, double *);
 void __THE_1_opt_float_free (double *);
 bool __THE_1_opt_float_ne (double *, double *);
-struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_TestObj_0 *);
-struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_copy (const struct __THE_1_TestObj_0 **);
-bool __THE_1_opt_TestObj_eq (struct __THE_1_TestObj_0 **, struct __THE_1_TestObj_0 **);
-void __THE_1_opt_TestObj_free (struct __THE_1_TestObj_0 **);
-bool __THE_1_opt_TestObj_ne (struct __THE_1_TestObj_0 **, struct __THE_1_TestObj_0 **);
+struct __THE_1_test_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_test_TestObj_0 *);
+struct __THE_1_test_TestObj_0 **__THE_1_opt_TestObj_copy (const struct __THE_1_test_TestObj_0 **);
+bool __THE_1_opt_TestObj_eq (struct __THE_1_test_TestObj_0 **, struct __THE_1_test_TestObj_0 **);
+void __THE_1_opt_TestObj_free (struct __THE_1_test_TestObj_0 **);
+bool __THE_1_opt_TestObj_ne (struct __THE_1_test_TestObj_0 **, struct __THE_1_test_TestObj_0 **);
 struct str *__THE_1_opt_str_alloc (struct str);
 struct str *__THE_1_opt_str_copy (const struct str *);
 bool __THE_1_opt_str_eq (struct str *, struct str *);
@@ -205,31 +205,31 @@ bool str_ne_str (struct str s1, struct str s2) {
   free(s2.d);
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_alloc (int32_t __THE_0_a) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_alloc (int32_t __THE_0_a) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-struct __THE_1_TestObj_0 *__THE_1_TestObj_0_copy (const struct __THE_1_TestObj_0 *n) {
-  struct __THE_1_TestObj_0 *r = alloc(sizeof(struct __THE_1_TestObj_0));
-  struct __THE_1_TestObj_0 s = {n->__THE_0_a};
-  memcpy(r, &s, sizeof(struct __THE_1_TestObj_0));
+struct __THE_1_test_TestObj_0 *__THE_1_test_TestObj_0_copy (const struct __THE_1_test_TestObj_0 *n) {
+  struct __THE_1_test_TestObj_0 *r = alloc(sizeof(struct __THE_1_test_TestObj_0));
+  struct __THE_1_test_TestObj_0 s = {n->__THE_0_a};
+  memcpy(r, &s, sizeof(struct __THE_1_test_TestObj_0));
   return r;
 }
-bool __THE_1_TestObj_0_eq (struct __THE_1_TestObj_0 *n1, struct __THE_1_TestObj_0 *n2) {
+bool __THE_1_test_TestObj_0_eq (struct __THE_1_test_TestObj_0 *n1, struct __THE_1_test_TestObj_0 *n2) {
   bool r = n1->__THE_0_a == n2->__THE_0_a;
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n1);
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n2);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n1);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n2);
   return r;
 }
-void __THE_1_TestObj_0_free (struct __THE_1_TestObj_0 *n) {
+void __THE_1_test_TestObj_0_free (struct __THE_1_test_TestObj_0 *n) {
   free(n);
 }
-bool __THE_1_TestObj_0_ne (struct __THE_1_TestObj_0 *n1, struct __THE_1_TestObj_0 *n2) {
+bool __THE_1_test_TestObj_0_ne (struct __THE_1_test_TestObj_0 *n1, struct __THE_1_test_TestObj_0 *n2) {
   bool r = n1->__THE_0_a != n2->__THE_0_a;
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n1);
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) n2);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n1);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n2);
   return r;
 }
 int32_t *__THE_1_opt_int_alloc (int32_t n) {
@@ -441,32 +441,32 @@ bool __THE_1_opt_float_ne (double *n1, double *n2) {
   __THE_1_opt_float_free((double *) n2);
   return r;
 }
-struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_TestObj_0 *n) {
-  struct __THE_1_TestObj_0 **r = alloc(sizeof(struct __THE_1_TestObj_0 *));
+struct __THE_1_test_TestObj_0 **__THE_1_opt_TestObj_alloc (struct __THE_1_test_TestObj_0 *n) {
+  struct __THE_1_test_TestObj_0 **r = alloc(sizeof(struct __THE_1_test_TestObj_0 *));
   *r = n;
   return r;
 }
-struct __THE_1_TestObj_0 **__THE_1_opt_TestObj_copy (const struct __THE_1_TestObj_0 **n) {
+struct __THE_1_test_TestObj_0 **__THE_1_opt_TestObj_copy (const struct __THE_1_test_TestObj_0 **n) {
   if (n == NULL) return NULL;
-  struct __THE_1_TestObj_0 **r = alloc(sizeof(struct __THE_1_TestObj_0 *));
-  *r = __THE_1_TestObj_0_copy(*n);
+  struct __THE_1_test_TestObj_0 **r = alloc(sizeof(struct __THE_1_test_TestObj_0 *));
+  *r = __THE_1_test_TestObj_0_copy(*n);
   return r;
 }
-bool __THE_1_opt_TestObj_eq (struct __THE_1_TestObj_0 **n1, struct __THE_1_TestObj_0 **n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : __THE_1_TestObj_0_eq(__THE_1_TestObj_0_copy(*n1), __THE_1_TestObj_0_copy(*n2));
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) n1);
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) n2);
+bool __THE_1_opt_TestObj_eq (struct __THE_1_test_TestObj_0 **n1, struct __THE_1_test_TestObj_0 **n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : __THE_1_test_TestObj_0_eq(__THE_1_test_TestObj_0_copy(*n1), __THE_1_test_TestObj_0_copy(*n2));
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) n1);
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) n2);
   return r;
 }
-void __THE_1_opt_TestObj_free (struct __THE_1_TestObj_0 **n) {
+void __THE_1_opt_TestObj_free (struct __THE_1_test_TestObj_0 **n) {
   if (n == NULL) return;
-  __THE_1_TestObj_0_free((struct __THE_1_TestObj_0 *) *n);
+  __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) *n);
   free(n);
 }
-bool __THE_1_opt_TestObj_ne (struct __THE_1_TestObj_0 **n1, struct __THE_1_TestObj_0 **n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : __THE_1_TestObj_0_ne(__THE_1_TestObj_0_copy(*n1), __THE_1_TestObj_0_copy(*n2));
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) n1);
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) n2);
+bool __THE_1_opt_TestObj_ne (struct __THE_1_test_TestObj_0 **n1, struct __THE_1_test_TestObj_0 **n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : __THE_1_test_TestObj_0_ne(__THE_1_test_TestObj_0_copy(*n1), __THE_1_test_TestObj_0_copy(*n2));
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) n1);
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) n2);
   return r;
 }
 struct str *__THE_1_opt_str_alloc (struct str n) {
@@ -512,8 +512,8 @@ int main () {
   const double *__THE_0_optFloat2_0 = NULL;
   const int32_t *__THE_0_optInt1_0 = __THE_1_opt_int_alloc(1);
   const int32_t *__THE_0_optInt2_0 = NULL;
-  const struct __THE_1_TestObj_0 **__THE_0_optObj1_0 = __THE_1_opt_TestObj_alloc(__THE_1_TestObj_0_alloc(1));
-  const struct __THE_1_TestObj_0 **__THE_0_optObj2_0 = NULL;
+  const struct __THE_1_test_TestObj_0 **__THE_0_optObj1_0 = __THE_1_opt_TestObj_alloc(__THE_1_test_TestObj_0_alloc(1));
+  const struct __THE_1_test_TestObj_0 **__THE_0_optObj2_0 = NULL;
   const int32_t **__THE_0_optRefInt1_0 = __THE_1_opt_ref_int_alloc(&__THE_0_intA_0);
   const int32_t **__THE_0_optRefInt2_0 = NULL;
   const struct str *__THE_0_optStr1_0 = __THE_1_opt_str_alloc(str_alloc("test"));
@@ -538,8 +538,8 @@ int main () {
   __THE_1_opt_str_free((struct str *) __THE_0_optStr1_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefInt2_0);
   __THE_1_opt_ref_int_free((int32_t **) __THE_0_optRefInt1_0);
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObj2_0);
-  __THE_1_opt_TestObj_free((struct __THE_1_TestObj_0 **) __THE_0_optObj1_0);
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) __THE_0_optObj2_0);
+  __THE_1_opt_TestObj_free((struct __THE_1_test_TestObj_0 **) __THE_0_optObj1_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_optInt2_0);
   __THE_1_opt_int_free((int32_t *) __THE_0_optInt1_0);
   __THE_1_opt_float_free((double *) __THE_0_optFloat2_0);

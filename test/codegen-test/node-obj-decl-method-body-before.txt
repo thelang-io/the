@@ -68,26 +68,26 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_Human_0;
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
+struct __THE_1_test_Human_0;
+struct __THE_1_fn_sFRvoidFE;
+struct __THE_1_fn_sFSref_HumanFRvoidFE;
+struct __THE_1_fn_sFSref_HumanFRvoidFEP;
 
-struct __THE_1_Human_0 {
+struct __THE_1_test_Human_0 {
   int32_t __THE_0_distance;
 };
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFSref_HumanFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
-  struct __THE_1_Human_0 **self;
+struct __THE_1_fn_sFSref_HumanFRvoidFEP {
+  struct __THE_1_test_Human_0 **self;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -97,10 +97,10 @@ void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 void *xalloc (void *, size_t);
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (int32_t);
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *);
-void __THE_1_HumanSDtalk_0 (void *);
-void __THE_1_HumanSDwalk_0 (void *, void *);
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (int32_t);
+void __THE_1_test_Human_0_free (struct __THE_1_test_Human_0 *);
+void __THE_1_test_HumanSDtalk_0 (void *);
+void __THE_1_test_HumanSDwalk_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -240,32 +240,32 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-struct __THE_1_Human_0 *__THE_1_Human_0_alloc (int32_t __THE_0_distance) {
-  struct __THE_1_Human_0 *r = alloc(sizeof(struct __THE_1_Human_0));
-  struct __THE_1_Human_0 s = {__THE_0_distance};
-  memcpy(r, &s, sizeof(struct __THE_1_Human_0));
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (int32_t __THE_0_distance) {
+  struct __THE_1_test_Human_0 *r = alloc(sizeof(struct __THE_1_test_Human_0));
+  struct __THE_1_test_Human_0 s = {__THE_0_distance};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Human_0));
   return r;
 }
-void __THE_1_Human_0_free (struct __THE_1_Human_0 *n) {
+void __THE_1_test_Human_0_free (struct __THE_1_test_Human_0 *n) {
   free(n);
 }
-void __THE_1_HumanSDtalk_0 (void *px) {
+void __THE_1_test_HumanSDtalk_0 (void *px) {
   print(stdout, "zz", "Human walks in meters", THE_EOL);
 }
-void __THE_1_HumanSDwalk_0 (void *px, void *pp) {
-  struct __THE_1_fn$1001P *p = pp;
-  struct __THE_1_Human_0 **__THE_0_self_0 = p->self;
+void __THE_1_test_HumanSDwalk_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFSref_HumanFRvoidFEP *p = pp;
+  struct __THE_1_test_Human_0 **__THE_0_self_0 = p->self;
   (*__THE_0_self_0)->__THE_0_distance += 1;
   free(pp);
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_HumanSDtalk_0 = (struct __THE_1_fn$1000) {&__THE_1_HumanSDtalk_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_HumanSDwalk_0 = (struct __THE_1_fn$1001) {&__THE_1_HumanSDwalk_0, NULL, 0};
-  struct __THE_1_Human_0 *__THE_0_person_0 = __THE_1_Human_0_alloc(0);
-  __THE_0_HumanSDtalk_0.f(__THE_0_HumanSDtalk_0.x);
-  __THE_0_HumanSDwalk_0.f(__THE_0_HumanSDwalk_0.x, xalloc(&(struct __THE_1_fn$1001P) {&__THE_0_person_0}, sizeof(struct __THE_1_fn$1001P)));
-  __THE_1_Human_0_free((struct __THE_1_Human_0 *) __THE_0_person_0);
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_HumanSDtalk_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_HumanSDtalk_0, NULL, 0};
+  const struct __THE_1_fn_sFSref_HumanFRvoidFE __THE_0_test_HumanSDwalk_0 = (struct __THE_1_fn_sFSref_HumanFRvoidFE) {&__THE_1_test_HumanSDwalk_0, NULL, 0};
+  struct __THE_1_test_Human_0 *__THE_0_person_0 = __THE_1_test_Human_0_alloc(0);
+  __THE_0_test_HumanSDtalk_0.f(__THE_0_test_HumanSDtalk_0.x);
+  __THE_0_test_HumanSDwalk_0.f(__THE_0_test_HumanSDwalk_0.x, xalloc(&(struct __THE_1_fn_sFSref_HumanFRvoidFEP) {&__THE_0_person_0}, sizeof(struct __THE_1_fn_sFSref_HumanFRvoidFEP)));
+  __THE_1_test_Human_0_free((struct __THE_1_test_Human_0 *) __THE_0_person_0);
 }
 ======= flags =======
 ======= stdout =======

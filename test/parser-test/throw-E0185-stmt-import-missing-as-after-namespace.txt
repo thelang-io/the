@@ -1,0 +1,6 @@
+======= stdin =======
+import * from "test"
+======= stderr =======
+/test:1:10: E0185 - Expected `as` keyword after importing namespace
+  1 | import * from "test"
+    |          ^~~~

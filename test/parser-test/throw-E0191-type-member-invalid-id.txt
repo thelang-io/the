@@ -1,0 +1,6 @@
+======= stdin =======
+a: Test1[].Test2
+======= stderr =======
+/test:1:4: E0191 - Member type allowed only on id or another member type
+  1 | a: Test1[].Test2
+    |    ^~~~~~~

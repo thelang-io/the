@@ -24,10 +24,10 @@ main {
 ======= stdout =======
 <NodeEnumDecl>
   <NodeEnumDeclType>
-    <TypeEnum codeName="Color_0" name="Color">
-      <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-      <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-      <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+    <TypeEnum codeName="test_Color_0" name="Color">
+      <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+      <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+      <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
     </TypeEnum>
   </NodeEnumDeclType>
   <NodeEnumDeclMembers>
@@ -97,39 +97,39 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="color" codeName="color_0" mut frame="2">
-        <TypeEnum codeName="Color_0" name="Color">
-          <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-          <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-          <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+        <TypeEnum codeName="test_Color_0" name="Color">
+          <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+          <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+          <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
         </TypeEnum>
       </Var>
     </NodeVarDeclVar>
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeEnum codeName="Color_0" name="Color">
-            <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-            <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-            <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+          <TypeEnum codeName="test_Color_0" name="Color">
+            <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+            <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+            <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
           </TypeEnum>
         </NodeExprType>
         <NodeExprBody>
           <ExprAccess prop="Green">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="Color_0" name="Color">
-                  <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                  <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                  <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                <TypeEnum codeName="test_Color_0" name="Color">
+                  <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                  <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                  <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
-                    <TypeEnum codeName="Color_0" name="Color">
-                      <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                      <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                      <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                  <Var name="Color" codeName="test_Color_0" ctxIgnored frame="1">
+                    <TypeEnum codeName="test_Color_0" name="Color">
+                      <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                      <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                      <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                     </TypeEnum>
                   </Var>
                 </ExprAccess>
@@ -143,39 +143,39 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="color2" codeName="color2_0" frame="2">
-        <TypeEnum codeName="Color_0" name="Color">
-          <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-          <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-          <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+        <TypeEnum codeName="test_Color_0" name="Color">
+          <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+          <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+          <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
         </TypeEnum>
       </Var>
     </NodeVarDeclVar>
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeEnum codeName="Color_0" name="Color">
-            <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-            <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-            <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+          <TypeEnum codeName="test_Color_0" name="Color">
+            <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+            <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+            <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
           </TypeEnum>
         </NodeExprType>
         <NodeExprBody>
           <ExprAccess prop="Black">
             <NodeExpr>
               <NodeExprType>
-                <TypeEnum codeName="Color_0" name="Color">
-                  <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                  <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                  <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                <TypeEnum codeName="test_Color_0" name="Color">
+                  <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                  <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                  <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                 </TypeEnum>
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
-                    <TypeEnum codeName="Color_0" name="Color">
-                      <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                      <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                      <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                  <Var name="Color" codeName="test_Color_0" ctxIgnored frame="1">
+                    <TypeEnum codeName="test_Color_0" name="Color">
+                      <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                      <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                      <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                     </TypeEnum>
                   </Var>
                 </ExprAccess>
@@ -189,20 +189,20 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="color3" codeName="color3_0" frame="2">
-        <TypeEnum codeName="Color_0" name="Color">
-          <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-          <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-          <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+        <TypeEnum codeName="test_Color_0" name="Color">
+          <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+          <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+          <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
         </TypeEnum>
       </Var>
     </NodeVarDeclVar>
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeEnum codeName="Color_0" name="Color">
-            <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-            <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-            <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+          <TypeEnum codeName="test_Color_0" name="Color">
+            <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+            <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+            <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
           </TypeEnum>
         </NodeExprType>
         <NodeExprBody>
@@ -213,10 +213,10 @@ main {
   </NodeVarDecl>
   <NodeExpr>
     <NodeExprType>
-      <TypeEnum codeName="Color_0" name="Color">
-        <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-        <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-        <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+      <TypeEnum codeName="test_Color_0" name="Color">
+        <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+        <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+        <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
       </TypeEnum>
     </NodeExprType>
     <NodeExprBody>
@@ -224,19 +224,19 @@ main {
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <TypeEnum codeName="Color_0" name="Color">
-                <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+              <TypeEnum codeName="test_Color_0" name="Color">
+                <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
               </TypeEnum>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
                 <Var name="color" codeName="color_0" mut frame="2">
-                  <TypeEnum codeName="Color_0" name="Color">
-                    <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                    <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                    <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                  <TypeEnum codeName="test_Color_0" name="Color">
+                    <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                    <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                    <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                   </TypeEnum>
                 </Var>
               </ExprAccess>
@@ -246,29 +246,29 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <TypeEnum codeName="Color_0" name="Color">
-                <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+              <TypeEnum codeName="test_Color_0" name="Color">
+                <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
               </TypeEnum>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="Green">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeEnum codeName="Color_0" name="Color">
-                      <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                      <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                      <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                    <TypeEnum codeName="test_Color_0" name="Color">
+                      <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                      <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                      <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                     </TypeEnum>
                   </NodeExprType>
                   <NodeExprBody>
                     <ExprAccess>
-                      <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
-                        <TypeEnum codeName="Color_0" name="Color">
-                          <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                          <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                          <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                      <Var name="Color" codeName="test_Color_0" ctxIgnored frame="1">
+                        <TypeEnum codeName="test_Color_0" name="Color">
+                          <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                          <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                          <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                         </TypeEnum>
                       </Var>
                     </ExprAccess>
@@ -283,10 +283,10 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeEnum codeName="Color_0" name="Color">
-        <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-        <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-        <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+      <TypeEnum codeName="test_Color_0" name="Color">
+        <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+        <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+        <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
       </TypeEnum>
     </NodeExprType>
     <NodeExprBody>
@@ -294,19 +294,19 @@ main {
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <TypeEnum codeName="Color_0" name="Color">
-                <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+              <TypeEnum codeName="test_Color_0" name="Color">
+                <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
               </TypeEnum>
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
                 <Var name="color" codeName="color_0" mut frame="2">
-                  <TypeEnum codeName="Color_0" name="Color">
-                    <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                    <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                    <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                  <TypeEnum codeName="test_Color_0" name="Color">
+                    <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                    <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                    <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                   </TypeEnum>
                 </Var>
               </ExprAccess>
@@ -316,10 +316,10 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <TypeEnum codeName="Color_0" name="Color">
-                <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+              <TypeEnum codeName="test_Color_0" name="Color">
+                <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
               </TypeEnum>
             </NodeExprType>
             <NodeExprBody>
@@ -341,19 +341,19 @@ main {
             <ExprBinaryLeft>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeEnum codeName="Color_0" name="Color">
-                    <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                    <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                    <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                  <TypeEnum codeName="test_Color_0" name="Color">
+                    <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                    <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                    <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                   </TypeEnum>
                 </NodeExprType>
                 <NodeExprBody>
                   <ExprAccess>
                     <Var name="color" codeName="color_0" mut frame="2">
-                      <TypeEnum codeName="Color_0" name="Color">
-                        <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                        <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                        <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                      <TypeEnum codeName="test_Color_0" name="Color">
+                        <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                        <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                        <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                       </TypeEnum>
                     </Var>
                   </ExprAccess>
@@ -363,10 +363,10 @@ main {
             <ExprBinaryRight>
               <NodeExpr>
                 <NodeExprType>
-                  <TypeEnum codeName="Color_0" name="Color">
-                    <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                    <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                    <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                  <TypeEnum codeName="test_Color_0" name="Color">
+                    <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                    <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                    <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                   </TypeEnum>
                 </NodeExprType>
                 <NodeExprBody>
@@ -425,19 +425,19 @@ main {
                 <ExprBinaryLeft>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeEnum codeName="Color_0" name="Color">
-                        <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                        <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                        <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                      <TypeEnum codeName="test_Color_0" name="Color">
+                        <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                        <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                        <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                       </TypeEnum>
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
                         <Var name="color" codeName="color_0" mut frame="2">
-                          <TypeEnum codeName="Color_0" name="Color">
-                            <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                            <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                            <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                          <TypeEnum codeName="test_Color_0" name="Color">
+                            <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                            <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                            <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                           </TypeEnum>
                         </Var>
                       </ExprAccess>
@@ -447,29 +447,29 @@ main {
                 <ExprBinaryRight>
                   <NodeExpr>
                     <NodeExprType>
-                      <TypeEnum codeName="Color_0" name="Color">
-                        <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                        <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                        <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                      <TypeEnum codeName="test_Color_0" name="Color">
+                        <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                        <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                        <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                       </TypeEnum>
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess prop="Brown">
                         <NodeExpr>
                           <NodeExprType>
-                            <TypeEnum codeName="Color_0" name="Color">
-                              <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                              <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                              <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                            <TypeEnum codeName="test_Color_0" name="Color">
+                              <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                              <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                              <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                             </TypeEnum>
                           </NodeExprType>
                           <NodeExprBody>
                             <ExprAccess>
-                              <Var name="Color" codeName="Color_0" ctxIgnored frame="1">
-                                <TypeEnum codeName="Color_0" name="Color">
-                                  <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                                  <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                                  <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                              <Var name="Color" codeName="test_Color_0" ctxIgnored frame="1">
+                                <TypeEnum codeName="test_Color_0" name="Color">
+                                  <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                                  <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                                  <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                                 </TypeEnum>
                               </Var>
                             </ExprAccess>
@@ -530,19 +530,19 @@ main {
                     <ExprBinaryLeft>
                       <NodeExpr>
                         <NodeExprType>
-                          <TypeEnum codeName="Color_0" name="Color">
-                            <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                            <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                            <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                          <TypeEnum codeName="test_Color_0" name="Color">
+                            <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                            <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                            <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                           </TypeEnum>
                         </NodeExprType>
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="color" codeName="color_0" mut frame="2">
-                              <TypeEnum codeName="Color_0" name="Color">
-                                <TypeEnumerator codeName="ColorSDBrown_0" name="Brown" />
-                                <TypeEnumerator codeName="ColorSDBlack_0" name="Black" />
-                                <TypeEnumerator codeName="ColorSDGreen_0" name="Green" />
+                              <TypeEnum codeName="test_Color_0" name="Color">
+                                <TypeEnumerator codeName="test_ColorSDBrown_0" name="Brown" />
+                                <TypeEnumerator codeName="test_ColorSDBlack_0" name="Black" />
+                                <TypeEnumerator codeName="test_ColorSDGreen_0" name="Green" />
                               </TypeEnum>
                             </Var>
                           </ExprAccess>

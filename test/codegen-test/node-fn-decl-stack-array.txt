@@ -54,23 +54,23 @@ typedef struct {
 } err_state_t;
 
 struct __THE_1_array_int;
-struct __THE_1_fn$1003;
-struct __THE_1_fn$1003P;
-struct __THE_1_mainSDtest_0X;
+struct __THE_1_fn_sFP3array_intFRvoidFE;
+struct __THE_1_fn_sFP3array_intFRvoidFEP;
+struct __THE_1_test_mainSDtest_0X;
 
 struct __THE_1_array_int {
   int32_t *d;
   size_t l;
 };
-struct __THE_1_fn$1003 {
+struct __THE_1_fn_sFP3array_intFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1003P {
+struct __THE_1_fn_sFP3array_intFRvoidFEP {
   struct __THE_1_array_int n0;
 };
-struct __THE_1_mainSDtest_0X {
+struct __THE_1_test_mainSDtest_0X {
   struct __THE_1_array_int *__THE_0_a_0;
 };
 
@@ -83,9 +83,9 @@ struct __THE_1_array_int __THE_1_array_int_alloc (size_t, ...);
 struct __THE_1_array_int __THE_1_array_int_copy (const struct __THE_1_array_int);
 void __THE_1_array_int_free (struct __THE_1_array_int);
 struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int, struct __THE_1_array_int);
-void __THE_1_fn$1003_free (struct __THE_1_fn$1003);
-void __THE_1_mainSDtest_0 (void *, void *);
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1003 *, struct __THE_1_mainSDtest_0X);
+void __THE_1_fn_sFP3array_intFRvoidFE_free (struct __THE_1_fn_sFP3array_intFRvoidFE);
+void __THE_1_test_mainSDtest_0 (void *, void *);
+void __THE_1_test_mainSDtest_0_alloc (struct __THE_1_fn_sFP3array_intFRvoidFE *, struct __THE_1_test_mainSDtest_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -133,33 +133,33 @@ struct __THE_1_array_int __THE_1_array_int_realloc (struct __THE_1_array_int n1,
   __THE_1_array_int_free((struct __THE_1_array_int) n1);
   return n2;
 }
-void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
+void __THE_1_fn_sFP3array_intFRvoidFE_free (struct __THE_1_fn_sFP3array_intFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest_0 (void *px, void *pp) {
-  struct __THE_1_fn$1003P *p = pp;
-  struct __THE_1_mainSDtest_0X *x = px;
+void __THE_1_test_mainSDtest_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFP3array_intFRvoidFEP *p = pp;
+  struct __THE_1_test_mainSDtest_0X *x = px;
   struct __THE_1_array_int *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_array_int __THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = __THE_1_array_int_realloc(*__THE_0_a_0, __THE_1_array_int_copy(__THE_0_newA_0));
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_newA_0);
   free(pp);
 }
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_mainSDtest_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtest_0X);
-  struct __THE_1_mainSDtest_0X *r = alloc(l);
+void __THE_1_test_mainSDtest_0_alloc (struct __THE_1_fn_sFP3array_intFRvoidFE *n, struct __THE_1_test_mainSDtest_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSDtest_0X);
+  struct __THE_1_test_mainSDtest_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtest_0;
+  n->f = &__THE_1_test_mainSDtest_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
   struct __THE_1_array_int __THE_0_a_0 = __THE_1_array_int_alloc(3, 1, 2, 3);
-  const struct __THE_1_fn$1003 __THE_0_mainSDtest_0;
-  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn$1003P) {__THE_1_array_int_alloc(3, 4, 5, 6)}, sizeof(struct __THE_1_fn$1003P)));
-  __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_mainSDtest_0);
+  const struct __THE_1_fn_sFP3array_intFRvoidFE __THE_0_test_mainSDtest_0;
+  __THE_1_test_mainSDtest_0_alloc((struct __THE_1_fn_sFP3array_intFRvoidFE *) &__THE_0_test_mainSDtest_0, (struct __THE_1_test_mainSDtest_0X) {&__THE_0_a_0});
+  __THE_0_test_mainSDtest_0.f(__THE_0_test_mainSDtest_0.x, xalloc(&(struct __THE_1_fn_sFP3array_intFRvoidFEP) {__THE_1_array_int_alloc(3, 4, 5, 6)}, sizeof(struct __THE_1_fn_sFP3array_intFRvoidFEP)));
+  __THE_1_fn_sFP3array_intFRvoidFE_free((struct __THE_1_fn_sFP3array_intFRvoidFE) __THE_0_test_mainSDtest_0);
   __THE_1_array_int_free((struct __THE_1_array_int) __THE_0_a_0);
 }
 ======= flags =======

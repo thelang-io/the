@@ -31,10 +31,10 @@ const auto banner = std::string(
 );
 
 std::string getCompilerFromPlatform (const std::string &arch, const std::string &platform) {
-  if (arch == "x86_64" && platform == "macos") {
-    return "o64-clang";
-  } else if (arch == "arm64" && platform == "macos") {
+  if (arch == "arm64" && platform == "macos") {
     return "oa64-clang";
+  } else if (platform == "macos") {
+    return "o64-clang";
   } else if (platform == "windows") {
     return "x86_64-w64-mingw32-gcc";
   }
@@ -65,23 +65,19 @@ void Codegen::compile (
   const std::string &platform,
   bool debug
 ) {
-  auto code = std::get<0>(result);
-  auto flags = std::get<1>(result);
   auto f = std::ofstream(path + ".c");
-
-  f << code;
+  f << std::get<0>(result);
   f.close();
 
   auto depsDir = Codegen::getEnvVar("DEPS_DIR");
-  auto compiler = getCompilerFromPlatform(arch, platform);
   auto flagsStr = std::string();
-  auto libraries = std::string();
 
   if (!depsDir.empty()) {
     flagsStr += " -I\"" + depsDir + "/include\"";
     flagsStr += " -L\"" + depsDir + "/lib\"";
   }
 
+  auto flags = std::get<1>(result);
   auto targetOS = getOSFromPlatform(platform);
 
   for (const auto &flag : flags) {
@@ -96,8 +92,9 @@ void Codegen::compile (
     }
   }
 
-  auto cmd = compiler + " " + path + ".c " + libraries + "-w -o " + path + flagsStr + " -O0 -g";
-  cmd += targetOS == "linux" && debug ? "dwarf-4" : "";
+  auto compiler = getCompilerFromPlatform(arch, platform);
+  auto cmd = compiler + " " + path + ".c -O0 -w -o " + path + flagsStr;
+  cmd += targetOS == "linux" && debug ? " -gdwarf-4" : " -g";
   auto returnCode = std::system(cmd.c_str());
   std::filesystem::remove(path + ".c");
 
@@ -112,11 +109,11 @@ std::string Codegen::name (const std::string &name) {
 
 std::string Codegen::stringifyFlags (const std::vector<std::string> &flags) {
   auto result = std::string();
-  auto idx = static_cast<std::size_t>(0);
+  auto i = static_cast<std::size_t>(0);
 
   for (const auto &flag : flags) {
     if (!flag.empty()) {
-      result += (idx++ == 0 ? "" : " ") + flag;
+      result += (i++ == 0 ? "" : " ") + flag;
     }
   }
 
@@ -240,6 +237,10 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
         )
       })
     );
+  }
+
+  for (auto it = this->ast->imports->rbegin(); it != this->ast->imports->rend(); it++) {
+    this->_block(&cMain, it->nodes, false);
   }
 
   this->_block(&cMain, nodes, false);
@@ -655,12 +656,16 @@ void Codegen::_node (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, Co
     return this->_nodeContinue(c, node);
   } else if (std::holds_alternative<ASTNodeEnumDecl>(*node.body)) {
     return this->_nodeEnumDecl(c, node, phase);
+  } else if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
+    return this->_nodeExportDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeExpr>(*node.body)) {
     return this->_nodeExprDecl(c, node);
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     return this->_nodeFnDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeIf>(*node.body)) {
     return this->_nodeIf(c, node);
+  } else if (std::holds_alternative<ASTNodeImportDecl>(*node.body)) {
+    return this->_nodeImportDecl(c, node, phase);
   } else if (std::holds_alternative<ASTNodeLoop>(*node.body)) {
     return this->_nodeLoop(c, node);
   } else if (std::holds_alternative<ASTNodeMain>(*node.body)) {

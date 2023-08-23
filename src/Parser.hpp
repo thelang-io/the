@@ -44,9 +44,11 @@ struct ParserStmtContinue;
 struct ParserStmtEmpty;
 struct ParserStmtEnumDecl;
 struct ParserStmtEof;
+struct ParserStmtExportDecl;
 struct ParserStmtExpr;
 struct ParserStmtFnDecl;
 struct ParserStmtIf;
+struct ParserStmtImportDecl;
 struct ParserStmtLoop;
 struct ParserStmtMain;
 struct ParserStmtObjDecl;
@@ -59,6 +61,7 @@ struct ParserTypeArray;
 struct ParserTypeFn;
 struct ParserTypeId;
 struct ParserTypeMap;
+struct ParserTypeMember;
 struct ParserTypeOptional;
 struct ParserTypeRef;
 struct ParserTypeUnion;
@@ -88,9 +91,11 @@ using ParserStmtBody = std::variant<
   ParserStmtEmpty,
   ParserStmtEnumDecl,
   ParserStmtEof,
+  ParserStmtExportDecl,
   ParserStmtExpr,
   ParserStmtFnDecl,
   ParserStmtIf,
+  ParserStmtImportDecl,
   ParserStmtLoop,
   ParserStmtMain,
   ParserStmtObjDecl,
@@ -106,6 +111,7 @@ using ParserTypeBody = std::variant<
   ParserTypeFn,
   ParserTypeId,
   ParserTypeMap,
+  ParserTypeMember,
   ParserTypeOptional,
   ParserTypeRef,
   ParserTypeUnion
@@ -237,7 +243,7 @@ struct ParserExprObjProp {
 };
 
 struct ParserExprObj {
-  Token id;
+  ParserType id;
   std::vector<ParserExprObjProp> props;
 };
 
@@ -277,6 +283,10 @@ struct ParserStmtEnumDecl {
 struct ParserStmtEof {
 };
 
+struct ParserStmtExportDecl {
+  ParserStmt declaration;
+};
+
 struct ParserStmtFnDecl {
   Token id;
   std::vector<ParserFnParam> params;
@@ -289,6 +299,16 @@ struct ParserStmtIf {
   ParserStmtExpr cond;
   ParserBlock body;
   std::optional<std::variant<ParserBlock, ParserStmt>> alt;
+};
+
+struct ParserStmtImportDeclSpecifier {
+  std::optional<ParserStmtExpr> imported;
+  ParserStmtExpr local;
+};
+
+struct ParserStmtImportDecl {
+  std::vector<ParserStmtImportDeclSpecifier> specifiers;
+  ParserStmtExpr source;
 };
 
 struct ParserStmtLoop {
@@ -360,6 +380,11 @@ struct ParserTypeMap {
   ParserType valueType;
 };
 
+struct ParserTypeMember {
+  ParserType id;
+  Token member;
+};
+
 struct ParserTypeOptional {
   ParserType type;
 };
@@ -377,7 +402,12 @@ class Parser {
   Lexer *lexer;
   Reader *reader;
 
+  static bool isValidExprObjId (const ParserStmtExpr &);
+  static ParserType transformExprToType (const ParserStmtExpr &);
+  static ParserStmtExpr transformTypeToExpr (const ParserType &);
+
   explicit Parser (Lexer *);
+  virtual ~Parser () = default;
 
   virtual std::string doc ();
   virtual ParserStmt next (bool = true, bool = false);

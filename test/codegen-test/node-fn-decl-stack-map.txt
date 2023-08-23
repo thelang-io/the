@@ -59,9 +59,9 @@ struct str {
 
 struct __THE_1_pair_strMSintME;
 struct __THE_1_map_strMSintME;
-struct __THE_1_fn$1003;
-struct __THE_1_fn$1003P;
-struct __THE_1_mainSDtest_0X;
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE;
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP;
+struct __THE_1_test_mainSDtest_0X;
 
 struct __THE_1_pair_strMSintME {
   struct str f;
@@ -72,15 +72,15 @@ struct __THE_1_map_strMSintME {
   size_t c;
   size_t l;
 };
-struct __THE_1_fn$1003 {
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1003P {
+struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP {
   struct __THE_1_map_strMSintME n0;
 };
-struct __THE_1_mainSDtest_0X {
+struct __THE_1_test_mainSDtest_0X {
   struct __THE_1_map_strMSintME *__THE_0_a_0;
 };
 
@@ -96,9 +96,9 @@ struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int, ...);
 struct __THE_1_map_strMSintME __THE_1_map_strMSintME_copy (const struct __THE_1_map_strMSintME);
 void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
 struct __THE_1_map_strMSintME __THE_1_map_strMSintME_realloc (struct __THE_1_map_strMSintME, struct __THE_1_map_strMSintME);
-void __THE_1_fn$1003_free (struct __THE_1_fn$1003);
-void __THE_1_mainSDtest_0 (void *, void *);
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1003 *, struct __THE_1_mainSDtest_0X);
+void __THE_1_fn_sFP3map_strMSintMEFRvoidFE_free (struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE);
+void __THE_1_test_mainSDtest_0 (void *, void *);
+void __THE_1_test_mainSDtest_0_alloc (struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE *, struct __THE_1_test_mainSDtest_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -161,33 +161,33 @@ struct __THE_1_map_strMSintME __THE_1_map_strMSintME_realloc (struct __THE_1_map
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n1);
   return n2;
 }
-void __THE_1_fn$1003_free (struct __THE_1_fn$1003 n) {
+void __THE_1_fn_sFP3map_strMSintMEFRvoidFE_free (struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_mainSDtest_0 (void *px, void *pp) {
-  struct __THE_1_fn$1003P *p = pp;
-  struct __THE_1_mainSDtest_0X *x = px;
+void __THE_1_test_mainSDtest_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP *p = pp;
+  struct __THE_1_test_mainSDtest_0X *x = px;
   struct __THE_1_map_strMSintME *__THE_0_a_0 = x->__THE_0_a_0;
   const struct __THE_1_map_strMSintME __THE_0_newA_0 = p->n0;
   *__THE_0_a_0 = __THE_1_map_strMSintME_realloc(*__THE_0_a_0, __THE_1_map_strMSintME_copy(__THE_0_newA_0));
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_newA_0);
   free(pp);
 }
-void __THE_1_mainSDtest_0_alloc (struct __THE_1_fn$1003 *n, struct __THE_1_mainSDtest_0X x) {
-  size_t l = sizeof(struct __THE_1_mainSDtest_0X);
-  struct __THE_1_mainSDtest_0X *r = alloc(l);
+void __THE_1_test_mainSDtest_0_alloc (struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE *n, struct __THE_1_test_mainSDtest_0X x) {
+  size_t l = sizeof(struct __THE_1_test_mainSDtest_0X);
+  struct __THE_1_test_mainSDtest_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_mainSDtest_0;
+  n->f = &__THE_1_test_mainSDtest_0;
   n->x = r;
   n->l = l;
 }
 
 int main () {
   struct __THE_1_map_strMSintME __THE_0_a_0 = __THE_1_map_strMSintME_alloc(3, str_alloc("key1"), 1, str_alloc("key2"), 2, str_alloc("key3"), 3);
-  const struct __THE_1_fn$1003 __THE_0_mainSDtest_0;
-  __THE_1_mainSDtest_0_alloc((struct __THE_1_fn$1003 *) &__THE_0_mainSDtest_0, (struct __THE_1_mainSDtest_0X) {&__THE_0_a_0});
-  __THE_0_mainSDtest_0.f(__THE_0_mainSDtest_0.x, xalloc(&(struct __THE_1_fn$1003P) {__THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6)}, sizeof(struct __THE_1_fn$1003P)));
-  __THE_1_fn$1003_free((struct __THE_1_fn$1003) __THE_0_mainSDtest_0);
+  const struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE __THE_0_test_mainSDtest_0;
+  __THE_1_test_mainSDtest_0_alloc((struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE *) &__THE_0_test_mainSDtest_0, (struct __THE_1_test_mainSDtest_0X) {&__THE_0_a_0});
+  __THE_0_test_mainSDtest_0.f(__THE_0_test_mainSDtest_0.x, xalloc(&(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP) {__THE_1_map_strMSintME_alloc(3, str_alloc("key4"), 4, str_alloc("key5"), 5, str_alloc("key6"), 6)}, sizeof(struct __THE_1_fn_sFP3map_strMSintMEFRvoidFEP)));
+  __THE_1_fn_sFP3map_strMSintMEFRvoidFE_free((struct __THE_1_fn_sFP3map_strMSintMEFRvoidFE) __THE_0_test_mainSDtest_0);
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) __THE_0_a_0);
 }
 ======= flags =======

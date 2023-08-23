@@ -15,6 +15,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <filesystem>
 #include "../src/Error.hpp"
 #include "../src/Lexer.hpp"
 #include "../src/config.hpp"
@@ -27,37 +28,54 @@ TEST(ErrorTest, ThrowsExactMessage) {
   }, "Hello, World!");
 }
 
-TEST(LexerErrorTest, SingleToken) {
+class LexerErrorTest : public testing::Test {
+ protected:
+  std::filesystem::path initialCwd_;
+
+  void SetUp () override {
+    this->initialCwd_ = std::filesystem::current_path();
+  }
+
+  void TearDown () override {
+    std::filesystem::current_path(this->initialCwd_);
+  }
+};
+
+TEST_F(LexerErrorTest, SingleToken) {
   auto reader = testing::NiceMock<MockReader>("@");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | @" EOL "    | ^");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0000 + EOL "  1 | @" EOL "    | ^"));
 }
 
-TEST(LexerErrorTest, MultipleTokens) {
+TEST_F(LexerErrorTest, MultipleTokens) {
   auto reader = testing::NiceMock<MockReader>("test");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   reader.loc = ReaderLocation{4, 1, 4};
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~~~");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~~~"));
 }
 
-TEST(LexerErrorTest, MultipleTokensWithEnd) {
+TEST_F(LexerErrorTest, MultipleTokensWithEnd) {
   auto reader = testing::NiceMock<MockReader>("test");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, ReaderLocation{2, 1, 2}, E0000);
-  }, std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0000 + EOL "  1 | test" EOL "    | ^~"));
 }
 
-TEST(LexerErrorTest, MultipleTokensAfterTokens) {
+TEST_F(LexerErrorTest, MultipleTokensAfterTokens) {
   auto reader = testing::NiceMock<MockReader>("1 + test");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   lexer.loc = ReaderLocation{4, 1, 4};
@@ -65,11 +83,12 @@ TEST(LexerErrorTest, MultipleTokensAfterTokens) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0000);
-  }, std::string("/test:1:5: ") + E0000 + EOL "  1 | 1 + test" EOL "    |     ^~~~");
+  }, prepareTestOutput(std::string("/test:1:5: ") + E0000 + EOL "  1 | 1 + test" EOL "    |     ^~~~"));
 }
 
-TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
+TEST_F(LexerErrorTest, MultipleTokensAfterNewLine) {
   auto reader = testing::NiceMock<MockReader>("print()" EOL "/*Hello");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   lexer.loc = ReaderLocation{7 + std::string(EOL).size(), 2, 0};
@@ -77,11 +96,12 @@ TEST(LexerErrorTest, MultipleTokensAfterNewLine) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~");
+  }, prepareTestOutput(std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~"));
 }
 
-TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
+TEST_F(LexerErrorTest, MultipleTokensBetweenNewLines) {
   auto reader = testing::NiceMock<MockReader>("print()" EOL "/*Hello" EOL "Denis");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   lexer.loc = ReaderLocation{7 + std::string(EOL).size(), 2, 0};
@@ -89,16 +109,17 @@ TEST(LexerErrorTest, MultipleTokensBetweenNewLines) {
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~");
+  }, prepareTestOutput(std::string("/test:2:1: ") + E0001 + EOL "  2 | /*Hello" EOL "    | ^~~~~~~"));
 }
 
-TEST(LexerErrorTest, MultipleTokensBeforeNewLine) {
+TEST_F(LexerErrorTest, MultipleTokensBeforeNewLine) {
   auto reader = testing::NiceMock<MockReader>("/*Hello" EOL "Denis");
+  std::filesystem::current_path(this->initialCwd_ / "test");
   auto lexer = Lexer(&reader);
 
   reader.loc = ReaderLocation{13, 2, 5};
 
   EXPECT_THROW_WITH_MESSAGE({
     throw Error(lexer.reader, lexer.loc, E0001);
-  }, std::string("/test:1:1: ") + E0001 + EOL "  1 | /*Hello" EOL "    | ^~~~~~~");
+  }, prepareTestOutput(std::string("/test:1:1: ") + E0001 + EOL "  1 | /*Hello" EOL "    | ^~~~~~~"));
 }

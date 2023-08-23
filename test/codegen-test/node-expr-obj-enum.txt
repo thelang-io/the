@@ -34,10 +34,10 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_Test2_0 {
-  __THE_0_Test2SDRed_0,
-  __THE_0_Test2SDGreen_0,
-  __THE_0_Test2SDBlue_0
+enum __THE_1_test_Test2_0 {
+  __THE_0_test_Test2SDRed_0,
+  __THE_0_test_Test2SDGreen_0,
+  __THE_0_test_Test2SDBlue_0
 };
 
 typedef struct err_buf {
@@ -63,19 +63,19 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_Test1_0;
+struct __THE_1_test_Test1_0;
 
-struct __THE_1_Test1_0 {
-  const enum __THE_1_Test2_0 __THE_0_a;
-  const enum __THE_1_Test2_0 __THE_0_b;
+struct __THE_1_test_Test1_0 {
+  const enum __THE_1_test_Test2_0 __THE_0_a;
+  const enum __THE_1_test_Test2_0 __THE_0_b;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (enum __THE_1_Test2_0, enum __THE_1_Test2_0);
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *);
+struct __THE_1_test_Test1_0 *__THE_1_test_Test1_0_alloc (enum __THE_1_test_Test2_0, enum __THE_1_test_Test2_0);
+void __THE_1_test_Test1_0_free (struct __THE_1_test_Test1_0 *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -95,19 +95,19 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_Test1_0 *__THE_1_Test1_0_alloc (enum __THE_1_Test2_0 __THE_0_a, enum __THE_1_Test2_0 __THE_0_b) {
-  struct __THE_1_Test1_0 *r = alloc(sizeof(struct __THE_1_Test1_0));
-  struct __THE_1_Test1_0 s = {__THE_0_a, __THE_0_b};
-  memcpy(r, &s, sizeof(struct __THE_1_Test1_0));
+struct __THE_1_test_Test1_0 *__THE_1_test_Test1_0_alloc (enum __THE_1_test_Test2_0 __THE_0_a, enum __THE_1_test_Test2_0 __THE_0_b) {
+  struct __THE_1_test_Test1_0 *r = alloc(sizeof(struct __THE_1_test_Test1_0));
+  struct __THE_1_test_Test1_0 s = {__THE_0_a, __THE_0_b};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Test1_0));
   return r;
 }
-void __THE_1_Test1_0_free (struct __THE_1_Test1_0 *n) {
+void __THE_1_test_Test1_0_free (struct __THE_1_test_Test1_0 *n) {
   free(n);
 }
 
 int main () {
-  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_1_Test1_0_alloc(__THE_0_Test2SDGreen_0, 0));
-  __THE_1_Test1_0_free((struct __THE_1_Test1_0 *) __THE_1_Test1_0_alloc(__THE_0_Test2SDBlue_0, __THE_0_Test2SDGreen_0));
+  __THE_1_test_Test1_0_free((struct __THE_1_test_Test1_0 *) __THE_1_test_Test1_0_alloc(__THE_0_test_Test2SDGreen_0, 0));
+  __THE_1_test_Test1_0_free((struct __THE_1_test_Test1_0 *) __THE_1_test_Test1_0_alloc(__THE_0_test_Test2SDBlue_0, __THE_0_test_Test2SDGreen_0));
 }
 ======= flags =======
 ======= stdout =======

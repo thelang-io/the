@@ -36,10 +36,10 @@ main {
 #include <stdlib.h>
 #include <string.h>
 
-enum __THE_1_RGB_0 {
-  __THE_0_RGBSDRed_0 = 1,
-  __THE_0_RGBSDGreen_0 = 1 << 2,
-  __THE_0_RGBSDBlue_0
+enum __THE_1_test_RGB_0 {
+  __THE_0_test_RGBSDRed_0 = 1,
+  __THE_0_test_RGBSDGreen_0 = 1 << 2,
+  __THE_0_test_RGBSDBlue_0
 };
 
 typedef struct err_buf {
@@ -77,7 +77,7 @@ void error_alloc (err_state_t *, size_t);
 void print (FILE *, const char *, ...);
 void *re_alloc (void *, size_t);
 struct str str_alloc (const char *);
-struct str __THE_1_RGB_0_rawValue (enum __THE_1_RGB_0);
+struct str __THE_1_test_RGB_0_rawValue (enum __THE_1_test_RGB_0);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -222,19 +222,19 @@ struct str str_alloc (const char *r) {
   memcpy(d, r, l);
   return (struct str) {d, l};
 }
-struct str __THE_1_RGB_0_rawValue (enum __THE_1_RGB_0 n) {
-  if (n == __THE_0_RGBSDRed_0) return str_alloc("Red");
-  if (n == __THE_0_RGBSDGreen_0) return str_alloc("Green");
-  if (n == __THE_0_RGBSDBlue_0) return str_alloc("Blue");
+struct str __THE_1_test_RGB_0_rawValue (enum __THE_1_test_RGB_0 n) {
+  if (n == __THE_0_test_RGBSDRed_0) return str_alloc("Red");
+  if (n == __THE_0_test_RGBSDGreen_0) return str_alloc("Green");
+  if (n == __THE_0_test_RGBSDBlue_0) return str_alloc("Blue");
 }
 
 int main () {
-  const enum __THE_1_RGB_0 __THE_0_red_0 = __THE_0_RGBSDRed_0;
-  const enum __THE_1_RGB_0 __THE_0_green_0 = __THE_0_RGBSDGreen_0;
-  const enum __THE_1_RGB_0 __THE_0_blue_0 = __THE_0_RGBSDBlue_0;
-  print(stdout, "szszsz", enum_str(__THE_0_red_0), " ", enum_str(__THE_0_red_0), " ", __THE_1_RGB_0_rawValue(__THE_0_red_0), THE_EOL);
-  print(stdout, "szszsz", enum_str(__THE_0_green_0), " ", enum_str(__THE_0_green_0), " ", __THE_1_RGB_0_rawValue(__THE_0_green_0), THE_EOL);
-  print(stdout, "szszsz", enum_str(__THE_0_blue_0), " ", enum_str(__THE_0_blue_0), " ", __THE_1_RGB_0_rawValue(__THE_0_blue_0), THE_EOL);
+  const enum __THE_1_test_RGB_0 __THE_0_red_0 = __THE_0_test_RGBSDRed_0;
+  const enum __THE_1_test_RGB_0 __THE_0_green_0 = __THE_0_test_RGBSDGreen_0;
+  const enum __THE_1_test_RGB_0 __THE_0_blue_0 = __THE_0_test_RGBSDBlue_0;
+  print(stdout, "szszsz", enum_str(__THE_0_red_0), " ", enum_str(__THE_0_red_0), " ", __THE_1_test_RGB_0_rawValue(__THE_0_red_0), THE_EOL);
+  print(stdout, "szszsz", enum_str(__THE_0_green_0), " ", enum_str(__THE_0_green_0), " ", __THE_1_test_RGB_0_rawValue(__THE_0_green_0), THE_EOL);
+  print(stdout, "szszsz", enum_str(__THE_0_blue_0), " ", enum_str(__THE_0_blue_0), " ", __THE_1_test_RGB_0_rawValue(__THE_0_blue_0), THE_EOL);
 }
 ======= flags =======
 ======= stdout =======

@@ -348,32 +348,32 @@ typedef struct threadpool_thread {
   struct threadpool_thread *next;
 } threadpool_thread_t;
 
-struct __THE_1_fn$1000;
-struct __THE_1_test1_0X;
-struct __THE_1_test2_0X;
-struct __THE_1_test3_0X;
-struct __THE_1_test4_0X;
-struct __THE_1_test5_0X;
-struct __THE_1_test6_0X;
-struct __THE_1_test7_0X;
-struct __THE_1_test8_0X;
-struct __THE_1_test9_0X;
-struct __THE_1_test10_0X;
-struct __THE_1_test11_0X;
-struct __THE_1_test12_0X;
-struct __THE_1_test13_0X;
-struct __THE_1_test14_0X;
-struct __THE_1_test15_0X;
-struct __THE_1_test16_0X;
+struct __THE_1_fn_aFRvoidFE;
+struct __THE_1_test_test1_0X;
+struct __THE_1_test_test2_0X;
+struct __THE_1_test_test3_0X;
+struct __THE_1_test_test4_0X;
+struct __THE_1_test_test5_0X;
+struct __THE_1_test_test6_0X;
+struct __THE_1_test_test7_0X;
+struct __THE_1_test_test8_0X;
+struct __THE_1_test_test9_0X;
+struct __THE_1_test_test10_0X;
+struct __THE_1_test_test11_0X;
+struct __THE_1_test_test12_0X;
+struct __THE_1_test_test13_0X;
+struct __THE_1_test_test14_0X;
+struct __THE_1_test_test15_0X;
+struct __THE_1_test_test16_0X;
 struct __THE_1_async_mainX;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_aFRvoidFE {
   void (*f) (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
   void *x;
   size_t l;
 };
-struct __THE_1_test1_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test1_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   int32_t __THE_0_i_0;
   struct str __THE_0_v2_0;
@@ -384,28 +384,28 @@ struct __THE_1_test1_0X {
   struct str __THE_0_v7_0;
   unsigned char r;
 };
-struct __THE_1_test2_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test2_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   int32_t __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test3_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test3_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   int32_t __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test4_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test4_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   int32_t __THE_0_i_0;
   unsigned char r;
 };
-struct __THE_1_test5_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test5_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   int32_t __THE_0_i_0;
   struct str __THE_0_v2_0;
   struct str __THE_0_v3_0;
@@ -415,25 +415,25 @@ struct __THE_1_test5_0X {
   struct str __THE_0_v7_0;
   unsigned char r;
 };
-struct __THE_1_test6_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test6_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   int32_t __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test7_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test7_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   int32_t __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test8_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test8_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   int32_t __THE_0_i_0;
   unsigned char r;
 };
-struct __THE_1_test9_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test9_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   struct str __THE_0_i_0;
   struct str __THE_0_v2_0;
@@ -444,28 +444,28 @@ struct __THE_1_test9_0X {
   struct str __THE_0_v7_0;
   unsigned char r;
 };
-struct __THE_1_test10_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test10_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   struct str __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test11_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test11_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   struct str __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test12_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test12_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_v1_0;
   struct str __THE_0_i_0;
   unsigned char r;
 };
-struct __THE_1_test13_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test13_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_i_0;
   struct str __THE_0_v2_0;
   struct str __THE_0_v3_0;
@@ -475,40 +475,40 @@ struct __THE_1_test13_0X {
   struct str __THE_0_v7_0;
   unsigned char r;
 };
-struct __THE_1_test14_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test14_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test15_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test15_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_i_0;
   struct str __THE_0_v2_0;
   unsigned char r;
 };
-struct __THE_1_test16_0X {
-  const struct __THE_1_fn$1000 *__THE_0_a_0;
+struct __THE_1_test_test16_0X {
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0;
   struct str __THE_0_i_0;
   unsigned char r;
 };
 struct __THE_1_async_mainX {
-  const struct __THE_1_fn$1000 *__THE_0_test16_0;
-  const struct __THE_1_fn$1000 *__THE_0_test15_0;
-  const struct __THE_1_fn$1000 *__THE_0_test14_0;
-  const struct __THE_1_fn$1000 *__THE_0_test13_0;
-  const struct __THE_1_fn$1000 *__THE_0_test12_0;
-  const struct __THE_1_fn$1000 *__THE_0_test11_0;
-  const struct __THE_1_fn$1000 *__THE_0_test10_0;
-  const struct __THE_1_fn$1000 *__THE_0_test9_0;
-  const struct __THE_1_fn$1000 *__THE_0_test8_0;
-  const struct __THE_1_fn$1000 *__THE_0_test7_0;
-  const struct __THE_1_fn$1000 *__THE_0_test6_0;
-  const struct __THE_1_fn$1000 *__THE_0_test5_0;
-  const struct __THE_1_fn$1000 *__THE_0_test4_0;
-  const struct __THE_1_fn$1000 *__THE_0_test3_0;
-  const struct __THE_1_fn$1000 *__THE_0_test2_0;
-  const struct __THE_1_fn$1000 *__THE_0_test1_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test16_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test15_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test14_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test13_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test12_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test11_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test10_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test9_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test8_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test7_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test6_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test5_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test4_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test3_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test2_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test1_0;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -544,42 +544,42 @@ threadpool_thread_t *threadpool_thread_init (threadpool_t *, threadpool_thread_t
 void threadpool_wait (threadpool_t *);
 void *threadpool_worker (void *);
 void *xalloc (void *, size_t);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_a_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test1_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test1_0X);
-void __THE_1_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test2_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test2_0X);
-void __THE_1_test3_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test3_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test3_0X);
-void __THE_1_test4_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test4_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test4_0X);
-void __THE_1_test5_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test5_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test5_0X);
-void __THE_1_test6_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test6_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test6_0X);
-void __THE_1_test7_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test7_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test7_0X);
-void __THE_1_test8_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test8_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test8_0X);
-void __THE_1_test9_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test9_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test9_0X);
-void __THE_1_test10_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test10_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test10_0X);
-void __THE_1_test11_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test11_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test11_0X);
-void __THE_1_test12_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test12_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test12_0X);
-void __THE_1_test13_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test13_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test13_0X);
-void __THE_1_test14_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test14_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test14_0X);
-void __THE_1_test15_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test15_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test15_0X);
-void __THE_1_test16_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_test16_0_alloc (struct __THE_1_fn$1000 *, struct __THE_1_test16_0X);
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE);
+void __THE_1_test_a_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test1_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test1_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test1_0X);
+void __THE_1_test_test2_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test2_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test2_0X);
+void __THE_1_test_test3_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test3_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test3_0X);
+void __THE_1_test_test4_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test4_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test4_0X);
+void __THE_1_test_test5_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test5_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test5_0X);
+void __THE_1_test_test6_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test6_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test6_0X);
+void __THE_1_test_test7_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test7_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test7_0X);
+void __THE_1_test_test8_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test8_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test8_0X);
+void __THE_1_test_test9_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test9_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test9_0X);
+void __THE_1_test_test10_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test10_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test10_0X);
+void __THE_1_test_test11_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test11_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test11_0X);
+void __THE_1_test_test12_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test12_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test12_0X);
+void __THE_1_test_test13_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test13_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test13_0X);
+void __THE_1_test_test14_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test14_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test14_0X);
+void __THE_1_test_test15_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test15_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test15_0X);
+void __THE_1_test_test16_0 (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
+void __THE_1_test_test16_0_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_test_test16_0X);
 void __THE_1_async_main (threadpool_t *, threadpool_job_t *, void *, void *, void *, int);
-void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *, struct __THE_1_async_mainX);
+void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *, struct __THE_1_async_mainX);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -965,16 +965,16 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_aFRvoidFE_free (struct __THE_1_fn_aFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_a_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+void __THE_1_test_a_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   if (job->parent != NULL) threadpool_insert(tp, job->parent);
   threadpool_job_deinit(job);
 }
-void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test1_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test1_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
@@ -994,13 +994,13 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
       if (!(*__THE_0_i_0 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 10));
       *__THE_0_v2_0 = str_alloc("test2");
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       *__THE_0_v3_0 = str_alloc("test3");
       print(stdout, "zziz", "1 start", " ", *__THE_0_i_0, THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       *__THE_0_v4_0 = str_alloc("test4");
@@ -1016,13 +1016,13 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 5: {
       *__THE_0_v6_0 = str_alloc("test6");
       job->step = 6;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 6: {
       print(stdout, "zziz", "1 end", " ", *__THE_0_i_0, THE_EOL);
       *__THE_0_v7_0 = str_alloc("test7");
       job->step = 7;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 7: {
       str_free((struct str) *__THE_0_v7_0);
@@ -1045,17 +1045,17 @@ void __THE_1_test1_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test1_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test1_0X x) {
-  size_t l = sizeof(struct __THE_1_test1_0X);
-  struct __THE_1_test1_0X *r = alloc(l);
+void __THE_1_test_test1_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test1_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test1_0X);
+  struct __THE_1_test_test1_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test1_0;
+  n->f = &__THE_1_test_test1_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test2_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test2_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
@@ -1069,7 +1069,7 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 1: {
       if (!(*__THE_0_i_0 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 6));
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       print(stdout, "zziz", "2 start", " ", *__THE_0_i_0, THE_EOL);
@@ -1096,17 +1096,17 @@ void __THE_1_test2_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test2_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test2_0X x) {
-  size_t l = sizeof(struct __THE_1_test2_0X);
-  struct __THE_1_test2_0X *r = alloc(l);
+void __THE_1_test_test2_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test2_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test2_0X);
+  struct __THE_1_test_test2_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test2_0;
+  n->f = &__THE_1_test_test2_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test3_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test3_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
@@ -1128,7 +1128,7 @@ void __THE_1_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 2: {
       print(stdout, "zziz", "3 end", " ", *__THE_0_i_0, THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       str_free((struct str) *__THE_0_v2_0);
@@ -1145,17 +1145,17 @@ void __THE_1_test3_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test3_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test3_0X x) {
-  size_t l = sizeof(struct __THE_1_test3_0X);
-  struct __THE_1_test3_0X *r = alloc(l);
+void __THE_1_test_test3_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test3_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test3_0X);
+  struct __THE_1_test_test3_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test3_0;
+  n->f = &__THE_1_test_test3_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test4_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test4_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test4_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test4_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
@@ -1175,7 +1175,7 @@ void __THE_1_test4_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 2: {
       print(stdout, "zziz", "4 end", " ", *__THE_0_i_0, THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       (*__THE_0_i_0)++;
@@ -1188,17 +1188,17 @@ void __THE_1_test4_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test4_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test4_0X x) {
-  size_t l = sizeof(struct __THE_1_test4_0X);
-  struct __THE_1_test4_0X *r = alloc(l);
+void __THE_1_test_test4_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test4_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test4_0X);
+  struct __THE_1_test_test4_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test4_0;
+  n->f = &__THE_1_test_test4_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test5_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test5_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test5_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test5_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   struct str *__THE_0_v3_0 = &x->__THE_0_v3_0;
@@ -1216,13 +1216,13 @@ void __THE_1_test5_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
       if (!(*__THE_0_i_0 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 10));
       *__THE_0_v2_0 = str_alloc("test2");
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       *__THE_0_v3_0 = str_alloc("test3");
       print(stdout, "zziz", "1 start", " ", *__THE_0_i_0, THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       *__THE_0_v4_0 = str_alloc("test4");
@@ -1238,13 +1238,13 @@ void __THE_1_test5_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 5: {
       *__THE_0_v6_0 = str_alloc("test6");
       job->step = 6;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 6: {
       print(stdout, "zziz", "1 end", " ", *__THE_0_i_0, THE_EOL);
       *__THE_0_v7_0 = str_alloc("test7");
       job->step = 7;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 7: {
       str_free((struct str) *__THE_0_v7_0);
@@ -1266,17 +1266,17 @@ void __THE_1_test5_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test5_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test5_0X x) {
-  size_t l = sizeof(struct __THE_1_test5_0X);
-  struct __THE_1_test5_0X *r = alloc(l);
+void __THE_1_test_test5_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test5_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test5_0X);
+  struct __THE_1_test_test5_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test5_0;
+  n->f = &__THE_1_test_test5_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test6_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test6_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test6_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test6_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
@@ -1288,7 +1288,7 @@ void __THE_1_test6_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 1: {
       if (!(*__THE_0_i_0 < 10)) return threadpool_insert(tp, threadpool_job_step(job, 6));
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       print(stdout, "zziz", "2 start", " ", *__THE_0_i_0, THE_EOL);
@@ -1314,17 +1314,17 @@ void __THE_1_test6_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test6_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test6_0X x) {
-  size_t l = sizeof(struct __THE_1_test6_0X);
-  struct __THE_1_test6_0X *r = alloc(l);
+void __THE_1_test_test6_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test6_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test6_0X);
+  struct __THE_1_test_test6_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test6_0;
+  n->f = &__THE_1_test_test6_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test7_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test7_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test7_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test7_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
@@ -1344,7 +1344,7 @@ void __THE_1_test7_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 2: {
       print(stdout, "zziz", "3 end", " ", *__THE_0_i_0, THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       str_free((struct str) *__THE_0_v2_0);
@@ -1360,17 +1360,17 @@ void __THE_1_test7_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test7_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test7_0X x) {
-  size_t l = sizeof(struct __THE_1_test7_0X);
-  struct __THE_1_test7_0X *r = alloc(l);
+void __THE_1_test_test7_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test7_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test7_0X);
+  struct __THE_1_test_test7_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test7_0;
+  n->f = &__THE_1_test_test7_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test8_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test8_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test8_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test8_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   int32_t *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
   job->init = 1;
@@ -1388,7 +1388,7 @@ void __THE_1_test8_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 2: {
       print(stdout, "zziz", "4 end", " ", *__THE_0_i_0, THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       (*__THE_0_i_0)++;
@@ -1400,17 +1400,17 @@ void __THE_1_test8_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test8_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test8_0X x) {
-  size_t l = sizeof(struct __THE_1_test8_0X);
-  struct __THE_1_test8_0X *r = alloc(l);
+void __THE_1_test_test8_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test8_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test8_0X);
+  struct __THE_1_test_test8_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test8_0;
+  n->f = &__THE_1_test_test8_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test9_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test9_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test9_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test9_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
@@ -1430,13 +1430,13 @@ void __THE_1_test9_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
       if (!(str_ne_cstr(str_copy(*__THE_0_i_0), "1111111111"))) return threadpool_insert(tp, threadpool_job_step(job, 10));
       *__THE_0_v2_0 = str_alloc("test2");
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       *__THE_0_v3_0 = str_alloc("test3");
       print(stdout, "zzsz", "1 start", " ", str_copy(*__THE_0_i_0), THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       *__THE_0_v4_0 = str_alloc("test4");
@@ -1452,13 +1452,13 @@ void __THE_1_test9_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     case 5: {
       *__THE_0_v6_0 = str_alloc("test6");
       job->step = 6;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 6: {
       print(stdout, "zzsz", "1 end", " ", str_copy(*__THE_0_i_0), THE_EOL);
       *__THE_0_v7_0 = str_alloc("test7");
       job->step = 7;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 7: {
       str_free((struct str) *__THE_0_v7_0);
@@ -1485,17 +1485,17 @@ void __THE_1_test9_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *p
     }
   }
 }
-void __THE_1_test9_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test9_0X x) {
-  size_t l = sizeof(struct __THE_1_test9_0X);
-  struct __THE_1_test9_0X *r = alloc(l);
+void __THE_1_test_test9_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test9_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test9_0X);
+  struct __THE_1_test_test9_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test9_0;
+  n->f = &__THE_1_test_test9_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test10_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test10_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test10_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test10_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
@@ -1509,7 +1509,7 @@ void __THE_1_test10_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     case 1: {
       if (!(str_ne_cstr(str_copy(*__THE_0_i_0), "1111111111"))) return threadpool_insert(tp, threadpool_job_step(job, 6));
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       print(stdout, "zzsz", "2 start", " ", str_copy(*__THE_0_i_0), THE_EOL);
@@ -1540,17 +1540,17 @@ void __THE_1_test10_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     }
   }
 }
-void __THE_1_test10_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test10_0X x) {
-  size_t l = sizeof(struct __THE_1_test10_0X);
-  struct __THE_1_test10_0X *r = alloc(l);
+void __THE_1_test_test10_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test10_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test10_0X);
+  struct __THE_1_test_test10_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test10_0;
+  n->f = &__THE_1_test_test10_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test11_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test11_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test11_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test11_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
@@ -1572,7 +1572,7 @@ void __THE_1_test11_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     case 2: {
       print(stdout, "zzsz", "3 end", " ", str_copy(*__THE_0_i_0), THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       str_free((struct str) *__THE_0_v2_0);
@@ -1593,17 +1593,17 @@ void __THE_1_test11_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     }
   }
 }
-void __THE_1_test11_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test11_0X x) {
-  size_t l = sizeof(struct __THE_1_test11_0X);
-  struct __THE_1_test11_0X *r = alloc(l);
+void __THE_1_test_test11_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test11_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test11_0X);
+  struct __THE_1_test_test11_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test11_0;
+  n->f = &__THE_1_test_test11_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test12_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test12_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test12_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test12_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_v1_0 = &x->__THE_0_v1_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
@@ -1623,7 +1623,7 @@ void __THE_1_test12_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     case 2: {
       print(stdout, "zzsz", "4 end", " ", str_copy(*__THE_0_i_0), THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       *__THE_0_i_0 = str_realloc(*__THE_0_i_0, str_concat_cstr(str_copy(*__THE_0_i_0), "1"));
@@ -1640,17 +1640,17 @@ void __THE_1_test12_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     }
   }
 }
-void __THE_1_test12_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test12_0X x) {
-  size_t l = sizeof(struct __THE_1_test12_0X);
-  struct __THE_1_test12_0X *r = alloc(l);
+void __THE_1_test_test12_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test12_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test12_0X);
+  struct __THE_1_test_test12_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test12_0;
+  n->f = &__THE_1_test_test12_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test13_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test13_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test13_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test13_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   struct str *__THE_0_v3_0 = &x->__THE_0_v3_0;
@@ -1668,13 +1668,13 @@ void __THE_1_test13_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
       if (!(str_ne_cstr(str_copy(*__THE_0_i_0), "1111111111"))) return threadpool_insert(tp, threadpool_job_step(job, 10));
       *__THE_0_v2_0 = str_alloc("test2");
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       *__THE_0_v3_0 = str_alloc("test3");
       print(stdout, "zzsz", "1 start", " ", str_copy(*__THE_0_i_0), THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       *__THE_0_v4_0 = str_alloc("test4");
@@ -1690,13 +1690,13 @@ void __THE_1_test13_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     case 5: {
       *__THE_0_v6_0 = str_alloc("test6");
       job->step = 6;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 6: {
       print(stdout, "zzsz", "1 end", " ", str_copy(*__THE_0_i_0), THE_EOL);
       *__THE_0_v7_0 = str_alloc("test7");
       job->step = 7;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 7: {
       str_free((struct str) *__THE_0_v7_0);
@@ -1722,17 +1722,17 @@ void __THE_1_test13_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     }
   }
 }
-void __THE_1_test13_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test13_0X x) {
-  size_t l = sizeof(struct __THE_1_test13_0X);
-  struct __THE_1_test13_0X *r = alloc(l);
+void __THE_1_test_test13_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test13_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test13_0X);
+  struct __THE_1_test_test13_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test13_0;
+  n->f = &__THE_1_test_test13_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test14_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test14_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test14_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test14_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
@@ -1744,7 +1744,7 @@ void __THE_1_test14_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     case 1: {
       if (!(str_ne_cstr(str_copy(*__THE_0_i_0), "1111111111"))) return threadpool_insert(tp, threadpool_job_step(job, 6));
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 2: {
       print(stdout, "zzsz", "2 start", " ", str_copy(*__THE_0_i_0), THE_EOL);
@@ -1774,17 +1774,17 @@ void __THE_1_test14_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     }
   }
 }
-void __THE_1_test14_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test14_0X x) {
-  size_t l = sizeof(struct __THE_1_test14_0X);
-  struct __THE_1_test14_0X *r = alloc(l);
+void __THE_1_test_test14_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test14_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test14_0X);
+  struct __THE_1_test_test14_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test14_0;
+  n->f = &__THE_1_test_test14_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test15_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test15_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test15_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test15_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   struct str *__THE_0_v2_0 = &x->__THE_0_v2_0;
   unsigned char *r = &x->r;
@@ -1804,7 +1804,7 @@ void __THE_1_test15_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     case 2: {
       print(stdout, "zzsz", "3 end", " ", str_copy(*__THE_0_i_0), THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       str_free((struct str) *__THE_0_v2_0);
@@ -1824,17 +1824,17 @@ void __THE_1_test15_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     }
   }
 }
-void __THE_1_test15_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test15_0X x) {
-  size_t l = sizeof(struct __THE_1_test15_0X);
-  struct __THE_1_test15_0X *r = alloc(l);
+void __THE_1_test_test15_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test15_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test15_0X);
+  struct __THE_1_test_test15_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test15_0;
+  n->f = &__THE_1_test_test15_0;
   n->x = r;
   n->l = l;
 }
-void __THE_1_test16_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
-  struct __THE_1_test16_0X *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_a_0 = x->__THE_0_a_0;
+void __THE_1_test_test16_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
+  struct __THE_1_test_test16_0X *x = px;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_a_0 = x->__THE_0_test_a_0;
   struct str *__THE_0_i_0 = &x->__THE_0_i_0;
   unsigned char *r = &x->r;
   job->init = 1;
@@ -1852,7 +1852,7 @@ void __THE_1_test16_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     case 2: {
       print(stdout, "zzsz", "4 end", " ", str_copy(*__THE_0_i_0), THE_EOL);
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_a_0).f, xalloc((*__THE_0_a_0).x, (*__THE_0_a_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_a_0).f, xalloc((*__THE_0_test_a_0).x, (*__THE_0_test_a_0).l), NULL, NULL, job);
     }
     case 3: {
       *__THE_0_i_0 = str_realloc(*__THE_0_i_0, str_concat_cstr(str_copy(*__THE_0_i_0), "1"));
@@ -1868,97 +1868,97 @@ void __THE_1_test16_0 (threadpool_t *tp, threadpool_job_t *job, void *px, void *
     }
   }
 }
-void __THE_1_test16_0_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_test16_0X x) {
-  size_t l = sizeof(struct __THE_1_test16_0X);
-  struct __THE_1_test16_0X *r = alloc(l);
+void __THE_1_test_test16_0_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_test_test16_0X x) {
+  size_t l = sizeof(struct __THE_1_test_test16_0X);
+  struct __THE_1_test_test16_0X *r = alloc(l);
   memcpy(r, &x, l);
-  n->f = &__THE_1_test16_0;
+  n->f = &__THE_1_test_test16_0;
   n->x = r;
   n->l = l;
 }
 void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void *pp, void *pv, int step) {
   struct __THE_1_async_mainX *x = px;
-  const struct __THE_1_fn$1000 *__THE_0_test16_0 = x->__THE_0_test16_0;
-  const struct __THE_1_fn$1000 *__THE_0_test15_0 = x->__THE_0_test15_0;
-  const struct __THE_1_fn$1000 *__THE_0_test14_0 = x->__THE_0_test14_0;
-  const struct __THE_1_fn$1000 *__THE_0_test13_0 = x->__THE_0_test13_0;
-  const struct __THE_1_fn$1000 *__THE_0_test12_0 = x->__THE_0_test12_0;
-  const struct __THE_1_fn$1000 *__THE_0_test11_0 = x->__THE_0_test11_0;
-  const struct __THE_1_fn$1000 *__THE_0_test10_0 = x->__THE_0_test10_0;
-  const struct __THE_1_fn$1000 *__THE_0_test9_0 = x->__THE_0_test9_0;
-  const struct __THE_1_fn$1000 *__THE_0_test8_0 = x->__THE_0_test8_0;
-  const struct __THE_1_fn$1000 *__THE_0_test7_0 = x->__THE_0_test7_0;
-  const struct __THE_1_fn$1000 *__THE_0_test6_0 = x->__THE_0_test6_0;
-  const struct __THE_1_fn$1000 *__THE_0_test5_0 = x->__THE_0_test5_0;
-  const struct __THE_1_fn$1000 *__THE_0_test4_0 = x->__THE_0_test4_0;
-  const struct __THE_1_fn$1000 *__THE_0_test3_0 = x->__THE_0_test3_0;
-  const struct __THE_1_fn$1000 *__THE_0_test2_0 = x->__THE_0_test2_0;
-  const struct __THE_1_fn$1000 *__THE_0_test1_0 = x->__THE_0_test1_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test16_0 = x->__THE_0_test_test16_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test15_0 = x->__THE_0_test_test15_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test14_0 = x->__THE_0_test_test14_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test13_0 = x->__THE_0_test_test13_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test12_0 = x->__THE_0_test_test12_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test11_0 = x->__THE_0_test_test11_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test10_0 = x->__THE_0_test_test10_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test9_0 = x->__THE_0_test_test9_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test8_0 = x->__THE_0_test_test8_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test7_0 = x->__THE_0_test_test7_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test6_0 = x->__THE_0_test_test6_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test5_0 = x->__THE_0_test_test5_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test4_0 = x->__THE_0_test_test4_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test3_0 = x->__THE_0_test_test3_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test2_0 = x->__THE_0_test_test2_0;
+  const struct __THE_1_fn_aFRvoidFE *__THE_0_test_test1_0 = x->__THE_0_test_test1_0;
   job->init = 1;
   switch (step) {
     case 0: {
       job->step = 1;
-      return threadpool_add(tp, (*__THE_0_test1_0).f, xalloc((*__THE_0_test1_0).x, (*__THE_0_test1_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test1_0).f, xalloc((*__THE_0_test_test1_0).x, (*__THE_0_test_test1_0).l), NULL, NULL, job);
     }
     case 1: {
       job->step = 2;
-      return threadpool_add(tp, (*__THE_0_test2_0).f, xalloc((*__THE_0_test2_0).x, (*__THE_0_test2_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test2_0).f, xalloc((*__THE_0_test_test2_0).x, (*__THE_0_test_test2_0).l), NULL, NULL, job);
     }
     case 2: {
       job->step = 3;
-      return threadpool_add(tp, (*__THE_0_test3_0).f, xalloc((*__THE_0_test3_0).x, (*__THE_0_test3_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test3_0).f, xalloc((*__THE_0_test_test3_0).x, (*__THE_0_test_test3_0).l), NULL, NULL, job);
     }
     case 3: {
       job->step = 4;
-      return threadpool_add(tp, (*__THE_0_test4_0).f, xalloc((*__THE_0_test4_0).x, (*__THE_0_test4_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test4_0).f, xalloc((*__THE_0_test_test4_0).x, (*__THE_0_test_test4_0).l), NULL, NULL, job);
     }
     case 4: {
       job->step = 5;
-      return threadpool_add(tp, (*__THE_0_test5_0).f, xalloc((*__THE_0_test5_0).x, (*__THE_0_test5_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test5_0).f, xalloc((*__THE_0_test_test5_0).x, (*__THE_0_test_test5_0).l), NULL, NULL, job);
     }
     case 5: {
       job->step = 6;
-      return threadpool_add(tp, (*__THE_0_test6_0).f, xalloc((*__THE_0_test6_0).x, (*__THE_0_test6_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test6_0).f, xalloc((*__THE_0_test_test6_0).x, (*__THE_0_test_test6_0).l), NULL, NULL, job);
     }
     case 6: {
       job->step = 7;
-      return threadpool_add(tp, (*__THE_0_test7_0).f, xalloc((*__THE_0_test7_0).x, (*__THE_0_test7_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test7_0).f, xalloc((*__THE_0_test_test7_0).x, (*__THE_0_test_test7_0).l), NULL, NULL, job);
     }
     case 7: {
       job->step = 8;
-      return threadpool_add(tp, (*__THE_0_test8_0).f, xalloc((*__THE_0_test8_0).x, (*__THE_0_test8_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test8_0).f, xalloc((*__THE_0_test_test8_0).x, (*__THE_0_test_test8_0).l), NULL, NULL, job);
     }
     case 8: {
       job->step = 9;
-      return threadpool_add(tp, (*__THE_0_test9_0).f, xalloc((*__THE_0_test9_0).x, (*__THE_0_test9_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test9_0).f, xalloc((*__THE_0_test_test9_0).x, (*__THE_0_test_test9_0).l), NULL, NULL, job);
     }
     case 9: {
       job->step = 10;
-      return threadpool_add(tp, (*__THE_0_test10_0).f, xalloc((*__THE_0_test10_0).x, (*__THE_0_test10_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test10_0).f, xalloc((*__THE_0_test_test10_0).x, (*__THE_0_test_test10_0).l), NULL, NULL, job);
     }
     case 10: {
       job->step = 11;
-      return threadpool_add(tp, (*__THE_0_test11_0).f, xalloc((*__THE_0_test11_0).x, (*__THE_0_test11_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test11_0).f, xalloc((*__THE_0_test_test11_0).x, (*__THE_0_test_test11_0).l), NULL, NULL, job);
     }
     case 11: {
       job->step = 12;
-      return threadpool_add(tp, (*__THE_0_test12_0).f, xalloc((*__THE_0_test12_0).x, (*__THE_0_test12_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test12_0).f, xalloc((*__THE_0_test_test12_0).x, (*__THE_0_test_test12_0).l), NULL, NULL, job);
     }
     case 12: {
       job->step = 13;
-      return threadpool_add(tp, (*__THE_0_test13_0).f, xalloc((*__THE_0_test13_0).x, (*__THE_0_test13_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test13_0).f, xalloc((*__THE_0_test_test13_0).x, (*__THE_0_test_test13_0).l), NULL, NULL, job);
     }
     case 13: {
       job->step = 14;
-      return threadpool_add(tp, (*__THE_0_test14_0).f, xalloc((*__THE_0_test14_0).x, (*__THE_0_test14_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test14_0).f, xalloc((*__THE_0_test_test14_0).x, (*__THE_0_test_test14_0).l), NULL, NULL, job);
     }
     case 14: {
       job->step = 15;
-      return threadpool_add(tp, (*__THE_0_test15_0).f, xalloc((*__THE_0_test15_0).x, (*__THE_0_test15_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test15_0).f, xalloc((*__THE_0_test_test15_0).x, (*__THE_0_test_test15_0).l), NULL, NULL, job);
     }
     case 15: {
       job->step = 16;
-      return threadpool_add(tp, (*__THE_0_test16_0).f, xalloc((*__THE_0_test16_0).x, (*__THE_0_test16_0).l), NULL, NULL, job);
+      return threadpool_add(tp, (*__THE_0_test_test16_0).f, xalloc((*__THE_0_test_test16_0).x, (*__THE_0_test_test16_0).l), NULL, NULL, job);
     }
     case 16: {
       if (job->parent != NULL) threadpool_insert(tp, job->parent);
@@ -1966,7 +1966,7 @@ void __THE_1_async_main (threadpool_t *tp, threadpool_job_t *job, void *px, void
     }
   }
 }
-void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_async_mainX x) {
+void __THE_1_async_main_alloc (struct __THE_1_fn_aFRvoidFE *n, struct __THE_1_async_mainX x) {
   size_t l = sizeof(struct __THE_1_async_mainX);
   struct __THE_1_async_mainX *r = alloc(l);
   memcpy(r, &x, l);
@@ -1977,61 +1977,61 @@ void __THE_1_async_main_alloc (struct __THE_1_fn$1000 *n, struct __THE_1_async_m
 
 int main () {
   threadpool_t *tp = threadpool_init(5);
-  const struct __THE_1_fn$1000 __THE_0_a_0 = (struct __THE_1_fn$1000) {&__THE_1_a_0, NULL, 0};
-  const struct __THE_1_fn$1000 __THE_0_test1_0;
-  const struct __THE_1_fn$1000 __THE_0_test2_0;
-  const struct __THE_1_fn$1000 __THE_0_test3_0;
-  const struct __THE_1_fn$1000 __THE_0_test4_0;
-  const struct __THE_1_fn$1000 __THE_0_test5_0;
-  const struct __THE_1_fn$1000 __THE_0_test6_0;
-  const struct __THE_1_fn$1000 __THE_0_test7_0;
-  const struct __THE_1_fn$1000 __THE_0_test8_0;
-  const struct __THE_1_fn$1000 __THE_0_test9_0;
-  const struct __THE_1_fn$1000 __THE_0_test10_0;
-  const struct __THE_1_fn$1000 __THE_0_test11_0;
-  const struct __THE_1_fn$1000 __THE_0_test12_0;
-  const struct __THE_1_fn$1000 __THE_0_test13_0;
-  const struct __THE_1_fn$1000 __THE_0_test14_0;
-  const struct __THE_1_fn$1000 __THE_0_test15_0;
-  const struct __THE_1_fn$1000 __THE_0_test16_0;
-  __THE_1_test1_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test1_0, (struct __THE_1_test1_0X) {&__THE_0_a_0});
-  __THE_1_test2_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test2_0, (struct __THE_1_test2_0X) {&__THE_0_a_0});
-  __THE_1_test3_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test3_0, (struct __THE_1_test3_0X) {&__THE_0_a_0});
-  __THE_1_test4_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test4_0, (struct __THE_1_test4_0X) {&__THE_0_a_0});
-  __THE_1_test5_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test5_0, (struct __THE_1_test5_0X) {&__THE_0_a_0});
-  __THE_1_test6_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test6_0, (struct __THE_1_test6_0X) {&__THE_0_a_0});
-  __THE_1_test7_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test7_0, (struct __THE_1_test7_0X) {&__THE_0_a_0});
-  __THE_1_test8_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test8_0, (struct __THE_1_test8_0X) {&__THE_0_a_0});
-  __THE_1_test9_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test9_0, (struct __THE_1_test9_0X) {&__THE_0_a_0});
-  __THE_1_test10_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test10_0, (struct __THE_1_test10_0X) {&__THE_0_a_0});
-  __THE_1_test11_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test11_0, (struct __THE_1_test11_0X) {&__THE_0_a_0});
-  __THE_1_test12_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test12_0, (struct __THE_1_test12_0X) {&__THE_0_a_0});
-  __THE_1_test13_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test13_0, (struct __THE_1_test13_0X) {&__THE_0_a_0});
-  __THE_1_test14_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test14_0, (struct __THE_1_test14_0X) {&__THE_0_a_0});
-  __THE_1_test15_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test15_0, (struct __THE_1_test15_0X) {&__THE_0_a_0});
-  __THE_1_test16_0_alloc((struct __THE_1_fn$1000 *) &__THE_0_test16_0, (struct __THE_1_test16_0X) {&__THE_0_a_0});
-  const struct __THE_1_fn$1000 async_main;
-  __THE_1_async_main_alloc((struct __THE_1_fn$1000 *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test16_0, &__THE_0_test15_0, &__THE_0_test14_0, &__THE_0_test13_0, &__THE_0_test12_0, &__THE_0_test11_0, &__THE_0_test10_0, &__THE_0_test9_0, &__THE_0_test8_0, &__THE_0_test7_0, &__THE_0_test6_0, &__THE_0_test5_0, &__THE_0_test4_0, &__THE_0_test3_0, &__THE_0_test2_0, &__THE_0_test1_0});
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_a_0 = (struct __THE_1_fn_aFRvoidFE) {&__THE_1_test_a_0, NULL, 0};
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test1_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test2_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test3_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test4_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test5_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test6_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test7_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test8_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test9_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test10_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test11_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test12_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test13_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test14_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test15_0;
+  const struct __THE_1_fn_aFRvoidFE __THE_0_test_test16_0;
+  __THE_1_test_test1_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test1_0, (struct __THE_1_test_test1_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test2_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test2_0, (struct __THE_1_test_test2_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test3_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test3_0, (struct __THE_1_test_test3_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test4_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test4_0, (struct __THE_1_test_test4_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test5_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test5_0, (struct __THE_1_test_test5_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test6_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test6_0, (struct __THE_1_test_test6_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test7_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test7_0, (struct __THE_1_test_test7_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test8_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test8_0, (struct __THE_1_test_test8_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test9_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test9_0, (struct __THE_1_test_test9_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test10_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test10_0, (struct __THE_1_test_test10_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test11_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test11_0, (struct __THE_1_test_test11_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test12_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test12_0, (struct __THE_1_test_test12_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test13_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test13_0, (struct __THE_1_test_test13_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test14_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test14_0, (struct __THE_1_test_test14_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test15_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test15_0, (struct __THE_1_test_test15_0X) {&__THE_0_test_a_0});
+  __THE_1_test_test16_0_alloc((struct __THE_1_fn_aFRvoidFE *) &__THE_0_test_test16_0, (struct __THE_1_test_test16_0X) {&__THE_0_test_a_0});
+  const struct __THE_1_fn_aFRvoidFE async_main;
+  __THE_1_async_main_alloc((struct __THE_1_fn_aFRvoidFE *) &async_main, (struct __THE_1_async_mainX) {&__THE_0_test_test16_0, &__THE_0_test_test15_0, &__THE_0_test_test14_0, &__THE_0_test_test13_0, &__THE_0_test_test12_0, &__THE_0_test_test11_0, &__THE_0_test_test10_0, &__THE_0_test_test9_0, &__THE_0_test_test8_0, &__THE_0_test_test7_0, &__THE_0_test_test6_0, &__THE_0_test_test5_0, &__THE_0_test_test4_0, &__THE_0_test_test3_0, &__THE_0_test_test2_0, &__THE_0_test_test1_0});
   threadpool_add(tp, async_main.f, xalloc(async_main.x, async_main.l), NULL, NULL, NULL);
   threadpool_wait(tp);
   threadpool_deinit(tp);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) async_main);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test16_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test15_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test14_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test13_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test12_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test11_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test10_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test9_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test8_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test7_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test6_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test5_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test4_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test3_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test2_0);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_test1_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) async_main);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test16_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test15_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test14_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test13_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test12_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test11_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test10_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test9_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test8_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test7_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test6_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test5_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test4_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test3_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test2_0);
+  __THE_1_fn_aFRvoidFE_free((struct __THE_1_fn_aFRvoidFE) __THE_0_test_test1_0);
 }
 ======= flags =======
 U:-pthread

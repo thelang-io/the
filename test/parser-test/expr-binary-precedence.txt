@@ -935,7 +935,9 @@ z := (-a + ~b + c++) - --d
       <ExprBinaryRight>
         <ExprObj start="26:18" end="26:28">
           <ExprObjId>
-            <Token type="ID" val="Test" start="26:18" end="26:22" />
+            <TypeId start="26:18" end="26:22">
+              <Token type="ID" val="Test" start="26:18" end="26:22" />
+            </TypeId>
           </ExprObjId>
           <ExprObjProps>
             <ExprObjProp>
@@ -995,7 +997,9 @@ z := (-a + ~b + c++) - --d
       <ExprBinaryRight>
         <ExprObj start="27:20" end="27:30">
           <ExprObjId>
-            <Token type="ID" val="Test" start="27:20" end="27:24" />
+            <TypeId start="27:20" end="27:24">
+              <Token type="ID" val="Test" start="27:20" end="27:24" />
+            </TypeId>
           </ExprObjId>
           <ExprObjProps>
             <ExprObjProp>

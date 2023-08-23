@@ -68,6 +68,47 @@ ParserStmtExpr &stmtExprLastChild (ParserStmtExpr &stmtExpr) {
   return stmtExpr;
 }
 
+bool Parser::isValidExprObjId (const ParserStmtExpr &stmtExpr) {
+  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
+    return false;
+  }
+
+  auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
+
+  if (exprAccess.expr == std::nullopt || exprAccess.elem != std::nullopt) {
+    return false;
+  }
+
+  return std::holds_alternative<Token>(*exprAccess.expr) ||
+    Parser::isValidExprObjId(std::get<ParserStmtExpr>(*exprAccess.expr));
+}
+
+ParserType Parser::transformExprToType (const ParserStmtExpr &stmtExpr) {
+  auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
+  auto body = ParserTypeBody{};
+
+  if (std::holds_alternative<Token>(*exprAccess.expr)) {
+    body = ParserTypeId{std::get<Token>(*exprAccess.expr)};
+  } else {
+    body = ParserTypeMember{Parser::transformExprToType(std::get<ParserStmtExpr>(*exprAccess.expr)), *exprAccess.prop};
+  }
+
+  return ParserType{std::make_shared<ParserTypeBody>(body), stmtExpr.parenthesized, stmtExpr.start, stmtExpr.end};
+}
+
+ParserStmtExpr Parser::transformTypeToExpr (const ParserType &type) {
+  auto body = ParserExpr{};
+
+  if (std::holds_alternative<ParserTypeId>(*type.body)) {
+    body = ParserExprAccess{std::get<ParserTypeId>(*type.body).id, std::nullopt, std::nullopt};
+  } else {
+    auto typeMember = std::get<ParserTypeMember>(*type.body);
+    body = ParserExprAccess{Parser::transformTypeToExpr(typeMember.id), std::nullopt, typeMember.member};
+  }
+
+  return ParserStmtExpr{std::make_shared<ParserExpr>(body), type.parenthesized, type.start, type.end};
+}
+
 Parser::Parser (Lexer *l) {
   this->lexer = l;
   this->reader = this->lexer->reader;
@@ -221,6 +262,106 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
     return this->_wrapStmt(allowSemi, ParserStmtEnumDecl{tok1, enumDeclMembers}, tok0.start);
   }
 
+  if (tok0.type == TK_KW_EXPORT) {
+    auto declaration = this->next(true, keepComments);
+
+    auto isExprAccessWithToken = std::holds_alternative<ParserStmtExpr>(*declaration.body) &&
+      std::holds_alternative<ParserExprAccess>(*std::get<ParserStmtExpr>(*declaration.body).body) &&
+      std::get<ParserExprAccess>(*std::get<ParserStmtExpr>(*declaration.body).body).expr != std::nullopt &&
+      std::holds_alternative<Token>(*std::get<ParserExprAccess>(*std::get<ParserStmtExpr>(*declaration.body).body).expr);
+
+    if (
+      !std::holds_alternative<ParserStmtEnumDecl>(*declaration.body) &&
+      !isExprAccessWithToken &&
+      !std::holds_alternative<ParserStmtFnDecl>(*declaration.body) &&
+      !std::holds_alternative<ParserStmtObjDecl>(*declaration.body) &&
+      !std::holds_alternative<ParserStmtTypeDecl>(*declaration.body) &&
+      !std::holds_alternative<ParserStmtVarDecl>(*declaration.body)
+    ) {
+      throw Error(this->reader, declaration.start, E0190);
+    }
+
+    return this->_wrapStmt(allowSemi, ParserStmtExportDecl{declaration}, tok0.start);
+  }
+
+  if (tok0.type == TK_KW_IMPORT) {
+    auto specifiers = std::vector<ParserStmtImportDeclSpecifier>{};
+    auto [loc1, tok1] = this->lexer->next();
+    this->lexer->seek(loc1);
+
+    if (tok1.type == TK_LIT_STR) {
+      auto source = *this->_stmtExpr(false);
+      return this->_wrapStmt(allowSemi, ParserStmtImportDecl{specifiers, source}, tok0.start);
+    }
+
+    while (true) {
+      auto [loc2, tok2] = this->lexer->next();
+
+      if (tok2.type == TK_OP_STAR) {
+        auto [_3, tok3] = this->lexer->next();
+
+        if (tok3.type != TK_KW_AS) {
+          throw Error(this->reader, tok3.start, E0185);
+        }
+
+        auto [loc4, tok4] = this->lexer->next();
+
+        if (tok4.type != TK_ID) {
+          throw Error(this->reader, tok4.start, E0186);
+        }
+
+        this->lexer->seek(loc4);
+        auto specifierLocal = *this->_stmtExpr(false);
+        specifiers.push_back(ParserStmtImportDeclSpecifier{std::nullopt, specifierLocal});
+      } else if (tok2.type == TK_ID) {
+        this->lexer->seek(loc2);
+        auto specifierImported = *this->_stmtExpr(false);
+        auto specifierLocal = specifierImported;
+        auto [loc3, tok3] = this->lexer->next();
+
+        if (tok3.type == TK_KW_AS) {
+          auto [loc4, tok4] = this->lexer->next();
+
+          if (tok4.type != TK_ID) {
+            throw Error(this->reader, tok4.start, E0186);
+          }
+
+          this->lexer->seek(loc4);
+          specifierLocal = *this->_stmtExpr(false);
+        } else {
+          this->lexer->seek(loc3);
+        }
+
+        specifiers.push_back(ParserStmtImportDeclSpecifier{specifierImported, specifierLocal});
+      } else {
+        throw Error(this->reader, tok2.start, E0187);
+      }
+
+      auto [loc5, tok5] = this->lexer->next();
+
+      if (tok5.type != TK_OP_COMMA) {
+        this->lexer->seek(loc5);
+        break;
+      }
+    }
+
+    auto [_6, tok6] = this->lexer->next();
+
+    if (tok6.type != TK_KW_FROM) {
+      throw Error(this->reader, tok6.start, E0188);
+    }
+
+    auto [loc7, tok7] = this->lexer->next();
+    this->lexer->seek(loc7);
+
+    if (tok7.type != TK_LIT_STR) {
+      throw Error(this->reader, tok7.start, tok7.end, E0189);
+    }
+
+    auto source = *this->_stmtExpr(false);
+    return this->_wrapStmt(allowSemi, ParserStmtImportDecl{specifiers, source}, tok0.start);
+  }
+
   if (tok0.type == TK_KW_FN) {
     auto [_1, tok1] = this->lexer->next();
 
@@ -263,11 +404,8 @@ ParserStmt Parser::next (bool allowSemi, bool keepComments) {
         throw Error(this->reader, this->lexer->loc, E0103);
       } else {
         auto exprObj = std::get<ParserExprObj>(*ifCondLastChild.body);
-        auto exprAccess = ParserExprAccess{exprObj.id, std::nullopt, std::nullopt};
-
-        ifCondLastChild = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, exprObj.id.start, exprObj.id.end};
+        ifCondLastChild = Parser::transformTypeToExpr(exprObj.id);
         this->lexer->seek(exprObj.id.end);
-
         ifBody = this->_block(keepComments);
       }
     }
@@ -1236,14 +1374,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprIs (
 }
 
 std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stmtExpr, ReaderLocation loc, [[maybe_unused]] const Token &tok) {
-  if (!std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
-    this->lexer->seek(loc);
-    return std::make_tuple(stmtExpr, false);
-  }
-
-  auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
-
-  if (exprAccess.expr == std::nullopt || !std::holds_alternative<Token>(*exprAccess.expr)) {
+  if (!Parser::isValidExprObjId(stmtExpr)) {
     this->lexer->seek(loc);
     return std::make_tuple(stmtExpr, false);
   }
@@ -1295,7 +1426,7 @@ std::tuple<ParserStmtExpr, bool> Parser::_wrapExprObj (const ParserStmtExpr &stm
     }
   }
 
-  auto exprObj = ParserExprObj{std::get<Token>(*exprAccess.expr), exprObjProps};
+  auto exprObj = ParserExprObj{Parser::transformExprToType(stmtExpr), exprObjProps};
   return std::make_tuple(ParserStmtExpr{std::make_shared<ParserExpr>(exprObj), false, stmtExpr.start, this->lexer->loc}, true);
 }
 
@@ -1458,9 +1589,7 @@ ParserStmt Parser::_wrapStmtLoop (bool allowSemi, const Token &tok1, bool parent
       std::holds_alternative<ParserExprObj>(*std::get<ParserStmtExpr>(*loopInit->body).body)
     ) {
       auto exprObj = std::get<ParserExprObj>(*std::get<ParserStmtExpr>(*loopInit->body).body);
-      auto exprAccess = ParserExprAccess{exprObj.id, std::nullopt, std::nullopt};
-
-      *loopInit->body = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, exprObj.id.start, exprObj.id.end};
+      *loopInit->body = Parser::transformTypeToExpr(exprObj.id);
       this->lexer->seek(exprObj.id.end);
     } else if (
       std::holds_alternative<ParserStmtExpr>(*loopInit->body) &&
@@ -1507,9 +1636,7 @@ ParserStmt Parser::_wrapStmtLoop (bool allowSemi, const Token &tok1, bool parent
         loopBody = this->_block(keepComments);
       } else if (std::holds_alternative<ParserExprObj>(*loopPartLastChild.body)) {
         auto exprObj = std::get<ParserExprObj>(*loopPartLastChild.body);
-        auto exprAccess = ParserExprAccess{exprObj.id, std::nullopt, std::nullopt};
-
-        loopPartLastChild = ParserStmtExpr{std::make_shared<ParserExpr>(exprAccess), false, exprObj.id.start, exprObj.id.end};
+        loopPartLastChild = Parser::transformTypeToExpr(exprObj.id);
         this->lexer->seek(exprObj.id.end);
         loopBody = this->_block(keepComments);
       }
@@ -1527,7 +1654,20 @@ ParserStmt Parser::_wrapStmtLoop (bool allowSemi, const Token &tok1, bool parent
 ParserType Parser::_wrapType (const ParserType &type) {
   auto [loc1, tok1] = this->lexer->next();
 
-  if (tok1.type == TK_OP_LBRACK) {
+  if (tok1.type == TK_OP_DOT) {
+    if (!std::holds_alternative<ParserTypeId>(*type.body) && !std::holds_alternative<ParserTypeMember>(*type.body)) {
+      throw Error(this->reader, type.start, type.end, E0191);
+    }
+
+    auto [_2, tok2] = this->lexer->next();
+
+    if (tok2.type != TK_ID) {
+      throw Error(this->reader, tok2.start, E0192);
+    }
+
+    auto typeMember = ParserTypeMember{type, tok2};
+    return this->_wrapType(ParserType{std::make_shared<ParserTypeBody>(typeMember), false, type.start, this->lexer->loc});
+  } else if (tok1.type == TK_OP_LBRACK) {
     auto [loc2, tok2] = this->lexer->next();
 
     if (tok2.type != TK_OP_RBRACK) {

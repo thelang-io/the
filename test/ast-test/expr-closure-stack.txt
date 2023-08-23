@@ -13,8 +13,8 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test" codeName="test_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="test" codeName="test_test_0" frame="1">
+      <TypeFn name="fn_sFP3intFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />
@@ -96,7 +96,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="testClosure" codeName="testClosure_0" frame="2">
-        <TypeFn name="fn$1001">
+        <TypeFn name="fn_sFRvoidFE">
           <TypeFnReturnType>
             <BuiltinType name="void" />
           </TypeFnReturnType>
@@ -106,7 +106,7 @@ main {
     <NodeVarDeclInit>
       <NodeExpr>
         <NodeExprType>
-          <TypeFn name="fn$1001">
+          <TypeFn name="fn_sFRvoidFE">
             <TypeFnReturnType>
               <BuiltinType name="void" />
             </TypeFnReturnType>
@@ -115,8 +115,8 @@ main {
         <NodeExprBody>
           <ExprClosure>
             <ExprClosureVar>
-              <Var name="$" codeName="mainSD$_0" frame="3">
-                <TypeFn name="fn$1001">
+              <Var name="$" codeName="test_mainSD$_0" frame="3">
+                <TypeFn name="fn_sFRvoidFE">
                   <TypeFnReturnType>
                     <BuiltinType name="void" />
                   </TypeFnReturnType>
@@ -127,8 +127,8 @@ main {
               <Var name="a" codeName="a_0" mut frame="2">
                 <BuiltinType name="int" />
               </Var>
-              <Var name="test" codeName="test_0" frame="1">
-                <TypeFn name="fn$1000">
+              <Var name="test" codeName="test_test_0" frame="1">
+                <TypeFn name="fn_sFP3intFRvoidFE">
                   <TypeFnParams>
                     <TypeFnParam name="a" required>
                       <BuiltinType name="int" />
@@ -150,7 +150,7 @@ main {
                     <ExprCallCallee>
                       <NodeExpr>
                         <NodeExprType>
-                          <TypeFn name="fn$1000">
+                          <TypeFn name="fn_sFP3intFRvoidFE">
                             <TypeFnParams>
                               <TypeFnParam name="a" required>
                                 <BuiltinType name="int" />
@@ -163,8 +163,8 @@ main {
                         </NodeExprType>
                         <NodeExprBody>
                           <ExprAccess>
-                            <Var name="test" codeName="test_0" frame="1">
-                              <TypeFn name="fn$1000">
+                            <Var name="test" codeName="test_test_0" frame="1">
+                              <TypeFn name="fn_sFP3intFRvoidFE">
                                 <TypeFnParams>
                                   <TypeFnParam name="a" required>
                                     <BuiltinType name="int" />

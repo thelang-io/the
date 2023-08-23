@@ -38,8 +38,8 @@ main {
 ======= stdout =======
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test1" codeName="test1_0" frame="1">
-      <TypeFn name="fn$1000">
+    <Var name="test1" codeName="test_test1_0" frame="1">
+      <TypeFn name="fn_sFP3strFP3strFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="p1" required>
             <BuiltinType name="str" />
@@ -149,8 +149,8 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test2" codeName="test2_0" frame="1">
-      <TypeFn name="fn$1001">
+    <Var name="test2" codeName="test_test2_0" frame="1">
+      <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
         <TypeFnParams>
           <TypeFnParam name="p2">
             <BuiltinType name="str" />
@@ -278,11 +278,11 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test3" codeName="test3_0" frame="1">
-      <TypeFn name="fn$1006">
+    <Var name="test3" codeName="test_test3_0" frame="1">
+      <TypeFn name="fn_sFP3fn_sFP3intFP4array_intFRintFEFRintFE">
         <TypeFnParams>
           <TypeFnParam name="sum" required>
-            <TypeFn name="fn$1005">
+            <TypeFn name="fn_sFP3intFP4array_intFRintFE">
               <TypeFnParams>
                 <TypeFnParam required>
                   <BuiltinType name="int" />
@@ -309,7 +309,7 @@ main {
     <FnDeclParam>
       <FnDeclParamVar>
         <Var name="sum" codeName="sum_0" frame="2">
-          <TypeFn name="fn$1005">
+          <TypeFn name="fn_sFP3intFP4array_intFRintFE">
             <TypeFnParams>
               <TypeFnParam required>
                 <BuiltinType name="int" />
@@ -353,7 +353,7 @@ main {
                             <ExprCallCallee>
                               <NodeExpr>
                                 <NodeExprType>
-                                  <TypeFn name="fn$1005">
+                                  <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                     <TypeFnParams>
                                       <TypeFnParam required>
                                         <BuiltinType name="int" />
@@ -372,7 +372,7 @@ main {
                                 <NodeExprBody>
                                   <ExprAccess>
                                     <Var name="sum" codeName="sum_0" frame="2">
-                                      <TypeFn name="fn$1005">
+                                      <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                         <TypeFnParams>
                                           <TypeFnParam required>
                                             <BuiltinType name="int" />
@@ -418,7 +418,7 @@ main {
                             <ExprCallCallee>
                               <NodeExpr>
                                 <NodeExprType>
-                                  <TypeFn name="fn$1005">
+                                  <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                     <TypeFnParams>
                                       <TypeFnParam required>
                                         <BuiltinType name="int" />
@@ -437,7 +437,7 @@ main {
                                 <NodeExprBody>
                                   <ExprAccess>
                                     <Var name="sum" codeName="sum_0" frame="2">
-                                      <TypeFn name="fn$1005">
+                                      <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                         <TypeFnParams>
                                           <TypeFnParam required>
                                             <BuiltinType name="int" />
@@ -497,7 +497,7 @@ main {
                     <ExprCallCallee>
                       <NodeExpr>
                         <NodeExprType>
-                          <TypeFn name="fn$1005">
+                          <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                             <TypeFnParams>
                               <TypeFnParam required>
                                 <BuiltinType name="int" />
@@ -516,7 +516,7 @@ main {
                         <NodeExprBody>
                           <ExprAccess>
                             <Var name="sum" codeName="sum_0" frame="2">
-                              <TypeFn name="fn$1005">
+                              <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                 <TypeFnParams>
                                   <TypeFnParam required>
                                     <BuiltinType name="int" />
@@ -570,8 +570,8 @@ main {
 </NodeFnDecl>
 <NodeFnDecl>
   <NodeFnDeclVar>
-    <Var name="test3_sum" codeName="test3_sum_0" frame="1">
-      <TypeFn name="fn$1005">
+    <Var name="test3_sum" codeName="test_test3_sum_0" frame="1">
+      <TypeFn name="fn_sFP3intFP4array_intFRintFE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <BuiltinType name="int" />
@@ -667,8 +667,8 @@ main {
 <NodeMain>
   <NodeFnDecl>
     <NodeFnDeclVar>
-      <Var name="test0" codeName="mainSDtest0_0" frame="2">
-        <TypeFn name="fn$1007">
+      <Var name="test0" codeName="test_mainSDtest0_0" frame="2">
+        <TypeFn name="fn_sFP3intFP1intFRintFE">
           <TypeFnParams>
             <TypeFnParam name="p0" required>
               <BuiltinType name="int" />
@@ -809,7 +809,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1000">
+              <TypeFn name="fn_sFP3strFP3strFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam name="p1" required>
                     <BuiltinType name="str" />
@@ -825,8 +825,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test1" codeName="test1_0" frame="1">
-                  <TypeFn name="fn$1000">
+                <Var name="test1" codeName="test_test1_0" frame="1">
+                  <TypeFn name="fn_sFP3strFP3strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p1" required>
                         <BuiltinType name="str" />
@@ -878,7 +878,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam name="p2">
                     <BuiltinType name="str" />
@@ -896,8 +896,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$1001">
+                <Var name="test2" codeName="test_test2_0" frame="1">
+                  <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
                         <BuiltinType name="str" />
@@ -929,7 +929,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam name="p2">
                     <BuiltinType name="str" />
@@ -947,8 +947,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$1001">
+                <Var name="test2" codeName="test_test2_0" frame="1">
+                  <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
                         <BuiltinType name="str" />
@@ -992,7 +992,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam name="p2">
                     <BuiltinType name="str" />
@@ -1010,8 +1010,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$1001">
+                <Var name="test2" codeName="test_test2_0" frame="1">
+                  <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
                         <BuiltinType name="str" />
@@ -1065,7 +1065,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn$1001">
+              <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                 <TypeFnParams>
                   <TypeFnParam name="p2">
                     <BuiltinType name="str" />
@@ -1083,8 +1083,8 @@ main {
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess>
-                <Var name="test2" codeName="test2_0" frame="1">
-                  <TypeFn name="fn$1001">
+                <Var name="test2" codeName="test_test2_0" frame="1">
+                  <TypeFn name="fn_sFP1strFP4array_strFRvoidFE">
                     <TypeFnParams>
                       <TypeFnParam name="p2">
                         <BuiltinType name="str" />
@@ -1178,10 +1178,10 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1006">
+                        <TypeFn name="fn_sFP3fn_sFP3intFP4array_intFRintFEFRintFE">
                           <TypeFnParams>
                             <TypeFnParam name="sum" required>
-                              <TypeFn name="fn$1005">
+                              <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                 <TypeFnParams>
                                   <TypeFnParam required>
                                     <BuiltinType name="int" />
@@ -1205,11 +1205,11 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test3" codeName="test3_0" frame="1">
-                            <TypeFn name="fn$1006">
+                          <Var name="test3" codeName="test_test3_0" frame="1">
+                            <TypeFn name="fn_sFP3fn_sFP3intFP4array_intFRintFEFRintFE">
                               <TypeFnParams>
                                 <TypeFnParam name="sum" required>
-                                  <TypeFn name="fn$1005">
+                                  <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                     <TypeFnParams>
                                       <TypeFnParam required>
                                         <BuiltinType name="int" />
@@ -1239,7 +1239,7 @@ main {
                     <ExprCallArg id="sum">
                       <NodeExpr>
                         <NodeExprType>
-                          <TypeFn name="fn$1005">
+                          <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                             <TypeFnParams>
                               <TypeFnParam name="a" required>
                                 <BuiltinType name="int" />
@@ -1257,8 +1257,8 @@ main {
                         </NodeExprType>
                         <NodeExprBody>
                           <ExprAccess>
-                            <Var name="test3_sum" codeName="test3_sum_0" frame="1">
-                              <TypeFn name="fn$1005">
+                            <Var name="test3_sum" codeName="test_test3_sum_0" frame="1">
+                              <TypeFn name="fn_sFP3intFP4array_intFRintFE">
                                 <TypeFnParams>
                                   <TypeFnParam name="a" required>
                                     <BuiltinType name="int" />
@@ -1326,7 +1326,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1007">
+                        <TypeFn name="fn_sFP3intFP1intFRintFE">
                           <TypeFnParams>
                             <TypeFnParam name="p0" required>
                               <BuiltinType name="int" />
@@ -1342,8 +1342,8 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test0" codeName="mainSDtest0_0" frame="2">
-                            <TypeFn name="fn$1007">
+                          <Var name="test0" codeName="test_mainSDtest0_0" frame="2">
+                            <TypeFn name="fn_sFP3intFP1intFRintFE">
                               <TypeFnParams>
                                 <TypeFnParam name="p0" required>
                                   <BuiltinType name="int" />
@@ -1420,7 +1420,7 @@ main {
                   <ExprCallCallee>
                     <NodeExpr>
                       <NodeExprType>
-                        <TypeFn name="fn$1007">
+                        <TypeFn name="fn_sFP3intFP1intFRintFE">
                           <TypeFnParams>
                             <TypeFnParam name="p0" required>
                               <BuiltinType name="int" />
@@ -1436,8 +1436,8 @@ main {
                       </NodeExprType>
                       <NodeExprBody>
                         <ExprAccess>
-                          <Var name="test0" codeName="mainSDtest0_0" frame="2">
-                            <TypeFn name="fn$1007">
+                          <Var name="test0" codeName="test_mainSDtest0_0" frame="2">
+                            <TypeFn name="fn_sFP3intFP1intFRintFE">
                               <TypeFnParams>
                                 <TypeFnParam name="p0" required>
                                   <BuiltinType name="int" />

@@ -44,6 +44,9 @@ std::string ParserType::stringify () const {
   } else if (std::holds_alternative<ParserTypeMap>(*this->body)) {
     auto typeBody = std::get<ParserTypeMap>(*this->body);
     code = typeBody.valueType.stringify() + "[" + typeBody.keyType.stringify() + "]";
+  } else if (std::holds_alternative<ParserTypeMember>(*this->body)) {
+    auto typeBody = std::get<ParserTypeMember>(*this->body);
+    code = typeBody.id.stringify() + "." + typeBody.member.val;
   } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
     auto typeBody = std::get<ParserTypeOptional>(*this->body);
     code = typeBody.type.stringify() + "?";
@@ -80,6 +83,11 @@ std::string ParserType::xml (std::size_t indent) const {
     typeName += "Id";
   } else if (std::holds_alternative<ParserTypeMap>(*this->body)) {
     typeName += "Map";
+  } else if (std::holds_alternative<ParserTypeMember>(*this->body)) {
+    auto typeMember = std::get<ParserTypeMember>(*this->body);
+
+    typeName += "Member";
+    attrs += R"( member=")" + typeMember.member.val + R"(")";
   } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
     typeName += "Optional";
   } else if (std::holds_alternative<ParserTypeRef>(*this->body)) {
@@ -137,6 +145,9 @@ std::string ParserType::xml (std::size_t indent) const {
     result += std::string(indent + 2, ' ') + "<TypeMapValueType>" EOL;
     result += typeMap.valueType.xml(indent + 4) + EOL;
     result += std::string(indent + 2, ' ') + "</TypeMapValueType>" EOL;
+  } else if (std::holds_alternative<ParserTypeMember>(*this->body)) {
+    auto typeMember = std::get<ParserTypeMember>(*this->body);
+    result += typeMember.id.xml(indent + 2) + EOL;
   } else if (std::holds_alternative<ParserTypeOptional>(*this->body)) {
     auto typeOptional = std::get<ParserTypeOptional>(*this->body);
     result += typeOptional.type.xml(indent + 2) + EOL;

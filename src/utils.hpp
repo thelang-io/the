@@ -17,43 +17,13 @@
 #ifndef SRC_UTILS_HPP
 #define SRC_UTILS_HPP
 
-#include <algorithm>
+#include <optional>
 #include <string>
 #include <vector>
-#include "config.hpp"
 
-inline std::string str_trim (const std::string &str) {
-  auto result = str;
-
-  result.erase(result.begin(), std::find_if(result.begin(), result.end(), [] (auto ch) -> bool {
-    return !std::isspace(ch);
-  }));
-
-  result.erase(std::find_if(result.rbegin(), result.rend(), [] (auto ch) -> bool {
-    return !std::isspace(ch);
-  }).base(), result.end());
-
-  return result;
-}
-
-inline std::vector<std::string> str_lines (const std::string &str) {
-  auto delimiter = std::string(EOL);
-  auto pos = static_cast<std::string::size_type>(0);
-  auto prev = static_cast<std::string::size_type>(0);
-  auto result = std::vector<std::string>{};
-
-  while ((pos = str.find(delimiter, prev)) != std::string::npos) {
-    result.push_back(str.substr(prev, pos - prev));
-    prev = pos + delimiter.size();
-  }
-
-  result.push_back(str.substr(prev));
-
-  result.erase(std::remove_if(result.begin(), result.end(), [] (auto it) {
-    return str_trim(it).empty();
-  }), result.end());
-
-  return result;
-}
+std::optional<std::string> convert_path_to_namespace (const std::string &);
+std::string str_trim (const std::string &);
+std::vector<std::string> str_lines (const std::string &);
+std::optional<std::string> parse_package_yaml_main (const std::string &);
 
 #endif

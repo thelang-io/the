@@ -162,7 +162,9 @@ main {
   </ExprLit>
   <ExprObj start="26:3" end="26:13">
     <ExprObjId>
-      <Token type="ID" val="Test" start="26:3" end="26:7" />
+      <TypeId start="26:3" end="26:7">
+        <Token type="ID" val="Test" start="26:3" end="26:7" />
+      </TypeId>
     </ExprObjId>
     <ExprObjProps>
       <ExprObjProp>

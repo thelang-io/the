@@ -72,31 +72,31 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1000P;
+struct __THE_1_fn_sFP5anyFRanyFE;
+struct __THE_1_fn_sFP5anyFRanyFEP;
 struct __THE_1_any_int;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
+struct __THE_1_fn_sFP5anyFP2anyFRanyFE;
+struct __THE_1_fn_sFP5anyFP2anyFRanyFEP;
 struct __THE_1_any_char;
 struct __THE_1_any_str;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFP5anyFRanyFE {
   struct any (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1000P {
+struct __THE_1_fn_sFP5anyFRanyFEP {
   struct any n0;
 };
 struct __THE_1_any_int {
   int32_t d;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFP5anyFP2anyFRanyFE {
   struct any (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_sFP5anyFP2anyFRanyFEP {
   struct any n0;
   unsigned char o1;
   struct any n1;
@@ -122,8 +122,8 @@ void *xalloc (void *, size_t);
 struct any __THE_1_any_int_alloc (int32_t);
 struct any __THE_1_any_int_copy (const struct any);
 void __THE_1_any_int_free (struct any);
-struct any __THE_1_test1_0 (void *, void *);
-struct any __THE_1_test2_0 (void *, void *);
+struct any __THE_1_test_test1_0 (void *, void *);
+struct any __THE_1_test_test2_0 (void *, void *);
 struct any __THE_1_any_char_alloc (char);
 struct any __THE_1_any_char_copy (const struct any);
 void __THE_1_any_char_free (struct any);
@@ -195,9 +195,9 @@ void __THE_1_any_int_free (struct any _n) {
   struct __THE_1_any_int *n = _n.d;
   free(n);
 }
-struct any __THE_1_test1_0 (void *px, void *pp) {
+struct any __THE_1_test_test1_0 (void *px, void *pp) {
   struct any v;
-  struct __THE_1_fn$1000P *p = pp;
+  struct __THE_1_fn_sFP5anyFRanyFEP *p = pp;
   struct any __THE_0_a_0 = p->n0;
   __THE_0_a_0 = any_realloc(__THE_0_a_0, __THE_1_any_int_alloc(2));
   v = any_copy(__THE_0_a_0);
@@ -205,9 +205,9 @@ struct any __THE_1_test1_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
-struct any __THE_1_test2_0 (void *px, void *pp) {
+struct any __THE_1_test_test2_0 (void *px, void *pp) {
   struct any v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP5anyFP2anyFRanyFEP *p = pp;
   struct any __THE_0_a_0 = p->n0;
   struct any __THE_0_b_0 = p->o1 == 1 ? p->n1 : __THE_1_any_int_alloc(3);
   __THE_0_b_0 = any_realloc(__THE_0_b_0, any_copy(__THE_0_a_0));
@@ -253,11 +253,11 @@ void __THE_1_any_str_free (struct any _n) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_test1_0 = (struct __THE_1_fn$1000) {&__THE_1_test1_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_test2_0 = (struct __THE_1_fn$1001) {&__THE_1_test2_0, NULL, 0};
-  any_free((struct any) __THE_0_test1_0.f(__THE_0_test1_0.x, xalloc(&(struct __THE_1_fn$1000P) {__THE_1_any_int_alloc(0)}, sizeof(struct __THE_1_fn$1000P))));
-  any_free((struct any) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_1_any_int_alloc(2), 0, (struct any) {}}, sizeof(struct __THE_1_fn$1001P))));
-  any_free((struct any) __THE_0_test2_0.f(__THE_0_test2_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_1_any_char_alloc('2'), 1, __THE_1_any_str_alloc(str_alloc("test"))}, sizeof(struct __THE_1_fn$1001P))));
+  const struct __THE_1_fn_sFP5anyFRanyFE __THE_0_test_test1_0 = (struct __THE_1_fn_sFP5anyFRanyFE) {&__THE_1_test_test1_0, NULL, 0};
+  const struct __THE_1_fn_sFP5anyFP2anyFRanyFE __THE_0_test_test2_0 = (struct __THE_1_fn_sFP5anyFP2anyFRanyFE) {&__THE_1_test_test2_0, NULL, 0};
+  any_free((struct any) __THE_0_test_test1_0.f(__THE_0_test_test1_0.x, xalloc(&(struct __THE_1_fn_sFP5anyFRanyFEP) {__THE_1_any_int_alloc(0)}, sizeof(struct __THE_1_fn_sFP5anyFRanyFEP))));
+  any_free((struct any) __THE_0_test_test2_0.f(__THE_0_test_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5anyFP2anyFRanyFEP) {__THE_1_any_int_alloc(2), 0, (struct any) {}}, sizeof(struct __THE_1_fn_sFP5anyFP2anyFRanyFEP))));
+  any_free((struct any) __THE_0_test_test2_0.f(__THE_0_test_test2_0.x, xalloc(&(struct __THE_1_fn_sFP5anyFP2anyFRanyFEP) {__THE_1_any_char_alloc('2'), 1, __THE_1_any_str_alloc(str_alloc("test"))}, sizeof(struct __THE_1_fn_sFP5anyFP2anyFRanyFEP))));
 }
 ======= flags =======
 ======= stdout =======

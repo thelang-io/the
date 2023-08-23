@@ -91,46 +91,46 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_fn$1000;
-struct __THE_1_fn$1002;
-struct __THE_1_fn$1002P;
-struct __THE_1_fn$1003;
-struct __THE_1_fn$1001;
-struct __THE_1_fn$1001P;
-struct __THE_1_fn$1003P;
+struct __THE_1_fn_sFRvoidFE;
+struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFE;
+struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFEP;
+struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFE;
+struct __THE_1_fn_sFP3intFP3intFRintFE;
+struct __THE_1_fn_sFP3intFP3intFRintFEP;
+struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP;
 
-struct __THE_1_fn$1000 {
+struct __THE_1_fn_sFRvoidFE {
   void (*f) (void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1002 {
+struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1002P {
-  struct __THE_1_fn$1000 n0;
+struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFEP {
+  struct __THE_1_fn_sFRvoidFE n0;
 };
-struct __THE_1_fn$1003 {
+struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001 {
+struct __THE_1_fn_sFP3intFP3intFRintFE {
   int32_t (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn$1001P {
+struct __THE_1_fn_sFP3intFP3intFRintFEP {
   int32_t n0;
   int32_t n1;
 };
-struct __THE_1_fn$1003P {
+struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP {
   struct str n0;
   int32_t n1;
   int32_t n2;
-  struct __THE_1_fn$1001 n3;
+  struct __THE_1_fn_sFP3intFP3intFRintFE n3;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -143,17 +143,17 @@ struct str str_alloc (const char *);
 struct str str_copy (const struct str);
 void str_free (struct str);
 void *xalloc (void *, size_t);
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000);
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000);
-void __THE_1_callback_0 (void *);
-void __THE_1_test_0 (void *, void *);
-struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001);
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001);
-void __THE_1_doJob_0 (void *, void *);
-int32_t __THE_1_sum_0 (void *, void *);
-int32_t __THE_1_div_0 (void *, void *);
-int32_t __THE_1_sub_0 (void *, void *);
-int32_t __THE_1_mul_0 (void *, void *);
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE);
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE);
+void __THE_1_test_callback_0 (void *);
+void __THE_1_test_test_0 (void *, void *);
+struct __THE_1_fn_sFP3intFP3intFRintFE __THE_1_fn_sFP3intFP3intFRintFE_copy (const struct __THE_1_fn_sFP3intFP3intFRintFE);
+void __THE_1_fn_sFP3intFP3intFRintFE_free (struct __THE_1_fn_sFP3intFP3intFRintFE);
+void __THE_1_test_doJob_0 (void *, void *);
+int32_t __THE_1_test_sum_0 (void *, void *);
+int32_t __THE_1_test_div_0 (void *, void *);
+int32_t __THE_1_test_sub_0 (void *, void *);
+int32_t __THE_1_test_mul_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -307,77 +307,77 @@ void *xalloc (void *n1, size_t n2) {
   memcpy(r, n1, n2);
   return r;
 }
-struct __THE_1_fn$1000 __THE_1_fn$1000_copy (const struct __THE_1_fn$1000 n) {
+struct __THE_1_fn_sFRvoidFE __THE_1_fn_sFRvoidFE_copy (const struct __THE_1_fn_sFRvoidFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1000) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFRvoidFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1000_free (struct __THE_1_fn$1000 n) {
+void __THE_1_fn_sFRvoidFE_free (struct __THE_1_fn_sFRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_callback_0 (void *px) {
+void __THE_1_test_callback_0 (void *px) {
   print(stdout, "zz", "callback called", THE_EOL);
 }
-void __THE_1_test_0 (void *px, void *pp) {
-  struct __THE_1_fn$1002P *p = pp;
-  const struct __THE_1_fn$1000 __THE_0_cb_0 = p->n0;
+void __THE_1_test_test_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFEP *p = pp;
+  const struct __THE_1_fn_sFRvoidFE __THE_0_cb_0 = p->n0;
   print(stdout, "zz", "before callback", THE_EOL);
   __THE_0_cb_0.f(__THE_0_cb_0.x);
   print(stdout, "zz", "after callback", THE_EOL);
-  __THE_1_fn$1000_free((struct __THE_1_fn$1000) __THE_0_cb_0);
+  __THE_1_fn_sFRvoidFE_free((struct __THE_1_fn_sFRvoidFE) __THE_0_cb_0);
   free(pp);
 }
-struct __THE_1_fn$1001 __THE_1_fn$1001_copy (const struct __THE_1_fn$1001 n) {
+struct __THE_1_fn_sFP3intFP3intFRintFE __THE_1_fn_sFP3intFP3intFRintFE_copy (const struct __THE_1_fn_sFP3intFP3intFRintFE n) {
   if (n.x == NULL) return n;
   void *x = alloc(n.l);
   memcpy(x, n.x, n.l);
-  return (struct __THE_1_fn$1001) {n.f, x, n.l};
+  return (struct __THE_1_fn_sFP3intFP3intFRintFE) {n.f, x, n.l};
 }
-void __THE_1_fn$1001_free (struct __THE_1_fn$1001 n) {
+void __THE_1_fn_sFP3intFP3intFRintFE_free (struct __THE_1_fn_sFP3intFP3intFRintFE n) {
   if (n.x != NULL) free(n.x);
 }
-void __THE_1_doJob_0 (void *px, void *pp) {
-  struct __THE_1_fn$1003P *p = pp;
+void __THE_1_test_doJob_0 (void *px, void *pp) {
+  struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP *p = pp;
   const struct str __THE_0_name_0 = p->n0;
   const int32_t __THE_0_a_0 = p->n1;
   const int32_t __THE_0_b_0 = p->n2;
-  const struct __THE_1_fn$1001 __THE_0_job_0 = p->n3;
-  print(stdout, "izszizzziz", __THE_0_a_0, " ", str_copy(__THE_0_name_0), " ", __THE_0_b_0, " ", "=", " ", __THE_0_job_0.f(__THE_0_job_0.x, xalloc(&(struct __THE_1_fn$1001P) {__THE_0_a_0, __THE_0_b_0}, sizeof(struct __THE_1_fn$1001P))), THE_EOL);
-  __THE_1_fn$1001_free((struct __THE_1_fn$1001) __THE_0_job_0);
+  const struct __THE_1_fn_sFP3intFP3intFRintFE __THE_0_job_0 = p->n3;
+  print(stdout, "izszizzziz", __THE_0_a_0, " ", str_copy(__THE_0_name_0), " ", __THE_0_b_0, " ", "=", " ", __THE_0_job_0.f(__THE_0_job_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3intFRintFEP) {__THE_0_a_0, __THE_0_b_0}, sizeof(struct __THE_1_fn_sFP3intFP3intFRintFEP))), THE_EOL);
+  __THE_1_fn_sFP3intFP3intFRintFE_free((struct __THE_1_fn_sFP3intFP3intFRintFE) __THE_0_job_0);
   str_free((struct str) __THE_0_name_0);
   free(pp);
 }
-int32_t __THE_1_sum_0 (void *px, void *pp) {
+int32_t __THE_1_test_sum_0 (void *px, void *pp) {
   int32_t v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP3intFP3intFRintFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   v = __THE_0_a_0 + __THE_0_b_0;
   free(pp);
   return v;
 }
-int32_t __THE_1_div_0 (void *px, void *pp) {
+int32_t __THE_1_test_div_0 (void *px, void *pp) {
   int32_t v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP3intFP3intFRintFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   v = __THE_0_a_0 / __THE_0_b_0;
   free(pp);
   return v;
 }
-int32_t __THE_1_sub_0 (void *px, void *pp) {
+int32_t __THE_1_test_sub_0 (void *px, void *pp) {
   int32_t v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP3intFP3intFRintFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   v = __THE_0_a_0 - __THE_0_b_0;
   free(pp);
   return v;
 }
-int32_t __THE_1_mul_0 (void *px, void *pp) {
+int32_t __THE_1_test_mul_0 (void *px, void *pp) {
   int32_t v;
-  struct __THE_1_fn$1001P *p = pp;
+  struct __THE_1_fn_sFP3intFP3intFRintFEP *p = pp;
   const int32_t __THE_0_a_0 = p->n0;
   const int32_t __THE_0_b_0 = p->n1;
   v = __THE_0_a_0 * __THE_0_b_0;
@@ -386,20 +386,20 @@ int32_t __THE_1_mul_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn$1000 __THE_0_callback_0 = (struct __THE_1_fn$1000) {&__THE_1_callback_0, NULL, 0};
-  const struct __THE_1_fn$1002 __THE_0_test_0 = (struct __THE_1_fn$1002) {&__THE_1_test_0, NULL, 0};
-  const struct __THE_1_fn$1003 __THE_0_doJob_0 = (struct __THE_1_fn$1003) {&__THE_1_doJob_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_sum_0 = (struct __THE_1_fn$1001) {&__THE_1_sum_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_div_0 = (struct __THE_1_fn$1001) {&__THE_1_div_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_sub_0 = (struct __THE_1_fn$1001) {&__THE_1_sub_0, NULL, 0};
-  const struct __THE_1_fn$1001 __THE_0_mul_0 = (struct __THE_1_fn$1001) {&__THE_1_mul_0, NULL, 0};
+  const struct __THE_1_fn_sFRvoidFE __THE_0_test_callback_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_callback_0, NULL, 0};
+  const struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFE __THE_0_test_test_0 = (struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFE) {&__THE_1_test_test_0, NULL, 0};
+  const struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFE __THE_0_test_doJob_0 = (struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFE) {&__THE_1_test_doJob_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFRintFE __THE_0_test_sum_0 = (struct __THE_1_fn_sFP3intFP3intFRintFE) {&__THE_1_test_sum_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFRintFE __THE_0_test_div_0 = (struct __THE_1_fn_sFP3intFP3intFRintFE) {&__THE_1_test_div_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFRintFE __THE_0_test_sub_0 = (struct __THE_1_fn_sFP3intFP3intFRintFE) {&__THE_1_test_sub_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3intFRintFE __THE_0_test_mul_0 = (struct __THE_1_fn_sFP3intFP3intFRintFE) {&__THE_1_test_mul_0, NULL, 0};
   print(stdout, "zz", "before test callback", THE_EOL);
-  __THE_0_test_0.f(__THE_0_test_0.x, xalloc(&(struct __THE_1_fn$1002P) {__THE_1_fn$1000_copy(__THE_0_callback_0)}, sizeof(struct __THE_1_fn$1002P)));
+  __THE_0_test_test_0.f(__THE_0_test_test_0.x, xalloc(&(struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFEP) {__THE_1_fn_sFRvoidFE_copy(__THE_0_test_callback_0)}, sizeof(struct __THE_1_fn_sFP3fn_sFRvoidFEFRvoidFEP)));
   print(stdout, "zz", "after test callback", THE_EOL);
-  __THE_0_doJob_0.f(__THE_0_doJob_0.x, xalloc(&(struct __THE_1_fn$1003P) {str_alloc("sum"), 1, 3, __THE_1_fn$1001_copy(__THE_0_sum_0)}, sizeof(struct __THE_1_fn$1003P)));
-  __THE_0_doJob_0.f(__THE_0_doJob_0.x, xalloc(&(struct __THE_1_fn$1003P) {str_alloc("sub"), 3, 1, __THE_1_fn$1001_copy(__THE_0_sub_0)}, sizeof(struct __THE_1_fn$1003P)));
-  __THE_0_doJob_0.f(__THE_0_doJob_0.x, xalloc(&(struct __THE_1_fn$1003P) {str_alloc("mul"), 2, 2, __THE_1_fn$1001_copy(__THE_0_mul_0)}, sizeof(struct __THE_1_fn$1003P)));
-  __THE_0_doJob_0.f(__THE_0_doJob_0.x, xalloc(&(struct __THE_1_fn$1003P) {str_alloc("div"), 4, 2, __THE_1_fn$1001_copy(__THE_0_div_0)}, sizeof(struct __THE_1_fn$1003P)));
+  __THE_0_test_doJob_0.f(__THE_0_test_doJob_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP) {str_alloc("sum"), 1, 3, __THE_1_fn_sFP3intFP3intFRintFE_copy(__THE_0_test_sum_0)}, sizeof(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP)));
+  __THE_0_test_doJob_0.f(__THE_0_test_doJob_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP) {str_alloc("sub"), 3, 1, __THE_1_fn_sFP3intFP3intFRintFE_copy(__THE_0_test_sub_0)}, sizeof(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP)));
+  __THE_0_test_doJob_0.f(__THE_0_test_doJob_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP) {str_alloc("mul"), 2, 2, __THE_1_fn_sFP3intFP3intFRintFE_copy(__THE_0_test_mul_0)}, sizeof(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP)));
+  __THE_0_test_doJob_0.f(__THE_0_test_doJob_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP) {str_alloc("div"), 4, 2, __THE_1_fn_sFP3intFP3intFRintFE_copy(__THE_0_test_div_0)}, sizeof(struct __THE_1_fn_sFP3strFP3intFP3intFP3fn_sFP3intFP3intFRintFEFRvoidFEP)));
 }
 ======= flags =======
 ======= stdout =======

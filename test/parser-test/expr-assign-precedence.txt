@@ -451,7 +451,9 @@ z = a = b = !c
       <ExprAssignRight>
         <ExprObj start="14:9" end="14:19">
           <ExprObjId>
-            <Token type="ID" val="Test" start="14:9" end="14:13" />
+            <TypeId start="14:9" end="14:13">
+              <Token type="ID" val="Test" start="14:9" end="14:13" />
+            </TypeId>
           </ExprObjId>
           <ExprObjProps>
             <ExprObjProp>
@@ -502,7 +504,9 @@ z = a = b = !c
           <ExprAssignRight>
             <ExprObj start="15:13" end="15:23">
               <ExprObjId>
-                <Token type="ID" val="Test" start="15:13" end="15:17" />
+                <TypeId start="15:13" end="15:17">
+                  <Token type="ID" val="Test" start="15:13" end="15:17" />
+                </TypeId>
               </ExprObjId>
               <ExprObjProps>
                 <ExprObjProp>
