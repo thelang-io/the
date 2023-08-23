@@ -22,11 +22,11 @@ TEST(UtilsTest, ConvertPathToNamespace) {
   auto cwd = std::filesystem::current_path();
   std::filesystem::current_path(cwd / "test");
 
-  EXPECT_EQ(convert_path_to_namespace(cwd / "src" / "main.cpp"), std::nullopt);
-  EXPECT_EQ(convert_path_to_namespace(cwd / "test" / "fixtures" / "export-circular"), "fixtures_export_circular");
-  EXPECT_EQ(convert_path_to_namespace(cwd / "test" / "fixtures" / "export-circular_"), "fixtures_export_circular");
-  EXPECT_EQ(convert_path_to_namespace(cwd / "test" / ".packages" / "test" / "package" / "package"), "packages_test_package_package");
-  EXPECT_EQ(convert_path_to_namespace(cwd / "test" / ".packages" / "test" / "package" / "package_"), "packages_test_package_package");
+  EXPECT_EQ(convert_path_to_namespace((cwd / "src" / "main.cpp").string()), std::nullopt);
+  EXPECT_EQ(convert_path_to_namespace((cwd / "test" / "fixtures" / "export-circular").string()), "fixtures_export_circular");
+  EXPECT_EQ(convert_path_to_namespace((cwd / "test" / "fixtures" / "export-circular_").string()), "fixtures_export_circular");
+  EXPECT_EQ(convert_path_to_namespace((cwd / "test" / ".packages" / "test" / "package" / "package").string()), "packages_test_package_package");
+  EXPECT_EQ(convert_path_to_namespace((cwd / "test" / ".packages" / "test" / "package" / "package_").string()), "packages_test_package_package");
 
   std::filesystem::current_path(cwd);
 }
