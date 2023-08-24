@@ -1,12 +1,8 @@
 name: the/algorithm
-version: 0.1.1
+version: 0.2.0
 description: Algorithms Library
 license: MIT
 main: src/main
 
-files:
-  - src/base64
-  - src/qrcode
-
 packages:
-  the/testing: 0.2.0
+  the/testing: 0.3.0

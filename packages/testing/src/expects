@@ -3,6 +3,8 @@
  * Licensed under the MIT License
  */
 
-fn EXPECT_EQ (a: any, b: any) {
+import MATCH_ANY from "./matchers"
+
+export fn EXPECT_EQ (a: any, b: any) {
   MATCH_ANY(a, b)
 }

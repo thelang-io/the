@@ -3,11 +3,22 @@
  * Licensed under the MIT License
  */
 
-obj ArgsState {
+export obj Arg {
+  mut command: str
+  mut option: str
+  mut value: str
+}
+
+export enum ConfigItemType {
+  Command,
+  Option
+}
+
+export obj State {
   mut hasCommands: bool
   mut hasOptions: bool
   mut leftColMaxLen: int
   mut nextArgIsValue: bool
   mut nextArgValueFor: str
-  mut nextArgValueForType: int
+  mut nextArgValueForType: ConfigItemType
 }

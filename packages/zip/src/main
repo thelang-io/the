@@ -1,0 +1,22 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import exec from "the/exec"
+
+export fn zip (name: str, path: str) {
+  if os_NAME == "Windows" {
+    exec("tar -a -c -f \"" + name + "\" \"" + path + "\"")
+  } else {
+    exec("zip \"" + name + "\" \"" + path + "\"")
+  }
+}
+
+export fn unzip (path: str) {
+  if os_NAME == "Windows" {
+    exec("tar.exe -x -f \"" + path + "\"")
+  } else {
+    exec("unzip \"" + path + "\"")
+  }
+}

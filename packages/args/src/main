@@ -3,15 +3,17 @@
  * Licensed under the MIT License
  */
 
-const ArgType_Command := 0
-const ArgType_Option := 1
+import Arg, ConfigItemType, State from "./types"
+import ConfigItem from "./config"
 
-obj Args {
+export Arg
+
+export obj Args {
   mut data: Arg[]
   mut lineLength: int
-  mut _config: ArgsConfigItem[]
+  mut _config: ConfigItem[]
   mut _examples: str[]
-  mut _state: ArgsState
+  mut _state: State
   mut _usage: str[]
 
   fn command (
@@ -22,8 +24,8 @@ obj Args {
     default := "",
     hasValue := true
   ) ref Self {
-    self._config.push(ArgsConfigItem{
-      t: ArgType_Command,
+    self._config.push(ConfigItem{
+      t: .Command,
       name: name,
       description: description,
       alias: alias,
@@ -40,7 +42,7 @@ obj Args {
   }
 
   fn help (mut self: ref Self) str {
-    self._state = ArgsState{}
+    self._state = State{}
     self._helpInit()
 
     mut message: str
@@ -65,7 +67,7 @@ obj Args {
       loop i := 0; i < self._config.len; i++ {
         item := self._config[i]
 
-        if item.t != ArgType_Command {
+        if item.t != .Command {
           continue
         }
 
@@ -83,7 +85,7 @@ obj Args {
       loop i := 0; i < self._config.len; i++ {
         item := self._config[i]
 
-        if item.t != ArgType_Option {
+        if item.t != .Option {
           continue
         }
 
@@ -108,16 +110,9 @@ obj Args {
     return message
   }
 
-  fn option (
-    mut self: ref Self,
-    name: str,
-    description: str,
-    alias := "",
-    default := "",
-    hasValue := true
-  ) ref Self {
-    self._config.push(ArgsConfigItem{
-      t: ArgType_Option,
+  fn option (mut self: ref Self, name: str, description: str, alias := "", default := "", hasValue := true) ref Self {
+    self._config.push(ConfigItem{
+      t: .Option,
       name: name,
       description: description,
       alias: alias,
@@ -129,7 +124,7 @@ obj Args {
   }
 
   fn parse (mut self: ref Self, args: str[]) ref Self {
-    self._state = ArgsState{}
+    self._state = State{}
 
     loop i := 1; i < args.len; i++ {
       arg := args[i]
@@ -137,12 +132,7 @@ obj Args {
       if self._state.nextArgIsValue && arg.slice(0, 1) == "-" {
         self._state.nextArgIsValue = false
       } elif self._state.nextArgIsValue {
-        self._setDataValue(
-          self._state.nextArgValueForType,
-          self._state.nextArgValueFor,
-          arg
-        )
-
+        self._setDataValue(self._state.nextArgValueForType, self._state.nextArgValueFor, arg)
         self._state.nextArgIsValue = false
         continue
       }
@@ -153,11 +143,7 @@ obj Args {
     loop i := 0; i < self._config.len; i++ {
       item := self._config[i]
 
-      if (
-        item.default.empty ||
-        item.t == ArgType_Command ||
-        self._existsDataValue(item.t, item.name)
-      ) {
+      if item.default.empty || item.t == .Command || self._existsDataValue(item.t, item.name) {
         continue
       }
 
@@ -172,14 +158,11 @@ obj Args {
     return self
   }
 
-  fn _existsDataValue (mut self: ref Self, t: int, name: str) bool {
+  fn _existsDataValue (mut self: ref Self, t: ConfigItemType, name: str) bool {
     loop i := 0; i < self.data.len; i++ {
       item := self.data[i]
 
-      if (
-        (t == ArgType_Command && item.command == name) ||
-        (t == ArgType_Option && item.option == name)
-      ) {
+      if (t == .Command && item.command == name) || (t == .Option && item.option == name) {
         return true
       }
     }
@@ -191,9 +174,9 @@ obj Args {
     loop i := 0; i < self._config.len; i++ {
       item := self._config[i]
 
-      if item.t == ArgType_Command {
+      if item.t == .Command {
         self._state.hasCommands = true
-      } elif item.t == ArgType_Option {
+      } elif item.t == .Option {
         self._state.hasOptions = true
       }
 
@@ -242,47 +225,36 @@ obj Args {
       return
     }
 
-    RaiseError("Unexpected argument `%s`", arg)
+    throw error_NewError("Unexpected argument `" + arg + "`")
   }
 
   fn _parseArgCommand (mut self: ref Self, name: str) {
     loop i := 0; i < self._config.len; i++ {
       item := self._config[i]
 
-      if (
-        item.t != ArgType_Command ||
-        (item.name != name && item.alias != name)
-      ) {
+      if item.t != .Command || (item.name != name && item.alias != name) {
         continue
       }
 
-      self._setDataValue(ArgType_Command, item.name, item.default)
+      self._setDataValue(.Command, item.name, item.default)
 
       if item.hasValue {
         self._state.nextArgIsValue = true
         self._state.nextArgValueFor = item.name
-        self._state.nextArgValueForType = ArgType_Command
+        self._state.nextArgValueForType = .Command
       }
 
       return
     }
 
-    RaiseError("Unexpected argument `%s`", name)
+    throw error_NewError("Unexpected argument `" + name + "`")
   }
 
-  fn _parseArgOption (
-    mut self: ref Self,
-    arg: str,
-    name: str,
-    mut value := ""
-  ) {
+  fn _parseArgOption (mut self: ref Self, arg: str, name: str, mut value := "") {
     loop i := 0; i < self._config.len; i++ {
       item := self._config[i]
 
-      if (
-        item.t != ArgType_Option ||
-        (item.name != name && item.alias != name)
-      ) {
+      if item.t != .Option || (item.name != name && item.alias != name) {
         continue
       }
 
@@ -291,33 +263,30 @@ obj Args {
       } elif item.hasValue && value.empty {
         self._state.nextArgIsValue = true
         self._state.nextArgValueFor = item.name
-        self._state.nextArgValueForType = ArgType_Option
+        self._state.nextArgValueForType = .Option
         value = item.default
       }
 
-      self._setDataValue(ArgType_Option, item.name, value)
+      self._setDataValue(.Option, item.name, value)
       return
     }
 
-    RaiseError("Unexpected argument `%s`", arg)
+    throw error_NewError("Unexpected argument `" + arg + "`")
   }
 
-  fn _setDataValue (mut self: ref Self, t: int, name: str, value: str) {
+  fn _setDataValue (mut self: ref Self, t: ConfigItemType, name: str, value: str) {
     loop i := 0; i < self.data.len; i++ {
       mut item := self.data[i]
 
-      if (
-        (t == ArgType_Command && item.command == name) ||
-        (t == ArgType_Option && item.option == name)
-      ) {
+      if (t == .Command && item.command == name) || (t == .Option && item.option == name) {
         item.value = value
         return
       }
     }
 
-    if t == ArgType_Command {
+    if t == .Command {
       self.data.push(Arg{command: name, value: value})
-    } elif t == ArgType_Option {
+    } elif t == .Option {
       self.data.push(Arg{option: name, value: value})
     }
   }

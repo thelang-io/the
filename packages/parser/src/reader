@@ -3,9 +3,9 @@
  * Licensed under the MIT License
  */
 
-type ReaderWalkMatcher = (char) -> bool
+import Location from "./types"
 
-obj Reader {
+export obj Reader {
   path: str
   content: str
   mut pos: int
@@ -15,11 +15,7 @@ obj Reader {
   }
 
   fn lookahead (mut self: ref Self, check: char) bool {
-    if (
-      check == '\n' &&
-      os_name() == "Windows" &&
-      self.content.slice(self.pos, self.pos + 2) == "\r\n"
-    ) {
+    if check == '\n' && os_NAME == "Windows" && self.content.slice(self.pos, self.pos + 2) == "\r\n" {
       self.pos += 2
       return true
     } elif self.pos < self.content.len && self.content[self.pos] == check {
@@ -32,11 +28,8 @@ obj Reader {
 
   fn next (mut self: ref Self) char {
     if self.eof() {
-      RaiseError("Tried next on Reader eof")
-    } elif (
-      os_name() == "Windows" &&
-      self.content.slice(self.pos, self.pos + 2) == "\r\n"
-    ) {
+      throw error_NewError("Tried next on Reader eof")
+    } elif os_NAME == "Windows" && self.content.slice(self.pos, self.pos + 2) == "\r\n" {
       self.pos++
     }
 
@@ -51,7 +44,7 @@ obj Reader {
     return self.content.slice(start, end)
   }
 
-  fn walk (mut self: ref Self, match: ReaderWalkMatcher) {
+  fn walk (mut self: ref Self, match: (char) -> bool) {
     loop !self.eof() {
       pos := self.pos
       ch := self.next()
@@ -64,13 +57,34 @@ obj Reader {
   }
 }
 
-fn Reader_init (path: str) Reader {
+export fn Reader_init (path: str) Reader {
   p := fs_realpathSync(path)
 
   if !fs_isFileSync(p) {
-    RaiseError("Path `%s` is not a file", p)
+    throw error_NewError("Path `" + p + "` is not a file")
   }
 
   content := fs_readFileSync(p).str()
   return Reader{path: p, content: content}
+}
+
+export fn Reader_locate (reader: ref Reader, pos: int) Location {
+  if pos == 0 {
+    return Location{line: 1, col: 1}
+  }
+
+  lines := reader.content.lines(keepLineBreaks: true)
+  mut curPos := 0
+
+  loop i := 0; i < lines.len; i++ {
+    line := lines[i]
+
+    if curPos + line.len > pos {
+      return Location{line: i + 1, col: pos - curPos + 1}
+    }
+
+    curPos += line.len
+  }
+
+  return Location{line: lines.len, col: lines[-1].len}
 }

@@ -3,24 +3,20 @@
  * Licensed under the MIT License
  */
 
-type TestBody = () -> void
+import EXPECT_EQ from "./expects"
+import FAIL_TEST, TEST_FAILED from "./matchers"
 
-mut TEST_FAILED := false
+export EXPECT_EQ
 
-fn FAIL_TEST (message: str) {
-  TEST_FAILED = true
-  print("Failure: " + message, to: "stderr")
-}
-
-obj Test {
+export obj Test {
   name: str
-  body: TestBody
+  body: () -> void
 }
 
-obj Tests {
+export obj Tests {
   mut _tests: Test[]
 
-  fn register (mut self: ref Self, name: str, body: TestBody) ref Self {
+  fn register (mut self: ref Self, name: str, body: () -> void) ref Self {
     self._tests.push(Test{name: name, body: body})
     return self
   }

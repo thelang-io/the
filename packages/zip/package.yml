@@ -1,0 +1,8 @@
+name: the/zip
+version: 0.1.0
+description: Zip Utilities
+license: MIT
+main: src/main
+
+packages:
+  the/exec: 0.2.0

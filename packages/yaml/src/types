@@ -1,0 +1,46 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export type Node = NodeMap | NodeMapping | NodeScalar | NodeSeq
+
+export obj NodeMap {
+  mappings: NodeMapping[]
+}
+
+export obj NodeMapping {
+  key: Node
+  value: Node?
+}
+
+export obj NodeScalar {
+  value: str
+}
+
+export obj NodeSeq {
+  items: Node[]
+}
+
+export obj State {
+  mut pos: int
+}
+
+export obj Token {
+  t: TokenType
+  val: str
+}
+
+export enum TokenType {
+  Whitespace,
+  EOL,
+  Colon,
+  Minus,
+  LBrack,
+  RBrack,
+  LBrace,
+  RBrace,
+  Comma,
+  Text,
+  Comment
+}

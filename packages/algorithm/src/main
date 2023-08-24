@@ -1,0 +1,10 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as base64 from "./base64"
+import * as qrcode from "./qrcode"
+
+export base64
+export qrcode

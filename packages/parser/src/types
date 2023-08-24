@@ -1,0 +1,123 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export obj Location {
+  mut line: int
+  mut col: int
+}
+
+export enum TokenAssociativity {
+  None,
+  Left,
+  Right,
+}
+
+export enum TokenType {
+  Unknown,
+  Eof,
+  Id,
+  Whitespace,
+
+  CommentBlock,
+  CommentLine,
+
+  LitChar,
+  LitFloat,
+  LitIntBin,
+  LitIntDec,
+  LitIntHex,
+  LitIntOct,
+  LitStr,
+
+  KwAsync,
+  KwAwait,
+  KwBreak,
+  KwCatch,
+  KwConst,
+  KwContinue,
+  KwElif,
+  KwElse,
+  KwEnum,
+  KwExport,
+  KwFalse,
+  KwFn,
+  KwFrom,
+  KwIf,
+  KwImport,
+  KwIs,
+  KwLoop,
+  KwMain,
+  KwMut,
+  KwNil,
+  KwObj,
+  KwRef,
+  KwReturn,
+  KwThrow,
+  KwTrue,
+  KwTry,
+  KwType,
+
+  OpAmp,
+  OpAmpEq,
+  OpAmpAmp,
+  OpAmpAmpEq,
+  OpArrow,
+  OpAt,
+  OpBacktick,
+  OpBackslash,
+  OpCaret,
+  OpCaretEq,
+  OpColon,
+  OpColonEq,
+  OpComma,
+  OpDot,
+  OpDollar,
+  OpEllipsis,
+  OpEq,
+  OpEqEq,
+  OpExcl,
+  OpExclEq,
+  OpGt,
+  OpGtEq,
+  OpHash,
+  OpLBrace,
+  OpLBrack,
+  OpLPar,
+  OpLShift,
+  OpLShiftEq,
+  OpLt,
+  OpLtEq,
+  OpMinus,
+  OpMinusEq,
+  OpMinusMinus,
+  OpPipe,
+  OpPipeEq,
+  OpPipePipe,
+  OpPipePipeEq,
+  OpPercent,
+  OpPercentEq,
+  OpPlus,
+  OpPlusEq,
+  OpPlusPlus,
+  OpQn,
+  OpRBrace,
+  OpRBrack,
+  OpRPar,
+  OpRShift,
+  OpRShiftEq,
+  OpSemi,
+  OpSlash,
+  OpSlashEq,
+  OpStar,
+  OpStarEq,
+  OpTilde,
+}
+
+export obj TokenizerState {
+  mut idx: int
+  mut pos: int
+  mut ch: char
+  mut handled: bool
+}

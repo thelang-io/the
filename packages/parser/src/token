@@ -3,115 +3,10 @@
  * Licensed under the MIT License
  */
 
-enum TokenAssociativity {
-  None,
-  Left,
-  Right,
-}
+import TokenType from "./types"
 
-enum TokenType {
-  Unknown,
-  Eof,
-  Id,
-  Whitespace,
-
-  CommentBlock,
-  CommentLine,
-
-  LitChar,
-  LitFloat,
-  LitIntBin,
-  LitIntDec,
-  LitIntHex,
-  LitIntDec,
-  LitStr,
-
-  KwAsync,
-  KwAwait,
-  KwBreak,
-  KwCatch,
-  KwConst,
-  KwContinue,
-  KwElif,
-  KwElse,
-  KwEnum,
-  KwExport,
-  KwFalse,
-  KwFn,
-  KwFrom,
-  KwIf,
-  KwImport,
-  KwIs,
-  KwLoop,
-  KwMain,
-  KwMut,
-  KwNil,
-  KwObj,
-  KwRef,
-  KwReturn,
-  KwThrow,
-  KwTrue,
-  KwTry,
-  KwType,
-
-  OpAmp,
-  OpAmpEq,
-  OpAmpAmp,
-  OpAmpAmpEq,
-  OpArrow,
-  OpAt,
-  OpBacktick,
-  OpBackSlash,
-  OpCaret,
-  OpCaretEq,
-  OpColon,
-  OpColonEq,
-  OpComma,
-  OpDot,
-  OpDollar,
-  OpEllipsis,
-  OpEq,
-  OpEqEq,
-  OpExcl,
-  OpExclEq,
-  OpGt,
-  OpGtEq,
-  OpHash,
-  OpLBrace,
-  OpLBrack,
-  OpLPar,
-  OpLShift,
-  OpLShiftEq,
-  OpLt,
-  OpLtEq,
-  OpMinus,
-  OpMinusEq,
-  OpMinusMinus,
-  OpPipe,
-  OpPipeEq,
-  OpPipePipe,
-  OpPipePipeEq,
-  OpPercent,
-  OpPercentEq,
-  OpPlus,
-  OpPlusEq,
-  OpPlusPlus,
-  OpQn,
-  OpRBrace,
-  OpRBrack,
-  OpRPar,
-  OpRShift,
-  OpRShiftEq,
-  OpSemi,
-  OpSlash,
-  OpSlashEq,
-  OpStar,
-  OpStarEq,
-  OpTilde,
-}
-
-obj Token {
-  t: int
+export obj Token {
+  t: TokenType
   val: str
   start: int
   end: int
@@ -160,7 +55,7 @@ obj Token {
   }
 }
 
-fn Token_isCharEsc (ch: char) bool {
+export fn Token_isCharEsc (ch: char) bool {
   return
     ch == '0' ||
     ch == 'b' ||
@@ -174,25 +69,25 @@ fn Token_isCharEsc (ch: char) bool {
     ch == '\\'
 }
 
-fn Token_isId (ch: char) bool {
-  return ch.isAlphaNum() || ch == '_'
+export fn Token_isId (ch: char) bool {
+  return ch.isLetterOrDigit || ch == '_'
 }
 
-fn Token_isIdStart (ch: char) bool {
-  return ch.isAlpha() || ch == '_'
+export fn Token_isIdStart (ch: char) bool {
+  return ch.isLetter || ch == '_'
 }
 
-fn Token_isIntBin (ch: char) bool {
+export fn Token_isIntBin (ch: char) bool {
   return ch == '0' || ch == '1'
 }
 
-fn Token_isIntDec (ch: char) bool {
-  return ch.isDigit()
+export fn Token_isIntDec (ch: char) bool {
+  return ch.isDigit
 }
 
-fn Token_isIntHex (ch: char) bool {
+export fn Token_isIntHex (ch: char) bool {
   return
-    ch.isDigit() ||
+    ch.isDigit ||
     ch == 'A' || ch == 'a' ||
     ch == 'B' || ch == 'b' ||
     ch == 'C' || ch == 'c' ||
@@ -201,7 +96,7 @@ fn Token_isIntHex (ch: char) bool {
     ch == 'F' || ch == 'f'
 }
 
-fn Token_isIntOct (ch: char) bool {
+export fn Token_isIntOct (ch: char) bool {
   return
     ch == '0' ||
     ch == '1' ||
@@ -213,15 +108,15 @@ fn Token_isIntOct (ch: char) bool {
     ch == '7'
 }
 
-fn Token_isNotNewLine (ch: char) bool {
+export fn Token_isNotNewLine (ch: char) bool {
   return ch != '\n'
 }
 
-fn Token_isStrEsc (ch: char) bool {
+export fn Token_isStrEsc (ch: char) bool {
   return Token_isCharEsc(ch) || ch == '{'
 }
 
-fn Token_isWhitespace (ch: char) bool {
+export fn Token_isWhitespace (ch: char) bool {
   return
     ch == ' ' ||
     ch == '\f' ||

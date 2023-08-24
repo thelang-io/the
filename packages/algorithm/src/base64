@@ -5,7 +5,7 @@
 
 const BASE64_TABLE := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
-fn base64_encode (data: buffer_Buffer) str {
+export fn encode (data: buffer_Buffer) str {
   in := data.str()
   len := in.len
 
@@ -46,7 +46,7 @@ fn base64_encode (data: buffer_Buffer) str {
   return result.slice(0, i)
 }
 
-fn base64_decode (data: str) buffer_Buffer {
+export fn decode (data: str) buffer_Buffer {
   dataLen := data.len
   base64TableLen := BASE64_TABLE.len
   char128: char = 0x80

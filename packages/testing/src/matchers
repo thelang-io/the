@@ -3,7 +3,14 @@
  * Licensed under the MIT License
  */
 
-fn MATCH_ANY (a: any, b: any) {
+export mut TEST_FAILED := false
+
+export fn FAIL_TEST (message: str) {
+  TEST_FAILED = true
+  print("Failure: " + message, to: "stderr")
+}
+
+export fn MATCH_ANY (a: any, b: any) {
   if (a is any) && (b is any) { MATCH_ANY(a, b) }
   elif (a is bool) && (b is bool) { MATCH_BOOL(a, b) }
   elif (a is byte) && (b is byte) { MATCH_BYTE(a, b) }

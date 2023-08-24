@@ -3,22 +3,30 @@
  * Licensed under the MIT License
  */
 
-type TokenizerWrapIntChecker = (char) -> bool
+import Reader, Reader_locate from "./reader"
+import
+  Token,
+  Token_isCharEsc,
+  Token_isId,
+  Token_isIdStart,
+  Token_isIntBin,
+  Token_isIntDec,
+  Token_isIntHex,
+  Token_isIntOct,
+  Token_isNotNewLine,
+  Token_isStrEsc,
+  Token_isWhitespace
+from "./token"
+import TokenType, TokenizerState from "./types"
+import * as errors from "./errors"
 
-const ignoredTokenTypes := [
-  TokenType.CommentBlock,
-  TokenType.CommentLine,
-  TokenType.Whitespace
+const ignoredTokenTypes: TokenType[] = [
+  .CommentBlock,
+  .CommentLine,
+  .Whitespace
 ]
 
-obj TokenizerState {
-  mut idx: int
-  mut pos: int
-  mut ch: char
-  mut handled: bool
-}
-
-obj Tokenizer {
+export obj Tokenizer {
   mut reader: ref Reader
   mut state: TokenizerState
   mut data: Token[]
@@ -27,8 +35,8 @@ obj Tokenizer {
   fn next (mut self: ref Self, withIgnored := false) Token {
     if self.data.len < self.state.idx {
       return self.data[self.state.idx++]
-    } elif !self.data.empty() && self.data[-1].t == .Eof {
-      RaiseError("Tried next on Tokenizer eof")
+    } elif !self.data.empty && self.data[-1].t == .Eof {
+      throw error_NewError("Tried next on Tokenizer eof")
     }
 
     loop {
@@ -74,7 +82,7 @@ obj Tokenizer {
     } elif (tok = self._maybeChar()) != nil {
       return tok
     } else {
-      self._raise(E0000(self.state.ch), self.state.pos)
+      self._raise(errors.E0000(self.state.ch), self.state.pos)
       return self._wrapToken(.Unknown)
     }
   }
@@ -85,35 +93,35 @@ obj Tokenizer {
     }
 
     if self.reader.eof() {
-      self._raise(E0002(), self.state.pos)
+      self._raise(errors.E0002(), self.state.pos)
       return self._wrapToken(.LitChar)
     }
 
     ch1 := self.reader.next()
 
     if ch1 == '\n' {
-      self._raise(E0002(), self.state.pos)
+      self._raise(errors.E0002(), self.state.pos)
       return self._wrapToken(.LitChar)
     } elif ch1 == '\'' {
-      self._raise(E0004(), self.state.pos)
+      self._raise(errors.E0004(), self.state.pos)
       return self._wrapToken(.LitChar)
     } elif ch1 == '\\' {
       if self.reader.eof() {
-        self._raise(E0002(), self.state.pos)
+        self._raise(errors.E0002(), self.state.pos)
         return self._wrapToken(.LitChar)
       }
 
       ch2 := self.reader.next()
 
       if !Token_isCharEsc(ch2) {
-        self._raise(E0005(), self.state.pos)
+        self._raise(errors.E0005(), self.state.pos)
       }
     }
 
     if !self.reader.lookahead('\'') {
       loop {
         if self.reader.eof() {
-          self._raise(E0002(), self.state.pos)
+          self._raise(errors.E0002(), self.state.pos)
           break
         }
 
@@ -121,11 +129,11 @@ obj Tokenizer {
         ch3 := self.reader.next()
 
         if ch3 == '\'' {
-          self._raise(E0007(), self.state.pos)
+          self._raise(errors.E0007(), self.state.pos)
           break
         } elif ch3 == '\n' {
           self.reader.seek(pos3)
-          self._raise(E0002(), self.state.pos)
+          self._raise(errors.E0002(), self.state.pos)
           break
         }
       }
@@ -141,7 +149,7 @@ obj Tokenizer {
 
     loop {
       if self.reader.eof() {
-        self._raise(E0001(), self.state.pos)
+        self._raise(errors.E0001(), self.state.pos)
         break
       }
 
@@ -203,7 +211,7 @@ obj Tokenizer {
   }
 
   fn _maybeNumber (mut self: ref Self) Token? {
-    if !self.state.ch.isDigit() {
+    if !self.state.ch.isDigit {
       return nil
     }
 
@@ -217,15 +225,15 @@ obj Tokenizer {
 
       if Token_isIntDec(ch) {
         self.reader.walk(Token_isId)
-        self._raise(E0008(), self.state.pos)
+        self._raise(errors.E0008(), self.state.pos)
 
         return self._wrapToken(.LitIntDec)
       } elif ch == 'B' || ch == 'b' {
-        return self._wrapInt(.LitIntBin, E0009("binary"), Token_isIntBin)
+        return self._wrapInt(.LitIntBin, errors.E0009("binary"), Token_isIntBin)
       } elif ch == 'X' || ch == 'x' {
-        return self._wrapInt(.LitIntHex, E0009("hexadecimal"), Token_isIntHex)
+        return self._wrapInt(.LitIntHex, errors.E0009("hexadecimal"), Token_isIntHex)
       } elif ch == 'O' || ch == 'o' {
-        return self._wrapInt(.LitIntOct, E0009("octal"), Token_isIntOct)
+        return self._wrapInt(.LitIntOct, errors.E0009("octal"), Token_isIntOct)
       }
 
       self.reader.seek(pos)
@@ -233,7 +241,7 @@ obj Tokenizer {
       self.reader.walk(Token_isIntDec)
     }
 
-    return self._wrapInt(.LitIntDec, E0009("decimal"), Token_isIntDec)
+    return self._wrapInt(.LitIntDec, errors.E0009("decimal"), Token_isIntDec)
   }
 
   fn _maybeOp (mut self: ref Self) Token? {
@@ -396,7 +404,7 @@ obj Tokenizer {
 
     loop {
       if self.reader.eof() {
-        self._raise(E0003(), self.state.pos)
+        self._raise(errors.E0003(), self.state.pos)
         break
       }
 
@@ -409,7 +417,7 @@ obj Tokenizer {
         ch2 := self.reader.next()
 
         if !Token_isStrEsc(ch2) {
-          self._raise(E0006(), pos1)
+          self._raise(errors.E0006(), pos1)
         }
       }
     }
@@ -418,7 +426,7 @@ obj Tokenizer {
   }
 
   fn _maybeWhitespace (mut self: ref Self) Token? {
-    if !self.state.ch.isSpace() {
+    if !self.state.ch.isWhitespace {
       return nil
     }
 
@@ -431,8 +439,8 @@ obj Tokenizer {
       return
     }
 
-    startLoc := Location_locate(self.reader.content, start)
-    endLoc := Location_locate(self.reader.content, self.reader.pos)
+    startLoc := Reader_locate(self.reader, start)
+    endLoc := Reader_locate(self.reader, self.reader.pos)
     lines := self.reader.content.lines()
 
     mut errorLines: str[]
@@ -447,22 +455,17 @@ obj Tokenizer {
     errorLinesNums.push(startLoc.line)
 
     if startLoc.line == endLoc.line && startLoc.col == endLoc.col {
-      mut x: u32 = startLoc.col - 1
-      errorLines.push(' '.repeat(x) + "^")
+      errorLines.push(' '.repeat(startLoc.col - 1) + "^")
     } elif startLoc.line == endLoc.line {
-      mut x1: u32 = startLoc.col - 1
-      mut x2: u32 = endLoc.col - startLoc.col
-      errorLines.push(' '.repeat(x1) + '~'.repeat(x2))
+      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(endLoc.col - startLoc.col))
     } else {
       errorLine := lines[startLoc.line - 1]
-      mut x1: u32 = startLoc.col - 1
-      mut x2: u32 = errorLine.len - startLoc.col
-      errorLines.push(' '.repeat(x1) + '~'.repeat(x2))
+      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col))
     }
 
     errorLinesNums.push(startLoc.line)
 
-    if startLoc.line != lines.len && !lines[startLoc.line].empty() {
+    if startLoc.line != lines.len && !lines[startLoc.line].empty {
       errorLines.push(lines[startLoc.line])
       errorLinesNums.push(startLoc.line + 1)
     }
@@ -478,12 +481,10 @@ obj Tokenizer {
       errorLineNum := errorLinesNums[i]
 
       if prevLineNum == errorLineNum {
-        mut x: u32 = gutterLen
-        error += ' '.repeat(x)
+        error += ' '.repeat(gutterLen)
       } else {
         errorLineNumLen := errorLineNum.str().len
-        mut x: u32 = gutterLen - errorLineNumLen
-        error += errorLineNum.str() + ' '.repeat(x)
+        error += errorLineNum.str() + ' '.repeat(gutterLen - errorLineNumLen)
       }
 
       error += "| " + errorLines[i] + os_EOL
@@ -494,7 +495,7 @@ obj Tokenizer {
     self.state.handled = true
   }
 
-  fn _wrapFloat (mut self: ref Self, t: int, errorMessage: str) Token {
+  fn _wrapFloat (mut self: ref Self, t: TokenType, errorMessage: str) Token {
     if self.reader.eof() {
       return self._wrapToken(t)
     }
@@ -516,7 +517,7 @@ obj Tokenizer {
 
     if ch1 == '.' {
       if self.reader.eof() {
-        self._raise(E0010(), self.state.pos)
+        self._raise(errors.E0010(), self.state.pos)
         return self._wrapToken(.LitFloat)
       }
 
@@ -528,7 +529,7 @@ obj Tokenizer {
         return self._wrapToken(t)
       } elif !Token_isIntDec(ch2) {
         self.reader.walk(Token_isId)
-        self._raise(E0010(), self.state.pos)
+        self._raise(errors.E0010(), self.state.pos)
 
         return self._wrapToken(.LitFloat)
       }
@@ -544,7 +545,7 @@ obj Tokenizer {
 
       if Token_isId(ch3) && ch3 != 'E' && ch3 != 'e' {
         self.reader.walk(Token_isId)
-        self._raise(E0010(), self.state.pos)
+        self._raise(errors.E0010(), self.state.pos)
 
         return self._wrapToken(.LitFloat)
       } elif ch3 != 'E' && ch3 != 'e' {
@@ -556,7 +557,7 @@ obj Tokenizer {
     }
 
     if self.reader.eof() {
-      self._raise(E0011(), expStartPos)
+      self._raise(errors.E0011(), expStartPos)
       return self._wrapToken(.LitFloat)
     }
 
@@ -564,14 +565,14 @@ obj Tokenizer {
 
     if !Token_isIntDec(ch4) && ch4 != '+' && ch4 != '-' {
       self.reader.walk(Token_isId)
-      self._raise(E0011(), expStartPos)
+      self._raise(errors.E0011(), expStartPos)
 
       return self._wrapToken(.LitFloat)
     }
 
     if ch4 == '+' || ch4 == '-' {
       if self.reader.eof() {
-        self._raise(E0011(), expStartPos)
+        self._raise(errors.E0011(), expStartPos)
         return self._wrapToken(.LitFloat)
       }
 
@@ -579,7 +580,7 @@ obj Tokenizer {
 
       if !Token_isIntDec(ch5) {
         self.reader.walk(Token_isId)
-        self._raise(E0011(), expStartPos)
+        self._raise(errors.E0011(), expStartPos)
 
         return self._wrapToken(.LitFloat)
       }
@@ -589,12 +590,7 @@ obj Tokenizer {
     return self._wrapTokenFloat(t)
   }
 
-  fn _wrapInt (
-    mut self: ref Self,
-    t: int,
-    errorMessage: str,
-    check: TokenizerWrapIntChecker
-  ) Token {
+  fn _wrapInt (mut self: ref Self, t: TokenType, errorMessage: str, check: (char) -> bool) Token {
     if t != .LitIntDec {
       if self.reader.eof() {
         self._raise(errorMessage, self.state.pos)
@@ -616,7 +612,7 @@ obj Tokenizer {
     return self._wrapFloat(t, errorMessage)
   }
 
-  fn _wrapToken (mut self: ref Self, t: int) Token {
+  fn _wrapToken (mut self: ref Self, t: TokenType) Token {
     start := self.state.pos
     self.state.pos = self.reader.pos
     self.state.handled = true
@@ -629,14 +625,14 @@ obj Tokenizer {
     }
   }
 
-  fn _wrapTokenFloat (mut self: ref Self, t: int) Token {
+  fn _wrapTokenFloat (mut self: ref Self, t: TokenType) Token {
     if !self.reader.eof() {
       pos := self.reader.pos
       ch := self.reader.next()
 
       if Token_isId(ch) {
         self.reader.walk(Token_isId)
-        self._raise(E0010(), self.state.pos)
+        self._raise(errors.E0010(), self.state.pos)
 
         return self._wrapToken(.LitFloat)
       }
@@ -645,17 +641,17 @@ obj Tokenizer {
     }
 
     if t == .LitIntBin {
-      self._raise(E0012("binary"), self.state.pos)
+      self._raise(errors.E0012("binary"), self.state.pos)
     } elif t == .LitIntHex {
-      self._raise(E0012("hexadecimal"), self.state.pos)
+      self._raise(errors.E0012("hexadecimal"), self.state.pos)
     } elif t == .LitIntOct {
-      self._raise(E0012("octal"), self.state.pos)
+      self._raise(errors.E0012("octal"), self.state.pos)
     }
 
     return self._wrapToken(.LitFloat)
   }
 }
 
-fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
+export fn Tokenizer_init (mut reader: ref Reader) Tokenizer {
   return Tokenizer{reader: reader}
 }

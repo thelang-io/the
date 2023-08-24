@@ -3,57 +3,39 @@
  * Licensed under the MIT License
  */
 
-type YAMLNode = YAMLNodeMap | YAMLNodeMapping | YAMLNodeScalar | YAMLNodeSeq
+import Node, NodeMap, NodeMapping, NodeScalar, NodeSeq from "./types"
 
-obj YAMLNodeMap {
-  mappings: YAMLNodeMapping[]
-}
-
-obj YAMLNodeMapping {
-  key: YAMLNode
-  value: YAMLNode?
-}
-
-obj YAMLNodeScalar {
-  value: str
-}
-
-obj YAMLNodeSeq {
-  items: YAMLNode[]
-}
-
-fn YAMLNode_stringify (node: YAMLNode, indent := 0) str {
+export fn Node_stringify (node: Node, indent := 0) str {
   mut result := ""
 
-  if node is YAMLNodeMap {
+  if node is NodeMap {
     loop i := 0; i < node.mappings.len; i++ {
-      n1: YAMLNodeMapping = node.mappings[i]
-      n: YAMLNode = n1
-      result += YAMLNode_stringify(n, indent + 2)
+      n: Node = node.mappings[i] as NodeMapping
+      result += Node_stringify(n, indent + 2)
     }
   }
 
-  if node is YAMLNodeMapping {
-    result += ' '.repeat(indent) + YAMLNode_stringify(node.key) + ":"
+  if node is NodeMapping {
+    result += ' '.repeat(indent) + Node_stringify(node.key) + ":"
 
     if node.value != nil {
       val := node.value
-      isValComplex := (val is YAMLNodeMap) || (val is YAMLNodeSeq)
-      result += (isValComplex ? os_EOL : " ") + YAMLNode_stringify(val)
+      isValComplex := (val is NodeMap) || (val is NodeSeq)
+      result += (isValComplex ? os_EOL : " ") + Node_stringify(val)
       result += isValComplex ? "" : os_EOL
     } else {
       result += os_EOL
     }
   }
 
-  if node is YAMLNodeScalar {
+  if node is NodeScalar {
     result += node.value
   }
 
-  if node is YAMLNodeSeq {
+  if node is NodeSeq {
     loop i := 0; i < node.items.len; i++ {
       result += ' '.repeat(indent + 2) + "- "
-      result += YAMLNode_stringify(node.items[i], indent + 2).trimStart()
+      result += Node_stringify(node.items[i], indent + 2).trimStart()
       result += os_EOL
     }
   }

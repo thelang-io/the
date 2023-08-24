@@ -3,6 +3,6 @@
  * Licensed under the MIT License
  */
 
-obj JSON {
+export obj JSON {
   // todo
 }

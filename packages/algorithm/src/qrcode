@@ -46,7 +46,7 @@ const ERROR_CORRECTION_TABLE := [
   [[2334, 28, 18, 47, 31, 48], [2956, 30, 19, 118, 6, 119], [1276, 30, 20, 15, 61, 16], [1666, 30, 34, 24, 34, 25]]
 ]
 
-enum ErrorCorrectionLevel {
+export enum ErrorCorrectionLevel {
   L = 1, // ~7%
   M = 0, // ~15%
   Q = 3, // ~25%
@@ -54,7 +54,7 @@ enum ErrorCorrectionLevel {
 }
 
 /* note Kanji is not supported */
-enum Mode {
+export enum Mode {
   Numeric = 1,
   Alphanumeric = 2,
   Byte = 4,
@@ -181,11 +181,6 @@ fn ByteArray_fromInt (mut num: int, padding := 0) IByteArray {
 
 fn Math_abs (x: float) float {
   return x < 0 ? -x : x
-}
-
-fn raise (message: str) {
-  print("Error:", message, to: "stderr")
-  process_exit(1)
 }
 
 fn isNumericMode (ch: char) bool {
@@ -419,7 +414,7 @@ fn characterCapacityTable (errorCorrectionLevel: ErrorCorrectionLevel, mode: Mod
   elif e == .M && ((m == .Numeric && l <= 5596) || (m == .Alphanumeric && l <= 3391) || (m == .Byte && l <= 2331) || (m == .Kanji && l <= 1435)) { return 40 }
   elif e == .Q && ((m == .Numeric && l <= 3993) || (m == .Alphanumeric && l <= 2420) || (m == .Byte && l <= 1663) || (m == .Kanji && l <= 1024)) { return 40 }
   elif e == .H && ((m == .Numeric && l <= 3057) || (m == .Alphanumeric && l <= 1852) || (m == .Byte && l <= 1273) || (m == .Kanji && l <= 784)) { return 40 }
-  else { raise("QRCode input is too long to calculate version") }
+  else { throw error_NewError("QRCode input is too long to calculate version") }
 }
 
 fn requiredRemainderBits (version: int) int {
@@ -470,7 +465,7 @@ fn alignmentPatternLocations (version: int) int[] {
   elif version == 38 { return [6, 32, 58, 84, 110, 136, 162] }
   elif version == 39 { return [6, 26, 54, 82, 110, 138, 166] }
   elif version == 40 { return [6, 30, 58, 86, 114, 142, 170] }
-  else { raise("QRCode input is too long for alignment pattern locations") }
+  else { throw error_NewError("QRCode input is too long for alignment pattern locations") }
 }
 
 fn mask0 (x: int, y: int) bool { return (x + y) % 2 == 0 }
@@ -544,7 +539,7 @@ fn Polynomial () IPolynomial {
   return IPolynomial{_exp: exp, _log: log}
 }
 
-obj IQRCode {
+export obj IQRCode {
   mut _a: int
   mut _b: ErrorCorrectionTableEntry
   mut _d: byte[][]
@@ -1344,7 +1339,7 @@ obj IQRCode {
     elif self._v <= 40 && self._m == .Alphanumeric { self._x = 13 }
     elif self._v <= 40 && self._m == .Byte { self._x = 16 }
     elif self._v <= 40 && self._m == .Kanji { self._x = 12 }
-    else { raise("QRCode input is too long to calculate character count indicator") }
+    else { throw error_NewError("QRCode input is too long to calculate character count indicator") }
   }
 
   fn updateMode (mut self: ref Self) {
@@ -1445,7 +1440,7 @@ obj IQRCode {
   }
 }
 
-fn QRCode (input: buffer_Buffer) IQRCode {
+export fn QRCode (input: buffer_Buffer) IQRCode {
   s := input.str()
 
   return IQRCode{
@@ -1456,7 +1451,7 @@ fn QRCode (input: buffer_Buffer) IQRCode {
   }
 }
 
-fn QRCode_toTerminal (qrcode: IQRCode) {
+export fn QRCode_toTerminal (qrcode: IQRCode) {
   block := ' '.repeat(2)
   mut result := ""
 

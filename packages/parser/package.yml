@@ -1,15 +1,5 @@
 name: the/parser
-version: 0.1.5
+version: 0.2.0
 description: The programming language parser
 license: MIT
-main: src/parser
-
-files:
-  - src/location
-  - src/parser
-  - src/token
-  - src/tokenizer
-
-packages:
-  the/error: 1.1.3
-  the/reader: 1.0.4
+main: src/main

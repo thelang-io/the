@@ -3,8 +3,10 @@
  * Licensed under the MIT License
  */
 
-obj ArgsConfigItem {
-  t: int
+import ConfigItemType from "./types"
+
+export obj ConfigItem {
+  t: ConfigItemType
   name: str
   description: str
   alias: str
@@ -12,7 +14,7 @@ obj ArgsConfigItem {
   hasValue: bool
 
   fn leftCol (self: ref Self) str {
-    if self.t == ArgType_Command {
+    if self.t == .Command {
       return self.name + " "
     }
 

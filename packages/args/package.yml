@@ -1,14 +1,5 @@
 name: the/args
-version: 0.2.1
+version: 0.3.0
 description: Command line arguments parser and tools
 license: MIT
-main: src/args
-
-files:
-  - src/arg
-  - src/args
-  - src/config
-  - src/state
-
-packages:
-  the/error: 1.1.3
+main: src/main

@@ -3,29 +3,48 @@
  * Licensed under the MIT License
  */
 
-obj YAML {
+import
+  Node,
+  NodeMap,
+  NodeMapping,
+  NodeScalar,
+  NodeSeq,
+  State,
+  Token,
+  TokenType
+from "./types"
+import Node_stringify from "./node"
+
+export Node
+export Node_stringify
+export NodeMap
+export NodeMapping
+export NodeScalar
+export NodeSeq
+
+export obj YAML {
   content: str
-  mut tokens: YAMLToken[]
-  mut nodes: YAMLNode[]
-  mut state: YAMLState
+  mut tokens: Token[]
+  mut nodes: Node[]
+  mut state: State
 
   fn hasNext (self: ref Self) bool {
     return self.state.pos < self.nodes.len
   }
 
-  fn next (mut self: ref Self) YAMLNode {
+  fn next (mut self: ref Self) Node {
     return self.nodes[self.state.pos++]
   }
 
   fn reset (mut self: ref Self) {
-    self.state = YAMLState{}
+    self.state = State{}
   }
 
   fn stringify (self: ref Self) str {
     mut code := ""
 
     loop i := 0; i < self.nodes.len; i++ {
-      code += YAMLNode_stringify(self.nodes[i])
+      code += Node_stringify(self.nodes[i])
     }
 
     return code
@@ -42,13 +61,10 @@ obj YAML {
     return pos < tokensLen
   }
 
-  fn _nextTk (mut self: ref Self) YAMLToken {
+  fn _nextTk (mut self: ref Self) Token {
     tokensLen := self.tokens.len
 
-    loop (
-      self.state.pos < tokensLen &&
-      self.tokens[self.state.pos].t == .Whitespace
-    ) {
+    loop self.state.pos < tokensLen && self.tokens[self.state.pos].t == .Whitespace {
       self.state.pos++
     }
 
@@ -73,7 +89,7 @@ obj YAML {
     return indent
   }
 
-  fn _nextTkIs (mut self: ref Self, t: YAMLTokenType) bool {
+  fn _nextTkIs (mut self: ref Self, t: TokenType) bool {
     if !self._hasNextTk() { return false }
     pos := self.state.pos
     tk := self._nextTk()
@@ -94,19 +110,19 @@ obj YAML {
       ch := self.content[i]
 
       if ch == ':' {
-        self.tokens.push(YAMLToken{t: .Colon, val: ch.str()})
+        self.tokens.push(Token{t: .Colon, val: ch.str()})
       } elif ch == '-' {
-        self.tokens.push(YAMLToken{t: .Minus, val: ch.str()})
+        self.tokens.push(Token{t: .Minus, val: ch.str()})
       } elif ch == '[' {
-        self.tokens.push(YAMLToken{t: .LBrack, val: ch.str()})
+        self.tokens.push(Token{t: .LBrack, val: ch.str()})
       } elif ch == ']' {
-        self.tokens.push(YAMLToken{t: .RBrack, val: ch.str()})
+        self.tokens.push(Token{t: .RBrack, val: ch.str()})
       } elif ch == '{' {
-        self.tokens.push(YAMLToken{t: .LBrace, val: ch.str()})
+        self.tokens.push(Token{t: .LBrace, val: ch.str()})
       } elif ch == '}' {
-        self.tokens.push(YAMLToken{t: .RBrace, val: ch.str()})
+        self.tokens.push(Token{t: .RBrace, val: ch.str()})
       } elif ch == ',' {
-        self.tokens.push(YAMLToken{t: .Comma, val: ch.str()})
+        self.tokens.push(Token{t: .Comma, val: ch.str()})
       } elif ch == '#' {
         loop i + 1 < contentLen && self.content[i + 1] != '\n' {
           i++
@@ -118,7 +134,7 @@ obj YAML {
           i++
         }
 
-        self.tokens.push(YAMLToken{
+        self.tokens.push(Token{
           t: .EOL,
           val: self.content.slice(startIdx, i + 1)
         })
@@ -134,7 +150,7 @@ obj YAML {
           i++
         }
 
-        self.tokens.push(YAMLToken{
+        self.tokens.push(Token{
           t: .Whitespace,
           val: self.content.slice(startIdx, i + 1)
         })
@@ -151,7 +167,7 @@ obj YAML {
           i++
         }
 
-        self.tokens.push(YAMLToken{
+        self.tokens.push(Token{
           t: .Text,
           val: self.content.slice(startIdx, i + 1)
         })
@@ -159,31 +175,31 @@ obj YAML {
     }
   }
 
-  fn _parse (mut self: ref Self, indent := 0) YAMLNode? {
-    mut node: YAMLNode?
+  fn _parse (mut self: ref Self, indent := 0) Node? {
+    mut node: Node?
     tk := self._nextTk()
 
     if tk.t == .Minus {
       value := self._stringifyTill(.EOL)
-      n: YAMLNode = YAMLNodeScalar{value: value.trim()}
+      n: Node = NodeScalar{value: value.trim()}
       return n
     }
 
     if tk.t == .Text {
       key := tk.val + self._stringifyTill(.Colon)
-      if !self._nextTkIs(.Colon) { continue }
+      if !self._nextTkIs(.Colon) { return nil }
       value := self._stringifyTill(.EOL)
-      keyNode: YAMLNode = YAMLNodeScalar{value: key.trim()}
+      keyNode: Node = NodeScalar{value: key.trim()}
 
       if !value.empty {
-        valueNode: YAMLNode = YAMLNodeScalar{value: value.trim()}
-        n: YAMLNode = YAMLNodeMapping{key: keyNode, value: valueNode}
+        valueNode: Node = NodeScalar{value: value.trim()}
+        n: Node = NodeMapping{key: keyNode, value: valueNode}
         return n
       }
 
       nexTkIndent := self._nextTkIndent()
-      mut mappings: YAMLNodeMapping[]
-      mut nodes: YAMLNode[]
+      mut mappings: NodeMapping[]
+      mut nodes: Node[]
       mut mappingsOnly := true
 
       if nexTkIndent > indent {
@@ -194,7 +210,7 @@ obj YAML {
             actualChildNode := childNode
             nodes.push(actualChildNode)
 
-            if actualChildNode is YAMLNodeMapping {
+            if actualChildNode is NodeMapping {
               mappings.push(actualChildNode)
             } else {
               mappingsOnly = false
@@ -204,15 +220,15 @@ obj YAML {
       }
 
       if nodes.empty {
-        n: YAMLNode = YAMLNodeMapping{key: keyNode}
+        n: Node = NodeMapping{key: keyNode}
         return n
       } elif mappingsOnly {
-        n1: YAMLNode = YAMLNodeMap{mappings: mappings}
-        n2: YAMLNode = YAMLNodeMapping{key: keyNode, value: n1}
+        n1: Node = NodeMap{mappings: mappings}
+        n2: Node = NodeMapping{key: keyNode, value: n1}
         return n2
       } else {
-        n1: YAMLNode = YAMLNodeSeq{items: nodes}
-        n2: YAMLNode = YAMLNodeMapping{key: keyNode, value: n1}
+        n1: Node = NodeSeq{items: nodes}
+        n2: Node = NodeMapping{key: keyNode, value: n1}
         return n2
       }
     }
@@ -220,17 +236,15 @@ obj YAML {
     return nil
   }
 
-  fn _stringifyTill (mut self: ref Self, t: YAMLTokenType) str {
+  fn _stringifyTill (mut self: ref Self, t: TokenType) str {
     tokensLen := self.tokens.len
     mut result := ""
 
     loop ; self.state.pos < tokensLen; self.state.pos++ {
-      if (
-        self.tokens[self.state.pos].t == t ||
-        self.tokens[self.state.pos].t == .EOL
-      ) {
+      if self.tokens[self.state.pos].t == t || self.tokens[self.state.pos].t == .EOL {
         break
       }
+
       tk := self.tokens[self.state.pos]
       result += tk.val
     }
@@ -239,7 +253,7 @@ obj YAML {
   }
 }
 
-fn YAML_parse (content: str) YAML {
+export fn parse (content: str) YAML {
   mut result := YAML{content: content}
   result._tokenize()
   loop result._hasNextTk() {
