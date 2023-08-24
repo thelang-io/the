@@ -239,8 +239,9 @@ class CodegenThrowTest : public testing::TestWithParam<const char *> {
 TEST_P(CodegenPassTest, Passes) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stdout"});
-  auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
+  auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
   std::filesystem::current_path(this->initialCwd_ / "test");
+  auto ast = AST(&parser);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
@@ -306,8 +307,9 @@ TEST_P(CodegenPassTest, Passes) {
 TEST_P(CodegenThrowTest, Throws) {
   auto param = std::string(testing::TestWithParam<const char *>::GetParam());
   auto sections = readTestFile("codegen", param, {"stdin", "code", "flags", "stderr"});
-  auto ast = testing::NiceMock<MockAST>(sections["stdin"]);
+  auto parser = testing::NiceMock<MockParser>(sections["stdin"]);
   std::filesystem::current_path(this->initialCwd_ / "test");
+  auto ast = AST(&parser);
   auto codegen = Codegen(&ast);
   auto result = codegen.gen();
   auto expectedCode = sections["code"];
@@ -1466,6 +1468,7 @@ INSTANTIATE_TEST_SUITE_P(NodeImport, CodegenPassTest, testing::Values(
   "node-import-multiple-namespaces",
   "node-import-empty-specifiers",
   "node-import-package",
+  "node-import-package-of-package",
   "node-import-priority"
 ));
 

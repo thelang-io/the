@@ -387,6 +387,7 @@ struct ASTImport {
 
 class AST {
  public:
+  std::string cwd;
   std::size_t priority;
   Parser *parser;
   Reader *reader;
@@ -405,7 +406,7 @@ class AST {
   static void populateParentExpr (ASTNodeExpr &, ASTNodeExpr *, ASTNode *);
   static void populateParents (ASTBlock &, ASTNode * = nullptr);
 
-  explicit AST (Parser *, const std::shared_ptr<std::vector<ASTImport>> & = nullptr);
+  explicit AST (Parser *, const std::optional<std::string> & = std::nullopt, const std::shared_ptr<std::vector<ASTImport>> & = nullptr);
   virtual ~AST () = default;
 
   virtual ASTBlock gen ();

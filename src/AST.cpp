@@ -301,10 +301,11 @@ void AST::populateParentExpr (ASTNodeExpr &expr, ASTNodeExpr *parent, ASTNode *n
   }
 }
 
-AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &i) {
+AST::AST (Parser *p, const std::optional<std::string> &c, const std::shared_ptr<std::vector<ASTImport>> &i) {
   this->parser = p;
   this->reader = this->parser->reader;
   this->imports = i == nullptr ? std::make_shared<std::vector<ASTImport>>() : i;
+  this->cwd = c == std::nullopt ? std::filesystem::current_path().string() : *c;
   this->priority = this->imports->empty() ? 0 : this->imports->back().priority;
 }
 
@@ -564,6 +565,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto stmtImportDecl = std::get<ParserStmtImportDecl>(*stmt.body);
       auto source = std::get<ParserExprLit>(*stmtImportDecl.source.body).body.val;
       auto sourceString = source.substr(1, source.size() - 2);
+      auto astCwd = this->cwd;
       auto relativePath = std::string();
 
       if (sourceString.starts_with(".")) {
@@ -571,12 +573,16 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       } else if (sourceString.starts_with("/")) {
         relativePath = std::filesystem::canonical(sourceString).string();
       } else {
+        auto initialCwd = std::filesystem::current_path();
+        std::filesystem::current_path(this->cwd);
         auto possibleRelativePath = parse_package_yaml_main(sourceString);
+        std::filesystem::current_path(initialCwd);
 
         if (possibleRelativePath == std::nullopt) {
           throw Error(this->reader, stmtImportDecl.source.start, stmtImportDecl.source.end, E1035);
         }
 
+        astCwd = (std::filesystem::path(this->cwd) / ".packages" / sourceString).string();
         relativePath = *possibleRelativePath;
       }
 
@@ -589,7 +595,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       if (importExists == this->imports->end()) {
         auto l = std::make_shared<Lexer>(r.get());
         auto p = std::make_shared<Parser>(l.get());
-        auto a = std::make_shared<AST>(p.get(), this->imports);
+        auto a = std::make_shared<AST>(p.get(), astCwd, this->imports);
 
         this->imports->push_back(ASTImport{
           this->imports->empty() ? 1 : this->imports->back().priority + 1,

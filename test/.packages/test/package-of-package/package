@@ -1,0 +1,2 @@
+import TestFunction from "test/package2"
+export TestFunction
