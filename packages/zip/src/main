@@ -3,8 +3,6 @@
  * Licensed under the MIT License
  */
 
-import exec from "the/exec"
-
 export fn zip (name: str, path: str) {
   if os_NAME == "Windows" {
     process_runSync("tar -a -c -f \"" + name + "\" \"" + path + "\"")
