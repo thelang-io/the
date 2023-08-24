@@ -6,7 +6,7 @@ main {
   print(test)
 }
 ======= stdout =======
-<NodeImportDeclsource="./fixtures/export-obj">
+<NodeImportDecl source="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="Package" />
   </NodeImportDeclSpecifiers>

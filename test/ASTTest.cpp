@@ -179,6 +179,7 @@ INSTANTIATE_TEST_SUITE_P(Node, ASTPassTest, testing::Values(
   "node-if-type-casts-elif",
   "node-import",
   "node-import-package",
+  "node-import-priority",
   "node-loop",
   "node-main",
   "node-obj-decl",

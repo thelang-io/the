@@ -377,6 +377,7 @@ struct ASTState {
 };
 
 struct ASTImport {
+  std::size_t priority;
   std::shared_ptr<Reader> reader;
   std::shared_ptr<Lexer> lexer;
   std::shared_ptr<Parser> parser;
@@ -386,6 +387,7 @@ struct ASTImport {
 
 class AST {
  public:
+  std::size_t priority;
   Parser *parser;
   Reader *reader;
   std::shared_ptr<std::vector<ASTImport>> imports;

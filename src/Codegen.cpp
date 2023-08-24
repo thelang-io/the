@@ -15,6 +15,7 @@
  */
 
 #include "Codegen.hpp"
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include "codegen-api.hpp"
@@ -131,6 +132,11 @@ Codegen::Codegen (AST *a) {
 
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   auto nodes = this->ast->gen();
+
+  std::sort(this->ast->imports->begin(), this->ast->imports->end(), [] (auto lhs, auto rhs) -> bool {
+    return lhs.priority > rhs.priority;
+  });
+
   this->async = ASTChecker(nodes).async(false);
   this->throws = ASTChecker(nodes).throws(false);
 
@@ -239,8 +245,8 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
     );
   }
 
-  for (auto it = this->ast->imports->rbegin(); it != this->ast->imports->rend(); it++) {
-    this->_block(&cMain, it->nodes, false);
+  for (const auto &it : *this->ast->imports) {
+    this->_block(&cMain, it.nodes, false);
   }
 
   this->_block(&cMain, nodes, false);

@@ -46,64 +46,64 @@ main {
   print(TestNamespace.TestFn, TestNamespace.TestFn(1, "2"), TestNamespace.TestConstVar, TestNamespace.TestMutVar)
 }
 ======= stdout =======
-<NodeImportDeclsource="./fixtures/export-enum">
+<NodeImportDecl source="./fixtures/export-enum">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestEnum" imported="TestEnum" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-fn">
+<NodeImportDecl source="./fixtures/export-fn">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestFn" imported="TestFn" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-obj">
+<NodeImportDecl source="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestObj" imported="TestObj" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-type">
+<NodeImportDecl source="./fixtures/export-type">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestAlias" imported="TestAlias" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-var">
+<NodeImportDecl source="./fixtures/export-var">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestConstVar" imported="TestConstVar" />
     <NodeImportDeclSpecifier local="TestMutVar" imported="TestMutVar" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-enum">
+<NodeImportDecl source="./fixtures/export-enum">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestEnumLocal" imported="TestEnum" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-fn">
+<NodeImportDecl source="./fixtures/export-fn">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestFnLocal" imported="TestFn" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-obj">
+<NodeImportDecl source="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestObjLocal" imported="TestObj" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-type">
+<NodeImportDecl source="./fixtures/export-type">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestAliasLocal" imported="TestAlias" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-var">
+<NodeImportDecl source="./fixtures/export-var">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestConstVarLocal" imported="TestConstVar" />
     <NodeImportDeclSpecifier local="TestMutVarLocal" imported="TestMutVar" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-expr">
+<NodeImportDecl source="./fixtures/export-expr">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestNamespace" />
   </NodeImportDeclSpecifiers>
 </NodeImportDecl>
-<NodeImportDeclsource="./fixtures/export-expr">
+<NodeImportDecl source="./fixtures/export-expr">
 </NodeImportDecl>
 <NodeMain>
   <NodeVarDecl>

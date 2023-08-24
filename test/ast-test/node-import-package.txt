@@ -5,7 +5,7 @@ main {
   TestFunction()
 }
 ======= stdout =======
-<NodeImportDeclsource="test/package">
+<NodeImportDecl source="test/package">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestFunction" imported="TestFunction" />
   </NodeImportDeclSpecifiers>

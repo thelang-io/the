@@ -9,7 +9,7 @@ export type TestAlias = str
 export const TEST_CONST := 1
 export mut TEST_MUT := 2
 ======= stdout =======
-<NodeImportDeclsource="./fixtures/export-obj">
+<NodeImportDecl source="./fixtures/export-obj">
   <NodeImportDeclSpecifiers>
     <NodeImportDeclSpecifier local="TestObj" imported="TestObj" />
   </NodeImportDeclSpecifiers>

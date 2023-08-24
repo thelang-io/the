@@ -305,6 +305,7 @@ AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &i) {
   this->parser = p;
   this->reader = this->parser->reader;
   this->imports = i == nullptr ? std::make_shared<std::vector<ASTImport>>() : i;
+  this->priority = this->imports->empty() ? 0 : this->imports->back().priority;
 }
 
 ASTBlock AST::gen () {
@@ -595,7 +596,15 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         auto l = std::make_shared<Lexer>(r.get());
         auto p = std::make_shared<Parser>(l.get());
         auto a = std::make_shared<AST>(p.get(), this->imports);
-        this->imports->push_back(ASTImport{r, l, p, nullptr});
+
+        this->imports->push_back(ASTImport{
+          this->imports->empty() ? 1 : this->imports->back().priority + 1,
+          r,
+          l,
+          p,
+          nullptr
+        });
+
         auto importItemIdx = this->imports->size() - 1;
 
         this->imports->at(importItemIdx).nodes = a->gen();
@@ -607,6 +616,11 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto importItem = std::find_if(this->imports->begin(), this->imports->end(), [&] (const auto &it) -> bool {
         return it.reader->path == r->path;
       });
+
+      if (importItem->priority < this->priority + 1) {
+        importItem->priority = this->priority + 1;
+        importItem->ast->priority = this->priority + 1;
+      }
 
       auto importNodes = importItem->nodes;
       auto importNodesExports = ASTBlock{};

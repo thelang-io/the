@@ -1,0 +1,132 @@
+======= stdin =======
+import PriorityEnum from "./fixtures/export-priority"
+import PriorityFunction from "./fixtures/import-priority"
+
+main {
+  a1 := PriorityEnum.One
+  PriorityFunction(a1)
+}
+======= stdout =======
+<NodeImportDecl source="./fixtures/export-priority">
+  <NodeImportDeclSpecifiers>
+    <NodeImportDeclSpecifier local="PriorityEnum" imported="PriorityEnum" />
+  </NodeImportDeclSpecifiers>
+</NodeImportDecl>
+<NodeImportDecl source="./fixtures/import-priority">
+  <NodeImportDeclSpecifiers>
+    <NodeImportDeclSpecifier local="PriorityFunction" imported="PriorityFunction" />
+  </NodeImportDeclSpecifiers>
+</NodeImportDecl>
+<NodeMain>
+  <NodeVarDecl>
+    <NodeVarDeclVar>
+      <Var name="a1" codeName="a1_0" frame="2">
+        <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+          <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+          <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+        </TypeEnum>
+      </Var>
+    </NodeVarDeclVar>
+    <NodeVarDeclInit>
+      <NodeExpr>
+        <NodeExprType>
+          <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+            <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+            <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+          </TypeEnum>
+        </NodeExprType>
+        <NodeExprBody>
+          <ExprAccess prop="One">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+                  <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+                </TypeEnum>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="PriorityEnum" codeName="fixtures_export_priority_PriorityEnum_0" ctxIgnored frame="1">
+                    <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+                      <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+                    </TypeEnum>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprAccess>
+        </NodeExprBody>
+      </NodeExpr>
+    </NodeVarDeclInit>
+  </NodeVarDecl>
+  <NodeExpr>
+    <NodeExprType>
+      <BuiltinType name="void" />
+    </NodeExprType>
+    <NodeExprBody>
+      <ExprCall>
+        <ExprCallCallee>
+          <NodeExpr>
+            <NodeExprType>
+              <TypeFn name="fn_sFP3PriorityEnumFRvoidFE">
+                <TypeFnParams>
+                  <TypeFnParam name="e" required>
+                    <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+                      <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+                    </TypeEnum>
+                  </TypeFnParam>
+                </TypeFnParams>
+                <TypeFnReturnType>
+                  <BuiltinType name="void" />
+                </TypeFnReturnType>
+              </TypeFn>
+            </NodeExprType>
+            <NodeExprBody>
+              <ExprAccess>
+                <Var name="PriorityFunction" codeName="fixtures_import_priority_PriorityFunction_0" frame="1">
+                  <TypeFn name="fn_sFP3PriorityEnumFRvoidFE">
+                    <TypeFnParams>
+                      <TypeFnParam name="e" required>
+                        <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+                          <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+                          <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+                        </TypeEnum>
+                      </TypeFnParam>
+                    </TypeFnParams>
+                    <TypeFnReturnType>
+                      <BuiltinType name="void" />
+                    </TypeFnReturnType>
+                  </TypeFn>
+                </Var>
+              </ExprAccess>
+            </NodeExprBody>
+          </NodeExpr>
+        </ExprCallCallee>
+        <ExprCallArgs>
+          <ExprCallArg id="e">
+            <NodeExpr>
+              <NodeExprType>
+                <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+                  <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+                  <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+                </TypeEnum>
+              </NodeExprType>
+              <NodeExprBody>
+                <ExprAccess>
+                  <Var name="a1" codeName="a1_0" frame="2">
+                    <TypeEnum codeName="fixtures_export_priority_PriorityEnum_0" name="PriorityEnum">
+                      <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDOne_0" name="One" />
+                      <TypeEnumerator codeName="fixtures_export_priority_PriorityEnumSDTwo_0" name="Two" />
+                    </TypeEnum>
+                  </Var>
+                </ExprAccess>
+              </NodeExprBody>
+            </NodeExpr>
+          </ExprCallArg>
+        </ExprCallArgs>
+      </ExprCall>
+    </NodeExprBody>
+  </NodeExpr>
+</NodeMain>

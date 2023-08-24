@@ -181,7 +181,7 @@ std::string ASTNode::xml (std::size_t indent) const {
     result += std::string(indent, ' ') + "</NodeIf>";
   } else if (std::holds_alternative<ASTNodeImportDecl>(*this->body)) {
     auto nodeImportDecl = std::get<ASTNodeImportDecl>(*this->body);
-    auto attrs = R"(source=")" + nodeImportDecl.source + R"(")";
+    auto attrs = R"( source=")" + nodeImportDecl.source + R"(")";
 
     result += std::string(indent, ' ') + "<NodeImportDecl" + attrs + ">" EOL;
 
