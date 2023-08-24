@@ -7,16 +7,16 @@ import exec from "the/exec"
 
 export fn zip (name: str, path: str) {
   if os_NAME == "Windows" {
-    exec("tar -a -c -f \"" + name + "\" \"" + path + "\"")
+    process_runSync("tar -a -c -f \"" + name + "\" \"" + path + "\"")
   } else {
-    exec("zip \"" + name + "\" \"" + path + "\"")
+    process_runSync("zip \"" + name + "\" \"" + path + "\"")
   }
 }
 
 export fn unzip (path: str) {
   if os_NAME == "Windows" {
-    exec("tar.exe -x -f \"" + path + "\"")
+    process_runSync("tar.exe -x -f \"" + path + "\"")
   } else {
-    exec("unzip \"" + path + "\"")
+    process_runSync("unzip \"" + path + "\"")
   }
 }

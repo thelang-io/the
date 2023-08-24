@@ -1,6 +1,0 @@
-======= stdin =======
-import TestObject from "../src/main.cpp"
-======= stderr =======
-/src/main.cpp:1:1: E1036 - Referencing files outside of current working directory is not supported
-  1 | /*!
-    | ^

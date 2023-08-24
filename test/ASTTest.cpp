@@ -322,6 +322,5 @@ INSTANTIATE_TEST_SUITE_P(, ASTThrowTest, testing::Values(
   "throw-E1032-node-import-circular",
   "throw-E1033-node-import-not-exported",
   "throw-E1034-expr-obj-non-existing-namespace-member",
-  "throw-E1035-node-import-non-existing-package",
-  "throw-E1036-node-import-outside-cwd"
+  "throw-E1035-node-import-non-existing-package"
 ));

@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-std::optional<std::string> convert_path_to_namespace (const std::string &);
+std::string convert_path_to_namespace (const std::string &);
 std::string str_trim (const std::string &);
 std::vector<std::string> str_lines (const std::string &);
 std::optional<std::string> parse_package_yaml_main (const std::string &);

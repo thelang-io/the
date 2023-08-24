@@ -309,13 +309,7 @@ AST::AST (Parser *p, const std::shared_ptr<std::vector<ASTImport>> &i) {
 }
 
 ASTBlock AST::gen () {
-  auto typeMapNamespace = convert_path_to_namespace(this->reader->path);
-
-  if (typeMapNamespace == std::nullopt) {
-    throw Error(this->reader, ReaderLocation{}, E1036);
-  }
-
-  this->typeMap.init(*typeMapNamespace);
+  this->typeMap.init(convert_path_to_namespace(this->reader->path));
   this->varMap.init(this->typeMap);
 
   auto block = ParserBlock{};

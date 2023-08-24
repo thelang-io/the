@@ -20,14 +20,9 @@
 #include <fstream>
 #include <sstream>
 
-std::optional<std::string> convert_path_to_namespace (const std::string &p) {
+std::string convert_path_to_namespace (const std::string &p) {
   auto cwd = std::filesystem::current_path().string();
-
-  if (!p.starts_with(cwd)) {
-    return std::nullopt;
-  }
-
-  auto s = p.substr(cwd.size());
+  auto s = p.starts_with(cwd) ? p.substr(cwd.size()) : p;
 
   for (auto i = static_cast<std::size_t>(0); i < s.size(); i++) {
     if (!std::isalnum(s[i])) {
