@@ -126,7 +126,14 @@ class ASTChecker {
     for (const auto &node : nodes) {
       result.push_back(node);
 
-      if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
+      if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
+        auto nodeBody = std::get<ASTNodeExportDecl>(*node.body);
+
+        if (nodeBody.declaration != std::nullopt) {
+          auto childResult = ASTChecker::flattenNode({ *nodeBody.declaration }, localScope);
+          result.insert(result.end(), childResult.begin(), childResult.end());
+        }
+      } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
         auto nodeBody = std::get<ASTNodeFnDecl>(*node.body);
 
         if (!localScope && nodeBody.body != std::nullopt) {
@@ -335,6 +342,11 @@ class ASTChecker {
 
     return std::all_of(this->_nodes.begin(), this->_nodes.end(), [] (const auto &it) {
       return std::holds_alternative<ASTNodeEnumDecl>(*it.body) ||
+        (
+          std::holds_alternative<ASTNodeExportDecl>(*it.body) &&
+          std::get<ASTNodeExportDecl>(*it.body).declaration != std::nullopt &&
+          !std::holds_alternative<ASTNodeExpr>(*std::get<ASTNodeExportDecl>(*it.body).declaration->body)
+        ) ||
         std::holds_alternative<ASTNodeFnDecl>(*it.body) ||
         std::holds_alternative<ASTNodeObjDecl>(*it.body) ||
         std::holds_alternative<ASTNodeTypeDecl>(*it.body);

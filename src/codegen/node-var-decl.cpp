@@ -58,7 +58,11 @@ std::shared_ptr<CodegenASTExpr> Codegen::_nodeVarDeclInit (const CodegenTypeInfo
   }
 }
 
-void Codegen::_nodeVarDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
+void Codegen::_nodeVarDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
+  if (phase != CODEGEN_PHASE_ALLOC && phase != CODEGEN_PHASE_FULL) {
+    return;
+  }
+
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
   auto name = Codegen::name(nodeVarDecl.var->codeName);
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);
@@ -80,7 +84,11 @@ void Codegen::_nodeVarDecl (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &n
   }
 }
 
-void Codegen::_nodeVarDeclAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node) {
+void Codegen::_nodeVarDeclAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, CodegenPhase phase) {
+  if (phase != CODEGEN_PHASE_ALLOC && phase != CODEGEN_PHASE_FULL) {
+    return;
+  }
+
   auto nodeVarDecl = std::get<ASTNodeVarDecl>(*node.body);
   auto name = Codegen::name(nodeVarDecl.var->codeName);
   auto typeInfo = this->_typeInfo(nodeVarDecl.var->type);

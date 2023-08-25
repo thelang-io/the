@@ -685,7 +685,7 @@ void Codegen::_node (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &node, Co
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
     return this->_nodeTry(c, node);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-    return this->_nodeVarDecl(c, node);
+    return this->_nodeVarDecl(c, node, phase);
   }
 }
 
@@ -707,7 +707,7 @@ void Codegen::_nodeAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
   } else if (std::holds_alternative<ASTNodeTry>(*node.body)) {
     return this->_nodeTryAsync(c, node);
   } else if (std::holds_alternative<ASTNodeVarDecl>(*node.body)) {
-    return this->_nodeVarDeclAsync(c, node);
+    return this->_nodeVarDeclAsync(c, node, phase);
   } else {
     return this->_node(c, node, phase);
   }

@@ -282,8 +282,8 @@ class Codegen {
   void _nodeThrowAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   void _nodeTry (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
   void _nodeTryAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
-  void _nodeVarDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
-  void _nodeVarDeclAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &);
+  void _nodeVarDecl (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
+  void _nodeVarDeclAsync (std::shared_ptr<CodegenASTStmt> *, const ASTNode &, CodegenPhase);
   std::shared_ptr<CodegenASTExpr> _nodeVarDeclInit (const CodegenTypeInfo &);
   void _restoreStateBuiltinsEntities ();
   void _saveStateBuiltinsEntities ();
