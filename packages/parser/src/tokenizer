@@ -20,12 +20,6 @@ from "./token"
 import TokenType, TokenizerState from "./types"
 import * as errors from "./errors"
 
-const ignoredTokenTypes: TokenType[] = [
-  .CommentBlock,
-  .CommentLine,
-  .Whitespace
-]
-
 export obj Tokenizer {
   mut reader: ref Reader
   mut state: TokenizerState
@@ -45,7 +39,7 @@ export obj Tokenizer {
       self.data.push(tok)
       self.state.idx++
 
-      if withIgnored || ignoredTokenTypes.contains(tok.t) {
+      if tok.t != .Whitespace {
         return tok
       }
     }
@@ -180,10 +174,12 @@ export obj Tokenizer {
     self.reader.walk(Token_isId)
     val := self.reader.slice(self.state.pos, self.reader.pos)
 
+    if val == "as" { return self._wrapToken(.KwAs) }
     if val == "async" { return self._wrapToken(.KwAsync) }
     if val == "await" { return self._wrapToken(.KwAwait) }
     if val == "break" { return self._wrapToken(.KwBreak) }
     if val == "catch" { return self._wrapToken(.KwCatch) }
+    if val == "const" { return self._wrapToken(.KwConst) }
     if val == "continue" { return self._wrapToken(.KwContinue) }
     if val == "elif" { return self._wrapToken(.KwElif) }
     if val == "else" { return self._wrapToken(.KwElse) }

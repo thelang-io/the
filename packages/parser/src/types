@@ -3,9 +3,31 @@
  * Licensed under the MIT License
  */
 
+export obj File {
+  path: str
+  mut errors: str[]
+  mut program: Program
+}
+
+export obj FunctionDeclaration {
+  id: str
+}
+
+export obj ImportDeclaration {
+  source: str
+}
+
 export obj Location {
   mut line: int
   mut col: int
+}
+
+export obj Program {
+  body: Statement[]
+}
+
+export obj Statement {
+  body: FunctionDeclaration | ImportDeclaration
 }
 
 export enum TokenAssociativity {
@@ -31,6 +53,7 @@ export enum TokenType {
   LitIntOct,
   LitStr,
 
+  KwAs,
   KwAsync,
   KwAwait,
   KwBreak,

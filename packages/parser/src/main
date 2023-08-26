@@ -3,14 +3,24 @@
  * Licensed under the MIT License
  */
 
+import
+  File,
+  FunctionDeclaration,
+  ImportDeclaration,
+  Statement,
+  Program
+from "./types"
+import Program_traverse from "./program"
 import Tokenizer from "./tokenizer"
 
-export obj Parser {
-  path: str
+export fn parse (path: str) File {
+  return File{path: path}
 }
 
-export fn parse (path: str) Parser {
-  return Parser{path: path}
-}
-
+export File
+export FunctionDeclaration
+export ImportDeclaration
+export Program
+export Program_traverse
+export Statement
 export Tokenizer

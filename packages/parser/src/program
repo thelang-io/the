@@ -1,0 +1,9 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import Program, Statement from "./types"
+
+export fn Program_traverse (program: Program, cb: (it: Statement) -> void) {
+}
