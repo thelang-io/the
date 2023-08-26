@@ -235,9 +235,9 @@ fs_realpathSync_cleanup2:
   if (d == NULL) {
     const char *fmt = "failed to get real path of file `%s`";
     size_t z = snprintf(NULL, 0, fmt, c);
-    char *d = alloc(z + 1);
-    sprintf(d, fmt, c);
-    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    char *m = alloc(z + 1);
+    sprintf(m, fmt, c);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {m, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
     goto fs_realpathSync_cleanup1;
   }
 fs_realpathSync_cleanup1:

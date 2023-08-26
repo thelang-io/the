@@ -490,9 +490,9 @@ const std::vector<std::string> codegenFs = {
   R"(  if (d == _{NULL}) {)" EOL
   R"(    const char *fmt = "failed to get real path of file `%s`";)" EOL
   R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);)" EOL
-  R"(    char *d = _{alloc}(z + 1);)" EOL
-  R"(    _{sprintf}(d, fmt, c);)" EOL
-  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    char *m = _{alloc}(z + 1);)" EOL
+  R"(    _{sprintf}(m, fmt, c);)" EOL
+  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {m, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
   R"(    goto fs_realpathSync_cleanup1;)" EOL
   R"(  })" EOL
   R"(fs_realpathSync_cleanup1:)" EOL

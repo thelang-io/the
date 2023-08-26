@@ -24,7 +24,7 @@ std::shared_ptr<Var> VarMap::add (const std::string &name, const std::string &co
 }
 
 std::shared_ptr<Var> VarMap::addNamespace (const std::string &name, Type *type) {
-  this->_items.push_back(std::make_shared<Var>(Var{name, this->name(name), type, false, false, false, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{name, this->name(name), type, false, false, false, true, this->_frame}));
   return this->_items.back();
 }
 

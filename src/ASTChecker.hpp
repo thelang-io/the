@@ -319,6 +319,18 @@ class ASTChecker {
   }
 
   template <typename T>
+  std::vector<ASTNode> getNodeOfType (bool localScope = true) const {
+    this->_checkNode();
+    auto result = ASTChecker::flattenNode(this->_nodes, localScope);
+
+    result.erase(std::remove_if(result.begin(), result.end(), [] (const auto &it) -> bool {
+      return !std::holds_alternative<T>(*it.body);
+    }), result.end());
+
+    return result;
+  }
+
+  template <typename T>
   bool has () const {
     this->_checkNode();
     return this->_hasNode<T>(this->_nodes);

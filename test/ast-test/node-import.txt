@@ -850,7 +850,7 @@ main {
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
-                        <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
+                        <Var name="TestNamespace" codeName="TestNamespace_0" ctxIgnored frame="1">
                           <TypeNamespace codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
                               <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
@@ -1120,7 +1120,7 @@ main {
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
-                        <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
+                        <Var name="TestNamespace" codeName="TestNamespace_0" ctxIgnored frame="1">
                           <TypeNamespace codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
                               <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
@@ -1242,7 +1242,7 @@ main {
                             </NodeExprType>
                             <NodeExprBody>
                               <ExprAccess>
-                                <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
+                                <Var name="TestNamespace" codeName="TestNamespace_0" ctxIgnored frame="1">
                                   <TypeNamespace codeName="test_TestNamespace_0" name="TestNamespace">
                                     <TypeField name="TestEnum">
                                       <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
@@ -1371,7 +1371,7 @@ main {
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
-                        <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
+                        <Var name="TestNamespace" codeName="TestNamespace_0" ctxIgnored frame="1">
                           <TypeNamespace codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
                               <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">
@@ -1474,7 +1474,7 @@ main {
                     </NodeExprType>
                     <NodeExprBody>
                       <ExprAccess>
-                        <Var name="TestNamespace" codeName="TestNamespace_0" frame="1">
+                        <Var name="TestNamespace" codeName="TestNamespace_0" ctxIgnored frame="1">
                           <TypeNamespace codeName="test_TestNamespace_0" name="TestNamespace">
                             <TypeField name="TestEnum">
                               <TypeEnum codeName="fixtures_export_enum_TestEnum_0" name="TestEnum">

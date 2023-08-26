@@ -117,6 +117,7 @@ TEST_F(ASTCheckerTest, CtorWithPointers) {
 
 TEST_F(ASTCheckerTest, ThrowsOnNonNode) {
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").endsWith<ASTNodeReturn>(), "tried node method on non node");
+  EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").getNodeOfType<ASTNodeReturn>(), "tried node method on non node");
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").has<ASTNodeReturn>(), "tried node method on non node");
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").hoistingFriendly(), "tried node method on non node");
   EXPECT_THROW_WITH_MESSAGE(this->expr_("a := 1", "a + 1").insideMain(), "tried node method on non node");
@@ -220,6 +221,14 @@ TEST_F(ASTCheckerTest, GetExprOfTypeFromNodes) {
 TEST_F(ASTCheckerTest, GetExprOfTypeFromNodeMain) {
   auto nodes = testing::NiceMock<MockAST>("main { 1 + 1 }").gen();
   EXPECT_EQ(ASTChecker(nodes).getExprOfType<ASTExprLit>().size(), 2);
+}
+
+TEST_F(ASTCheckerTest, GetNodeOfType) {
+  EXPECT_EQ(this->node_("loop { break }").getNodeOfType<ASTNodeBreak>().size(), 1);
+  EXPECT_EQ(this->node_("fn test () { loop { break } }").getNodeOfType<ASTNodeBreak>().size(), 0);
+  EXPECT_EQ(this->node_("export fn test () { loop { break } }").getNodeOfType<ASTNodeBreak>().size(), 0);
+  EXPECT_EQ(this->node_("fn test () { loop { break } }").getNodeOfType<ASTNodeBreak>(false).size(), 1);
+  EXPECT_EQ(this->node_("export fn test () { loop { break } }").getNodeOfType<ASTNodeBreak>(false).size(), 1);
 }
 
 TEST_F(ASTCheckerTest, HasAwait) {

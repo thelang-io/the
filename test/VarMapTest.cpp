@@ -99,7 +99,7 @@ TEST_F(VarMapTest, AddsNamespace) {
   EXPECT_FALSE(this->vm_.get("Test")->mut);
   EXPECT_FALSE(this->vm_.get("Test")->constant);
   EXPECT_FALSE(this->vm_.get("Test")->builtin);
-  EXPECT_FALSE(this->vm_.get("Test")->ctxIgnored);
+  EXPECT_TRUE(this->vm_.get("Test")->ctxIgnored);
   EXPECT_EQ(this->vm_.get("Test")->frame, 0);
 }
 

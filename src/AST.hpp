@@ -382,6 +382,7 @@ struct ASTImport {
   std::shared_ptr<Lexer> lexer;
   std::shared_ptr<Parser> parser;
   std::shared_ptr<AST> ast;
+  bool initialized;
   ASTBlock nodes = {};
 };
 

@@ -220,7 +220,12 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       }
 
       auto typeField = objTypeInfo.realType->getField(*exprAccess.prop);
-      expr = CodegenASTExprAccess::create(Codegen::name(typeField.callInfo.codeName));
+      auto memberName = Codegen::name(typeField.callInfo.codeName);
+      expr = CodegenASTExprAccess::create(memberName);
+
+      if (this->state.contextVars.contains(memberName) && (nodeExpr.type->isRef() || !targetType->isRef())) {
+        expr = CodegenASTExprUnary::create("*", expr);
+      }
     } else if (exprAccess.prop != std::nullopt) {
       auto cObj = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, parent, c, true);
 

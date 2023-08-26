@@ -341,7 +341,6 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     }
 
     if (
-      fnType.isMethod &&
       this->state.contextVars.contains(fnName->str()) &&
       (nodeExpr.type->isRef() || !targetType->isRef())
     ) {

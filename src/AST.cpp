@@ -616,12 +616,12 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         auto p = std::make_shared<Parser>(l.get());
         auto a = std::make_shared<AST>(p.get(), astCwd, this->imports);
 
-        this->imports->push_back(ASTImport{a->priority, r, l, p, nullptr});
+        this->imports->push_back(ASTImport{a->priority, r, l, p, a, false});
         auto importItemIdx = this->imports->size() - 1;
 
-        this->imports->at(importItemIdx).nodes = a->gen();
-        this->imports->at(importItemIdx).ast = a;
-      } else if (importExists->ast == nullptr) {
+        this->imports->at(importItemIdx).nodes = this->imports->at(importItemIdx).ast->gen();
+        this->imports->at(importItemIdx).initialized = true;
+      } else if (!importExists->initialized) {
         throw Error(this->reader, stmtImportDecl.source.start, stmtImportDecl.source.end, E1032);
       }
 
@@ -638,11 +638,15 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       }
 
       auto importNodes = importItem->nodes;
-      auto importNodesExports = ASTBlock{};
+      auto importNodesExports = ASTChecker(importItem->nodes).getNodeOfType<ASTNodeExportDecl>(false);
+      auto importNodesObjects = ASTChecker(importItem->nodes).getNodeOfType<ASTNodeObjDecl>(false);
 
-      for (const auto &node : importItem->nodes) {
-        if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
-          importNodesExports.push_back(node);
+      for (const auto &importNodesObject : importNodesObjects) {
+        auto nodeObjDecl = std::get<ASTNodeObjDecl>(*importNodesObject.body);
+
+        for (const auto &method : nodeObjDecl.methods) {
+          this->typeMap.insert(method.var->type);
+          this->varMap.insert(method.var);
         }
       }
 
@@ -654,13 +658,15 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto namespaceFields = std::vector<TypeField>{};
 
             for (const auto &node : importNodesExports) {
-              namespaceFields.push_back(TypeField{
-                AST::getExportName(node),
-                AST::getExportType(node),
-                false,
-                false,
-                TypeCallInfo{AST::getExportCodeName(node)}
-              });
+              auto exportName = AST::getExportName(node);
+              auto exportCodeName = AST::getExportCodeName(node);
+              auto exportType = AST::getExportType(node);
+
+              namespaceFields.push_back(TypeField{exportName, exportType, false, false, TypeCallInfo{exportCodeName}});
+
+              if (!exportType->isEnum()) {
+                this->varMap.add(specifierLocal + "." + exportName, exportCodeName, exportType);
+              }
             }
 
             auto namespaceType = this->typeMap.createNamespace(specifierLocal, namespaceFields);
@@ -687,7 +693,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
               this->typeMap.insert(exportType);
             }
 
-            if (exportVar == nullptr && exportType->isEnum()) {
+            if (exportType->isEnum()) {
               this->varMap.add(specifierLocal, exportType->codeName, exportType, false, false, true);
             }
           }
@@ -1202,6 +1208,13 @@ ASTNodeExpr AST::_nodeExpr (const ParserStmtExpr &stmtExpr, Type *targetType, Va
 
           varStack.mark(propTypeFn.callInfo.codeName);
           initializedExprAccessExpr = true;
+        } else if (exprAccessExpr.type->isNamespace() && exprAccessExpr.type->hasProp(parserExprAccess.prop->val)) {
+          auto var = this->varMap.get(exprAccessExpr.type->name + "." + parserExprAccess.prop->val);
+
+          if (var != nullptr) {
+            varStack.mark(var);
+            initializedExprAccessExpr = true;
+          }
         }
       }
 

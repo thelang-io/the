@@ -1466,6 +1466,7 @@ INSTANTIATE_TEST_SUITE_P(NodeImport, CodegenPassTest, testing::Values(
   "node-import-with-rename",
   "node-import-namespace",
   "node-import-multiple-namespaces",
+  "node-import-namespace-scoped",
   "node-import-empty-specifiers",
   "node-import-package",
   "node-import-package-of-package",
