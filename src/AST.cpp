@@ -171,6 +171,12 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
         AST::populateParentExpr(*member.init, nullptr, &node);
       }
     }
+  } else if (std::holds_alternative<ASTNodeExportDecl>(*node.body)) {
+    auto &nodeExportDecl = std::get<ASTNodeExportDecl>(*node.body);
+
+    if (nodeExportDecl.declaration != std::nullopt) {
+      AST::populateParent(*nodeExportDecl.declaration, &node);
+    }
   } else if (std::holds_alternative<ASTNodeFnDecl>(*node.body)) {
     auto &nodeFnDecl = std::get<ASTNodeFnDecl>(*node.body);
 
@@ -198,7 +204,7 @@ void AST::populateParent (ASTNode &node, ASTNode *parent) {
     AST::populateParents(nodeLoop.body, &node);
 
     if (nodeLoop.init != std::nullopt) {
-      nodeLoop.init->parent = &node;
+      AST::populateParent(*nodeLoop.init, &node);
     }
     if (nodeLoop.cond != std::nullopt) {
       AST::populateParentExpr(*nodeLoop.cond, nullptr, &node);

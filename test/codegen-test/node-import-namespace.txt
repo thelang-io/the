@@ -289,8 +289,6 @@ struct str __THE_1_fixtures_export_fn_TestFn_0 (void *px, void *pp) {
   const int32_t __THE_0_a_0 = p->n0;
   const struct str __THE_0_b_0 = p->n1;
   v = str_concat_str(int_str(__THE_0_a_0), str_copy(__THE_0_b_0));
-  goto L0;
-L0:
   str_free((struct str) __THE_0_b_0);
   free(pp);
   return v;
