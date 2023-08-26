@@ -178,7 +178,7 @@ std::string Codegen::_type (Type *type) {
     auto optType = std::get<TypeOptional>(type->body);
     return this->_type(optType.type) + "*";
   } else if (type->isNamespace()) {
-    return "void ";
+    return "void *";
   } else if (type->isRef()) {
     auto refType = std::get<TypeRef>(type->body);
     return this->_type(refType.refType) + "*";

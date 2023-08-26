@@ -392,6 +392,7 @@ class AST {
   Parser *parser;
   Reader *reader;
   std::shared_ptr<std::vector<ASTImport>> imports;
+  std::vector<std::size_t> deps;
   TypeMap typeMap;
   VarMap varMap;
   ASTState state;

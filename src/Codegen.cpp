@@ -713,7 +713,14 @@ void Codegen::_nodeAsync (std::shared_ptr<CodegenASTStmt> *c, const ASTNode &nod
   }
 }
 
-std::shared_ptr<CodegenASTExpr> Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, const ASTNode &parent, std::shared_ptr<CodegenASTStmt> *c, bool root, std::size_t awaitCallId) {
+std::shared_ptr<CodegenASTExpr> Codegen::_nodeExpr (
+  const ASTNodeExpr &nodeExpr,
+  Type *targetType,
+  const ASTNode &parent,
+  std::shared_ptr<CodegenASTStmt> *c,
+  bool root,
+  std::size_t awaitCallId
+) {
   if (std::holds_alternative<ASTExprAccess>(*nodeExpr.body)) {
     return this->_exprAccess(nodeExpr, targetType, parent, c, root);
   } else if (std::holds_alternative<ASTExprArray>(*nodeExpr.body)) {
@@ -749,7 +756,12 @@ std::shared_ptr<CodegenASTExpr> Codegen::_nodeExpr (const ASTNodeExpr &nodeExpr,
   throw Error("tried to generate code for unknown expression");
 }
 
-std::shared_ptr<CodegenASTExpr> Codegen::_wrapNodeExpr (const ASTNodeExpr &nodeExpr, Type *targetType, bool root, const std::shared_ptr<CodegenASTExpr> &expr) {
+std::shared_ptr<CodegenASTExpr> Codegen::_wrapNodeExpr (
+  const ASTNodeExpr &nodeExpr,
+  Type *targetType,
+  bool root,
+  const std::shared_ptr<CodegenASTExpr> &expr
+) {
   auto realTargetType = Type::real(targetType);
   auto realNodeExprType = Type::real(nodeExpr.type);
   auto result = expr;

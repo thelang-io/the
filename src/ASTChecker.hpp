@@ -342,11 +342,7 @@ class ASTChecker {
 
     return std::all_of(this->_nodes.begin(), this->_nodes.end(), [] (const auto &it) {
       return std::holds_alternative<ASTNodeEnumDecl>(*it.body) ||
-        (
-          std::holds_alternative<ASTNodeExportDecl>(*it.body) &&
-          std::get<ASTNodeExportDecl>(*it.body).declaration != std::nullopt &&
-          !std::holds_alternative<ASTNodeExpr>(*std::get<ASTNodeExportDecl>(*it.body).declaration->body)
-        ) ||
+        std::holds_alternative<ASTNodeExportDecl>(*it.body) ||
         std::holds_alternative<ASTNodeFnDecl>(*it.body) ||
         std::holds_alternative<ASTNodeObjDecl>(*it.body) ||
         std::holds_alternative<ASTNodeTypeDecl>(*it.body);

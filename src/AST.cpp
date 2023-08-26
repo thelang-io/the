@@ -57,6 +57,19 @@ std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
   throw Error("Tried stringify non lvalue expr access");
 }
 
+void updatePriorities (const std::shared_ptr<AST> &ast, std::size_t priority) {
+  ast->priority = priority;
+
+  for (const auto &depIdx : ast->deps) {
+    auto &dep = ast->imports->at(depIdx);
+
+    if (dep.priority < ast->priority + 1) {
+      dep.priority = ast->priority + 1;
+      updatePriorities(dep.ast, dep.priority);
+    }
+  }
+}
+
 std::string AST::getExportCodeName (const ASTNode &node) {
   auto var = AST::getExportVar(node);
 
@@ -306,7 +319,7 @@ AST::AST (Parser *p, const std::optional<std::string> &c, const std::shared_ptr<
   this->reader = this->parser->reader;
   this->imports = i == nullptr ? std::make_shared<std::vector<ASTImport>>() : i;
   this->cwd = c == std::nullopt ? std::filesystem::current_path().string() : *c;
-  this->priority = this->imports->empty() ? 0 : this->imports->back().priority;
+  this->priority = 0;
 }
 
 ASTBlock AST::gen () {
@@ -597,14 +610,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         auto p = std::make_shared<Parser>(l.get());
         auto a = std::make_shared<AST>(p.get(), astCwd, this->imports);
 
-        this->imports->push_back(ASTImport{
-          this->imports->empty() ? 1 : this->imports->back().priority + 1,
-          r,
-          l,
-          p,
-          nullptr
-        });
-
+        this->imports->push_back(ASTImport{a->priority, r, l, p, nullptr});
         auto importItemIdx = this->imports->size() - 1;
 
         this->imports->at(importItemIdx).nodes = a->gen();
@@ -617,9 +623,12 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         return it.reader->path == r->path;
       });
 
+      auto importItemIdx = std::distance(this->imports->begin(), importItem);
+      this->deps.push_back(static_cast<std::size_t>(importItemIdx));
+
       if (importItem->priority < this->priority + 1) {
         importItem->priority = this->priority + 1;
-        importItem->ast->priority = this->priority + 1;
+        updatePriorities(importItem->ast, importItem->priority);
       }
 
       auto importNodes = importItem->nodes;

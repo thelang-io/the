@@ -554,10 +554,10 @@ TEST_F(ASTCheckerTest, HoistingFriendly) {
   EXPECT_TRUE(this->node_("export obj Test { a: int }").hoistingFriendly());
   EXPECT_TRUE(this->node_("export type Alias = int").hoistingFriendly());
 
-  EXPECT_FALSE(this->node_("enum Test { One, Two, Three } export Test").hoistingFriendly());
-  EXPECT_FALSE(this->node_("fn test () {} export test").hoistingFriendly());
-  EXPECT_FALSE(this->node_("obj Test { a: int } export Test").hoistingFriendly());
-  EXPECT_FALSE(this->node_("type Alias = int export Alias").hoistingFriendly());
+  EXPECT_TRUE(this->node_("enum Test { One, Two, Three } export Test").hoistingFriendly());
+  EXPECT_TRUE(this->node_("fn test () {} export test").hoistingFriendly());
+  EXPECT_TRUE(this->node_("obj Test { a: int } export Test").hoistingFriendly());
+  EXPECT_TRUE(this->node_("type Alias = int export Alias").hoistingFriendly());
 }
 
 TEST_F(ASTCheckerTest, InsideMainOnNull) {
