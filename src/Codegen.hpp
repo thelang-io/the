@@ -159,6 +159,7 @@ class Codegen {
   std::map<std::string, CodegenAPIItem> api = {};
   AST *ast;
   Reader *reader;
+  std::string readerPath;
   CodegenState state;
   VarMap varMap;
   std::map<std::string, const Type *> anyTypes;

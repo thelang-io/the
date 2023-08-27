@@ -131,6 +131,7 @@ Codegen::Codegen (AST *a) {
 }
 
 std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
+  this->readerPath = this->reader->path;
   auto nodes = this->ast->gen();
 
   std::sort(this->ast->imports->begin(), this->ast->imports->end(), [] (auto lhs, auto rhs) -> bool {
@@ -246,9 +247,11 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   }
 
   for (const auto &it : *this->ast->imports) {
+    this->readerPath = it.reader->path;
     this->_block(&cMain, it.nodes, false);
   }
 
+  this->readerPath = this->reader->path;
   this->_block(&cMain, nodes, false);
 
   if (this->async) {
