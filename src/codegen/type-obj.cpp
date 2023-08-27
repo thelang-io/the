@@ -119,11 +119,11 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
     } else if (entity.name == typeName + "_eq") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
+      auto entityDef = std::string();
       auto fieldIdx = static_cast<std::size_t>(0);
 
       entity.decl += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} *, struct _{" + typeName + "} *);";
       entity.def += "_{bool} " + typeName + "_eq (struct _{" + typeName + "} *n1, struct _{" + typeName + "} *n2) {" EOL;
-      entity.def += "  _{bool} r = ";
 
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.type->isMethod()) {
@@ -131,12 +131,12 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
           auto cEq1 = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n1"), fieldName, true);
           auto cEq2 = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), fieldName, true);
 
-          entity.def += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, cEq1, cEq2)->str();
+          entityDef += (fieldIdx == 0 ? "" : " && ") + this->_genEqFn(field.type, cEq1, cEq2)->str();
           fieldIdx++;
         }
       }
 
-      entity.def += ";" EOL;
+      entity.def += "  _{bool} r = " + (entityDef.empty() ? "_{true}" : entityDef) + ";" EOL;
       entity.def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
       entity.def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
       entity.def += "  return r;" EOL;
@@ -166,11 +166,11 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
     } else if (entity.name == typeName + "_ne") {
       this->state.builtins = &entity.builtins;
       this->state.entities = &entity.entities;
+      auto entityDef = std::string();
       auto fieldIdx = static_cast<std::size_t>(0);
 
       entity.decl += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} *, struct _{" + typeName + "} *);";
       entity.def += "_{bool} " + typeName + "_ne (struct _{" + typeName + "} *n1, struct _{" + typeName + "} *n2) {" EOL;
-      entity.def += "  _{bool} r = ";
 
       for (const auto &field : type->fields) {
         if (!field.builtin && !field.type->isMethod()) {
@@ -178,12 +178,12 @@ std::string Codegen::_typeNameObjDef (Type *type, const std::map<std::string, st
           auto cEq1 = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n1"), fieldName, true);
           auto cEq2 = CodegenASTExprAccess::create(CodegenASTExprAccess::create("n2"), fieldName, true);
 
-          entity.def += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, cEq1, cEq2, true)->str();
+          entityDef += (fieldIdx == 0 ? "" : " || ") + this->_genEqFn(field.type, cEq1, cEq2, true)->str();
           fieldIdx++;
         }
       }
 
-      entity.def += ";" EOL;
+      entity.def += "  _{bool} r = " + (entityDef.empty() ? "_{false}" : entityDef) + ";" EOL;
       entity.def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
       entity.def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
       entity.def += "  return r;" EOL;
