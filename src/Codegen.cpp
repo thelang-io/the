@@ -141,6 +141,20 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
   this->async = ASTChecker(nodes).async(false);
   this->throws = ASTChecker(nodes).throws(false);
 
+  if (!this->async) {
+    for (const auto &it : *this->ast->imports) {
+      this->async = ASTChecker(it.nodes).async(false);
+      if (this->async) break;
+    }
+  }
+
+  if (!this->throws) {
+    for (const auto &it : *this->ast->imports) {
+      this->throws = ASTChecker(it.nodes).throws(false);
+      if (this->throws) break;
+    }
+  }
+
   for (const auto &[name, item] : codegenAPI) {
     this->api[name] = item;
   }
