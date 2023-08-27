@@ -3,18 +3,117 @@
  * Licensed under the MIT License
  */
 
-export obj File {
-  path: str
-  mut errors: str[]
-  mut program: Program
+export type Expression =
+  CallExpression |
+  Identifier |
+  NumericLiteral |
+  ParenthesizedExpression |
+  StringLiteral
+
+export obj CallExpression {
+  start: int
+  end: int
+  callee: Expression
+  arguments: Expression[]
+}
+
+export obj Identifier {
+  start: int
+  end: int
+  name: str
+}
+
+export enum NumericLiteralType {
+  Binary,
+  Decimal,
+  Hexadecimal,
+  Octal
+}
+
+export obj NumericLiteral {
+  start: int
+  end: int
+  t: NumericLiteralType
+  value: str
+}
+
+export obj ParenthesizedExpression {
+  start: int
+  end: int
+  expression: Expression
+}
+
+export obj StringLiteral {
+  start: int
+  end: int
+  raw: str
+  value: str
+}
+
+export type Statement =
+  BlockStatement |
+  EmptyStatement |
+  ExpressionStatement |
+  FunctionDeclaration |
+  ImportDeclaration |
+  MainDeclaration
+
+export obj BlockStatement {
+  start: int
+  end: int
+  body: Statement[]
+}
+
+export obj EmptyStatement {
+  start: int
+  end: int
+}
+
+export obj ExpressionStatement {
+  start: int
+  end: int
+  expression: Expression
 }
 
 export obj FunctionDeclaration {
-  id: str
+  start: int
+  end: int
+  id: Expression
 }
 
+export obj ImportSpecifier {
+  start: int
+  end: int
+  imported: Expression
+  local: Expression
+}
+
+export obj ImportNamespaceSpecifier {
+  start: int
+  end: int
+  local: Expression
+}
+
+export type ImportDeclarationSpecifier = ImportSpecifier | ImportNamespaceSpecifier
+
 export obj ImportDeclaration {
-  source: str
+  start: int
+  end: int
+  specifiers: ImportDeclarationSpecifier[]
+  source: Expression
+}
+
+export obj MainDeclaration {
+  start: int
+  end: int
+  body: Statement
+}
+
+export obj File {
+  path: str
+  errors: str[]
+  hasErrors: bool
+  mut program: Program
 }
 
 export obj Location {
@@ -24,10 +123,6 @@ export obj Location {
 
 export obj Program {
   body: Statement[]
-}
-
-export obj Statement {
-  body: FunctionDeclaration | ImportDeclaration
 }
 
 export enum TokenAssociativity {

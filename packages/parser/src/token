@@ -3,10 +3,10 @@
  * Licensed under the MIT License
  */
 
-import TokenType from "./types"
+import * as t from "./types"
 
 export obj Token {
-  t: TokenType
+  t: t.TokenType
   val: str
   start: int
   end: int
@@ -15,7 +15,7 @@ export obj Token {
     val := self._valEscaped()
     loc := "(" + self.start.str() + "-" + self.end.str() + ")"
 
-    return self.t.rawValue.slice(3) + loc + (val == "" ? "" : ": " + val)
+    return self.t.rawValue.slice(3) + loc + (val.empty ? "" : ": " + val)
   }
 
   fn toXML (self: Self) str {
@@ -55,7 +55,7 @@ export obj Token {
   }
 }
 
-export fn Token_isCharEsc (ch: char) bool {
+export fn isCharEsc (ch: char) bool {
   return
     ch == '0' ||
     ch == 'b' ||
@@ -69,23 +69,23 @@ export fn Token_isCharEsc (ch: char) bool {
     ch == '\\'
 }
 
-export fn Token_isId (ch: char) bool {
+export fn isId (ch: char) bool {
   return ch.isLetterOrDigit || ch == '_'
 }
 
-export fn Token_isIdStart (ch: char) bool {
+export fn isIdStart (ch: char) bool {
   return ch.isLetter || ch == '_'
 }
 
-export fn Token_isIntBin (ch: char) bool {
+export fn isIntBin (ch: char) bool {
   return ch == '0' || ch == '1'
 }
 
-export fn Token_isIntDec (ch: char) bool {
+export fn isIntDec (ch: char) bool {
   return ch.isDigit
 }
 
-export fn Token_isIntHex (ch: char) bool {
+export fn isIntHex (ch: char) bool {
   return
     ch.isDigit ||
     ch == 'A' || ch == 'a' ||
@@ -96,7 +96,7 @@ export fn Token_isIntHex (ch: char) bool {
     ch == 'F' || ch == 'f'
 }
 
-export fn Token_isIntOct (ch: char) bool {
+export fn isIntOct (ch: char) bool {
   return
     ch == '0' ||
     ch == '1' ||
@@ -108,15 +108,15 @@ export fn Token_isIntOct (ch: char) bool {
     ch == '7'
 }
 
-export fn Token_isNotNewLine (ch: char) bool {
+export fn isNotNewLine (ch: char) bool {
   return ch != '\n'
 }
 
-export fn Token_isStrEsc (ch: char) bool {
-  return Token_isCharEsc(ch) || ch == '{'
+export fn isStrEsc (ch: char) bool {
+  return isCharEsc(ch) || ch == '{'
 }
 
-export fn Token_isWhitespace (ch: char) bool {
+export fn isWhitespace (ch: char) bool {
   return
     ch == ' ' ||
     ch == '\f' ||

@@ -1,0 +1,271 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Reader from "./reader"
+import * as Token from "./token"
+import * as Tokenizer from "./tokenizer"
+import * as errors from "./errors"
+import * as t from "./types"
+
+fn tokenTypeToNumericLiteralType (t: t.TokenType) t.NumericLiteralType {
+  if t == .LitIntBin {
+    return .Binary
+  } elif t == .LitIntDec {
+    return .Decimal
+  } elif t == .LitIntHex {
+    return .Hexadecimal
+  } else {
+    return .Octal
+  }
+}
+
+export obj Parser {
+  mut errors: str[]
+  mut tokenizer: ref Tokenizer.Tokenizer
+
+  fn hasNext (mut self: ref Self) bool {
+    return !self.tokenizer.lookahead(.Eof)
+  }
+
+  fn next (mut self: ref Self) t.Statement {
+    mut statement: t.Statement?
+
+    if (
+      (statement = self._maybeMainDeclaration()) != nil ||
+      (statement = self._maybeBlockStatement()) != nil ||
+      (statement = self._maybeExpressionStatement()) != nil
+    ) {
+      return self._wrapStatement(statement)
+    }
+
+    tk := self.tokenizer.next()
+    self._raise(errors.E0104(tk.val))
+
+    r: t.Statement = t.EmptyStatement{}
+    return r
+  }
+
+  fn nextExpression (mut self: ref Self) t.Expression? {
+    mut expression: t.Expression?
+
+    if (
+      (expression = self._maybeIdentifier()) != nil ||
+      (expression = self._maybeNumericLiteral()) != nil ||
+      (expression = self._maybeStringLiteral()) != nil ||
+      (expression = self._maybeParenthesizedExpression()) != nil
+    ) {
+      return self._wrapExpression(expression)
+    }
+
+    return nil
+  }
+
+  fn _maybeBlockStatement (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.OpLBrace) {
+      return nil
+    }
+
+    mut body: t.Statement[]
+    mut tk := self.tokenizer.next()
+
+    loop tk.t != .OpRBrace {
+      self.tokenizer.goBack()
+
+      if tk.t == .Eof {
+        self._raise(errors.E0101())
+        break
+      }
+
+      body.push(self.next())
+      tk = self.tokenizer.next()
+    }
+
+    r: t.Statement = t.BlockStatement{body: body}
+    return r
+  }
+
+  fn _maybeExpressionStatement (mut self: ref Self) t.Statement? {
+    expression := self.nextExpression()
+
+    if expression != nil {
+      r: t.Statement = t.ExpressionStatement{expression: expression}
+      return r
+    }
+
+    return nil
+  }
+
+  fn _maybeIdentifier (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.Id) {
+      return nil
+    }
+
+    self.tokenizer.goBack()
+    tk := self.tokenizer.next()
+    r: t.Expression = t.Identifier{name: tk.val}
+    return r
+  }
+
+  fn _maybeMainDeclaration (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwMain) {
+      return nil
+    }
+
+    mut body: t.Statement = t.BlockStatement{}
+
+    if !self.tokenizer.lookahead(.OpLBrace) {
+      self._raise(errors.E0100("main"))
+    } else {
+      self.tokenizer.goBack()
+      body = self.next()
+    }
+
+    r: t.Statement = t.MainDeclaration{body: body}
+    return r
+  }
+
+  fn _maybeNumericLiteral (mut self: ref Self) t.Expression? {
+    if (
+      !self.tokenizer.lookahead(.LitIntBin) &&
+      !self.tokenizer.lookahead(.LitIntDec) &&
+      !self.tokenizer.lookahead(.LitIntHex) &&
+      !self.tokenizer.lookahead(.LitIntOct)
+    ) {
+      return nil
+    }
+
+    self.tokenizer.goBack()
+    tk := self.tokenizer.next()
+
+    r: t.Expression = t.NumericLiteral{
+      t: tokenTypeToNumericLiteralType(tk.t),
+      value: tk.val
+    }
+
+    return r
+  }
+
+  fn _maybeParenthesizedExpression (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.OpLPar) {
+      return nil
+    }
+
+    expression := self.nextExpression()
+
+    if expression == nil {
+      self.tokenizer.goBack()
+      return nil
+    }
+
+    if !self.tokenizer.lookahead(.OpRPar) {
+      self._raise(errors.E0103())
+    }
+
+    r: t.Expression = t.ParenthesizedExpression{expression: expression as t.Expression}
+    return r
+  }
+
+  fn _maybeStringLiteral (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.LitStr) {
+      return nil
+    }
+
+    self.tokenizer.goBack()
+    tk := self.tokenizer.next()
+    r: t.Expression = t.StringLiteral{raw: tk.val, value: tk.val.slice(1, -1)}
+    return r
+  }
+
+  fn _maybeWrapCallExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !(expression is t.Identifier) || !self.tokenizer.lookahead(.OpLPar) {
+      return nil
+    }
+
+    mut arguments: t.Expression[]
+
+    loop !self.tokenizer.lookahead(.OpRPar) {
+      expression := self.nextExpression()
+
+      if expression == nil {
+        self._raise(errors.E0105())
+      } else {
+        arguments.push(expression)
+      }
+
+      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
+        self._raise(errors.E0106())
+      }
+    }
+
+    r: t.Expression = t.CallExpression{callee: expression, arguments: arguments}
+    return r
+  }
+
+  fn _raise (mut self: ref Self, message: str) {
+    self.errors.push(message)
+  }
+
+  fn _wrapExpression (mut self: ref Self, expression: t.Expression) t.Expression {
+    mut result: t.Expression?
+
+    if (result = self._maybeWrapCallExpression(expression)) != nil {
+      return result
+    }
+
+    return expression
+  }
+
+  fn _wrapStatement (mut self: ref Self, mut statement: t.Statement) t.Statement {
+    if self.tokenizer.lookahead(.OpSemi) {
+      return statement
+    }
+
+    return statement
+  }
+}
+
+export fn init (mut tokenizer: ref Tokenizer) Parser {
+  return Parser{tokenizer: tokenizer}
+}
+
+export fn parse (path: str) t.File {
+  mut reader := Reader.init(path)
+  mut tokenizer := Tokenizer.init(ref reader)
+  mut parser := init(ref tokenizer)
+  mut result: t.Statement[]
+
+  loop parser.hasNext() {
+    statement := parser.next()
+    print(statement)
+    result.push(statement)
+  }
+
+  if !parser.tokenizer.errors.empty {
+    parser.errors.merge(parser.tokenizer.errors)
+  }
+
+  return t.File{
+    path: reader.path,
+    errors: parser.errors,
+    hasErrors: !parser.errors.empty,
+    program: t.Program{
+      body: result
+    }
+  }
+}
+
+export fn report (file: ref t.File) {
+  if !file.hasErrors {
+    return
+  }
+
+  loop i := 0; i < file.errors.len; i++ {
+    if i != 0 {
+      print(to: "stderr")
+    }
+
+    print(file.errors[i] as str, to: "stderr")
+  }
+}

@@ -4,7 +4,7 @@
  */
 
 export fn E0000 (unexpected: char, expected := '\0') str {
-  return "E0000: Unexpected token `" + unexpected.str() + "`" +
+  return "E0000 - Unexpected token `" + unexpected.str() + "`" +
     (expected == '\0' ? "" : ", expected `" + expected.str() + "`")
 }
 
@@ -54,4 +54,28 @@ export fn E0011 () str {
 
 export fn E0012 (t: str) str {
   return "E0012 - " + t.upperFirst + " float literals are not allowed"
+}
+
+export fn E0100 (kw: str) str {
+  return "E0100 - Expected left brace after `" + kw + "` keyword"
+}
+
+export fn E0101 () str {
+  return "E0101 - Expected block statement closing right brace"
+}
+
+export fn E0103 () str {
+  return "E0103 - Expected right parenthesis"
+}
+
+export fn E0104 (unexpected: str) str {
+  return "E0104 - Unexpected statement `" + unexpected + "`"
+}
+
+export fn E0105 () str {
+  return "E0105 - Expected call expression argument"
+}
+
+export fn E0106 () str {
+  return "E0106 - Expected comma after call expression argument"
 }

@@ -3,7 +3,7 @@
  * Licensed under the MIT License
  */
 
-import Program, Statement from "./types"
+import * as t from "./types"
 
-export fn Program_traverse (program: Program, cb: (it: Statement) -> void) {
+export fn Program_traverse (program: t.Program, cb: (it: t.Statement) -> void) {
 }

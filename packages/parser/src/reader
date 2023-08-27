@@ -3,7 +3,7 @@
  * Licensed under the MIT License
  */
 
-import Location from "./types"
+import * as t from "./types"
 
 export obj Reader {
   path: str
@@ -57,7 +57,7 @@ export obj Reader {
   }
 }
 
-export fn Reader_init (path: str) Reader {
+export fn init (path: str) Reader {
   p := fs_realpathSync(path)
 
   if !fs_isFileSync(p) {
@@ -68,9 +68,9 @@ export fn Reader_init (path: str) Reader {
   return Reader{path: p, content: content}
 }
 
-export fn Reader_locate (reader: ref Reader, pos: int) Location {
+export fn locate (reader: ref Reader, pos: int) t.Location {
   if pos == 0 {
-    return Location{line: 1, col: 1}
+    return t.Location{line: 1, col: 1}
   }
 
   lines := reader.content.lines(keepLineBreaks: true)
@@ -80,11 +80,11 @@ export fn Reader_locate (reader: ref Reader, pos: int) Location {
     line := lines[i]
 
     if curPos + line.len > pos {
-      return Location{line: i + 1, col: pos - curPos + 1}
+      return t.Location{line: i + 1, col: pos - curPos + 1}
     }
 
     curPos += line.len
   }
 
-  return Location{line: lines.len, col: lines[-1].len}
+  return t.Location{line: lines.len, col: lines[-1].len}
 }
