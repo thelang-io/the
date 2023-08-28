@@ -24,5 +24,8 @@ export parse
 main {
   args := process_args
   file := parse(args[1])
+  print()
+  print("====================")
+  print()
   report(ref file)
 }

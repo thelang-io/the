@@ -3,18 +3,145 @@
  * Licensed under the MIT License
  */
 
-export type Expression =
-  CallExpression |
-  Identifier |
-  NumericLiteral |
-  ParenthesizedExpression |
-  StringLiteral
+export type Type =
+  ArrayType | // todo
+  EmptyType |
+  FunctionType | // todo
+  IdentifierType |
+  MapType | // todo
+  MemberType | // todo
+  OptionalType | // todo
+  ParenthesizedType | // todo
+  ReferenceType | // todo
+  UnionType // todo
 
-export obj CallExpression {
+export type Expression =
+  Identifier |
+
+  BooleanLiteral |
+  CharacterLiteral |
+  FloatingPointLiteral |
+  IntegerLiteral |
+  NilLiteral |
+  StringLiteral |
+
+  ArrayExpression |
+  AsExpression |
+  AssignmentExpression |
+  AwaitExpression |
+  BinaryExpression |
+  CallExpression |
+  ClosureExpression |
+  ConditionalExpression |
+  ElementAccessExpression |
+  EmptyExpression |
+  IsExpression |
+  MapExpression |
+  MemberAccessExpression |
+  ObjectExpression |
+  ParenthesizedExpression |
+  PropertyAccessExpression |
+  ReferenceExpression |
+  UnaryExpression
+
+export type Statement =
+  BlockStatement |
+  BreakStatement | // todo
+  ContinueStatement | // todo
+  EmptyStatement |
+  EnumDeclaration | // todo
+  EofStatement | // todo
+  ExportDeclaration | // todo
+  ExportNamedDeclaration | // todo
+  ExpressionStatement |
+  FunctionDeclaration | // todo
+  IfStatement | // todo
+  ImportDeclaration | // todo
+  LoopStatement | // todo
+  MainDeclaration |
+  ObjectDeclaration | // todo
+  ReturnStatement | // todo
+  ThrowStatement | // todo
+  TryStatement | // todo
+  TypeAliasDeclaration | // todo
+  VariableDeclaration // todo
+
+export obj FunctionParameter {
+  name: Expression
+  t: Type?
+  initializer: Expression?
+  mutable: bool
+  variadic: bool
+}
+
+export obj ArrayType {
   start: int
   end: int
-  callee: Expression
-  arguments: Expression[]
+  elementType: Type
+}
+
+export obj EmptyType {
+  start: int
+  end: int
+}
+
+export obj FunctionTypeParameter {
+  name: Expression?
+  t: Type
+  mutable: bool
+  variadic: bool
+}
+
+export obj FunctionType {
+  start: int
+  end: int
+  parameters: FunctionTypeParameter[]
+  returnType: Type
+  asynchronous: bool
+}
+
+export obj IdentifierType {
+  start: int
+  end: int
+  name: str
+}
+
+export obj MapType {
+  start: int
+  end: int
+  keyType: Type
+  valueType: Type
+}
+
+export obj MemberType {
+  start: int
+  end: int
+  t: Type
+  name: str
+}
+
+export obj OptionalType {
+  start: int
+  end: int
+  t: Type
+}
+
+export obj ParenthesizedType {
+  start: int
+  end: int
+  t: Type
+}
+
+export obj ReferenceType {
+  start: int
+  end: int
+  t: Type
+}
+
+export obj UnionType {
+  start: int
+  end: int
+  types: Type[]
 }
 
 export obj Identifier {
@@ -23,24 +150,42 @@ export obj Identifier {
   name: str
 }
 
-export enum NumericLiteralType {
+export obj BooleanLiteral {
+  start: int
+  end: int
+  value: str
+}
+
+export obj CharacterLiteral {
+  start: int
+  end: int
+  raw: str
+  value: str
+}
+
+export obj FloatingPointLiteral {
+  start: int
+  end: int
+  value: str
+}
+
+export enum IntegerLiteralType {
   Binary,
   Decimal,
   Hexadecimal,
   Octal
 }
 
-export obj NumericLiteral {
+export obj IntegerLiteral {
   start: int
   end: int
-  t: NumericLiteralType
+  t: IntegerLiteralType
   value: str
 }
 
-export obj ParenthesizedExpression {
+export obj NilLiteral {
   start: int
   end: int
-  expression: Expression
 }
 
 export obj StringLiteral {
@@ -50,13 +195,144 @@ export obj StringLiteral {
   value: str
 }
 
-export type Statement =
-  BlockStatement |
-  EmptyStatement |
-  ExpressionStatement |
-  FunctionDeclaration |
-  ImportDeclaration |
-  MainDeclaration
+export obj ArrayExpression {
+  start: int
+  end: int
+  elements: Expression[]
+}
+
+export obj AsExpression {
+  start: int
+  end: int
+  expression: Expression
+  t: Type
+}
+
+export obj AssignmentExpression {
+  start: int
+  end: int
+  left: Expression
+  operator: str
+  right: Expression
+}
+
+export obj AwaitExpression {
+  start: int
+  end: int
+  expression: Expression
+}
+
+export obj BinaryExpression {
+  start: int
+  end: int
+  left: Expression
+  operator: str
+  right: Expression
+}
+
+export obj CallExpressionArgument {
+  name: Expression?
+  expression: Expression
+}
+
+export obj CallExpression {
+  start: int
+  end: int
+  callee: Expression
+  arguments: CallExpressionArgument[]
+}
+
+export obj ClosureExpression {
+  start: int
+  end: int
+  parameters: FunctionParameter[]
+  returnType: Type
+  body: Statement
+  asynchronous: bool
+}
+
+export obj ConditionalExpression {
+  start: int
+  end: int
+  condition: Expression
+  consequent: Expression
+  alternate: Expression
+}
+
+export obj ElementAccessExpression {
+  start: int
+  end: int
+  expression: Expression
+  argument: Expression
+}
+
+export obj EmptyExpression {
+  start: int
+  end: int
+}
+
+export obj IsExpression {
+  start: int
+  end: int
+  expression: Expression
+  t: Type
+}
+
+export obj MapExpressionElement {
+  key: Expression
+  value: Expression
+}
+
+export obj MapExpression {
+  start: int
+  end: int
+  elements: MapExpressionElement[]
+}
+
+export obj MemberAccessExpression {
+  start: int
+  end: int
+  name: Expression
+}
+
+export obj ObjectExpressionProperty {
+  name: Expression
+  value: Expression
+}
+
+export obj ObjectExpression {
+  start: int
+  end: int
+  id: Expression
+  properties: ObjectExpressionProperty[]
+}
+
+export obj ParenthesizedExpression {
+  start: int
+  end: int
+  expression: Expression
+}
+
+export obj PropertyAccessExpression {
+  start: int
+  end: int
+  expression: Expression
+  name: Expression
+}
+
+export obj ReferenceExpression {
+  start: int
+  end: int
+  expression: Expression
+}
+
+export obj UnaryExpression {
+  start: int
+  end: int
+  operand: Expression
+  operator: str
+  prefix: bool
+}
 
 export obj BlockStatement {
   start: int
@@ -64,9 +340,48 @@ export obj BlockStatement {
   body: Statement[]
 }
 
+export obj BreakStatement {
+  start: int
+  end: int
+}
+
+export obj ContinueStatement {
+  start: int
+  end: int
+}
+
 export obj EmptyStatement {
   start: int
   end: int
+}
+
+export obj EnumDeclarationMember {
+  name: Expression
+  initializer: Expression
+}
+
+export obj EnumDeclaration {
+  start: int
+  end: int
+  name: Expression
+  members: EnumDeclarationMember[]
+}
+
+export obj EofStatement {
+  start: int
+  end: int
+}
+
+export obj ExportDeclaration {
+  start: int
+  end: int
+  statement: Statement
+}
+
+export obj ExportNamedDeclaration {
+  start: int
+  end: int
+  expression: Expression
 }
 
 export obj ExpressionStatement {
@@ -78,7 +393,19 @@ export obj ExpressionStatement {
 export obj FunctionDeclaration {
   start: int
   end: int
-  id: Expression
+  name: Expression
+  params: FunctionParameter[]
+  returnType: Type
+  body: Statement
+  asynchronous: bool
+}
+
+export obj IfStatement {
+  start: int
+  end: int
+  condition: Expression
+  consequent: Statement
+  alternate: Statement?
 }
 
 export obj ImportSpecifier {
@@ -91,7 +418,7 @@ export obj ImportSpecifier {
 export obj ImportNamespaceSpecifier {
   start: int
   end: int
-  local: Expression
+  name: Expression
 }
 
 export type ImportDeclarationSpecifier = ImportSpecifier | ImportNamespaceSpecifier
@@ -103,10 +430,68 @@ export obj ImportDeclaration {
   source: Expression
 }
 
+export obj LoopStatement {
+  start: int
+  end: int
+  initializer: Statement?
+  condition: Expression?
+  update: Expression?
+  body: Statement
+  parenthesized: bool
+}
+
 export obj MainDeclaration {
   start: int
   end: int
   body: Statement
+}
+
+export obj ObjectDeclaration {
+  start: int
+  end: int
+  name: Expression
+  body: Statement
+}
+
+export obj ReturnStatement {
+  start: int
+  end: int
+  expression: Expression?
+}
+
+export obj ThrowStatement {
+  start: int
+  end: int
+  expression: Expression
+}
+
+export obj TryStatementHandler {
+  param: Statement
+  body: Statement
+}
+
+export obj TryStatement {
+  start: int
+  end: int
+  body: Statement
+  handlers: TryStatementHandler[]
+}
+
+export obj TypeAliasDeclaration {
+  start: int
+  end: int
+  name: Expression
+  t: Type
+}
+
+export obj VariableDeclaration {
+  start: int
+  end: int
+  name: Expression
+  t: Type?
+  initializer: Expression?
+  mutable: bool
+  constant: bool
 }
 
 export obj File {

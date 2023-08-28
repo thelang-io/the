@@ -9,7 +9,22 @@ import * as Tokenizer from "./tokenizer"
 import * as errors from "./errors"
 import * as t from "./types"
 
-fn tokenTypeToNumericLiteralType (t: t.TokenType) t.NumericLiteralType {
+fn emptyExpression () t.Expression {
+  r: t.Expression = t.EmptyExpression{}
+  return r
+}
+
+fn emptyStatement () t.Statement {
+  r: t.Statement = t.EmptyStatement{}
+  return r
+}
+
+fn emptyType () t.Type {
+  r: t.Type = t.EmptyType{}
+  return r
+}
+
+fn tokenTypeToIntegerLiteralType (t: t.TokenType) t.IntegerLiteralType {
   if t == .LitIntBin {
     return .Binary
   } elif t == .LitIntDec {
@@ -25,16 +40,17 @@ export obj Parser {
   mut errors: str[]
   mut tokenizer: ref Tokenizer.Tokenizer
 
-  fn hasNext (mut self: ref Self) bool {
-    return !self.tokenizer.lookahead(.Eof)
-  }
+  fn next (mut self: ref Self, withBlockStatement := false) t.Statement {
+    if self.tokenizer.lookahead(.Eof) {
+      r: t.Statement = t.EofStatement{}
+      return r
+    }
 
-  fn next (mut self: ref Self) t.Statement {
     mut statement: t.Statement?
 
     if (
       (statement = self._maybeMainDeclaration()) != nil ||
-      (statement = self._maybeBlockStatement()) != nil ||
+      (withBlockStatement && (statement = self._maybeBlockStatement()) != nil) ||
       (statement = self._maybeExpressionStatement()) != nil
     ) {
       return self._wrapStatement(statement)
@@ -42,24 +58,221 @@ export obj Parser {
 
     tk := self.tokenizer.next()
     self._raise(errors.E0104(tk.val))
-
-    r: t.Statement = t.EmptyStatement{}
-    return r
+    return emptyStatement()
   }
 
-  fn nextExpression (mut self: ref Self) t.Expression? {
+  fn nextExpression (mut self: ref Self, shouldWrap := true) t.Expression? {
     mut expression: t.Expression?
 
     if (
+      (expression = self._maybeArrayExpression()) != nil ||
+      (expression = self._maybeAwaitExpression()) != nil ||
+      (expression = self._maybeClosureExpression()) != nil ||
+      (expression = self._maybeMapExpression()) != nil ||
+      (expression = self._maybeMemberAccessExpression()) != nil ||
+      (expression = self._maybeLiteral()) != nil ||
       (expression = self._maybeIdentifier()) != nil ||
-      (expression = self._maybeNumericLiteral()) != nil ||
-      (expression = self._maybeStringLiteral()) != nil ||
-      (expression = self._maybeParenthesizedExpression()) != nil
+      (expression = self._maybeParenthesizedExpression()) != nil ||
+      (expression = self._maybeReferenceExpression()) != nil ||
+      (expression = self._maybeUnaryExpression()) != nil
     ) {
-      return self._wrapExpression(expression)
+      return shouldWrap ? self._wrapExpression(expression) : expression
     }
 
     return nil
+  }
+
+  fn nextType (mut self: ref Self) t.Type? {
+    mut t: t.Type?
+
+    if (
+      (t = self._maybeIdentifierType()) != nil
+    ) {
+      return self._wrapType(t)
+    }
+
+    return nil
+  }
+
+  fn _maybeArrayExpression (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.OpLBrack) {
+      return nil
+    }
+
+    mut elements: t.Expression[]
+
+    loop !self.tokenizer.lookahead(.OpRBrack) {
+      if self.tokenizer.lookahead(.Eof, true) {
+        if elements.empty {
+          self._raise(errors.E0116("array expression"))
+        }
+
+        break
+      }
+
+      expression := self.nextExpression()
+
+      if expression == nil {
+        self._raise(errors.E0108("array expression"))
+      } else {
+        elements.push(expression)
+      }
+
+      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrack, true) {
+        self._raise(errors.E0106("array expression element"))
+      }
+    }
+
+    r: t.Expression = t.ArrayExpression{elements: elements}
+    return r
+  }
+
+  fn _maybeAwaitExpression (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.KwAwait) {
+      return nil
+    }
+
+    expression := self.nextExpression()
+
+    if expression == nil {
+      self._raise(errors.E0109("await"))
+      expression = emptyExpression()
+    }
+
+    r: t.Expression = t.AwaitExpression{expression: expression as t.Expression}
+    return r
+  }
+
+  fn _maybeClosureExpression (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.KwAsync, true) && !self.tokenizer.lookahead(.OpLPar, true) {
+      return nil
+    }
+
+    mut asynchronous := false
+
+    if self.tokenizer.lookahead(.KwAsync) {
+      if !self.tokenizer.lookahead(.OpLPar) {
+        self.tokenizer.goBack()
+        return nil
+      }
+
+      asynchronous = true
+    } else {
+      self.tokenizer.next()
+    }
+
+    mut parameters: t.FunctionParameter[]
+
+    loop !self.tokenizer.lookahead(.OpRPar) {
+      if self.tokenizer.lookahead(.Eof, true) {
+        if !asynchronous && parameters.empty {
+          self.tokenizer.goBack()
+          return nil
+        }
+
+        self._raise(errors.E0124())
+        break
+      }
+
+      parameterMutable := self.tokenizer.lookahead(.KwMut)
+      canGoBack := !asynchronous && parameters.empty && !parameterMutable
+      parameterName := self.nextExpression(shouldWrap: false)
+
+      if parameterName == nil {
+        if canGoBack {
+          self.tokenizer.goBack()
+          return nil
+        }
+
+        self._raise(errors.E0125())
+      } else {
+        mut parameterType: t.Type?
+        mut parameterInitializer: t.Expression?
+        mut parameterVariadic := false
+
+        if self.tokenizer.lookahead(.OpColon) {
+          parameterType = self.nextType()
+
+          if parameterType == nil {
+            self._raise(errors.E0127())
+            parameterType = emptyType()
+          } elif self.tokenizer.lookahead(.OpEq) {
+            parameterInitializer = self.nextExpression()
+
+            if parameterInitializer == nil {
+              self._raise(errors.E0128("equals sign"))
+              parameterInitializer = emptyExpression()
+            }
+          } elif self.tokenizer.lookahead(.OpEllipsis) {
+            parameterVariadic = true
+
+            if self.tokenizer.lookahead(.OpEq) {
+              parameterInitializer = self.nextExpression()
+
+              if parameterInitializer == nil {
+                self._raise(errors.E0128("equals sign"))
+                parameterInitializer = emptyExpression()
+              }
+            }
+          }
+        } elif self.tokenizer.lookahead(.OpColonEq) {
+          parameterInitializer = self.nextExpression()
+
+          if parameterInitializer == nil {
+            self._raise(errors.E0128("colon equals sign"))
+            parameterInitializer = emptyExpression()
+          }
+        } else {
+          if canGoBack {
+            self.tokenizer.goBack()
+            return nil
+          }
+
+          self._raise(errors.E0126())
+          parameterType = emptyType()
+        }
+
+        parameters.push(t.FunctionParameter{
+          name: parameterName,
+          t: parameterType,
+          initializer: parameterInitializer,
+          mutable: parameterMutable,
+          variadic: parameterVariadic
+        })
+      }
+
+      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
+        self._raise(errors.E0106("closure expression parameter"))
+      }
+    }
+
+    if !self.tokenizer.lookahead(.OpArrow) {
+      self._raise(errors.E0129())
+    }
+
+    mut returnType := self.nextType()
+
+    if returnType == nil {
+      self._raise(errors.E0130())
+      returnType = emptyType()
+    }
+
+    mut body := emptyStatement()
+
+    if self.tokenizer.lookahead(.OpLBrace, true) {
+      body = self.next(withBlockStatement: true)
+    } else {
+      self._raise(errors.E0102("expression closure return type"))
+    }
+
+    r: t.Expression = t.ClosureExpression{
+      parameters: parameters,
+      returnType: returnType as t.Type,
+      body: body,
+      asynchronous: asynchronous
+    }
+
+    return r
   }
 
   fn _maybeBlockStatement (mut self: ref Self) t.Statement? {
@@ -68,18 +281,14 @@ export obj Parser {
     }
 
     mut body: t.Statement[]
-    mut tk := self.tokenizer.next()
 
-    loop tk.t != .OpRBrace {
-      self.tokenizer.goBack()
-
-      if tk.t == .Eof {
+    loop !self.tokenizer.lookahead(.OpRBrace) {
+      if self.tokenizer.lookahead(.Eof, true) {
         self._raise(errors.E0101())
         break
       }
 
       body.push(self.next())
-      tk = self.tokenizer.next()
     }
 
     r: t.Statement = t.BlockStatement{body: body}
@@ -98,14 +307,57 @@ export obj Parser {
   }
 
   fn _maybeIdentifier (mut self: ref Self) t.Expression? {
-    if !self.tokenizer.lookahead(.Id) {
+    if !self.tokenizer.lookahead(.Id, true) {
       return nil
     }
 
-    self.tokenizer.goBack()
     tk := self.tokenizer.next()
     r: t.Expression = t.Identifier{name: tk.val}
     return r
+  }
+
+  fn _maybeIdentifierType (mut self: ref Self) t.Type? {
+    if !self.tokenizer.lookahead(.Id, true) {
+      return nil
+    }
+
+    tk := self.tokenizer.next()
+    r: t.Type = t.IdentifierType{name: tk.val}
+    return r
+  }
+
+  fn _maybeLiteral (mut self: ref Self) t.Expression? {
+    if self.tokenizer.lookahead(.KwFalse, true) || self.tokenizer.lookahead(.KwTrue, true) {
+      tk := self.tokenizer.next()
+      r: t.Expression = t.BooleanLiteral{value: tk.val}
+      return r
+    } elif self.tokenizer.lookahead(.KwNil) {
+      r: t.Expression = t.NilLiteral{}
+      return r
+    } elif self.tokenizer.lookahead(.LitChar, true) {
+      tk := self.tokenizer.next()
+      r: t.Expression = t.CharacterLiteral{raw: tk.val, value: tk.val.slice(1, -1)}
+      return r
+    } elif (
+      self.tokenizer.lookahead(.LitIntBin, true) ||
+      self.tokenizer.lookahead(.LitIntDec, true) ||
+      self.tokenizer.lookahead(.LitIntHex, true) ||
+      self.tokenizer.lookahead(.LitIntOct, true)
+    ) {
+      tk := self.tokenizer.next()
+      r: t.Expression = t.IntegerLiteral{t: tokenTypeToIntegerLiteralType(tk.t), value: tk.val}
+      return r
+    } elif self.tokenizer.lookahead(.LitFloat, true) {
+      tk := self.tokenizer.next()
+      r: t.Expression = t.FloatingPointLiteral{value: tk.val}
+      return r
+    } elif self.tokenizer.lookahead(.LitStr, true) {
+      tk := self.tokenizer.next()
+      r: t.Expression = t.StringLiteral{raw: tk.val, value: tk.val.slice(1, -1)}
+      return r
+    }
+
+    return nil
   }
 
   fn _maybeMainDeclaration (mut self: ref Self) t.Statement? {
@@ -115,35 +367,72 @@ export obj Parser {
 
     mut body: t.Statement = t.BlockStatement{}
 
-    if !self.tokenizer.lookahead(.OpLBrace) {
-      self._raise(errors.E0100("main"))
+    if self.tokenizer.lookahead(.OpLBrace, true) {
+      body = self.next(withBlockStatement: true)
     } else {
-      self.tokenizer.goBack()
-      body = self.next()
+      self._raise(errors.E0100("main"))
     }
 
     r: t.Statement = t.MainDeclaration{body: body}
     return r
   }
 
-  fn _maybeNumericLiteral (mut self: ref Self) t.Expression? {
-    if (
-      !self.tokenizer.lookahead(.LitIntBin) &&
-      !self.tokenizer.lookahead(.LitIntDec) &&
-      !self.tokenizer.lookahead(.LitIntHex) &&
-      !self.tokenizer.lookahead(.LitIntOct)
-    ) {
+  fn _maybeMapExpression (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.OpLBrace) {
       return nil
     }
 
-    self.tokenizer.goBack()
-    tk := self.tokenizer.next()
+    mut elements: t.MapExpressionElement[]
 
-    r: t.Expression = t.NumericLiteral{
-      t: tokenTypeToNumericLiteralType(tk.t),
-      value: tk.val
+    loop !self.tokenizer.lookahead(.OpRBrace) {
+      if self.tokenizer.lookahead(.Eof, true) {
+        if elements.empty {
+          self._raise(errors.E0117("map expression"))
+        }
+
+        break
+      }
+
+      key := self.nextExpression(shouldWrap: false)
+
+      if key == nil {
+        self._raise(errors.E0118())
+      } elif !self.tokenizer.lookahead(.OpColon) {
+        self._raise(errors.E0113("map expression key"))
+        elements.push(t.MapExpressionElement{key: key, value: emptyExpression()})
+      } else {
+        value := self.nextExpression()
+
+        if value == nil {
+          self._raise(errors.E0119())
+          elements.push(t.MapExpressionElement{key: key, value: emptyExpression()})
+        } else {
+          elements.push(t.MapExpressionElement{key: key, value: value})
+        }
+      }
+
+      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrace, true) {
+        self._raise(errors.E0106("map expression element"))
+      }
     }
 
+    r: t.Expression = t.MapExpression{elements: elements}
+    return r
+  }
+
+  fn _maybeMemberAccessExpression (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.OpDot) {
+      return nil
+    }
+
+    name := self.nextExpression(shouldWrap: false)
+
+    if name == nil {
+      self._raise(errors.E0107("dot"))
+      name = emptyExpression()
+    }
+
+    r: t.Expression = t.MemberAccessExpression{name: name as t.Expression}
     return r
   }
 
@@ -155,51 +444,325 @@ export obj Parser {
     expression := self.nextExpression()
 
     if expression == nil {
-      self.tokenizer.goBack()
-      return nil
+      self._raise(errors.E0107("left parenthesis"))
+      expression = emptyExpression()
     }
 
     if !self.tokenizer.lookahead(.OpRPar) {
-      self._raise(errors.E0103())
+      self._raise(errors.E0103("parenthesized expression"))
     }
 
     r: t.Expression = t.ParenthesizedExpression{expression: expression as t.Expression}
     return r
   }
 
-  fn _maybeStringLiteral (mut self: ref Self) t.Expression? {
-    if !self.tokenizer.lookahead(.LitStr) {
+  fn _maybeReferenceExpression (mut self: ref Self) t.Expression? {
+    if !self.tokenizer.lookahead(.KwRef) {
       return nil
     }
 
-    self.tokenizer.goBack()
+    expression := self.nextExpression()
+
+    if expression == nil {
+      self._raise(errors.E0109("ref"))
+      expression = emptyExpression()
+    }
+
+    r: t.Expression = t.ReferenceExpression{expression: expression as t.Expression}
+    return r
+  }
+
+  fn _maybeUnaryExpression (mut self: ref Self) t.Expression? {
+    if (
+      !self.tokenizer.lookahead(.OpExcl, true) &&
+      !self.tokenizer.lookahead(.OpMinus, true) &&
+      !self.tokenizer.lookahead(.OpMinusMinus, true) &&
+      !self.tokenizer.lookahead(.OpPlus, true) &&
+      !self.tokenizer.lookahead(.OpPlusPlus, true) &&
+      !self.tokenizer.lookahead(.OpTilde, true)
+    ) {
+      return nil
+    }
+
     tk := self.tokenizer.next()
-    r: t.Expression = t.StringLiteral{raw: tk.val, value: tk.val.slice(1, -1)}
+    operator := tk.val
+    operand := self.nextExpression(shouldWrap: false)
+
+    if operand == nil {
+      self._raise(errors.E0122())
+      operand = emptyExpression()
+    }
+
+    r: t.Expression = t.UnaryExpression{operand: operand as t.Expression, operator: operator, prefix: true}
+    return r
+  }
+
+  fn _maybeWrapAsExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !self.tokenizer.lookahead(.KwAs) {
+      return nil
+    }
+
+    t := self.nextType()
+
+    if t == nil {
+      self._raise(errors.E0123("as"))
+      t = emptyType()
+    }
+
+    r: t.Expression = t.AsExpression{expression: expression, t: t as t.Type}
+    return r
+  }
+
+  fn _maybeWrapAssignmentExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if (
+      !self.tokenizer.lookahead(.OpAmpEq, true) &&
+      !self.tokenizer.lookahead(.OpAmpAmpEq, true) &&
+      !self.tokenizer.lookahead(.OpCaretEq, true) &&
+      !self.tokenizer.lookahead(.OpEq, true) &&
+      !self.tokenizer.lookahead(.OpLShiftEq, true) &&
+      !self.tokenizer.lookahead(.OpMinusEq, true) &&
+      !self.tokenizer.lookahead(.OpPercentEq, true) &&
+      !self.tokenizer.lookahead(.OpPipeEq, true) &&
+      !self.tokenizer.lookahead(.OpPipePipeEq, true) &&
+      !self.tokenizer.lookahead(.OpPlusEq, true) &&
+      !self.tokenizer.lookahead(.OpRShiftEq, true) &&
+      !self.tokenizer.lookahead(.OpSlashEq, true) &&
+      !self.tokenizer.lookahead(.OpStarEq, true)
+    ) {
+      return nil
+    }
+
+    tk := self.tokenizer.next()
+    operator := tk.val
+    right := self.nextExpression()
+
+    if right == nil {
+      self._raise(errors.E0111(operator))
+      right = emptyExpression()
+    }
+
+    r: t.Expression = t.AssignmentExpression{left: expression, operator: operator, right: right as t.Expression}
+    return r
+  }
+
+  fn _maybeWrapBinaryExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if (
+      !self.tokenizer.lookahead(.OpAmp, true) &&
+      !self.tokenizer.lookahead(.OpAmpAmp, true) &&
+      !self.tokenizer.lookahead(.OpCaret, true) &&
+      !self.tokenizer.lookahead(.OpEqEq, true) &&
+      !self.tokenizer.lookahead(.OpExclEq, true) &&
+      !self.tokenizer.lookahead(.OpGt, true) &&
+      !self.tokenizer.lookahead(.OpGtEq, true) &&
+      !self.tokenizer.lookahead(.OpLShift, true) &&
+      !self.tokenizer.lookahead(.OpLt, true) &&
+      !self.tokenizer.lookahead(.OpLtEq, true) &&
+      !self.tokenizer.lookahead(.OpMinus, true) &&
+      !self.tokenizer.lookahead(.OpPercent, true) &&
+      !self.tokenizer.lookahead(.OpPipe, true) &&
+      !self.tokenizer.lookahead(.OpPipePipe, true) &&
+      !self.tokenizer.lookahead(.OpPlus, true) &&
+      !self.tokenizer.lookahead(.OpRShift, true) &&
+      !self.tokenizer.lookahead(.OpSlash, true) &&
+      !self.tokenizer.lookahead(.OpStar, true)
+    ) {
+      return nil
+    }
+
+    tk := self.tokenizer.next()
+    operator := tk.val
+    right := self.nextExpression()
+
+    if right == nil {
+      self._raise(errors.E0111(operator))
+      right = emptyExpression()
+    }
+
+    r: t.Expression = t.BinaryExpression{left: expression, operator: operator, right: right as t.Expression}
     return r
   }
 
   fn _maybeWrapCallExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
-    if !(expression is t.Identifier) || !self.tokenizer.lookahead(.OpLPar) {
+    if !self.tokenizer.lookahead(.OpLPar) {
       return nil
     }
 
-    mut arguments: t.Expression[]
+    mut arguments: t.CallExpressionArgument[]
 
     loop !self.tokenizer.lookahead(.OpRPar) {
-      expression := self.nextExpression()
+      if self.tokenizer.lookahead(.Eof, true) {
+        if arguments.empty {
+          self._raise(errors.E0103("call expression openning brace"))
+        }
 
-      if expression == nil {
+        break
+      }
+
+      argumentNameOrExpression := self.nextExpression()
+
+      if argumentNameOrExpression == nil {
         self._raise(errors.E0105())
       } else {
-        arguments.push(expression)
+        argumentNameOrExpression2 := argumentNameOrExpression
+
+        if argumentNameOrExpression2 is t.Identifier && self.tokenizer.lookahead(.OpColon) {
+          argumentExpression := self.nextExpression()
+
+          if argumentExpression == nil {
+            self._raise(errors.E0107("call expression named argument"))
+            arguments.push(t.CallExpressionArgument{expression: argumentNameOrExpression})
+          } else {
+            arguments.push(t.CallExpressionArgument{name: argumentNameOrExpression, expression: argumentExpression})
+          }
+        } else {
+          arguments.push(t.CallExpressionArgument{expression: argumentNameOrExpression})
+        }
       }
 
       if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
-        self._raise(errors.E0106())
+        self._raise(errors.E0106("call expression argument"))
       }
     }
 
     r: t.Expression = t.CallExpression{callee: expression, arguments: arguments}
+    return r
+  }
+
+  fn _maybeWrapConditionalExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !self.tokenizer.lookahead(.OpQn) {
+      return nil
+    }
+
+    consequent := self.nextExpression()
+
+    if consequent == nil {
+      self._raise(errors.E0112())
+      consequent = emptyExpression()
+    }
+
+    if !self.tokenizer.lookahead(.OpColon) {
+      self._raise(errors.E0113("conditional expression consequent"))
+    }
+
+    alternate := self.nextExpression()
+
+    if alternate == nil {
+      self._raise(errors.E0110())
+      alternate = emptyExpression()
+    }
+
+    r: t.Expression = t.ConditionalExpression{
+      condition: expression,
+      consequent: consequent as t.Expression,
+      alternate: alternate as t.Expression
+    }
+
+    return r
+  }
+
+  fn _maybeWrapElementAccessExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !self.tokenizer.lookahead(.OpLBrack) {
+      return nil
+    }
+
+    argument := self.nextExpression()
+
+    if argument == nil {
+      self._raise(errors.E0114())
+      argument = emptyExpression()
+    }
+
+    if !self.tokenizer.lookahead(.OpRBrack) {
+      self._raise(errors.E0115("element access expression argument"))
+    }
+
+    r: t.Expression = t.ElementAccessExpression{expression: expression, argument: argument as t.Expression}
+    return r
+  }
+
+  fn _maybeWrapIsExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !self.tokenizer.lookahead(.KwIs) {
+      return nil
+    }
+
+    t := self.nextType()
+
+    if t == nil {
+      self._raise(errors.E0123("is"))
+      t = emptyType()
+    }
+
+    r: t.Expression = t.IsExpression{expression: expression, t: t as t.Type}
+    return r
+  }
+
+  fn _maybeWrapObjectExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !self.tokenizer.lookahead(.OpLBrace) {
+      return nil
+    }
+
+    mut properties: t.ObjectExpressionProperty[]
+
+    loop !self.tokenizer.lookahead(.OpRBrace) {
+      if self.tokenizer.lookahead(.Eof, true) {
+        if properties.empty {
+          self._raise(errors.E0117("object expression"))
+        }
+
+        break
+      }
+
+      name := self.nextExpression(shouldWrap: false)
+
+      if name == nil {
+        self._raise(errors.E0120())
+      } elif !self.tokenizer.lookahead(.OpColon) {
+        self._raise(errors.E0113("object expression property name"))
+        properties.push(t.ObjectExpressionProperty{name: name, value: emptyExpression()})
+      } else {
+        value := self.nextExpression()
+
+        if value == nil {
+          self._raise(errors.E0121())
+          properties.push(t.ObjectExpressionProperty{name: name, value: emptyExpression()})
+        } else {
+          properties.push(t.ObjectExpressionProperty{name: name, value: value})
+        }
+      }
+
+      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrace, true) {
+        self._raise(errors.E0106("object expression property value"))
+      }
+    }
+
+    r: t.Expression = t.ObjectExpression{id: expression, properties: properties}
+    return r
+  }
+
+  fn _maybeWrapPropertyAccessExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !self.tokenizer.lookahead(.OpDot) {
+      return nil
+    }
+
+    name := self.nextExpression(shouldWrap: false)
+
+    if name == nil {
+      self._raise(errors.E0107("dot"))
+      name = emptyExpression()
+    }
+
+    r: t.Expression = t.PropertyAccessExpression{expression: expression, name: name as t.Expression}
+    return r
+  }
+
+  fn _maybeWrapUnaryExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
+    if !self.tokenizer.lookahead(.OpMinusMinus, true) && !self.tokenizer.lookahead(.OpPlusPlus, true) {
+      return nil
+    }
+
+    tk := self.tokenizer.next()
+    operator := tk.val
+    r: t.Expression = t.UnaryExpression{operand: expression, operator: operator, prefix: false}
     return r
   }
 
@@ -210,10 +773,22 @@ export obj Parser {
   fn _wrapExpression (mut self: ref Self, expression: t.Expression) t.Expression {
     mut result: t.Expression?
 
-    if (result = self._maybeWrapCallExpression(expression)) != nil {
-      return result
+    if (
+      (result = self._maybeWrapAsExpression(expression)) != nil ||
+      (result = self._maybeWrapAssignmentExpression(expression)) != nil ||
+      (result = self._maybeWrapBinaryExpression(expression)) != nil ||
+      (result = self._maybeWrapCallExpression(expression)) != nil ||
+      (result = self._maybeWrapConditionalExpression(expression)) != nil ||
+      (result = self._maybeWrapElementAccessExpression(expression)) != nil ||
+      (result = self._maybeWrapIsExpression(expression)) != nil ||
+      (result = self._maybeWrapObjectExpression(expression)) != nil ||
+      (result = self._maybeWrapPropertyAccessExpression(expression)) != nil ||
+      (result = self._maybeWrapUnaryExpression(expression)) != nil
+    ) {
+      return self._wrapExpression(result)
     }
 
+    // todo precedence and associativity
     return expression
   }
 
@@ -223,6 +798,10 @@ export obj Parser {
     }
 
     return statement
+  }
+
+  fn _wrapType (mut self: ref Self, t: t.Type) t.Type {
+    return t
   }
 }
 
@@ -236,14 +815,19 @@ export fn parse (path: str) t.File {
   mut parser := init(ref tokenizer)
   mut result: t.Statement[]
 
-  loop parser.hasNext() {
+  loop {
     statement := parser.next()
+
+    if statement is t.EofStatement {
+      break
+    }
+
     print(statement)
     result.push(statement)
   }
 
   if !parser.tokenizer.errors.empty {
-    parser.errors.merge(parser.tokenizer.errors)
+    parser.errors = parser.tokenizer.errors.merge(parser.errors)
   }
 
   return t.File{
@@ -262,10 +846,6 @@ export fn report (file: ref t.File) {
   }
 
   loop i := 0; i < file.errors.len; i++ {
-    if i != 0 {
-      print(to: "stderr")
-    }
-
-    print(file.errors[i] as str, to: "stderr")
+    print((i == 0 ? "" : os_EOL) + (file.errors[i] as str), to: "stderr")
   }
 }

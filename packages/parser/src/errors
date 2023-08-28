@@ -4,7 +4,7 @@
  */
 
 export fn E0000 (unexpected: char, expected := '\0') str {
-  return "E0000 - Unexpected token `" + unexpected.str() + "`" +
+  return "E0000 - Unexpected character `" + unexpected.str() + "`" +
     (expected == '\0' ? "" : ", expected `" + expected.str() + "`")
 }
 
@@ -57,25 +57,125 @@ export fn E0012 (t: str) str {
 }
 
 export fn E0100 (kw: str) str {
-  return "E0100 - Expected left brace after `" + kw + "` keyword"
+  return "E0100 - Expected openning brace after `" + kw + "` keyword"
 }
 
 export fn E0101 () str {
-  return "E0101 - Expected block statement closing right brace"
+  return "E0101 - Expected block statement closing brace"
 }
 
-export fn E0103 () str {
-  return "E0103 - Expected right parenthesis"
+export fn E0102 (after: str) str {
+  return "E0102 - Expected openning brace after " + after
+}
+
+export fn E0103 (after: str) str {
+  return "E0103 - Expected closing parenthesis " + after
 }
 
 export fn E0104 (unexpected: str) str {
-  return "E0104 - Unexpected statement `" + unexpected + "`"
+  return "E0104 - Unexpected token `" + unexpected + "`"
 }
 
 export fn E0105 () str {
   return "E0105 - Expected call expression argument"
 }
 
-export fn E0106 () str {
-  return "E0106 - Expected comma after call expression argument"
+export fn E0106 (after: str) str {
+  return "E0106 - Expected comma after " + after
+}
+
+export fn E0107 (after: str) str {
+  return "E0107 - Expected expression after " + after
+}
+
+export fn E0108 (in: str) str {
+  return "E0108 - Expected expression in " + in
+}
+
+export fn E0109 (kw: str) str {
+  return "E0109 - Expected expression after `" + kw + "` keyword"
+}
+
+export fn E0110 () str {
+  return "E0110 - Expected conditional expression alternate after colon"
+}
+
+export fn E0111 (op: str) str {
+  return "E0111 - Expected right-hand expression after `" + op + "` operator"
+}
+
+export fn E0112 () str {
+  return "E0112 - Expected conditional expression consequent after question mark"
+}
+
+export fn E0113 (after: str) str {
+  return "E0113 - Expected colon after " + after
+}
+
+export fn E0114 () str {
+  return "E0114 - Expected element access expression argument after openning bracket"
+}
+
+export fn E0115 (after: str) str {
+  return "E0115 - Expected closing bracket after " + after
+}
+
+export fn E0116 (in: str) str {
+  return "E0116 - Expected closing bracket in " + in
+}
+
+export fn E0117 (in: str) str {
+  return "E0117 - Expected closing brace in " + in
+}
+
+export fn E0118 () str {
+  return "E0118 - Expected map expression key"
+}
+
+export fn E0119 () str {
+  return "E0119 - Expected map expression value after colon"
+}
+
+export fn E0120 () str {
+  return "E0120 - Expected object expression property name"
+}
+
+export fn E0121 () str {
+  return "E0121 - Expected object expression property value after colon"
+}
+
+export fn E0122 () str {
+  return "E0122 - Expected unary expression operand after operator"
+}
+
+export fn E0123 (kw: str) str {
+  return "E0123 - Expected type after `" + kw + "` keyword"
+}
+
+export fn E0124 () str {
+  return "E0124 - Expected closure expression closing parenthesis"
+}
+
+export fn E0125 () str {
+  return "E0125 - Expected closure expression parameter name"
+}
+
+export fn E0126 () str {
+  return "E0126 - Expected closure expression parameter type or initializer after parameter name"
+}
+
+export fn E0127 () str {
+  return "E0127 - Expected closure expression parameter type after colon"
+}
+
+export fn E0128 (after: str) str {
+  return "E0128 - Expected closure expression parameter initializer after " + after
+}
+
+export fn E0129 () str {
+  return "E0129 - Expected arrow after closure expression parameters"
+}
+
+export fn E0130 () str {
+  return "E0130 - Expected closure expression return type after arrow"
 }
