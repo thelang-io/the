@@ -14,38 +14,47 @@ export obj Tokenizer {
   mut reader: ref Reader.Reader
   mut state: t.TokenizerState
 
-  fn goBack (mut self: ref Self) {
-    self.state.idx--
-  }
-
   fn lookahead (mut self: ref Self, t: t.TokenType, alwaysGoBack := false) bool {
+    startPos := self.state.idx
     tk := self.next()
+    r := tk.t == t
 
-    if tk.t == t {
-      if alwaysGoBack { self.goBack() }
-      return true
-    } else {
-      self.goBack()
-      return false
+    if alwaysGoBack || !r {
+      self.state.idx = startPos
     }
+
+    return r
   }
 
   fn next (mut self: ref Self) Token.Token {
-    if !self.data.empty && self.data.len > self.state.idx {
-      return self.data[self.state.idx++]
-    } elif !self.data.empty && self.data[-1].t == .Eof {
+    if !self.data.empty && (self.state.idx == self.data.len && self.data[-1].t == .Eof) {
       throw error_NewError("Tried next on Tokenizer eof")
     }
 
     loop {
-      tk := self._getToken()
-      self.data.push(tk)
+      mut tk: Token.Token
+
+      if self.data.len > self.state.idx {
+        tk = self.data[self.state.idx]
+      } else {
+        tk = self._getToken()
+        self.data.push(tk)
+      }
+
       self.state.idx++
 
       if tk.t != .Whitespace {
         return tk
       }
     }
+  }
+
+  fn pos (mut self: ref Self) int {
+    return self.state.idx
+  }
+
+  fn seek (mut self: ref Self, pos: int) {
+    self.state.idx = pos
   }
 
   fn _getToken (mut self: ref Self) Token.Token {
@@ -448,7 +457,7 @@ export obj Tokenizer {
     errorLines.push(lines[startLoc.line - 1])
     errorLinesNums.push(startLoc.line)
 
-    if startLoc.line == endLoc.line && startLoc.col == endLoc.col {
+    if startLoc.line == endLoc.line && (startLoc.col == endLoc.col || startLoc.col + 1 == endLoc.col) {
       errorLines.push(' '.repeat(startLoc.col - 1) + "^")
     } elif startLoc.line == endLoc.line {
       errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(endLoc.col - startLoc.col))

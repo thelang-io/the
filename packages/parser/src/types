@@ -4,16 +4,16 @@
  */
 
 export type Type =
-  ArrayType | // todo
+  ArrayType |
   EmptyType |
-  FunctionType | // todo
+  FunctionType |
   IdentifierType |
-  MapType | // todo
-  MemberType | // todo
-  OptionalType | // todo
-  ParenthesizedType | // todo
-  ReferenceType | // todo
-  UnionType // todo
+  MapType |
+  MemberType |
+  OptionalType |
+  ParenthesizedType |
+  ReferenceType |
+  UnionType
 
 export type Expression =
   Identifier |
@@ -64,10 +64,16 @@ export type Statement =
   ThrowStatement | // todo
   TryStatement | // todo
   TypeAliasDeclaration | // todo
-  VariableDeclaration // todo
+  VariableDeclaration
+
+export obj Identifier {
+  start: int
+  end: int
+  name: str
+}
 
 export obj FunctionParameter {
-  name: Expression
+  name: Identifier
   t: Type?
   initializer: Expression?
   mutable: bool
@@ -86,7 +92,7 @@ export obj EmptyType {
 }
 
 export obj FunctionTypeParameter {
-  name: Expression?
+  name: Identifier?
   t: Type
   mutable: bool
   variadic: bool
@@ -103,7 +109,7 @@ export obj FunctionType {
 export obj IdentifierType {
   start: int
   end: int
-  name: str
+  name: Identifier
 }
 
 export obj MapType {
@@ -117,7 +123,7 @@ export obj MemberType {
   start: int
   end: int
   t: Type
-  name: str
+  name: Identifier
 }
 
 export obj OptionalType {
@@ -142,12 +148,6 @@ export obj UnionType {
   start: int
   end: int
   types: Type[]
-}
-
-export obj Identifier {
-  start: int
-  end: int
-  name: str
 }
 
 export obj BooleanLiteral {
@@ -231,7 +231,7 @@ export obj BinaryExpression {
 }
 
 export obj CallExpressionArgument {
-  name: Expression?
+  name: Identifier?
   expression: Expression
 }
 
@@ -292,11 +292,11 @@ export obj MapExpression {
 export obj MemberAccessExpression {
   start: int
   end: int
-  name: Expression
+  name: Identifier
 }
 
 export obj ObjectExpressionProperty {
-  name: Expression
+  name: Identifier
   value: Expression
 }
 
@@ -317,7 +317,7 @@ export obj PropertyAccessExpression {
   start: int
   end: int
   expression: Expression
-  name: Expression
+  name: Identifier
 }
 
 export obj ReferenceExpression {
@@ -356,14 +356,14 @@ export obj EmptyStatement {
 }
 
 export obj EnumDeclarationMember {
-  name: Expression
+  name: Identifier
   initializer: Expression
 }
 
 export obj EnumDeclaration {
   start: int
   end: int
-  name: Expression
+  name: Identifier
   members: EnumDeclarationMember[]
 }
 
@@ -393,7 +393,7 @@ export obj ExpressionStatement {
 export obj FunctionDeclaration {
   start: int
   end: int
-  name: Expression
+  name: Identifier
   params: FunctionParameter[]
   returnType: Type
   body: Statement
@@ -411,14 +411,14 @@ export obj IfStatement {
 export obj ImportSpecifier {
   start: int
   end: int
-  imported: Expression
-  local: Expression
+  imported: Identifier
+  local: Identifier
 }
 
 export obj ImportNamespaceSpecifier {
   start: int
   end: int
-  name: Expression
+  name: Identifier
 }
 
 export type ImportDeclarationSpecifier = ImportSpecifier | ImportNamespaceSpecifier
@@ -449,7 +449,7 @@ export obj MainDeclaration {
 export obj ObjectDeclaration {
   start: int
   end: int
-  name: Expression
+  name: Identifier
   body: Statement
 }
 
@@ -480,14 +480,14 @@ export obj TryStatement {
 export obj TypeAliasDeclaration {
   start: int
   end: int
-  name: Expression
+  name: Identifier
   t: Type
 }
 
 export obj VariableDeclaration {
   start: int
   end: int
-  name: Expression
+  name: Identifier
   t: Type?
   initializer: Expression?
   mutable: bool

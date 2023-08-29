@@ -57,7 +57,7 @@ export fn E0012 (t: str) str {
 }
 
 export fn E0100 (kw: str) str {
-  return "E0100 - Expected openning brace after `" + kw + "` keyword"
+  return "E0100 - Expected opening brace after `" + kw + "` keyword"
 }
 
 export fn E0101 () str {
@@ -65,11 +65,11 @@ export fn E0101 () str {
 }
 
 export fn E0102 (after: str) str {
-  return "E0102 - Expected openning brace after " + after
+  return "E0102 - Expected opening brace after " + after
 }
 
 export fn E0103 (after: str) str {
-  return "E0103 - Expected closing parenthesis " + after
+  return "E0103 - Expected closing parenthesis after " + after
 }
 
 export fn E0104 (unexpected: str) str {
@@ -113,7 +113,7 @@ export fn E0113 (after: str) str {
 }
 
 export fn E0114 () str {
-  return "E0114 - Expected element access expression argument after openning bracket"
+  return "E0114 - Expected element access expression argument after opening bracket"
 }
 
 export fn E0115 (after: str) str {
@@ -178,4 +178,62 @@ export fn E0129 () str {
 
 export fn E0130 () str {
   return "E0130 - Expected closure expression return type after arrow"
+}
+
+export fn E0131 (kw: str) str {
+  return "E0131 - Expected variable declaration name after `" + kw + "` keyword"
+}
+
+export fn E0132 () str {
+  return "E0132 - Expected variable declaration type or initializer after name"
+}
+
+export fn E0133 () str {
+  return "E0133 - Expected variable declaration type after name"
+}
+
+export fn E0134 (after: str) str {
+  return "E0134 - Expected variable declaration initializer after " + after
+}
+
+export fn E0135 () str {
+  return "E0135 - Expected member type identifier after dot"
+}
+
+export fn E0136 () str {
+  return "E0136 - Expected map type value type after opening bracket"
+}
+
+export fn E0137 () str {
+  return "E0137 - Expected union sub type after pipe operator"
+}
+
+export fn E0138 (kw: str) str {
+  return "E0138 - Expected type after `" + kw + "` keyword"
+}
+
+// E0139
+
+export fn E0140 () str {
+  return "E0140 - Expected function type closing parenthesis"
+}
+
+export fn E0141 () str {
+  return "E0141 - Expected function type parameter type"
+}
+
+export fn E0142 () str {
+  return "E0142 - Expected function type parameter type after parameter name"
+}
+
+export fn E0143 () str {
+  return "E0143 - Expected function type parameter type after colon"
+}
+
+export fn E0144 () str {
+  return "E0144 - Expected arrow after function type parameters"
+}
+
+export fn E0145 () str {
+  return "E0145 - Expected function type return type after arrow"
 }
