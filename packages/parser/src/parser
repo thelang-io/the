@@ -3,6 +3,10 @@
  * Licensed under the MIT License
  */
 
+
+// todo implement dead-loop detection lock (check starting position and then display "unexpected token")
+// todo implement fast exit (canGoBack) from object expression and other loops where needed
+
 import * as Reader from "./reader"
 import * as Token from "./token"
 import * as Tokenizer from "./tokenizer"
@@ -47,24 +51,15 @@ export obj Parser {
       return r
     }
 
-    mut statement: t.Statement?
+    mut statement := self.nextStatement(withBlockStatement: withBlockStatement)
 
-    if (
-      (withBlockStatement && (statement = self._maybeBlockStatement()) != nil) ||
-      (statement = self._maybeMainDeclaration()) != nil ||
-      (statement = self._maybeVariableDeclaration()) != nil ||
-      (statement = self._maybeExpressionStatement()) != nil
-    ) {
-      return self._wrapStatement(statement)
+    if statement == nil {
+      tk := self.tokenizer.next()
+      self._raise(errors.E0104(tk.val))
+      statement = emptyStatement()
     }
 
-    if self.tokenizer.lookahead(.OpSemi) {
-      return emptyStatement()
-    }
-
-    tk := self.tokenizer.next()
-    self._raise(errors.E0104(tk.val))
-    return emptyStatement()
+    return statement as t.Statement
   }
 
   fn nextExpression (mut self: ref Self, shouldWrap := true) t.Expression? {
@@ -100,6 +95,27 @@ export obj Parser {
     return nil
   }
 
+  fn nextStatement (mut self: ref Self, withBlockStatement := false) t.Statement? {
+    mut statement: t.Statement?
+
+    if (
+      (withBlockStatement && (statement = self._maybeBlockStatement()) != nil) ||
+      (statement = self._maybeBreakStatement()) != nil ||
+      (statement = self._maybeContinueStatement()) != nil ||
+      (statement = self._maybeEnumDeclaration()) != nil ||
+      (statement = self._maybeIfStatement()) != nil ||
+      (statement = self._maybeMainDeclaration()) != nil ||
+      (statement = self._maybeVariableDeclaration()) != nil ||
+      (statement = self._maybeExpressionStatement()) != nil
+    ) {
+      return self._wrapStatement(statement)
+    } elif self.tokenizer.lookahead(.OpSemi) {
+      return emptyStatement()
+    }
+
+    return nil
+  }
+
   fn nextType (mut self: ref Self, withoutUnion := false) t.Type? {
     mut t: t.Type?
 
@@ -123,16 +139,14 @@ export obj Parser {
 
     loop !self.tokenizer.lookahead(.OpRBrack) {
       if self.tokenizer.lookahead(.Eof, true) {
-        if elements.empty {
-          self._raise(errors.E0116("array expression"))
-        }
-
+        self._raise(errors.E0116("array expression"))
         break
       }
 
       expression := self.nextExpression()
 
       if expression == nil {
+        self.tokenizer.next()
         self._raise(errors.E0108("array expression"))
       } else {
         elements.push(expression)
@@ -160,6 +174,36 @@ export obj Parser {
     }
 
     r: t.Expression = t.AwaitExpression{expression: expression as t.Expression}
+    return r
+  }
+
+  fn _maybeBlockStatement (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.OpLBrace) {
+      return nil
+    }
+
+    mut body: t.Statement[]
+
+    loop !self.tokenizer.lookahead(.OpRBrace) {
+      if self.tokenizer.lookahead(.Eof, true) {
+        self._raise(errors.E0101())
+        break
+      }
+
+      statement := self.next()
+      body.push(statement)
+    }
+
+    r: t.Statement = t.BlockStatement{body: body}
+    return r
+  }
+
+  fn _maybeBreakStatement (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwBreak) {
+      return nil
+    }
+
+    r: t.Statement = t.BreakStatement{}
     return r
   }
 
@@ -199,6 +243,7 @@ export obj Parser {
           return nil
         }
 
+        self.tokenizer.next()
         self._raise(errors.E0125())
       } else {
         mut parameterType: t.Type?
@@ -270,7 +315,13 @@ export obj Parser {
     mut body := emptyStatement()
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
-      body = self.next(withBlockStatement: true)
+      statement := self.nextStatement(withBlockStatement: true)
+
+      if statement == nil {
+        self._raise(errors.E0150())
+      } else {
+        body = statement
+      }
     } else {
       self._raise(errors.E0102("expression closure return type"))
     }
@@ -285,23 +336,66 @@ export obj Parser {
     return r
   }
 
-  fn _maybeBlockStatement (mut self: ref Self) t.Statement? {
-    if !self.tokenizer.lookahead(.OpLBrace) {
+  fn _maybeContinueStatement (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwContinue) {
       return nil
     }
 
-    mut body: t.Statement[]
+    r: t.Statement = t.ContinueStatement{}
+    return r
+  }
+
+  fn _maybeEnumDeclaration (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwEnum) {
+      return nil
+    }
+
+    name := self.nextIdentifier()
+
+    if name == nil {
+      self._raise(errors.E0145())
+      name = emptyIdentifier()
+    }
+
+    if !self.tokenizer.lookahead(.OpLBrace) {
+      self._raise(errors.E0102("enumeration declaration name"))
+    }
+
+    mut members: t.EnumDeclarationMember[]
 
     loop !self.tokenizer.lookahead(.OpRBrace) {
       if self.tokenizer.lookahead(.Eof, true) {
-        self._raise(errors.E0101())
+        self._raise(errors.E0146("enumeration declaration members"))
         break
       }
 
-      body.push(self.next())
+      name := self.nextIdentifier()
+
+      if name == nil {
+        self.tokenizer.next()
+        self._raise(errors.E0147())
+        name = emptyIdentifier()
+      }
+
+      mut initializer: t.Expression?
+
+      if self.tokenizer.lookahead(.OpEq) {
+        initializer = self.nextExpression()
+
+        if initializer == nil {
+          self._raise(errors.E0148())
+          initializer = emptyExpression()
+        }
+      }
+
+      members.push(t.EnumDeclarationMember{name: name as t.Identifier, initializer: initializer})
+
+      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrace, true) {
+        self._raise(errors.E0106("enumeration declaration member"))
+      }
     }
 
-    r: t.Statement = t.BlockStatement{body: body}
+    r: t.Statement = t.EnumDeclaration{name: name as t.Identifier, members: members}
     return r
   }
 
@@ -338,7 +432,7 @@ export obj Parser {
           return nil
         }
 
-        self._raise(errors.E0140())
+        self._raise(errors.E0139())
         break
       }
 
@@ -354,12 +448,12 @@ export obj Parser {
 
         if parameterType == nil {
           if canGoBack {
-            print("here3")
             self.tokenizer.seek(startPos)
             return nil
           }
 
-          self._raise(errors.E0141())
+          self.tokenizer.next()
+          self._raise(errors.E0140())
           parameterType = emptyType()
         }
       } else {
@@ -367,7 +461,7 @@ export obj Parser {
           parameterType = self.nextType()
 
           if parameterType == nil {
-            self._raise(errors.E0143())
+            self._raise(errors.E0142())
             parameterType = emptyType()
           }
         } else {
@@ -381,7 +475,8 @@ export obj Parser {
               return nil
             }
 
-            self._raise(errors.E0142())
+            self.tokenizer.next()
+            self._raise(errors.E0141())
             parameterType = emptyType()
           }
         }
@@ -411,13 +506,13 @@ export obj Parser {
         }
       }
 
-      self._raise(errors.E0144())
+      self._raise(errors.E0143())
     }
 
     mut returnType := self.nextType()
 
     if returnType == nil {
-      self._raise(errors.E0145())
+      self._raise(errors.E0144())
       returnType = emptyType()
     }
 
@@ -445,6 +540,50 @@ export obj Parser {
     }
 
     return nil
+  }
+
+  fn _maybeIfStatement (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwElif) && !self.tokenizer.lookahead(.KwIf) {
+      return nil
+    }
+
+    print("here1")
+    mut condition := self.nextExpression()
+    print("here1-2")
+
+    if condition == nil {
+      self._raise(errors.E0109("if"))
+      condition = emptyExpression()
+    }
+    print("here2")
+
+    consequent := self.nextStatement(withBlockStatement: true)
+
+    if consequent == nil {
+      self._raise(errors.E0151())
+      consequent = emptyStatement()
+    }
+
+    mut alternate: t.Statement?
+    print("here3")
+
+    if self.tokenizer.lookahead(.KwElif, true) || self.tokenizer.lookahead(.KwElse) {
+      alternate = self.nextStatement(withBlockStatement: true)
+
+      if alternate == nil {
+        self._raise(errors.E0152())
+        alternate = emptyStatement()
+      }
+    }
+    print("here4")
+
+    r: t.Statement = t.IfStatement{
+      condition: condition as t.Expression,
+      consequent: consequent as t.Statement,
+      alternate: alternate
+    }
+
+    return r
   }
 
   fn _maybeLiteral (mut self: ref Self) t.Expression? {
@@ -486,15 +625,21 @@ export obj Parser {
       return nil
     }
 
-    mut body: t.Statement = t.BlockStatement{}
+    mut body: t.Statement?
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
-      body = self.next(withBlockStatement: true)
+      body = self.nextStatement(withBlockStatement: true)
+
+      if body == nil {
+        self._raise(errors.E0153())
+        body = emptyStatement()
+      }
     } else {
       self._raise(errors.E0100("main"))
+      body = emptyStatement()
     }
 
-    r: t.Statement = t.MainDeclaration{body: body}
+    r: t.Statement = t.MainDeclaration{body: body as t.Statement}
     return r
   }
 
@@ -507,16 +652,14 @@ export obj Parser {
 
     loop !self.tokenizer.lookahead(.OpRBrace) {
       if self.tokenizer.lookahead(.Eof, true) {
-        if elements.empty {
-          self._raise(errors.E0117("map expression"))
-        }
-
+        self._raise(errors.E0117("map expression"))
         break
       }
 
       key := self.nextExpression(shouldWrap: false)
 
       if key == nil {
+        self.tokenizer.next()
         self._raise(errors.E0118())
       } elif !self.tokenizer.lookahead(.OpColon) {
         self._raise(errors.E0113("map expression key"))
@@ -837,10 +980,7 @@ export obj Parser {
 
     loop !self.tokenizer.lookahead(.OpRPar) {
       if self.tokenizer.lookahead(.Eof, true) {
-        if arguments.empty {
-          self._raise(errors.E0103("call expression openning brace"))
-        }
-
+        self._raise(errors.E0103("call expression openning brace"))
         break
       }
 
@@ -851,6 +991,7 @@ export obj Parser {
         expression := self.nextExpression()
 
         if expression == nil {
+          self.tokenizer.next()
           self._raise(errors.E0105())
         } else {
           arguments.push(t.CallExpressionArgument{expression: expression})
@@ -870,6 +1011,7 @@ export obj Parser {
           expression := self.nextExpression()
 
           if expression == nil {
+            self.tokenizer.next()
             self._raise(errors.E0105())
           } else {
             arguments.push(t.CallExpressionArgument{expression: expression})
@@ -979,16 +1121,14 @@ export obj Parser {
 
     loop !self.tokenizer.lookahead(.OpRBrace) {
       if self.tokenizer.lookahead(.Eof, true) {
-        if properties.empty {
-          self._raise(errors.E0117("object expression"))
-        }
-
+        self._raise(errors.E0117("object expression"))
         break
       }
 
       name := self.nextIdentifier()
 
       if name == nil {
+        self.tokenizer.next()
         self._raise(errors.E0120())
       } else {
         if !self.tokenizer.lookahead(.OpColon) {

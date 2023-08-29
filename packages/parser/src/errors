@@ -212,28 +212,62 @@ export fn E0138 (kw: str) str {
   return "E0138 - Expected type after `" + kw + "` keyword"
 }
 
-// E0139
+export fn E0139 () str {
+  return "E0139 - Expected function type closing parenthesis"
+}
 
 export fn E0140 () str {
-  return "E0140 - Expected function type closing parenthesis"
+  return "E0140 - Expected function type parameter type"
 }
 
 export fn E0141 () str {
-  return "E0141 - Expected function type parameter type"
+  return "E0141 - Expected function type parameter type after parameter name"
 }
 
 export fn E0142 () str {
-  return "E0142 - Expected function type parameter type after parameter name"
+  return "E0142 - Expected function type parameter type after colon"
 }
 
 export fn E0143 () str {
-  return "E0143 - Expected function type parameter type after colon"
+  return "E0143 - Expected arrow after function type parameters"
 }
 
 export fn E0144 () str {
-  return "E0144 - Expected arrow after function type parameters"
+  return "E0144 - Expected function type return type after arrow"
 }
 
 export fn E0145 () str {
-  return "E0145 - Expected function type return type after arrow"
+  return "E0145 - Expected enumeration declaration name after `enum` keyword"
+}
+
+export fn E0146 (after: str) str {
+  return "E0146 - Expected closing brace after " + after
+}
+
+export fn E0147 () str {
+  return "E0147 - Expected enumeration declaration member name"
+}
+
+export fn E0148 () str {
+  return "E0148 - Expected enumeration declaration member initializer after colon"
+}
+
+// export fn E0149 () str {
+//   return "E0149 - Expected block statement"
+// }
+
+export fn E0150 () str {
+  return "E0150 - Expected closure expression body"
+}
+
+export fn E0151 () str {
+  return "E0151 - Expected if statement consequent statement"
+}
+
+export fn E0152 () str {
+  return "E0152 - Expected if statement alternate statement"
+}
+
+export fn E0153 () str {
+  return "E0153 - Expected main declaration body"
 }

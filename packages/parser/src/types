@@ -46,16 +46,16 @@ export type Expression =
 
 export type Statement =
   BlockStatement |
-  BreakStatement | // todo
-  ContinueStatement | // todo
+  BreakStatement |
+  ContinueStatement |
   EmptyStatement |
-  EnumDeclaration | // todo
-  EofStatement | // todo
+  EnumDeclaration |
+  EofStatement |
   ExportDeclaration | // todo
   ExportNamedDeclaration | // todo
   ExpressionStatement |
   FunctionDeclaration | // todo
-  IfStatement | // todo
+  IfStatement |
   ImportDeclaration | // todo
   LoopStatement | // todo
   MainDeclaration |
@@ -357,7 +357,7 @@ export obj EmptyStatement {
 
 export obj EnumDeclarationMember {
   name: Identifier
-  initializer: Expression
+  initializer: Expression?
 }
 
 export obj EnumDeclaration {
