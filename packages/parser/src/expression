@@ -5,6 +5,10 @@
 
 import * as t from "./types"
 
+export fn create (body: t.ExpressionBody, start := 0, end := 0) t.Expression {
+  return t.Expression{body: body, start: start, end: end}
+}
+
 export fn endsWithObjExpr (self: t.Expression) bool {
   return false
 }

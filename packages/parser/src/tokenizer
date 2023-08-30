@@ -53,6 +53,14 @@ export obj Tokenizer {
     return self.state.idx
   }
 
+  fn readerStartPos (mut self: ref Self, offset := 0) int {
+    return self.state.idx == 0 ? 0 : self.data[self.state.idx - 1 + offset].start
+  }
+
+  fn readerEndPos (mut self: ref Self) int {
+    return self.state.idx == 0 ? 0 : self.data[self.state.idx - 1].end
+  }
+
   fn seek (mut self: ref Self, pos: int) {
     self.state.idx = pos
   }
@@ -447,15 +455,15 @@ export obj Tokenizer {
     lines := self.reader.content.lines()
 
     mut errorLines: str[]
-    mut errorLinesNums: int[]
+    mut errorLinesNumbers: int[]
 
     if startLoc.line != 1 {
       errorLines.push(lines[startLoc.line - 2])
-      errorLinesNums.push(startLoc.line - 1)
+      errorLinesNumbers.push(startLoc.line - 1)
     }
 
     errorLines.push(lines[startLoc.line - 1])
-    errorLinesNums.push(startLoc.line)
+    errorLinesNumbers.push(startLoc.line)
 
     if startLoc.line == endLoc.line && (startLoc.col == endLoc.col || startLoc.col + 1 == endLoc.col) {
       errorLines.push(' '.repeat(startLoc.col - 1) + "^")
@@ -466,22 +474,22 @@ export obj Tokenizer {
       errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col))
     }
 
-    errorLinesNums.push(startLoc.line)
+    errorLinesNumbers.push(startLoc.line)
 
     if startLoc.line != lines.len && !lines[startLoc.line].empty {
       errorLines.push(lines[startLoc.line])
-      errorLinesNums.push(startLoc.line + 1)
+      errorLinesNumbers.push(startLoc.line + 1)
     }
 
-    gutterLen := errorLinesNums[-1].str().len + 1
+    gutterLen := errorLinesNumbers[-1].str().len + 1
 
     mut error := self.reader.path + ":" + startLoc.line.str() + ":" +
       startLoc.col.str() + ": SyntaxError: " + message + os_EOL
 
     mut prevLineNum := 0
 
-    loop i := 0; i < errorLinesNums.len; i++ {
-      errorLineNum := errorLinesNums[i]
+    loop i := 0; i < errorLinesNumbers.len; i++ {
+      errorLineNum := errorLinesNumbers[i]
 
       if prevLineNum == errorLineNum {
         error += ' '.repeat(gutterLen)

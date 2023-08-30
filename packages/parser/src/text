@@ -1,0 +1,474 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as t from "./types"
+
+export fn FunctionParameterArray_toText (array: t.FunctionParameter[], indent := 0) str {
+  mut result := ""
+
+  loop i := 0; i < array.len; i++ {
+    result += FunctionParameter_toText(array[i], indent)
+  }
+
+  return result
+}
+
+export fn FunctionParameter_toText (self: t.FunctionParameter, indent := 0) str {
+  attrs := ((self.mutable ? " mut" : "") + (self.mutable ? " variadic" : "")).trim()
+  mut result := ' '.repeat(indent) + "FunctionParameter" + (attrs.empty ? "" : "(" + attrs + ")") + os_EOL
+  result += ' '.repeat(indent + 2) + "name" + os_EOL
+  result += Identifier_toText(self.name, indent: indent + 4)
+
+  if self.t != nil {
+    result += ' '.repeat(indent + 2) + "type" + os_EOL
+    result += Type_toText(self.t, indent: indent + 4)
+  }
+
+  if self.initializer != nil {
+    result += ' '.repeat(indent + 2) + "initializer" + os_EOL
+    result += Expression_toText(self.initializer, indent: indent + 4)
+  }
+
+  return result
+}
+
+export fn Identifier_toText (self: t.Identifier, indent := 0) str {
+  attrs := "start=" + self.start.str() + " end=" + self.end.str()
+  return ' '.repeat(indent) + "Identifier(" + attrs + ") " + self.name + os_EOL
+}
+
+export fn Expression_toText (self: t.Expression, indent := 0) str {
+  mut result := ""
+  mut beginAttrs := "start=" + self.start.str() + ", end=" + self.end.str()
+
+  if self.isIdentifier() {
+    expression := self.asIdentifier()
+    result += Identifier_toText(expression, indent: indent)
+  } elif self.isBooleanLiteral() {
+    expression := self.asBooleanLiteral()
+    result += ' '.repeat(indent) + "BooleanLiteral(" + beginAttrs + ")"
+    result += " " + expression.value + os_EOL
+  } elif self.isCharacterLiteral() {
+    expression := self.asCharacterLiteral()
+    result += ' '.repeat(indent) + "CharacterLiteral(" + beginAttrs + ")"
+    result += " " + expression.value + os_EOL
+  } elif self.isFloatingPointLiteral() {
+    expression := self.asFloatingPointLiteral()
+    result += ' '.repeat(indent) + "FloatingPointLiteral(" + beginAttrs + ")"
+    result += " " + expression.value + os_EOL
+  } elif self.isIntegerLiteral() {
+    expression := self.asIntegerLiteral()
+    beginAttrs += " type=" + expression.t.rawValue
+    result += ' '.repeat(indent) + "IntegerLiteral(" + beginAttrs + ")"
+    result += " " + expression.value + os_EOL
+  } elif self.isNilLiteral() {
+    result += ' '.repeat(indent) + "NilLiteral(" + beginAttrs + ")" + os_EOL
+  } elif self.isStringLiteral() {
+    expression := self.asStringLiteral()
+    result += ' '.repeat(indent) + "StringLiteral(" + beginAttrs + ")"
+    result += " " + expression.value + os_EOL
+  } elif self.isArray() {
+    expression := self.asArray()
+    result += ' '.repeat(indent) + "ArrayExpression(" + beginAttrs + ")" + os_EOL
+
+    loop i := 0; i < expression.elements.len; i++ {
+      result += Expression_toText(expression.elements[i], indent: indent + 2)
+    }
+  } elif self.isAs() {
+    expression := self.asAs()
+    result += ' '.repeat(indent) + "AsExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "expression" + os_EOL
+    result += Expression_toText(expression.expression, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "type" + os_EOL
+    result += Type_toText(expression.t, indent: indent + 4)
+  } elif self.isAssignment() {
+    expression := self.asAssignment()
+    result += ' '.repeat(indent) + "AssignmentExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "left" + os_EOL
+    result += Expression_toText(expression.left, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "op " + expression.operator + os_EOL
+    result += ' '.repeat(indent + 2) + "right" + os_EOL
+    result += Expression_toText(expression.right, indent: indent + 4)
+  } elif self.isAwait() {
+    expression := self.asAwait()
+    result += ' '.repeat(indent) + "AwaitExpression(" + beginAttrs + ")" + os_EOL
+    result += Expression_toText(expression.expression, indent: indent + 2)
+  } elif self.isBinary() {
+    expression := self.asBinary()
+    result += ' '.repeat(indent) + "BinaryExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "left" + os_EOL
+    result += Expression_toText(expression.left, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "op " + expression.operator + os_EOL
+    result += ' '.repeat(indent + 2) + "right" + os_EOL
+    result += Expression_toText(expression.right, indent: indent + 4)
+  } elif self.isCall() {
+    expression := self.asCall()
+    result += ' '.repeat(indent) + "CallExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "callee" + os_EOL
+    result += Expression_toText(expression.callee, indent: indent + 4)
+
+    if !expression.arguments.empty {
+      result += ' '.repeat(indent + 2) + "arguments" + os_EOL
+
+      loop i := 0; i < expression.arguments.len; i++ {
+        argument := expression.arguments[i]
+        result += ' '.repeat(indent + 4) + "CallExpressionArgument" + os_EOL
+
+        if argument.name != nil {
+          result += ' '.repeat(indent + 6) + "name" + os_EOL
+          result += Identifier_toText(argument.name, indent: indent + 8)
+          result += ' '.repeat(indent + 6) + "expression" + os_EOL
+          result += Expression_toText(argument.expression, indent: indent + 8)
+        } else {
+          result += Expression_toText(argument.expression, indent: indent + 6)
+        }
+      }
+    }
+  } elif self.isClosure() {
+    expression := self.asClosure()
+    beginAttrs += expression.asynchronous ? " async" : ""
+    result += ' '.repeat(indent) + "ClosureExpression(" + beginAttrs + ")" + os_EOL
+
+    if !expression.parameters.empty {
+      result += ' '.repeat(indent + 2) + "parameters" + os_EOL
+      result += FunctionParameterArray_toText(expression.parameters, indent + 4)
+    }
+
+    result += ' '.repeat(indent + 2) + "returnType" + os_EOL
+    result += Type_toText(expression.returnType, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "body" + os_EOL
+    result += Statement_toText(expression.body, indent: indent + 4)
+  } elif self.isConditional() {
+    expression := self.asConditional()
+    result += ' '.repeat(indent) + "ConditionalExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "condition" + os_EOL
+    result += Expression_toText(expression.condition, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "consequent" + os_EOL
+    result += Expression_toText(expression.consequent, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "alternate" + os_EOL
+    result += Expression_toText(expression.alternate, indent: indent + 4)
+  } elif self.isElementAccess() {
+    expression := self.asElementAccess()
+    result += ' '.repeat(indent) + "ElementAccessExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "expression" + os_EOL
+    result += Expression_toText(expression.expression, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "argument" + os_EOL
+    result += Expression_toText(expression.argument, indent: indent + 4)
+  } elif self.isEmpty() {
+    expression := self.asEmpty()
+    result += ' '.repeat(indent) + "EmptyExpression(" + beginAttrs + ")" + os_EOL
+  } elif self.isIs() {
+    expression := self.asIs()
+    result += ' '.repeat(indent) + "IsExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "expression" + os_EOL
+    result += Expression_toText(expression.expression, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "type" + os_EOL
+    result += Type_toText(expression.t, indent: indent + 4)
+  } elif self.isMap() {
+    expression := self.asMap()
+    result += ' '.repeat(indent) + "MapExpression(" + beginAttrs + ")" + os_EOL
+
+    loop i := 0; i < expression.elements.len; i++ {
+      element := expression.elements[i]
+      result += ' '.repeat(indent + 2) + "MapExpressionElement" + os_EOL
+      result += ' '.repeat(indent + 4) + "key" + os_EOL
+      result += Expression_toText(element.key, indent: indent + 6)
+      result += ' '.repeat(indent + 4) + "value" + os_EOL
+      result += Expression_toText(element.value, indent: indent + 6)
+    }
+  } elif self.isMemberAccess() {
+    expression := self.asMemberAccess()
+    result += ' '.repeat(indent) + "MemberAccessExpression(" + beginAttrs + ")" + os_EOL
+    result += Identifier_toText(expression.name, indent: indent + 2)
+  } elif self.isObject() {
+    expression := self.asObject()
+    result += ' '.repeat(indent) + "ObjectExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "id" + os_EOL
+    result += Expression_toText(expression.id, indent: indent + 4)
+
+    if !expression.properties.empty {
+      result += ' '.repeat(indent + 2) + "properties" + os_EOL
+
+      loop i := 0; i < expression.properties.len; i++ {
+        property := expression.properties[i]
+        result += ' '.repeat(indent + 4) + "ObjectExpressionProperty" + os_EOL
+        result += ' '.repeat(indent + 6) + "name" + os_EOL
+        result += Identifier_toText(property.name, indent: indent + 8)
+        result += ' '.repeat(indent + 6) + "value" + os_EOL
+        result += Expression_toText(property.value, indent: indent + 8)
+      }
+    }
+  } elif self.isParenthesized() {
+    expression := self.asParenthesized()
+    result += ' '.repeat(indent) + "ParenthesizedExpression(" + beginAttrs + ")" + os_EOL
+    result += Expression_toText(expression.expression, indent: indent + 2)
+  } elif self.isPropertyAccess() {
+    expression := self.asPropertyAccess()
+    result += ' '.repeat(indent) + "PropertyAccessExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "expression" + os_EOL
+    result += Expression_toText(expression.expression, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "name" + os_EOL
+    result += Identifier_toText(expression.name, indent: indent + 4)
+  } elif self.isReference() {
+    expression := self.asReference()
+    result += ' '.repeat(indent) + "ReferenceExpression(" + beginAttrs + ")" + os_EOL
+    result += Expression_toText(expression.expression, indent: indent + 2)
+  } elif self.isUnary() {
+    expression := self.asUnary()
+    beginAttrs += expression.prefix ? " prefix" : ""
+    result += ' '.repeat(indent) + "UnaryExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "operator " + expression.operator + os_EOL
+    result += ' '.repeat(indent + 2) + "operand" + os_EOL
+    result += Expression_toText(expression.operand, indent: indent + 4)
+  }
+
+  return result
+}
+
+export fn StatementArray_toText (array: t.Statement[], indent := 0) str {
+  mut result := ""
+
+  loop i := 0; i < array.len; i++ {
+    result += Statement_toText(array[i], indent)
+  }
+
+  return result
+}
+
+export fn Statement_toText (self: t.Statement, indent := 0) str {
+  mut result := ""
+  mut beginAttrs := "start=" + self.start.str() + ", end=" + self.end.str()
+
+  if self.isBlock() {
+    statement := self.asBlock()
+    result += ' '.repeat(indent) + "BlockStatement(" + beginAttrs + ")" + os_EOL
+
+    loop i := 0; i < statement.body.len; i++ {
+      result += Statement_toText(statement.body[i], indent + 2)
+    }
+  } elif self.isBreak() {
+    result += ' '.repeat(indent) + "BreakStatement(" + beginAttrs + ")" + os_EOL
+  } elif self.isContinue() {
+    result += ' '.repeat(indent) + "ContinueStatement(" + beginAttrs + ")" + os_EOL
+  } elif self.isEmpty() {
+    result += ' '.repeat(indent) + "EmptyStatement(" + beginAttrs + ")" + os_EOL
+  } elif self.isEnumDeclaration() {
+    statement := self.asEnumDeclaration()
+    result += ' '.repeat(indent) + "EnumDeclaration(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "name" + os_EOL
+    result += Identifier_toText(statement.name, indent: indent + 4)
+
+    if !statement.members.empty {
+      result += ' '.repeat(indent + 2) + "members" + os_EOL
+
+      loop i := 0; i < statement.members.len; i++ {
+        member := statement.members[i]
+        result += ' '.repeat(indent + 4) + "EnumDeclarationMember" + os_EOL
+
+        if member.initializer != nil {
+          result += ' '.repeat(indent + 6) + "name" + os_EOL
+          result += Identifier_toText(member.name, indent: indent + 8)
+          result += ' '.repeat(indent + 6) + "initializer" + os_EOL
+          result += Expression_toText(member.initializer, indent: indent + 8)
+        } else {
+          result += Identifier_toText(member.name, indent: indent + 6)
+        }
+      }
+    }
+  } elif self.isEof() {
+    result += ' '.repeat(indent) + "EofStatement(" + beginAttrs + ")" + os_EOL
+  } elif self.isExportDeclaration() {
+    statement := self.asExportDeclaration()
+    // todo
+  } elif self.isExportNamedDeclaration() {
+    statement := self.asExportNamedDeclaration()
+    // todo
+  } elif self.isExpression() {
+    statement := self.asExpression()
+    result += ' '.repeat(indent) + "ExpressionStatement(" + beginAttrs + ")" + os_EOL
+    result += Expression_toText(statement.expression, indent + 2)
+  } elif self.isFunctionDeclaration() {
+    statement := self.asFunctionDeclaration()
+    // todo
+  } elif self.isIf() {
+    statement := self.asIf()
+    result += ' '.repeat(indent) + "IfStatement(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "condition" + os_EOL
+    result += Expression_toText(statement.condition, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "consequent" + os_EOL
+    result += Statement_toText(statement.consequent, indent: indent + 4)
+
+    if statement.alternate != nil {
+      result += ' '.repeat(indent + 2) + "alternate" + os_EOL
+      result += Statement_toText(statement.alternate, indent: indent + 4)
+    }
+  } elif self.isImportDeclaration() {
+    statement := self.asImportDeclaration()
+    // todo
+  } elif self.isLoop() {
+    statement := self.asLoop()
+    beginAttrs += statement.parenthesized ? " parenthesized" : ""
+    result += ' '.repeat(indent) + "IfStatement(" + beginAttrs + ")" + os_EOL
+
+    if statement.initializer != nil {
+      result += ' '.repeat(indent + 2) + "initializer" + os_EOL
+      result += Statement_toText(statement.initializer, indent: indent + 4)
+    }
+
+    if statement.condition != nil {
+      result += ' '.repeat(indent + 2) + "condition" + os_EOL
+      result += Expression_toText(statement.condition, indent: indent + 4)
+    }
+
+    if statement.update != nil {
+      result += ' '.repeat(indent + 2) + "update" + os_EOL
+      result += Expression_toText(statement.update, indent: indent + 4)
+    }
+
+    result += ' '.repeat(indent + 2) + "body" + os_EOL
+    result += Statement_toText(statement.body, indent: indent + 4)
+  } elif self.isMainDeclaration() {
+    statement := self.asMainDeclaration()
+    result += ' '.repeat(indent) + "MainDeclaration(" + beginAttrs + ")" + os_EOL
+    result += Statement_toText(statement.body, indent: indent + 2)
+  } elif self.isObjectDeclaration() {
+    statement := self.asObjectDeclaration()
+    // todo
+  } elif self.isReturn() {
+    statement := self.asReturn()
+    result += ' '.repeat(indent) + "ReturnStatement(" + beginAttrs + ")" + os_EOL
+
+    if statement.expression != nil {
+      result += Expression_toText(statement.expression, indent + 2)
+    }
+  } elif self.isThrow() {
+    statement := self.asThrow()
+    result += ' '.repeat(indent) + "ThrowStatement(" + beginAttrs + ")" + os_EOL
+    result += Expression_toText(statement.expression, indent + 2)
+  } elif self.isTry() {
+    statement := self.asTry()
+    result += ' '.repeat(indent) + "IfStatement(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "body" + os_EOL
+    result += Statement_toText(statement.body, indent: indent + 4)
+
+    if !statement.handlers.empty {
+      result += ' '.repeat(indent + 2) + "handlers" + os_EOL
+
+      loop i := 0; i < statement.handlers.len; i++ {
+        handler := statement.handlers[i]
+        result += ' '.repeat(indent + 4) + "TryStatementHandler" + os_EOL
+        result += ' '.repeat(indent + 6) + "parameter" + os_EOL
+        result += Statement_toText(handler.parameter, indent: indent + 8)
+        result += ' '.repeat(indent + 6) + "body" + os_EOL
+        result += Statement_toText(handler.body, indent: indent + 8)
+      }
+    }
+  } elif self.isTypeAliasDeclaration() {
+    statement := self.asTypeAliasDeclaration()
+    result += ' '.repeat(indent) + "TypeAliasDeclaration(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "name" + os_EOL
+    result += Identifier_toText(statement.name, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "type" + os_EOL
+    result += Type_toText(statement.t, indent: indent + 4)
+  } elif self.isVariableDeclaration() {
+    statement := self.asVariableDeclaration()
+    beginAttrs += (statement.constant ? " const" : "") + (statement.mutable ? " mut" : "")
+    result += ' '.repeat(indent) + "VariableDeclaration(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "name" + os_EOL
+    result += Identifier_toText(statement.name, indent: indent + 4)
+
+    if statement.t != nil {
+      result += ' '.repeat(indent + 2) + "type" + os_EOL
+      result += Type_toText(statement.t, indent: indent + 4)
+    }
+
+    if statement.initializer != nil {
+      result += ' '.repeat(indent + 2) + "initializer" + os_EOL
+      result += Expression_toText(statement.initializer, indent: indent + 4)
+    }
+  }
+
+  return result
+}
+
+export fn Type_toText (self: t.Type, indent := 0) str {
+  mut result := ""
+  mut beginAttrs := "start=" + self.start.str() + " end=" + self.end.str()
+
+  if self.isArray() {
+    bodyType := self.asArray()
+    result += ' '.repeat(indent) + "ArrayType(" + beginAttrs + ")" + os_EOL
+    result += Type_toText(bodyType.elementType, indent: indent + 2)
+  } elif self.isEmpty() {
+    result += ' '.repeat(indent) + "EmptyType(" + beginAttrs + ")" + os_EOL
+  } elif self.isFunction() {
+    bodyType := self.asFunction()
+    beginAttrs += bodyType.asynchronous ? " async" : ""
+    result += ' '.repeat(indent) + "FunctionType(" + beginAttrs + ")" + os_EOL
+
+    if !bodyType.parameters.empty {
+      result += ' '.repeat(indent + 2) + "parameters" + os_EOL
+
+      loop i := 0; i < bodyType.parameters.len; i++ {
+        parameter := bodyType.parameters[i]
+        parameterAttrs := ((parameter.mutable ? " mut" : "") + (parameter.variadic ? " variadic" : "")).trim()
+
+        result += ' '.repeat(indent + 4) + "FunctionTypeParameter"
+        result += (parameterAttrs.empty ? "" : "(" + parameterAttrs + ")") + os_EOL
+
+        if parameter.name != nil {
+          result += ' '.repeat(indent + 6) + "name" + os_EOL
+          result += Identifier_toText(parameter.name, indent: indent + 8)
+          result += ' '.repeat(indent + 6) + "type" + os_EOL
+          result += Type_toText(parameter.t, indent: indent + 8)
+        } else {
+          result += Type_toText(parameter.t, indent: indent + 6)
+        }
+      }
+    }
+
+    result += ' '.repeat(indent + 2) + "returnType" + os_EOL
+    result += Type_toText(bodyType.returnType, indent: indent + 4)
+  } elif self.isIdentifier() {
+    bodyType := self.asIdentifier()
+    result += ' '.repeat(indent) + "IdentifierType(" + beginAttrs + ")" + os_EOL
+    result += Identifier_toText(bodyType.name, indent: indent + 2)
+  } elif self.isMap() {
+    bodyType := self.asMap()
+    result += ' '.repeat(indent) + "MapType(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "keyType" + os_EOL
+    result += Type_toText(bodyType.keyType, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "valueType" + os_EOL
+    result += Type_toText(bodyType.valueType, indent: indent + 4)
+  } elif self.isMember() {
+    bodyType := self.asMember()
+    result += ' '.repeat(indent) + "MemberType(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "type" + os_EOL
+    result += Type_toText(bodyType.t, indent: indent + 4)
+    result += ' '.repeat(indent + 2) + "name" + os_EOL
+    result += Identifier_toText(bodyType.name, indent: indent + 4)
+  } elif self.isOptional() {
+    bodyType := self.asOptional()
+    result += ' '.repeat(indent) + "OptionalType(" + beginAttrs + ")" + os_EOL
+    result += Type_toText(bodyType.t, indent: indent + 2)
+  } elif self.isParenthesized() {
+    bodyType := self.asParenthesized()
+    result += ' '.repeat(indent) + "ParenthesizedType(" + beginAttrs + ")" + os_EOL
+    result += Type_toText(bodyType.t, indent: indent + 2)
+  } elif self.isReference() {
+    bodyType := self.asReference()
+    result += ' '.repeat(indent) + "ReferenceType(" + beginAttrs + ")" + os_EOL
+    result += Type_toText(bodyType.t, indent: indent + 2)
+  } elif self.isUnion() {
+    bodyType := self.asUnion()
+    result += ' '.repeat(indent) + "UnionType(" + beginAttrs + ")" + os_EOL
+
+    loop i := 0; i < bodyType.types.len; i++ {
+      result += Type_toText(bodyType.types[i], indent: indent + 2)
+    }
+  }
+
+  return result
+}

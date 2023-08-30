@@ -5,25 +5,27 @@
 
 import * as Expression from "./expression"
 import * as Reader from "./reader"
+import * as Statement from "./statement"
 import * as Token from "./token"
 import * as Tokenizer from "./tokenizer"
+import * as Type from "./type"
 import * as errors from "./errors"
 import * as t from "./types"
 
 fn emptyExpression () t.Expression {
-  return t.EmptyExpression{}
+  return Expression.create(t.EmptyExpression{})
 }
 
 fn emptyIdentifier () t.Identifier {
-  return t.Identifier{}
+  return t.Identifier{start: 0, end: 0, name: ""}
 }
 
 fn emptyStatement () t.Statement {
-  return t.EmptyStatement{}
+  return Statement.create(t.EmptyStatement{})
 }
 
 fn emptyType () t.Type {
-  return t.EmptyType{}
+  return Type.create(t.EmptyType{})
 }
 
 fn tokenTypeToIntegerLiteralType (tokenType: t.TokenType) t.IntegerLiteralType {
@@ -42,13 +44,19 @@ export obj Parser {
   mut errors: str[]
   mut tokenizer: ref Tokenizer.Tokenizer
 
-  fn next (mut self: ref Self, withBlockStatement := false) t.Statement {
+  fn next (mut self: ref Self, withBlockStatement := false, withElifStatement := false) t.Statement {
     if self.tokenizer.lookahead(.Eof) {
-      r: t.Statement = t.EofStatement{}
-      return r
+      return Statement.create(
+        t.EofStatement{},
+        self.tokenizer.readerStartPos(),
+        self.tokenizer.readerEndPos()
+      )
     }
 
-    mut statement := self.nextStatement(withBlockStatement: withBlockStatement)
+    mut statement := self.nextStatement(
+      withBlockStatement: withBlockStatement,
+      withElifStatement: withElifStatement
+    )
 
     if statement == nil {
       tk := self.tokenizer.next()
@@ -85,14 +93,14 @@ export obj Parser {
     tk := self.tokenizer.next()
 
     if tk.t == .Id || tk.t.rawValue.slice(0, 2) == "Kw" {
-      return t.Identifier{name: tk.val}
+      return t.Identifier{name: tk.val, start: tk.start, end: tk.end}
     }
 
     self.tokenizer.seek(startPos)
     return nil
   }
 
-  fn nextStatement (mut self: ref Self, withBlockStatement := false) t.Statement? {
+  fn nextStatement (mut self: ref Self, withBlockStatement := false, withElifStatement := false) t.Statement? {
     mut statement: t.Statement?
 
     if (
@@ -100,7 +108,7 @@ export obj Parser {
       (statement = self._maybeBreakStatement()) != nil ||
       (statement = self._maybeContinueStatement()) != nil ||
       (statement = self._maybeEnumDeclaration()) != nil ||
-      (statement = self._maybeIfStatement()) != nil ||
+      (statement = self._maybeIfStatement(withElifStatement: withElifStatement)) != nil ||
       (statement = self._maybeMainDeclaration()) != nil ||
       (statement = self._maybeVariableDeclaration()) != nil ||
       (statement = self._maybeExpressionStatement()) != nil
@@ -132,6 +140,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut elements: t.Expression[]
     mut elementStartPos := -1
 
@@ -155,8 +164,11 @@ export obj Parser {
       }
     }
 
-    r: t.Expression = t.ArrayExpression{elements: elements}
-    return r
+    return Expression.create(
+      t.ArrayExpression{elements: elements},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeAwaitExpression (mut self: ref Self) t.Expression? {
@@ -164,6 +176,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut expression := self.nextExpression()
 
     if expression == nil {
@@ -171,8 +184,11 @@ export obj Parser {
       expression = emptyExpression()
     }
 
-    r: t.Expression = t.AwaitExpression{expression: expression as t.Expression}
-    return r
+    return Expression.create(
+      t.AwaitExpression{expression: expression as t.Expression},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeBlockStatement (mut self: ref Self) t.Statement? {
@@ -180,6 +196,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut body: t.Statement[]
 
     loop !self.tokenizer.lookahead(.OpRBrace) {
@@ -192,8 +209,11 @@ export obj Parser {
       body.push(statement)
     }
 
-    r: t.Statement = t.BlockStatement{body: body}
-    return r
+    return Statement.create(
+      t.BlockStatement{body: body},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeBreakStatement (mut self: ref Self) t.Statement? {
@@ -201,8 +221,11 @@ export obj Parser {
       return nil
     }
 
-    r: t.Statement = t.BreakStatement{}
-    return r
+    return Statement.create(
+      t.BreakStatement{},
+      self.tokenizer.readerStartPos(),
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeClosureExpression (mut self: ref Self) t.Expression? {
@@ -210,6 +233,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
     startPos := self.tokenizer.pos()
     asynchronous := self.tokenizer.lookahead(.KwAsync)
 
@@ -325,14 +349,16 @@ export obj Parser {
       self._raise(errors.E0102("expression closure return type"))
     }
 
-    r: t.Expression = t.ClosureExpression{
-      parameters: parameters,
-      returnType: returnType as t.Type,
-      body: body,
-      asynchronous: asynchronous
-    }
-
-    return r
+    return Expression.create(
+      t.ClosureExpression{
+        parameters: parameters,
+        returnType: returnType as t.Type,
+        body: body,
+        asynchronous: asynchronous
+      },
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeContinueStatement (mut self: ref Self) t.Statement? {
@@ -340,8 +366,11 @@ export obj Parser {
       return nil
     }
 
-    r: t.Statement = t.ContinueStatement{}
-    return r
+    return Statement.create(
+      t.ContinueStatement{},
+      self.tokenizer.readerStartPos(),
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeEnumDeclaration (mut self: ref Self) t.Statement? {
@@ -349,6 +378,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut name := self.nextIdentifier()
 
     if name == nil {
@@ -395,16 +425,22 @@ export obj Parser {
       }
     }
 
-    r: t.Statement = t.EnumDeclaration{name: name as t.Identifier, members: members}
-    return r
+    return Statement.create(
+      t.EnumDeclaration{name: name as t.Identifier, members: members},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeExpressionStatement (mut self: ref Self) t.Statement? {
     expression := self.nextExpression()
 
     if expression != nil {
-      r: t.Statement = t.ExpressionStatement{expression: expression}
-      return r
+      return Statement.create(
+        t.ExpressionStatement{expression: expression},
+        expression.start,
+        expression.end
+      )
     }
 
     return nil
@@ -415,6 +451,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
     startPos := self.tokenizer.pos()
     asynchronous := self.tokenizer.lookahead(.KwAsync)
 
@@ -516,16 +553,18 @@ export obj Parser {
       returnType = emptyType()
     }
 
-    r: t.Type = t.FunctionType{parameters: parameters, returnType: returnType as t.Type, asynchronous: asynchronous}
-    return r
+    return Type.create(
+      t.FunctionType{parameters: parameters, returnType: returnType as t.Type, asynchronous: asynchronous},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeIdentifier (mut self: ref Self) t.Expression? {
     id := self.nextIdentifier()
 
     if id != nil {
-      r: t.Expression = id
-      return r
+      return Expression.create(id, id.start, id.end)
     }
 
     return nil
@@ -535,18 +574,21 @@ export obj Parser {
     name := self.nextIdentifier()
 
     if name != nil {
-      r: t.Type = t.IdentifierType{name: name}
-      return r
+      return Type.create(t.IdentifierType{name: name}, name.start, name.end)
     }
 
     return nil
   }
 
-  fn _maybeIfStatement (mut self: ref Self) t.Statement? {
-    if !self.tokenizer.lookahead(.KwElif) && !self.tokenizer.lookahead(.KwIf) {
+  fn _maybeIfStatement (mut self: ref Self, withElifStatement := false) t.Statement? {
+    if (
+      !self.tokenizer.lookahead(.KwIf) &&
+      !(withElifStatement && self.tokenizer.lookahead(.KwElif))
+    ) {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut condition := self.nextExpression()
 
     if condition == nil {
@@ -559,7 +601,7 @@ export obj Parser {
     if consequent == nil && Expression.endsWithObjExpr(condition as t.Expression) {
       objectExpression := Expression.extractLastObjExpr(condition as t.Expression)
       condition = Expression.subtractLastObjExpr(condition as t.Expression)
-      // self.tokenizer.seek(objectExpression.id.end)
+      self.tokenizer.seek(objectExpression.id.end)
       consequent := self.nextStatement(withBlockStatement: true)
     }
 
@@ -571,7 +613,7 @@ export obj Parser {
     mut alternate: t.Statement?
 
     if self.tokenizer.lookahead(.KwElif, true) || self.tokenizer.lookahead(.KwElse) {
-      alternate = self.nextStatement(withBlockStatement: true)
+      alternate = self.nextStatement(withBlockStatement: true, withElifStatement: true)
 
       if alternate == nil {
         self._raise(errors.E0152())
@@ -579,27 +621,27 @@ export obj Parser {
       }
     }
 
-    r: t.Statement = t.IfStatement{
-      condition: condition as t.Expression,
-      consequent: consequent as t.Statement,
-      alternate: alternate
-    }
-
-    return r
+    return Statement.create(
+      t.IfStatement{
+        condition: condition as t.Expression,
+        consequent: consequent as t.Statement,
+        alternate: alternate
+      },
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeLiteral (mut self: ref Self) t.Expression? {
     if self.tokenizer.lookahead(.KwFalse, true) || self.tokenizer.lookahead(.KwTrue, true) {
       tk := self.tokenizer.next()
-      r: t.Expression = t.BooleanLiteral{value: tk.val}
-      return r
-    } elif self.tokenizer.lookahead(.KwNil) {
-      r: t.Expression = t.NilLiteral{}
-      return r
+      return Expression.create(t.BooleanLiteral{value: tk.val}, tk.start, tk.end)
+    } elif self.tokenizer.lookahead(.KwNil, true) {
+      tk := self.tokenizer.next()
+      return Expression.create(t.NilLiteral{}, tk.start, tk.end)
     } elif self.tokenizer.lookahead(.LitChar, true) {
       tk := self.tokenizer.next()
-      r: t.Expression = t.CharacterLiteral{raw: tk.val, value: tk.val.slice(1, -1)}
-      return r
+      return Expression.create(t.CharacterLiteral{raw: tk.val, value: tk.val.slice(1, -1)}, tk.start, tk.end)
     } elif (
       self.tokenizer.lookahead(.LitIntBin, true) ||
       self.tokenizer.lookahead(.LitIntDec, true) ||
@@ -607,16 +649,13 @@ export obj Parser {
       self.tokenizer.lookahead(.LitIntOct, true)
     ) {
       tk := self.tokenizer.next()
-      r: t.Expression = t.IntegerLiteral{t: tokenTypeToIntegerLiteralType(tk.t), value: tk.val}
-      return r
+      return Expression.create(t.IntegerLiteral{t: tokenTypeToIntegerLiteralType(tk.t), value: tk.val}, tk.start, tk.end)
     } elif self.tokenizer.lookahead(.LitFloat, true) {
       tk := self.tokenizer.next()
-      r: t.Expression = t.FloatingPointLiteral{value: tk.val}
-      return r
+      return Expression.create(t.FloatingPointLiteral{value: tk.val}, tk.start, tk.end)
     } elif self.tokenizer.lookahead(.LitStr, true) {
       tk := self.tokenizer.next()
-      r: t.Expression = t.StringLiteral{raw: tk.val, value: tk.val.slice(1, -1)}
-      return r
+      return Expression.create(t.StringLiteral{raw: tk.val, value: tk.val.slice(1, -1)}, tk.start, tk.end)
     }
 
     return nil
@@ -627,6 +666,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut body: t.Statement?
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
@@ -641,8 +681,11 @@ export obj Parser {
       body = emptyStatement()
     }
 
-    r: t.Statement = t.MainDeclaration{body: body as t.Statement}
-    return r
+    return Statement.create(
+      t.MainDeclaration{body: body as t.Statement},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeMapExpression (mut self: ref Self) t.Expression? {
@@ -652,6 +695,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut elements: t.MapExpressionElement[]
     mut elementStartPos := -1
 
@@ -705,8 +749,11 @@ export obj Parser {
       }
     }
 
-    r: t.Expression = t.MapExpression{elements: elements}
-    return r
+    return Expression.create(
+      t.MapExpression{elements: elements},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeMemberAccessExpression (mut self: ref Self) t.Expression? {
@@ -714,6 +761,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut name := self.nextIdentifier()
 
     if name == nil {
@@ -721,8 +769,11 @@ export obj Parser {
       name = emptyIdentifier()
     }
 
-    r: t.Expression = t.MemberAccessExpression{name: name as t.Identifier}
-    return r
+    return Expression.create(
+      t.MemberAccessExpression{name: name as t.Identifier},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeParenthesizedExpression (mut self: ref Self) t.Expression? {
@@ -730,6 +781,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut expression := self.nextExpression()
 
     if expression == nil {
@@ -741,8 +793,11 @@ export obj Parser {
       self._raise(errors.E0103("parenthesized expression"))
     }
 
-    r: t.Expression = t.ParenthesizedExpression{expression: expression as t.Expression}
-    return r
+    return Expression.create(
+      t.ParenthesizedExpression{expression: expression as t.Expression},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeReferenceExpression (mut self: ref Self) t.Expression? {
@@ -750,6 +805,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut expression := self.nextExpression()
 
     if expression == nil {
@@ -757,8 +813,11 @@ export obj Parser {
       expression = emptyExpression()
     }
 
-    r: t.Expression = t.ReferenceExpression{expression: expression as t.Expression}
-    return r
+    return Expression.create(
+      t.ReferenceExpression{expression: expression as t.Expression},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeReferenceType (mut self: ref Self) t.Type? {
@@ -766,6 +825,7 @@ export obj Parser {
       return nil
     }
 
+    readerStartPos := self.tokenizer.readerStartPos()
     mut referencedType := self.nextType()
 
     if referencedType == nil {
@@ -773,8 +833,11 @@ export obj Parser {
       referencedType = emptyType()
     }
 
-    r: t.Type = t.ReferenceType{t: referencedType as t.Type}
-    return r
+    return Type.create(
+      t.ReferenceType{t: referencedType as t.Type},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeUnaryExpression (mut self: ref Self) t.Expression? {
@@ -798,8 +861,11 @@ export obj Parser {
       operand = emptyExpression()
     }
 
-    r: t.Expression = t.UnaryExpression{operand: operand as t.Expression, operator: operator, prefix: true}
-    return r
+    return Expression.create(
+      t.UnaryExpression{operator: operator, operand: operand as t.Expression, prefix: true},
+      tk.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeVariableDeclaration (mut self: ref Self) t.Statement? {
@@ -813,7 +879,8 @@ export obj Parser {
       return nil
     }
 
-    mut name := emptyIdentifier()
+    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
+    mut name: t.Identifier
     mut constant := false
     mut mutable := false
 
@@ -875,15 +942,17 @@ export obj Parser {
       self._raise(errors.E0132())
     }
 
-    r: t.Statement = t.VariableDeclaration{
-      name: name,
-      t: variableType,
-      initializer: initializer,
-      mutable: mutable,
-      constant: constant
-    }
-
-    return r
+    return Statement.create(
+      t.VariableDeclaration{
+        name: name,
+        t: variableType,
+        initializer: initializer,
+        mutable: mutable,
+        constant: constant
+      },
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapArrayOrMapType (mut self: ref Self, typeToWrap: t.Type) t.Type? {
@@ -892,8 +961,11 @@ export obj Parser {
     }
 
     if self.tokenizer.lookahead(.OpRBrack) {
-      r: t.Type = t.ArrayType{elementType: typeToWrap}
-      return r
+      return Type.create(
+        t.ArrayType{elementType: typeToWrap},
+        typeToWrap.start,
+        self.tokenizer.readerEndPos()
+      )
     }
 
     mut valueType := self.nextType()
@@ -907,8 +979,11 @@ export obj Parser {
       self._raise(errors.E0115("map type value type"))
     }
 
-    r: t.Type = t.MapType{keyType: typeToWrap, valueType: valueType as t.Type}
-    return r
+    return Type.create(
+      t.MapType{keyType: typeToWrap, valueType: valueType as t.Type},
+      typeToWrap.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapAsExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -923,8 +998,11 @@ export obj Parser {
       asType = emptyType()
     }
 
-    r: t.Expression = t.AsExpression{expression: expression, t: asType as t.Type}
-    return r
+    return Expression.create(
+      t.AsExpression{expression: expression, t: asType as t.Type},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapAssignmentExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -955,8 +1033,11 @@ export obj Parser {
       right = emptyExpression()
     }
 
-    r: t.Expression = t.AssignmentExpression{left: expression, operator: operator, right: right as t.Expression}
-    return r
+    return Expression.create(
+      t.AssignmentExpression{left: expression, operator: operator, right: right as t.Expression},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapBinaryExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -992,8 +1073,11 @@ export obj Parser {
       right = emptyExpression()
     }
 
-    r: t.Expression = t.BinaryExpression{left: expression, operator: operator, right: right as t.Expression}
-    return r
+    return Expression.create(
+      t.BinaryExpression{left: expression, operator: operator, right: right as t.Expression},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapCallExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -1006,7 +1090,7 @@ export obj Parser {
 
     loop !self.tokenizer.lookahead(.OpRPar) {
       if self.tokenizer.lookahead(.Eof, true) || argumentStartPos == self.tokenizer.pos() {
-        self._raise(errors.E0103("call expression openning brace"))
+        self._raise(errors.E0103("call expression opening brace"))
         break
       }
 
@@ -1048,8 +1132,11 @@ export obj Parser {
       }
     }
 
-    r: t.Expression = t.CallExpression{callee: expression, arguments: arguments}
-    return r
+    return Expression.create(
+      t.CallExpression{callee: expression, arguments: arguments},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapConditionalExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -1075,13 +1162,15 @@ export obj Parser {
       alternate = emptyExpression()
     }
 
-    r: t.Expression = t.ConditionalExpression{
-      condition: expression,
-      consequent: consequent as t.Expression,
-      alternate: alternate as t.Expression
-    }
-
-    return r
+    return Expression.create(
+      t.ConditionalExpression{
+        condition: expression,
+        consequent: consequent as t.Expression,
+        alternate: alternate as t.Expression
+      },
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapElementAccessExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -1100,8 +1189,11 @@ export obj Parser {
       self._raise(errors.E0115("element access expression argument"))
     }
 
-    r: t.Expression = t.ElementAccessExpression{expression: expression, argument: argument as t.Expression}
-    return r
+    return Expression.create(
+      t.ElementAccessExpression{expression: expression, argument: argument as t.Expression},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapIsExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -1116,8 +1208,11 @@ export obj Parser {
       isType = emptyType()
     }
 
-    r: t.Expression = t.IsExpression{expression: expression, t: isType as t.Type}
-    return r
+    return Expression.create(
+      t.IsExpression{expression: expression, t: isType as t.Type},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapMemberType (mut self: ref Self, typeToWrap: t.Type) t.Type? {
@@ -1132,8 +1227,11 @@ export obj Parser {
       name = emptyIdentifier()
     }
 
-    r: t.Type = t.MemberType{t: typeToWrap, name: name as t.Identifier}
-    return r
+    return Type.create(
+      t.MemberType{t: typeToWrap, name: name as t.Identifier},
+      typeToWrap.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapObjectExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -1198,8 +1296,11 @@ export obj Parser {
       }
     }
 
-    r: t.Expression = t.ObjectExpression{id: expression, properties: properties}
-    return r
+    return Expression.create(
+      t.ObjectExpression{id: expression, properties: properties},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapOptionalType (mut self: ref Self, typeToWrap: t.Type) t.Type? {
@@ -1207,8 +1308,11 @@ export obj Parser {
       return nil
     }
 
-    r: t.Type = t.OptionalType{t: typeToWrap}
-    return r
+    return Type.create(
+      t.OptionalType{t: typeToWrap},
+      typeToWrap.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapPropertyAccessExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -1223,8 +1327,11 @@ export obj Parser {
       name = emptyIdentifier()
     }
 
-    r: t.Expression = t.PropertyAccessExpression{expression: expression, name: name as t.Identifier}
-    return r
+    return Expression.create(
+      t.PropertyAccessExpression{expression: expression, name: name as t.Identifier},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapUnaryExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
@@ -1234,8 +1341,12 @@ export obj Parser {
 
     tk := self.tokenizer.next()
     operator := tk.val
-    r: t.Expression = t.UnaryExpression{operand: expression, operator: operator, prefix: false}
-    return r
+
+    return Expression.create(
+      t.UnaryExpression{operator: operator, operand: expression, prefix: false},
+      expression.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _maybeWrapUnionType (mut self: ref Self, typeToWrap: t.Type) t.Type? {
@@ -1256,8 +1367,11 @@ export obj Parser {
       types.push(subType as t.Type)
     }
 
-    r: t.Type = t.UnionType{types: types}
-    return r
+    return Type.create(
+      t.UnionType{types: types},
+      typeToWrap.start,
+      self.tokenizer.readerEndPos()
+    )
   }
 
   fn _raise (mut self: ref Self, message: str) {
@@ -1288,7 +1402,7 @@ export obj Parser {
 
   fn _wrapStatement (mut self: ref Self, mut statement: t.Statement) t.Statement {
     if self.tokenizer.lookahead(.OpSemi) {
-      // todo update end
+      statement.end = self.tokenizer.readerEndPos()
       return statement
     }
 
@@ -1324,12 +1438,7 @@ export fn parse (path: str) t.File {
 
   loop {
     statement := parser.next()
-
-    if statement is t.EofStatement {
-      break
-    }
-
-    print(statement)
+    if statement.isEof() { break }
     result.push(statement)
   }
 
@@ -1348,9 +1457,7 @@ export fn parse (path: str) t.File {
 }
 
 export fn report (file: ref t.File) {
-  if !file.hasErrors {
-    return
-  }
+  if !file.hasErrors { return }
 
   loop i := 0; i < file.errors.len; i++ {
     print((i == 0 ? "" : os_EOL) + (file.errors[i] as str), to: "stderr")
