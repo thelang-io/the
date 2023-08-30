@@ -1,0 +1,18 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as t from "./types"
+
+export fn endsWithObjExpr (self: t.Expression) bool {
+  return false
+}
+
+export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
+  return t.ObjectExpression{id: t.EmptyExpression{}}
+}
+
+export fn subtractLastObjExpr (self: t.Expression) t.Expression {
+  return self
+}
