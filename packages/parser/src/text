@@ -219,9 +219,16 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     expression := self.asUnary()
     beginAttrs += expression.prefix ? " prefix" : ""
     result += ' '.repeat(indent) + "UnaryExpression(" + beginAttrs + ")" + os_EOL
-    result += ' '.repeat(indent + 2) + "operator " + expression.operator + os_EOL
-    result += ' '.repeat(indent + 2) + "operand" + os_EOL
-    result += Expression_toText(expression.operand, indent: indent + 4)
+
+    if expression.prefix {
+      result += ' '.repeat(indent + 2) + "operator " + expression.operator + os_EOL
+      result += ' '.repeat(indent + 2) + "operand" + os_EOL
+      result += Expression_toText(expression.operand, indent: indent + 4)
+    } else {
+      result += ' '.repeat(indent + 2) + "operand" + os_EOL
+      result += Expression_toText(expression.operand, indent: indent + 4)
+      result += ' '.repeat(indent + 2) + "operator " + expression.operator + os_EOL
+    }
   }
 
   return result

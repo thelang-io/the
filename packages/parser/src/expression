@@ -10,13 +10,104 @@ export fn create (body: t.ExpressionBody, start := 0, end := 0) t.Expression {
 }
 
 export fn endsWithObjExpr (self: t.Expression) bool {
+  if self.isAssignment() {
+    selfBody := self.asAssignment()
+    return endsWithObjExpr(selfBody.right)
+  } elif self.isAwait() {
+    selfBody := self.asAwait()
+    return endsWithObjExpr(selfBody.expression)
+  } elif self.isBinary() {
+    selfBody := self.asBinary()
+    return endsWithObjExpr(selfBody.right)
+  } elif self.isConditional() {
+    selfBody := self.asConditional()
+    return endsWithObjExpr(selfBody.alternate)
+  } elif self.isObject() {
+    selfBody := self.asObject()
+    return true
+  } elif self.isReference() {
+    selfBody := self.asReference()
+    return endsWithObjExpr(selfBody.expression)
+  } elif self.isUnary() {
+    selfBody := self.asUnary()
+    if selfBody.prefix {
+      return endsWithObjExpr(selfBody.operand)
+    }
+  }
+
   return false
 }
 
 export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
-  return t.ObjectExpression{id: t.EmptyExpression{}}
+  if self.isAssignment() {
+    selfBody := self.asAssignment()
+    return endsWithObjExpr(selfBody.right)
+  } elif self.isAwait() {
+    selfBody := self.asAwait()
+    return endsWithObjExpr(selfBody.expression)
+  } elif self.isBinary() {
+    selfBody := self.asBinary()
+    return endsWithObjExpr(selfBody.right)
+  } elif self.isConditional() {
+    selfBody := self.asConditional()
+    return endsWithObjExpr(selfBody.alternate)
+  } elif self.isObject() {
+    return self.asObject()
+  } elif self.isReference() {
+    selfBody := self.asReference()
+    return endsWithObjExpr(selfBody.expression)
+  } elif self.isUnary() {
+    selfBody := self.asUnary()
+
+    if selfBody.prefix {
+      return endsWithObjExpr(selfBody.operand)
+    }
+  }
+
+  throw error_NewError("Unable to extract last object expression")
 }
 
 export fn subtractLastObjExpr (self: t.Expression) t.Expression {
+  if self.isAssignment() {
+    selfBody := self.asAssignment()
+    return t.AssignmentExpression{
+      left: selfBody.left,
+      operator: selfBody.operator,
+      right: endsWithObjExpr(selfBody.right)
+    }
+  } elif self.isAwait() {
+    selfBody := self.asAwait()
+    return t.AwaitExpression{expression: endsWithObjExpr(selfBody.expression)}
+  } elif self.isBinary() {
+    selfBody := self.asBinary()
+    return t.BinaryExpression{
+      left: selfBody.left,
+      operator: selfBody.operator,
+      right: endsWithObjExpr(selfBody.right)
+    }
+  } elif self.isConditional() {
+    selfBody := self.asConditional()
+    return t.ConditionalExpression{
+      condition: selfBody.condition,
+      consequent: selfBody.consequent,
+      alternate: endsWithObjExpr(selfBody.alternate)
+    }
+  } elif self.isObject() {
+    selfBody := self.asObject()
+    return selfBody.id
+  } elif self.isReference() {
+    selfBody := self.asReference()
+    return t.ReferenceExpression{expression: endsWithObjExpr(selfBody.expression)}
+  } elif self.isUnary() {
+    selfBody := self.asUnary()
+    if selfBody.prefix {
+      return t.UnaryExpression{
+        operator: selfBody.operator,
+        operand: endsWithObjExpr(selfBody.operand),
+        prefix: selfBody.prefix
+      }
+    }
+  }
+
   return self
 }

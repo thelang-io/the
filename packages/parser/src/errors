@@ -208,8 +208,8 @@ export fn E0137 () str {
   return "E0137 - Expected union sub type after pipe operator"
 }
 
-export fn E0138 (kw: str) str {
-  return "E0138 - Expected type after `" + kw + "` keyword"
+export fn E0138 (after: str) str {
+  return "E0138 - Expected type after " + after
 }
 
 export fn E0139 () str {
@@ -252,9 +252,9 @@ export fn E0148 () str {
   return "E0148 - Expected enumeration declaration member initializer after colon"
 }
 
-// export fn E0149 () str {
-//   return "E0149 - Expected block statement"
-// }
+export fn E0149 (kw: str) str {
+  return "E0149 - Expected identifier after `" + kw + "` keyword"
+}
 
 export fn E0150 () str {
   return "E0150 - Expected closure expression body"
@@ -270,4 +270,24 @@ export fn E0152 () str {
 
 export fn E0153 () str {
   return "E0153 - Expected main declaration body"
+}
+
+export fn E0154 () str {
+  return "E0154 - Expected equals sign after type alias declaration name"
+}
+
+export fn E0155 () str {
+  return "E0155 - Expected loop statement closing parenthesis"
+}
+
+export fn E0156 () str {
+  return "E0156 - Expected semicolon after loop statement initializer"
+}
+
+export fn E0157 () str {
+  return "E0157 - Expected semicolon after loop statement condition"
+}
+
+export fn E0158 () str {
+  return "E0158 - Expected loop statement body"
 }

@@ -61,6 +61,17 @@ export obj Tokenizer {
     return self.state.idx == 0 ? 0 : self.data[self.state.idx - 1].end
   }
 
+  fn readerSeek (mut self: ref Self, pos: int) int {
+    loop i := self.data.len - 1; i >= 0; i-- {
+      if self.data[i].start <= pos && pos <= self.data[i].end {
+        self.seek(i)
+        return
+      }
+    }
+
+    self.seek(0)
+  }
+
   fn seek (mut self: ref Self, pos: int) {
     self.state.idx = pos
   }

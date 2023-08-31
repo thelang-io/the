@@ -57,13 +57,13 @@ export type StatementBody =
   FunctionDeclaration | // todo
   IfStatement |
   ImportDeclaration | // todo
-  LoopStatement | // todo
+  LoopStatement |
   MainDeclaration |
   ObjectDeclaration | // todo
-  ReturnStatement | // todo
-  ThrowStatement | // todo
+  ReturnStatement |
+  ThrowStatement |
   TryStatement | // todo
-  TypeAliasDeclaration | // todo
+  TypeAliasDeclaration |
   VariableDeclaration
 
 export obj Type {
