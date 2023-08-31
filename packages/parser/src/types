@@ -440,9 +440,9 @@ export obj ExpressionStatement {
 
 export obj FunctionDeclaration {
   name: Identifier
-  params: FunctionParameter[]
-  returnType: Type
-  body: Statement
+  parameters: FunctionParameter[]
+  returnType: Type?
+  body: Statement?
   asynchronous: bool
 }
 
