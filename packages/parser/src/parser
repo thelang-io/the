@@ -102,29 +102,34 @@ export obj Parser {
 
   fn nextStatement (
     mut self: ref Self,
+    insideObjectDeclaration := false,
     shouldWrap := true,
     withBlockStatement := false,
-    withElifStatement := false,
-    withoutEmptyStatement := false
+    withElifStatement := false
   ) t.Statement? {
     mut statement: t.Statement?
 
     if (
       (withBlockStatement && (statement = self._maybeBlockStatement()) != nil) ||
-      (statement = self._maybeBreakStatement()) != nil ||
-      (statement = self._maybeContinueStatement()) != nil ||
-      (statement = self._maybeEnumDeclaration()) != nil ||
-      (statement = self._maybeIfStatement(withElifStatement: withElifStatement)) != nil ||
-      (statement = self._maybeLoopStatement()) != nil ||
-      (statement = self._maybeMainDeclaration()) != nil ||
-      (statement = self._maybeReturnStatement()) != nil ||
-      (statement = self._maybeThrowStatement()) != nil ||
-      (statement = self._maybeTypeAliasDeclaration()) != nil ||
-      (statement = self._maybeVariableDeclaration()) != nil ||
-      (statement = self._maybeExpressionStatement()) != nil
+      (!insideObjectDeclaration && (statement = self._maybeBreakStatement()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeContinueStatement()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeEnumDeclaration()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeExportDeclaration()) != nil) ||
+      (statement = self._maybeFunctionDeclaration(insideObjectDeclaration: insideObjectDeclaration)) != nil ||
+      (!insideObjectDeclaration && (statement = self._maybeIfStatement(withElifStatement: withElifStatement)) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeImportDeclaration()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeLoopStatement()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeMainDeclaration()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeObjectDeclaration()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeReturnStatement()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeThrowStatement()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeTryStatement()) != nil) ||
+      (!insideObjectDeclaration && (statement = self._maybeTypeAliasDeclaration()) != nil) ||
+      (statement = self._maybeVariableDeclaration(insideObjectDeclaration: insideObjectDeclaration)) != nil ||
+      (!insideObjectDeclaration && (statement = self._maybeExpressionStatement()) != nil)
     ) {
       return shouldWrap ? self._wrapStatement(statement) : statement
-    } elif !withoutEmptyStatement && self.tokenizer.lookahead(.OpSemi) {
+    } elif !insideObjectDeclaration && self.tokenizer.lookahead(.OpSemi) {
       return emptyStatement()
     }
 
@@ -262,7 +267,7 @@ export obj Parser {
           return nil
         }
 
-        self._raise(errors.E0124())
+        self._raise(errors.E0103("closure expression parameters"))
         break
       }
 
@@ -291,9 +296,7 @@ export obj Parser {
             parameterType = emptyType()
           }
 
-          if self.tokenizer.lookahead(.OpEllipsis) {
-            parameterVariadic = true
-          }
+          parameterVariadic = self.tokenizer.lookahead(.OpEllipsis)
 
           if self.tokenizer.lookahead(.OpEq) {
             parameterInitializer = self.nextExpression()
@@ -442,6 +445,34 @@ export obj Parser {
     )
   }
 
+  fn _maybeExportDeclaration (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwExport) {
+      return nil
+    }
+
+    readerStartPos := self.tokenizer.readerStartPos()
+    mut statement := self.nextStatement()
+
+    if statement == nil {
+      self._raise(errors.E0172())
+      statement = emptyStatement()
+    } elif statement.isExpression() {
+      expression := statement.asExpression()
+
+      return Statement.create(
+        t.ExportNamedDeclaration{expression: expression.expression},
+        readerStartPos,
+        self.tokenizer.readerEndPos()
+      )
+    }
+
+    return Statement.create(
+      t.ExportDeclaration{statement: statement as t.Statement},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
+  }
+
   fn _maybeExpressionStatement (mut self: ref Self) t.Statement? {
     expression := self.nextExpression()
 
@@ -454,6 +485,140 @@ export obj Parser {
     }
 
     return nil
+  }
+
+  fn _maybeFunctionDeclaration (mut self: ref Self, insideObjectDeclaration := false) t.Statement? {
+    startPos := self.tokenizer.pos()
+
+    if !self.tokenizer.lookahead(.KwAsync, true) && !self.tokenizer.lookahead(.KwFn, true) {
+      self.tokenizer.seek(startPos)
+      return nil
+    }
+
+    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
+    asynchronous := self.tokenizer.lookahead(.KwAsync)
+
+    if !self.tokenizer.lookahead(.KwFn) {
+      self.tokenizer.seek(startPos)
+      return nil
+    }
+
+    name := self.nextIdentifier()
+
+    if name == nil {
+      self.tokenizer.seek(startPos)
+      return nil
+    }
+
+    if !self.tokenizer.lookahead(.OpLPar) {
+      self._raise(errors.E0163("function declaration name"))
+    }
+
+    mut parameters: t.FunctionParameter[]
+    mut parameterStartPos := -1
+
+    loop !self.tokenizer.lookahead(.OpRPar) {
+      if self.tokenizer.lookahead(.Eof, true) || parameterStartPos == self.tokenizer.pos() {
+        self._raise(errors.E0103("function declaration parameters"))
+        break
+      }
+
+      parameterStartPos = self.tokenizer.pos()
+      parameterMutable := self.tokenizer.lookahead(.KwMut)
+      parameterName := self.nextIdentifier()
+
+      if parameterName == nil {
+        self._raise(errors.E0164())
+      } else {
+        mut parameterType: t.Type?
+        mut parameterInitializer: t.Expression?
+        mut parameterVariadic := false
+
+        if self.tokenizer.lookahead(.OpColon) {
+          parameterType = self.nextType()
+
+          if parameterType == nil {
+            self._raise(errors.E0166())
+            parameterType = emptyType()
+          }
+
+          parameterVariadic = self.tokenizer.lookahead(.OpEllipsis)
+
+          if self.tokenizer.lookahead(.OpEq) {
+            parameterInitializer = self.nextExpression()
+
+            if parameterInitializer == nil {
+              self._raise(errors.E0167("equals sign"))
+              parameterInitializer = emptyExpression()
+            }
+          }
+        } elif self.tokenizer.lookahead(.OpColonEq) {
+          parameterInitializer = self.nextExpression()
+
+          if parameterInitializer == nil {
+            self._raise(errors.E0167("colon equals sign"))
+            parameterInitializer = emptyExpression()
+          }
+        } else {
+          self._raise(errors.E0165())
+          parameterType = emptyType()
+        }
+
+        parameters.push(t.FunctionParameter{
+          name: parameterName,
+          t: parameterType,
+          initializer: parameterInitializer,
+          mutable: parameterMutable,
+          variadic: parameterVariadic
+        })
+      }
+
+      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
+        self._raise(errors.E0106("function declaration parameter"))
+      }
+    }
+
+    returnType := self.nextType()
+    mut body: t.Statement?
+
+    if self.tokenizer.lookahead(.OpLBrace, true) {
+      statement := self.nextStatement(withBlockStatement: true)
+
+      if statement == nil {
+        self._raise(errors.E0150())
+      } else {
+        body = statement
+      }
+    } elif returnType == nil {
+      self._raise(errors.E0169())
+      returnType = emptyType()
+    }
+
+    if insideObjectDeclaration {
+      return Statement.create(
+        t.ObjectDeclarationMethod{
+          name: name as t.Identifier,
+          parameters: parameters,
+          returnType: returnType,
+          body: body,
+          asynchronous: asynchronous
+        },
+        readerStartPos,
+        self.tokenizer.readerEndPos()
+      )
+    } else {
+      return Statement.create(
+        t.FunctionDeclaration{
+          name: name as t.Identifier,
+          parameters: parameters,
+          returnType: returnType,
+          body: body,
+          asynchronous: asynchronous
+        },
+        readerStartPos,
+        self.tokenizer.readerEndPos()
+      )
+    }
   }
 
   fn _maybeFunctionOrParenthesizedType (mut self: ref Self) t.Type? {
@@ -480,7 +645,7 @@ export obj Parser {
           return nil
         }
 
-        self._raise(errors.E0139())
+        self._raise(errors.E0103("function type parameters"))
         break
       }
 
@@ -642,6 +807,116 @@ export obj Parser {
     )
   }
 
+  fn _maybeImportDeclaration (mut self: ref Self) t.Statement? {
+    startPos := self.tokenizer.pos()
+
+    if !self.tokenizer.lookahead(.KwImport) {
+      return nil
+    }
+
+    readerStartPos := self.tokenizer.readerStartPos()
+    earlySource := self._maybeLiteral()
+
+    if earlySource != nil {
+      if earlySource.isStringLiteral() {
+        return Statement.create(
+          t.ImportDeclaration{source: earlySource},
+          readerStartPos,
+          self.tokenizer.readerEndPos()
+        )
+      }
+    }
+
+    mut specifiers: t.ImportDeclarationSpecifier[]
+    mut specifierStartPos := -1
+
+    loop {
+      if self.tokenizer.lookahead(.Eof, true) || specifierStartPos == self.tokenizer.pos() {
+        if specifiers.empty {
+          self.tokenizer.seek(startPos)
+          return nil
+        }
+
+        self._raise(errors.E0173())
+        break
+      }
+
+      specifierStartPos = self.tokenizer.pos()
+
+      if self.tokenizer.lookahead(.OpStar) {
+        if !self.tokenizer.lookahead(.KwAs) {
+          if specifiers.empty {
+            self.tokenizer.seek(startPos)
+            return nil
+          }
+
+          self._raise(errors.E0174())
+        }
+
+        mut name := self.nextIdentifier()
+
+        if name == nil {
+          self._raise(errors.E0175())
+          name = emptyIdentifier()
+        }
+
+        specifiers.push(t.ImportNamespaceSpecifier{name: name as t.Identifier})
+      } else {
+        mut imported := self.nextIdentifier()
+
+        if imported == nil {
+          if specifiers.empty {
+            self.tokenizer.seek(startPos)
+            return nil
+          }
+
+          self._raise(errors.E0139("import declaration specifier imported name"))
+          imported = emptyIdentifier()
+        }
+
+        mut local := imported as t.Identifier
+
+        if self.tokenizer.lookahead(.KwAs) {
+          identifier := self.nextIdentifier()
+
+          if identifier == nil {
+            self._raise(errors.E0176())
+            local = emptyIdentifier()
+          } else {
+            local = identifier
+          }
+        }
+
+        specifiers.push(t.ImportSpecifier{imported: imported as t.Identifier, local: local})
+      }
+
+      if self.tokenizer.lookahead(.KwFrom, true) {
+        break
+      }
+
+      if !self.tokenizer.lookahead(.OpComma) {
+        self._raise(errors.E0106("import declaration specifier"))
+      }
+    }
+
+    if !self.tokenizer.lookahead(.KwFrom) {
+      self._raise(errors.E0173())
+    }
+
+    mut source := self._maybeLiteral()
+
+    if source == nil {
+      self._raise(errors.E0177())
+      source = emptyExpression()
+    }
+
+    return Statement.create(
+      t.ImportDeclaration{specifiers: specifiers, source: source as t.Expression},
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
+  }
+
   fn _maybeLiteral (mut self: ref Self) t.Expression? {
     if self.tokenizer.lookahead(.KwFalse, true) || self.tokenizer.lookahead(.KwTrue, true) {
       tk := self.tokenizer.next()
@@ -678,7 +953,7 @@ export obj Parser {
 
     readerStartPos := self.tokenizer.readerStartPos()
     parenthesized := self.tokenizer.lookahead(.OpLPar)
-    mut initializer := self.nextStatement(shouldWrap: false, withoutEmptyStatement: true)
+    mut initializer := self._maybeVariableDeclaration()
     mut initializerIntentionallyEmpty := false
     initializer2 := initializer
     mut condition: t.Expression?
@@ -885,6 +1160,51 @@ export obj Parser {
     )
   }
 
+  fn _maybeObjectDeclaration (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwObj) {
+      return nil
+    }
+
+    readerStartPos := self.tokenizer.readerStartPos()
+    mut name := self.nextIdentifier()
+
+    if name == nil {
+      self._raise(errors.E0149("obj"))
+      name = emptyIdentifier()
+    }
+
+    if !self.tokenizer.lookahead(.OpLBrace) {
+      self._raise(errors.E0102("object declaration name"))
+    }
+
+    mut body: t.Statement[]
+
+    loop !self.tokenizer.lookahead(.OpRBrace) {
+      if self.tokenizer.lookahead(.Eof, true) {
+        self._raise(errors.E0171())
+        break
+      }
+
+      statement := self.nextStatement(insideObjectDeclaration: true)
+
+      if statement == nil {
+        self._raise(errors.E0170())
+        break
+      }
+
+      body.push(statement as t.Statement)
+    }
+
+    return Statement.create(
+      t.ObjectDeclaration{
+        name: name as t.Identifier,
+        body: body
+      },
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
+  }
+
   fn _maybeParenthesizedExpression (mut self: ref Self) t.Expression? {
     if !self.tokenizer.lookahead(.OpLPar) {
       return nil
@@ -984,6 +1304,56 @@ export obj Parser {
     )
   }
 
+  fn _maybeTryStatement (mut self: ref Self) t.Statement? {
+    if !self.tokenizer.lookahead(.KwTry) {
+      return nil
+    }
+
+    readerStartPos := self.tokenizer.readerStartPos()
+    mut body := self.nextStatement(withBlockStatement: true)
+
+    if body == nil {
+      self._raise(errors.E0159())
+      body = emptyStatement()
+    }
+
+    mut handlers: t.TryStatementHandler[]
+
+    loop self.tokenizer.lookahead(.KwCatch) {
+      mut handlerParameter := self._maybeVariableDeclaration()
+
+      if handlerParameter == nil {
+        self._raise(errors.E0161())
+        handlerParameter = emptyStatement()
+      }
+
+      mut handlerBody := self.nextStatement(withBlockStatement: true)
+
+      if handlerBody == nil {
+        self._raise(errors.E0162())
+        handlerBody = emptyStatement()
+      }
+
+      handlers.push(t.TryStatementHandler{
+        parameter: handlerParameter as t.Statement,
+        body: handlerBody as t.Statement
+      })
+    }
+
+    if handlers.empty {
+      self._raise(errors.E0160())
+    }
+
+    return Statement.create(
+      t.TryStatement{
+        body: body as t.Statement,
+        handlers: handlers
+      },
+      readerStartPos,
+      self.tokenizer.readerEndPos()
+    )
+  }
+
   fn _maybeTypeAliasDeclaration (mut self: ref Self) t.Statement? {
     if !self.tokenizer.lookahead(.KwType) {
       return nil
@@ -1043,7 +1413,7 @@ export obj Parser {
     )
   }
 
-  fn _maybeVariableDeclaration (mut self: ref Self) t.Statement? {
+  fn _maybeVariableDeclaration (mut self: ref Self, insideObjectDeclaration := false) t.Statement? {
     startPos := self.tokenizer.pos()
 
     if (
@@ -1117,17 +1487,31 @@ export obj Parser {
       self._raise(errors.E0132())
     }
 
-    return Statement.create(
-      t.VariableDeclaration{
-        name: name,
-        t: variableType,
-        initializer: initializer,
-        mutable: mutable,
-        constant: constant
-      },
-      readerStartPos,
-      self.tokenizer.readerEndPos()
-    )
+    if insideObjectDeclaration {
+      return Statement.create(
+        t.ObjectDeclarationProperty{
+          name: name,
+          t: variableType,
+          initializer: initializer,
+          mutable: mutable,
+          constant: constant
+        },
+        readerStartPos,
+        self.tokenizer.readerEndPos()
+      )
+    } else {
+      return Statement.create(
+        t.VariableDeclaration{
+          name: name,
+          t: variableType,
+          initializer: initializer,
+          mutable: mutable,
+          constant: constant
+        },
+        readerStartPos,
+        self.tokenizer.readerEndPos()
+      )
+    }
   }
 
   fn _maybeWrapArrayOrMapType (mut self: ref Self, typeToWrap: t.Type) t.Type? {

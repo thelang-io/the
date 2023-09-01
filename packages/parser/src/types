@@ -51,18 +51,20 @@ export type StatementBody =
   EmptyStatement |
   EnumDeclaration |
   EofStatement |
-  ExportDeclaration | // todo
-  ExportNamedDeclaration | // todo
+  ExportDeclaration |
+  ExportNamedDeclaration |
   ExpressionStatement |
-  FunctionDeclaration | // todo
+  FunctionDeclaration |
   IfStatement |
-  ImportDeclaration | // todo
+  ImportDeclaration |
   LoopStatement |
   MainDeclaration |
-  ObjectDeclaration | // todo
+  ObjectDeclaration |
+  ObjectDeclarationMethod |
+  ObjectDeclarationProperty |
   ReturnStatement |
   ThrowStatement |
-  TryStatement | // todo
+  TryStatement |
   TypeAliasDeclaration |
   VariableDeclaration
 
@@ -172,6 +174,8 @@ export obj Statement {
   fn asLoop (mut self: ref Self) LoopStatement { return self.body as LoopStatement }
   fn asMainDeclaration (mut self: ref Self) MainDeclaration { return self.body as MainDeclaration }
   fn asObjectDeclaration (mut self: ref Self) ObjectDeclaration { return self.body as ObjectDeclaration }
+  fn asObjectDeclarationMethod (mut self: ref Self) ObjectDeclarationMethod { return self.body as ObjectDeclarationMethod }
+  fn asObjectDeclarationProperty (mut self: ref Self) ObjectDeclarationProperty { return self.body as ObjectDeclarationProperty }
   fn asReturn (mut self: ref Self) ReturnStatement { return self.body as ReturnStatement }
   fn asThrow (mut self: ref Self) ThrowStatement { return self.body as ThrowStatement }
   fn asTry (mut self: ref Self) TryStatement { return self.body as TryStatement }
@@ -193,6 +197,8 @@ export obj Statement {
   fn isLoop (self: ref Self) bool { return self.body is LoopStatement }
   fn isMainDeclaration (self: ref Self) bool { return self.body is MainDeclaration }
   fn isObjectDeclaration (self: ref Self) bool { return self.body is ObjectDeclaration }
+  fn isObjectDeclarationMethod (self: ref Self) bool { return self.body is ObjectDeclarationMethod }
+  fn isObjectDeclarationProperty (self: ref Self) bool { return self.body is ObjectDeclarationProperty }
   fn isReturn (self: ref Self) bool { return self.body is ReturnStatement }
   fn isThrow (self: ref Self) bool { return self.body is ThrowStatement }
   fn isTry (self: ref Self) bool { return self.body is TryStatement }
@@ -482,7 +488,23 @@ export obj MainDeclaration {
 
 export obj ObjectDeclaration {
   name: Identifier
-  body: Statement
+  body: Statement[]
+}
+
+export obj ObjectDeclarationMethod {
+  name: Identifier
+  parameters: FunctionParameter[]
+  returnType: Type?
+  body: Statement?
+  asynchronous: bool
+}
+
+export obj ObjectDeclarationProperty {
+  name: Identifier
+  t: Type?
+  initializer: Expression?
+  mutable: bool
+  constant: bool
 }
 
 export obj ReturnStatement {

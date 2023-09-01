@@ -16,7 +16,7 @@ export fn FunctionParameterArray_toText (array: t.FunctionParameter[], indent :=
 }
 
 export fn FunctionParameter_toText (self: t.FunctionParameter, indent := 0) str {
-  attrs := ((self.mutable ? " mut" : "") + (self.mutable ? " variadic" : "")).trim()
+  attrs := ((self.mutable ? " mut" : "") + (self.variadic ? " variadic" : "")).trim()
   mut result := ' '.repeat(indent) + "FunctionParameter" + (attrs.empty ? "" : "(" + attrs + ")") + os_EOL
   result += ' '.repeat(indent + 2) + "name" + os_EOL
   result += Identifier_toText(self.name, indent: indent + 4)
@@ -158,7 +158,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     result += Expression_toText(expression.argument, indent: indent + 4)
   } elif self.isEmpty() {
     expression := self.asEmpty()
-    result += ' '.repeat(indent) + "EmptyExpression(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent) + "EmptyExpression" + os_EOL
   } elif self.isIs() {
     expression := self.asIs()
     result += ' '.repeat(indent) + "IsExpression(" + beginAttrs + ")" + os_EOL
@@ -388,8 +388,51 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     result += ' '.repeat(indent) + "ObjectDeclaration(" + beginAttrs + ")" + os_EOL
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
-    result += ' '.repeat(indent + 2) + "body" + os_EOL
-    result += Statement_toText(statement.body, indent: indent + 4)
+
+    if !statement.body.empty {
+      result += ' '.repeat(indent + 2) + "body" + os_EOL
+
+      loop i := 0; i < statement.body.len; i++ {
+        result += Statement_toText(statement.body[i], indent: indent + 4)
+      }
+    }
+  } elif self.isObjectDeclarationMethod() {
+    statement := self.asObjectDeclarationMethod()
+    beginAttrs += statement.asynchronous ? " async" : ""
+    result += ' '.repeat(indent) + "ObjectDeclarationMethod(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "name" + os_EOL
+    result += Identifier_toText(statement.name, indent: indent + 4)
+
+    if !statement.parameters.empty {
+      result += ' '.repeat(indent + 2) + "parameters" + os_EOL
+      result += FunctionParameterArray_toText(statement.parameters, indent + 4)
+    }
+
+    if statement.returnType != nil {
+      result += ' '.repeat(indent + 2) + "returnType" + os_EOL
+      result += Type_toText(statement.returnType, indent: indent + 4)
+    }
+
+    if statement.body != nil {
+      result += ' '.repeat(indent + 2) + "body" + os_EOL
+      result += Statement_toText(statement.body, indent: indent + 4)
+    }
+  } elif self.isObjectDeclarationProperty() {
+    statement := self.asObjectDeclarationProperty()
+    beginAttrs += (statement.constant ? " const" : "") + (statement.mutable ? " mut" : "")
+    result += ' '.repeat(indent) + "ObjectDeclarationProperty(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent + 2) + "name" + os_EOL
+    result += Identifier_toText(statement.name, indent: indent + 4)
+
+    if statement.t != nil {
+      result += ' '.repeat(indent + 2) + "type" + os_EOL
+      result += Type_toText(statement.t, indent: indent + 4)
+    }
+
+    if statement.initializer != nil {
+      result += ' '.repeat(indent + 2) + "initializer" + os_EOL
+      result += Expression_toText(statement.initializer, indent: indent + 4)
+    }
   } elif self.isReturn() {
     statement := self.asReturn()
     result += ' '.repeat(indent) + "ReturnStatement(" + beginAttrs + ")" + os_EOL
@@ -403,7 +446,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     result += Expression_toText(statement.expression, indent + 2)
   } elif self.isTry() {
     statement := self.asTry()
-    result += ' '.repeat(indent) + "IfStatement(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent) + "TryStatement(" + beginAttrs + ")" + os_EOL
     result += ' '.repeat(indent + 2) + "body" + os_EOL
     result += Statement_toText(statement.body, indent: indent + 4)
 
@@ -456,7 +499,7 @@ export fn Type_toText (self: t.Type, indent := 0) str {
     result += ' '.repeat(indent) + "ArrayType(" + beginAttrs + ")" + os_EOL
     result += Type_toText(bodyType.elementType, indent: indent + 2)
   } elif self.isEmpty() {
-    result += ' '.repeat(indent) + "EmptyType(" + beginAttrs + ")" + os_EOL
+    result += ' '.repeat(indent) + "EmptyType" + os_EOL
   } elif self.isFunction() {
     bodyType := self.asFunction()
     beginAttrs += bodyType.asynchronous ? " async" : ""

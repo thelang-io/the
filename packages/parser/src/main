@@ -27,8 +27,11 @@ main {
   file := parse(args[1])
 
   print(StatementArray_toText(file.program.body))
-  print()
-  print("====================")
-  print()
-  report(ref file)
+
+  if file.hasErrors {
+    print()
+    print("====================")
+    print()
+    report(ref file)
+  }
 }

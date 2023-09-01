@@ -152,9 +152,9 @@ export fn E0123 (kw: str) str {
   return "E0123 - Expected type after `" + kw + "` keyword"
 }
 
-export fn E0124 () str {
-  return "E0124 - Expected closure expression closing parenthesis"
-}
+// export fn E0124 () str {
+//   return "E0124 - Expected closure expression closing parenthesis"
+// }
 
 export fn E0125 () str {
   return "E0125 - Expected closure expression parameter name"
@@ -212,8 +212,8 @@ export fn E0138 (after: str) str {
   return "E0138 - Expected type after " + after
 }
 
-export fn E0139 () str {
-  return "E0139 - Expected function type closing parenthesis"
+export fn E0139 (after: str) str {
+  return "E0139 - Expected identifier after " + after
 }
 
 export fn E0140 () str {
@@ -290,4 +290,80 @@ export fn E0157 () str {
 
 export fn E0158 () str {
   return "E0158 - Expected loop statement body"
+}
+
+export fn E0159 () str {
+  return "E0159 - Expected try statement body"
+}
+
+export fn E0160 () str {
+  return "E0160 - Expected `catch` keyword after try statement body"
+}
+
+export fn E0161 () str {
+  return "E0161 - Expected try statement handler parameter declaration after `catch` keyword"
+}
+
+export fn E0162 () str {
+  return "E0162 - Expected try statement handler body after handler parameter declaration"
+}
+
+export fn E0163 (after: str) str {
+  return "E0163 - Expected opening parenthesis after " + after
+}
+
+export fn E0164 () str {
+  return "E0164 - Expected function declaration parameter name"
+}
+
+export fn E0165 () str {
+  return "E0165 - Expected function declaration parameter type or initializer after parameter name"
+}
+
+export fn E0166 () str {
+  return "E0166 - Expected function declaration parameter type after colon"
+}
+
+export fn E0167 (after: str) str {
+  return "E0167 - Expected function declaration parameter initializer after " + after
+}
+
+export fn E0168 () str {
+  return "E0168 - Expected function declaration body"
+}
+
+export fn E0169 () str {
+  return "E0169 - Expected function declaration return type"
+}
+
+export fn E0170 () str {
+  return "E0170 - Expected object declaration body property or method"
+}
+
+export fn E0171 () str {
+  return "E0171 - Expected object declaration body closing brace"
+}
+
+export fn E0172 () str {
+  return "E0172 - Expected export declaration or expression after `export` keyword"
+}
+
+export fn E0173 () str {
+  return "E0173 - Expected `from` keyword after import declaration specifiers"
+}
+
+export fn E0174 () str {
+  return "E0174 - Expected `as` keyword after import declaration namespace specifier"
+}
+
+export fn E0175 () str {
+  return "E0175 - Expected import declaration namespace specifier name after `as` keyword"
+}
+
+export fn E0176 () str {
+  return "E0176 - Expected import declaration specifier local name after `as` keyword"
+}
+
+export fn E0177 () str {
+  return "E0177 - Expected import declaration source after `from` keyword"
 }
