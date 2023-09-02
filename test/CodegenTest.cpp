@@ -770,6 +770,8 @@ INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
 ));
 
 INSTANTIATE_TEST_SUITE_P(BuiltinOS, CodegenPassTest, testing::Values(
+  "builtin-os-arch",
+  "builtin-os-arch-root",
   "builtin-os-eol",
   "builtin-os-eol-root",
   "builtin-os-name",

@@ -92,6 +92,7 @@ void VarMap::init (TypeMap &typeMap) {
   this->_items.push_back(std::make_shared<Var>(Var{"math_MinU32", "@math_MinU32", typeMap.get("u32"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"math_MaxU64", "@math_MaxU64", typeMap.get("u64"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"math_MinU64", "@math_MinU64", typeMap.get("u64"), false, false, true, false, this->_frame}));
+  this->_items.push_back(std::make_shared<Var>(Var{"os_ARCH", "@os_ARCH", typeMap.get("str"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"os_EOL", "@os_EOL", typeMap.get("str"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"os_NAME", "@os_NAME", typeMap.get("str"), false, false, true, false, this->_frame}));
   this->_items.push_back(std::make_shared<Var>(Var{"path_SEP", "@path_SEP", typeMap.get("str"), false, false, true, false, this->_frame}));

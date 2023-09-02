@@ -1,5 +1,8 @@
 // Operating System API
 
+/* Operating system processor architecture. Possible values are `arm64`, `x86_64`, etc. */
+const os_ARCH: str
+
 /* Operating system-specific end-of-line marker. `\r\n` on Windows, `\n` on POSIX. */
 const os_EOL: str
 

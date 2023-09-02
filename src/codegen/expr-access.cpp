@@ -65,6 +65,19 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       objVar->codeName == "@math_MinU64"
     )) {
       expr = CodegenASTExprLiteral::create("0");
+    } else if (objVar->builtin && objVar->codeName == "@os_ARCH") {
+      expr = CodegenASTExprCall::create(
+        CodegenASTExprAccess::create(this->_("os_arch")),
+        {
+          this->_genErrState(ASTChecker(parent).insideMain(), false),
+          CodegenASTExprLiteral::create(line),
+          CodegenASTExprLiteral::create(col)
+        }
+      );
+
+      if (root) {
+        expr = this->_genFreeFn(objVar->type, expr);
+      }
     } else if (objVar->builtin && objVar->codeName == "@os_EOL") {
       expr = CodegenASTExprCall::create(
         CodegenASTExprAccess::create(this->_("str_alloc")),
