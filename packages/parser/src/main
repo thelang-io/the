@@ -4,72 +4,134 @@
  */
 
 import
-  File,
+  ArrayType,
+  EmptyType,
+  FunctionType,
+  IdentifierType,
+  MapType,
+  MemberType,
+  OptionalType,
+  ParenthesizedType,
+  ReferenceType,
+  UnionType,
+  Identifier,
+  BooleanLiteral,
+  CharacterLiteral,
+  FloatingPointLiteral,
+  IntegerLiteral,
+  NilLiteral,
+  StringLiteral,
+  ArrayExpression,
+  AsExpression,
+  AssignmentExpression,
+  AwaitExpression,
+  BinaryExpression,
+  CallExpression,
+  ClosureExpression,
+  ConditionalExpression,
+  ElementAccessExpression,
+  EmptyExpression,
+  IsExpression,
+  MapExpression,
+  MemberAccessExpression,
+  ObjectExpression,
+  ParenthesizedExpression,
+  PropertyAccessExpression,
+  ReferenceExpression,
+  UnaryExpression,
+  BlockStatement,
+  BreakStatement,
+  ContinueStatement,
+  EmptyStatement,
+  EnumDeclaration,
+  EofStatement,
+  ExportDeclaration,
+  ExportNamedDeclaration,
+  ExpressionStatement,
   FunctionDeclaration,
+  IfStatement,
   ImportDeclaration,
-  Program,
-  Statement
+  LoopStatement,
+  MainDeclaration,
+  ObjectDeclaration,
+  ObjectDeclarationMethod,
+  ObjectDeclarationProperty,
+  ReturnStatement,
+  ThrowStatement,
+  TryStatement,
+  TypeAliasDeclaration,
+  VariableDeclaration,
+  Expression,
+  Statement,
+  Type,
+  File,
+  Program
 from "./types"
 import Program_traverse from "./program"
-import StatementArray_toText from "./text"
 import parse, report from "./parser"
 
-export File
+export ArrayType
+export EmptyType
+export FunctionType
+export IdentifierType
+export MapType
+export MemberType
+export OptionalType
+export ParenthesizedType
+export ReferenceType
+export UnionType
+export Identifier
+export BooleanLiteral
+export CharacterLiteral
+export FloatingPointLiteral
+export IntegerLiteral
+export NilLiteral
+export StringLiteral
+export ArrayExpression
+export AsExpression
+export AssignmentExpression
+export AwaitExpression
+export BinaryExpression
+export CallExpression
+export ClosureExpression
+export ConditionalExpression
+export ElementAccessExpression
+export EmptyExpression
+export IsExpression
+export MapExpression
+export MemberAccessExpression
+export ObjectExpression
+export ParenthesizedExpression
+export PropertyAccessExpression
+export ReferenceExpression
+export UnaryExpression
+export BlockStatement
+export BreakStatement
+export ContinueStatement
+export EmptyStatement
+export EnumDeclaration
+export EofStatement
+export ExportDeclaration
+export ExportNamedDeclaration
+export ExpressionStatement
 export FunctionDeclaration
+export IfStatement
 export ImportDeclaration
+export LoopStatement
+export MainDeclaration
+export ObjectDeclaration
+export ObjectDeclarationMethod
+export ObjectDeclarationProperty
+export ReturnStatement
+export ThrowStatement
+export TryStatement
+export TypeAliasDeclaration
+export VariableDeclaration
+export Expression
+export Statement
+export Type
+export File
 export Program
 export Program_traverse
-export Statement
 export parse
-
-fn traverseDirectory (path: str) str[] {
-  p := fs_realpathSync(path)
-  files := fs_scandirSync(p)
-  mut result: str[]
-
-  loop i := 0; i < files.len; i++ {
-    file := files[i] as str
-
-    if file.slice(-4) == ".txt" && file.slice(0, 6) != "throw-" {
-      result.push(p + path_SEP + file)
-    }
-  }
-
-  return result
-}
-
-main {
-  args := process_args
-
-  if fs_isFileSync(args[1]) {
-    file := parse(args[1])
-    print(StatementArray_toText(file.program.body))
-
-    if file.hasErrors {
-      print()
-      print("====================")
-      print()
-      report(ref file)
-    }
-  } else {
-    files := traverseDirectory(args[1])
-    tempFile := path_tempFile()
-
-    loop i := 0; i < files.len; i++ {
-      filePath := files[i] as str
-      print("file:", filePath, "...", terminator: "")
-      content := fs_readFileSync(filePath).str()
-      stdin := content.slice(21 + os_EOL.len, content.find(os_EOL + "======="))
-      fs_writeFileSync(tempFile, stdin.toBuffer())
-      file := parse(tempFile)
-
-      if file.hasErrors {
-        print("has " + file.errors.len.str() + " errors")
-      } else {
-        print()
-      }
-    }
-
-    fs_rmSync(tempFile)
-  }
-}
+export report
