@@ -67,6 +67,15 @@ import
   File,
   Program
 from "./types"
+import
+  Expression_toText,
+  FunctionParameter_toText,
+  FunctionParameterArray_toText,
+  Identifier_toText,
+  Statement_toText,
+  StatementArray_toText,
+  Type_toText
+from "./text"
 import Program_traverse from "./program"
 import parse, report from "./parser"
 
@@ -132,6 +141,13 @@ export Statement
 export Type
 export File
 export Program
+export Expression_toText
+export FunctionParameter_toText
+export FunctionParameterArray_toText
+export Identifier_toText
+export Statement_toText
+export StatementArray_toText
+export Type_toText
 export Program_traverse
 export parse
 export report
