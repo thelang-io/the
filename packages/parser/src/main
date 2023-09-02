@@ -22,16 +22,54 @@ export Program_traverse
 export Statement
 export parse
 
+fn traverseDirectory (path: str) str[] {
+  p := fs_realpathSync(path)
+  files := fs_scandirSync(p)
+  mut result: str[]
+
+  loop i := 0; i < files.len; i++ {
+    file := files[i] as str
+
+    if file.slice(-4) == ".txt" && file.slice(0, 6) != "throw-" {
+      result.push(p + path_SEP + file)
+    }
+  }
+
+  return result
+}
+
 main {
   args := process_args
-  file := parse(args[1])
 
-  print(StatementArray_toText(file.program.body))
+  if fs_isFileSync(args[1]) {
+    file := parse(args[1])
+    print(StatementArray_toText(file.program.body))
 
-  if file.hasErrors {
-    print()
-    print("====================")
-    print()
-    report(ref file)
+    if file.hasErrors {
+      print()
+      print("====================")
+      print()
+      report(ref file)
+    }
+  } else {
+    files := traverseDirectory(args[1])
+    tempFile := path_tempFile()
+
+    loop i := 0; i < files.len; i++ {
+      filePath := files[i] as str
+      print("file:", filePath, "...", terminator: "")
+      content := fs_readFileSync(filePath).str()
+      stdin := content.slice(21 + os_EOL.len, content.find(os_EOL + "======="))
+      fs_writeFileSync(tempFile, stdin.toBuffer())
+      file := parse(tempFile)
+
+      if file.hasErrors {
+        print("has " + file.errors.len.str() + " errors")
+      } else {
+        print()
+      }
+    }
+
+    fs_rmSync(tempFile)
   }
 }

@@ -383,7 +383,7 @@ export obj ObjectExpressionProperty {
 }
 
 export obj ObjectExpression {
-  id: Expression
+  id: Type
   properties: ObjectExpressionProperty[]
 }
 

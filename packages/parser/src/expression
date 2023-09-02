@@ -41,26 +41,26 @@ export fn endsWithObjExpr (self: t.Expression) bool {
 export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
   if self.isAssignment() {
     selfBody := self.asAssignment()
-    return endsWithObjExpr(selfBody.right)
+    return extractLastObjExpr(selfBody.right)
   } elif self.isAwait() {
     selfBody := self.asAwait()
-    return endsWithObjExpr(selfBody.expression)
+    return extractLastObjExpr(selfBody.expression)
   } elif self.isBinary() {
     selfBody := self.asBinary()
-    return endsWithObjExpr(selfBody.right)
+    return extractLastObjExpr(selfBody.right)
   } elif self.isConditional() {
     selfBody := self.asConditional()
-    return endsWithObjExpr(selfBody.alternate)
+    return extractLastObjExpr(selfBody.alternate)
   } elif self.isObject() {
     return self.asObject()
   } elif self.isReference() {
     selfBody := self.asReference()
-    return endsWithObjExpr(selfBody.expression)
+    return extractLastObjExpr(selfBody.expression)
   } elif self.isUnary() {
     selfBody := self.asUnary()
 
     if selfBody.prefix {
-      return endsWithObjExpr(selfBody.operand)
+      return extractLastObjExpr(selfBody.operand)
     }
   }
 
@@ -70,44 +70,103 @@ export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
 export fn subtractLastObjExpr (self: t.Expression) t.Expression {
   if self.isAssignment() {
     selfBody := self.asAssignment()
-    return t.AssignmentExpression{
+    return create(t.AssignmentExpression{
       left: selfBody.left,
       operator: selfBody.operator,
-      right: endsWithObjExpr(selfBody.right)
-    }
+      right: subtractLastObjExpr(selfBody.right)
+    }, self.start, self.end)
   } elif self.isAwait() {
     selfBody := self.asAwait()
-    return t.AwaitExpression{expression: endsWithObjExpr(selfBody.expression)}
+    return create(t.AwaitExpression{
+      expression: subtractLastObjExpr(selfBody.expression)
+    }, self.start, self.end)
   } elif self.isBinary() {
     selfBody := self.asBinary()
-    return t.BinaryExpression{
+    return create(t.BinaryExpression{
       left: selfBody.left,
       operator: selfBody.operator,
-      right: endsWithObjExpr(selfBody.right)
-    }
+      right: subtractLastObjExpr(selfBody.right)
+    }, self.start, self.end)
   } elif self.isConditional() {
     selfBody := self.asConditional()
-    return t.ConditionalExpression{
+    return create(t.ConditionalExpression{
       condition: selfBody.condition,
       consequent: selfBody.consequent,
-      alternate: endsWithObjExpr(selfBody.alternate)
-    }
+      alternate: subtractLastObjExpr(selfBody.alternate)
+    }, self.start, self.end)
   } elif self.isObject() {
     selfBody := self.asObject()
-    return selfBody.id
+    return typeToExpression(selfBody.id)
   } elif self.isReference() {
     selfBody := self.asReference()
-    return t.ReferenceExpression{expression: endsWithObjExpr(selfBody.expression)}
+    return create(t.ReferenceExpression{
+      expression: subtractLastObjExpr(selfBody.expression)
+    }, self.start, self.end)
   } elif self.isUnary() {
     selfBody := self.asUnary()
     if selfBody.prefix {
-      return t.UnaryExpression{
+      return create(t.UnaryExpression{
         operator: selfBody.operator,
-        operand: endsWithObjExpr(selfBody.operand),
+        operand: subtractLastObjExpr(selfBody.operand),
         prefix: selfBody.prefix
-      }
+      }, self.start, self.end)
     }
   }
 
   return self
+}
+
+export fn toType (self: t.Expression) t.Type {
+  if self.isIdentifier() {
+    selfBody := self.asIdentifier()
+
+    return t.Type{
+      body: t.IdentifierType{name: selfBody},
+      start: self.start,
+      end: self.end
+    }
+  } elif self.isPropertyAccess() {
+    selfBody := self.asPropertyAccess()
+
+    return t.Type{
+      body: t.MemberType{t: toType(selfBody.expression), name: selfBody.name},
+      start: self.start,
+      end: self.end
+    }
+  }
+
+  throw error_NewError("Unable to transform expression to type")
+}
+
+export fn typeToExpression (self: t.Type) t.Expression {
+  if self.isIdentifier() {
+    selfBody := self.asIdentifier()
+
+    return t.Expression{
+      body: selfBody.name,
+      start: self.start,
+      end: self.end
+    }
+  } elif self.isMember() {
+    selfBody := self.asMember()
+
+    return t.Expression{
+      body: t.PropertyAccessExpression{expression: typeToExpression(selfBody.t), name: selfBody.name},
+      start: self.start,
+      end: self.end
+    }
+  }
+
+  throw error_NewError("Unable to transform type to expression")
+}
+
+export fn validObjExprId (self: t.Expression) bool {
+  if self.isIdentifier() {
+    return true
+  } elif self.isPropertyAccess() {
+    selfBody := self.asPropertyAccess()
+    return validObjExprId(selfBody.expression)
+  }
+
+  return false
 }

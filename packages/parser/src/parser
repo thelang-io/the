@@ -713,8 +713,11 @@ export obj Parser {
         parameter := parameters[0]
 
         if parameter.name == nil && !parameter.mutable && !parameter.variadic {
-          r: t.Type = t.ParenthesizedType{t: parameter.t}
-          return r
+          return Type.create(
+            t.ParenthesizedType{t: parameter.t},
+            readerStartPos,
+            self.tokenizer.readerEndPos()
+          )
         }
       }
 
@@ -764,18 +767,21 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    mut condition := self.nextExpression()
+    mut maybeCondition := self.nextExpression()
 
-    if condition == nil {
+    if maybeCondition == nil {
       self._raise(errors.E0109("if"))
-      condition = emptyExpression()
+      maybeCondition = emptyExpression()
     }
 
-    mut consequent := self.nextStatement(withBlockStatement: true)
+    condition := maybeCondition as t.Expression
+    mut consequent := condition.isParenthesized()
+      ? self.nextStatement(withBlockStatement: true)
+      : self._maybeBlockStatement()
 
-    if consequent == nil && Expression.endsWithObjExpr(condition as t.Expression) {
-      objectExpression := Expression.extractLastObjExpr(condition as t.Expression)
-      condition = Expression.subtractLastObjExpr(condition as t.Expression)
+    if consequent == nil && Expression.endsWithObjExpr(condition) {
+      objectExpression := Expression.extractLastObjExpr(condition)
+      condition = Expression.subtractLastObjExpr(condition)
       self.tokenizer.readerSeek(objectExpression.id.end)
       consequent = self.nextStatement(withBlockStatement: true)
     }
@@ -798,7 +804,7 @@ export obj Parser {
 
     return Statement.create(
       t.IfStatement{
-        condition: condition as t.Expression,
+        condition: condition,
         consequent: consequent as t.Statement,
         alternate: alternate
       },
@@ -984,13 +990,39 @@ export obj Parser {
       }
 
       condition = self.nextExpression()
+      mut shouldContinue := true
 
       if !self.tokenizer.lookahead(.OpSemi) {
-        self._raise(errors.E0157())
+        initializer3 := initializer
+
+        if !parenthesized && initializer3 != nil {
+          if initializer3.isExpression() {
+            expression := initializer3.asExpression()
+
+            if Expression.endsWithObjExpr(expression.expression) {
+              objectExpression := Expression.extractLastObjExpr(expression.expression)
+              initializerExpression := Expression.subtractLastObjExpr(expression.expression)
+
+              initializer = Statement.create(t.ExpressionStatement{
+                expression: initializerExpression
+              }, initializerExpression.start, initializerExpression.end)
+
+              self.tokenizer.readerSeek(objectExpression.id.end)
+              condition = nil
+              shouldContinue = false
+            }
+          }
+        }
+
+        if shouldContinue {
+          self._raise(errors.E0157())
+        }
       }
 
-      update = self.nextExpression()
-      hasAllParts = true
+      if shouldContinue {
+        update = self.nextExpression()
+        hasAllParts = true
+      }
     }
 
     if parenthesized && !self.tokenizer.lookahead(.OpRPar) {
@@ -999,7 +1031,7 @@ export obj Parser {
 
     condition2 := condition
     update2 := update
-    mut body := self.nextStatement(withBlockStatement: true)
+    mut body := parenthesized ? self.nextStatement(withBlockStatement: true) : self._maybeBlockStatement()
 
     if (
       body == nil &&
@@ -1796,7 +1828,7 @@ export obj Parser {
   fn _maybeWrapObjectExpression (mut self: ref Self, expression: t.Expression) t.Expression? {
     startPos := self.tokenizer.pos()
 
-    if !self.tokenizer.lookahead(.OpLBrace) {
+    if !Expression.validObjExprId(expression) || !self.tokenizer.lookahead(.OpLBrace) {
       return nil
     }
 
@@ -1856,7 +1888,7 @@ export obj Parser {
     }
 
     return Expression.create(
-      t.ObjectExpression{id: expression, properties: properties},
+      t.ObjectExpression{id: Expression.toType(expression), properties: properties},
       expression.start,
       self.tokenizer.readerEndPos()
     )
