@@ -20,8 +20,8 @@
 const std::vector<std::string> codegenOS = {
   R"(_{struct str} os_arch (_{err_state_t} *fn_err_state, int line, int col) {)" EOL
   R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{SYSTEM_INFO} info;" EOL
-  R"(    _{GetSystemInfo}(&info);" EOL
+  R"(    _{SYSTEM_INFO} info;)" EOL
+  R"(    _{GetSystemInfo}(&info);)" EOL
   R"(    switch (info.wProcessorArchitecture) {)" EOL
   R"(      case _{PROCESSOR_ARCHITECTURE_ALPHA}:)" EOL
   R"(      case _{PROCESSOR_ARCHITECTURE_ALPHA64}: return _{str_alloc}("alpha");)" EOL

@@ -154,8 +154,8 @@ void error_stack_str (err_state_t *fn_err_state) {
 }
 struct str os_arch (err_state_t *fn_err_state, int line, int col) {
   #ifdef THE_OS_WINDOWS
-    SYSTEM_INFO info;" EOL
-    GetSystemInfo(&info);" EOL
+    SYSTEM_INFO info;
+    GetSystemInfo(&info);
     switch (info.wProcessorArchitecture) {
       case PROCESSOR_ARCHITECTURE_ALPHA:
       case PROCESSOR_ARCHITECTURE_ALPHA64: return str_alloc("alpha");
