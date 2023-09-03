@@ -5,5 +5,64 @@
 
 import * as t from "./types"
 
-export fn Program_traverse (program: t.Program, cb: (it: t.Statement) -> void) {
+export fn Program_traverse (program: ref t.Program, cb: (it: t.Statement) -> void) {
+  bodyLen := program.body.len
+
+  loop i := 0; i < bodyLen; i++ {
+    Statement_traverse(program.body[i], cb)
+  }
+}
+
+export fn Statement_traverse (statement: t.Statement, cb: (it: t.Statement) -> void) {
+  cb(statement)
+
+  if statement.isBlock() {
+    body := statement.asBlock()
+    bodyLen := body.body.len
+    loop i := 0; i < bodyLen; i++ {
+      Statement_traverse(body.body[i], cb)
+    }
+  } elif statement.isExportDeclaration() {
+    body := statement.asExportDeclaration()
+    Statement_traverse(body.statement, cb)
+  } elif statement.isFunctionDeclaration() {
+    body := statement.asFunctionDeclaration()
+    if body.body != nil {
+      Statement_traverse(body.body, cb)
+    }
+  } elif statement.isIf() {
+    body := statement.asIf()
+    Statement_traverse(body.consequent, cb)
+
+    if body.alternate != nil {
+      Statement_traverse(body.alternate, cb)
+    }
+  } elif statement.isLoop() {
+    body := statement.asLoop()
+    if body.initializer != nil {
+      Statement_traverse(body.initializer, cb)
+    }
+    Statement_traverse(body.body, cb)
+  } elif statement.isMainDeclaration() {
+    body := statement.asMainDeclaration()
+    Statement_traverse(body.body, cb)
+  } elif statement.isObjectDeclaration() {
+    body := statement.asObjectDeclaration()
+    bodyLen := body.body.len
+    loop i := 0; i < bodyLen; i++ {
+      Statement_traverse(body.body[i], cb)
+    }
+  } elif statement.isObjectDeclarationMethod() {
+    body := statement.asObjectDeclarationMethod()
+    if body.body != nil {
+      Statement_traverse(body.body, cb)
+    }
+  } elif statement.isTry() {
+    body := statement.asTry()
+    Statement_traverse(body.body, cb)
+    handlersLen := body.handlers.len
+    loop i := 0; i < handlersLen; i++ {
+      Statement_traverse(body.handlers[i].body, cb)
+    }
+  }
 }
