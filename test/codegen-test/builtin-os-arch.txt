@@ -165,11 +165,11 @@ struct str os_arch (err_state_t *fn_err_state, int line, int col) {
       case PROCESSOR_ARCHITECTURE_IA32_ON_WIN64: return str_alloc("i686");
       case PROCESSOR_ARCHITECTURE_IA64: return str_alloc("ia64");
       case PROCESSOR_ARCHITECTURE_INTEL:
-        switch (info.wProcessorLevel) )
+        switch (info.wProcessorLevel) {
           case 4: return str_alloc("i486");
           case 5: return str_alloc("i586");
           default: return str_alloc("i386");
-        )
+        }
       case PROCESSOR_ARCHITECTURE_MIPS: return str_alloc("mips");
       case PROCESSOR_ARCHITECTURE_PPC: return str_alloc("powerpc");
       case PROCESSOR_ARCHITECTURE_SHX: return str_alloc("sh");

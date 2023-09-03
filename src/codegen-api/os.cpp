@@ -31,11 +31,11 @@ const std::vector<std::string> codegenOS = {
   R"(      case _{PROCESSOR_ARCHITECTURE_IA32_ON_WIN64}: return _{str_alloc}("i686");)" EOL
   R"(      case _{PROCESSOR_ARCHITECTURE_IA64}: return _{str_alloc}("ia64");)" EOL
   R"(      case _{PROCESSOR_ARCHITECTURE_INTEL}:)" EOL
-  R"(        switch (info.wProcessorLevel) ))" EOL
+  R"(        switch (info.wProcessorLevel) {)" EOL
   R"(          case 4: return _{str_alloc}("i486");)" EOL
   R"(          case 5: return _{str_alloc}("i586");)" EOL
   R"(          default: return _{str_alloc}("i386");)" EOL
-  R"(        ))" EOL
+  R"(        })" EOL
   R"(      case _{PROCESSOR_ARCHITECTURE_MIPS}: return _{str_alloc}("mips");)" EOL
   R"(      case _{PROCESSOR_ARCHITECTURE_PPC}: return _{str_alloc}("powerpc");)" EOL
   R"(      case _{PROCESSOR_ARCHITECTURE_SHX}: return _{str_alloc}("sh");)" EOL
