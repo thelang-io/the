@@ -4,7 +4,7 @@
  */
 
 export fn zip (name: str, path: str) {
-  if fs_existsSync(path) {
+  if !fs_existsSync(path) {
     throw error_NewError("Can't perform zip operation, path doesn't exists")
   }
 
@@ -16,7 +16,7 @@ export fn zip (name: str, path: str) {
 }
 
 export fn unzip (path: str) {
-  if fs_existsSync(path) {
+  if !fs_existsSync(path) {
     throw error_NewError("Can't perform unzip operation, path doesn't exists")
   }
 
