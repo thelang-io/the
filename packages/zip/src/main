@@ -4,16 +4,16 @@
  */
 
 export fn zip (name: str, path: str, cwd: str? = nil) {
-  if !fs_existsSync(path) {
+  if path != "*" && !fs_existsSync(path) {
     throw error_NewError("Can't perform zip operation, path doesn't exists")
   }
 
   mut cmd := os_NAME == "Windows"
-    ? "tar -a -c -f \"" + name + "\" \"" + path + "\""
-    : "zip -qr \"" + name + "\" \"" + path + "\""
+    ? "tar -a -c -f '" + name + "' " + (path == "*" ? "*" : "'" + path + "'")
+    : "zip -qr '" + name + "' " + (path == "*" ? "*" : "'" + path + "'")
 
   if cwd != nil {
-    cmd = "cd \"" + cwd + "\" && " + cwd
+    cmd = "(cd '" + cwd + "' && " + cmd + ")"
   }
 
   process_runSync(cmd)
@@ -24,9 +24,9 @@ export fn unzip (path: str) {
     throw error_NewError("Can't perform unzip operation, path doesn't exists")
   }
 
-  if os_NAME == "Windows" {
-    process_runSync("tar.exe -x -f \"" + path + "\"")
-  } else {
-    process_runSync("unzip \"" + path + "\"")
-  }
+  cmd := os_NAME == "Windows"
+    ? "tar.exe -x -f '" + path + "'"
+    : "unzip '" + path + "'"
+
+  process_runSync(cmd)
 }
