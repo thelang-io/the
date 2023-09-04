@@ -3,16 +3,20 @@
  * Licensed under the MIT License
  */
 
-export fn zip (name: str, path: str) {
+export fn zip (name: str, path: str, cwd: str? = nil) {
   if !fs_existsSync(path) {
     throw error_NewError("Can't perform zip operation, path doesn't exists")
   }
 
-  if os_NAME == "Windows" {
-    process_runSync("tar -a -c -f \"" + name + "\" \"" + path + "\"")
-  } else {
-    process_runSync("zip \"" + name + "\" \"" + path + "\"")
+  mut cmd := os_NAME == "Windows"
+    ? "tar -a -c -f \"" + name + "\" \"" + path + "\""
+    : "zip -qr \"" + name + "\" \"" + path + "\""
+
+  if cwd != nil {
+    cmd = "cd \"" + cwd + "\" && " + cwd
   }
+
+  process_runSync(cmd)
 }
 
 export fn unzip (path: str) {
