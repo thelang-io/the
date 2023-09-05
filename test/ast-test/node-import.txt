@@ -429,7 +429,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestMutVar" codeName="TestMutVar_0" frame="1">
+                  <Var name="TestMutVar" codeName="TestMutVar_0" mut frame="1">
                     <BuiltinType name="int" />
                   </Var>
                 </ExprAccess>
@@ -765,7 +765,7 @@ main {
               </NodeExprType>
               <NodeExprBody>
                 <ExprAccess>
-                  <Var name="TestMutVarLocal" codeName="TestMutVar_0" frame="1">
+                  <Var name="TestMutVarLocal" codeName="TestMutVar_0" mut frame="1">
                     <BuiltinType name="int" />
                   </Var>
                 </ExprAccess>

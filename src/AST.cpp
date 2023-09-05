@@ -661,8 +661,15 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
               auto exportName = AST::getExportName(node);
               auto exportCodeName = AST::getExportCodeName(node);
               auto exportType = AST::getExportType(node);
+              auto exportVar = AST::getExportVar(node);
 
-              namespaceFields.push_back(TypeField{exportName, exportType, false, false, TypeCallInfo{exportCodeName}});
+              namespaceFields.push_back(TypeField{
+                exportName,
+                exportType,
+                exportVar != nullptr && exportVar->mut,
+                false,
+                TypeCallInfo{exportCodeName}
+              });
 
               if (!exportType->isEnum()) {
                 this->varMap.add(specifierLocal + "." + exportName, exportCodeName, exportType);
@@ -686,7 +693,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto exportType = AST::getExportType(*specifierExport);
 
             if (exportVar != nullptr) {
-              this->varMap.add(specifierLocal, exportVar->codeName, exportVar->type);
+              this->varMap.add(specifierLocal, exportVar->codeName, exportVar->type, exportVar->mut);
             } else if (specifierImported != specifierLocal) {
               this->typeMap.createAlias(specifierLocal, exportType);
             } else {
