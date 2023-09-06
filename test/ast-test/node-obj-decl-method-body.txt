@@ -79,7 +79,7 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Animal.talk" codeName="test_AnimalSDtalk_0" frame="1">
+        <Var name="Animal.talk" codeName="test_AnimalSDtalk_0" frame="0">
           <TypeMethod name="fn_sFRvoidFE">
             <TypeCallInfo codeName="test_AnimalSDtalk_0" />
             <TypeFnReturnType>
@@ -91,7 +91,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Animal.run" codeName="test_AnimalSDrun_0" frame="1">
+        <Var name="Animal.run" codeName="test_AnimalSDrun_0" frame="0">
           <TypeMethod name="fn_sFSref_AnimalFRvoidFE">
             <TypeCallInfo codeName="test_AnimalSDrun_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Animal">
@@ -162,7 +162,7 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Human.talk" codeName="test_HumanSDtalk_0" frame="1">
+        <Var name="Human.talk" codeName="test_HumanSDtalk_0" frame="0">
           <TypeMethod name="fn_sFRvoidFE">
             <TypeCallInfo codeName="test_HumanSDtalk_0" />
             <TypeFnReturnType>
@@ -174,7 +174,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Human.walk" codeName="test_HumanSDwalk_0" frame="1">
+        <Var name="Human.walk" codeName="test_HumanSDwalk_0" frame="0">
           <TypeMethod name="fn_sFSref_HumanFRvoidFE">
             <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Human">
@@ -214,7 +214,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Human.talk" codeName="test_HumanSDtalk_0" frame="1">
+        <Var name="Human.talk" codeName="test_HumanSDtalk_0" frame="0">
           <TypeMethod name="fn_sFRvoidFE">
             <TypeCallInfo codeName="test_HumanSDtalk_0" />
             <TypeFnReturnType>
@@ -261,7 +261,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Human.walk" codeName="test_HumanSDwalk_0" frame="1">
+        <Var name="Human.walk" codeName="test_HumanSDwalk_0" frame="0">
           <TypeMethod name="fn_sFSref_HumanFRvoidFE">
             <TypeCallInfo codeName="test_HumanSDwalk_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Human">
@@ -428,7 +428,7 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Alien.talk" codeName="test_AlienSDtalk_0" frame="1">
+        <Var name="Alien.talk" codeName="test_AlienSDtalk_0" frame="0">
           <TypeMethod name="fn_sFRvoidFE">
             <TypeCallInfo codeName="test_AlienSDtalk_0" />
             <TypeFnReturnType>
@@ -475,7 +475,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Alien.travel" codeName="test_AlienSDtravel_0" frame="1">
+        <Var name="Alien.travel" codeName="test_AlienSDtravel_0" frame="0">
           <TypeMethod name="fn_sFSref_AlienFRvoidFE">
             <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Alien">
@@ -611,7 +611,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Alien.talk" codeName="test_AlienSDtalk_0" frame="1">
+        <Var name="Alien.talk" codeName="test_AlienSDtalk_0" frame="0">
           <TypeMethod name="fn_sFRvoidFE">
             <TypeCallInfo codeName="test_AlienSDtalk_0" />
             <TypeFnReturnType>
@@ -623,7 +623,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Alien.travel" codeName="test_AlienSDtravel_0" frame="1">
+        <Var name="Alien.travel" codeName="test_AlienSDtravel_0" frame="0">
           <TypeMethod name="fn_sFSref_AlienFRvoidFE">
             <TypeCallInfo codeName="test_AlienSDtravel_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Alien">

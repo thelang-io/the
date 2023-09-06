@@ -639,15 +639,10 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
       auto importNodes = importItem->nodes;
       auto importNodesExports = ASTChecker(importItem->nodes).getNodeOfType<ASTNodeExportDecl>(false);
-      auto importNodesObjects = ASTChecker(importItem->nodes).getNodeOfType<ASTNodeObjDecl>(false);
 
-      for (const auto &importNodesObject : importNodesObjects) {
-        auto nodeObjDecl = std::get<ASTNodeObjDecl>(*importNodesObject.body);
-
-        for (const auto &method : nodeObjDecl.methods) {
-          this->typeMap.insert(method.var->type);
-          this->varMap.insert(method.var);
-        }
+      for (const auto &item : importItem->ast->varMap.methods()) {
+        this->typeMap.insert(item->type);
+        this->varMap.insert(item);
       }
 
       if (!stmtImportDecl.specifiers.empty()) {
@@ -789,7 +784,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto methodDeclAliasType = this->typeMap.createAlias(methodDeclName, methodDeclType);
 
             this->varMap.restore();
-            this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
+            auto methodVar = this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
+            methodVar->frame = 0;
             type->fields.push_back(TypeField{methodDeclName, methodDeclType, false});
           } else if (std::holds_alternative<ParserStmtVarDecl>(*member.body)) {
             auto stmtVarDecl = std::get<ParserStmtVarDecl>(*member.body);

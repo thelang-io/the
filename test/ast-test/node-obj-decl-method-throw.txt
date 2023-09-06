@@ -109,7 +109,7 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="StaticTest.staticMethod" codeName="test_StaticTestSDstaticMethod_0" frame="1">
+        <Var name="StaticTest.staticMethod" codeName="test_StaticTestSDstaticMethod_0" frame="0">
           <TypeMethod name="fn_sFRvoidFE">
             <TypeCallInfo codeName="test_StaticTestSDstaticMethod_0" />
             <TypeFnReturnType>
@@ -383,7 +383,7 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Counter.get" codeName="test_CounterSDget_0" frame="1">
+        <Var name="Counter.get" codeName="test_CounterSDget_0" frame="0">
           <TypeMethod name="fn_sFSCounterFRintFE">
             <TypeCallInfo codeName="test_CounterSDget_0" selfCodeName="self_0" selfFirst>
               <TypeObj codeName="test_Counter_0" name="Counter">
@@ -649,7 +649,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Counter.decrease" codeName="test_CounterSDdecrease_0" frame="1">
+        <Var name="Counter.decrease" codeName="test_CounterSDdecrease_0" frame="0">
           <TypeMethod name="fn_sFSref_CounterFP1intFRref_CounterFE">
             <TypeCallInfo codeName="test_CounterSDdecrease_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Counter">
@@ -1403,7 +1403,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Counter.increase" codeName="test_CounterSDincrease_0" frame="1">
+        <Var name="Counter.increase" codeName="test_CounterSDincrease_0" frame="0">
           <TypeMethod name="fn_sFSref_CounterFP1intFRref_CounterFE">
             <TypeCallInfo codeName="test_CounterSDincrease_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Counter">
@@ -2157,7 +2157,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Counter.ridiculousStuff" codeName="test_CounterSDridiculousStuff_0" frame="1">
+        <Var name="Counter.ridiculousStuff" codeName="test_CounterSDridiculousStuff_0" frame="0">
           <TypeMethod name="fn_sFSref_CounterFRvoidFE">
             <TypeCallInfo codeName="test_CounterSDridiculousStuff_0" selfCodeName="self_0" selfFirst selfMut>
               <TypeRef name="ref_Counter">
@@ -2250,7 +2250,7 @@ main {
             </TypeFnReturnType>
           </TypeFn>
         </Var>
-        <Var name="Counter.get" codeName="test_CounterSDget_0" frame="1">
+        <Var name="Counter.get" codeName="test_CounterSDget_0" frame="0">
           <TypeMethod name="fn_sFSCounterFRintFE">
             <TypeCallInfo codeName="test_CounterSDget_0" selfCodeName="self_0" selfFirst>
               <TypeObj codeName="test_Counter_0" name="Counter">
@@ -2877,7 +2877,7 @@ main {
           <NodeObjDeclMethods>
             <NodeObjDeclMethod>
               <NodeObjDeclMethodType>
-                <Var name="Counter2.decrease" codeName="test_CounterSDridiculousStuffSDCounter2SDdecrease_0" frame="2">
+                <Var name="Counter2.decrease" codeName="test_CounterSDridiculousStuffSDCounter2SDdecrease_0" frame="0">
                   <TypeMethod name="fn_sFSref_Counter2FRvoidFE">
                     <TypeCallInfo codeName="test_CounterSDridiculousStuffSDCounter2SDdecrease_0" selfCodeName="self_1" selfFirst selfMut>
                       <TypeRef name="ref_Counter2">
@@ -3000,7 +3000,7 @@ main {
                     </TypeObj>
                   </TypeRef>
                 </Var>
-                <Var name="Counter2.get" codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" frame="2">
+                <Var name="Counter2.get" codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" frame="0">
                   <TypeMethod name="fn_sFSref_Counter2FRintFE">
                     <TypeCallInfo codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" selfCodeName="self_1" selfFirst>
                       <TypeRef name="ref_Counter2">
@@ -3052,7 +3052,7 @@ main {
                     </TypeFnReturnType>
                   </TypeMethod>
                 </Var>
-                <Var name="Counter.get" codeName="test_CounterSDget_0" frame="1">
+                <Var name="Counter.get" codeName="test_CounterSDget_0" frame="0">
                   <TypeMethod name="fn_sFSCounterFRintFE">
                     <TypeCallInfo codeName="test_CounterSDget_0" selfCodeName="self_0" selfFirst>
                       <TypeObj codeName="test_Counter_0" name="Counter">
@@ -4092,7 +4092,7 @@ main {
             </NodeObjDeclMethod>
             <NodeObjDeclMethod>
               <NodeObjDeclMethodType>
-                <Var name="Counter2.increase" codeName="test_CounterSDridiculousStuffSDCounter2SDincrease_0" frame="2">
+                <Var name="Counter2.increase" codeName="test_CounterSDridiculousStuffSDCounter2SDincrease_0" frame="0">
                   <TypeMethod name="fn_sFSref_Counter2FRvoidFE">
                     <TypeCallInfo codeName="test_CounterSDridiculousStuffSDCounter2SDincrease_0" selfCodeName="self_1" selfFirst selfMut>
                       <TypeRef name="ref_Counter2">
@@ -4215,7 +4215,7 @@ main {
                     </TypeObj>
                   </TypeRef>
                 </Var>
-                <Var name="Counter2.get" codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" frame="2">
+                <Var name="Counter2.get" codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" frame="0">
                   <TypeMethod name="fn_sFSref_Counter2FRintFE">
                     <TypeCallInfo codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" selfCodeName="self_1" selfFirst>
                       <TypeRef name="ref_Counter2">
@@ -4282,7 +4282,7 @@ main {
                     </TypeFnReturnType>
                   </TypeFn>
                 </Var>
-                <Var name="Counter.get" codeName="test_CounterSDget_0" frame="1">
+                <Var name="Counter.get" codeName="test_CounterSDget_0" frame="0">
                   <TypeMethod name="fn_sFSCounterFRintFE">
                     <TypeCallInfo codeName="test_CounterSDget_0" selfCodeName="self_0" selfFirst>
                       <TypeObj codeName="test_Counter_0" name="Counter">
@@ -5307,7 +5307,7 @@ main {
             </NodeObjDeclMethod>
             <NodeObjDeclMethod>
               <NodeObjDeclMethodType>
-                <Var name="Counter2.get" codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" frame="2">
+                <Var name="Counter2.get" codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" frame="0">
                   <TypeMethod name="fn_sFSref_Counter2FRintFE">
                     <TypeCallInfo codeName="test_CounterSDridiculousStuffSDCounter2SDget_0" selfCodeName="self_1" selfFirst>
                       <TypeRef name="ref_Counter2">

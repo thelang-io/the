@@ -1474,7 +1474,8 @@ INSTANTIATE_TEST_SUITE_P(NodeImport, CodegenPassTest, testing::Values(
   "node-import-package-of-package",
   "node-import-priority",
   "node-import-with-mutable-usage",
-  "node-import-with-mutable-namespace-usage"
+  "node-import-with-mutable-namespace-usage",
+  "node-import-deep-methods"
 ));
 
 INSTANTIATE_TEST_SUITE_P(NodeLoop, CodegenPassTest, testing::Values(

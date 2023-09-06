@@ -199,6 +199,15 @@ TEST_F(VarMapTest, InsertsVar) {
   EXPECT_EQ(this->vm_.get("test1")->frame, 1);
 }
 
+TEST_F(VarMapTest, FiltersMethods) {
+  this->vm_.add("test1", "test1_0", this->tm_.get("int"), false);
+  EXPECT_EQ(this->vm_.methods().size(), 0);
+  this->vm_.add("test2", "test2_0", this->tm_.createMethod({}, this->tm_.get("int"), false, TypeCallInfo{}));
+  EXPECT_EQ(this->vm_.methods().size(), 1);
+  this->vm_.add("test3", "test3_0", this->tm_.createMethod({}, this->tm_.get("str"), false, TypeCallInfo{}));
+  EXPECT_EQ(this->vm_.methods().size(), 2);
+}
+
 TEST_F(VarMapTest, NameGeneratesValid) {
   EXPECT_EQ(this->vm_.name("test"), "test_0");
   this->vm_.add("test", this->vm_.name("test"), this->tm_.get("int"), false);
