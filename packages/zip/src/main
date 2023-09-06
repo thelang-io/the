@@ -12,10 +12,10 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
 
   if os_NAME == "Windows" {
     cmd = "powershell Compress-Archive -Path " + (path == "*" ? "*" : "\"" + path + "\"") + " -DestinationPath \"" + name + "\""
-    cmd += cwd == nil ? "" : "(cd \"" + cwd + "\" && " + cmd + ")"
+    cmd = cwd == nil ? "" : ("(cd \"" + cwd + "\" && " + cmd + ")")
   } else {
     cmd = "zip -qr '" + name + "' " + (path == "*" ? "*" : "'" + path + "'")
-    cmd += cwd == nil ? "" : "(cd '" + cwd + "' && " + cmd + ")"
+    cmd = cwd == nil ? "" : ("(cd '" + cwd + "' && " + cmd + ")")
   }
 
   process_runSync(cmd)
