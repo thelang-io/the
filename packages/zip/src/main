@@ -12,7 +12,7 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
   p := (path == "*" ? "*" : "'" + path + "'")
 
   mut cmd := os_NAME == "Windows"
-    ? "powershell Compress-Archive -Path " + p + "-DestinationPath " + n
+    ? "powershell Compress-Archive -Path " + p + " -DestinationPath " + n
     : "zip -qr " + n + " " + p
 
   if cwd != nil {
@@ -32,7 +32,7 @@ export fn unzip (source: str, destination: str) {
 
   cmd := os_NAME == "Windows"
     ? "powershell Expand-Archive -Path " + s + " -DestinationPath " + d
-    : "unzip " + s + " -d " + d
+    : "unzip -q " + s + " -d " + d
 
   process_runSync(cmd)
 }
