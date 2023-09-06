@@ -23,7 +23,7 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
 }
 
 export fn unzip (source: str, destination: str) {
-  if !fs_existsSync(path) {
+  if !fs_existsSync(source) {
     throw error_NewError("Can't perform unzip operation, path doesn't exists")
   }
 
