@@ -8,15 +8,14 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
     throw error_NewError("Can't perform zip operation, path doesn't exists")
   }
 
-  n := "'" + name + "'"
-  p := (path == "*" ? "*" : "'" + path + "'")
+  mut cmd: str
 
-  mut cmd := os_NAME == "Windows"
-    ? "powershell Compress-Archive -Path " + p + " -DestinationPath " + n
-    : "zip -qr " + n + " " + p
-
-  if cwd != nil {
-    cmd = "(cd '" + cwd + "' && " + cmd + ")"
+  if os_NAME == "Windows" {
+    cmd = "powershell Compress-Archive -Path " + (path == "*" ? "*" : "\"" + path + "\"") + " -DestinationPath \"" + name + "\""
+    cmd += cwd == nil ? "" : "(cd \"" + cwd + "\" && " + cmd + ")"
+  } else {
+    cmd = "zip -qr '" + name + "' " + (path == "*" ? "*" : "'" + path + "'")
+    cmd += cwd == nil ? "" : "(cd '" + cwd + "' && " + cmd + ")"
   }
 
   process_runSync(cmd)
@@ -27,12 +26,13 @@ export fn unzip (source: str, destination: str) {
     throw error_NewError("Can't perform unzip operation, path doesn't exists")
   }
 
-  s := "'" + source + "'"
-  d := "'" + destination + "'"
+  mut cmd: str
 
-  cmd := os_NAME == "Windows"
-    ? "powershell Expand-Archive -Path " + s + " -DestinationPath " + d
-    : "unzip -q " + s + " -d " + d
+  if os_NAME == "Windows" {
+    cmd = "powershell Expand-Archive -Path \"" + source + "\" -DestinationPath \"" + destination + "\""
+  } else {
+    cmd = "unzip -q '" + source + "' -d '" + destination + "'"
+  }
 
   process_runSync(cmd)
 }
