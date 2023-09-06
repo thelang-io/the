@@ -513,4 +513,4 @@ L1:
 }
 ======= flags =======
 ======= stdout =======
-["dir1", "export-circular", "export-enum", "export-expr", "export-fn", "export-obj", "export-priority", "export-type", "export-var", "import-circular", "import-priority", "test{{ 2? }}.txt", "test{{ 2? }}.txt"]
+["dir1", "export-circular", "export-enum", "export-expr", "export-fn", "export-obj", "export-priority", "export-type", "export-var", "import-circular", "import-deep", "import-priority", "test{{ 2? }}.txt", "test{{ 2? }}.txt"]
