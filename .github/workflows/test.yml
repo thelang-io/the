@@ -39,7 +39,7 @@ jobs:
             platform: windows
             generator: Visual Studio 17 2022
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: thelang-io/setup-the@v1
       - if: runner.os == 'Linux'
         run: |

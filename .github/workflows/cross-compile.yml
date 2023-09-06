@@ -22,7 +22,7 @@ jobs:
           - platform: linux
           - platform: windows
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: thelang-io/setup-the@v1
       - run: sudo apt-get update
       - run: sudo apt-get install mingw-w64 ninja-build
