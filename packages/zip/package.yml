@@ -1,5 +1,5 @@
 name: the/zip
-version: 0.1.5
+version: 0.1.6
 description: Zip Utilities
 license: MIT
 main: src/main
