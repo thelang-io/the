@@ -105,7 +105,7 @@ struct str {
 struct __THE_1_test_Test_0;
 struct __THE_1_any_test_Test_0;
 struct __THE_1_any_float;
-struct __THE_1_union_TestUSfloatUE;
+struct __THE_1_union_test_Test_0USfloatUE;
 
 struct __THE_1_test_Test_0 {
   const int32_t __THE_0_a;
@@ -116,7 +116,7 @@ struct __THE_1_any_test_Test_0 {
 struct __THE_1_any_float {
   double d;
 };
-struct __THE_1_union_TestUSfloatUE {
+struct __THE_1_union_test_Test_0USfloatUE {
   int t;
   union {
     struct __THE_1_test_Test_0 *v2;
@@ -148,9 +148,9 @@ void __THE_1_any_test_Test_0_free (struct any);
 struct any __THE_1_any_float_alloc (double);
 struct any __THE_1_any_float_copy (const struct any);
 void __THE_1_any_float_free (struct any);
-struct __THE_1_union_TestUSfloatUE __THE_1_union_TestUSfloatUE_alloc (int, ...);
-void __THE_1_union_TestUSfloatUE_free (struct __THE_1_union_TestUSfloatUE);
-struct __THE_1_union_TestUSfloatUE __THE_1_union_TestUSfloatUE_realloc (struct __THE_1_union_TestUSfloatUE, struct __THE_1_union_TestUSfloatUE);
+struct __THE_1_union_test_Test_0USfloatUE __THE_1_union_test_Test_0USfloatUE_alloc (int, ...);
+void __THE_1_union_test_Test_0USfloatUE_free (struct __THE_1_union_test_Test_0USfloatUE);
+struct __THE_1_union_test_Test_0USfloatUE __THE_1_union_test_Test_0USfloatUE_realloc (struct __THE_1_union_test_Test_0USfloatUE, struct __THE_1_union_test_Test_0USfloatUE);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -387,8 +387,8 @@ void __THE_1_any_float_free (struct any _n) {
   struct __THE_1_any_float *n = _n.d;
   free(n);
 }
-struct __THE_1_union_TestUSfloatUE __THE_1_union_TestUSfloatUE_alloc (int t, ...) {
-  struct __THE_1_union_TestUSfloatUE r = {t};
+struct __THE_1_union_test_Test_0USfloatUE __THE_1_union_test_Test_0USfloatUE_alloc (int t, ...) {
+  struct __THE_1_union_test_Test_0USfloatUE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_test_Test_0) r.v2 = va_arg(args, struct __THE_1_test_Test_0 *);
@@ -396,11 +396,11 @@ struct __THE_1_union_TestUSfloatUE __THE_1_union_TestUSfloatUE_alloc (int t, ...
   va_end(args);
   return r;
 }
-void __THE_1_union_TestUSfloatUE_free (struct __THE_1_union_TestUSfloatUE n) {
+void __THE_1_union_test_Test_0USfloatUE_free (struct __THE_1_union_test_Test_0USfloatUE n) {
   if (n.t == TYPE_test_Test_0) __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) n.v2);
 }
-struct __THE_1_union_TestUSfloatUE __THE_1_union_TestUSfloatUE_realloc (struct __THE_1_union_TestUSfloatUE n1, struct __THE_1_union_TestUSfloatUE n2) {
-  __THE_1_union_TestUSfloatUE_free((struct __THE_1_union_TestUSfloatUE) n1);
+struct __THE_1_union_test_Test_0USfloatUE __THE_1_union_test_Test_0USfloatUE_realloc (struct __THE_1_union_test_Test_0USfloatUE n1, struct __THE_1_union_test_Test_0USfloatUE n2) {
+  __THE_1_union_test_Test_0USfloatUE_free((struct __THE_1_union_test_Test_0USfloatUE) n1);
   return n2;
 }
 
@@ -417,13 +417,13 @@ int main () {
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
-  const struct __THE_1_union_TestUSfloatUE __THE_0_c_0 = __THE_1_union_TestUSfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0));
+  const struct __THE_1_union_test_Test_0USfloatUE __THE_0_c_0 = __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0));
   if (__THE_0_c_0.t == TYPE_test_Test_0) {
     print(stdout, "sz", cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_c_0.v2))), THE_EOL);
   } else {
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_c_0.v3)), THE_EOL);
   }
-  const struct __THE_1_union_TestUSfloatUE __THE_0_d_0 = __THE_1_union_TestUSfloatUE_alloc(TYPE_float, 3.14);
+  const struct __THE_1_union_test_Test_0USfloatUE __THE_0_d_0 = __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_float, 3.14);
   if (__THE_0_d_0.t == TYPE_test_Test_0) {
     print(stdout, "sz", cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_d_0.v2))), THE_EOL);
   } else {
@@ -441,14 +441,14 @@ int main () {
   } else {
     print(stdout, "zz", "any", THE_EOL);
   }
-  struct __THE_1_union_TestUSfloatUE __THE_0_g_0 = __THE_1_union_TestUSfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0));
-  if ((__THE_0_g_0 = __THE_1_union_TestUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_TestUSfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0)))).t == TYPE_test_Test_0) {
+  struct __THE_1_union_test_Test_0USfloatUE __THE_0_g_0 = __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0));
+  if ((__THE_0_g_0 = __THE_1_union_test_Test_0USfloatUE_realloc(__THE_0_g_0, __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0)))).t == TYPE_test_Test_0) {
     print(stdout, "sz", cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_g_0.v2))), THE_EOL);
   } else {
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
   }
-  struct __THE_1_union_TestUSfloatUE __THE_0_h_0 = __THE_1_union_TestUSfloatUE_alloc(TYPE_float, 3.14);
-  if ((__THE_0_h_0 = __THE_1_union_TestUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_TestUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_test_Test_0) {
+  struct __THE_1_union_test_Test_0USfloatUE __THE_0_h_0 = __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_float, 3.14);
+  if ((__THE_0_h_0 = __THE_1_union_test_Test_0USfloatUE_realloc(__THE_0_h_0, __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_test_Test_0) {
     print(stdout, "sz", cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_h_0.v2))), THE_EOL);
   } else {
     print(stdout, "sz", cstr_concat_str("float ", float_str(__THE_0_h_0.v3)), THE_EOL);
@@ -459,14 +459,14 @@ int main () {
   print(stdout, "sz", (__THE_0_d_0.t == TYPE_test_Test_0) ? cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_d_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_d_0.v3)), THE_EOL);
   print(stdout, "sz", ((__THE_0_e_0 = any_realloc(__THE_0_e_0, __THE_1_any_test_Test_0_alloc(__THE_1_test_Test_0_alloc(0)))).t == TYPE_test_Test_0) ? cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(((struct __THE_1_any_test_Test_0 *) __THE_0_e_0.d)->d))) : str_alloc("any"), THE_EOL);
   print(stdout, "sz", ((__THE_0_f_0 = any_realloc(__THE_0_f_0, __THE_1_any_float_alloc(3.14))).t == TYPE_test_Test_0) ? cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(((struct __THE_1_any_test_Test_0 *) __THE_0_f_0.d)->d))) : str_alloc("any"), THE_EOL);
-  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_TestUSfloatUE_realloc(__THE_0_g_0, __THE_1_union_TestUSfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0)))).t == TYPE_test_Test_0) ? cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_g_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
-  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_TestUSfloatUE_realloc(__THE_0_h_0, __THE_1_union_TestUSfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_test_Test_0) ? cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_h_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_h_0.v3)), THE_EOL);
-  __THE_1_union_TestUSfloatUE_free((struct __THE_1_union_TestUSfloatUE) __THE_0_h_0);
-  __THE_1_union_TestUSfloatUE_free((struct __THE_1_union_TestUSfloatUE) __THE_0_g_0);
+  print(stdout, "sz", ((__THE_0_g_0 = __THE_1_union_test_Test_0USfloatUE_realloc(__THE_0_g_0, __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_test_Test_0, __THE_1_test_Test_0_alloc(0)))).t == TYPE_test_Test_0) ? cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_g_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_g_0.v3)), THE_EOL);
+  print(stdout, "sz", ((__THE_0_h_0 = __THE_1_union_test_Test_0USfloatUE_realloc(__THE_0_h_0, __THE_1_union_test_Test_0USfloatUE_alloc(TYPE_float, 3.14))).t == TYPE_test_Test_0) ? cstr_concat_str("Test ", __THE_1_test_Test_0_str(__THE_1_test_Test_0_copy(__THE_0_h_0.v2))) : cstr_concat_str("float ", float_str(__THE_0_h_0.v3)), THE_EOL);
+  __THE_1_union_test_Test_0USfloatUE_free((struct __THE_1_union_test_Test_0USfloatUE) __THE_0_h_0);
+  __THE_1_union_test_Test_0USfloatUE_free((struct __THE_1_union_test_Test_0USfloatUE) __THE_0_g_0);
   any_free((struct any) __THE_0_f_0);
   any_free((struct any) __THE_0_e_0);
-  __THE_1_union_TestUSfloatUE_free((struct __THE_1_union_TestUSfloatUE) __THE_0_d_0);
-  __THE_1_union_TestUSfloatUE_free((struct __THE_1_union_TestUSfloatUE) __THE_0_c_0);
+  __THE_1_union_test_Test_0USfloatUE_free((struct __THE_1_union_test_Test_0USfloatUE) __THE_0_d_0);
+  __THE_1_union_test_Test_0USfloatUE_free((struct __THE_1_union_test_Test_0USfloatUE) __THE_0_c_0);
   any_free((struct any) __THE_0_b_0);
   any_free((struct any) __THE_0_a_0);
 }

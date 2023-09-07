@@ -138,18 +138,18 @@ struct __THE_1_test_Counter_0;
 struct __THE_1_fn_sFRvoidFE;
 struct __THE_1_fn_sFSCounterFRintFE;
 struct __THE_1_fn_sFSCounterFRintFEP;
-struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE;
-struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP;
+struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE;
+struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP;
 struct __THE_1_test_CounterSDdecrease_0X;
 struct __THE_1_test_CounterSDincrease_0X;
-struct __THE_1_fn_sFSref_CounterFRvoidFE;
-struct __THE_1_fn_sFSref_CounterFRvoidFEP;
+struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE;
+struct __THE_1_fn_sFSref_test_Counter_0FRvoidFEP;
 struct __THE_1_test_CounterSDridiculousStuff_0X;
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0;
-struct __THE_1_fn_sFSref_Counter2FRvoidFE;
-struct __THE_1_fn_sFSref_Counter2FRvoidFEP;
-struct __THE_1_fn_sFSref_Counter2FRintFE;
-struct __THE_1_fn_sFSref_Counter2FRintFEP;
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE;
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP;
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE;
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP;
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X;
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X;
 
@@ -182,12 +182,12 @@ struct __THE_1_fn_sFSCounterFRintFE {
 struct __THE_1_fn_sFSCounterFRintFEP {
   const struct __THE_1_test_Counter_0 *self;
 };
-struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE {
+struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE {
   struct __THE_1_test_Counter_0 **(*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP {
+struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP {
   struct __THE_1_test_Counter_0 **self;
   unsigned char o0;
   int32_t n0;
@@ -198,12 +198,12 @@ struct __THE_1_test_CounterSDdecrease_0X {
 struct __THE_1_test_CounterSDincrease_0X {
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_add_0;
 };
-struct __THE_1_fn_sFSref_CounterFRvoidFE {
+struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn_sFSref_CounterFRvoidFEP {
+struct __THE_1_fn_sFSref_test_Counter_0FRvoidFEP {
   struct __THE_1_test_Counter_0 **self;
 };
 struct __THE_1_test_CounterSDridiculousStuff_0X {
@@ -214,31 +214,31 @@ struct __THE_1_test_CounterSDridiculousStuff_0X {
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 {
   int32_t __THE_0__i;
 };
-struct __THE_1_fn_sFSref_Counter2FRvoidFE {
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn_sFSref_Counter2FRvoidFEP {
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP {
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 **self;
 };
-struct __THE_1_fn_sFSref_Counter2FRintFE {
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE {
   int32_t (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn_sFSref_Counter2FRintFEP {
+struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP {
   const struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 **self;
 };
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X {
   struct __THE_1_test_Counter_0 ***__THE_0_self2_0;
-  const struct __THE_1_fn_sFSref_Counter2FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
   const struct __THE_1_fn_sFSCounterFRintFE *__THE_0_test_CounterSDget_0;
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_sub_0;
 };
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X {
   struct __THE_1_test_Counter_0 ***__THE_0_self2_0;
-  const struct __THE_1_fn_sFSref_Counter2FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_add_0;
   const struct __THE_1_fn_sFSCounterFRintFE *__THE_0_test_CounterSDget_0;
 };
@@ -259,22 +259,22 @@ void __THE_1_test_Counter_0_free (struct __THE_1_test_Counter_0 *);
 int32_t __THE_1_test_add_0 (void *, void *);
 void __THE_1_test_StaticTestSDstaticMethod_0 (void *);
 int32_t __THE_1_test_CounterSDget_0 (void *, void *);
-void __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE_free (struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE);
+void __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE_free (struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE);
 struct __THE_1_test_Counter_0 **__THE_1_test_CounterSDdecrease_0 (void *, void *);
-void __THE_1_test_CounterSDdecrease_0_alloc (struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE *, struct __THE_1_test_CounterSDdecrease_0X);
+void __THE_1_test_CounterSDdecrease_0_alloc (struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE *, struct __THE_1_test_CounterSDdecrease_0X);
 struct __THE_1_test_Counter_0 **__THE_1_test_CounterSDincrease_0 (void *, void *);
-void __THE_1_test_CounterSDincrease_0_alloc (struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE *, struct __THE_1_test_CounterSDincrease_0X);
-void __THE_1_fn_sFSref_CounterFRvoidFE_free (struct __THE_1_fn_sFSref_CounterFRvoidFE);
+void __THE_1_test_CounterSDincrease_0_alloc (struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE *, struct __THE_1_test_CounterSDincrease_0X);
+void __THE_1_fn_sFSref_test_Counter_0FRvoidFE_free (struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE);
 void __THE_1_test_CounterSDridiculousStuff_0 (void *, void *);
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 *__THE_1_test_CounterSDridiculousStuffSDCounter2_0_alloc (int32_t);
 void __THE_1_test_CounterSDridiculousStuffSDCounter2_0_free (struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 *);
-void __THE_1_fn_sFSref_Counter2FRvoidFE_free (struct __THE_1_fn_sFSref_Counter2FRvoidFE);
+void __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE_free (struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE);
 void __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0 (void *, void *);
-void __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn_sFSref_Counter2FRvoidFE *, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X);
+void __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE *, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X);
 void __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0 (void *, void *);
-void __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn_sFSref_Counter2FRvoidFE *, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X);
+void __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE *, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X);
 int32_t __THE_1_test_CounterSDridiculousStuffSDCounter2SDget_0 (void *, void *);
-void __THE_1_test_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn_sFSref_CounterFRvoidFE *, struct __THE_1_test_CounterSDridiculousStuff_0X);
+void __THE_1_test_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE *, struct __THE_1_test_CounterSDridiculousStuff_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -468,12 +468,12 @@ int32_t __THE_1_test_CounterSDget_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
-void __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE_free (struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE n) {
+void __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE_free (struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE n) {
   if (n.x != NULL) free(n.x);
 }
 struct __THE_1_test_Counter_0 **__THE_1_test_CounterSDdecrease_0 (void *px, void *pp) {
   struct __THE_1_test_Counter_0 **v;
-  struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP *p = pp;
+  struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP *p = pp;
   struct __THE_1_test_CounterSDdecrease_0X *x = px;
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_sub_0 = x->__THE_0_test_sub_0;
   struct __THE_1_test_Counter_0 **__THE_0_self_0 = p->self;
@@ -483,7 +483,7 @@ struct __THE_1_test_Counter_0 **__THE_1_test_CounterSDdecrease_0 (void *px, void
   free(pp);
   return v;
 }
-void __THE_1_test_CounterSDdecrease_0_alloc (struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE *n, struct __THE_1_test_CounterSDdecrease_0X x) {
+void __THE_1_test_CounterSDdecrease_0_alloc (struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE *n, struct __THE_1_test_CounterSDdecrease_0X x) {
   size_t l = sizeof(struct __THE_1_test_CounterSDdecrease_0X);
   struct __THE_1_test_CounterSDdecrease_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -493,7 +493,7 @@ void __THE_1_test_CounterSDdecrease_0_alloc (struct __THE_1_fn_sFSref_CounterFP1
 }
 struct __THE_1_test_Counter_0 **__THE_1_test_CounterSDincrease_0 (void *px, void *pp) {
   struct __THE_1_test_Counter_0 **v;
-  struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP *p = pp;
+  struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP *p = pp;
   struct __THE_1_test_CounterSDincrease_0X *x = px;
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_add_0 = x->__THE_0_test_add_0;
   struct __THE_1_test_Counter_0 **__THE_0_self_0 = p->self;
@@ -503,7 +503,7 @@ struct __THE_1_test_Counter_0 **__THE_1_test_CounterSDincrease_0 (void *px, void
   free(pp);
   return v;
 }
-void __THE_1_test_CounterSDincrease_0_alloc (struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE *n, struct __THE_1_test_CounterSDincrease_0X x) {
+void __THE_1_test_CounterSDincrease_0_alloc (struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE *n, struct __THE_1_test_CounterSDincrease_0X x) {
   size_t l = sizeof(struct __THE_1_test_CounterSDincrease_0X);
   struct __THE_1_test_CounterSDincrease_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -511,11 +511,11 @@ void __THE_1_test_CounterSDincrease_0_alloc (struct __THE_1_fn_sFSref_CounterFP1
   n->x = r;
   n->l = l;
 }
-void __THE_1_fn_sFSref_CounterFRvoidFE_free (struct __THE_1_fn_sFSref_CounterFRvoidFE n) {
+void __THE_1_fn_sFSref_test_Counter_0FRvoidFE_free (struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_test_CounterSDridiculousStuff_0 (void *px, void *pp) {
-  struct __THE_1_fn_sFSref_CounterFRvoidFEP *p = pp;
+  struct __THE_1_fn_sFSref_test_Counter_0FRvoidFEP *p = pp;
   struct __THE_1_test_CounterSDridiculousStuff_0X *x = px;
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_add_0 = x->__THE_0_test_add_0;
   const struct __THE_1_fn_sFSCounterFRintFE *__THE_0_test_CounterSDget_0 = x->__THE_0_test_CounterSDget_0;
@@ -523,22 +523,22 @@ void __THE_1_test_CounterSDridiculousStuff_0 (void *px, void *pp) {
   struct __THE_1_test_Counter_0 **__THE_0_self_0 = p->self;
   struct __THE_1_test_Counter_0 **__THE_0_self2_0 = __THE_0_self_0;
   print(stdout, "zziz", "For testing:", " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self2_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  const struct __THE_1_fn_sFSref_Counter2FRvoidFE __THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0;
-  const struct __THE_1_fn_sFSref_Counter2FRvoidFE __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0;
-  const struct __THE_1_fn_sFSref_Counter2FRintFE __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0 = (struct __THE_1_fn_sFSref_Counter2FRintFE) {&__THE_1_test_CounterSDridiculousStuffSDCounter2SDget_0, NULL, 0};
-  __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc((struct __THE_1_fn_sFSref_Counter2FRvoidFE *) &__THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0, (struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X) {&__THE_0_self2_0, &__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_test_CounterSDget_0, __THE_0_test_sub_0});
-  __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc((struct __THE_1_fn_sFSref_Counter2FRvoidFE *) &__THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0, (struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X) {&__THE_0_self2_0, &__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_test_add_0, __THE_0_test_CounterSDget_0});
+  const struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE __THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0;
+  const struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0;
+  const struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0 = (struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE) {&__THE_1_test_CounterSDridiculousStuffSDCounter2SDget_0, NULL, 0};
+  __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc((struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE *) &__THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0, (struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X) {&__THE_0_self2_0, &__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_test_CounterSDget_0, __THE_0_test_sub_0});
+  __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc((struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE *) &__THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0, (struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X) {&__THE_0_self2_0, &__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0, __THE_0_test_add_0, __THE_0_test_CounterSDget_0});
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 *__THE_0_counter_0 = __THE_1_test_CounterSDridiculousStuffSDCounter2_0_alloc(0);
-  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_Counter2FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_Counter2FRvoidFEP)));
-  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_Counter2FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_Counter2FRvoidFEP)));
-  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_Counter2FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  __THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_Counter2FRvoidFEP)));
-  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_Counter2FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
+  __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP)));
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
+  __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP)));
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
+  __THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP)));
+  print(stdout, "zziziz", "Counter2:", " ", __THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.f(__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP))), " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(*__THE_0_self_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
   __THE_1_test_CounterSDridiculousStuffSDCounter2_0_free((struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 *) __THE_0_counter_0);
-  __THE_1_fn_sFSref_Counter2FRvoidFE_free((struct __THE_1_fn_sFSref_Counter2FRvoidFE) __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0);
-  __THE_1_fn_sFSref_Counter2FRvoidFE_free((struct __THE_1_fn_sFSref_Counter2FRvoidFE) __THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0);
+  __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE_free((struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE) __THE_0_test_CounterSDridiculousStuffSDCounter2SDincrease_0);
+  __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE_free((struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE) __THE_0_test_CounterSDridiculousStuffSDCounter2SDdecrease_0);
   free(pp);
 }
 struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 *__THE_1_test_CounterSDridiculousStuffSDCounter2_0_alloc (int32_t __THE_0__i) {
@@ -550,23 +550,23 @@ struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 *__THE_1_test_CounterSD
 void __THE_1_test_CounterSDridiculousStuffSDCounter2_0_free (struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 *n) {
   free(n);
 }
-void __THE_1_fn_sFSref_Counter2FRvoidFE_free (struct __THE_1_fn_sFSref_Counter2FRvoidFE n) {
+void __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE_free (struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE n) {
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0 (void *px, void *pp) {
-  struct __THE_1_fn_sFSref_Counter2FRvoidFEP *p = pp;
+  struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP *p = pp;
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X *x = px;
   struct __THE_1_test_Counter_0 ***__THE_0_self2_0 = x->__THE_0_self2_0;
-  const struct __THE_1_fn_sFSref_Counter2FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0 = x->__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0 = x->__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
   const struct __THE_1_fn_sFSCounterFRintFE *__THE_0_test_CounterSDget_0 = x->__THE_0_test_CounterSDget_0;
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_sub_0 = x->__THE_0_test_sub_0;
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1 = p->self;
   (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_test_sub_0).f((*__THE_0_test_sub_0).x, xalloc(&(struct __THE_1_fn_sFP3intFP1intFRintFEP) {(*__THE_0_self_1)->__THE_0__i, 0, 0}, sizeof(struct __THE_1_fn_sFP3intFP1intFRintFEP)));
   print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(**__THE_0_self2_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  print(stdout, "zziz", "Current scope:", " ", (*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRintFEP) {__THE_0_self_1}, sizeof(struct __THE_1_fn_sFSref_Counter2FRintFEP))), THE_EOL);
+  print(stdout, "zziz", "Current scope:", " ", (*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP) {__THE_0_self_1}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP))), THE_EOL);
   free(pp);
 }
-void __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn_sFSref_Counter2FRvoidFE *n, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X x) {
+void __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE *n, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X x) {
   size_t l = sizeof(struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X);
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -575,19 +575,19 @@ void __THE_1_test_CounterSDridiculousStuffSDCounter2SDdecrease_0_alloc (struct _
   n->l = l;
 }
 void __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0 (void *px, void *pp) {
-  struct __THE_1_fn_sFSref_Counter2FRvoidFEP *p = pp;
+  struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFEP *p = pp;
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X *x = px;
   struct __THE_1_test_Counter_0 ***__THE_0_self2_0 = x->__THE_0_self2_0;
-  const struct __THE_1_fn_sFSref_Counter2FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0 = x->__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
+  const struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFE *__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0 = x->__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0;
   const struct __THE_1_fn_sFP3intFP1intFRintFE *__THE_0_test_add_0 = x->__THE_0_test_add_0;
   const struct __THE_1_fn_sFSCounterFRintFE *__THE_0_test_CounterSDget_0 = x->__THE_0_test_CounterSDget_0;
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1 = p->self;
   (**__THE_0_self2_0)->__THE_0__i = (*__THE_0_self_1)->__THE_0__i = (*__THE_0_test_add_0).f((*__THE_0_test_add_0).x, xalloc(&(struct __THE_1_fn_sFP3intFP1intFRintFEP) {(*__THE_0_self_1)->__THE_0__i, 0, 0}, sizeof(struct __THE_1_fn_sFP3intFP1intFRintFEP)));
   print(stdout, "zziz", "Parent scope:", " ", (*__THE_0_test_CounterSDget_0).f((*__THE_0_test_CounterSDget_0).x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(**__THE_0_self2_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  print(stdout, "zziz", "Current scope", " ", (*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).x, xalloc(&(struct __THE_1_fn_sFSref_Counter2FRintFEP) {__THE_0_self_1}, sizeof(struct __THE_1_fn_sFSref_Counter2FRintFEP))), THE_EOL);
+  print(stdout, "zziz", "Current scope", " ", (*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).f((*__THE_0_test_CounterSDridiculousStuffSDCounter2SDget_0).x, xalloc(&(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP) {__THE_0_self_1}, sizeof(struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP))), THE_EOL);
   free(pp);
 }
-void __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn_sFSref_Counter2FRvoidFE *n, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X x) {
+void __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRvoidFE *n, struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X x) {
   size_t l = sizeof(struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X);
   struct __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -598,14 +598,14 @@ void __THE_1_test_CounterSDridiculousStuffSDCounter2SDincrease_0_alloc (struct _
 int32_t __THE_1_test_CounterSDridiculousStuffSDCounter2SDget_0 (void *px, void *pp) {
   unsigned char r = 0;
   int32_t v;
-  struct __THE_1_fn_sFSref_Counter2FRintFEP *p = pp;
+  struct __THE_1_fn_sFSref_test_CounterSDridiculousStuffSDCounter2_0FRintFEP *p = pp;
   const struct __THE_1_test_CounterSDridiculousStuffSDCounter2_0 **__THE_0_self_1 = p->self;
   r = 1;
   v = (*__THE_0_self_1)->__THE_0__i;
   free(pp);
   return v;
 }
-void __THE_1_test_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn_sFSref_CounterFRvoidFE *n, struct __THE_1_test_CounterSDridiculousStuff_0X x) {
+void __THE_1_test_CounterSDridiculousStuff_0_alloc (struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE *n, struct __THE_1_test_CounterSDridiculousStuff_0X x) {
   size_t l = sizeof(struct __THE_1_test_CounterSDridiculousStuff_0X);
   struct __THE_1_test_CounterSDridiculousStuff_0X *r = alloc(l);
   memcpy(r, &x, l);
@@ -619,29 +619,29 @@ int main () {
   const struct __THE_1_fn_sFP3intFP1intFRintFE __THE_0_test_add_0 = (struct __THE_1_fn_sFP3intFP1intFRintFE) {&__THE_1_test_add_0, NULL, 0};
   const struct __THE_1_fn_sFRvoidFE __THE_0_test_StaticTestSDstaticMethod_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_test_StaticTestSDstaticMethod_0, NULL, 0};
   const struct __THE_1_fn_sFSCounterFRintFE __THE_0_test_CounterSDget_0 = (struct __THE_1_fn_sFSCounterFRintFE) {&__THE_1_test_CounterSDget_0, NULL, 0};
-  const struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE __THE_0_test_CounterSDdecrease_0;
-  const struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE __THE_0_test_CounterSDincrease_0;
-  const struct __THE_1_fn_sFSref_CounterFRvoidFE __THE_0_test_CounterSDridiculousStuff_0;
-  __THE_1_test_CounterSDdecrease_0_alloc((struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE *) &__THE_0_test_CounterSDdecrease_0, (struct __THE_1_test_CounterSDdecrease_0X) {&__THE_0_test_sub_0});
-  __THE_1_test_CounterSDincrease_0_alloc((struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE *) &__THE_0_test_CounterSDincrease_0, (struct __THE_1_test_CounterSDincrease_0X) {&__THE_0_test_add_0});
-  __THE_1_test_CounterSDridiculousStuff_0_alloc((struct __THE_1_fn_sFSref_CounterFRvoidFE *) &__THE_0_test_CounterSDridiculousStuff_0, (struct __THE_1_test_CounterSDridiculousStuff_0X) {&__THE_0_test_add_0, &__THE_0_test_CounterSDget_0, &__THE_0_test_sub_0});
+  const struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE __THE_0_test_CounterSDdecrease_0;
+  const struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE __THE_0_test_CounterSDincrease_0;
+  const struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE __THE_0_test_CounterSDridiculousStuff_0;
+  __THE_1_test_CounterSDdecrease_0_alloc((struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE *) &__THE_0_test_CounterSDdecrease_0, (struct __THE_1_test_CounterSDdecrease_0X) {&__THE_0_test_sub_0});
+  __THE_1_test_CounterSDincrease_0_alloc((struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE *) &__THE_0_test_CounterSDincrease_0, (struct __THE_1_test_CounterSDincrease_0X) {&__THE_0_test_add_0});
+  __THE_1_test_CounterSDridiculousStuff_0_alloc((struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE *) &__THE_0_test_CounterSDridiculousStuff_0, (struct __THE_1_test_CounterSDridiculousStuff_0X) {&__THE_0_test_add_0, &__THE_0_test_CounterSDget_0, &__THE_0_test_sub_0});
   const struct __THE_1_test_StaticTest_0 *__THE_0_staticTest_0 = __THE_1_test_StaticTest_0_alloc();
   __THE_0_test_StaticTestSDstaticMethod_0.f(__THE_0_test_StaticTestSDstaticMethod_0.x);
   struct __THE_1_test_Counter_0 *__THE_0_counter_0 = __THE_1_test_Counter_0_alloc(0);
   print(stdout, "zziz", "Counter:", " ", __THE_0_test_CounterSDget_0.f(__THE_0_test_CounterSDget_0.x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(__THE_0_counter_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  __THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP) {&__THE_0_counter_0, 0, 0}, sizeof(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP)));
+  __THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP) {&__THE_0_counter_0, 0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP)));
   print(stdout, "zziz", "Counter:", " ", __THE_0_test_CounterSDget_0.f(__THE_0_test_CounterSDget_0.x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(__THE_0_counter_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  __THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP) {__THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP) {__THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP) {__THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP) {&__THE_0_counter_0, 0, 0}, sizeof(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP)));
+  __THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP) {__THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP) {__THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP) {__THE_0_test_CounterSDincrease_0.f(__THE_0_test_CounterSDincrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP) {&__THE_0_counter_0, 0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP)));
   print(stdout, "zziz", "Counter:", " ", __THE_0_test_CounterSDget_0.f(__THE_0_test_CounterSDget_0.x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(__THE_0_counter_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  __THE_0_test_CounterSDdecrease_0.f(__THE_0_test_CounterSDdecrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP) {__THE_0_test_CounterSDdecrease_0.f(__THE_0_test_CounterSDdecrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP) {&__THE_0_counter_0, 0, 0}, sizeof(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFEP)));
+  __THE_0_test_CounterSDdecrease_0.f(__THE_0_test_CounterSDdecrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP) {__THE_0_test_CounterSDdecrease_0.f(__THE_0_test_CounterSDdecrease_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP) {&__THE_0_counter_0, 0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP))), 0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FEP)));
   print(stdout, "zziz", "Counter:", " ", __THE_0_test_CounterSDget_0.f(__THE_0_test_CounterSDget_0.x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(__THE_0_counter_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
-  __THE_0_test_CounterSDridiculousStuff_0.f(__THE_0_test_CounterSDridiculousStuff_0.x, xalloc(&(struct __THE_1_fn_sFSref_CounterFRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_CounterFRvoidFEP)));
+  __THE_0_test_CounterSDridiculousStuff_0.f(__THE_0_test_CounterSDridiculousStuff_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Counter_0FRvoidFEP) {&__THE_0_counter_0}, sizeof(struct __THE_1_fn_sFSref_test_Counter_0FRvoidFEP)));
   print(stdout, "zziz", "Counter Again:", " ", __THE_0_test_CounterSDget_0.f(__THE_0_test_CounterSDget_0.x, xalloc(&(struct __THE_1_fn_sFSCounterFRintFEP) {__THE_1_test_Counter_0_copy(__THE_0_counter_0)}, sizeof(struct __THE_1_fn_sFSCounterFRintFEP))), THE_EOL);
   __THE_1_test_Counter_0_free((struct __THE_1_test_Counter_0 *) __THE_0_counter_0);
   __THE_1_test_StaticTest_0_free((struct __THE_1_test_StaticTest_0 *) __THE_0_staticTest_0);
-  __THE_1_fn_sFSref_CounterFRvoidFE_free((struct __THE_1_fn_sFSref_CounterFRvoidFE) __THE_0_test_CounterSDridiculousStuff_0);
-  __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE_free((struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE) __THE_0_test_CounterSDincrease_0);
-  __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE_free((struct __THE_1_fn_sFSref_CounterFP1intFRref_CounterFE) __THE_0_test_CounterSDdecrease_0);
+  __THE_1_fn_sFSref_test_Counter_0FRvoidFE_free((struct __THE_1_fn_sFSref_test_Counter_0FRvoidFE) __THE_0_test_CounterSDridiculousStuff_0);
+  __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE_free((struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE) __THE_0_test_CounterSDincrease_0);
+  __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE_free((struct __THE_1_fn_sFSref_test_Counter_0FP1intFRref_test_Counter_0FE) __THE_0_test_CounterSDdecrease_0);
 }
 ======= flags =======
 ======= stdout =======

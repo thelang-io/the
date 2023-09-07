@@ -28,6 +28,7 @@ class VarMap {
   bool has (const std::string &) const;
   void init (TypeMap &);
   std::shared_ptr<Var> insert (const std::shared_ptr<Var> &);
+  std::vector<std::shared_ptr<Var>> methods () const;
   std::string name (const std::string &) const;
   void restore ();
   void save ();

@@ -61,15 +61,15 @@ struct str {
   size_t l;
 };
 
-struct __THE_1_pair_strMSTestME;
-struct __THE_1_map_strMSTestME;
+struct __THE_1_pair_strMStest_Test_0ME;
+struct __THE_1_map_strMStest_Test_0ME;
 
-struct __THE_1_pair_strMSTestME {
+struct __THE_1_pair_strMStest_Test_0ME {
   struct str f;
   enum __THE_1_test_Test_0 s;
 };
-struct __THE_1_map_strMSTestME {
-  struct __THE_1_pair_strMSTestME *d;
+struct __THE_1_map_strMStest_Test_0ME {
+  struct __THE_1_pair_strMStest_Test_0ME *d;
   size_t c;
   size_t l;
 };
@@ -80,8 +80,8 @@ void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
 struct str str_alloc (const char *);
 void str_free (struct str);
-struct __THE_1_map_strMSTestME __THE_1_map_strMSTestME_alloc (int, ...);
-void __THE_1_map_strMSTestME_free (struct __THE_1_map_strMSTestME);
+struct __THE_1_map_strMStest_Test_0ME __THE_1_map_strMStest_Test_0ME_alloc (int, ...);
+void __THE_1_map_strMStest_Test_0ME_free (struct __THE_1_map_strMStest_Test_0ME);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -110,15 +110,15 @@ struct str str_alloc (const char *r) {
 void str_free (struct str s) {
   free(s.d);
 }
-struct __THE_1_map_strMSTestME __THE_1_map_strMSTestME_alloc (int x, ...) {
-  struct __THE_1_pair_strMSTestME *d = alloc(x * sizeof(struct __THE_1_pair_strMSTestME));
+struct __THE_1_map_strMStest_Test_0ME __THE_1_map_strMStest_Test_0ME_alloc (int x, ...) {
+  struct __THE_1_pair_strMStest_Test_0ME *d = alloc(x * sizeof(struct __THE_1_pair_strMStest_Test_0ME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSTestME) {va_arg(args, struct str), va_arg(args, enum __THE_1_test_Test_0)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMStest_Test_0ME) {va_arg(args, struct str), va_arg(args, enum __THE_1_test_Test_0)};
   va_end(args);
-  return (struct __THE_1_map_strMSTestME) {d, x, x};
+  return (struct __THE_1_map_strMStest_Test_0ME) {d, x, x};
 }
-void __THE_1_map_strMSTestME_free (struct __THE_1_map_strMSTestME n) {
+void __THE_1_map_strMStest_Test_0ME_free (struct __THE_1_map_strMStest_Test_0ME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
   }
@@ -126,7 +126,7 @@ void __THE_1_map_strMSTestME_free (struct __THE_1_map_strMSTestME n) {
 }
 
 int main () {
-  __THE_1_map_strMSTestME_free((struct __THE_1_map_strMSTestME) __THE_1_map_strMSTestME_alloc(3, str_alloc("key1"), __THE_0_test_TestSDRed_0, str_alloc("key2"), __THE_0_test_TestSDGreen_0, str_alloc("key3"), __THE_0_test_TestSDBlue_0));
+  __THE_1_map_strMStest_Test_0ME_free((struct __THE_1_map_strMStest_Test_0ME) __THE_1_map_strMStest_Test_0ME_alloc(3, str_alloc("key1"), __THE_0_test_TestSDRed_0, str_alloc("key2"), __THE_0_test_TestSDGreen_0, str_alloc("key3"), __THE_0_test_TestSDBlue_0));
 }
 ======= flags =======
 ======= stdout =======

@@ -277,8 +277,8 @@ TEST_F(TypeMapTest, MethodInserts) {
 
   EXPECT_NE(this->tm_.get("fn_sFRvoidFE"), nullptr);
   EXPECT_NE(this->tm_.get("fn_sFSTestFP3intFRvoidFE"), nullptr);
-  EXPECT_NE(this->tm_.get("fn_sFSref_TestFP1intFP4strFRstrFE"), nullptr);
-  EXPECT_NE(this->tm_.get("fn_sFSref_TestFRanyFE"), nullptr);
+  EXPECT_NE(this->tm_.get("fn_sFSref_test_Test_0FP1intFP4strFRstrFE"), nullptr);
+  EXPECT_NE(this->tm_.get("fn_sFSref_test_Test_0FRanyFE"), nullptr);
   EXPECT_NE(this->tm_.get("fn_aFRvoidFE"), nullptr);
   EXPECT_FALSE(type1->builtin);
   EXPECT_TRUE(std::holds_alternative<TypeFn>(type1->body));

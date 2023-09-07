@@ -31,9 +31,9 @@ enum __THE_1_test_EyeColor_0 {
   __THE_0_test_EyeColorSDGreen_0
 };
 
-struct __THE_1_union_HairColorUSEyeColorUE;
+struct __THE_1_union_test_HairColor_0UStest_EyeColor_0UE;
 
-struct __THE_1_union_HairColorUSEyeColorUE {
+struct __THE_1_union_test_HairColor_0UStest_EyeColor_0UE {
   int t;
   union {
     enum __THE_1_test_HairColor_0 v2;
@@ -41,10 +41,10 @@ struct __THE_1_union_HairColorUSEyeColorUE {
   };
 };
 
-struct __THE_1_union_HairColorUSEyeColorUE __THE_1_union_HairColorUSEyeColorUE_alloc (int, ...);
+struct __THE_1_union_test_HairColor_0UStest_EyeColor_0UE __THE_1_union_test_HairColor_0UStest_EyeColor_0UE_alloc (int, ...);
 
-struct __THE_1_union_HairColorUSEyeColorUE __THE_1_union_HairColorUSEyeColorUE_alloc (int t, ...) {
-  struct __THE_1_union_HairColorUSEyeColorUE r = {t};
+struct __THE_1_union_test_HairColor_0UStest_EyeColor_0UE __THE_1_union_test_HairColor_0UStest_EyeColor_0UE_alloc (int t, ...) {
+  struct __THE_1_union_test_HairColor_0UStest_EyeColor_0UE r = {t};
   va_list args;
   va_start(args, t);
   if (t == TYPE_test_HairColor_0) r.v2 = va_arg(args, enum __THE_1_test_HairColor_0);
@@ -54,8 +54,8 @@ struct __THE_1_union_HairColorUSEyeColorUE __THE_1_union_HairColorUSEyeColorUE_a
 }
 
 int main () {
-  const struct __THE_1_union_HairColorUSEyeColorUE __THE_0_g1_0 = __THE_1_union_HairColorUSEyeColorUE_alloc(TYPE_test_HairColor_0, __THE_0_test_HairColorSDBlack_0);
-  const struct __THE_1_union_HairColorUSEyeColorUE __THE_0_g2_0 = __THE_1_union_HairColorUSEyeColorUE_alloc(TYPE_test_EyeColor_0, __THE_0_test_EyeColorSDBlue_0);
+  const struct __THE_1_union_test_HairColor_0UStest_EyeColor_0UE __THE_0_g1_0 = __THE_1_union_test_HairColor_0UStest_EyeColor_0UE_alloc(TYPE_test_HairColor_0, __THE_0_test_HairColorSDBlack_0);
+  const struct __THE_1_union_test_HairColor_0UStest_EyeColor_0UE __THE_0_g2_0 = __THE_1_union_test_HairColor_0UStest_EyeColor_0UE_alloc(TYPE_test_EyeColor_0, __THE_0_test_EyeColorSDBlue_0);
 }
 ======= flags =======
 ======= stdout =======

@@ -20,6 +20,10 @@
 #include <utility>
 #include "codegen-api.hpp"
 
+std::string actualName (const Type *type) {
+  return type->codeName[0] == '@' ? type->name : type->codeName;
+}
+
 std::string genFnTypeBodyParamId (const TypeFnParam &param) {
   if (param.mut && param.required) return "FP5";
   else if (param.mut && param.variadic) return "FP6";
@@ -124,7 +128,7 @@ Type *TypeMap::createArr (Type *elementType) {
     return this->createArr(std::get<TypeAlias>(elementType->body).type);
   }
 
-  auto newType = Type{"array_" + elementType->name, "@array_" + elementType->name, TypeArray{elementType}};
+  auto newType = Type{"array_" + actualName(elementType), "@array_" + actualName(elementType), TypeArray{elementType}};
 
   for (const auto &it : this->_items) {
     if (
@@ -188,7 +192,7 @@ Type *TypeMap::createMap (Type *keyType, Type *valueType) {
   auto actualKeyType = Type::actual(keyType);
   auto actualValueType = Type::actual(valueType);
 
-  auto n = "map_" + actualKeyType->name + "MS" + actualValueType->name + "ME";
+  auto n = "map_" + actualName(actualKeyType) + "MS" + actualName(actualValueType) + "ME";
   auto codeName = "@map_" + actualKeyType->codeName + "MS" + actualValueType->codeName + "ME";
   auto newType = Type{n, codeName, TypeBodyMap{actualKeyType, actualValueType}};
 
@@ -244,7 +248,7 @@ Type *TypeMap::createNamespace (const std::string &n, const std::vector<TypeFiel
 }
 
 Type *TypeMap::createObj (const std::string &n, const std::vector<TypeField> &fields, bool builtin) {
-  auto newType = Type{n, this->name(n), TypeObj{}, fields, builtin};
+  auto newType = Type{n, builtin ? n : this->name(n), TypeObj{}, fields, builtin};
   this->_items.push_back(std::make_unique<Type>(newType));
   auto selfType = this->_items.back().get();
   auto refSelfType = this->createRef(selfType);
@@ -257,7 +261,7 @@ Type *TypeMap::createOpt (Type *type) {
     return this->createOpt(std::get<TypeAlias>(type->body).type);
   }
 
-  auto newType = Type{"opt_" + type->name, "@opt_" + type->name, TypeOptional{type}};
+  auto newType = Type{"opt_" + actualName(type), "@opt_" + actualName(type), TypeOptional{type}};
 
   for (const auto &it : this->_items) {
     if (
@@ -282,7 +286,7 @@ Type *TypeMap::createRef (Type *refType) {
     return this->createRef(std::get<TypeAlias>(refType->body).type);
   }
 
-  auto newType = Type{"ref_" + refType->name, "@ref_" + refType->name, TypeRef{refType}};
+  auto newType = Type{"ref_" + actualName(refType), "@ref_" + actualName(refType), TypeRef{refType}};
 
   for (const auto &it : this->_items) {
     if (
@@ -305,7 +309,7 @@ Type *TypeMap::createUnion (const std::vector<Type *> &subTypes) {
 
   for (const auto &subType : subTypes) {
     actualSubTypes.push_back(Type::actual(subType));
-    n += actualSubTypes.back()->name + "US";
+    n += actualName(actualSubTypes.back()) + "US";
     codeName += actualSubTypes.back()->codeName + "US";
   }
 

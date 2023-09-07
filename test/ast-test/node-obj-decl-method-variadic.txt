@@ -88,7 +88,7 @@ main {
   <NodeObjDeclMethods>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Test.test1" codeName="test_TestSDtest1_0" frame="1">
+        <Var name="Test.test1" codeName="test_TestSDtest1_0" frame="0">
           <TypeMethod name="fn_sFP4array_intFRvoidFE">
             <TypeCallInfo codeName="test_TestSDtest1_0" />
             <TypeFnParams>
@@ -161,7 +161,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Test.test2" codeName="test_TestSDtest2_0" frame="1">
+        <Var name="Test.test2" codeName="test_TestSDtest2_0" frame="0">
           <TypeMethod name="fn_sFP3intFP4array_intFRvoidFE">
             <TypeCallInfo codeName="test_TestSDtest2_0" />
             <TypeFnParams>
@@ -258,7 +258,7 @@ main {
     </NodeObjDeclMethod>
     <NodeObjDeclMethod>
       <NodeObjDeclMethodType>
-        <Var name="Test.test3" codeName="test_TestSDtest3_0" frame="1">
+        <Var name="Test.test3" codeName="test_TestSDtest3_0" frame="0">
           <TypeMethod name="fn_sFP3intFP4array_intFP1intFRvoidFE">
             <TypeCallInfo codeName="test_TestSDtest3_0" />
             <TypeFnParams>

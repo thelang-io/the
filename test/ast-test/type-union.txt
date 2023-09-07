@@ -82,7 +82,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="aa" codeName="aa_0" frame="2">
-        <TypeUnion name="union_Test1USTest2USunion_strUSintUEUE">
+        <TypeUnion name="union_test_Test1_0UStest_Test2_0USunion_strUSintUEUE">
           <TypeObj codeName="test_Test1_0" name="Test1">
             <TypeField name="a">
               <BuiltinType name="int" />

@@ -756,7 +756,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="v08" codeName="v08_0" mut frame="2">
-        <TypeArray name="array_Test">
+        <TypeArray name="array_test_Test_0">
           <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <BuiltinType name="int" />
@@ -775,13 +775,13 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <BuiltinType name="array_Test.push" />
+              <BuiltinType name="array_test_Test_0.push" />
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="push">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeArray name="array_Test">
+                    <TypeArray name="array_test_Test_0">
                       <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <BuiltinType name="int" />
@@ -792,7 +792,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="v08" codeName="v08_0" mut frame="2">
-                        <TypeArray name="array_Test">
+                        <TypeArray name="array_test_Test_0">
                           <TypeObj codeName="test_Test_0" name="Test">
                             <TypeField name="a">
                               <BuiltinType name="int" />
@@ -846,13 +846,13 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <BuiltinType name="array_Test.push" />
+              <BuiltinType name="array_test_Test_0.push" />
             </NodeExprType>
             <NodeExprBody>
               <ExprAccess prop="push">
                 <NodeExpr>
                   <NodeExprType>
-                    <TypeArray name="array_Test">
+                    <TypeArray name="array_test_Test_0">
                       <TypeObj codeName="test_Test_0" name="Test">
                         <TypeField name="a">
                           <BuiltinType name="int" />
@@ -863,7 +863,7 @@ main {
                   <NodeExprBody>
                     <ExprAccess>
                       <Var name="v08" codeName="v08_0" mut frame="2">
-                        <TypeArray name="array_Test">
+                        <TypeArray name="array_test_Test_0">
                           <TypeObj codeName="test_Test_0" name="Test">
                             <TypeField name="a">
                               <BuiltinType name="int" />

@@ -639,15 +639,10 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
 
       auto importNodes = importItem->nodes;
       auto importNodesExports = ASTChecker(importItem->nodes).getNodeOfType<ASTNodeExportDecl>(false);
-      auto importNodesObjects = ASTChecker(importItem->nodes).getNodeOfType<ASTNodeObjDecl>(false);
 
-      for (const auto &importNodesObject : importNodesObjects) {
-        auto nodeObjDecl = std::get<ASTNodeObjDecl>(*importNodesObject.body);
-
-        for (const auto &method : nodeObjDecl.methods) {
-          this->typeMap.insert(method.var->type);
-          this->varMap.insert(method.var);
-        }
+      for (const auto &item : importItem->ast->varMap.methods()) {
+        this->typeMap.insert(item->type);
+        this->varMap.insert(item);
       }
 
       if (!stmtImportDecl.specifiers.empty()) {
@@ -661,8 +656,15 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
               auto exportName = AST::getExportName(node);
               auto exportCodeName = AST::getExportCodeName(node);
               auto exportType = AST::getExportType(node);
+              auto exportVar = AST::getExportVar(node);
 
-              namespaceFields.push_back(TypeField{exportName, exportType, false, false, TypeCallInfo{exportCodeName}});
+              namespaceFields.push_back(TypeField{
+                exportName,
+                exportType,
+                exportVar != nullptr && exportVar->mut,
+                false,
+                TypeCallInfo{exportCodeName}
+              });
 
               if (!exportType->isEnum()) {
                 this->varMap.add(specifierLocal + "." + exportName, exportCodeName, exportType);
@@ -686,7 +688,7 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto exportType = AST::getExportType(*specifierExport);
 
             if (exportVar != nullptr) {
-              this->varMap.add(specifierLocal, exportVar->codeName, exportVar->type);
+              this->varMap.add(specifierLocal, exportVar->codeName, exportVar->type, exportVar->mut);
             } else if (specifierImported != specifierLocal) {
               this->typeMap.createAlias(specifierLocal, exportType);
             } else {
@@ -782,7 +784,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
             auto methodDeclAliasType = this->typeMap.createAlias(methodDeclName, methodDeclType);
 
             this->varMap.restore();
-            this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
+            auto methodVar = this->varMap.add(type->name + "." + methodDeclName, methodDeclAliasType->codeName, methodDeclType);
+            methodVar->frame = 0;
             type->fields.push_back(TypeField{methodDeclName, methodDeclType, false});
           } else if (std::holds_alternative<ParserStmtVarDecl>(*member.body)) {
             auto stmtVarDecl = std::get<ParserStmtVarDecl>(*member.body);

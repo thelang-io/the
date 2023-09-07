@@ -124,6 +124,18 @@ std::shared_ptr<Var> VarMap::insert (const std::shared_ptr<Var> &var) {
   return this->_items.back();
 }
 
+std::vector<std::shared_ptr<Var>> VarMap::methods () const {
+  auto result = std::vector<std::shared_ptr<Var>>{};
+
+  for (const auto &it : this->_items) {
+    if (it->type->isMethod()) {
+      result.push_back(it);
+    }
+  }
+
+  return result;
+}
+
 std::string VarMap::name (const std::string &name) const {
   auto fullName = name + "_";
 

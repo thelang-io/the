@@ -70,22 +70,18 @@ const std::vector<std::string> codegenFs = {
   R"(})" EOL,
 
   R"(void fs_chownSync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} s, _{int32_t} u, _{int32_t} g) {)" EOL
-  R"(  #ifdef _{THE_OS_WINDOWS})" EOL
-  R"(    _{str_free}(s);)" EOL
-  R"(    return;)" EOL
+  R"(  #ifndef _{THE_OS_WINDOWS})" EOL
+  R"(    char *c = _{str_cstr}(s);)" EOL
+  R"(    if (_{chown}(c, u, g) != 0) {)" EOL
+  R"(      const char *fmt = "failed to change owner to %" _{PRId32} " and group to %" _{PRId32} " for file `%s`";)" EOL
+  R"(      _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, u, g, c);)" EOL
+  R"(      char *d = _{alloc}(z + 1);)" EOL
+  R"(      _{sprintf}(d, fmt, u, g, c);)" EOL
+  R"(      _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
+  R"(    })" EOL
+  R"(    _{free}(c);)" EOL
   R"(  #endif)" EOL
-  R"(  char *c = _{str_cstr}(s);)" EOL
-  R"(  if (_{chown}(c, u, g) != 0) {)" EOL
-  R"(    const char *fmt = "failed to change owner to %" _{PRId32} " and group to %" _{PRId32} " for file `%s`";)" EOL
-  R"(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, u, g, c);)" EOL
-  R"(    char *d = _{alloc}(z + 1);)" EOL
-  R"(    _{sprintf}(d, fmt, u, g, c);)" EOL
-  R"(    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{struct str}) {d, z}, (_{struct str}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);)" EOL
-  R"(    goto fs_chownSync_cleanup;)" EOL
-  R"(  })" EOL
-  R"(fs_chownSync_cleanup:)" EOL
   R"(  _{str_free}(s);)" EOL
-  R"(  _{free}(c);)" EOL
   R"(  if (fn_err_state->id != -1) _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);)" EOL
   R"(})" EOL,
 

@@ -146,7 +146,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeArray name="array_TestObj">
+      <TypeArray name="array_test_TestObj_0">
         <TypeObj codeName="test_TestObj_0" name="TestObj">
           <TypeField name="a">
             <BuiltinType name="int" />

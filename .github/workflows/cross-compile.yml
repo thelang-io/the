@@ -13,16 +13,25 @@ concurrency:
 
 jobs:
   cross-compile:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
       matrix:
         config:
-          - platform: macos
-          - platform: linux
-          - platform: windows
+          - os: ubuntu-20.04
+            platform: macos
+          - os: ubuntu-22.04
+            platform: macos
+          - os: ubuntu-20.04
+            platform: linux
+          - os: ubuntu-22.04
+            platform: linux
+          - os: ubuntu-20.04
+            platform: windows
+          - os: ubuntu-22.04
+            platform: windows
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: thelang-io/setup-the@v1
       - run: sudo apt-get update
       - run: sudo apt-get install mingw-w64 ninja-build

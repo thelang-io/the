@@ -92,15 +92,15 @@ typedef struct {
   void (*_free) (void *);
 } err_state_t;
 
-struct __THE_1_fn_sFP5ref_TestFRTestFE;
-struct __THE_1_fn_sFP5ref_TestFRTestFEP;
+struct __THE_1_fn_sFP5ref_test_Test_0FRTestFE;
+struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP;
 
-struct __THE_1_fn_sFP5ref_TestFRTestFE {
+struct __THE_1_fn_sFP5ref_test_Test_0FRTestFE {
   enum __THE_1_test_Test_0 (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn_sFP5ref_TestFRTestFEP {
+struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP {
   enum __THE_1_test_Test_0 *n0;
 };
 
@@ -130,7 +130,7 @@ void *xalloc (void *n1, size_t n2) {
   return r;
 }
 enum __THE_1_test_Test_0 __THE_1_test_inc_0 (void *px, void *pp) {
-  struct __THE_1_fn_sFP5ref_TestFRTestFEP *p = pp;
+  struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP *p = pp;
   enum __THE_1_test_Test_0 *__THE_0_test_0 = p->n0;
   if (*__THE_0_test_0 == __THE_0_test_TestSDRed_0) {
     *__THE_0_test_0 = __THE_0_test_TestSDGreen_0;
@@ -143,27 +143,27 @@ enum __THE_1_test_Test_0 __THE_1_test_inc_0 (void *px, void *pp) {
 }
 
 int main () {
-  const struct __THE_1_fn_sFP5ref_TestFRTestFE __THE_0_test_inc_0 = (struct __THE_1_fn_sFP5ref_TestFRTestFE) {&__THE_1_test_inc_0, NULL, 0};
-  for (enum __THE_1_test_Test_0 __THE_0_i_0 = __THE_0_test_TestSDRed_0; __THE_0_i_0 != __THE_0_test_TestSDBlue_0; __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_TestFRTestFEP) {&__THE_0_i_0}, sizeof(struct __THE_1_fn_sFP5ref_TestFRTestFEP)))) {
+  const struct __THE_1_fn_sFP5ref_test_Test_0FRTestFE __THE_0_test_inc_0 = (struct __THE_1_fn_sFP5ref_test_Test_0FRTestFE) {&__THE_1_test_inc_0, NULL, 0};
+  for (enum __THE_1_test_Test_0 __THE_0_i_0 = __THE_0_test_TestSDRed_0; __THE_0_i_0 != __THE_0_test_TestSDBlue_0; __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP) {&__THE_0_i_0}, sizeof(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP)))) {
   }
   enum __THE_1_test_Test_0 __THE_0_a_0 = __THE_0_test_TestSDRed_0;
-  for (; __THE_0_a_0 != __THE_0_test_TestSDBlue_0; __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_TestFRTestFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_TestFRTestFEP)))) {
+  for (; __THE_0_a_0 != __THE_0_test_TestSDBlue_0; __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP) {&__THE_0_a_0}, sizeof(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP)))) {
   }
   enum __THE_1_test_Test_0 __THE_0_b_0 = __THE_0_test_TestSDRed_0;
   while (__THE_0_b_0 != __THE_0_test_TestSDBlue_0) {
-    __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_TestFRTestFEP) {&__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP5ref_TestFRTestFEP)));
+    __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP) {&__THE_0_b_0}, sizeof(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP)));
   }
   enum __THE_1_test_Test_0 __THE_0_c_0 = __THE_0_test_TestSDRed_0;
   while (1) {
     if (__THE_0_c_0 == __THE_0_test_TestSDBlue_0) {
       break;
     }
-    __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_TestFRTestFEP) {&__THE_0_c_0}, sizeof(struct __THE_1_fn_sFP5ref_TestFRTestFEP)));
+    __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP) {&__THE_0_c_0}, sizeof(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP)));
   }
   for (enum __THE_1_test_Test_0 __THE_0_d_0 = __THE_0_test_TestSDRed_0; __THE_0_d_0 != __THE_0_test_TestSDBlue_0;) {
-    __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_TestFRTestFEP) {&__THE_0_d_0}, sizeof(struct __THE_1_fn_sFP5ref_TestFRTestFEP)));
+    __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP) {&__THE_0_d_0}, sizeof(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP)));
   }
-  for (enum __THE_1_test_Test_0 __THE_0_e_0 = __THE_0_test_TestSDRed_0;; __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_TestFRTestFEP) {&__THE_0_e_0}, sizeof(struct __THE_1_fn_sFP5ref_TestFRTestFEP)))) {
+  for (enum __THE_1_test_Test_0 __THE_0_e_0 = __THE_0_test_TestSDRed_0;; __THE_0_test_inc_0.f(__THE_0_test_inc_0.x, xalloc(&(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP) {&__THE_0_e_0}, sizeof(struct __THE_1_fn_sFP5ref_test_Test_0FRTestFEP)))) {
     if (__THE_0_e_0 == __THE_0_test_TestSDBlue_0) {
       break;
     }

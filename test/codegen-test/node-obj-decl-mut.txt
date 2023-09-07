@@ -89,7 +89,7 @@ struct str {
 
 struct error_Error;
 struct __THE_1_test_Animal_0;
-struct __THE_1_array_Animal;
+struct __THE_1_array_test_Animal_0;
 struct __THE_1_test_Human_0;
 
 struct error_Error {
@@ -100,13 +100,13 @@ struct __THE_1_test_Animal_0 {
   const struct str __THE_0_name;
   int32_t __THE_0_age;
 };
-struct __THE_1_array_Animal {
+struct __THE_1_array_test_Animal_0 {
   struct __THE_1_test_Animal_0 **d;
   size_t l;
 };
 struct __THE_1_test_Human_0 {
   const struct str __THE_0_name;
-  struct __THE_1_array_Animal __THE_0_pets;
+  struct __THE_1_array_test_Animal_0 __THE_0_pets;
 };
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -134,13 +134,13 @@ struct __THE_1_test_Animal_0 *__THE_1_test_Animal_0_alloc (struct str, int32_t);
 struct __THE_1_test_Animal_0 *__THE_1_test_Animal_0_copy (const struct __THE_1_test_Animal_0 *);
 void __THE_1_test_Animal_0_free (struct __THE_1_test_Animal_0 *);
 struct str __THE_1_test_Animal_0_str (struct __THE_1_test_Animal_0 *);
-struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t, ...);
-struct __THE_1_test_Animal_0 **__THE_1_array_Animal_at (err_state_t *, int, int, struct __THE_1_array_Animal, int32_t);
-struct __THE_1_array_Animal __THE_1_array_Animal_copy (const struct __THE_1_array_Animal);
-void __THE_1_array_Animal_free (struct __THE_1_array_Animal);
-void __THE_1_array_Animal_push (struct __THE_1_array_Animal *, struct __THE_1_array_Animal);
-struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal);
-struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (struct str, struct __THE_1_array_Animal);
+struct __THE_1_array_test_Animal_0 __THE_1_array_test_Animal_0_alloc (size_t, ...);
+struct __THE_1_test_Animal_0 **__THE_1_array_test_Animal_0_at (err_state_t *, int, int, struct __THE_1_array_test_Animal_0, int32_t);
+struct __THE_1_array_test_Animal_0 __THE_1_array_test_Animal_0_copy (const struct __THE_1_array_test_Animal_0);
+void __THE_1_array_test_Animal_0_free (struct __THE_1_array_test_Animal_0);
+void __THE_1_array_test_Animal_0_push (struct __THE_1_array_test_Animal_0 *, struct __THE_1_array_test_Animal_0);
+struct str __THE_1_array_test_Animal_0_str (struct __THE_1_array_test_Animal_0);
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (struct str, struct __THE_1_array_test_Animal_0);
 struct __THE_1_test_Human_0 *__THE_1_test_Human_0_copy (const struct __THE_1_test_Human_0 *);
 void __THE_1_test_Human_0_free (struct __THE_1_test_Human_0 *);
 struct __THE_1_test_Human_0 *__THE_1_test_Human_0_realloc (struct __THE_1_test_Human_0 *, struct __THE_1_test_Human_0 *);
@@ -211,7 +211,6 @@ void error_stack_str (err_state_t *fn_err_state) {
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  int i = 0;
   for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
     size_t z;
     char *fmt;
@@ -234,7 +233,6 @@ void error_stack_str (err_state_t *fn_err_state) {
       sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
     }
     stack->l += z;
-    i++;
   }
 }
 struct str int_str (int32_t d) {
@@ -336,16 +334,16 @@ struct str __THE_1_test_Animal_0_str (struct __THE_1_test_Animal_0 *n) {
   __THE_1_test_Animal_0_free((struct __THE_1_test_Animal_0 *) n);
   return str_concat_cstr(r, "}");
 }
-struct __THE_1_array_Animal __THE_1_array_Animal_alloc (size_t x, ...) {
-  if (x == 0) return (struct __THE_1_array_Animal) {NULL, 0};
+struct __THE_1_array_test_Animal_0 __THE_1_array_test_Animal_0_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_test_Animal_0) {NULL, 0};
   struct __THE_1_test_Animal_0 **d = alloc(x * sizeof(struct __THE_1_test_Animal_0 *));
   va_list args;
   va_start(args, x);
   for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct __THE_1_test_Animal_0 *);
   va_end(args);
-  return (struct __THE_1_array_Animal) {d, x};
+  return (struct __THE_1_array_test_Animal_0) {d, x};
 }
-struct __THE_1_test_Animal_0 **__THE_1_array_Animal_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_Animal n, int32_t i) {
+struct __THE_1_test_Animal_0 **__THE_1_array_test_Animal_0_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_test_Animal_0 n, int32_t i) {
   if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
     const char *fmt = "index %" PRId32 " out of array bounds";
     size_t z = snprintf(NULL, 0, fmt, i);
@@ -356,17 +354,17 @@ struct __THE_1_test_Animal_0 **__THE_1_array_Animal_at (err_state_t *fn_err_stat
   }
   return i < 0 ? &n.d[n.l + i] : &n.d[i];
 }
-struct __THE_1_array_Animal __THE_1_array_Animal_copy (const struct __THE_1_array_Animal n) {
-  if (n.l == 0) return (struct __THE_1_array_Animal) {NULL, 0};
+struct __THE_1_array_test_Animal_0 __THE_1_array_test_Animal_0_copy (const struct __THE_1_array_test_Animal_0 n) {
+  if (n.l == 0) return (struct __THE_1_array_test_Animal_0) {NULL, 0};
   struct __THE_1_test_Animal_0 **d = alloc(n.l * sizeof(struct __THE_1_test_Animal_0 *));
   for (size_t i = 0; i < n.l; i++) d[i] = __THE_1_test_Animal_0_copy(n.d[i]);
-  return (struct __THE_1_array_Animal) {d, n.l};
+  return (struct __THE_1_array_test_Animal_0) {d, n.l};
 }
-void __THE_1_array_Animal_free (struct __THE_1_array_Animal n) {
+void __THE_1_array_test_Animal_0_free (struct __THE_1_array_test_Animal_0 n) {
   for (size_t i = 0; i < n.l; i++) __THE_1_test_Animal_0_free((struct __THE_1_test_Animal_0 *) n.d[i]);
   free(n.d);
 }
-void __THE_1_array_Animal_push (struct __THE_1_array_Animal *n, struct __THE_1_array_Animal m) {
+void __THE_1_array_test_Animal_0_push (struct __THE_1_array_test_Animal_0 *n, struct __THE_1_array_test_Animal_0 m) {
   if (m.l == 0) return;
   n->l += m.l;
   n->d = re_alloc(n->d, n->l * sizeof(struct __THE_1_test_Animal_0 *));
@@ -374,16 +372,16 @@ void __THE_1_array_Animal_push (struct __THE_1_array_Animal *n, struct __THE_1_a
   for (size_t i = n->l - m.l; i < n->l; i++) n->d[i] = m.d[k++];
   free(m.d);
 }
-struct str __THE_1_array_Animal_str (struct __THE_1_array_Animal n) {
+struct str __THE_1_array_test_Animal_0_str (struct __THE_1_array_test_Animal_0 n) {
   struct str r = str_alloc("[");
   for (size_t i = 0; i < n.l; i++) {
     if (i != 0) r = str_concat_cstr(r, ", ");
     r = str_concat_str(r, __THE_1_test_Animal_0_str(__THE_1_test_Animal_0_copy(n.d[i])));
   }
-  __THE_1_array_Animal_free((struct __THE_1_array_Animal) n);
+  __THE_1_array_test_Animal_0_free((struct __THE_1_array_test_Animal_0) n);
   return str_concat_cstr(r, "]");
 }
-struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (struct str __THE_0_name, struct __THE_1_array_Animal __THE_0_pets) {
+struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (struct str __THE_0_name, struct __THE_1_array_test_Animal_0 __THE_0_pets) {
   struct __THE_1_test_Human_0 *r = alloc(sizeof(struct __THE_1_test_Human_0));
   struct __THE_1_test_Human_0 s = {__THE_0_name, __THE_0_pets};
   memcpy(r, &s, sizeof(struct __THE_1_test_Human_0));
@@ -391,13 +389,13 @@ struct __THE_1_test_Human_0 *__THE_1_test_Human_0_alloc (struct str __THE_0_name
 }
 struct __THE_1_test_Human_0 *__THE_1_test_Human_0_copy (const struct __THE_1_test_Human_0 *n) {
   struct __THE_1_test_Human_0 *r = alloc(sizeof(struct __THE_1_test_Human_0));
-  struct __THE_1_test_Human_0 s = {str_copy(n->__THE_0_name), __THE_1_array_Animal_copy(n->__THE_0_pets)};
+  struct __THE_1_test_Human_0 s = {str_copy(n->__THE_0_name), __THE_1_array_test_Animal_0_copy(n->__THE_0_pets)};
   memcpy(r, &s, sizeof(struct __THE_1_test_Human_0));
   return r;
 }
 void __THE_1_test_Human_0_free (struct __THE_1_test_Human_0 *n) {
   str_free((struct str) n->__THE_0_name);
-  __THE_1_array_Animal_free((struct __THE_1_array_Animal) n->__THE_0_pets);
+  __THE_1_array_test_Animal_0_free((struct __THE_1_array_test_Animal_0) n->__THE_0_pets);
   free(n);
 }
 struct __THE_1_test_Human_0 *__THE_1_test_Human_0_realloc (struct __THE_1_test_Human_0 *n1, struct __THE_1_test_Human_0 *n2) {
@@ -410,23 +408,23 @@ struct str __THE_1_test_Human_0_str (struct __THE_1_test_Human_0 *n) {
   r = str_concat_str(r, str_escape(n->__THE_0_name));
   r = str_concat_cstr(r, "\"");
   r = str_concat_cstr(r, ", pets: ");
-  r = str_concat_str(r, __THE_1_array_Animal_str(__THE_1_array_Animal_copy(n->__THE_0_pets)));
+  r = str_concat_str(r, __THE_1_array_test_Animal_0_str(__THE_1_array_test_Animal_0_copy(n->__THE_0_pets)));
   __THE_1_test_Human_0_free((struct __THE_1_test_Human_0 *) n);
   return str_concat_cstr(r, "}");
 }
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  struct __THE_1_test_Human_0 *__THE_0_person1_0 = __THE_1_test_Human_0_alloc(str_alloc("Peter"), __THE_1_array_Animal_alloc(0));
-  struct __THE_1_test_Human_0 *__THE_0_person2_0 = __THE_1_test_Human_0_alloc(str_alloc("Brian"), __THE_1_array_Animal_alloc(0));
+  struct __THE_1_test_Human_0 *__THE_0_person1_0 = __THE_1_test_Human_0_alloc(str_alloc("Peter"), __THE_1_array_test_Animal_0_alloc(0));
+  struct __THE_1_test_Human_0 *__THE_0_person2_0 = __THE_1_test_Human_0_alloc(str_alloc("Brian"), __THE_1_array_test_Animal_0_alloc(0));
   if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L1;
-  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, __THE_1_array_Animal_alloc(1, __THE_1_test_Animal_0_alloc(str_alloc("Cleo"), 1)));
+  __THE_1_array_test_Animal_0_push(&__THE_0_person1_0->__THE_0_pets, __THE_1_array_test_Animal_0_alloc(1, __THE_1_test_Animal_0_alloc(str_alloc("Cleo"), 1)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L1;
-  __THE_1_array_Animal_push(&__THE_0_person1_0->__THE_0_pets, __THE_1_array_Animal_alloc(1, __THE_1_test_Animal_0_alloc(str_alloc("Bella"), 1)));
+  __THE_1_array_test_Animal_0_push(&__THE_0_person1_0->__THE_0_pets, __THE_1_array_test_Animal_0_alloc(1, __THE_1_test_Animal_0_alloc(str_alloc("Bella"), 1)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L1;
-  (*__THE_1_array_Animal_at(&err_state, 25, 3, __THE_0_person1_0->__THE_0_pets, 0))->__THE_0_age++;
+  (*__THE_1_array_test_Animal_0_at(&err_state, 25, 3, __THE_0_person1_0->__THE_0_pets, 0))->__THE_0_age++;
   if (setjmp(err_state.buf_last->buf) != 0) goto L1;
-  __THE_1_array_Animal_push(&__THE_0_person2_0->__THE_0_pets, __THE_1_array_Animal_alloc(1, __THE_1_test_Animal_0_alloc(str_alloc("Luxor"), 10)));
+  __THE_1_array_test_Animal_0_push(&__THE_0_person2_0->__THE_0_pets, __THE_1_array_test_Animal_0_alloc(1, __THE_1_test_Animal_0_alloc(str_alloc("Luxor"), 10)));
   const struct __THE_1_test_Human_0 *__THE_0_person3_0 = __THE_1_test_Human_0_copy(__THE_0_person1_0);
   __THE_0_person1_0 = __THE_1_test_Human_0_realloc(__THE_0_person1_0, __THE_1_test_Human_0_copy(__THE_0_person2_0));
   __THE_0_person2_0 = __THE_1_test_Human_0_realloc(__THE_0_person2_0, __THE_1_test_Human_0_copy(__THE_0_person3_0));
