@@ -62,9 +62,9 @@ err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 
 void *alloc (size_t);
 void error_alloc (err_state_t *, size_t);
-struct __THE_1_test_Test_0 **__THE_1_opt_Test_alloc (struct __THE_1_test_Test_0 *);
-struct __THE_1_test_Test_0 **__THE_1_opt_Test_copy (const struct __THE_1_test_Test_0 **);
-void __THE_1_opt_Test_free (struct __THE_1_test_Test_0 **);
+struct __THE_1_test_Test_0 **__THE_1_opt_test_Test_0_alloc (struct __THE_1_test_Test_0 *);
+struct __THE_1_test_Test_0 **__THE_1_opt_test_Test_0_copy (const struct __THE_1_test_Test_0 **);
+void __THE_1_opt_test_Test_0_free (struct __THE_1_test_Test_0 **);
 struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (struct __THE_1_test_Test_0 **);
 struct __THE_1_test_Test_0 *__THE_1_test_Test_0_copy (const struct __THE_1_test_Test_0 *);
 void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *);
@@ -87,18 +87,18 @@ void error_alloc (err_state_t *fn_err_state, size_t n1) {
   fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
   exit(EXIT_FAILURE);
 }
-struct __THE_1_test_Test_0 **__THE_1_opt_Test_alloc (struct __THE_1_test_Test_0 *n) {
+struct __THE_1_test_Test_0 **__THE_1_opt_test_Test_0_alloc (struct __THE_1_test_Test_0 *n) {
   struct __THE_1_test_Test_0 **r = alloc(sizeof(struct __THE_1_test_Test_0 *));
   *r = n;
   return r;
 }
-struct __THE_1_test_Test_0 **__THE_1_opt_Test_copy (const struct __THE_1_test_Test_0 **n) {
+struct __THE_1_test_Test_0 **__THE_1_opt_test_Test_0_copy (const struct __THE_1_test_Test_0 **n) {
   if (n == NULL) return NULL;
   struct __THE_1_test_Test_0 **r = alloc(sizeof(struct __THE_1_test_Test_0 *));
   *r = __THE_1_test_Test_0_copy(*n);
   return r;
 }
-void __THE_1_opt_Test_free (struct __THE_1_test_Test_0 **n) {
+void __THE_1_opt_test_Test_0_free (struct __THE_1_test_Test_0 **n) {
   if (n == NULL) return;
   __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) *n);
   free(n);
@@ -111,20 +111,20 @@ struct __THE_1_test_Test_0 *__THE_1_test_Test_0_alloc (struct __THE_1_test_Test_
 }
 struct __THE_1_test_Test_0 *__THE_1_test_Test_0_copy (const struct __THE_1_test_Test_0 *n) {
   struct __THE_1_test_Test_0 *r = alloc(sizeof(struct __THE_1_test_Test_0));
-  struct __THE_1_test_Test_0 s = {__THE_1_opt_Test_copy(n->__THE_0_a)};
+  struct __THE_1_test_Test_0 s = {__THE_1_opt_test_Test_0_copy(n->__THE_0_a)};
   memcpy(r, &s, sizeof(struct __THE_1_test_Test_0));
   return r;
 }
 void __THE_1_test_Test_0_free (struct __THE_1_test_Test_0 *n) {
-  __THE_1_opt_Test_free((struct __THE_1_test_Test_0 **) n->__THE_0_a);
+  __THE_1_opt_test_Test_0_free((struct __THE_1_test_Test_0 **) n->__THE_0_a);
   free(n);
 }
 
 int main () {
   const struct __THE_1_test_Test_0 *__THE_0_test1_0 = __THE_1_test_Test_0_alloc(NULL);
-  const struct __THE_1_test_Test_0 *__THE_0_test2_0 = __THE_1_test_Test_0_alloc(__THE_1_opt_Test_alloc(__THE_1_test_Test_0_copy(__THE_0_test1_0)));
-  const struct __THE_1_test_Test_0 *__THE_0_test3_0 = __THE_1_test_Test_0_alloc(__THE_1_opt_Test_alloc(__THE_1_test_Test_0_copy(__THE_0_test2_0)));
-  const struct __THE_1_test_Test_0 *__THE_0_test4_0 = __THE_1_test_Test_0_alloc(__THE_1_opt_Test_alloc(__THE_1_test_Test_0_copy(__THE_0_test3_0)));
+  const struct __THE_1_test_Test_0 *__THE_0_test2_0 = __THE_1_test_Test_0_alloc(__THE_1_opt_test_Test_0_alloc(__THE_1_test_Test_0_copy(__THE_0_test1_0)));
+  const struct __THE_1_test_Test_0 *__THE_0_test3_0 = __THE_1_test_Test_0_alloc(__THE_1_opt_test_Test_0_alloc(__THE_1_test_Test_0_copy(__THE_0_test2_0)));
+  const struct __THE_1_test_Test_0 *__THE_0_test4_0 = __THE_1_test_Test_0_alloc(__THE_1_opt_test_Test_0_alloc(__THE_1_test_Test_0_copy(__THE_0_test3_0)));
   __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_0_test4_0);
   __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_0_test3_0);
   __THE_1_test_Test_0_free((struct __THE_1_test_Test_0 *) __THE_0_test2_0);

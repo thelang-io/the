@@ -79,8 +79,8 @@ struct __THE_1_fn_sFP3intFP3strFRstrFE;
 struct __THE_1_fn_sFP3intFP3strFRstrFEP;
 struct __THE_1_fixtures_export_obj_TestObj_0;
 struct __THE_1_fixtures_export_obj_TestObjWithMethods_0;
-struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFE;
-struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFEP;
+struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFE;
+struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFEP;
 struct __THE_1_fn_sFRvoidFE;
 struct __THE_1_test_test_0X;
 
@@ -99,12 +99,12 @@ struct __THE_1_fixtures_export_obj_TestObj_0 {
 struct __THE_1_fixtures_export_obj_TestObjWithMethods_0 {
   const int32_t __THE_0_a;
 };
-struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFE {
+struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFE {
   void (*f) (void *, void *);
   void *x;
   size_t l;
 };
-struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFEP {
+struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFEP {
   const struct __THE_1_fixtures_export_obj_TestObjWithMethods_0 **self;
 };
 struct __THE_1_fn_sFRvoidFE {
@@ -116,7 +116,7 @@ struct __THE_1_test_test_0X {
   const int32_t *__THE_0_TestMutVar_0;
   const int32_t *__THE_0_TestConstVar_0;
   const struct __THE_1_fn_sFRvoidFE *__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest2_0;
-  const struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFE *__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0;
+  const struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFE *__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0;
   const struct __THE_1_fn_sFP3intFP3strFRstrFE *__THE_0_fixtures_export_fn_TestFn_0;
 };
 
@@ -383,7 +383,7 @@ struct str __THE_1_fixtures_export_obj_TestObjWithMethods_0_str (struct __THE_1_
   return str_concat_cstr(r, "}");
 }
 void __THE_1_fixtures_export_obj_TestObjWithMethodsSDtest1_0 (void *px, void *pp) {
-  struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFEP *p = pp;
+  struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFEP *p = pp;
   const struct __THE_1_fixtures_export_obj_TestObjWithMethods_0 **__THE_0_self_0 = p->self;
   free(pp);
 }
@@ -397,13 +397,13 @@ void __THE_1_test_test_0 (void *px) {
   const int32_t *__THE_0_TestMutVar_0 = x->__THE_0_TestMutVar_0;
   const int32_t *__THE_0_TestConstVar_0 = x->__THE_0_TestConstVar_0;
   const struct __THE_1_fn_sFRvoidFE *__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest2_0 = x->__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest2_0;
-  const struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFE *__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0 = x->__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0;
+  const struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFE *__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0 = x->__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0;
   const struct __THE_1_fn_sFP3intFP3strFRstrFE *__THE_0_fixtures_export_fn_TestFn_0 = x->__THE_0_fixtures_export_fn_TestFn_0;
   const enum __THE_1_fixtures_export_enum_TestEnum_0 __THE_0_t1_0 = __THE_0_fixtures_export_enum_TestEnumSDOne_0;
   const struct __THE_1_fixtures_export_obj_TestObj_0 *__THE_0_t2_0 = __THE_1_fixtures_export_obj_TestObj_0_alloc(1);
   const struct str __THE_0_t3_0 = str_alloc("test3");
   const struct __THE_1_fixtures_export_obj_TestObjWithMethods_0 *__THE_0_t4_0 = __THE_1_fixtures_export_obj_TestObjWithMethods_0_alloc(1);
-  (*__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0).f((*__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0).x, xalloc(&(struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFEP) {&__THE_0_t4_0}, sizeof(struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFEP)));
+  (*__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0).f((*__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0).x, xalloc(&(struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFEP) {&__THE_0_t4_0}, sizeof(struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFEP)));
   (*__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest2_0).f((*__THE_0_fixtures_export_obj_TestObjWithMethodsSDtest2_0).x);
   print(stdout, "szszszsziziz", enum_str(__THE_0_t1_0), " ", __THE_1_fixtures_export_obj_TestObj_0_str(__THE_1_fixtures_export_obj_TestObj_0_copy(__THE_0_t2_0)), " ", str_copy(__THE_0_t3_0), " ", __THE_1_fixtures_export_obj_TestObjWithMethods_0_str(__THE_1_fixtures_export_obj_TestObjWithMethods_0_copy(__THE_0_t4_0)), " ", *__THE_0_TestConstVar_0, " ", *__THE_0_TestMutVar_0, THE_EOL);
   print(stdout, "sz", (*__THE_0_fixtures_export_fn_TestFn_0).f((*__THE_0_fixtures_export_fn_TestFn_0).x, xalloc(&(struct __THE_1_fn_sFP3intFP3strFRstrFEP) {1, str_alloc("2")}, sizeof(struct __THE_1_fn_sFP3intFP3strFRstrFEP))), THE_EOL);
@@ -422,7 +422,7 @@ void __THE_1_test_test_0_alloc (struct __THE_1_fn_sFRvoidFE *n, struct __THE_1_t
 
 int main () {
   const struct __THE_1_fn_sFP3intFP3strFRstrFE __THE_0_fixtures_export_fn_TestFn_0 = (struct __THE_1_fn_sFP3intFP3strFRstrFE) {&__THE_1_fixtures_export_fn_TestFn_0, NULL, 0};
-  const struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFE __THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0 = (struct __THE_1_fn_sFSref_TestObjWithMethodsFRvoidFE) {&__THE_1_fixtures_export_obj_TestObjWithMethodsSDtest1_0, NULL, 0};
+  const struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFE __THE_0_fixtures_export_obj_TestObjWithMethodsSDtest1_0 = (struct __THE_1_fn_sFSref_fixtures_export_obj_TestObjWithMethods_0FRvoidFE) {&__THE_1_fixtures_export_obj_TestObjWithMethodsSDtest1_0, NULL, 0};
   const struct __THE_1_fn_sFRvoidFE __THE_0_fixtures_export_obj_TestObjWithMethodsSDtest2_0 = (struct __THE_1_fn_sFRvoidFE) {&__THE_1_fixtures_export_obj_TestObjWithMethodsSDtest2_0, NULL, 0};
   const int32_t __THE_0_TestConstVar_0 = 1;
   int32_t __THE_0_TestMutVar_0 = 2;

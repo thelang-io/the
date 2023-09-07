@@ -90,8 +90,8 @@ struct __THE_1_pair_strMSfloatME;
 struct __THE_1_map_strMSfloatME;
 struct __THE_1_pair_strMSintME;
 struct __THE_1_map_strMSintME;
-struct __THE_1_pair_strMSTestObjME;
-struct __THE_1_map_strMSTestObjME;
+struct __THE_1_pair_strMStest_TestObj_0ME;
+struct __THE_1_map_strMStest_TestObj_0ME;
 struct __THE_1_pair_strMSopt_intME;
 struct __THE_1_map_strMSopt_intME;
 struct __THE_1_pair_strMSref_intME;
@@ -158,12 +158,12 @@ struct __THE_1_map_strMSintME {
   size_t c;
   size_t l;
 };
-struct __THE_1_pair_strMSTestObjME {
+struct __THE_1_pair_strMStest_TestObj_0ME {
   struct str f;
   struct __THE_1_test_TestObj_0 *s;
 };
-struct __THE_1_map_strMSTestObjME {
-  struct __THE_1_pair_strMSTestObjME *d;
+struct __THE_1_map_strMStest_TestObj_0ME {
+  struct __THE_1_pair_strMStest_TestObj_0ME *d;
   size_t c;
   size_t l;
 };
@@ -230,10 +230,10 @@ struct __THE_1_map_strMSintME __THE_1_map_strMSintME_alloc (int, ...);
 bool __THE_1_map_strMSintME_eq (struct __THE_1_map_strMSintME, struct __THE_1_map_strMSintME);
 void __THE_1_map_strMSintME_free (struct __THE_1_map_strMSintME);
 bool __THE_1_map_strMSintME_ne (struct __THE_1_map_strMSintME, struct __THE_1_map_strMSintME);
-struct __THE_1_map_strMSTestObjME __THE_1_map_strMSTestObjME_alloc (int, ...);
-bool __THE_1_map_strMSTestObjME_eq (struct __THE_1_map_strMSTestObjME, struct __THE_1_map_strMSTestObjME);
-void __THE_1_map_strMSTestObjME_free (struct __THE_1_map_strMSTestObjME);
-bool __THE_1_map_strMSTestObjME_ne (struct __THE_1_map_strMSTestObjME, struct __THE_1_map_strMSTestObjME);
+struct __THE_1_map_strMStest_TestObj_0ME __THE_1_map_strMStest_TestObj_0ME_alloc (int, ...);
+bool __THE_1_map_strMStest_TestObj_0ME_eq (struct __THE_1_map_strMStest_TestObj_0ME, struct __THE_1_map_strMStest_TestObj_0ME);
+void __THE_1_map_strMStest_TestObj_0ME_free (struct __THE_1_map_strMStest_TestObj_0ME);
+bool __THE_1_map_strMStest_TestObj_0ME_ne (struct __THE_1_map_strMStest_TestObj_0ME, struct __THE_1_map_strMStest_TestObj_0ME);
 struct __THE_1_map_strMSopt_intME __THE_1_map_strMSopt_intME_alloc (int, ...);
 bool __THE_1_map_strMSopt_intME_eq (struct __THE_1_map_strMSopt_intME, struct __THE_1_map_strMSopt_intME);
 void __THE_1_map_strMSopt_intME_free (struct __THE_1_map_strMSopt_intME);
@@ -609,15 +609,15 @@ bool __THE_1_map_strMSintME_ne (struct __THE_1_map_strMSintME n1, struct __THE_1
   __THE_1_map_strMSintME_free((struct __THE_1_map_strMSintME) n2);
   return r;
 }
-struct __THE_1_map_strMSTestObjME __THE_1_map_strMSTestObjME_alloc (int x, ...) {
-  struct __THE_1_pair_strMSTestObjME *d = alloc(x * sizeof(struct __THE_1_pair_strMSTestObjME));
+struct __THE_1_map_strMStest_TestObj_0ME __THE_1_map_strMStest_TestObj_0ME_alloc (int x, ...) {
+  struct __THE_1_pair_strMStest_TestObj_0ME *d = alloc(x * sizeof(struct __THE_1_pair_strMStest_TestObj_0ME));
   va_list args;
   va_start(args, x);
-  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMSTestObjME) {va_arg(args, struct str), va_arg(args, struct __THE_1_test_TestObj_0 *)};
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_strMStest_TestObj_0ME) {va_arg(args, struct str), va_arg(args, struct __THE_1_test_TestObj_0 *)};
   va_end(args);
-  return (struct __THE_1_map_strMSTestObjME) {d, x, x};
+  return (struct __THE_1_map_strMStest_TestObj_0ME) {d, x, x};
 }
-bool __THE_1_map_strMSTestObjME_eq (struct __THE_1_map_strMSTestObjME n1, struct __THE_1_map_strMSTestObjME n2) {
+bool __THE_1_map_strMStest_TestObj_0ME_eq (struct __THE_1_map_strMStest_TestObj_0ME n1, struct __THE_1_map_strMStest_TestObj_0ME n2) {
   bool r = n1.l == n2.l;
   if (r) {
     for (size_t i = 0; i < n1.l; i++) {
@@ -627,18 +627,18 @@ bool __THE_1_map_strMSTestObjME_eq (struct __THE_1_map_strMSTestObjME n1, struct
       }
     }
   }
-  __THE_1_map_strMSTestObjME_free((struct __THE_1_map_strMSTestObjME) n1);
-  __THE_1_map_strMSTestObjME_free((struct __THE_1_map_strMSTestObjME) n2);
+  __THE_1_map_strMStest_TestObj_0ME_free((struct __THE_1_map_strMStest_TestObj_0ME) n1);
+  __THE_1_map_strMStest_TestObj_0ME_free((struct __THE_1_map_strMStest_TestObj_0ME) n2);
   return r;
 }
-void __THE_1_map_strMSTestObjME_free (struct __THE_1_map_strMSTestObjME n) {
+void __THE_1_map_strMStest_TestObj_0ME_free (struct __THE_1_map_strMStest_TestObj_0ME n) {
   for (size_t i = 0; i < n.l; i++) {
     str_free((struct str) n.d[i].f);
     __THE_1_test_TestObj_0_free((struct __THE_1_test_TestObj_0 *) n.d[i].s);
   }
   free(n.d);
 }
-bool __THE_1_map_strMSTestObjME_ne (struct __THE_1_map_strMSTestObjME n1, struct __THE_1_map_strMSTestObjME n2) {
+bool __THE_1_map_strMStest_TestObj_0ME_ne (struct __THE_1_map_strMStest_TestObj_0ME n1, struct __THE_1_map_strMStest_TestObj_0ME n2) {
   bool r = n1.l != n2.l;
   if (!r) {
     for (size_t i = 0; i < n1.l; i++) {
@@ -648,8 +648,8 @@ bool __THE_1_map_strMSTestObjME_ne (struct __THE_1_map_strMSTestObjME n1, struct
       }
     }
   }
-  __THE_1_map_strMSTestObjME_free((struct __THE_1_map_strMSTestObjME) n1);
-  __THE_1_map_strMSTestObjME_free((struct __THE_1_map_strMSTestObjME) n2);
+  __THE_1_map_strMStest_TestObj_0ME_free((struct __THE_1_map_strMStest_TestObj_0ME) n1);
+  __THE_1_map_strMStest_TestObj_0ME_free((struct __THE_1_map_strMStest_TestObj_0ME) n2);
   return r;
 }
 struct __THE_1_map_strMSopt_intME __THE_1_map_strMSopt_intME_alloc (int x, ...) {
@@ -753,8 +753,8 @@ int main () {
   __THE_1_map_strMSfloatME_ne(__THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 3.14), __THE_1_map_strMSfloatME_alloc(1, str_alloc("key"), 2.16));
   __THE_1_map_strMSintME_eq(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1));
   __THE_1_map_strMSintME_ne(__THE_1_map_strMSintME_alloc(1, str_alloc("key"), 1), __THE_1_map_strMSintME_alloc(1, str_alloc("key"), 0));
-  __THE_1_map_strMSTestObjME_eq(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)));
-  __THE_1_map_strMSTestObjME_ne(__THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)), __THE_1_map_strMSTestObjME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(2)));
+  __THE_1_map_strMStest_TestObj_0ME_eq(__THE_1_map_strMStest_TestObj_0ME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)), __THE_1_map_strMStest_TestObj_0ME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)));
+  __THE_1_map_strMStest_TestObj_0ME_ne(__THE_1_map_strMStest_TestObj_0ME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(1)), __THE_1_map_strMStest_TestObj_0ME_alloc(1, str_alloc("key"), __THE_1_test_TestObj_0_alloc(2)));
   __THE_1_map_strMSopt_intME_eq(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)));
   __THE_1_map_strMSopt_intME_ne(__THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntA_0)), __THE_1_map_strMSopt_intME_alloc(1, str_alloc("key"), __THE_1_opt_int_copy(__THE_0_optIntB_0)));
   __THE_1_map_strMSref_intME_eq(__THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0), __THE_1_map_strMSref_intME_alloc(1, str_alloc("key"), &__THE_0_intA_0));

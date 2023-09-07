@@ -74,7 +74,7 @@ main {
 <NodeFnDecl>
   <NodeFnDeclVar>
     <Var name="job2" codeName="test_job2_0" frame="1">
-      <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+      <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
         <TypeFnParams>
           <TypeFnParam name="a" required>
             <TypeRef name="ref_int">
@@ -88,7 +88,7 @@ main {
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef name="ref_Test">
+          <TypeRef name="ref_test_Test_0">
             <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="a">
                 <BuiltinType name="int" />
@@ -289,7 +289,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="d" codeName="d_0" mut frame="2">
-        <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+        <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
           <TypeFnParams>
             <TypeFnParam required>
               <TypeRef name="ref_int">
@@ -303,7 +303,7 @@ main {
             </TypeFnParam>
           </TypeFnParams>
           <TypeFnReturnType>
-            <TypeRef name="ref_Test">
+            <TypeRef name="ref_test_Test_0">
               <TypeObj codeName="test_Test_0" name="Test">
                 <TypeField name="a">
                   <BuiltinType name="int" />
@@ -457,7 +457,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+      <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
         <TypeFnParams>
           <TypeFnParam required>
             <TypeRef name="ref_int">
@@ -471,7 +471,7 @@ main {
           </TypeFnParam>
         </TypeFnParams>
         <TypeFnReturnType>
-          <TypeRef name="ref_Test">
+          <TypeRef name="ref_test_Test_0">
             <TypeObj codeName="test_Test_0" name="Test">
               <TypeField name="a">
                 <BuiltinType name="int" />
@@ -486,7 +486,7 @@ main {
         <ExprAssignLeft>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -500,7 +500,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef name="ref_Test">
+                  <TypeRef name="ref_test_Test_0">
                     <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="a">
                         <BuiltinType name="int" />
@@ -513,7 +513,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="d" codeName="d_0" mut frame="2">
-                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -527,7 +527,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef name="ref_Test">
+                      <TypeRef name="ref_test_Test_0">
                         <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />
@@ -544,7 +544,7 @@ main {
         <ExprAssignRight>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -558,7 +558,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef name="ref_Test">
+                  <TypeRef name="ref_test_Test_0">
                     <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="a">
                         <BuiltinType name="int" />
@@ -571,7 +571,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job2" codeName="test_job2_0" frame="1">
-                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -585,7 +585,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef name="ref_Test">
+                      <TypeRef name="ref_test_Test_0">
                         <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />
@@ -952,7 +952,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef name="ref_Test">
+      <TypeRef name="ref_test_Test_0">
         <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <BuiltinType name="int" />
@@ -965,7 +965,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                 <TypeFnParams>
                   <TypeFnParam required>
                     <TypeRef name="ref_int">
@@ -979,7 +979,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef name="ref_Test">
+                  <TypeRef name="ref_test_Test_0">
                     <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="a">
                         <BuiltinType name="int" />
@@ -992,7 +992,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="d" codeName="d_0" mut frame="2">
-                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                     <TypeFnParams>
                       <TypeFnParam required>
                         <TypeRef name="ref_int">
@@ -1006,7 +1006,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef name="ref_Test">
+                      <TypeRef name="ref_test_Test_0">
                         <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />
@@ -1077,7 +1077,7 @@ main {
   </NodeExpr>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef name="ref_Test">
+      <TypeRef name="ref_test_Test_0">
         <TypeObj codeName="test_Test_0" name="Test">
           <TypeField name="a">
             <BuiltinType name="int" />
@@ -1090,7 +1090,7 @@ main {
         <ExprCallCallee>
           <NodeExpr>
             <NodeExprType>
-              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+              <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                 <TypeFnParams>
                   <TypeFnParam name="a" required>
                     <TypeRef name="ref_int">
@@ -1104,7 +1104,7 @@ main {
                   </TypeFnParam>
                 </TypeFnParams>
                 <TypeFnReturnType>
-                  <TypeRef name="ref_Test">
+                  <TypeRef name="ref_test_Test_0">
                     <TypeObj codeName="test_Test_0" name="Test">
                       <TypeField name="a">
                         <BuiltinType name="int" />
@@ -1117,7 +1117,7 @@ main {
             <NodeExprBody>
               <ExprAccess>
                 <Var name="job2" codeName="test_job2_0" frame="1">
-                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_TestFE">
+                  <TypeFn name="fn_sFP3ref_intFP3ref_intFRref_test_Test_0FE">
                     <TypeFnParams>
                       <TypeFnParam name="a" required>
                         <TypeRef name="ref_int">
@@ -1131,7 +1131,7 @@ main {
                       </TypeFnParam>
                     </TypeFnParams>
                     <TypeFnReturnType>
-                      <TypeRef name="ref_Test">
+                      <TypeRef name="ref_test_Test_0">
                         <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />

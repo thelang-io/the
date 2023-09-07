@@ -196,6 +196,7 @@ endif ()
 
 if (EXISTS "${PROJECT_SOURCE_DIR}/lab")
   add_executable(lab lab/lab.c)
+  target_compile_options(lab PRIVATE -Wno-incompatible-pointer-types-discards-qualifiers)
   target_include_directories(lab PRIVATE "$ENV{DEPS_DIR}/include")
   target_link_directories(lab PRIVATE "$ENV{DEPS_DIR}/lib")
   target_link_libraries(lab PRIVATE crypto ssl)

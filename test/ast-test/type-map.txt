@@ -44,7 +44,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a2" codeName="a2_0" frame="2">
-        <TypeMap name="map_intMSTestME">
+        <TypeMap name="map_intMStest_Test_0ME">
           <TypeMapKeyType>
             <BuiltinType name="int" />
           </TypeMapKeyType>
@@ -166,12 +166,12 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="b2" codeName="b2_0" frame="2">
-        <TypeMap name="map_charMSmap_intMSTestMEME">
+        <TypeMap name="map_charMSmap_intMStest_Test_0MEME">
           <TypeMapKeyType>
             <BuiltinType name="char" />
           </TypeMapKeyType>
           <TypeMapValueType>
-            <TypeMap name="map_intMSTestME">
+            <TypeMap name="map_intMStest_Test_0ME">
               <TypeMapKeyType>
                 <BuiltinType name="int" />
               </TypeMapKeyType>

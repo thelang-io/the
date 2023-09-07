@@ -147,7 +147,7 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="p" codeName="p_0" frame="2">
-        <TypeOptional name="opt_Test">
+        <TypeOptional name="opt_test_Test_0">
           <TypeObj codeName="test_Test_0" name="Test">
             <TypeField name="a">
               <BuiltinType name="int" />

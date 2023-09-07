@@ -156,14 +156,14 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a09" codeName="a09_0" frame="2">
-        <TypeRef name="ref_array_array_array_array_array_array_array_Test">
-          <TypeArray name="array_array_array_array_array_array_array_Test">
-            <TypeArray name="array_array_array_array_array_array_Test">
-              <TypeArray name="array_array_array_array_array_Test">
-                <TypeArray name="array_array_array_array_Test">
-                  <TypeArray name="array_array_array_Test">
-                    <TypeArray name="array_array_Test">
-                      <TypeArray name="array_Test">
+        <TypeRef name="ref_array_array_array_array_array_array_array_test_Test_0">
+          <TypeArray name="array_array_array_array_array_array_array_test_Test_0">
+            <TypeArray name="array_array_array_array_array_array_test_Test_0">
+              <TypeArray name="array_array_array_array_array_test_Test_0">
+                <TypeArray name="array_array_array_array_test_Test_0">
+                  <TypeArray name="array_array_array_test_Test_0">
+                    <TypeArray name="array_array_test_Test_0">
+                      <TypeArray name="array_test_Test_0">
                         <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />
@@ -183,14 +183,14 @@ main {
   <NodeVarDecl>
     <NodeVarDeclVar>
       <Var name="a10" codeName="a10_0" frame="2">
-        <TypeArray name="array_array_array_array_array_array_array_ref_Test">
-          <TypeArray name="array_array_array_array_array_array_ref_Test">
-            <TypeArray name="array_array_array_array_array_ref_Test">
-              <TypeArray name="array_array_array_array_ref_Test">
-                <TypeArray name="array_array_array_ref_Test">
-                  <TypeArray name="array_array_ref_Test">
-                    <TypeArray name="array_ref_Test">
-                      <TypeRef name="ref_Test">
+        <TypeArray name="array_array_array_array_array_array_array_ref_test_Test_0">
+          <TypeArray name="array_array_array_array_array_array_ref_test_Test_0">
+            <TypeArray name="array_array_array_array_array_ref_test_Test_0">
+              <TypeArray name="array_array_array_array_ref_test_Test_0">
+                <TypeArray name="array_array_array_ref_test_Test_0">
+                  <TypeArray name="array_array_ref_test_Test_0">
+                    <TypeArray name="array_ref_test_Test_0">
+                      <TypeRef name="ref_test_Test_0">
                         <TypeObj codeName="test_Test_0" name="Test">
                           <TypeField name="a">
                             <BuiltinType name="int" />
