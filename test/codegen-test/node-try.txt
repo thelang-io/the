@@ -150,7 +150,6 @@ void error_stack_str (err_state_t *fn_err_state) {
   stack->l = message.l;
   stack->d = re_alloc(stack->d, stack->l);
   memcpy(stack->d, message.d, stack->l);
-  int i = 0;
   for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
     size_t z;
     char *fmt;
@@ -173,7 +172,6 @@ void error_stack_str (err_state_t *fn_err_state) {
       sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
     }
     stack->l += z;
-    i++;
   }
 }
 void error_unset (err_state_t *fn_err_state) {

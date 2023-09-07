@@ -85,7 +85,6 @@ const std::vector<std::string> codegenError = {
   R"~(  stack->l = message.l;)~" EOL
   R"~(  stack->d = _{re_alloc}(stack->d, stack->l);)~" EOL
   R"~(  _{memcpy}(stack->d, message.d, stack->l);)~" EOL
-  R"~(  int i = 0;)~" EOL
   R"~(  for (_{err_stack_t} *it = fn_err_state->stack_last; it != _{NULL}; it = it->prev) {)~" EOL
   R"~(    _{size_t} z;)~" EOL
   R"~(    char *fmt;)~" EOL
@@ -108,7 +107,6 @@ const std::vector<std::string> codegenError = {
   R"~(      _{sprintf}(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);)~" EOL
   R"~(    })~" EOL
   R"~(    stack->l += z;)~" EOL
-  R"~(    i++;)~" EOL
   R"~(  })~" EOL
   R"~(})~" EOL,
 
