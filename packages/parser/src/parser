@@ -40,8 +40,13 @@ fn tokenTypeToIntegerLiteralType (tokenType: t.TokenType) t.IntegerLiteralType {
   }
 }
 
+export obj ParserState {
+  mut denyIncomplete: bool
+}
+
 export obj Parser {
   mut errors: str[]
+  mut state: ParserState
   mut tokenizer: ref Tokenizer.Tokenizer
 
   fn next (mut self: ref Self, withBlockStatement := false, withElifStatement := false) t.Statement {
@@ -67,32 +72,78 @@ export obj Parser {
     return statement as t.Statement
   }
 
-  fn nextExpression (mut self: ref Self, shouldWrap := true, recognizeKeywords := false) t.Expression? {
-    mut expression: t.Expression?
+  fn nextExpression (mut self: ref Self, shouldWrap := true) t.Expression? {
+    startPos := self.tokenizer.pos()
+    mut e: t.Expression?
 
-    if (
-      (expression = self._maybeArrayExpression()) != nil ||
-      (expression = self._maybeAwaitExpression()) != nil ||
-      (expression = self._maybeClosureExpression()) != nil ||
-      (expression = self._maybeMapExpression()) != nil ||
-      (expression = self._maybeMemberAccessExpression()) != nil ||
-      (expression = self._maybeParenthesizedExpression()) != nil ||
-      (expression = self._maybeReferenceExpression()) != nil ||
-      (expression = self._maybeUnaryExpression()) != nil ||
-      (expression = self._maybeLiteral()) != nil ||
-      (expression = self._maybeIdentifier(recognizeKeywords: recognizeKeywords)) != nil
-    ) {
-      return shouldWrap ? self._wrapExpression(expression) : expression
+    try {
+      if (e = self._maybeArrayExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeAwaitExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeClosureExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeMapExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeMemberAccessExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeParenthesizedExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeReferenceExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeUnaryExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeLiteral()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (e = self._maybeIdentifier()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
     }
 
     return nil
   }
 
-  fn nextIdentifier (mut self: ref Self, recognizeKeywords := false) t.Identifier? {
+  fn nextIdentifier (mut self: ref Self, allowKeywords := false) t.Identifier? {
     startPos := self.tokenizer.pos()
     tk := self.tokenizer.next()
 
-    if tk.t == .Id || (!recognizeKeywords && tk.t.rawValue.slice(0, 2) == "Kw") {
+    if tk.t == .Id || (allowKeywords && tk.t.rawValue.slice(0, 2) == "Kw") {
       return t.Identifier{name: tk.val, start: tk.start, end: tk.end}
     }
 
@@ -274,7 +325,7 @@ export obj Parser {
       parameterStartPos = self.tokenizer.pos()
       parameterMutable := self.tokenizer.lookahead(.KwMut)
       canGoBack := !asynchronous && parameters.empty && !parameterMutable
-      parameterName := self.nextIdentifier()
+      parameterName := self.nextIdentifier(allowKeywords: true)
 
       if parameterName == nil {
         if canGoBack {
@@ -413,7 +464,7 @@ export obj Parser {
       }
 
       memberStartPos = self.tokenizer.pos()
-      mut name := self.nextIdentifier()
+      mut name := self.nextIdentifier(allowKeywords: true)
 
       if name == nil {
         self._raise(errors.E0147())
@@ -525,7 +576,7 @@ export obj Parser {
 
       parameterStartPos = self.tokenizer.pos()
       parameterMutable := self.tokenizer.lookahead(.KwMut)
-      parameterName := self.nextIdentifier()
+      parameterName := self.nextIdentifier(allowKeywords: true)
 
       if parameterName == nil {
         self._raise(errors.E0164())
@@ -653,7 +704,7 @@ export obj Parser {
       parameterMutable := self.tokenizer.lookahead(.KwMut)
       canGoBack := !asynchronous && parameters.empty && !parameterMutable
       beforeNamePos := self.tokenizer.pos()
-      mut parameterName := self.nextIdentifier()
+      mut parameterName := self.nextIdentifier(allowKeywords: true)
       parameterName2 := parameterName
       mut parameterType: t.Type?
 
@@ -738,8 +789,8 @@ export obj Parser {
     )
   }
 
-  fn _maybeIdentifier (mut self: ref Self, recognizeKeywords := false) t.Expression? {
-    id := self.nextIdentifier(recognizeKeywords: recognizeKeywords)
+  fn _maybeIdentifier (mut self: ref Self) t.Expression? {
+    id := self.nextIdentifier()
 
     if id != nil {
       return Expression.create(id, id.start, id.end)
@@ -767,7 +818,9 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
+    self.state.denyIncomplete = true
     mut maybeCondition := self.nextExpression()
+    self.state.denyIncomplete = false
 
     if maybeCondition == nil {
       self._raise(errors.E0109("if"))
@@ -1046,6 +1099,14 @@ export obj Parser {
       body = self.nextStatement(withBlockStatement: true)
     }
 
+    if body == nil && !parenthesized && hasAllParts && update2 != nil {
+      if update2.isMap() {
+        self.tokenizer.readerSeek(update2.start)
+        update = nil
+        body = self.nextStatement(withBlockStatement: true)
+      }
+    }
+
     if (
       body == nil &&
       !parenthesized &&
@@ -1057,6 +1118,14 @@ export obj Parser {
       condition = Expression.subtractLastObjExpr(condition as t.Expression)
       self.tokenizer.readerSeek(objectExpression.id.end)
       body = self.nextStatement(withBlockStatement: true)
+    }
+
+    if body == nil && !parenthesized && !hasAllParts && condition2 != nil {
+      if condition2.isMap() {
+        self.tokenizer.readerSeek(condition2.start)
+        condition = nil
+        body = self.nextStatement(withBlockStatement: true)
+      }
     }
 
     if body == nil {
@@ -1178,7 +1247,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    mut name := self.nextIdentifier()
+    mut name := self.nextIdentifier(allowKeywords: true)
 
     if name == nil {
       self._raise(errors.E0107("dot"))
@@ -1307,7 +1376,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    expression := self.nextExpression(recognizeKeywords: true)
+    expression := self.nextExpression()
 
     return Statement.create(
       t.ReturnStatement{expression: expression},
@@ -1463,7 +1532,7 @@ export obj Parser {
 
     if self.tokenizer.lookahead(.KwConst) {
       constant = true
-      possibleName := self.nextIdentifier()
+      possibleName := self.nextIdentifier(allowKeywords: insideObjectDeclaration)
 
       if possibleName == nil {
         self._raise(errors.E0131("const"))
@@ -1472,7 +1541,7 @@ export obj Parser {
       }
     } elif self.tokenizer.lookahead(.KwMut) {
       mutable = true
-      possibleName := self.nextIdentifier()
+      possibleName := self.nextIdentifier(allowKeywords: insideObjectDeclaration)
 
       if possibleName == nil {
         self._raise(errors.E0131("mut"))
@@ -1480,7 +1549,7 @@ export obj Parser {
         name = possibleName
       }
     } else {
-      possibleName := self.nextIdentifier()
+      possibleName := self.nextIdentifier(allowKeywords: insideObjectDeclaration)
       name = possibleName as t.Identifier
 
       if !self.tokenizer.lookahead(.OpColon, true) && !self.tokenizer.lookahead(.OpColonEq, true) {
@@ -1686,7 +1755,7 @@ export obj Parser {
       }
 
       argumentStartPos = self.tokenizer.pos()
-      name := self.nextIdentifier()
+      name := self.nextIdentifier(allowKeywords: true)
 
       if name == nil {
         expression := self.nextExpression()
@@ -1847,7 +1916,7 @@ export obj Parser {
       }
 
       propertyStartPos = self.tokenizer.pos()
-      name := self.nextIdentifier()
+      name := self.nextIdentifier(allowKeywords: true)
 
       if name == nil {
         if properties.empty {
@@ -1911,7 +1980,7 @@ export obj Parser {
       return nil
     }
 
-    mut name := self.nextIdentifier()
+    mut name := self.nextIdentifier(allowKeywords: true)
 
     if name == nil {
       self._raise(errors.E0107("dot"))
@@ -1966,29 +2035,79 @@ export obj Parser {
   }
 
   fn _raise (mut self: ref Self, message: str) {
+    if self.state.denyIncomplete {
+      throw t.IncompleteRaiseError{message: "Incomplete raise"}
+    }
+
     self.errors.push(message)
   }
 
-  fn _wrapExpression (mut self: ref Self, expression: t.Expression) t.Expression {
-    mut result: t.Expression?
+  fn _wrapExpression (mut self: ref Self, e: t.Expression) t.Expression {
+    startPos := self.tokenizer.pos()
+    mut r: t.Expression?
 
-    if (
-      (result = self._maybeWrapAsExpression(expression)) != nil ||
-      (result = self._maybeWrapAssignmentExpression(expression)) != nil ||
-      (result = self._maybeWrapBinaryExpression(expression)) != nil ||
-      (result = self._maybeWrapCallExpression(expression)) != nil ||
-      (result = self._maybeWrapConditionalExpression(expression)) != nil ||
-      (result = self._maybeWrapElementAccessExpression(expression)) != nil ||
-      (result = self._maybeWrapIsExpression(expression)) != nil ||
-      (result = self._maybeWrapObjectExpression(expression)) != nil ||
-      (result = self._maybeWrapPropertyAccessExpression(expression)) != nil ||
-      (result = self._maybeWrapUnaryExpression(expression)) != nil
-    ) {
-      return self._wrapExpression(result)
+    try {
+      if (r = self._maybeWrapAsExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapAssignmentExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapBinaryExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapCallExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapConditionalExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapElementAccessExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapIsExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapObjectExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapPropertyAccessExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
+    }
+
+    try {
+      if (r = self._maybeWrapUnaryExpression(e)) != nil { return self._wrapExpression(r) }
+    } catch err: t.IncompleteRaiseError {
+      self.tokenizer.seek(startPos)
     }
 
     // todo precedence and associativity
-    return expression
+    return e
   }
 
   fn _wrapStatement (mut self: ref Self, mut statement: t.Statement) t.Statement {

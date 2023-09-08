@@ -3,6 +3,11 @@
  * Licensed under the MIT License
  */
 
+export obj IncompleteRaiseError {
+  message: str
+  stack: str
+}
+
 export type TypeBody =
   ArrayType |
   EmptyType |
