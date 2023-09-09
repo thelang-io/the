@@ -3,29 +3,29 @@
  * Licensed under the MIT License
  */
 
+import Statement_toText from "./text"
 import * as Expression from "./expression"
 import * as Reader from "./reader"
 import * as Statement from "./statement"
-import * as Token from "./token"
 import * as Tokenizer from "./tokenizer"
 import * as Type from "./type"
 import * as errors from "./errors"
 import * as t from "./types"
 
-fn emptyExpression () t.Expression {
-  return Expression.create(t.EmptyExpression{})
+fn dummyExpression () t.Expression {
+  return Expression.create(t.DummyExpression{}, 0, 0)
 }
 
-fn emptyIdentifier () t.Identifier {
+fn dummyIdentifier () t.Identifier {
   return t.Identifier{start: 0, end: 0, name: ""}
 }
 
-fn emptyStatement () t.Statement {
-  return Statement.create(t.EmptyStatement{})
+fn dummyStatement () t.Statement {
+  return Statement.create(t.DummyStatement{}, 0, 0)
 }
 
-fn emptyType () t.Type {
-  return Type.create(t.EmptyType{})
+fn dummyType () t.Type {
+  return Type.create(t.DummyType{}, 0, 0)
 }
 
 fn tokenTypeToIntegerLiteralType (tokenType: t.TokenType) t.IntegerLiteralType {
@@ -49,89 +49,132 @@ export obj Parser {
   mut state: ParserState
   mut tokenizer: ref Tokenizer.Tokenizer
 
-  fn next (mut self: ref Self, withBlockStatement := false, withElifStatement := false) t.Statement {
-    if self.tokenizer.lookahead(.Eof) {
-      return Statement.create(
-        t.EofStatement{},
-        self.tokenizer.readerStartPos(),
-        self.tokenizer.readerEndPos()
-      )
+  fn comments (mut self: ref Self) t.Token[] {
+    mut result: t.Token[]
+
+    loop (
+      self.tokenizer.lookahead(.CommentBlock, true, allowComments: true) ||
+      self.tokenizer.lookahead(.CommentLine, true, allowComments: true)
+    ) {
+      result.push(self.tokenizer.next(allowComments: true))
     }
 
-    mut statement := self.nextStatement(
-      withBlockStatement: withBlockStatement,
-      withElifStatement: withElifStatement
-    )
+    return result
+  }
+
+  fn next (mut self: ref Self) t.Statement {
+    mut statement := self.nextStatement()
 
     if statement == nil {
       tk := self.tokenizer.next()
       self._raise(errors.E0104(tk.val))
-      statement = emptyStatement()
+      statement = dummyStatement()
     }
 
     return statement as t.Statement
   }
 
   fn nextExpression (mut self: ref Self, shouldWrap := true) t.Expression? {
+    comments := self.comments()
     startPos := self.tokenizer.pos()
     mut e: t.Expression?
 
     try {
-      if (e = self._maybeArrayExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeArrayExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeAwaitExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeAwaitExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeClosureExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeClosureExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeMapExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeMapExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeMemberAccessExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeMemberAccessExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeParenthesizedExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeParenthesizedExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeReferenceExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeReferenceExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeUnaryExpression()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeUnaryExpression()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeLiteral()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeLiteral()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (e = self._maybeIdentifier()) != nil { return shouldWrap ? self._wrapExpression(e) : e }
+      if (e = self._maybeIdentifier()) != nil {
+        e.leadingComments = comments
+        e.trailingComments = self.comments()
+        return shouldWrap ? self._wrapExpression(e) : e
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
@@ -158,6 +201,17 @@ export obj Parser {
     withBlockStatement := false,
     withElifStatement := false
   ) t.Statement? {
+    comments := self.comments()
+
+    if self.tokenizer.lookahead(.Eof) {
+      return Statement.create(
+        t.EofStatement{},
+        self.tokenizer.readerStartPos(),
+        self.tokenizer.readerEndPos(),
+        leadingComments: comments
+      )
+    }
+
     mut statement: t.Statement?
 
     if (
@@ -179,15 +233,24 @@ export obj Parser {
       (statement = self._maybeVariableDeclaration(insideObjectDeclaration: insideObjectDeclaration)) != nil ||
       (!insideObjectDeclaration && (statement = self._maybeExpressionStatement()) != nil)
     ) {
+      statement.leadingComments = comments
+      statement.trailingComments = self.comments()
       return shouldWrap ? self._wrapStatement(statement) : statement
     } elif !insideObjectDeclaration && self.tokenizer.lookahead(.OpSemi) {
-      return emptyStatement()
+      return Statement.create(
+        t.EmptyStatement{},
+        self.tokenizer.readerStartPos(),
+        self.tokenizer.readerEndPos(),
+        leadingComments: comments,
+        trailingComments: self.comments()
+      )
     }
 
     return nil
   }
 
   fn nextType (mut self: ref Self, withoutUnion := false) t.Type? {
+    comments := self.comments()
     mut possibleType: t.Type?
 
     if (
@@ -195,6 +258,8 @@ export obj Parser {
       (possibleType = self._maybeReferenceType()) != nil ||
       (possibleType = self._maybeIdentifierType()) != nil
     ) {
+      possibleType.leadingComments = comments
+      possibleType.trailingComments = self.comments()
       return self._wrapType(possibleType, withoutUnion: withoutUnion)
     }
 
@@ -247,7 +312,7 @@ export obj Parser {
 
     if expression == nil {
       self._raise(errors.E0109("await"))
-      expression = emptyExpression()
+      expression = dummyExpression()
     }
 
     return Expression.create(
@@ -344,7 +409,7 @@ export obj Parser {
 
           if parameterType == nil {
             self._raise(errors.E0127())
-            parameterType = emptyType()
+            parameterType = dummyType()
           }
 
           parameterVariadic = self.tokenizer.lookahead(.OpEllipsis)
@@ -354,7 +419,7 @@ export obj Parser {
 
             if parameterInitializer == nil {
               self._raise(errors.E0128("equals sign"))
-              parameterInitializer = emptyExpression()
+              parameterInitializer = dummyExpression()
             }
           }
         } elif self.tokenizer.lookahead(.OpColonEq) {
@@ -362,7 +427,7 @@ export obj Parser {
 
           if parameterInitializer == nil {
             self._raise(errors.E0128("colon equals sign"))
-            parameterInitializer = emptyExpression()
+            parameterInitializer = dummyExpression()
           }
         } else {
           if canGoBack {
@@ -371,7 +436,7 @@ export obj Parser {
           }
 
           self._raise(errors.E0126())
-          parameterType = emptyType()
+          parameterType = dummyType()
         }
 
         parameters.push(t.FunctionParameter{
@@ -396,13 +461,13 @@ export obj Parser {
 
     if returnType == nil {
       self._raise(errors.E0130())
-      returnType = emptyType()
+      returnType = dummyType()
     }
 
-    mut body := emptyStatement()
+    mut body := dummyStatement()
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
-      statement := self.nextStatement(withBlockStatement: true)
+      statement := self.nextStatement(shouldWrap: false, withBlockStatement: true)
 
       if statement == nil {
         self._raise(errors.E0150())
@@ -447,7 +512,7 @@ export obj Parser {
 
     if name == nil {
       self._raise(errors.E0145())
-      name = emptyIdentifier()
+      name = dummyIdentifier()
     }
 
     if !self.tokenizer.lookahead(.OpLBrace) {
@@ -468,7 +533,7 @@ export obj Parser {
 
       if name == nil {
         self._raise(errors.E0147())
-        name = emptyIdentifier()
+        name = dummyIdentifier()
       }
 
       mut initializer: t.Expression?
@@ -478,7 +543,7 @@ export obj Parser {
 
         if initializer == nil {
           self._raise(errors.E0148())
-          initializer = emptyExpression()
+          initializer = dummyExpression()
         }
       }
 
@@ -506,7 +571,7 @@ export obj Parser {
 
     if statement == nil {
       self._raise(errors.E0172())
-      statement = emptyStatement()
+      statement = dummyStatement()
     } elif statement.isExpression() {
       expression := statement.asExpression()
 
@@ -590,7 +655,7 @@ export obj Parser {
 
           if parameterType == nil {
             self._raise(errors.E0166())
-            parameterType = emptyType()
+            parameterType = dummyType()
           }
 
           parameterVariadic = self.tokenizer.lookahead(.OpEllipsis)
@@ -600,7 +665,7 @@ export obj Parser {
 
             if parameterInitializer == nil {
               self._raise(errors.E0167("equals sign"))
-              parameterInitializer = emptyExpression()
+              parameterInitializer = dummyExpression()
             }
           }
         } elif self.tokenizer.lookahead(.OpColonEq) {
@@ -608,11 +673,11 @@ export obj Parser {
 
           if parameterInitializer == nil {
             self._raise(errors.E0167("colon equals sign"))
-            parameterInitializer = emptyExpression()
+            parameterInitializer = dummyExpression()
           }
         } else {
           self._raise(errors.E0165())
-          parameterType = emptyType()
+          parameterType = dummyType()
         }
 
         parameters.push(t.FunctionParameter{
@@ -642,7 +707,7 @@ export obj Parser {
       }
     } elif returnType == nil {
       self._raise(errors.E0169())
-      returnType = emptyType()
+      returnType = dummyType()
     }
 
     if insideObjectDeclaration {
@@ -718,7 +783,7 @@ export obj Parser {
           }
 
           self._raise(errors.E0140())
-          parameterType = emptyType()
+          parameterType = dummyType()
         }
       } else {
         if self.tokenizer.lookahead(.OpColon) {
@@ -726,7 +791,7 @@ export obj Parser {
 
           if parameterType == nil {
             self._raise(errors.E0142())
-            parameterType = emptyType()
+            parameterType = dummyType()
           }
         } else {
           self.tokenizer.seek(beforeNamePos)
@@ -740,7 +805,7 @@ export obj Parser {
             }
 
             self._raise(errors.E0141())
-            parameterType = emptyType()
+            parameterType = dummyType()
           }
         }
       }
@@ -779,7 +844,7 @@ export obj Parser {
 
     if returnType == nil {
       self._raise(errors.E0144())
-      returnType = emptyType()
+      returnType = dummyType()
     }
 
     return Type.create(
@@ -824,7 +889,7 @@ export obj Parser {
 
     if maybeCondition == nil {
       self._raise(errors.E0109("if"))
-      maybeCondition = emptyExpression()
+      maybeCondition = dummyExpression()
     }
 
     condition := maybeCondition as t.Expression
@@ -841,7 +906,7 @@ export obj Parser {
 
     if consequent == nil {
       self._raise(errors.E0151())
-      consequent = emptyStatement()
+      consequent = dummyStatement()
     }
 
     mut alternate: t.Statement?
@@ -851,7 +916,7 @@ export obj Parser {
 
       if alternate == nil {
         self._raise(errors.E0152())
-        alternate = emptyStatement()
+        alternate = dummyStatement()
       }
     }
 
@@ -916,7 +981,7 @@ export obj Parser {
 
         if name == nil {
           self._raise(errors.E0175())
-          name = emptyIdentifier()
+          name = dummyIdentifier()
         }
 
         specifiers.push(t.ImportNamespaceSpecifier{name: name as t.Identifier})
@@ -930,7 +995,7 @@ export obj Parser {
           }
 
           self._raise(errors.E0139("import declaration specifier imported name"))
-          imported = emptyIdentifier()
+          imported = dummyIdentifier()
         }
 
         mut local := imported as t.Identifier
@@ -940,7 +1005,7 @@ export obj Parser {
 
           if identifier == nil {
             self._raise(errors.E0176())
-            local = emptyIdentifier()
+            local = dummyIdentifier()
           } else {
             local = identifier
           }
@@ -966,7 +1031,7 @@ export obj Parser {
 
     if source == nil {
       self._raise(errors.E0177())
-      source = emptyExpression()
+      source = dummyExpression()
     }
 
     return Statement.create(
@@ -1130,7 +1195,7 @@ export obj Parser {
 
     if body == nil {
       self._raise(errors.E0158())
-      body = emptyStatement()
+      body = dummyStatement()
     }
 
     return Statement.create(
@@ -1159,11 +1224,11 @@ export obj Parser {
 
       if body == nil {
         self._raise(errors.E0153())
-        body = emptyStatement()
+        body = dummyStatement()
       }
     } else {
       self._raise(errors.E0100("main"))
-      body = emptyStatement()
+      body = dummyStatement()
     }
 
     return Statement.create(
@@ -1212,7 +1277,7 @@ export obj Parser {
         }
 
         self._raise(errors.E0113("map expression key"))
-        elements.push(t.MapExpressionElement{key: key, value: emptyExpression()})
+        elements.push(t.MapExpressionElement{key: key, value: dummyExpression()})
       } else {
         value := self.nextExpression()
 
@@ -1223,7 +1288,7 @@ export obj Parser {
           }
 
           self._raise(errors.E0119())
-          elements.push(t.MapExpressionElement{key: key, value: emptyExpression()})
+          elements.push(t.MapExpressionElement{key: key, value: dummyExpression()})
         } else {
           elements.push(t.MapExpressionElement{key: key, value: value})
         }
@@ -1251,7 +1316,7 @@ export obj Parser {
 
     if name == nil {
       self._raise(errors.E0107("dot"))
-      name = emptyIdentifier()
+      name = dummyIdentifier()
     }
 
     return Expression.create(
@@ -1271,7 +1336,7 @@ export obj Parser {
 
     if name == nil {
       self._raise(errors.E0149("obj"))
-      name = emptyIdentifier()
+      name = dummyIdentifier()
     }
 
     if !self.tokenizer.lookahead(.OpLBrace) {
@@ -1316,7 +1381,7 @@ export obj Parser {
 
     if expression == nil {
       self._raise(errors.E0107("left parenthesis"))
-      expression = emptyExpression()
+      expression = dummyExpression()
     }
 
     if !self.tokenizer.lookahead(.OpRPar) {
@@ -1340,7 +1405,7 @@ export obj Parser {
 
     if expression == nil {
       self._raise(errors.E0109("ref"))
-      expression = emptyExpression()
+      expression = dummyExpression()
     }
 
     return Expression.create(
@@ -1360,7 +1425,7 @@ export obj Parser {
 
     if referencedType == nil {
       self._raise(errors.E0123("ref"))
-      referencedType = emptyType()
+      referencedType = dummyType()
     }
 
     return Type.create(
@@ -1395,7 +1460,7 @@ export obj Parser {
 
     if expression == nil {
       self._raise(errors.E0109("throw"))
-      expression = emptyExpression()
+      expression = dummyExpression()
     }
 
     return Statement.create(
@@ -1415,7 +1480,7 @@ export obj Parser {
 
     if body == nil {
       self._raise(errors.E0159())
-      body = emptyStatement()
+      body = dummyStatement()
     }
 
     mut handlers: t.TryStatementHandler[]
@@ -1425,14 +1490,14 @@ export obj Parser {
 
       if handlerParameter == nil {
         self._raise(errors.E0161())
-        handlerParameter = emptyStatement()
+        handlerParameter = dummyStatement()
       }
 
       mut handlerBody := self.nextStatement(withBlockStatement: true)
 
       if handlerBody == nil {
         self._raise(errors.E0162())
-        handlerBody = emptyStatement()
+        handlerBody = dummyStatement()
       }
 
       handlers.push(t.TryStatementHandler{
@@ -1465,7 +1530,7 @@ export obj Parser {
 
     if name == nil {
       self._raise(errors.E0149("type"))
-      name = emptyIdentifier()
+      name = dummyIdentifier()
     }
 
     if !self.tokenizer.lookahead(.OpEq) {
@@ -1476,7 +1541,7 @@ export obj Parser {
 
     if aliasType == nil {
       self._raise(errors.E0138("equals sign"))
-      aliasType = emptyType()
+      aliasType = dummyType()
     }
 
     return Statement.create(
@@ -1504,7 +1569,7 @@ export obj Parser {
 
     if operand == nil {
       self._raise(errors.E0122())
-      operand = emptyExpression()
+      operand = dummyExpression()
     }
 
     return Expression.create(
@@ -1566,7 +1631,7 @@ export obj Parser {
 
       if variableType == nil {
         self._raise(errors.E0133())
-        variableType = emptyType()
+        variableType = dummyType()
       }
 
       if self.tokenizer.lookahead(.OpEq) {
@@ -1574,7 +1639,7 @@ export obj Parser {
 
         if initializer == nil {
           self._raise(errors.E0134("equals sign"))
-          initializer = emptyExpression()
+          initializer = dummyExpression()
         }
       }
     } elif self.tokenizer.lookahead(.OpColonEq) {
@@ -1582,7 +1647,7 @@ export obj Parser {
 
       if initializer == nil {
         self._raise(errors.E0134("colon equals sign"))
-        initializer = emptyExpression()
+        initializer = dummyExpression()
       }
     } else {
       self._raise(errors.E0132())
@@ -1632,7 +1697,7 @@ export obj Parser {
 
     if valueType == nil {
       self._raise(errors.E0136())
-      valueType = emptyType()
+      valueType = dummyType()
     }
 
     if !self.tokenizer.lookahead(.OpRBrack) {
@@ -1655,7 +1720,7 @@ export obj Parser {
 
     if asType == nil {
       self._raise(errors.E0123("as"))
-      asType = emptyType()
+      asType = dummyType()
     }
 
     return Expression.create(
@@ -1690,7 +1755,7 @@ export obj Parser {
 
     if right == nil {
       self._raise(errors.E0111(operator))
-      right = emptyExpression()
+      right = dummyExpression()
     }
 
     return Expression.create(
@@ -1730,7 +1795,7 @@ export obj Parser {
 
     if right == nil {
       self._raise(errors.E0111(operator))
-      right = emptyExpression()
+      right = dummyExpression()
     }
 
     return Expression.create(
@@ -1771,7 +1836,7 @@ export obj Parser {
 
           if expression == nil {
             self._raise(errors.E0107("call expression named argument"))
-            arguments.push(t.CallExpressionArgument{name: name, expression: emptyExpression()})
+            arguments.push(t.CallExpressionArgument{name: name, expression: dummyExpression()})
           } else {
             arguments.push(t.CallExpressionArgument{name: name, expression: expression})
           }
@@ -1808,7 +1873,7 @@ export obj Parser {
 
     if consequent == nil {
       self._raise(errors.E0112())
-      consequent = emptyExpression()
+      consequent = dummyExpression()
     }
 
     if !self.tokenizer.lookahead(.OpColon) {
@@ -1819,7 +1884,7 @@ export obj Parser {
 
     if alternate == nil {
       self._raise(errors.E0110())
-      alternate = emptyExpression()
+      alternate = dummyExpression()
     }
 
     return Expression.create(
@@ -1842,7 +1907,7 @@ export obj Parser {
 
     if argument == nil {
       self._raise(errors.E0114())
-      argument = emptyExpression()
+      argument = dummyExpression()
     }
 
     if !self.tokenizer.lookahead(.OpRBrack) {
@@ -1865,7 +1930,7 @@ export obj Parser {
 
     if isType == nil {
       self._raise(errors.E0123("is"))
-      isType = emptyType()
+      isType = dummyType()
     }
 
     return Expression.create(
@@ -1884,7 +1949,7 @@ export obj Parser {
 
     if name == nil {
       self._raise(errors.E0135())
-      name = emptyIdentifier()
+      name = dummyIdentifier()
     }
 
     return Type.create(
@@ -1933,7 +1998,7 @@ export obj Parser {
           }
 
           self._raise(errors.E0113("object expression property name"))
-          properties.push(t.ObjectExpressionProperty{name: name, value: emptyExpression()})
+          properties.push(t.ObjectExpressionProperty{name: name, value: dummyExpression()})
         } else {
           value := self.nextExpression()
 
@@ -1944,7 +2009,7 @@ export obj Parser {
             }
 
             self._raise(errors.E0121())
-            properties.push(t.ObjectExpressionProperty{name: name, value: emptyExpression()})
+            properties.push(t.ObjectExpressionProperty{name: name, value: dummyExpression()})
           } else {
             properties.push(t.ObjectExpressionProperty{name: name, value: value})
           }
@@ -1984,7 +2049,7 @@ export obj Parser {
 
     if name == nil {
       self._raise(errors.E0107("dot"))
-      name = emptyIdentifier()
+      name = dummyIdentifier()
     }
 
     return Expression.create(
@@ -2021,7 +2086,7 @@ export obj Parser {
 
       if subType == nil {
         self._raise(errors.E0137())
-        subType = emptyType()
+        subType = dummyType()
       }
 
       types.push(subType as t.Type)
@@ -2047,61 +2112,91 @@ export obj Parser {
     mut r: t.Expression?
 
     try {
-      if (r = self._maybeWrapAsExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapAsExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapAssignmentExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapAssignmentExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapBinaryExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapBinaryExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapCallExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapCallExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapConditionalExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapConditionalExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapElementAccessExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapElementAccessExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapIsExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapIsExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapObjectExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapObjectExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapPropertyAccessExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapPropertyAccessExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
 
     try {
-      if (r = self._maybeWrapUnaryExpression(e)) != nil { return self._wrapExpression(r) }
+      if (r = self._maybeWrapUnaryExpression(e)) != nil {
+        r.trailingComments = self.comments()
+        return self._wrapExpression(r)
+      }
     } catch err: t.IncompleteRaiseError {
       self.tokenizer.seek(startPos)
     }
@@ -2113,6 +2208,7 @@ export obj Parser {
   fn _wrapStatement (mut self: ref Self, mut statement: t.Statement) t.Statement {
     if self.tokenizer.lookahead(.OpSemi) {
       statement.end = self.tokenizer.readerEndPos()
+      statement.trailingComments = self.comments()
       return statement
     }
 
@@ -2128,6 +2224,7 @@ export obj Parser {
       (result = self._maybeWrapOptionalType(typeToWrap)) != nil ||
       (!withoutUnion && (result = self._maybeWrapUnionType(typeToWrap)) != nil)
     ) {
+      result.trailingComments = self.comments()
       return self._wrapType(result, withoutUnion)
     }
 
@@ -2144,26 +2241,33 @@ export fn parse (path: str) t.File {
   mut reader := Reader.init(path)
   mut tokenizer := Tokenizer.init(ref reader)
   mut parser := init(ref tokenizer)
-  mut result: t.Statement[]
+
+  mut f := t.File{
+    path: reader.path,
+    program: t.Program{
+      eof: dummyStatement()
+    }
+  }
 
   loop {
     statement := parser.next()
-    if statement.isEof() { break }
-    result.push(statement)
+
+    if statement.isEof() {
+      f.program.eof = statement
+      break
+    }
+
+    f.program.body.push(statement)
   }
 
   if !parser.tokenizer.errors.empty {
     parser.errors = parser.tokenizer.errors.merge(parser.errors)
   }
 
-  return t.File{
-    path: reader.path,
-    errors: parser.errors,
-    hasErrors: !parser.errors.empty,
-    program: t.Program{
-      body: result
-    }
-  }
+  f.errors = parser.errors
+  f.hasErrors = !parser.errors.empty
+
+  return f
 }
 
 export fn report (file: ref t.File) {
@@ -2172,4 +2276,15 @@ export fn report (file: ref t.File) {
   loop i := 0; i < file.errors.len; i++ {
     print((i == 0 ? "" : os_EOL) + (file.errors[i] as str), to: "stderr")
   }
+}
+
+export fn stringify (file: ref t.File) str {
+  mut result := "Program" + os_EOL
+
+  loop i := 0; i < file.program.body.len; i++ {
+    result += Statement_toText(file.program.body[i], 2)
+  }
+
+  result += Statement_toText(file.program.eof, 2)
+  return result
 }

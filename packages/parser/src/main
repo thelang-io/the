@@ -5,7 +5,6 @@
 
 import
   ArrayType,
-  EmptyType,
   FunctionType,
   IdentifierType,
   MapType,
@@ -30,7 +29,6 @@ import
   ClosureExpression,
   ConditionalExpression,
   ElementAccessExpression,
-  EmptyExpression,
   IsExpression,
   MapExpression,
   MemberAccessExpression,
@@ -70,17 +68,14 @@ from "./types"
 import
   Expression_toText,
   FunctionParameter_toText,
-  FunctionParameterArray_toText,
   Identifier_toText,
   Statement_toText,
-  StatementArray_toText,
   Type_toText
 from "./text"
 import Program_traverse from "./program"
-import parse, report from "./parser"
+import parse, report, stringify from "./parser"
 
 export ArrayType
-export EmptyType
 export FunctionType
 export IdentifierType
 export MapType
@@ -105,7 +100,6 @@ export CallExpression
 export ClosureExpression
 export ConditionalExpression
 export ElementAccessExpression
-export EmptyExpression
 export IsExpression
 export MapExpression
 export MemberAccessExpression
@@ -143,10 +137,8 @@ export File
 export Program
 export Expression_toText
 export FunctionParameter_toText
-export FunctionParameterArray_toText
 export Identifier_toText
 export Statement_toText
-export StatementArray_toText
 export Type_toText
 export Program_traverse
 export parse
@@ -173,7 +165,7 @@ main {
 
   if fs_isFileSync(args[1]) {
     file := parse(args[1])
-    print(StatementArray_toText(file.program.body))
+    print(stringify(ref file))
 
     if file.hasErrors {
       print()

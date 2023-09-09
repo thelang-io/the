@@ -5,54 +5,30 @@
 
 import * as t from "./types"
 
-export obj Token {
-  t: t.TokenType
-  val: str
-  start: int
-  end: int
+fn escapeVal (val: str, xml := false) str {
+  mut result := ""
 
-  fn toStr (self: Self) str {
-    val := self._valEscaped()
-    loc := "(" + self.start.str() + "-" + self.end.str() + ")"
+  loop i := 0; i < val.len; i++ {
+    ch := val[i]
 
-    return self.t.rawValue.slice(3) + loc + (val.empty ? "" : ": " + val)
-  }
-
-  fn toXML (self: Self) str {
-    return
-      "<Token" +
-      " type=\"" + self.t.rawValue.slice(3) + "\"" +
-      " val=\"" + self._valEscaped(true) + "\"" +
-      " start=\"" + self.start.str() + "\"" +
-      " end=\"" + self.end.str() + "\"" +
-      " />"
-  }
-
-  fn _valEscaped (self: Self, xml := false) str {
-    mut result := ""
-
-    loop i := 0; i < self.val.len; i++ {
-      ch := self.val[i]
-
-      if ch == '\f' {
-        result += "\\f"
-      } elif ch == '\n' {
-        result += "\\n"
-      } elif ch == '\r' {
-        result += "\\r"
-      } elif ch == '\t' {
-        result += "\\t"
-      } elif ch == '\v' {
-        result += "\\v"
-      } elif ch == '"' && xml {
-        result += "\\\""
-      } else {
-        result += ch.str()
-      }
+    if ch == '\f' {
+      result += "\\f"
+    } elif ch == '\n' {
+      result += "\\n"
+    } elif ch == '\r' {
+      result += "\\r"
+    } elif ch == '\t' {
+      result += "\\t"
+    } elif ch == '\v' {
+      result += "\\v"
+    } elif ch == '"' && xml {
+      result += "\\\""
+    } else {
+      result += ch.str()
     }
-
-    return result
   }
+
+  return result
 }
 
 export fn isCharEsc (ch: char) bool {
@@ -124,4 +100,21 @@ export fn isWhitespace (ch: char) bool {
     ch == '\r' ||
     ch == '\t' ||
     ch == '\v'
+}
+
+export fn toStr (tk: t.Token) str {
+  val := escapeVal(tk.val)
+  loc := "(" + tk.start.str() + "-" + tk.end.str() + ")"
+
+  return tk.t.rawValue + loc + (val.empty ? "" : ": " + val)
+}
+
+export fn toXML (tk: t.Token) str {
+  return
+    "<Token" +
+    " type=\"" + tk.t.rawValue + "\"" +
+    " val=\"" + escapeVal(tk.val, true) + "\"" +
+    " start=\"" + tk.start.str() + "\"" +
+    " end=\"" + tk.end.str() + "\"" +
+    " />"
 }

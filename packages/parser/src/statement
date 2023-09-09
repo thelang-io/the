@@ -5,6 +5,18 @@
 
 import * as t from "./types"
 
-export fn create (body: t.StatementBody, start := 0, end := 0) t.Statement {
-  return t.Statement{body: body, start: start, end: end}
+export fn create (
+  body: t.StatementBody,
+  start: int,
+  end: int,
+  leadingComments: t.Token[] = [],
+  trailingComments: t.Token[] = []
+) t.Statement {
+  return t.Statement{
+    body: body,
+    start: start,
+    end: end,
+    leadingComments: leadingComments,
+    trailingComments: trailingComments
+  }
 }

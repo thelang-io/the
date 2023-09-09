@@ -3,6 +3,7 @@
  * Licensed under the MIT License
  */
 
+import * as Token from "./token"
 import * as t from "./types"
 
 export fn FunctionParameterArray_toText (array: t.FunctionParameter[], indent := 0) str {
@@ -42,6 +43,23 @@ export fn Identifier_toText (self: t.Identifier, indent := 0) str {
 export fn Expression_toText (self: t.Expression, indent := 0) str {
   mut result := ""
   mut beginAttrs := "start=" + self.start.str() + ", end=" + self.end.str()
+  mut comments := ""
+
+  if !self.leadingComments.empty {
+    comments += ' '.repeat(indent + 2) + "leadingComments:" + os_EOL
+
+    loop i := 0; i < self.leadingComments.len; i++ {
+      comments += ' '.repeat(indent + 4) + Token.toStr(self.leadingComments[i]) + os_EOL
+    }
+  }
+
+  if !self.trailingComments.empty {
+    comments += ' '.repeat(indent + 2) + "trailingComments:" + os_EOL
+
+    loop i := 0; i < self.trailingComments.len; i++ {
+      comments += ' '.repeat(indent + 4) + Token.toStr(self.trailingComments[i]) + os_EOL
+    }
+  }
 
   if self.isIdentifier() {
     expression := self.asIdentifier()
@@ -50,28 +68,35 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     expression := self.asBooleanLiteral()
     result += ' '.repeat(indent) + "BooleanLiteral(" + beginAttrs + ")"
     result += " " + expression.value + os_EOL
+    result += comments
   } elif self.isCharacterLiteral() {
     expression := self.asCharacterLiteral()
     result += ' '.repeat(indent) + "CharacterLiteral(" + beginAttrs + ")"
     result += " " + expression.value + os_EOL
+    result += comments
   } elif self.isFloatingPointLiteral() {
     expression := self.asFloatingPointLiteral()
     result += ' '.repeat(indent) + "FloatingPointLiteral(" + beginAttrs + ")"
     result += " " + expression.value + os_EOL
+    result += comments
   } elif self.isIntegerLiteral() {
     expression := self.asIntegerLiteral()
     beginAttrs += " type=" + expression.t.rawValue
     result += ' '.repeat(indent) + "IntegerLiteral(" + beginAttrs + ")"
     result += " " + expression.value + os_EOL
+    result += comments
   } elif self.isNilLiteral() {
     result += ' '.repeat(indent) + "NilLiteral(" + beginAttrs + ")" + os_EOL
+    result += comments
   } elif self.isStringLiteral() {
     expression := self.asStringLiteral()
     result += ' '.repeat(indent) + "StringLiteral(" + beginAttrs + ")"
     result += " " + expression.value + os_EOL
+    result += comments
   } elif self.isArray() {
     expression := self.asArray()
     result += ' '.repeat(indent) + "ArrayExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     loop i := 0; i < expression.elements.len; i++ {
       result += Expression_toText(expression.elements[i], indent: indent + 2)
@@ -79,6 +104,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isAs() {
     expression := self.asAs()
     result += ' '.repeat(indent) + "AsExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "expression" + os_EOL
     result += Expression_toText(expression.expression, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "type" + os_EOL
@@ -86,6 +112,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isAssignment() {
     expression := self.asAssignment()
     result += ' '.repeat(indent) + "AssignmentExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "left" + os_EOL
     result += Expression_toText(expression.left, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "op " + expression.operator + os_EOL
@@ -94,10 +121,12 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isAwait() {
     expression := self.asAwait()
     result += ' '.repeat(indent) + "AwaitExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Expression_toText(expression.expression, indent: indent + 2)
   } elif self.isBinary() {
     expression := self.asBinary()
     result += ' '.repeat(indent) + "BinaryExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "left" + os_EOL
     result += Expression_toText(expression.left, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "op " + expression.operator + os_EOL
@@ -106,6 +135,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isCall() {
     expression := self.asCall()
     result += ' '.repeat(indent) + "CallExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "callee" + os_EOL
     result += Expression_toText(expression.callee, indent: indent + 4)
 
@@ -130,6 +160,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     expression := self.asClosure()
     beginAttrs += expression.asynchronous ? " async" : ""
     result += ' '.repeat(indent) + "ClosureExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     if !expression.parameters.empty {
       result += ' '.repeat(indent + 2) + "parameters" + os_EOL
@@ -143,6 +174,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isConditional() {
     expression := self.asConditional()
     result += ' '.repeat(indent) + "ConditionalExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "condition" + os_EOL
     result += Expression_toText(expression.condition, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "consequent" + os_EOL
@@ -152,16 +184,15 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isElementAccess() {
     expression := self.asElementAccess()
     result += ' '.repeat(indent) + "ElementAccessExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "expression" + os_EOL
     result += Expression_toText(expression.expression, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "argument" + os_EOL
     result += Expression_toText(expression.argument, indent: indent + 4)
-  } elif self.isEmpty() {
-    expression := self.asEmpty()
-    result += ' '.repeat(indent) + "EmptyExpression" + os_EOL
   } elif self.isIs() {
     expression := self.asIs()
     result += ' '.repeat(indent) + "IsExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "expression" + os_EOL
     result += Expression_toText(expression.expression, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "type" + os_EOL
@@ -169,6 +200,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isMap() {
     expression := self.asMap()
     result += ' '.repeat(indent) + "MapExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     loop i := 0; i < expression.elements.len; i++ {
       element := expression.elements[i]
@@ -181,10 +213,12 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isMemberAccess() {
     expression := self.asMemberAccess()
     result += ' '.repeat(indent) + "MemberAccessExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Identifier_toText(expression.name, indent: indent + 2)
   } elif self.isObject() {
     expression := self.asObject()
     result += ' '.repeat(indent) + "ObjectExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "id" + os_EOL
     result += Type_toText(expression.id, indent: indent + 4)
 
@@ -203,10 +237,12 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isParenthesized() {
     expression := self.asParenthesized()
     result += ' '.repeat(indent) + "ParenthesizedExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Expression_toText(expression.expression, indent: indent + 2)
   } elif self.isPropertyAccess() {
     expression := self.asPropertyAccess()
     result += ' '.repeat(indent) + "PropertyAccessExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "expression" + os_EOL
     result += Expression_toText(expression.expression, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "name" + os_EOL
@@ -214,11 +250,13 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isReference() {
     expression := self.asReference()
     result += ' '.repeat(indent) + "ReferenceExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Expression_toText(expression.expression, indent: indent + 2)
   } elif self.isUnary() {
     expression := self.asUnary()
     beginAttrs += expression.prefix ? " prefix" : ""
     result += ' '.repeat(indent) + "UnaryExpression(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     if expression.prefix {
       result += ' '.repeat(indent + 2) + "operator " + expression.operator + os_EOL
@@ -247,23 +285,45 @@ export fn StatementArray_toText (array: t.Statement[], indent := 0) str {
 export fn Statement_toText (self: t.Statement, indent := 0) str {
   mut result := ""
   mut beginAttrs := "start=" + self.start.str() + ", end=" + self.end.str()
+  mut comments := ""
+
+  if !self.leadingComments.empty {
+    comments += ' '.repeat(indent + 2) + "leadingComments:" + os_EOL
+
+    loop i := 0; i < self.leadingComments.len; i++ {
+      comments += ' '.repeat(indent + 4) + Token.toStr(self.leadingComments[i]) + os_EOL
+    }
+  }
+
+  if !self.trailingComments.empty {
+    comments += ' '.repeat(indent + 2) + "trailingComments:" + os_EOL
+
+    loop i := 0; i < self.trailingComments.len; i++ {
+      comments += ' '.repeat(indent + 4) + Token.toStr(self.trailingComments[i]) + os_EOL
+    }
+  }
 
   if self.isBlock() {
     statement := self.asBlock()
     result += ' '.repeat(indent) + "BlockStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     loop i := 0; i < statement.body.len; i++ {
       result += Statement_toText(statement.body[i], indent + 2)
     }
   } elif self.isBreak() {
     result += ' '.repeat(indent) + "BreakStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
   } elif self.isContinue() {
     result += ' '.repeat(indent) + "ContinueStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
   } elif self.isEmpty() {
     result += ' '.repeat(indent) + "EmptyStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
   } elif self.isEnumDeclaration() {
     statement := self.asEnumDeclaration()
     result += ' '.repeat(indent) + "EnumDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
 
@@ -286,22 +346,27 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     }
   } elif self.isEof() {
     result += ' '.repeat(indent) + "EofStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
   } elif self.isExportDeclaration() {
     statement := self.asExportDeclaration()
     result += ' '.repeat(indent) + "ExportDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Statement_toText(statement.statement, indent: indent + 2)
   } elif self.isExportNamedDeclaration() {
     statement := self.asExportNamedDeclaration()
     result += ' '.repeat(indent) + "ExportNamedDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Expression_toText(statement.expression, indent: indent + 2)
   } elif self.isExpression() {
     statement := self.asExpression()
     result += ' '.repeat(indent) + "ExpressionStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Expression_toText(statement.expression, indent + 2)
   } elif self.isFunctionDeclaration() {
     statement := self.asFunctionDeclaration()
     beginAttrs += statement.asynchronous ? " async" : ""
     result += ' '.repeat(indent) + "FunctionDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
 
@@ -322,6 +387,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
   } elif self.isIf() {
     statement := self.asIf()
     result += ' '.repeat(indent) + "IfStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "condition" + os_EOL
     result += Expression_toText(statement.condition, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "consequent" + os_EOL
@@ -334,6 +400,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
   } elif self.isImportDeclaration() {
     statement := self.asImportDeclaration()
     result += ' '.repeat(indent) + "ImportDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     if !statement.specifiers.empty {
       result += ' '.repeat(indent + 2) + "source" + os_EOL
@@ -361,6 +428,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     statement := self.asLoop()
     beginAttrs += statement.parenthesized ? " parenthesized" : ""
     result += ' '.repeat(indent) + "LoopStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     if statement.initializer != nil {
       result += ' '.repeat(indent + 2) + "initializer" + os_EOL
@@ -382,10 +450,12 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
   } elif self.isMainDeclaration() {
     statement := self.asMainDeclaration()
     result += ' '.repeat(indent) + "MainDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Statement_toText(statement.body, indent: indent + 2)
   } elif self.isObjectDeclaration() {
     statement := self.asObjectDeclaration()
     result += ' '.repeat(indent) + "ObjectDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
 
@@ -400,6 +470,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     statement := self.asObjectDeclarationMethod()
     beginAttrs += statement.asynchronous ? " async" : ""
     result += ' '.repeat(indent) + "ObjectDeclarationMethod(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
 
@@ -421,6 +492,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     statement := self.asObjectDeclarationProperty()
     beginAttrs += (statement.constant ? " const" : "") + (statement.mutable ? " mut" : "")
     result += ' '.repeat(indent) + "ObjectDeclarationProperty(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
 
@@ -436,6 +508,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
   } elif self.isReturn() {
     statement := self.asReturn()
     result += ' '.repeat(indent) + "ReturnStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     if statement.expression != nil {
       result += Expression_toText(statement.expression, indent + 2)
@@ -443,10 +516,12 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
   } elif self.isThrow() {
     statement := self.asThrow()
     result += ' '.repeat(indent) + "ThrowStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Expression_toText(statement.expression, indent + 2)
   } elif self.isTry() {
     statement := self.asTry()
     result += ' '.repeat(indent) + "TryStatement(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "body" + os_EOL
     result += Statement_toText(statement.body, indent: indent + 4)
 
@@ -465,6 +540,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
   } elif self.isTypeAliasDeclaration() {
     statement := self.asTypeAliasDeclaration()
     result += ' '.repeat(indent) + "TypeAliasDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "type" + os_EOL
@@ -473,6 +549,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     statement := self.asVariableDeclaration()
     beginAttrs += (statement.constant ? " const" : "") + (statement.mutable ? " mut" : "")
     result += ' '.repeat(indent) + "VariableDeclaration(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "name" + os_EOL
     result += Identifier_toText(statement.name, indent: indent + 4)
 
@@ -493,17 +570,34 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
 export fn Type_toText (self: t.Type, indent := 0) str {
   mut result := ""
   mut beginAttrs := "start=" + self.start.str() + " end=" + self.end.str()
+  mut comments := ""
+
+  if !self.leadingComments.empty {
+    comments += ' '.repeat(indent + 2) + "leadingComments:" + os_EOL
+
+    loop i := 0; i < self.leadingComments.len; i++ {
+      comments += ' '.repeat(indent + 4) + Token.toStr(self.leadingComments[i]) + os_EOL
+    }
+  }
+
+  if !self.trailingComments.empty {
+    comments += ' '.repeat(indent + 2) + "trailingComments:" + os_EOL
+
+    loop i := 0; i < self.trailingComments.len; i++ {
+      comments += ' '.repeat(indent + 4) + Token.toStr(self.trailingComments[i]) + os_EOL
+    }
+  }
 
   if self.isArray() {
     bodyType := self.asArray()
     result += ' '.repeat(indent) + "ArrayType(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Type_toText(bodyType.elementType, indent: indent + 2)
-  } elif self.isEmpty() {
-    result += ' '.repeat(indent) + "EmptyType" + os_EOL
   } elif self.isFunction() {
     bodyType := self.asFunction()
     beginAttrs += bodyType.asynchronous ? " async" : ""
     result += ' '.repeat(indent) + "FunctionType(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     if !bodyType.parameters.empty {
       result += ' '.repeat(indent + 2) + "parameters" + os_EOL
@@ -531,10 +625,12 @@ export fn Type_toText (self: t.Type, indent := 0) str {
   } elif self.isIdentifier() {
     bodyType := self.asIdentifier()
     result += ' '.repeat(indent) + "IdentifierType(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Identifier_toText(bodyType.name, indent: indent + 2)
   } elif self.isMap() {
     bodyType := self.asMap()
     result += ' '.repeat(indent) + "MapType(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "keyType" + os_EOL
     result += Type_toText(bodyType.keyType, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "valueType" + os_EOL
@@ -542,6 +638,7 @@ export fn Type_toText (self: t.Type, indent := 0) str {
   } elif self.isMember() {
     bodyType := self.asMember()
     result += ' '.repeat(indent) + "MemberType(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += ' '.repeat(indent + 2) + "type" + os_EOL
     result += Type_toText(bodyType.t, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "name" + os_EOL
@@ -549,18 +646,22 @@ export fn Type_toText (self: t.Type, indent := 0) str {
   } elif self.isOptional() {
     bodyType := self.asOptional()
     result += ' '.repeat(indent) + "OptionalType(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Type_toText(bodyType.t, indent: indent + 2)
   } elif self.isParenthesized() {
     bodyType := self.asParenthesized()
     result += ' '.repeat(indent) + "ParenthesizedType(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Type_toText(bodyType.t, indent: indent + 2)
   } elif self.isReference() {
     bodyType := self.asReference()
     result += ' '.repeat(indent) + "ReferenceType(" + beginAttrs + ")" + os_EOL
+    result += comments
     result += Type_toText(bodyType.t, indent: indent + 2)
   } elif self.isUnion() {
     bodyType := self.asUnion()
     result += ' '.repeat(indent) + "UnionType(" + beginAttrs + ")" + os_EOL
+    result += comments
 
     loop i := 0; i < bodyType.types.len; i++ {
       result += Type_toText(bodyType.types[i], indent: indent + 2)
