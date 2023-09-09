@@ -456,13 +456,18 @@ export obj Tokenizer {
     return self._wrapToken(.Whitespace)
   }
 
-  fn _raise (mut self: ref Self, message: str, start: int) {
+  fn _raise (mut self: ref Self, message: str, start: int, end := self.reader.pos) {
     if self.state.handled {
       return
     }
 
+    self._raiseException("SyntaxError", message, start, end)
+    self.state.handled = true
+  }
+
+  fn _raiseException (mut self: ref Self, errorType: str, message: str, start: int, end: int) {
     startLoc := Reader.locate(self.reader, start)
-    endLoc := Reader.locate(self.reader, self.reader.pos)
+    endLoc := Reader.locate(self.reader, end)
     lines := self.reader.content.lines()
 
     mut errorLines: str[]
@@ -495,7 +500,7 @@ export obj Tokenizer {
     gutterLen := errorLinesNumbers[-1].str().len + 1
 
     mut error := self.reader.path + ":" + startLoc.line.str() + ":" +
-      startLoc.col.str() + ": SyntaxError: " + message + os_EOL
+      startLoc.col.str() + ": " + errorType + ": " + message + os_EOL
 
     mut prevLineNum := 0
 

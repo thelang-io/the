@@ -45,7 +45,6 @@ export obj ParserState {
 }
 
 export obj Parser {
-  mut errors: str[]
   mut state: ParserState
   mut tokenizer: ref Tokenizer.Tokenizer
 
@@ -67,7 +66,7 @@ export obj Parser {
 
     if statement == nil {
       tk := self.tokenizer.next()
-      self._raise(errors.E0104(tk.val))
+      self._raise(errors.E0104(tk.val), tk.start, tk.end)
       statement = dummyStatement()
     }
 
@@ -2099,12 +2098,17 @@ export obj Parser {
     )
   }
 
-  fn _raise (mut self: ref Self, message: str) {
+  fn _raise (
+    mut self: ref Self,
+    message: str,
+    start := self.tokenizer.readerEndPos(),
+    end := self.tokenizer.readerEndPos()
+  ) {
     if self.state.denyIncomplete {
       throw t.IncompleteRaiseError{message: "Incomplete raise"}
     }
 
-    self.errors.push(message)
+    self.tokenizer._raiseException("ParseError", message, start, end)
   }
 
   fn _wrapExpression (mut self: ref Self, e: t.Expression) t.Expression {
@@ -2260,12 +2264,8 @@ export fn parse (path: str) t.File {
     f.program.body.push(statement)
   }
 
-  if !parser.tokenizer.errors.empty {
-    parser.errors = parser.tokenizer.errors.merge(parser.errors)
-  }
-
-  f.errors = parser.errors
-  f.hasErrors = !parser.errors.empty
+  f.errors = parser.tokenizer.errors
+  f.hasErrors = !f.errors.empty
 
   return f
 }
