@@ -611,6 +611,8 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
         return it.reader->path == r->path;
       });
 
+      auto importExistedBefore = importExists != this->imports->end();
+
       if (importExists == this->imports->end()) {
         auto l = std::make_shared<Lexer>(r.get());
         auto p = std::make_shared<Parser>(l.get());
@@ -640,9 +642,11 @@ void AST::_forwardNode (const ParserBlock &block, ASTPhase phase) {
       auto importNodes = importItem->nodes;
       auto importNodesExports = ASTChecker(importItem->nodes).getNodeOfType<ASTNodeExportDecl>(false);
 
-      for (const auto &item : importItem->ast->varMap.methods()) {
-        this->typeMap.insert(item->type);
-        this->varMap.insert(item);
+      if (!importExistedBefore) {
+        for (const auto &item : importItem->ast->varMap.methods()) {
+          this->typeMap.insert(item->type);
+          this->varMap.insert(item);
+        }
       }
 
       if (!stmtImportDecl.specifiers.empty()) {

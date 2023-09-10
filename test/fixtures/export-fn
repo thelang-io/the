@@ -1,3 +1,7 @@
 export fn TestFn (a: int, b: str) str {
   return a.str() + b
 }
+
+export fn TestFn2 (a: int, b: str) str {
+  return b + a.str()
+}

@@ -28,6 +28,7 @@ void VarStack::mark (const std::string &codeName) {
   for (auto &it : this->_items) {
     if (std::get<0>(it)->codeName == codeName) {
       std::get<1>(it) = true;
+      break;
     }
   }
 }
@@ -36,6 +37,7 @@ void VarStack::mark (const std::shared_ptr<Var> &var) {
   for (auto &it : this->_items) {
     if (std::get<0>(it)->codeName == var->codeName) {
       std::get<1>(it) = true;
+      break;
     }
   }
 }
