@@ -165,7 +165,7 @@ main {
 
   if fs_isFileSync(args[1]) {
     file := parse(args[1])
-    print(stringify(ref file))
+    print(stringify(ref file), terminator: "")
 
     if file.hasErrors {
       print()

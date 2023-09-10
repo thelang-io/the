@@ -8,3 +8,7 @@ import * as t from "./types"
 export fn create (body: t.TypeBody, start: int, end: int) t.Type {
   return t.Type{body: body, start: start, end: end}
 }
+
+export fn dummy () t.Type {
+  return create(t.DummyType{}, 0, 0)
+}

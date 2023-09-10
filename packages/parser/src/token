@@ -31,6 +31,42 @@ fn escapeVal (val: str, xml := false) str {
   return result
 }
 
+export fn associativity (t: t.TokenType, unary := false) t.TokenAssociativity {
+  if (
+    (unary && (t == .OpExcl || t == .OpMinus || t == .OpPlus || t == .OpTilde)) ||
+    t == .OpAmpEq ||
+    t == .OpAmpAmpEq ||
+    t == .OpCaretEq ||
+    t == .OpEq ||
+    t == .OpLShiftEq ||
+    t == .OpMinusEq ||
+    t == .OpPercentEq ||
+    t == .OpPipeEq ||
+    t == .OpPipePipeEq ||
+    t == .OpPlusEq ||
+    t == .OpRShiftEq ||
+    t == .OpSlashEq ||
+    t == .OpStarEq ||
+    t == .OpColon || t == .OpQn
+  ) {
+    return .Right
+  } elif (
+    t == .OpDot || t == .OpLBrack || t == .OpRBrack ||
+    t == .OpPercent || t == .OpSlash || t == .OpStar ||
+    t == .OpMinus || t == .OpPlus ||
+    t == .OpLShift || t == .OpRShift ||
+    t == .OpGt || t == .OpGtEq || t == .OpLt || t == .OpLtEq ||
+    t == .OpEqEq || t == .OpExclEq ||
+    t == .OpAmp || t == .OpCaret || t == .OpPipe ||
+    t == .OpAmpAmp || t == .OpPipePipe ||
+    t == .OpComma
+  ) {
+    return .Left
+  }
+
+  return .None
+}
+
 export fn isCharEsc (ch: char) bool {
   return
     ch == '0' ||
@@ -102,11 +138,71 @@ export fn isWhitespace (ch: char) bool {
     ch == '\v'
 }
 
+export fn precedence (t: t.TokenType, unary := false) int {
+  if t == .OpLBrace || t == .OpRBrace || t == .OpLPar || t == .OpRPar {
+    return 18
+  } elif t == .OpDot || t == .OpLBrack || t == .OpRBrack {
+    return 17
+  } elif t == .OpMinusMinus || t == .OpPlusPlus {
+    return 16
+  } elif t == .KwAwait || t == .KwRef {
+    return 15
+  } elif unary && (t == .OpExcl || t == .OpMinus || t == .OpPlus || t == .OpTilde) {
+    return 14
+  } elif t == .OpPercent || t == .OpSlash || t == .OpStar {
+    return 12
+  } elif t == .OpMinus || t == .OpPlus {
+    return 11
+  } elif t == .OpLShift || t == .OpRShift {
+    return 10
+  } elif (
+    t == .KwAs || t == .KwIs ||
+    t == .OpGt || t == .OpGtEq ||
+    t == .OpLt || t == .OpLtEq
+  ) {
+    return 9
+  } elif t == .OpEqEq || t == .OpExclEq {
+    return 8
+  } elif t == .OpAmp {
+    return 7
+  } elif t == .OpCaret {
+    return 6
+  } elif t == .OpPipe {
+    return 5
+  } elif t == .OpAmpAmp {
+    return 4
+  } elif t == .OpPipePipe {
+    return 3
+  } elif (
+    t == .OpAmpEq ||
+    t == .OpAmpAmpEq ||
+    t == .OpCaretEq ||
+    t == .OpEq ||
+    t == .OpLShiftEq ||
+    t == .OpMinusEq ||
+    t == .OpPercentEq ||
+    t == .OpPipeEq ||
+    t == .OpPipePipeEq ||
+    t == .OpPlusEq ||
+    t == .OpRShiftEq ||
+    t == .OpSlashEq ||
+    t == .OpStarEq ||
+    t == .OpColon || t == .OpQn ||
+    t == .OpArrow
+  ) {
+    return 2
+  } elif t == .OpComma {
+    return 1
+  }
+
+  throw error_NewError("Tried precedence on unknown token")
+}
+
 export fn toStr (tk: t.Token) str {
   val := escapeVal(tk.val)
-  loc := "(" + tk.start.str() + "-" + tk.end.str() + ")"
-
-  return tk.t.rawValue + loc + (val.empty ? "" : ": " + val)
+  return tk.t.rawValue +
+    "(start=" + tk.start.str() + " end=" + tk.end.str() + ")" +
+    (val.empty ? "" : " " + val)
 }
 
 export fn toXML (tk: t.Token) str {
@@ -117,4 +213,11 @@ export fn toXML (tk: t.Token) str {
     " start=\"" + tk.start.str() + "\"" +
     " end=\"" + tk.end.str() + "\"" +
     " />"
+}
+
+export fn typeToIntegerLiteralType (tokenType: t.TokenType) t.IntegerLiteralType {
+  if tokenType == .LitIntBin { return .Binary }
+  elif tokenType == .LitIntDec { return .Decimal }
+  elif tokenType == .LitIntHex { return .Hexadecimal }
+  else { return .Octal }
 }

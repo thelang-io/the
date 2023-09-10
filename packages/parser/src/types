@@ -329,7 +329,7 @@ export obj AsExpression {
 
 export obj AssignmentExpression {
   left: Expression
-  operator: str
+  operator: Token
   right: Expression
 }
 
@@ -339,7 +339,7 @@ export obj AwaitExpression {
 
 export obj BinaryExpression {
   left: Expression
-  operator: str
+  operator: Token
   right: Expression
 }
 
@@ -416,7 +416,7 @@ export obj ReferenceExpression {
 }
 
 export obj UnaryExpression {
-  operator: str
+  operator: Token
   operand: Expression
   prefix: bool
 }

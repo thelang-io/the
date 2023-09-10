@@ -20,3 +20,7 @@ export fn create (
     trailingComments: trailingComments
   }
 }
+
+export fn dummy () t.Statement {
+  return create(t.DummyStatement{}, 0, 0)
+}

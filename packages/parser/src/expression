@@ -9,6 +9,14 @@ export fn create (body: t.ExpressionBody, start: int, end: int) t.Expression {
   return t.Expression{body: body, start: start, end: end}
 }
 
+export fn dummy () t.Expression {
+  return create(t.DummyExpression{}, 0, 0)
+}
+
+export fn dummyIdentifier () t.Identifier {
+  return t.Identifier{start: 0, end: 0, name: ""}
+}
+
 export fn endsWithObjExpr (self: t.Expression) bool {
   if self.isAssignment() {
     selfBody := self.asAssignment()
