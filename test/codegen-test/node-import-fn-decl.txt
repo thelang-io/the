@@ -79,6 +79,7 @@ struct str str_copy (const struct str);
 void str_free (struct str);
 void *xalloc (void *, size_t);
 struct str __THE_1_fixtures_export_fn_TestFn_0 (void *, void *);
+struct str __THE_1_fixtures_export_fn_TestFn2_0 (void *, void *);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -256,9 +257,20 @@ struct str __THE_1_fixtures_export_fn_TestFn_0 (void *px, void *pp) {
   free(pp);
   return v;
 }
+struct str __THE_1_fixtures_export_fn_TestFn2_0 (void *px, void *pp) {
+  struct str v;
+  struct __THE_1_fn_sFP3intFP3strFRstrFEP *p = pp;
+  const int32_t __THE_0_a_0 = p->n0;
+  const struct str __THE_0_b_0 = p->n1;
+  v = str_concat_str(str_copy(__THE_0_b_0), int_str(__THE_0_a_0));
+  str_free((struct str) __THE_0_b_0);
+  free(pp);
+  return v;
+}
 
 int main () {
   const struct __THE_1_fn_sFP3intFP3strFRstrFE __THE_0_fixtures_export_fn_TestFn_0 = (struct __THE_1_fn_sFP3intFP3strFRstrFE) {&__THE_1_fixtures_export_fn_TestFn_0, NULL, 0};
+  const struct __THE_1_fn_sFP3intFP3strFRstrFE __THE_0_fixtures_export_fn_TestFn2_0 = (struct __THE_1_fn_sFP3intFP3strFRstrFE) {&__THE_1_fixtures_export_fn_TestFn2_0, NULL, 0};
   print(stdout, "sz", __THE_0_fixtures_export_fn_TestFn_0.f(__THE_0_fixtures_export_fn_TestFn_0.x, xalloc(&(struct __THE_1_fn_sFP3intFP3strFRstrFEP) {1, str_alloc("2")}, sizeof(struct __THE_1_fn_sFP3intFP3strFRstrFEP))), THE_EOL);
 }
 ======= flags =======

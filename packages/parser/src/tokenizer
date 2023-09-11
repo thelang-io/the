@@ -9,14 +9,14 @@ import * as errors from "./errors"
 import * as t from "./types"
 
 export obj Tokenizer {
-  mut data: Token.Token[]
+  mut data: t.Token[]
   mut errors: str[]
   mut reader: ref Reader.Reader
   mut state: t.TokenizerState
 
-  fn lookahead (mut self: ref Self, t: t.TokenType, alwaysGoBack := false) bool {
+  fn lookahead (mut self: ref Self, t: t.TokenType, alwaysGoBack := false, allowComments := false) bool {
     startPos := self.state.idx
-    tk := self.next()
+    tk := self.next(allowComments: allowComments)
     r := tk.t == t
 
     if alwaysGoBack || !r {
@@ -26,13 +26,13 @@ export obj Tokenizer {
     return r
   }
 
-  fn next (mut self: ref Self) Token.Token {
+  fn next (mut self: ref Self, allowComments := false) t.Token {
     if !self.data.empty && (self.state.idx == self.data.len && self.data[-1].t == .Eof) {
       throw error_NewError("Tried next on Tokenizer eof")
     }
 
     loop {
-      mut tk: Token.Token
+      mut tk: t.Token
 
       if self.data.len > self.state.idx {
         tk = self.data[self.state.idx]
@@ -43,7 +43,7 @@ export obj Tokenizer {
 
       self.state.idx++
 
-      if tk.t != .Whitespace {
+      if (allowComments || (tk.t != .CommentBlock && tk.t != .CommentLine)) && tk.t != .Whitespace {
         return tk
       }
     }
@@ -51,6 +51,14 @@ export obj Tokenizer {
 
   fn pos (mut self: ref Self) int {
     return self.state.idx
+  }
+
+  fn errorSeek (mut self: ref Self, pos: int) int {
+    if pos == -1 {
+      self.errors.clear()
+    } else {
+      self.errors = self.errors.slice(0, pos + 1)
+    }
   }
 
   fn readerStartPos (mut self: ref Self, offset := 0) int {
@@ -76,9 +84,9 @@ export obj Tokenizer {
     self.state.idx = pos
   }
 
-  fn _getToken (mut self: ref Self) Token.Token {
+  fn _getToken (mut self: ref Self) t.Token {
     if self.reader.eof() {
-      return Token.Token{
+      return t.Token{
         t: .Eof,
         val: "",
         start: self.state.pos,
@@ -88,7 +96,7 @@ export obj Tokenizer {
 
     self.state.ch = self.reader.next()
     self.state.handled = false
-    mut tk: Token.Token?
+    mut tk: t.Token?
 
     if (
       (tk = self._maybeWhitespace()) != nil ||
@@ -107,7 +115,7 @@ export obj Tokenizer {
     }
   }
 
-  fn _maybeChar (mut self: ref Self) Token.Token? {
+  fn _maybeChar (mut self: ref Self) t.Token? {
     if self.state.ch != '\'' {
       return nil
     }
@@ -162,7 +170,7 @@ export obj Tokenizer {
     return self._wrapToken(.LitChar)
   }
 
-  fn _maybeCommentBlock (mut self: ref Self) Token.Token? {
+  fn _maybeCommentBlock (mut self: ref Self) t.Token? {
     if self.state.ch != '/' || !self.reader.lookahead('*') {
       return nil
     }
@@ -183,7 +191,7 @@ export obj Tokenizer {
     return self._wrapToken(.CommentBlock)
   }
 
-  fn _maybeCommentLine (mut self: ref Self) Token.Token? {
+  fn _maybeCommentLine (mut self: ref Self) t.Token? {
     if self.state.ch != '/' || !self.reader.lookahead('/') {
       return nil
     }
@@ -192,7 +200,7 @@ export obj Tokenizer {
     return self._wrapToken(.CommentLine)
   }
 
-  fn _maybeKeyword (mut self: ref Self) Token.Token? {
+  fn _maybeKeyword (mut self: ref Self) t.Token? {
     if !Token.isIdStart(self.state.ch) {
       return nil
     }
@@ -232,7 +240,7 @@ export obj Tokenizer {
     return self._wrapToken(.Id)
   }
 
-  fn _maybeNumber (mut self: ref Self) Token.Token? {
+  fn _maybeNumber (mut self: ref Self) t.Token? {
     if !self.state.ch.isDigit {
       return nil
     }
@@ -266,7 +274,7 @@ export obj Tokenizer {
     return self._wrapInt(.LitIntDec, errors.E0009("decimal"), Token.isIntDec)
   }
 
-  fn _maybeOp (mut self: ref Self) Token.Token? {
+  fn _maybeOp (mut self: ref Self) t.Token? {
     if self.state.ch == '&' {
       if self.reader.lookahead('&') {
         if self.reader.lookahead('=') {
@@ -419,7 +427,7 @@ export obj Tokenizer {
     return nil
   }
 
-  fn _maybeString (mut self: ref Self) Token.Token? {
+  fn _maybeString (mut self: ref Self) t.Token? {
     if self.state.ch != '"' {
       return nil
     }
@@ -447,7 +455,7 @@ export obj Tokenizer {
     return self._wrapToken(.LitStr)
   }
 
-  fn _maybeWhitespace (mut self: ref Self) Token.Token? {
+  fn _maybeWhitespace (mut self: ref Self) t.Token? {
     if !self.state.ch.isWhitespace {
       return nil
     }
@@ -456,13 +464,18 @@ export obj Tokenizer {
     return self._wrapToken(.Whitespace)
   }
 
-  fn _raise (mut self: ref Self, message: str, start: int) {
+  fn _raise (mut self: ref Self, message: str, start: int, end := self.reader.pos) {
     if self.state.handled {
       return
     }
 
+    self._raiseException("SyntaxError", message, start, end)
+    self.state.handled = true
+  }
+
+  fn _raiseException (mut self: ref Self, errorType: str, message: str, start: int, end: int) {
     startLoc := Reader.locate(self.reader, start)
-    endLoc := Reader.locate(self.reader, self.reader.pos)
+    endLoc := Reader.locate(self.reader, end)
     lines := self.reader.content.lines()
 
     mut errorLines: str[]
@@ -495,7 +508,7 @@ export obj Tokenizer {
     gutterLen := errorLinesNumbers[-1].str().len + 1
 
     mut error := self.reader.path + ":" + startLoc.line.str() + ":" +
-      startLoc.col.str() + ": SyntaxError: " + message + os_EOL
+      startLoc.col.str() + ": " + errorType + ": " + message + os_EOL
 
     mut prevLineNum := 0
 
@@ -517,7 +530,7 @@ export obj Tokenizer {
     self.state.handled = true
   }
 
-  fn _wrapFloat (mut self: ref Self, t: t.TokenType, errorMessage: str) Token.Token {
+  fn _wrapFloat (mut self: ref Self, t: t.TokenType, errorMessage: str) t.Token {
     if self.reader.eof() {
       return self._wrapToken(t)
     }
@@ -612,7 +625,7 @@ export obj Tokenizer {
     return self._wrapTokenFloat(t)
   }
 
-  fn _wrapInt (mut self: ref Self, t: t.TokenType, errorMessage: str, check: (char) -> bool) Token.Token {
+  fn _wrapInt (mut self: ref Self, t: t.TokenType, errorMessage: str, check: (char) -> bool) t.Token {
     if t != .LitIntDec {
       if self.reader.eof() {
         self._raise(errorMessage, self.state.pos)
@@ -634,12 +647,12 @@ export obj Tokenizer {
     return self._wrapFloat(t, errorMessage)
   }
 
-  fn _wrapToken (mut self: ref Self, t: t.TokenType) Token.Token {
+  fn _wrapToken (mut self: ref Self, t: t.TokenType) t.Token {
     start := self.state.pos
     self.state.pos = self.reader.pos
     self.state.handled = true
 
-    return Token.Token{
+    return t.Token{
       t: t,
       val: self.reader.slice(start, self.state.pos),
       start: start,
@@ -647,7 +660,7 @@ export obj Tokenizer {
     }
   }
 
-  fn _wrapTokenFloat (mut self: ref Self, t: t.TokenType) Token.Token {
+  fn _wrapTokenFloat (mut self: ref Self, t: t.TokenType) t.Token {
     if !self.reader.eof() {
       pos := self.reader.pos
       ch := self.reader.next()

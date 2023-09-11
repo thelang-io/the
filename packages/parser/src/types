@@ -3,9 +3,16 @@
  * Licensed under the MIT License
  */
 
+export obj Token {
+  mut t: TokenType
+  mut val: str
+  mut start: int
+  mut end: int
+}
+
 export type TypeBody =
   ArrayType |
-  EmptyType |
+  DummyType |
   FunctionType |
   IdentifierType |
   MapType |
@@ -34,7 +41,7 @@ export type ExpressionBody =
   ClosureExpression |
   ConditionalExpression |
   ElementAccessExpression |
-  EmptyExpression |
+  DummyExpression |
   IsExpression |
   MapExpression |
   MemberAccessExpression |
@@ -48,6 +55,7 @@ export type StatementBody =
   BlockStatement |
   BreakStatement |
   ContinueStatement |
+  DummyStatement |
   EmptyStatement |
   EnumDeclaration |
   EofStatement |
@@ -72,9 +80,10 @@ export obj Type {
   mut start: int
   mut end: int
   mut body: TypeBody
+  mut leadingComments: Token[]
+  mut trailingComments: Token[]
 
   fn asArray (mut self: ref Self) ArrayType { return self.body as ArrayType }
-  fn asEmpty (mut self: ref Self) EmptyType { return self.body as EmptyType }
   fn asFunction (mut self: ref Self) FunctionType { return self.body as FunctionType }
   fn asIdentifier (mut self: ref Self) IdentifierType { return self.body as IdentifierType }
   fn asMap (mut self: ref Self) MapType { return self.body as MapType }
@@ -85,7 +94,6 @@ export obj Type {
   fn asUnion (mut self: ref Self) UnionType { return self.body as UnionType }
 
   fn isArray (self: ref Self) bool { return self.body is ArrayType }
-  fn isEmpty (self: ref Self) bool { return self.body is EmptyType }
   fn isFunction (self: ref Self) bool { return self.body is FunctionType }
   fn isIdentifier (self: ref Self) bool { return self.body is IdentifierType }
   fn isMap (self: ref Self) bool { return self.body is MapType }
@@ -100,6 +108,8 @@ export obj Expression {
   mut start: int
   mut end: int
   mut body: ExpressionBody
+  mut leadingComments: Token[]
+  mut trailingComments: Token[]
 
   fn asIdentifier (mut self: ref Self) Identifier { return self.body as Identifier }
   fn asBooleanLiteral (mut self: ref Self) BooleanLiteral { return self.body as BooleanLiteral }
@@ -117,7 +127,6 @@ export obj Expression {
   fn asClosure (mut self: ref Self) ClosureExpression { return self.body as ClosureExpression }
   fn asConditional (mut self: ref Self) ConditionalExpression { return self.body as ConditionalExpression }
   fn asElementAccess (mut self: ref Self) ElementAccessExpression { return self.body as ElementAccessExpression }
-  fn asEmpty (mut self: ref Self) EmptyExpression { return self.body as EmptyExpression }
   fn asIs (mut self: ref Self) IsExpression { return self.body as IsExpression }
   fn asMap (mut self: ref Self) MapExpression { return self.body as MapExpression }
   fn asMemberAccess (mut self: ref Self) MemberAccessExpression { return self.body as MemberAccessExpression }
@@ -143,7 +152,6 @@ export obj Expression {
   fn isClosure (self: ref Self) bool { return self.body is ClosureExpression }
   fn isConditional (self: ref Self) bool { return self.body is ConditionalExpression }
   fn isElementAccess (self: ref Self) bool { return self.body is ElementAccessExpression }
-  fn isEmpty (self: ref Self) bool { return self.body is EmptyExpression }
   fn isIs (self: ref Self) bool { return self.body is IsExpression }
   fn isMap (self: ref Self) bool { return self.body is MapExpression }
   fn isMemberAccess (self: ref Self) bool { return self.body is MemberAccessExpression }
@@ -158,6 +166,8 @@ export obj Statement {
   mut start: int
   mut end: int
   mut body: StatementBody
+  mut leadingComments: Token[]
+  mut trailingComments: Token[]
 
   fn asBlock (mut self: ref Self) BlockStatement { return self.body as BlockStatement }
   fn asBreak (mut self: ref Self) BreakStatement { return self.body as BreakStatement }
@@ -224,7 +234,7 @@ export obj ArrayType {
   elementType: Type
 }
 
-export obj EmptyType {
+export obj DummyType {
 }
 
 export obj FunctionTypeParameter {
@@ -314,7 +324,7 @@ export obj AsExpression {
 
 export obj AssignmentExpression {
   left: Expression
-  operator: str
+  operator: Token
   right: Expression
 }
 
@@ -324,7 +334,7 @@ export obj AwaitExpression {
 
 export obj BinaryExpression {
   left: Expression
-  operator: str
+  operator: Token
   right: Expression
 }
 
@@ -356,7 +366,7 @@ export obj ElementAccessExpression {
   argument: Expression
 }
 
-export obj EmptyExpression {
+export obj DummyExpression {
 }
 
 export obj IsExpression {
@@ -385,6 +395,7 @@ export obj ObjectExpressionProperty {
 export obj ObjectExpression {
   id: Type
   properties: ObjectExpressionProperty[]
+  errorPosIdx: int
 }
 
 export obj ParenthesizedExpression {
@@ -401,7 +412,7 @@ export obj ReferenceExpression {
 }
 
 export obj UnaryExpression {
-  operator: str
+  operator: Token
   operand: Expression
   prefix: bool
 }
@@ -414,6 +425,9 @@ export obj BreakStatement {
 }
 
 export obj ContinueStatement {
+}
+
+export obj DummyStatement {
 }
 
 export obj EmptyStatement {
@@ -539,9 +553,9 @@ export obj VariableDeclaration {
 }
 
 export obj File {
-  path: str
-  errors: str[]
-  hasErrors: bool
+  mut path: str
+  mut errors: str[]
+  mut hasErrors: bool
   mut program: Program
 }
 
@@ -551,7 +565,8 @@ export obj Location {
 }
 
 export obj Program {
-  body: Statement[]
+  mut body: Statement[]
+  mut eof: Statement
 }
 
 export enum TokenAssociativity {
