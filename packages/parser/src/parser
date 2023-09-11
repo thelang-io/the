@@ -26,12 +26,12 @@ export enum ParserExpressionWrapper {
   Unary,
 }
 
-export obj ParserState {
-  mut denyIncomplete: bool
+export obj ParserWrapOutput {
+  mut expression: t.Expression
+  mut shouldWrap: bool
 }
 
 export obj Parser {
-  mut state: ParserState
   mut tokenizer: ref Tokenizer.Tokenizer
 
   fn comments (mut self: ref Self) t.Token[] {
@@ -64,104 +64,21 @@ export obj Parser {
     startPos := self.tokenizer.pos()
     mut e: t.Expression?
 
-    try {
-      if (e = self._maybeArrayExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeAwaitExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeClosureExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeMapExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeMemberAccessExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeParenthesizedExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeReferenceExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeUnaryExpression()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeLiteral()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
-    }
-
-    try {
-      if (e = self._maybeIdentifier()) != nil {
-        e.leadingComments = comments
-        e.trailingComments = self.comments()
-        return shouldWrap ? self._wrapExpression(e) : e
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
+    if (
+      (e = self._maybeArrayExpression()) != nil ||
+      (e = self._maybeAwaitExpression()) != nil ||
+      (e = self._maybeClosureExpression()) != nil ||
+      (e = self._maybeMapExpression()) != nil ||
+      (e = self._maybeMemberAccessExpression()) != nil ||
+      (e = self._maybeParenthesizedExpression()) != nil ||
+      (e = self._maybeReferenceExpression()) != nil ||
+      (e = self._maybeUnaryExpression()) != nil ||
+      (e = self._maybeLiteral()) != nil ||
+      (e = self._maybeIdentifier()) != nil
+    ) {
+      e.leadingComments = comments
+      e.trailingComments = self.comments()
+      return shouldWrap ? self._wrapExpression(e) : e
     }
 
     return nil
@@ -868,9 +785,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    self.state.denyIncomplete = true
     mut maybeCondition := self.nextExpression()
-    self.state.denyIncomplete = false
 
     if maybeCondition == nil {
       self._raise(errors.E0109("if"))
@@ -885,6 +800,7 @@ export obj Parser {
     if consequent == nil && Expression.endsWithObjExpr(condition) {
       objectExpression := Expression.extractLastObjExpr(condition)
       condition = Expression.subtractLastObjExpr(condition)
+      self.tokenizer.errorSeek(objectExpression.errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
       consequent = self.nextStatement(withBlockStatement: true)
     }
@@ -1110,6 +1026,7 @@ export obj Parser {
                 expression: initializerExpression
               }, initializerExpression.start, initializerExpression.end)
 
+              self.tokenizer.errorSeek(objectExpression.errorPosIdx)
               self.tokenizer.readerSeek(objectExpression.id.end)
               condition = nil
               shouldContinue = false
@@ -1145,6 +1062,7 @@ export obj Parser {
     ) {
       objectExpression := Expression.extractLastObjExpr(update as t.Expression)
       update = Expression.subtractLastObjExpr(update as t.Expression)
+      self.tokenizer.errorSeek(objectExpression.errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
       body = self.nextStatement(withBlockStatement: true)
     }
@@ -1166,6 +1084,7 @@ export obj Parser {
     ) {
       objectExpression := Expression.extractLastObjExpr(condition as t.Expression)
       condition = Expression.subtractLastObjExpr(condition as t.Expression)
+      self.tokenizer.errorSeek(objectExpression.errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
       body = self.nextStatement(withBlockStatement: true)
     }
@@ -1757,84 +1676,104 @@ export obj Parser {
     startPos: int,
     tk: t.Token,
     wrapper: ParserExpressionWrapper
-  ) t.Expression {
+  ) ParserWrapOutput {
     if expression.isAssignment() {
       e := expression.asAssignment()
+
       shouldWrapExpression := Token.precedence(e.operator.t) == Token.precedence(tk.t)
         ? Token.associativity(e.operator.t) == .Right
         : Token.precedence(e.operator.t) < Token.precedence(tk.t)
 
       if shouldWrapExpression {
-        result := self._precedence(e.right, startPos, tk, wrapper)
+        wrapOutput := self._precedence(e.right, startPos, tk, wrapper)
 
-        return Expression.create(
-          t.AssignmentExpression{left: e.left, operator: e.operator, right: result},
-          expression.start,
-          result.end
-        )
+        return ParserWrapOutput{
+          expression: Expression.create(
+            t.AssignmentExpression{left: e.left, operator: e.operator, right: wrapOutput.expression},
+            expression.start,
+            wrapOutput.expression.end
+          ),
+          shouldWrap: wrapOutput.shouldWrap
+        }
       }
     } elif expression.isAwait() {
       e := expression.asAwait()
 
       if Token.precedence(.KwAwait) < Token.precedence(tk.t) {
-        result := self._precedence(e.expression, startPos, tk, wrapper)
+        wrapOutput := self._precedence(e.expression, startPos, tk, wrapper)
 
-        return Expression.create(
-          t.AwaitExpression{expression: result},
-          expression.start,
-          result.end
-        )
+        return ParserWrapOutput{
+          expression: Expression.create(
+            t.AwaitExpression{expression: wrapOutput.expression},
+            expression.start,
+            wrapOutput.expression.end
+          ),
+          shouldWrap: wrapOutput.shouldWrap
+        }
       }
     } elif expression.isBinary() {
       e := expression.asBinary()
+
       shouldWrapExpression := Token.precedence(e.operator.t) == Token.precedence(tk.t)
         ? Token.associativity(e.operator.t) == .Right
         : Token.precedence(e.operator.t) < Token.precedence(tk.t)
 
       if shouldWrapExpression {
-        result := self._precedence(e.right, startPos, tk, wrapper)
+        wrapOutput := self._precedence(e.right, startPos, tk, wrapper)
 
-        return Expression.create(
-          t.BinaryExpression{left: e.left, operator: e.operator, right: result},
-          expression.start,
-          result.end
-        )
+        return ParserWrapOutput{
+          expression: Expression.create(
+            t.BinaryExpression{left: e.left, operator: e.operator, right: wrapOutput.expression},
+            expression.start,
+            wrapOutput.expression.end
+          ),
+          shouldWrap: wrapOutput.shouldWrap
+        }
       }
     } elif expression.isConditional() {
       e := expression.asConditional()
 
       if Token.precedence(.OpQn) <= Token.precedence(tk.t) {
-        result := self._precedence(e.alternate, startPos, tk, wrapper)
+        wrapOutput := self._precedence(e.alternate, startPos, tk, wrapper)
 
-        return Expression.create(
-          t.ConditionalExpression{condition: e.condition, consequent: e.consequent, alternate: result},
-          expression.start,
-          result.end
-        )
+        return ParserWrapOutput{
+          expression: Expression.create(
+            t.ConditionalExpression{condition: e.condition, consequent: e.consequent, alternate: wrapOutput.expression},
+            expression.start,
+            wrapOutput.expression.end
+          ),
+          shouldWrap: wrapOutput.shouldWrap
+        }
       }
     } elif expression.isReference() {
       e := expression.asReference()
 
       if Token.precedence(.KwRef) < Token.precedence(tk.t) {
-        result := self._precedence(e.expression, startPos, tk, wrapper)
+        wrapOutput := self._precedence(e.expression, startPos, tk, wrapper)
 
-        return Expression.create(
-          t.ReferenceExpression{expression: result},
-          expression.start,
-          result.end
-        )
+        return ParserWrapOutput{
+          expression: Expression.create(
+            t.ReferenceExpression{expression: wrapOutput.expression},
+            expression.start,
+            wrapOutput.expression.end
+          ),
+          shouldWrap: wrapOutput.shouldWrap
+        }
       }
     } elif expression.isUnary() {
       e := expression.asUnary()
 
       if e.prefix && Token.precedence(e.operator.t, true) < Token.precedence(tk.t, true) {
-        result := self._precedence(e.operand, startPos, tk, wrapper)
+        wrapOutput := self._precedence(e.operand, startPos, tk, wrapper)
 
-        return Expression.create(
-          t.UnaryExpression{operator: e.operator, operand: result, prefix: e.prefix},
-          expression.start,
-          result.end
-        )
+        return ParserWrapOutput{
+          expression: Expression.create(
+            t.UnaryExpression{operator: e.operator, operand: wrapOutput.expression, prefix: e.prefix},
+            expression.start,
+            wrapOutput.expression.end
+          ),
+          shouldWrap: wrapOutput.shouldWrap
+        }
       }
     }
 
@@ -1848,8 +1787,7 @@ export obj Parser {
     elif wrapper == .Object { return self._wrapObjectExpression(expression, startPos, tk) }
     elif wrapper == .PropertyAccess { return self._wrapPropertyAccessExpression(expression, startPos, tk) }
     elif wrapper == .Unary { return self._wrapUnaryExpression(expression, startPos, tk) }
-
-    return expression
+    else { return ParserWrapOutput{expression: expression, shouldWrap: true} }
   }
 
   fn _raise (
@@ -1858,14 +1796,10 @@ export obj Parser {
     start := self.tokenizer.readerEndPos(),
     end := self.tokenizer.readerEndPos()
   ) {
-    if self.state.denyIncomplete {
-      throw t.IncompleteRaiseError{message: "Incomplete raise"}
-    }
-
     self.tokenizer._raiseException("ParseError", message, start, end)
   }
 
-  fn _wrapAsExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapAsExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut asType := self.nextType()
 
     if asType == nil {
@@ -1873,14 +1807,17 @@ export obj Parser {
       asType = Type.dummy()
     }
 
-    return Expression.create(
-      t.AsExpression{expression: expression, t: asType as t.Type},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.AsExpression{expression: expression, t: asType as t.Type},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapAssignmentExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapAssignmentExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut right := self.nextExpression(shouldWrap: false)
 
     if right == nil {
@@ -1888,14 +1825,17 @@ export obj Parser {
       right = Expression.dummy()
     }
 
-    return Expression.create(
-      t.AssignmentExpression{left: expression, operator: tk, right: right as t.Expression},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.AssignmentExpression{left: expression, operator: tk, right: right as t.Expression},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapBinaryExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapBinaryExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut right := self.nextExpression(shouldWrap: false)
 
     if right == nil {
@@ -1903,14 +1843,17 @@ export obj Parser {
       right = Expression.dummy()
     }
 
-    return Expression.create(
-      t.BinaryExpression{left: expression, operator: tk, right: right as t.Expression},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.BinaryExpression{left: expression, operator: tk, right: right as t.Expression},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapCallExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapCallExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut arguments: t.CallExpressionArgument[]
     mut argumentStartPos := -1
 
@@ -1958,14 +1901,17 @@ export obj Parser {
       }
     }
 
-    return Expression.create(
-      t.CallExpression{callee: expression, arguments: arguments},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.CallExpression{callee: expression, arguments: arguments},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapConditionalExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapConditionalExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut consequent := self.nextExpression()
 
     if consequent == nil {
@@ -1984,18 +1930,21 @@ export obj Parser {
       alternate = Expression.dummy()
     }
 
-    return Expression.create(
-      t.ConditionalExpression{
-        condition: expression,
-        consequent: consequent as t.Expression,
-        alternate: alternate as t.Expression
-      },
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.ConditionalExpression{
+          condition: expression,
+          consequent: consequent as t.Expression,
+          alternate: alternate as t.Expression
+        },
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapElementAccessExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapElementAccessExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut argument := self.nextExpression()
 
     if argument == nil {
@@ -2007,109 +1956,109 @@ export obj Parser {
       self._raise(errors.E0115("element access expression argument"))
     }
 
-    return Expression.create(
-      t.ElementAccessExpression{expression: expression, argument: argument as t.Expression},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.ElementAccessExpression{expression: expression, argument: argument as t.Expression},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapExpression (mut self: ref Self, e: t.Expression) t.Expression {
+  fn _wrapExpression (mut self: ref Self, mut e: t.Expression) t.Expression {
     startPos := self.tokenizer.pos()
 
-    try {
-      if self.tokenizer.lookahead(.KwAs, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .As)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif (
-        self.tokenizer.lookahead(.OpAmpEq, true) ||
-        self.tokenizer.lookahead(.OpAmpAmpEq, true) ||
-        self.tokenizer.lookahead(.OpCaretEq, true) ||
-        self.tokenizer.lookahead(.OpEq, true) ||
-        self.tokenizer.lookahead(.OpLShiftEq, true) ||
-        self.tokenizer.lookahead(.OpMinusEq, true) ||
-        self.tokenizer.lookahead(.OpPercentEq, true) ||
-        self.tokenizer.lookahead(.OpPipeEq, true) ||
-        self.tokenizer.lookahead(.OpPipePipeEq, true) ||
-        self.tokenizer.lookahead(.OpPlusEq, true) ||
-        self.tokenizer.lookahead(.OpRShiftEq, true) ||
-        self.tokenizer.lookahead(.OpSlashEq, true) ||
-        self.tokenizer.lookahead(.OpStarEq, true)
-      ) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .Assignment)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif (
-        self.tokenizer.lookahead(.OpAmp, true) ||
-        self.tokenizer.lookahead(.OpAmpAmp, true) ||
-        self.tokenizer.lookahead(.OpCaret, true) ||
-        self.tokenizer.lookahead(.OpEqEq, true) ||
-        self.tokenizer.lookahead(.OpExclEq, true) ||
-        self.tokenizer.lookahead(.OpGt, true) ||
-        self.tokenizer.lookahead(.OpGtEq, true) ||
-        self.tokenizer.lookahead(.OpLShift, true) ||
-        self.tokenizer.lookahead(.OpLt, true) ||
-        self.tokenizer.lookahead(.OpLtEq, true) ||
-        self.tokenizer.lookahead(.OpMinus, true) ||
-        self.tokenizer.lookahead(.OpPercent, true) ||
-        self.tokenizer.lookahead(.OpPipe, true) ||
-        self.tokenizer.lookahead(.OpPipePipe, true) ||
-        self.tokenizer.lookahead(.OpPlus, true) ||
-        self.tokenizer.lookahead(.OpRShift, true) ||
-        self.tokenizer.lookahead(.OpSlash, true) ||
-        self.tokenizer.lookahead(.OpStar, true)
-      ) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .Binary)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif self.tokenizer.lookahead(.OpLPar, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .Call)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif self.tokenizer.lookahead(.OpQn, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .Conditional)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif self.tokenizer.lookahead(.OpLBrack, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .ElementAccess)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif self.tokenizer.lookahead(.KwIs, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .Is)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif Expression.validObjExprId(e) && self.tokenizer.lookahead(.OpLBrace, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .Object)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif self.tokenizer.lookahead(.OpDot, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .PropertyAccess)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      } elif self.tokenizer.lookahead(.OpMinusMinus, true) || self.tokenizer.lookahead(.OpPlusPlus, true) {
-        tk := self.tokenizer.next()
-        mut result := self._precedence(e, startPos, tk, .Unary)
-        result.trailingComments = self.comments()
-        return self._wrapExpression(result)
-      }
-    } catch err: t.IncompleteRaiseError {
-      self.tokenizer.seek(startPos)
+    if self.tokenizer.lookahead(.KwAs, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .As)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif (
+      self.tokenizer.lookahead(.OpAmpEq, true) ||
+      self.tokenizer.lookahead(.OpAmpAmpEq, true) ||
+      self.tokenizer.lookahead(.OpCaretEq, true) ||
+      self.tokenizer.lookahead(.OpEq, true) ||
+      self.tokenizer.lookahead(.OpLShiftEq, true) ||
+      self.tokenizer.lookahead(.OpMinusEq, true) ||
+      self.tokenizer.lookahead(.OpPercentEq, true) ||
+      self.tokenizer.lookahead(.OpPipeEq, true) ||
+      self.tokenizer.lookahead(.OpPipePipeEq, true) ||
+      self.tokenizer.lookahead(.OpPlusEq, true) ||
+      self.tokenizer.lookahead(.OpRShiftEq, true) ||
+      self.tokenizer.lookahead(.OpSlashEq, true) ||
+      self.tokenizer.lookahead(.OpStarEq, true)
+    ) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .Assignment)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif (
+      self.tokenizer.lookahead(.OpAmp, true) ||
+      self.tokenizer.lookahead(.OpAmpAmp, true) ||
+      self.tokenizer.lookahead(.OpCaret, true) ||
+      self.tokenizer.lookahead(.OpEqEq, true) ||
+      self.tokenizer.lookahead(.OpExclEq, true) ||
+      self.tokenizer.lookahead(.OpGt, true) ||
+      self.tokenizer.lookahead(.OpGtEq, true) ||
+      self.tokenizer.lookahead(.OpLShift, true) ||
+      self.tokenizer.lookahead(.OpLt, true) ||
+      self.tokenizer.lookahead(.OpLtEq, true) ||
+      self.tokenizer.lookahead(.OpMinus, true) ||
+      self.tokenizer.lookahead(.OpPercent, true) ||
+      self.tokenizer.lookahead(.OpPipe, true) ||
+      self.tokenizer.lookahead(.OpPipePipe, true) ||
+      self.tokenizer.lookahead(.OpPlus, true) ||
+      self.tokenizer.lookahead(.OpRShift, true) ||
+      self.tokenizer.lookahead(.OpSlash, true) ||
+      self.tokenizer.lookahead(.OpStar, true)
+    ) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .Binary)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif self.tokenizer.lookahead(.OpLPar, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .Call)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif self.tokenizer.lookahead(.OpQn, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .Conditional)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif self.tokenizer.lookahead(.OpLBrack, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .ElementAccess)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif self.tokenizer.lookahead(.KwIs, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .Is)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif self.tokenizer.lookahead(.OpLBrace, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .Object)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif self.tokenizer.lookahead(.OpDot, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .PropertyAccess)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
+    } elif self.tokenizer.lookahead(.OpMinusMinus, true) || self.tokenizer.lookahead(.OpPlusPlus, true) {
+      tk := self.tokenizer.next()
+      mut wrapOutput := self._precedence(e, startPos, tk, .Unary)
+      wrapOutput.expression.trailingComments = self.comments()
+      return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     }
 
+    e.trailingComments = self.comments()
     return e
   }
 
-  fn _wrapIsExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapIsExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut isType := self.nextType()
 
     if isType == nil {
@@ -2117,14 +2066,24 @@ export obj Parser {
       isType = Type.dummy()
     }
 
-    return Expression.create(
-      t.IsExpression{expression: expression, t: isType as t.Type},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.IsExpression{expression: expression, t: isType as t.Type},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapObjectExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapObjectExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
+    errorPosIdx := self.tokenizer.errors.empty ? -1 : self.tokenizer.errors.len - 1
+
+    if !Expression.validObjExprId(expression) {
+      self.tokenizer.seek(startPos)
+      return ParserWrapOutput{expression: expression, shouldWrap: false}
+    }
+
     mut properties: t.ObjectExpressionProperty[]
     mut propertyStartPos := -1
 
@@ -2132,7 +2091,7 @@ export obj Parser {
       if self.tokenizer.lookahead(.Eof, true) || propertyStartPos == self.tokenizer.pos() {
         if properties.empty {
           self.tokenizer.seek(startPos)
-          return expression
+          return ParserWrapOutput{expression: expression, shouldWrap: false}
         }
 
         self._raise(errors.E0117("object expression"))
@@ -2145,7 +2104,7 @@ export obj Parser {
       if name == nil {
         if properties.empty {
           self.tokenizer.seek(startPos)
-          return expression
+          return ParserWrapOutput{expression: expression, shouldWrap: false}
         }
 
         self._raise(errors.E0120())
@@ -2153,7 +2112,7 @@ export obj Parser {
         if !self.tokenizer.lookahead(.OpColon) {
           if properties.empty {
             self.tokenizer.seek(startPos)
-            return expression
+            return ParserWrapOutput{expression: expression, shouldWrap: false}
           }
 
           self._raise(errors.E0113("object expression property name"))
@@ -2164,7 +2123,7 @@ export obj Parser {
           if value == nil {
             if properties.empty {
               self.tokenizer.seek(startPos)
-              return expression
+              return ParserWrapOutput{expression: expression, shouldWrap: false}
             }
 
             self._raise(errors.E0121())
@@ -2180,14 +2139,17 @@ export obj Parser {
       }
     }
 
-    return Expression.create(
-      t.ObjectExpression{id: Expression.toType(expression), properties: properties},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.ObjectExpression{id: Expression.toType(expression), properties: properties, errorPosIdx: errorPosIdx},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapPropertyAccessExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
+  fn _wrapPropertyAccessExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
     mut name := self.nextIdentifier(allowKeywords: true)
 
     if name == nil {
@@ -2195,19 +2157,25 @@ export obj Parser {
       name = Expression.dummyIdentifier()
     }
 
-    return Expression.create(
-      t.PropertyAccessExpression{expression: expression, name: name as t.Identifier},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.PropertyAccessExpression{expression: expression, name: name as t.Identifier},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
-  fn _wrapUnaryExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) t.Expression {
-    return Expression.create(
-      t.UnaryExpression{operator: tk, operand: expression, prefix: false},
-      expression.start,
-      self.tokenizer.readerEndPos()
-    )
+  fn _wrapUnaryExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
+    return ParserWrapOutput{
+      expression: Expression.create(
+        t.UnaryExpression{operator: tk, operand: expression, prefix: false},
+        expression.start,
+        self.tokenizer.readerEndPos()
+      ),
+      shouldWrap: true
+    }
   }
 
   fn _wrapStatement (mut self: ref Self, mut statement: t.Statement) t.Statement {

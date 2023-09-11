@@ -10,11 +10,6 @@ export obj Token {
   mut end: int
 }
 
-export obj IncompleteRaiseError {
-  message: str
-  stack: str
-}
-
 export type TypeBody =
   ArrayType |
   DummyType |
@@ -400,6 +395,7 @@ export obj ObjectExpressionProperty {
 export obj ObjectExpression {
   id: Type
   properties: ObjectExpressionProperty[]
+  errorPosIdx: int
 }
 
 export obj ParenthesizedExpression {

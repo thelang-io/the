@@ -53,6 +53,14 @@ export obj Tokenizer {
     return self.state.idx
   }
 
+  fn errorSeek (mut self: ref Self, pos: int) int {
+    if pos == -1 {
+      self.errors.clear()
+    } else {
+      self.errors = self.errors.slice(0, pos + 1)
+    }
+  }
+
   fn readerStartPos (mut self: ref Self, offset := 0) int {
     return self.state.idx == 0 ? 0 : self.data[self.state.idx - 1 + offset].start
   }
