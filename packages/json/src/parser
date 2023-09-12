@@ -1,0 +1,122 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as t from "./types"
+import tokenize from "./tokenizer"
+
+fn lookahead (mut state: ref t.ParserState, t: t.TokenType, eat := false) bool {
+  mut i := state.pos
+  loop ; i < state.tokensLen && state.tokens[i].t == .Whitespace; i++ {}
+  r := state.tokens[i].t == t
+  if r && eat { state.pos = i + 1 }
+  return r
+}
+
+fn next (mut state: ref t.ParserState) t.Token {
+  loop ; state.pos < state.tokensLen && state.tokens[state.pos].t == .Whitespace; state.pos++ {}
+  return state.tokens[state.pos++]
+}
+
+fn maybeParseArray (mut state: ref t.ParserState) t.Value? {
+  if !lookahead(state, .OpeningBracket, eat: true) {
+    return nil
+  }
+
+  mut elements: t.Value[]
+  mut prevStatePos := -1
+
+  loop !lookahead(state, .ClosingBracket, eat: true) {
+    if lookahead(state, .Eof) || prevStatePos == state.pos { break }
+    prevStatePos = state.pos
+    element := maybeParseValue(state)
+    if element == nil { break }
+    else { elements.push(element) }
+    if !lookahead(state, .Comma, eat: true) { break }
+  }
+
+  return t.Value{body: t.ArrayValue{elements: elements}}
+}
+
+fn maybeParseLiteral (mut state: ref t.ParserState) t.Value? {
+  if !lookahead(state, .BooleanLiteral) && !lookahead(state, .NullLiteral) {
+    return nil
+  }
+
+  tk := next(state)
+  return t.Value{body: t.LiteralValue{val: tk.val}}
+}
+
+fn maybeParseNumber (mut state: ref t.ParserState) t.Value? {
+  if !lookahead(state, .NumberLiteral) {
+    return nil
+  }
+
+  tk := next(state)
+  return t.Value{body: t.NumberValue{val: tk.val}}
+}
+
+fn maybeParseObject (mut state: ref t.ParserState) t.Value? {
+  if !lookahead(state, .OpeningBrace, eat: true) {
+    return nil
+  }
+
+  mut members: t.ObjectValueMember[]
+  mut prevStatePos := -1
+
+  loop !lookahead(state, .ClosingBrace, eat: true) {
+    if lookahead(state, .Eof) || prevStatePos == state.pos { break }
+    prevStatePos = state.pos
+    key := maybeParseString(state)
+    if key == nil { break }
+    if !lookahead(state, .Colon, eat: true) { break }
+    val := maybeParseValue(state)
+    if val == nil { break }
+    members.push(t.ObjectValueMember{key: key as t.Value, val: val as t.Value})
+    if !lookahead(state, .Comma, eat: true) { break }
+  }
+
+  return t.Value{body: t.ObjectValue{members: members}}
+}
+
+fn maybeParseString (mut state: ref t.ParserState) t.Value? {
+  if !lookahead(state, .StringLiteral) {
+    return nil
+  }
+
+  tk := next(state)
+  return t.Value{body: t.StringValue{raw: tk.val, val: tk.val.slice(1, -1)}}
+}
+
+fn maybeParseValue (mut state: ref t.ParserState) t.Value? {
+  mut v: t.Value?
+
+  if (
+    (v = maybeParseArray(state)) != nil ||
+    (v = maybeParseLiteral(state)) != nil ||
+    (v = maybeParseNumber(state)) != nil ||
+    (v = maybeParseObject(state)) != nil ||
+    (v = maybeParseString(state)) != nil
+  ) {
+    return v
+  }
+
+  return nil
+}
+
+export fn parse (code: str) t.Value[] {
+  tokens := tokenize(code)
+  mut state := t.ParserState{tokens: tokens, tokensLen: tokens.len}
+  mut result: t.Value[]
+  mut prevStatePos := -1
+
+  loop tokens[state.pos].t != .Eof {
+    value := maybeParseValue(ref state)
+    if value != nil { result.push(value) }
+    if prevStatePos == state.pos { break }
+    prevStatePos = state.pos
+  }
+
+  return result
+}

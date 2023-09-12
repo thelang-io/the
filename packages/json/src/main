@@ -3,122 +3,28 @@
  * Licensed under the MIT License
  */
 
-export enum TokenType {
-  Unknown,
-  Eof,
-  Whitespace,
+import
+  ArrayValue,
+  LiteralValue,
+  NumberValue,
+  ObjectValue,
+  ObjectValueMember,
+  StringValue,
+  Token,
+  TokenType,
+  Value,
+  ValueBody
+from "./types"
+import parse from "./parser"
 
-  BooleanLiteral,
-  NullLiteral,
-  NumberLiteral,
-  StringLiteral,
-
-  Colon,
-  Comma,
-  OpeningBrace,
-  ClosingBrace,
-  OpeningBracket,
-  ClosingBracket,
-}
-
-export obj Token {
-  mut t: TokenType
-  mut start: int
-  mut end: int
-  mut val: str
-}
-
-fn isWhitespaceCharacter (ch: char) bool {
-  return ch == ' ' || ch == '\n' || ch == '\r' || ch == '\t'
-}
-
-fn tokenizeFraction (code: str, codeLen: int, mut i: ref int) {
-  if i + 1 >= codeLen || code[i + 1] != '.' { return }
-  i += 1
-  loop ; i + 1 < codeLen && code[i + 1].isDigit; i++ {}
-}
-
-fn tokenizeExponent (code: str, codeLen: int, mut i: ref int) {
-  if i + 1 >= codeLen || (code[i + 1] != 'E' && code[i + 1] != 'e') { return }
-  i += 1
-  if i + 1 < codeLen && (code[i + 1] == '+' || code[i + 1] == '-') { i += 1 }
-  loop ; i + 1 < codeLen && code[i + 1].isDigit; i++ {}
-}
-
-fn tokenize (code: str) Token[] {
-  codeLen := code.len
-  mut result: Token[]
-
-  loop i := 0; i < codeLen; i++ {
-    start := i
-    ch := code[i]
-
-    if ch == ':' {
-      result.push(Token{t: .Colon, start: start, end: i + 1, val: ch.str()})
-    } elif ch == ',' {
-      result.push(Token{t: .Comma, start: start, end: i + 1, val: ch.str()})
-    } elif ch == '{' {
-      result.push(Token{t: .OpeningBrace, start: start, end: i + 1, val: ch.str()})
-    } elif ch == '}' {
-      result.push(Token{t: .ClosingBrace, start: start, end: i + 1, val: ch.str()})
-    } elif ch == '[' {
-      result.push(Token{t: .OpeningBracket, start: start, end: i + 1, val: ch.str()})
-    } elif ch == ']' {
-      result.push(Token{t: .ClosingBracket, start: start, end: i + 1, val: ch.str()})
-    } elif isWhitespaceCharacter(ch) {
-      loop ; i + 1 < codeLen && isWhitespaceCharacter(code[i + 1]); i++ {}
-      result.push(Token{t: .Whitespace, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif ch == '"' {
-      loop i + 1 < codeLen {
-        i++
-        if code[i] == '"' && code[i - 1] != '\\' { break }
-      }
-
-      result.push(Token{t: .StringLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif i + 3 < codeLen && code.slice(i, i + 4) == "true" {
-      i += 3
-      result.push(Token{t: .BooleanLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif i + 4 < codeLen && code.slice(i, i + 5) == "false" {
-      i += 4
-      result.push(Token{t: .BooleanLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif i + 3 < codeLen && code.slice(i, i + 4) == "null" {
-      i += 3
-      result.push(Token{t: .NullLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif ch == '0' {
-      tokenizeFraction(code, codeLen, ref i)
-      tokenizeExponent(code, codeLen, ref i)
-      result.push(Token{t: .NumberLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif ch.isDigit {
-      loop ; i + 1 < codeLen && code[i + 1].isDigit; i++ {}
-      tokenizeFraction(code, codeLen, ref i)
-      tokenizeExponent(code, codeLen, ref i)
-      result.push(Token{t: .NumberLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif ch == '-' && i + 1 < codeLen && code[i + 1] == '0' {
-      i += 1
-      tokenizeFraction(code, codeLen, ref i)
-      tokenizeExponent(code, codeLen, ref i)
-      result.push(Token{t: .NumberLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } elif ch == '-' && i + 1 < codeLen && code[i + 1].isDigit {
-      i += 1
-      loop ; i + 1 < codeLen && code[i + 1].isDigit; i++ {}
-      tokenizeFraction(code, codeLen, ref i)
-      tokenizeExponent(code, codeLen, ref i)
-      result.push(Token{t: .NumberLiteral, start: start, end: i + 1, val: code.slice(start, i + 1)})
-    } else {
-      result.push(Token{t: .Unknown, start: start, end: i + 1, val: ch.str()})
-    }
-  }
-
-  result.push(Token{t: .Eof, start: codeLen, end: codeLen, val: ""})
-  return result
-}
-
-export fn parse (code: str) {
-  tokens := tokenize(code)
-  print(tokens)
-}
-
-main {
-  args := process_args
-  parse(fs_readFileSync(args[1]).str())
-}
+export ArrayValue
+export LiteralValue
+export NumberValue
+export ObjectValue
+export ObjectValueMember
+export StringValue
+export Token
+export TokenType
+export Value
+export ValueBody
+export parse

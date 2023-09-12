@@ -1,0 +1,79 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export type ValueBody = ArrayValue | LiteralValue | NumberValue | ObjectValue | StringValue
+
+export obj Value {
+  body: ValueBody
+
+  fn asArray (self: ref Self) ArrayValue { return self.body as ArrayValue }
+  fn asLiteral (self: ref Self) LiteralValue { return self.body as LiteralValue }
+  fn asNumber (self: ref Self) NumberValue { return self.body as NumberValue }
+  fn asObject (self: ref Self) ObjectValue { return self.body as ObjectValue }
+  fn asString (self: ref Self) StringValue { return self.body as StringValue }
+
+  fn isArray (self: ref Self) bool { return self.body is ArrayValue }
+  fn isLiteral (self: ref Self) bool { return self.body is LiteralValue }
+  fn isNumber (self: ref Self) bool { return self.body is NumberValue }
+  fn isObject (self: ref Self) bool { return self.body is ObjectValue }
+  fn isString (self: ref Self) bool { return self.body is StringValue }
+}
+
+export obj ArrayValue {
+  elements: Value[]
+}
+
+export obj LiteralValue {
+  val: str
+}
+
+export obj NumberValue {
+  val: str
+}
+
+export obj ObjectValueMember {
+  key: Value
+  val: Value
+}
+
+export obj ObjectValue {
+  members: ObjectValueMember[]
+}
+
+export obj StringValue {
+  raw: str
+  val: str
+}
+
+export obj ParserState {
+  mut tokens: Token[]
+  mut tokensLen: int
+  mut pos: int
+}
+
+export obj Token {
+  mut t: TokenType
+  mut start: int
+  mut end: int
+  mut val: str
+}
+
+export enum TokenType {
+  Unknown,
+  Eof,
+  Whitespace,
+
+  BooleanLiteral,
+  NullLiteral,
+  NumberLiteral,
+  StringLiteral,
+
+  Colon,
+  Comma,
+  OpeningBrace,
+  ClosingBrace,
+  OpeningBracket,
+  ClosingBracket,
+}
