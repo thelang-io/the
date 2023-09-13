@@ -3,6 +3,28 @@
  * Licensed under the MIT License
  */
 
-export obj JSON {
-  // todo
-}
+import
+  ArrayValue,
+  LiteralValue,
+  NumberValue,
+  ObjectValue,
+  ObjectValueMember,
+  StringValue,
+  Token,
+  TokenType,
+  Value,
+  ValueBody
+from "./types"
+import parse from "./parser"
+
+export ArrayValue
+export LiteralValue
+export NumberValue
+export ObjectValue
+export ObjectValueMember
+export StringValue
+export Token
+export TokenType
+export Value
+export ValueBody
+export parse
