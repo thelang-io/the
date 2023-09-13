@@ -36,10 +36,6 @@ export obj YAML {
     return self.nodes[self.state.pos++]
   }
 
-  fn reset (mut self: ref Self) {
-    self.state = State{}
-  }
-
   fn stringify (self: ref Self) str {
     mut code := ""
 
@@ -100,6 +96,10 @@ export obj YAML {
 
     self.state.pos = pos
     return false
+  }
+
+  fn _reset (mut self: ref Self) {
+    self.state = State{}
   }
 
   fn _tokenize (mut self: ref Self) {
@@ -260,6 +260,6 @@ export fn parse (content: str) YAML {
     node := result._parse()
     if node != nil { result.nodes.push(node) }
   }
-  result.reset()
+  result._reset()
   return result
 }
