@@ -3,9 +3,14 @@
  * Licensed under the MIT License
  */
 
+export obj ZipError {
+  message: str
+  stack: str
+}
+
 export fn zip (name: str, path: str, cwd: str? = nil) {
   if path != "*" && !fs_existsSync(path) {
-    throw error_NewError("Can't perform zip operation, path doesn't exists")
+    throw ZipError{message: "Can't perform zip operation, path doesn't exists"}
   }
 
   mut cmd: str
@@ -23,7 +28,7 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
 
 export fn unzip (source: str, destination: str) {
   if !fs_existsSync(source) {
-    throw error_NewError("Can't perform unzip operation, path doesn't exists")
+    throw ZipError{message: "Can't perform unzip operation, path doesn't exists"}
   }
 
   mut cmd: str

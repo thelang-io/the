@@ -60,15 +60,15 @@ Constructs `IQRCode` object.
 
 Constructed `IQRCode` object.
 
+**Exceptions**
+
+- `Base64Error` - throw if string to be decoded is not correctly encoded
+
 **Examples**
 
 ```the
 mut qr := qrcode.QRCode("HELLO, WORLD!")
 ```
-
-**Exceptions**
-
-- `Base64Error` - throw if string to be decoded is not correctly encoded
 
 ### `qrcode.IQRCode.encode (ecc := ErrorCorrectionLevel.Q, mask: int? = nil) byte[][]`
 Encodes `IQRCode` object and outputs array of bytes.
@@ -82,18 +82,18 @@ Encodes `IQRCode` object and outputs array of bytes.
 
 Array of bytes produced by encoding `IQRCode` object.
 
+**Exceptions**
+
+- `QRCodeError` - throw if QRCode input is too long for alignment pattern locations
+- `QRCodeError` - throw if QRCode input is too long to calculate character count indicator
+- `QRCodeError` - throw if QRCode input is too long to calculate version
+
 **Examples**
 
 ```the
 mut qr := qrcode.QRCode("HELLO, WORLD!")
 qr.encode(ecc: .M, mask: 3)
 ```
-
-**Exceptions**
-
-- `QRCodeError` - throw if QRCode input is too long for alignment pattern locations
-- `QRCodeError` - throw if QRCode input is too long to calculate character count indicator
-- `QRCodeError` - throw if QRCode input is too long to calculate version
 
 ### `qrcode.toTerminal (qrcode: IQRCode) void`
 Prints encoded `IQRCode` to terminal.
