@@ -62,7 +62,7 @@ Constructed `IQRCode` object.
 
 **Exceptions**
 
-- `Base64Error` - throw if string to be decoded is not correctly encoded
+- `Base64Error` - thrown if string to be decoded is not correctly encoded
 
 **Examples**
 
@@ -84,9 +84,9 @@ Array of bytes produced by encoding `IQRCode` object.
 
 **Exceptions**
 
-- `QRCodeError` - throw if QRCode input is too long for alignment pattern locations
-- `QRCodeError` - throw if QRCode input is too long to calculate character count indicator
-- `QRCodeError` - throw if QRCode input is too long to calculate version
+- `QRCodeError` - thrown if QRCode input is too long for alignment pattern locations
+- `QRCodeError` - thrown if QRCode input is too long to calculate character count indicator
+- `QRCodeError` - thrown if QRCode input is too long to calculate version
 
 **Examples**
 

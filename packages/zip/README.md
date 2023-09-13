@@ -15,7 +15,7 @@ import zip, unzip from "the/zip"
 
 ## API
 
-### `zip.zip (name: str, path: str, cwd: str? = nil) void`
+### `zip (name: str, path: str, cwd: str? = nil) void`
 Thin wrapper around `zip` system call.
 
 **Parameters**
@@ -30,7 +30,7 @@ none
 
 **Exceptions**
 
-- `ZipError` - throw if path doesn't exists
+- `ZipError` - thrown if path doesn't exists
 
 **Examples**
 
@@ -39,7 +39,7 @@ zip.zip("archive.zip", "file.txt")
 zip.zip("archive.zip", "*", cwd: ".")
 ```
 
-### `zip.unzip (source: str, destination: str) void`
+### `unzip (source: str, destination: str) void`
 Thin wrapper around `unzip` system call.
 
 **Parameters**
@@ -53,7 +53,7 @@ none
 
 **Exceptions**
 
-- `ZipError` - throw if path doesn't exists
+- `ZipError` - thrown if path doesn't exists
 
 **Examples**
 
