@@ -46,6 +46,11 @@ const ERROR_CORRECTION_TABLE := [
   [[2334, 28, 18, 47, 31, 48], [2956, 30, 19, 118, 6, 119], [1276, 30, 20, 15, 61, 16], [1666, 30, 34, 24, 34, 25]]
 ]
 
+export obj QRCodeError {
+  message: str
+  stack: str
+}
+
 export enum ErrorCorrectionLevel {
   L = 1, // ~7%
   M = 0, // ~15%
@@ -414,7 +419,7 @@ fn characterCapacityTable (errorCorrectionLevel: ErrorCorrectionLevel, mode: Mod
   elif e == .M && ((m == .Numeric && l <= 5596) || (m == .Alphanumeric && l <= 3391) || (m == .Byte && l <= 2331) || (m == .Kanji && l <= 1435)) { return 40 }
   elif e == .Q && ((m == .Numeric && l <= 3993) || (m == .Alphanumeric && l <= 2420) || (m == .Byte && l <= 1663) || (m == .Kanji && l <= 1024)) { return 40 }
   elif e == .H && ((m == .Numeric && l <= 3057) || (m == .Alphanumeric && l <= 1852) || (m == .Byte && l <= 1273) || (m == .Kanji && l <= 784)) { return 40 }
-  else { throw error_NewError("QRCode input is too long to calculate version") }
+  else { throw QRCodeError{message: "QRCode input is too long to calculate version"} }
 }
 
 fn requiredRemainderBits (version: int) int {
@@ -465,7 +470,7 @@ fn alignmentPatternLocations (version: int) int[] {
   elif version == 38 { return [6, 32, 58, 84, 110, 136, 162] }
   elif version == 39 { return [6, 26, 54, 82, 110, 138, 166] }
   elif version == 40 { return [6, 30, 58, 86, 114, 142, 170] }
-  else { throw error_NewError("QRCode input is too long for alignment pattern locations") }
+  else { throw QRCodeError{message: "QRCode input is too long for alignment pattern locations"} }
 }
 
 fn mask0 (x: int, y: int) bool { return (x + y) % 2 == 0 }
@@ -1339,7 +1344,7 @@ export obj IQRCode {
     elif self._v <= 40 && self._m == .Alphanumeric { self._x = 13 }
     elif self._v <= 40 && self._m == .Byte { self._x = 16 }
     elif self._v <= 40 && self._m == .Kanji { self._x = 12 }
-    else { throw error_NewError("QRCode input is too long to calculate character count indicator") }
+    else { throw QRCodeError{message: "QRCode input is too long to calculate character count indicator"} }
   }
 
   fn updateMode (mut self: ref Self) {
@@ -1451,7 +1456,7 @@ export fn QRCode (input: buffer_Buffer) IQRCode {
   }
 }
 
-export fn QRCode_toTerminal (qrcode: IQRCode) {
+export fn toTerminal (qrcode: IQRCode) {
   block := ' '.repeat(2)
   mut result := ""
 
