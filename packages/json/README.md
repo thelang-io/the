@@ -34,11 +34,15 @@ parse("[1] [true] [null]")
 ```
 
 ### `Value.asArray () ArrayValue`
-This method is a shortcut for `as` expression.
+### `Value.asLiteral () LiteralValue`
+### `Value.asNumber () NumberValue`
+### `Value.asObject () ObjectValue`
+### `Value.asString () StringValue`
+These methods are shortcuts for `as` expression.
 
 **Return value**
 
-Returns value casted to `ArrayValue` object.
+Returns value casted to corresponding body type.
 
 **Examples**
 
@@ -47,128 +51,20 @@ values := parse("[1, true, null]")
 value := values[0].asArray()
 ```
 
-### `Value.asLiteral () LiteralValue`
-This method is a shortcut for `as` expression.
-
-**Return value**
-
-Returns value casted to `LiteralValue` object.
-
-**Examples**
-
-```the
-values := parse("true")
-value := values[0].asLiteral()
-```
-
-### `Value.asNumber () NumberValue`
-This method is a shortcut for `as` expression.
-
-**Return value**
-
-Returns value casted to `NumberValue` object.
-
-**Examples**
-
-```the
-values := parse("10")
-value := values[0].asNumber()
-```
-
-### `Value.asObject () ObjectValue`
-This method is a shortcut for `as` expression.
-
-**Return value**
-
-Returns value casted to `ObjectValue` object.
-
-**Examples**
-
-```the
-values := parse("{ \"key\": 10 }")
-value := values[0].asObject()
-```
-
-### `Value.asString () StringValue`
-This method is a shortcut for `as` expression.
-
-**Return value**
-
-Returns value casted to `StringValue` object.
-
-**Examples**
-
-```the
-values := parse("\"HELLO WOLRD\"")
-value := values[0].asString()
-```
-
 ### `Value.isArray () bool`
-This method is a shortcut for `is` expression.
+### `Value.isLiteral () bool`
+### `Value.isNumber () bool`
+### `Value.isObject () bool`
+### `Value.isString () bool`
+These methods are shortcuts for `is` expression.
 
 **Return value**
 
-Checke whether value body contains `ArrayValue`.
+Checks whether value's body contains corresponding type.
 
 **Examples**
 
 ```the
 values := parse("[1, true, null]")
 values[0].isArray()
-```
-
-### `Value.isLiteral () bool`
-This method is a shortcut for `is` expression.
-
-**Return value**
-
-Checke whether value body contains `LiteralValue`.
-
-**Examples**
-
-```the
-values := parse("true")
-values[0].isLiteral()
-```
-
-### `Value.isNumber () bool`
-This method is a shortcut for `is` expression.
-
-**Return value**
-
-Checke whether value body contains `NumberValue`.
-
-**Examples**
-
-```the
-values := parse("10")
-values[0].isNumber()
-```
-
-### `Value.isObject () bool`
-This method is a shortcut for `is` expression.
-
-**Return value**
-
-Checke whether value body contains `ObjectValue`.
-
-**Examples**
-
-```the
-values := parse("{ \"key\": 10 }")
-values[0].isObject()
-```
-
-### `Value.isString () bool`
-This method is a shortcut for `is` expression.
-
-**Return value**
-
-Checke whether value body contains `StringValue`.
-
-**Examples**
-
-```the
-values := parse("\"HELLO WORLD\"")
-values[0].isString()
 ```
