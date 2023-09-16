@@ -62,8 +62,14 @@ export obj Reader {
   }
 }
 
-export fn init (path: str) Reader {
-  p := fs_realpathSync(path)
+export fn init (pathOrCode: str) Reader {
+  pathFirstChar := pathOrCode.slice(0, 1)
+
+  if pathFirstChar != "." && pathFirstChar != "/" && pathFirstChar != "\\" {
+    return Reader{path: "anonymous", content: pathOrCode}
+  }
+
+  p := fs_realpathSync(pathOrCode)
 
   if !fs_isFileSync(p) {
     throw ParserError{message: "Path `" + p + "` is not a file"}

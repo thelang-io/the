@@ -1,0 +1,15 @@
+import Tests from "the/testing"
+import * as n1 from "./expression"
+
+main {
+  mut tests := Tests{}
+  tests.register("TEST_Expression_creates", n1.TEST_Expression_creates)
+  tests.register("TEST_Expression_dummy", n1.TEST_Expression_dummy)
+  tests.register("TEST_Expression_dummyIdentifier", n1.TEST_Expression_dummyIdentifier)
+  tests.register("TEST_Expression_endsWithObjExpr", n1.TEST_Expression_endsWithObjExpr)
+  tests.register("TEST_Expression_extractLastObjExpr", n1.TEST_Expression_extractLastObjExpr)
+  tests.register("TEST_Expression_subtractLastObjExpr", n1.TEST_Expression_subtractLastObjExpr)
+  tests.register("TEST_Expression_toType", n1.TEST_Expression_toType)
+  tests.register("TEST_Expression_validObjExprId", n1.TEST_Expression_validObjExprId)
+  tests.run(process_args)
+}

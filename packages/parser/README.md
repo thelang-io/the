@@ -15,12 +15,12 @@ import parse from "the/parser"
 
 ## API
 
-### `parse (path: str) File`
+### `parse (pathOrCode: str) File`
 Parses path into `File` object.
 
 **Parameters**
 
-- `path` - path to parse
+- `pathOrCode` - path or code to parse
 
 **Return value**
 

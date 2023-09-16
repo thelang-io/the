@@ -395,7 +395,7 @@ export obj ObjectExpressionProperty {
 export obj ObjectExpression {
   id: Type
   properties: ObjectExpressionProperty[]
-  errorPosIdx: int
+  _errorPosIdx: int
 }
 
 export obj ParenthesizedExpression {

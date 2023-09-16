@@ -800,7 +800,7 @@ export obj Parser {
     if consequent == nil && Expression.endsWithObjExpr(condition) {
       objectExpression := Expression.extractLastObjExpr(condition)
       condition = Expression.subtractLastObjExpr(condition)
-      self.tokenizer.errorSeek(objectExpression.errorPosIdx)
+      self.tokenizer.errorSeek(objectExpression._errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
       consequent = self.nextStatement(withBlockStatement: true)
     }
@@ -1026,7 +1026,7 @@ export obj Parser {
                 expression: initializerExpression
               }, initializerExpression.start, initializerExpression.end)
 
-              self.tokenizer.errorSeek(objectExpression.errorPosIdx)
+              self.tokenizer.errorSeek(objectExpression._errorPosIdx)
               self.tokenizer.readerSeek(objectExpression.id.end)
               condition = nil
               shouldContinue = false
@@ -1062,7 +1062,7 @@ export obj Parser {
     ) {
       objectExpression := Expression.extractLastObjExpr(update as t.Expression)
       update = Expression.subtractLastObjExpr(update as t.Expression)
-      self.tokenizer.errorSeek(objectExpression.errorPosIdx)
+      self.tokenizer.errorSeek(objectExpression._errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
       body = self.nextStatement(withBlockStatement: true)
     }
@@ -1084,7 +1084,7 @@ export obj Parser {
     ) {
       objectExpression := Expression.extractLastObjExpr(condition as t.Expression)
       condition = Expression.subtractLastObjExpr(condition as t.Expression)
-      self.tokenizer.errorSeek(objectExpression.errorPosIdx)
+      self.tokenizer.errorSeek(objectExpression._errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
       body = self.nextStatement(withBlockStatement: true)
     }
@@ -2141,7 +2141,7 @@ export obj Parser {
 
     return ParserWrapOutput{
       expression: Expression.create(
-        t.ObjectExpression{id: Expression.toType(expression), properties: properties, errorPosIdx: errorPosIdx},
+        t.ObjectExpression{id: Expression.toType(expression), properties: properties, _errorPosIdx: errorPosIdx},
         expression.start,
         self.tokenizer.readerEndPos()
       ),
@@ -2209,8 +2209,8 @@ export fn init (mut tokenizer: ref Tokenizer) Parser {
   return Parser{tokenizer: tokenizer}
 }
 
-export fn parse (path: str) t.File {
-  mut reader := Reader.init(path)
+export fn parse (pathOrCode: str) t.File {
+  mut reader := Reader.init(pathOrCode)
   mut tokenizer := Tokenizer.init(ref reader)
   mut parser := init(ref tokenizer)
 

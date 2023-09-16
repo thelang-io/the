@@ -1,0 +1,171 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as t from "./types"
+
+export fn expression (self: t.Expression) str {
+  if self.isIdentifier() {
+    body := self.asIdentifier()
+    return body.name
+  } elif self.isBooleanLiteral() {
+    body := self.asBooleanLiteral()
+    return body.value
+  } elif self.isCharacterLiteral() {
+    body := self.asCharacterLiteral()
+    return body.raw
+  } elif self.isFloatingPointLiteral() {
+    body := self.asFloatingPointLiteral()
+    return body.value
+  } elif self.isIntegerLiteral() {
+    body := self.asIntegerLiteral()
+    return body.value
+  } elif self.isStringLiteral() {
+    body := self.asStringLiteral()
+    return body.raw
+  } elif self.isArray() {
+    body := self.asArray()
+    mut elements: str[]
+    body.elements.forEach((it: t.Expression, idx: int) -> void {
+      elements.push(expression(it))
+    })
+    return "[" + elements.join(", ") + "]"
+  } elif self.isAs() {
+    body := self.asAs()
+    return expression(body.expression) + " as " + typeT(body.t)
+  } elif self.isAssignment() {
+    body := self.asAssignment()
+    return expression(body.left) + " " + body.operator.val + " " + expression(body.right)
+  } elif self.isAwait() {
+    body := self.asAwait()
+    return "await " + expression(body.expression)
+  } elif self.isBinary() {
+    body := self.asBinary()
+    return expression(body.left) + " " + body.operator.val + " " + expression(body.right)
+  } elif self.isCall() {
+    body := self.asCall()
+    mut arguments: str[]
+    body.arguments.forEach((it: t.CallExpressionArgument, idx: int) -> void {
+      mut val := expression(it.expression)
+      if it.name != nil {
+        val = it.name.name + ": " + val
+      }
+      arguments.push(val)
+    })
+    return expression(body.callee) + "(" + arguments.join(", ") + ")"
+  } elif self.isClosure() {
+    body := self.asClosure()
+    mut parameters: str[]
+    body.parameters.forEach((it: t.FunctionParameter, idx: int) -> void {
+      mut val := (it.mutable ? "mut " : "") + it.name.name
+
+      if it.t != nil {
+        val += ": " + typeT(it.t)
+        if it.initializer != nil {
+          val += " = " + expression(it.initializer)
+        }
+      } elif it.initializer != nil {
+        val += " := " + expression(it.initializer)
+      }
+
+      val += it.variadic ? "..." : ""
+      parameters.push(val)
+    })
+    return (body.asynchronous ? "async " : "") + "(" + parameters.join(", ") + ")" +
+      " -> " + typeT(body.returnType) + " " + statement(body.body)
+  } elif self.isConditional() {
+    body := self.asConditional()
+    return expression(body.condition) + " ? " + expression(body.consequent) + " : " + expression(body.alternate)
+  } elif self.isElementAccess() {
+    body := self.asElementAccess()
+    return expression(body.expression) + "[" + expression(body.argument) + "]"
+  } elif self.isIs() {
+    body := self.asIs()
+    return expression(body.expression) + " is " + typeT(body.t)
+  } elif self.isMap() {
+    body := self.asMap()
+    mut elements: str[]
+    body.elements.forEach((it: t.MapExpressionElement, idx: int) -> void {
+      elements.push(expression(it.key) + ": " + expression(it.value))
+    })
+    return "{" + elements.join() + "}"
+  } elif self.isMemberAccess() {
+    body := self.asMemberAccess()
+    return "." + body.name.name + "]"
+  } elif self.isObject() {
+    body := self.asObject()
+    mut properties: str[]
+    body.properties.forEach((it: t.ObjectExpressionProperty, idx: int) -> void {
+      properties.push(it.name.name + ": " + expression(it.value))
+    })
+    return typeT(body.id) + "{" + properties.join() + "}"
+  } elif self.isParenthesized() {
+    body := self.asParenthesized()
+    return "(" + expression(body.expression) + ")"
+  } elif self.isPropertyAccess() {
+    body := self.asPropertyAccess()
+    return expression(body.expression) + "." + body.name.name
+  } elif self.isReference() {
+    body := self.asReference()
+    return "ref " + expression(body.expression)
+  } elif self.isUnary() {
+    body := self.asUnary()
+    if body.prefix {
+      return body.operator.val + expression(body.operand)
+    } else {
+      return expression(body.operand) + body.operator.val
+    }
+  }
+  return "nil"
+}
+
+export fn statement (self: t.Statement) str {
+  // todo
+  return ""
+}
+
+export fn typeT (self: t.Type) str {
+  if self.isArray() {
+    body := self.asArray()
+    return typeT(body.elementType) + "[]"
+  } elif self.isFunction() {
+    body := self.asFunction()
+    mut parameters: str[]
+    body.parameters.forEach((it: t.FunctionTypeParameter, idx: int) -> void {
+      mut val: str
+      if it.name != nil {
+        val += (it.mutable ? "mut " : "") + it.name.name + ": "
+      }
+      val += typeT(it.t) + (it.variadic ? "..." : "")
+      parameters.push(val)
+    })
+    return (body.asynchronous ? "async " : "") + "(" + parameters.join(", ") + ")" +
+      " " + typeT(body.returnType)
+  } elif self.isIdentifier() {
+    body := self.asIdentifier()
+    return body.name.name
+  } elif self.isMap() {
+    body := self.asMap()
+    return typeT(body.keyType) + "[" + typeT(body.valueType) + "]"
+  } elif self.isMember() {
+    body := self.asMember()
+    return typeT(body.t) + "." + body.name.name
+  } elif self.isOptional() {
+    body := self.asOptional()
+    return typeT(body.t) + "?"
+  } elif self.isParenthesized() {
+    body := self.asParenthesized()
+    return "(" + typeT(body.t) + ")"
+  } elif self.isReference() {
+    body := self.asReference()
+    return "ref " + typeT(body.t)
+  } elif self.isUnion() {
+    body := self.asUnion()
+    mut types: str[]
+    body.types.forEach((it: t.Type, idx: int) -> void {
+      types.push(typeT(it))
+    })
+    return types.join(" | ")
+  }
+}

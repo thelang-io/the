@@ -30,9 +30,6 @@ export fn endsWithObjExpr (self: t.Expression) bool {
   } elif self.isConditional() {
     selfBody := self.asConditional()
     return endsWithObjExpr(selfBody.alternate)
-  } elif self.isObject() {
-    selfBody := self.asObject()
-    return true
   } elif self.isReference() {
     selfBody := self.asReference()
     return endsWithObjExpr(selfBody.expression)
@@ -43,7 +40,7 @@ export fn endsWithObjExpr (self: t.Expression) bool {
     }
   }
 
-  return false
+  return self.isObject()
 }
 
 export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
