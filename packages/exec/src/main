@@ -3,6 +3,11 @@
  * Licensed under the MIT License
  */
 
+export obj ExecError {
+  message: str
+  stack: str
+}
+
 export obj ExecOutput {
   code: int
   stderr: str
@@ -121,7 +126,7 @@ export fn exec (cmd: str) Exec {
   mut parts := parse(cmd)
 
   if parts.empty {
-    throw error_NewError("Exec input is empty")
+    throw ExecError{message: "Exec input is empty"}
   }
 
   script: str = parts[0]

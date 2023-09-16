@@ -8,6 +8,11 @@ import ConfigItem from "./config"
 
 export Arg
 
+export obj ArgsError {
+  message: str
+  stack: str
+}
+
 export obj Args {
   mut data: Arg[]
   mut lineLength: int
@@ -225,7 +230,7 @@ export obj Args {
       return
     }
 
-    throw error_NewError("Unexpected argument `" + arg + "`")
+    throw ArgsError{message: "Unexpected argument `" + arg + "`"}
   }
 
   fn _parseArgCommand (mut self: ref Self, name: str) {
@@ -247,7 +252,7 @@ export obj Args {
       return
     }
 
-    throw error_NewError("Unexpected argument `" + name + "`")
+    throw ArgsError{message: "Unexpected argument `" + name + "`"}
   }
 
   fn _parseArgOption (mut self: ref Self, arg: str, name: str, mut value := "") {
@@ -271,7 +276,7 @@ export obj Args {
       return
     }
 
-    throw error_NewError("Unexpected argument `" + arg + "`")
+    throw ArgsError{message: "Unexpected argument `" + arg + "`"}
   }
 
   fn _setDataValue (mut self: ref Self, t: ConfigItemType, name: str, value: str) {

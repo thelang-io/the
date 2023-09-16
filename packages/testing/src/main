@@ -25,7 +25,7 @@ export obj Tests {
     mut totalTime := 0
     mut failedTests: str[]
 
-    print("[==========] Running", self._tests.len, self.word(self._tests.len), to: "stderr")
+    print("[==========] Running", self._tests.len, self._word(self._tests.len), to: "stderr")
 
     loop i := 0; i < self._tests.len; i++ {
       test := self._tests[i]
@@ -48,15 +48,15 @@ export obj Tests {
     print(
       "[==========]",
       self._tests.len,
-      self.word(self._tests.len) + " ran (" + totalTime.str() + " ms total)",
+      self._word(self._tests.len) + " ran (" + totalTime.str() + " ms total)",
       to: "stderr"
     )
 
     passedTestsNum := self._tests.len - failedTests.len
-    print("[  PASSED  ]", passedTestsNum, self.word(passedTestsNum), to: "stderr")
+    print("[  PASSED  ]", passedTestsNum, self._word(passedTestsNum), to: "stderr")
 
     if !failedTests.empty {
-      print("[  FAILED  ]", failedTests.len, self.word(failedTests.len) + ", listed below:", to: "stderr")
+      print("[  FAILED  ]", failedTests.len, self._word(failedTests.len) + ", listed below:", to: "stderr")
 
       loop i := 0; i < failedTests.len; i++ {
         failedTest: str = failedTests[i]
@@ -64,12 +64,12 @@ export obj Tests {
       }
 
       print(to: "stderr")
-      print(" " + failedTests.len.str() + " FAILED", self.word(failedTests.len).upper, to: "stderr")
+      print(" " + failedTests.len.str() + " FAILED", self._word(failedTests.len).upper, to: "stderr")
       process_exit(1)
     }
   }
 
-  fn word (n: int) str {
+  fn _word (n: int) str {
     return n == 1 ? "test" : "tests"
   }
 }

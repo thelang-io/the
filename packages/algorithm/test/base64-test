@@ -5,7 +5,7 @@
 
 import * as base64 from "../src/base64"
 
-fn TEST_base64_encode () {
+export fn TEST_base64_encode () {
   EXPECT_EQ(base64.encode("0".toBuffer()), "MA==")
   EXPECT_EQ(base64.encode("A".toBuffer()), "QQ==")
   EXPECT_EQ(base64.encode("ABC".toBuffer()), "QUJD")
@@ -19,7 +19,7 @@ fn TEST_base64_encode () {
   )
 }
 
-fn TEST_base64_decode () {
+export fn TEST_base64_decode () {
   EXPECT_EQ(base64.decode("MA==").str(), "0")
   EXPECT_EQ(base64.decode("QQ==").str(), "A")
   EXPECT_EQ(base64.decode("QUJD").str(), "ABC")

@@ -5,6 +5,11 @@
 
 import * as t from "./types"
 
+export obj ParserError {
+  message: str
+  stack: str
+}
+
 export obj Reader {
   path: str
   content: str
@@ -61,7 +66,7 @@ export fn init (path: str) Reader {
   p := fs_realpathSync(path)
 
   if !fs_isFileSync(p) {
-    throw error_NewError("Path `" + p + "` is not a file")
+    throw ParserError{message: "Path `" + p + "` is not a file"}
   }
 
   content := fs_readFileSync(p).str()

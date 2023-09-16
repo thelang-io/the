@@ -5,6 +5,11 @@
 
 const BASE64_TABLE := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
+export obj Base64Error {
+  message: str
+  stack: str
+}
+
 export fn encode (data: buffer_Buffer) str {
   in := data.str()
   len := in.len
@@ -68,8 +73,7 @@ export fn decode (data: str) buffer_Buffer {
   }
 
   if count == 0 || count % 4 != 0 {
-    // throw error_NewError("The string to be decoded is not correctly encoded")
-    return "".toBuffer()
+    throw Base64Error{message: "The string to be decoded is not correctly encoded"}
   }
 
   mut result := '\0'.repeat(count / 4 * 3)
@@ -97,8 +101,7 @@ export fn decode (data: str) buffer_Buffer {
       blockCount = 0
 
       if pad > 2 {
-        // throw error_NewError("The string to be decoded is not correctly encoded")
-        return "".toBuffer()
+        throw Base64Error{message: "The string to be decoded is not correctly encoded"}
       } elif pad > 0 {
         result = result.slice(0, pos - pad)
         break
