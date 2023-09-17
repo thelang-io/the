@@ -1,0 +1,30 @@
+export enum Test {
+  One,
+  Two
+}
+export fn test () int {
+  return 1
+}
+export obj Test {
+  a: int
+  mut b: str
+}
+export type Alias = str
+export const TEST := 2
+export mut TEST := 2
+main {
+  export enum Test {
+    One,
+    Two
+  }
+  export fn test () int {
+    return 1
+  }
+  export obj Test {
+    a: int
+    mut b: str
+  }
+  export type Alias = str
+  export const TEST := 2
+  export mut TEST := 2
+}

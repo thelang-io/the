@@ -1,0 +1,10 @@
+obj Test {
+  a: int
+  mut b: str
+}
+main {
+  obj Test {
+    a: int
+    mut b: str
+  }
+}

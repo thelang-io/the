@@ -5,6 +5,16 @@
 
 import * as t from "./types"
 
+fn indentResult (s: str, indent: int) str {
+  lines := s.lines()
+  linesLen := lines.len
+  mut result: str
+  loop i := 0; i < linesLen; i++ {
+    result += ' '.repeat(indent) + lines[i] + os_EOL
+  }
+  return result.trimEnd()
+}
+
 export fn expression (self: t.Expression) str {
   if self.isIdentifier() {
     body := self.asIdentifier()
@@ -21,6 +31,8 @@ export fn expression (self: t.Expression) str {
   } elif self.isIntegerLiteral() {
     body := self.asIntegerLiteral()
     return body.value
+  } elif self.isNilLiteral() {
+    return "nil"
   } elif self.isStringLiteral() {
     body := self.asStringLiteral()
     return body.raw
@@ -47,30 +59,30 @@ export fn expression (self: t.Expression) str {
     body := self.asCall()
     mut arguments: str[]
     body.arguments.forEach((it: t.CallExpressionArgument, idx: int) -> void {
-      mut val := expression(it.expression)
+      mut result := expression(it.expression)
       if it.name != nil {
-        val = it.name.name + ": " + val
+        result = it.name.name + ": " + result
       }
-      arguments.push(val)
+      arguments.push(result)
     })
     return expression(body.callee) + "(" + arguments.join(", ") + ")"
   } elif self.isClosure() {
     body := self.asClosure()
     mut parameters: str[]
     body.parameters.forEach((it: t.FunctionParameter, idx: int) -> void {
-      mut val := (it.mutable ? "mut " : "") + it.name.name
+      mut result := (it.mutable ? "mut " : "") + it.name.name
 
       if it.t != nil {
-        val += ": " + typeT(it.t)
+        result += ": " + typeT(it.t)
         if it.initializer != nil {
-          val += " = " + expression(it.initializer)
+          result += " = " + expression(it.initializer)
         }
       } elif it.initializer != nil {
-        val += " := " + expression(it.initializer)
+        result += " := " + expression(it.initializer)
       }
 
-      val += it.variadic ? "..." : ""
-      parameters.push(val)
+      result += it.variadic ? "..." : ""
+      parameters.push(result)
     })
     return (body.asynchronous ? "async " : "") + "(" + parameters.join(", ") + ")" +
       " -> " + typeT(body.returnType) + " " + statement(body.body)
@@ -89,17 +101,17 @@ export fn expression (self: t.Expression) str {
     body.elements.forEach((it: t.MapExpressionElement, idx: int) -> void {
       elements.push(expression(it.key) + ": " + expression(it.value))
     })
-    return "{" + elements.join() + "}"
+    return "{" + elements.join(", ") + "}"
   } elif self.isMemberAccess() {
     body := self.asMemberAccess()
-    return "." + body.name.name + "]"
+    return "." + body.name.name
   } elif self.isObject() {
     body := self.asObject()
     mut properties: str[]
     body.properties.forEach((it: t.ObjectExpressionProperty, idx: int) -> void {
       properties.push(it.name.name + ": " + expression(it.value))
     })
-    return typeT(body.id) + "{" + properties.join() + "}"
+    return typeT(body.id) + "{" + properties.join(", ") + "}"
   } elif self.isParenthesized() {
     body := self.asParenthesized()
     return "(" + expression(body.expression) + ")"
@@ -117,12 +129,222 @@ export fn expression (self: t.Expression) str {
       return expression(body.operand) + body.operator.val
     }
   }
-  return "nil"
+
+  throw error_NewError("Unable to stringify expression")
 }
 
-export fn statement (self: t.Statement) str {
-  // todo
-  return ""
+export fn statement (self: t.Statement, indent := 0) str {
+  mut result := ' '.repeat(indent)
+  if self.isBlock() {
+    body := self.asBlock()
+    bodyLen := body.body.len
+    if body.body.empty {
+      return result + "{}"
+    }
+    result += "{" + os_EOL
+    loop i := 0; i < bodyLen; i++ {
+      result += statement(body.body[i], indent: indent + 2) + os_EOL
+    }
+    result += ' '.repeat(indent) + "}"
+    return result
+  } elif self.isBreak() {
+    body := self.asBreak()
+    return result + "break"
+  } elif self.isContinue() {
+    body := self.asContinue()
+    return result + "continue"
+  } elif self.isEmpty() {
+    body := self.asEmpty()
+    return result + ";"
+  } elif self.isEnumDeclaration() {
+    body := self.asEnumDeclaration()
+    mut members: str[]
+    body.members.forEach((it: t.EnumDeclarationMember, idx: int) -> void {
+      mut member := ' '.repeat(indent + 2) + it.name.name
+      if it.initializer != nil {
+        member += " = " + expression(it.initializer)
+      }
+      members.push(member)
+    })
+    result += "enum " + body.name.name + " {" + os_EOL
+    result += members.join("," + os_EOL) + os_EOL
+    result += ' '.repeat(indent) + "}"
+    return result
+  } elif self.isExportDeclaration() {
+    body := self.asExportDeclaration()
+    return result + "export " + statement(body.statement, indent: indent).trimStart()
+  } elif self.isExportNamedDeclaration() {
+    body := self.asExportNamedDeclaration()
+    return result + "export " + expression(body.expression)
+  } elif self.isExpression() {
+    body := self.asExpression()
+    return indentResult(expression(body.expression), indent)
+  } elif self.isFunctionDeclaration() {
+    body := self.asFunctionDeclaration()
+    mut parameters: str[]
+    body.parameters.forEach((it: t.FunctionParameter, idx: int) -> void {
+      mut parameter := (it.mutable ? "mut " : "") + it.name.name
+
+      if it.t != nil {
+        parameter += ": " + typeT(it.t)
+        if it.initializer != nil {
+          parameter += " = " + expression(it.initializer)
+        }
+      } elif it.initializer != nil {
+        parameter += " := " + expression(it.initializer)
+      }
+
+      parameter += it.variadic ? "..." : ""
+      parameters.push(parameter)
+    })
+    result += (body.asynchronous ? "async " : "") + "fn " + body.name.name
+    result += " (" + parameters.join(", ") + ")"
+    result += body.returnType != nil ? " " + typeT(body.returnType) : ""
+    if body.body != nil {
+      result += " " + statement(body.body, indent: indent).trimStart()
+    }
+    return result
+  } elif self.isIf() {
+    body := self.asIf()
+    result += "if " + expression(body.condition) + " " + statement(body.consequent, indent: indent).trimStart()
+    if body.alternate != nil {
+      if body.consequent.isBlock() && body.alternate.isIf() {
+        result += " el" + statement(body.alternate, indent: indent).trimStart()
+      } elif body.consequent.isBlock() {
+        result += " else " + statement(body.alternate, indent: indent).trimStart()
+      } elif body.alternate.isIf() {
+        result += os_EOL + ' '.repeat(indent) + "el" + statement(body.alternate, indent: indent).trimStart()
+      } else {
+        result += os_EOL + ' '.repeat(indent) + "else " + statement(body.alternate, indent: indent).trimStart()
+      }
+    }
+    return result
+  } elif self.isImportDeclaration() {
+    body := self.asImportDeclaration()
+    mut specifiers: str[]
+    body.specifiers.forEach((it: t.ImportDeclarationSpecifier, idx: int) -> void {
+      if it is t.ImportSpecifier {
+        if it.imported.name == it.local.name {
+          specifiers.push(it.imported.name)
+        } else {
+          specifiers.push(it.imported.name + " as " + it.local.name)
+        }
+      } else {
+        specifiers.push("* as " + it.name.name)
+      }
+    })
+    result += "import " + (specifiers.empty ? "" : specifiers.join(", ") + " from ")
+    result += expression(body.source)
+    return result
+  } elif self.isLoop() {
+    body := self.asLoop()
+    bodyInitializer2 := body.initializer
+    bodyUpdate2 := body.update
+    mut parts: str
+
+    if body.condition != nil && bodyInitializer2 == nil && bodyUpdate2 == nil {
+      parts += expression(body.condition)
+    } elif body.initializer != nil || body.condition != nil || body.update != nil {
+      if body.initializer != nil {
+        parts += statement(body.initializer, indent: indent).trimStart()
+      }
+      parts += ";"
+      if body.condition != nil {
+        parts += " " + expression(body.condition)
+      }
+      parts += ";"
+      if body.update != nil {
+        parts += " " + expression(body.update)
+      }
+    }
+
+    result += "loop " + (parts.empty ? "" : (body.parenthesized ? "(" + parts + ")" : parts) + " ")
+    result += statement(body.body, indent: indent).trimStart()
+    return result
+  } elif self.isMainDeclaration() {
+    body := self.asMainDeclaration()
+    return result + "main " + statement(body.body, indent: indent).trimStart()
+  } elif self.isObjectDeclaration() {
+    body := self.asObjectDeclaration()
+    bodyLen := body.body.len
+    result += "obj " + body.name.name + " {"
+    if body.body.empty {
+      return result + "}"
+    }
+    result += os_EOL
+    loop i := 0; i < bodyLen; i++ {
+      result += statement(body.body[i], indent: indent + 2) + os_EOL
+    }
+    result += ' '.repeat(indent) + "}"
+    return result
+  } elif self.isObjectDeclarationMethod() {
+    body := self.asObjectDeclarationMethod()
+    mut parameters: str[]
+    body.parameters.forEach((it: t.FunctionParameter, idx: int) -> void {
+      mut parameter := (it.mutable ? "mut " : "") + it.name.name
+
+      if it.t != nil {
+        parameter += ": " + typeT(it.t)
+        if it.initializer != nil {
+          parameter += " = " + expression(it.initializer)
+        }
+      } elif it.initializer != nil {
+        parameter += " := " + expression(it.initializer)
+      }
+
+      parameter += it.variadic ? "..." : ""
+      parameters.push(parameter)
+    })
+    result += (body.asynchronous ? "async " : "") + "fn " + body.name.name
+    result += " (" + parameters.join(", ") + ")"
+    result += body.returnType != nil ? " " + typeT(body.returnType) : ""
+    if body.body != nil {
+      result += " " + statement(body.body, indent: indent).trimStart()
+    }
+    return result
+  } elif self.isObjectDeclarationProperty() {
+    body := self.asObjectDeclarationProperty()
+    result += (body.mutable ? "mut " : "")
+    result += body.name.name
+    if body.t != nil {
+      result += ": " + typeT(body.t)
+    }
+    return result
+  } elif self.isReturn() {
+    body := self.asReturn()
+    return result + "return" + (body.expression == nil ? "" : " " + expression(body.expression))
+  } elif self.isThrow() {
+    body := self.asThrow()
+    return result + "throw " + expression(body.expression)
+  } elif self.isTry() {
+    body := self.asTry()
+    handlersLen := body.handlers.len
+    result += "try " + statement(body.body, indent: indent).trimStart()
+    loop i := 0; i < handlersLen; i++ {
+      handler := body.handlers[i] as t.TryStatementHandler
+      result += " catch " + statement(handler.parameter, indent: indent).trimStart()
+      result += " " + statement(handler.body, indent: indent).trimStart()
+    }
+    return result
+  } elif self.isTypeAliasDeclaration() {
+    body := self.asTypeAliasDeclaration()
+    return result + "type " + body.name.name + " = " + typeT(body.t)
+  } elif self.isVariableDeclaration() {
+    body := self.asVariableDeclaration()
+    result += (body.constant ? "const " : "") + (body.mutable ? "mut " : "")
+    result += body.name.name
+    if body.t != nil {
+      result += ": " + typeT(body.t)
+      if body.initializer != nil {
+        result += " = " + expression(body.initializer)
+      }
+    } elif body.initializer != nil {
+      result += " := " + expression(body.initializer)
+    }
+    return result
+  }
+
+  throw error_NewError("Unable to stringify statement")
 }
 
 export fn typeT (self: t.Type) str {
@@ -133,15 +355,15 @@ export fn typeT (self: t.Type) str {
     body := self.asFunction()
     mut parameters: str[]
     body.parameters.forEach((it: t.FunctionTypeParameter, idx: int) -> void {
-      mut val: str
+      mut result: str
       if it.name != nil {
-        val += (it.mutable ? "mut " : "") + it.name.name + ": "
+        result += (it.mutable ? "mut " : "") + it.name.name + ": "
       }
-      val += typeT(it.t) + (it.variadic ? "..." : "")
-      parameters.push(val)
+      result += typeT(it.t) + (it.variadic ? "..." : "")
+      parameters.push(result)
     })
     return (body.asynchronous ? "async " : "") + "(" + parameters.join(", ") + ")" +
-      " " + typeT(body.returnType)
+      " -> " + typeT(body.returnType)
   } elif self.isIdentifier() {
     body := self.asIdentifier()
     return body.name.name
@@ -168,4 +390,6 @@ export fn typeT (self: t.Type) str {
     })
     return types.join(" | ")
   }
+
+  throw error_NewError("Unable to stringify type")
 }

@@ -4,12 +4,13 @@
  */
 
 import EXPECT_EQ from "the/testing"
+import EXPECT_TRUE from "./utils"
 import * as Statement from "../src/statement"
 import * as t from "../src/types"
 
 export fn TEST_Statement_creates () {
   statement := Statement.create(t.EmptyStatement{}, 0, 0)
-  EXPECT_EQ(statement.isEmpty(), true)
+  EXPECT_TRUE(statement.isEmpty())
 }
 
 export fn TEST_Statement_createsWithComments () {
@@ -38,5 +39,5 @@ export fn TEST_Statement_createsWithComments () {
 
 export fn TEST_Statement_dummy () {
   statement := Statement.dummy()
-  EXPECT_EQ(statement.body is t.DummyStatement, true)
+  EXPECT_TRUE(statement.body is t.DummyStatement)
 }

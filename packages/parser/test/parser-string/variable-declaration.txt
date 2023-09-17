@@ -1,0 +1,8 @@
+a := 2
+const b: str = 3
+mut c: str
+main {
+  a := 2
+  const b: str = 3
+  mut c: str
+}

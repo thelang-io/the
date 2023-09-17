@@ -2,6 +2,8 @@ import Tests from "the/testing"
 import * as n1 from "./expression"
 import * as n2 from "./statement"
 import * as n3 from "./type"
+import * as n4 from "./string"
+import * as n5 from "./types"
 
 main {
   mut tests := Tests{}
@@ -18,5 +20,11 @@ main {
   tests.register("TEST_Statement_dummy", n2.TEST_Statement_dummy)
   tests.register("TEST_Type_creates", n3.TEST_Type_creates)
   tests.register("TEST_Type_dummy", n3.TEST_Type_dummy)
+  tests.register("TEST_string_expression", n4.TEST_string_expression)
+  tests.register("TEST_string_statement", n4.TEST_string_statement)
+  tests.register("TEST_string_type", n4.TEST_string_type)
+  tests.register("TEST_types_expression", n5.TEST_types_expression)
+  tests.register("TEST_types_statement", n5.TEST_types_statement)
+  tests.register("TEST_types_type", n5.TEST_types_type)
   tests.run(process_args)
 }

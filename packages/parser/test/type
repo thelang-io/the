@@ -4,16 +4,17 @@
  */
 
 import EXPECT_EQ from "the/testing"
+import EXPECT_TRUE from "./utils"
 import dummyIdentifier from "../src/expression"
 import * as Type from "../src/type"
 import * as t from "../src/types"
 
 export fn TEST_Type_creates () {
   t := Type.create(t.IdentifierType{name: dummyIdentifier()}, 0, 0)
-  EXPECT_EQ(t.isIdentifier(), true)
+  EXPECT_TRUE(t.isIdentifier())
 }
 
 export fn TEST_Type_dummy () {
   t := Type.dummy()
-  EXPECT_EQ(t.body is t.DummyType, true)
+  EXPECT_TRUE(t.body is t.DummyType)
 }

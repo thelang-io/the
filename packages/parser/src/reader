@@ -65,7 +65,7 @@ export obj Reader {
 export fn init (pathOrCode: str) Reader {
   pathFirstChar := pathOrCode.slice(0, 1)
 
-  if pathFirstChar != "." && pathFirstChar != "/" && pathFirstChar != "\\" {
+  if pathOrCode.slice(0, 2) != "./" && pathFirstChar != "/" && pathFirstChar != "\\" {
     return Reader{path: "anonymous", content: pathOrCode}
   }
 

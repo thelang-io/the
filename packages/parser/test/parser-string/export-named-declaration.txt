@@ -1,0 +1,6 @@
+export Test
+export Test1.Test2
+main {
+  export Test
+  export Test1.Test2
+}

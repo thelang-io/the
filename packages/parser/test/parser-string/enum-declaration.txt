@@ -1,0 +1,16 @@
+enum Test {
+  One
+}
+enum Test {
+  One = 1,
+  Two = 1 << 1
+}
+main {
+  enum Test {
+    One
+  }
+  enum Test {
+    One = 1,
+    Two = 1 << 1
+  }
+}

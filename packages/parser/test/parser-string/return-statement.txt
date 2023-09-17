@@ -1,0 +1,6 @@
+return
+return test
+main {
+  return
+  return test
+}

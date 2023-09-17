@@ -7,6 +7,14 @@ import EXPECT_EQ from "the/testing"
 import parse from "../src/parser"
 import * as t from "../src/types"
 
+export fn EXPECT_FALSE (a: bool) {
+  EXPECT_EQ(a, false)
+}
+
+export fn EXPECT_TRUE (a: bool) {
+  EXPECT_EQ(a, true)
+}
+
 export fn EXPECT_NO_THROW (function: () -> void) bool {
   mut message: str
 
@@ -35,6 +43,11 @@ export fn parseExpression (code: str) t.Expression {
   f := parse(code)
   statement := f.program.body[0].asExpression()
   return statement.expression
+}
+
+export fn parseStatement (code: str) t.Statement {
+  f := parse(code)
+  return f.program.body[0]
 }
 
 export fn parseType (code: str) t.Type {
