@@ -3,6 +3,11 @@
  * Licensed under the MIT License
  */
 
+export obj ParserError {
+  message: str
+  stack: str
+}
+
 export obj Token {
   mut t: TokenType
   mut val: str

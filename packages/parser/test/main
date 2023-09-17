@@ -4,9 +4,12 @@ import * as n2 from "./statement"
 import * as n3 from "./type"
 import * as n4 from "./string"
 import * as n5 from "./types"
+import * as n6 from "./token"
+import * as n7 from "./reader"
 
 main {
   mut tests := Tests{}
+
   tests.register("TEST_Expression_creates", n1.TEST_Expression_creates)
   tests.register("TEST_Expression_dummy", n1.TEST_Expression_dummy)
   tests.register("TEST_Expression_dummyIdentifier", n1.TEST_Expression_dummyIdentifier)
@@ -26,5 +29,29 @@ main {
   tests.register("TEST_types_expression", n5.TEST_types_expression)
   tests.register("TEST_types_statement", n5.TEST_types_statement)
   tests.register("TEST_types_type", n5.TEST_types_type)
+  tests.register("TEST_Token_associativity", n6.TEST_Token_associativity)
+  tests.register("TEST_Token_isCharEsc", n6.TEST_Token_isCharEsc)
+  tests.register("TEST_Token_isId", n6.TEST_Token_isId)
+  tests.register("TEST_Token_isIdStart", n6.TEST_Token_isIdStart)
+  tests.register("TEST_Token_isIntBin", n6.TEST_Token_isIntBin)
+  tests.register("TEST_Token_isIntDec", n6.TEST_Token_isIntDec)
+  tests.register("TEST_Token_isIntHex", n6.TEST_Token_isIntHex)
+  tests.register("TEST_Token_isIntOct", n6.TEST_Token_isIntOct)
+  tests.register("TEST_Token_isNotNewLine", n6.TEST_Token_isNotNewLine)
+  tests.register("TEST_Token_isStrEsc", n6.TEST_Token_isStrEsc)
+  tests.register("TEST_Token_isWhitespace", n6.TEST_Token_isWhitespace)
+  tests.register("TEST_Token_precedence", n6.TEST_Token_precedence)
+  tests.register("TEST_Token_typeToIntegerLiteralType", n6.TEST_Token_typeToIntegerLiteralType)
+  tests.register("TEST_Reader_initWithCode", n7.TEST_Reader_initWithCode)
+  tests.register("TEST_Reader_initWithPath", n7.TEST_Reader_initWithPath)
+  tests.register("TEST_Reader_initThrows", n7.TEST_Reader_initThrows)
+  tests.register("TEST_Reader_locate", n7.TEST_Reader_locate)
+  tests.register("TEST_Reader_eof", n7.TEST_Reader_eof)
+  tests.register("TEST_Reader_lookahead", n7.TEST_Reader_lookahead)
+  tests.register("TEST_Reader_next", n7.TEST_Reader_next)
+  tests.register("TEST_Reader_seek", n7.TEST_Reader_seek)
+  tests.register("TEST_Reader_slice", n7.TEST_Reader_slice)
+  tests.register("TEST_Reader_walk", n7.TEST_Reader_walk)
+
   tests.run(process_args)
 }

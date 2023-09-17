@@ -28,6 +28,7 @@ Parsed path as `File` object.
 
 **Exceptions**
 
+- `ParserError` - thrown if path doesn't exists
 - `ParserError` - thrown if path is not a file
 
 **Examples**
