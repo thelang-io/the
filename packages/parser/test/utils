@@ -1,0 +1,44 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import EXPECT_EQ from "the/testing"
+import parse from "../src/parser"
+import * as t from "../src/types"
+
+export fn EXPECT_NO_THROW (function: () -> void) bool {
+  mut message: str
+
+  try {
+    function()
+  } catch err: error_Error {
+    message = err.message
+  }
+
+  EXPECT_EQ(message, "")
+}
+
+export fn EXPECT_THROW_WITH_MESSAGE (function: () -> void, message: str) bool {
+  mut errMessage: str
+
+  try {
+    function()
+  } catch err: error_Error {
+    errMessage = err.message
+  }
+
+  EXPECT_EQ(errMessage, message)
+}
+
+export fn parseExpression (code: str) t.Expression {
+  f := parse(code)
+  statement := f.program.body[0].asExpression()
+  return statement.expression
+}
+
+export fn parseType (code: str) t.Type {
+  f := parse("var: " + code)
+  statement := f.program.body[0].asVariableDeclaration()
+  return statement.t as t.Type
+}

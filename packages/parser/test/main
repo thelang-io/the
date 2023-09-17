@@ -1,5 +1,7 @@
 import Tests from "the/testing"
 import * as n1 from "./expression"
+import * as n2 from "./statement"
+import * as n3 from "./type"
 
 main {
   mut tests := Tests{}
@@ -11,5 +13,10 @@ main {
   tests.register("TEST_Expression_subtractLastObjExpr", n1.TEST_Expression_subtractLastObjExpr)
   tests.register("TEST_Expression_toType", n1.TEST_Expression_toType)
   tests.register("TEST_Expression_validObjExprId", n1.TEST_Expression_validObjExprId)
+  tests.register("TEST_Statement_creates", n2.TEST_Statement_creates)
+  tests.register("TEST_Statement_createsWithComments", n2.TEST_Statement_createsWithComments)
+  tests.register("TEST_Statement_dummy", n2.TEST_Statement_dummy)
+  tests.register("TEST_Type_creates", n3.TEST_Type_creates)
+  tests.register("TEST_Type_dummy", n3.TEST_Type_dummy)
   tests.run(process_args)
 }

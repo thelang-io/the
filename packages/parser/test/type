@@ -1,0 +1,19 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import EXPECT_EQ from "the/testing"
+import dummyIdentifier from "../src/expression"
+import * as Type from "../src/type"
+import * as t from "../src/types"
+
+export fn TEST_Type_creates () {
+  t := Type.create(t.IdentifierType{name: dummyIdentifier()}, 0, 0)
+  EXPECT_EQ(t.isIdentifier(), true)
+}
+
+export fn TEST_Type_dummy () {
+  t := Type.dummy()
+  EXPECT_EQ(t.body is t.DummyType, true)
+}
