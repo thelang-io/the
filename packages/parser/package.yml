@@ -6,3 +6,6 @@ main: src/main
 
 packages:
   the/testing: 0.3.0
+
+scripts:
+  update-tokenizer-tests: the run scripts/update-tokenizer-tests

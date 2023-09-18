@@ -1,0 +1,8 @@
+//
+//test
+// test
+===== out =====
+CommentLine(start=0 end=2) //
+CommentLine(start=3 end=9) //test
+CommentLine(start=10 end=17) // test
+Eof(start=17 end=17)

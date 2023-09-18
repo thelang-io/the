@@ -1,0 +1,5 @@
+'\w'
+===== err =====
+/test/tokenizer/E0005.txt:1:1: SyntaxError: E0005 - Illegal character escape sequence
+1 | '\w'
+  | ~~~

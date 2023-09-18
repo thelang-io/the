@@ -1,11 +1,13 @@
 import Tests from "the/testing"
-import * as n1 from "./expression"
-import * as n2 from "./statement"
-import * as n3 from "./type"
-import * as n4 from "./string"
-import * as n5 from "./types"
-import * as n6 from "./token"
-import * as n7 from "./reader"
+import * as n1 from "./expression-test"
+import * as n2 from "./statement-test"
+import * as n3 from "./type-test"
+import * as n4 from "./string-test"
+import * as n5 from "./types-test"
+import * as n6 from "./token-test"
+import * as n7 from "./reader-test"
+import * as n8 from "./program-test"
+import * as n9 from "./tokenizer-test"
 
 main {
   mut tests := Tests{}
@@ -52,6 +54,20 @@ main {
   tests.register("TEST_Reader_seek", n7.TEST_Reader_seek)
   tests.register("TEST_Reader_slice", n7.TEST_Reader_slice)
   tests.register("TEST_Reader_walk", n7.TEST_Reader_walk)
+  tests.register("TEST_Program_traverse", n8.TEST_Program_traverse)
+  tests.register("TEST_Statement_traverse", n8.TEST_Statement_traverse)
+  tests.register("TEST_Tokenizer_init", n9.TEST_Tokenizer_init)
+  tests.register("TEST_Tokenizer_lookahead", n9.TEST_Tokenizer_lookahead)
+  tests.register("TEST_Tokenizer_next", n9.TEST_Tokenizer_next)
+  tests.register("TEST_Tokenizer_pos", n9.TEST_Tokenizer_pos)
+  tests.register("TEST_Tokenizer_errorSeek", n9.TEST_Tokenizer_errorSeek)
+  tests.register("TEST_Tokenizer_readerStartPos", n9.TEST_Tokenizer_readerStartPos)
+  tests.register("TEST_Tokenizer_readerEndPos", n9.TEST_Tokenizer_readerEndPos)
+  tests.register("TEST_Tokenizer_readerSeek", n9.TEST_Tokenizer_readerSeek)
+  tests.register("TEST_Tokenizer_seek", n9.TEST_Tokenizer_seek)
+  tests.register("TEST_Tokenizer_nextComments", n9.TEST_Tokenizer_nextComments)
+  tests.register("TEST_Tokenizer_nextCaches", n9.TEST_Tokenizer_nextCaches)
+  tests.register("TEST_Tokenizer_nextThrows", n9.TEST_Tokenizer_nextThrows)
 
   tests.run(process_args)
 }

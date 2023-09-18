@@ -10,9 +10,17 @@ import * as Token from "../src/token"
 import * as t from "../src/types"
 
 export fn TEST_Reader_initWithCode () {
-  reader := Reader.init("test")
-  EXPECT_EQ(reader.path, "anonymous")
-  EXPECT_EQ(reader.content, "test")
+  reader1 := Reader.init("test")
+  EXPECT_EQ(reader1.path, "anonymous")
+  EXPECT_EQ(reader1.content, "test")
+
+  reader2 := Reader.init("//")
+  EXPECT_EQ(reader2.path, "anonymous")
+  EXPECT_EQ(reader2.content, "//")
+
+  reader3 := Reader.init(".Test")
+  EXPECT_EQ(reader3.path, "anonymous")
+  EXPECT_EQ(reader3.content, ".Test")
 }
 
 export fn TEST_Reader_initWithPath () {

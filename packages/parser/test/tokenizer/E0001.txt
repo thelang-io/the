@@ -1,0 +1,5 @@
+/* test
+===== err =====
+/test/tokenizer/E0001.txt:1:1: SyntaxError: E0001 - Unterminated comment
+1 | /* test
+  | ~~~~~~

@@ -1,0 +1,4 @@
+0.123456e+14
+===== out =====
+LitFloat(start=0 end=12) 0.123456e+14
+Eof(start=12 end=12)

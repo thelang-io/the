@@ -1,0 +1,5 @@
+0xG
+===== err =====
+/test/tokenizer/E0009-hexadecimal-invalid.txt:1:1: SyntaxError: E0009 - Invalid hexadecimal integer literal
+1 | 0xG
+  | ~~

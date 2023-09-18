@@ -1,0 +1,46 @@
+0
+1
+10
+18446744073709551615
+0b0
+0b1
+0b01010101010101010010101010101010
+0b10101010101010100101010101010101
+0x0
+0xA
+0xF
+0xa
+0xf
+0x0123456789ABCDEF
+0xfedcba9876543210
+0o0
+0o1
+0o7
+0o777777777777777777777
+0o1777777777777777777777
+1+1
+===== out =====
+LitIntDec(start=0 end=1) 0
+LitIntDec(start=2 end=3) 1
+LitIntDec(start=4 end=6) 10
+LitIntDec(start=7 end=27) 18446744073709551615
+LitIntBin(start=28 end=31) 0b0
+LitIntBin(start=32 end=35) 0b1
+LitIntBin(start=36 end=70) 0b01010101010101010010101010101010
+LitIntBin(start=71 end=105) 0b10101010101010100101010101010101
+LitIntHex(start=106 end=109) 0x0
+LitIntHex(start=110 end=113) 0xA
+LitIntHex(start=114 end=117) 0xF
+LitIntHex(start=118 end=121) 0xa
+LitIntHex(start=122 end=125) 0xf
+LitIntHex(start=126 end=144) 0x0123456789ABCDEF
+LitIntHex(start=145 end=163) 0xfedcba9876543210
+LitIntOct(start=164 end=167) 0o0
+LitIntOct(start=168 end=171) 0o1
+LitIntOct(start=172 end=175) 0o7
+LitIntOct(start=176 end=199) 0o777777777777777777777
+LitIntOct(start=200 end=224) 0o1777777777777777777777
+LitIntDec(start=225 end=226) 1
+OpPlus(start=226 end=227) +
+LitIntDec(start=227 end=228) 1
+Eof(start=228 end=228)

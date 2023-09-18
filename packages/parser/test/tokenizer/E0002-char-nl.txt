@@ -1,0 +1,6 @@
+'
+
+===== err =====
+/test/tokenizer/E0002-char-nl.txt:1:1: SyntaxError: E0002 - Unterminated character literal
+1 | '
+  | ^

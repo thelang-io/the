@@ -1,0 +1,5 @@
+0.1234EG
+===== err =====
+/test/tokenizer/E0011-exponent-invalid.txt:1:7: SyntaxError: E0011 - Invalid float literal exponent
+1 | 0.1234EG
+  |       ^

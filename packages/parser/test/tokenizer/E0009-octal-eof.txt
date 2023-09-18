@@ -1,0 +1,5 @@
+0o
+===== err =====
+/test/tokenizer/E0009-octal-eof.txt:1:1: SyntaxError: E0009 - Invalid octal integer literal
+1 | 0o
+  | ^

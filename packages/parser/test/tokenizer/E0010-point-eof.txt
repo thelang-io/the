@@ -1,0 +1,5 @@
+0.
+===== err =====
+/test/tokenizer/E0010-point-eof.txt:1:1: SyntaxError: E0010 - Invalid float literal
+1 | 0.
+  | ^

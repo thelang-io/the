@@ -1,0 +1,5 @@
+0xAF.14
+===== err =====
+/test/tokenizer/E0012-hexadecimal.txt:1:1: SyntaxError: E0012 - Hexadecimal float literals are not allowed
+1 | 0xAF.14
+  | ~~~~~~

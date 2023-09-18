@@ -1,0 +1,14 @@
+""
+"test"
+"multiline
+string
+paragraph"
+"multiline\nstring"
+"\f\n\r\t\v"
+===== out =====
+LitStr(start=0 end=2) ""
+LitStr(start=3 end=9) "test"
+LitStr(start=10 end=38) "multiline\nstring\nparagraph"
+LitStr(start=39 end=58) "multiline\nstring"
+LitStr(start=59 end=71) "\f\n\r\t\v"
+Eof(start=71 end=71)

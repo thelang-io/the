@@ -3,10 +3,8 @@
  * Licensed under the MIT License
  */
 
-import * as Token from "./token"
 import * as t from "./types"
 
-// todo test escape
 export fn escape (val: str) str {
   mut result := ""
 

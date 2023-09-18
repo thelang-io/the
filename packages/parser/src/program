@@ -62,7 +62,9 @@ export fn Statement_traverse (statement: t.Statement, cb: (it: t.Statement) -> v
     Statement_traverse(body.body, cb)
     handlersLen := body.handlers.len
     loop i := 0; i < handlersLen; i++ {
-      Statement_traverse(body.handlers[i].body, cb)
+      handler := body.handlers[i]
+      Statement_traverse(handler.parameter, cb)
+      Statement_traverse(handler.body, cb)
     }
   }
 }

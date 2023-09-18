@@ -1,0 +1,63 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import * as Reader from "../src/reader"
+import * as Tokenizer from "../src/tokenizer"
+import * as string from "../src/string"
+
+const ERR_DELIMITER := "===== err =====" + os_EOL
+const OUT_DELIMITER := "===== out =====" + os_EOL
+
+main {
+  cwd := process_cwd()
+  dir := fs_realpathSync(cwd + path_SEP + "test/tokenizer")
+  allFiles := fs_scandirSync(dir)
+  allFilesLen := allFiles.len
+  mut files: str[]
+
+  loop i := 0; i < allFilesLen; i++ {
+    file := allFiles[i]
+    if file.slice(-4) != ".txt" { continue }
+    files.push(dir + path_SEP + file)
+  }
+
+  filesLen := files.len
+
+  loop i := 0; i < filesLen; i++ {
+    file := files[i]
+    relativePath := file.slice(cwd.len).replace("\\", "/")
+
+    content := fs_readFileSync(file).str()
+    isError := content.find(OUT_DELIMITER) == -1
+    delimiter := isError ? ERR_DELIMITER : OUT_DELIMITER
+    stdinContent := content.slice(0, content.find(delimiter) - os_EOL.len)
+
+    mut reader := Reader.init(stdinContent)
+    mut tokenizer := Tokenizer.init(ref reader)
+
+    mut stdoutContent := Tokenizer.stringify(
+      ref tokenizer,
+      allowComments: relativePath.contains("comment")
+    )
+
+    if stdoutContent.slice(0, 10) == "anonymous:" {
+      stdoutContent = relativePath + stdoutContent.slice(9)
+    }
+
+    result := stdinContent + os_EOL + delimiter + stdoutContent
+    fs_writeFileSync(file, result.toBuffer())
+  }
+}
