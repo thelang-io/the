@@ -1,5 +1,5 @@
-"test \w
+"test \w string"
 ===== err =====
-/test/tokenizer/E0006.txt:1:7: SyntaxError: E0006 - Illegal string escape sequence
-1 | "test \w
-  |       ^
+anonymous:1:7: SyntaxError: E0006 - Illegal string escape sequence
+1 | "test \w string"
+  |       ~~

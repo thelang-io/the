@@ -1,5 +1,5 @@
 0b1010a10
 ===== err =====
-/test/tokenizer/E0009-binary.txt:1:1: SyntaxError: E0009 - Invalid binary integer literal
+anonymous:1:1: SyntaxError: E0009 - Invalid binary integer literal
 1 | 0b1010a10
-  | ~~~~~~~~
+  | ~~~~~~~~~

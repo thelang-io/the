@@ -82,12 +82,12 @@ export fn TEST_string_expression () {
 }
 
 export fn TEST_string_statement () {
-  files := fs_scandirSync("./test/parser-string")
+  files := fs_scandirSync("./test/string")
 
   loop i := 0; i < files.len; i++ {
     file := files[i] as str
     if file.slice(-4) != ".txt" { continue }
-    content := fs_readFileSync("./test/parser-string/" + file).str()
+    content := fs_readFileSync("./test/string/" + file).str()
     f := parse(content)
     bodyLen := f.program.body.len
     mut result: str

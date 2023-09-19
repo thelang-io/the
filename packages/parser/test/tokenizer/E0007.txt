@@ -1,5 +1,5 @@
 'aa'
 ===== err =====
-/test/tokenizer/E0007.txt:1:1: SyntaxError: E0007 - Too many characters in character literal
+anonymous:1:1: SyntaxError: E0007 - Too many characters in character literal
 1 | 'aa'
-  | ~~~
+  | ~~~~

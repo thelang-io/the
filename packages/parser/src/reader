@@ -102,5 +102,5 @@ export fn locate (reader: ref Reader, pos: int) t.Location {
     curPos += line.len
   }
 
-  return t.Location{line: lines.len, col: lines[-1].len}
+  return t.Location{line: lines.len, col: lines[-1].len + 1}
 }

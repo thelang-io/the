@@ -1,5 +1,5 @@
 3.14e+15dada
 ===== err =====
-/test/tokenizer/E0010-invalid-after.txt:1:1: SyntaxError: E0010 - Invalid float literal
+anonymous:1:1: SyntaxError: E0010 - Invalid float literal
 1 | 3.14e+15dada
-  | ~~~~~~~~~~~
+  | ~~~~~~~~~~~~

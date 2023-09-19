@@ -1,5 +1,5 @@
 0123456789
 ===== err =====
-/test/tokenizer/E0008.txt:1:1: SyntaxError: E0008 - Leading zero integer literals are not allowed
+anonymous:1:1: SyntaxError: E0008 - Leading zero integer literals are not allowed
 1 | 0123456789
-  | ~~~~~~~~~
+  | ~~~~~~~~~~

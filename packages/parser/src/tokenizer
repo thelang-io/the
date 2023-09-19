@@ -126,6 +126,7 @@ export obj Tokenizer {
       return self._wrapToken(.LitChar)
     }
 
+    pos1 := self.reader.pos
     ch1 := self.reader.next()
 
     if ch1 == '\n' {
@@ -143,7 +144,7 @@ export obj Tokenizer {
       ch2 := self.reader.next()
 
       if !Token.isCharEsc(ch2) {
-        self._raise(errors.E0005(), self.state.pos)
+        self._raise(errors.E0005(), pos1)
       }
     }
 
@@ -497,7 +498,7 @@ export obj Tokenizer {
       errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(endLoc.col - startLoc.col))
     } else {
       errorLine := lines[startLoc.line - 1]
-      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col))
+      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col + 1))
     }
 
     errorLinesNumbers.push(startLoc.line)

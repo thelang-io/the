@@ -14,6 +14,9 @@ import * as Reader from "../src/reader"
 import * as Tokenizer from "../src/tokenizer"
 import * as t from "../src/types"
 
+const ERR_DELIMITER := "===== err =====" + os_EOL
+const OUT_DELIMITER := "===== out =====" + os_EOL
+
 export fn TEST_Tokenizer_init () {
   EXPECT_NO_THROW(() -> void {
     mut r := Reader.init("test")
@@ -174,4 +177,21 @@ export fn TEST_Tokenizer_seek () {
 }
 
 export fn TEST_Tokenizer_next () {
+  files := fs_scandirSync("./test/tokenizer")
+
+  loop i := 0; i < files.len; i++ {
+    file := files[i] as str
+    if file.slice(-4) != ".txt" { continue }
+
+    content := fs_readFileSync("./test/tokenizer/" + file).str()
+    delimiter := content.find(OUT_DELIMITER) == -1 ? ERR_DELIMITER : OUT_DELIMITER
+    stdinCode := content.slice(0, content.find(delimiter) - os_EOL.len)
+    expectedStdoutCode := content.slice(content.find(delimiter) + delimiter.len)
+
+    mut reader := Reader.init(stdinCode)
+    mut tokenizer := Tokenizer.init(ref reader)
+    actualStdoutCode := Tokenizer.stringify(ref tokenizer, allowComments: file.contains("comment"))
+
+    EXPECT_EQ(expectedStdoutCode, actualStdoutCode)
+  }
 }

@@ -1,5 +1,5 @@
 0.1231ABC
 ===== err =====
-/test/tokenizer/E0010-point-invalid-continuous.txt:1:1: SyntaxError: E0010 - Invalid float literal
+anonymous:1:1: SyntaxError: E0010 - Invalid float literal
 1 | 0.1231ABC
-  | ~~~~~~~~
+  | ~~~~~~~~~

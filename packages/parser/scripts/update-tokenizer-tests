@@ -16,48 +16,27 @@
 
 import * as Reader from "../src/reader"
 import * as Tokenizer from "../src/tokenizer"
-import * as string from "../src/string"
 
 const ERR_DELIMITER := "===== err =====" + os_EOL
 const OUT_DELIMITER := "===== out =====" + os_EOL
 
 main {
-  cwd := process_cwd()
-  dir := fs_realpathSync(cwd + path_SEP + "test/tokenizer")
-  allFiles := fs_scandirSync(dir)
-  allFilesLen := allFiles.len
-  mut files: str[]
-
-  loop i := 0; i < allFilesLen; i++ {
-    file := allFiles[i]
-    if file.slice(-4) != ".txt" { continue }
-    files.push(dir + path_SEP + file)
-  }
-
+  files := fs_scandirSync("./test/tokenizer")
   filesLen := files.len
 
   loop i := 0; i < filesLen; i++ {
     file := files[i]
-    relativePath := file.slice(cwd.len).replace("\\", "/")
+    if file.slice(-4) != ".txt" { continue }
 
-    content := fs_readFileSync(file).str()
-    isError := content.find(OUT_DELIMITER) == -1
-    delimiter := isError ? ERR_DELIMITER : OUT_DELIMITER
-    stdinContent := content.slice(0, content.find(delimiter) - os_EOL.len)
+    content := fs_readFileSync("./test/tokenizer/" + file).str()
+    delimiter := content.find(OUT_DELIMITER) == -1 ? ERR_DELIMITER : OUT_DELIMITER
+    stdinCode := content.slice(0, content.find(delimiter) - os_EOL.len)
 
-    mut reader := Reader.init(stdinContent)
+    mut reader := Reader.init(stdinCode)
     mut tokenizer := Tokenizer.init(ref reader)
+    stdoutCode := Tokenizer.stringify(ref tokenizer, allowComments: file.contains("comment"))
 
-    mut stdoutContent := Tokenizer.stringify(
-      ref tokenizer,
-      allowComments: relativePath.contains("comment")
-    )
-
-    if stdoutContent.slice(0, 10) == "anonymous:" {
-      stdoutContent = relativePath + stdoutContent.slice(9)
-    }
-
-    result := stdinContent + os_EOL + delimiter + stdoutContent
-    fs_writeFileSync(file, result.toBuffer())
+    result := stdinCode + os_EOL + delimiter + stdoutCode
+    fs_writeFileSync("./test/tokenizer/" + file, result.toBuffer())
   }
 }

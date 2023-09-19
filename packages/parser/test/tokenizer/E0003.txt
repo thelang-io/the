@@ -1,5 +1,5 @@
 "
 ===== err =====
-/test/tokenizer/E0003.txt:1:1: SyntaxError: E0003 - Unterminated string literal
+anonymous:1:1: SyntaxError: E0003 - Unterminated string literal
 1 | "
   | ^

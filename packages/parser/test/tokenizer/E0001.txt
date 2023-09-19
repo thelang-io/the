@@ -1,5 +1,7 @@
 /* test
+multiline
 ===== err =====
-/test/tokenizer/E0001.txt:1:1: SyntaxError: E0001 - Unterminated comment
+anonymous:1:1: SyntaxError: E0001 - Unterminated comment
 1 | /* test
-  | ~~~~~~
+  | ~~~~~~~
+2 | multiline

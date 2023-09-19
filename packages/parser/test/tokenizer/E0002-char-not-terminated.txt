@@ -1,5 +1,5 @@
 'a
 ===== err =====
-/test/tokenizer/E0002-char-not-terminated.txt:1:1: SyntaxError: E0002 - Unterminated character literal
+anonymous:1:1: SyntaxError: E0002 - Unterminated character literal
 1 | 'a
-  | ^
+  | ~~

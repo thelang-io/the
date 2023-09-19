@@ -1,5 +1,5 @@
 0x1234g10
 ===== err =====
-/test/tokenizer/E0009-hexadecimal.txt:1:1: SyntaxError: E0009 - Invalid hexadecimal integer literal
+anonymous:1:1: SyntaxError: E0009 - Invalid hexadecimal integer literal
 1 | 0x1234g10
-  | ~~~~~~~~
+  | ~~~~~~~~~

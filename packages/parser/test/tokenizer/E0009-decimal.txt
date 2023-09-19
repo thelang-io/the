@@ -1,5 +1,5 @@
 1234a10
 ===== err =====
-/test/tokenizer/E0009-decimal.txt:1:1: SyntaxError: E0009 - Invalid decimal integer literal
+anonymous:1:1: SyntaxError: E0009 - Invalid decimal integer literal
 1 | 1234a10
-  | ~~~~~~
+  | ~~~~~~~
