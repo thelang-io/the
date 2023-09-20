@@ -8,6 +8,7 @@ import * as n6 from "./token-test"
 import * as n7 from "./reader-test"
 import * as n8 from "./program-test"
 import * as n9 from "./tokenizer-test"
+import * as n10 from "./parser-test"
 
 main {
   mut tests := Tests{}
@@ -68,6 +69,7 @@ main {
   tests.register("TEST_Tokenizer_nextComments", n9.TEST_Tokenizer_nextComments)
   tests.register("TEST_Tokenizer_nextCaches", n9.TEST_Tokenizer_nextCaches)
   tests.register("TEST_Tokenizer_nextThrows", n9.TEST_Tokenizer_nextThrows)
+  tests.register("TEST_Parser_parse", n10.TEST_Parser_parse)
 
   tests.run(process_args)
 }

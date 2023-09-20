@@ -1,0 +1,87 @@
+a: int[][str]
+a: int[char]
+a: int[str][char]
+a: Test1.Test2[char]
+a: int?[char]
+a: (int)[char]
+===== out =====
+Program
+  VariableDeclaration(start=0, end=13)
+    name
+      Identifier(start=0 end=1) a
+    type
+      MapType(start=3 end=13)
+        keyType
+          ArrayType(start=3 end=8)
+            IdentifierType(start=3 end=6)
+              Identifier(start=3 end=6) int
+        valueType
+          IdentifierType(start=9 end=12)
+            Identifier(start=9 end=12) str
+  VariableDeclaration(start=13, end=26)
+    name
+      Identifier(start=14 end=15) a
+    type
+      MapType(start=17 end=26)
+        keyType
+          IdentifierType(start=17 end=20)
+            Identifier(start=17 end=20) int
+        valueType
+          IdentifierType(start=21 end=25)
+            Identifier(start=21 end=25) char
+  VariableDeclaration(start=26, end=44)
+    name
+      Identifier(start=27 end=28) a
+    type
+      MapType(start=30 end=44)
+        keyType
+          MapType(start=30 end=38)
+            keyType
+              IdentifierType(start=30 end=33)
+                Identifier(start=30 end=33) int
+            valueType
+              IdentifierType(start=34 end=37)
+                Identifier(start=34 end=37) str
+        valueType
+          IdentifierType(start=39 end=43)
+            Identifier(start=39 end=43) char
+  VariableDeclaration(start=44, end=65)
+    name
+      Identifier(start=45 end=46) a
+    type
+      MapType(start=48 end=65)
+        keyType
+          MemberType(start=48 end=59)
+            type
+              IdentifierType(start=48 end=53)
+                Identifier(start=48 end=53) Test1
+            name
+              Identifier(start=54 end=59) Test2
+        valueType
+          IdentifierType(start=60 end=64)
+            Identifier(start=60 end=64) char
+  VariableDeclaration(start=65, end=79)
+    name
+      Identifier(start=66 end=67) a
+    type
+      MapType(start=69 end=79)
+        keyType
+          OptionalType(start=69 end=73)
+            IdentifierType(start=69 end=72)
+              Identifier(start=69 end=72) int
+        valueType
+          IdentifierType(start=74 end=78)
+            Identifier(start=74 end=78) char
+  VariableDeclaration(start=79, end=94)
+    name
+      Identifier(start=80 end=81) a
+    type
+      MapType(start=82 end=94)
+        keyType
+          ParenthesizedType(start=82 end=88)
+            IdentifierType(start=84 end=87)
+              Identifier(start=84 end=87) int
+        valueType
+          IdentifierType(start=89 end=93)
+            Identifier(start=89 end=93) char
+  EofStatement(start=94, end=94)

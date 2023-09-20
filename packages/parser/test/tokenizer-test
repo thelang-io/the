@@ -8,14 +8,12 @@ import
   EXPECT_FALSE,
   EXPECT_NO_THROW,
   EXPECT_THROW_WITH_MESSAGE,
-  EXPECT_TRUE
+  EXPECT_TRUE,
+  parseTestFile
 from "./utils"
 import * as Reader from "../src/reader"
 import * as Tokenizer from "../src/tokenizer"
 import * as t from "../src/types"
-
-const ERR_DELIMITER := "===== err =====" + os_EOL
-const OUT_DELIMITER := "===== out =====" + os_EOL
 
 export fn TEST_Tokenizer_init () {
   EXPECT_NO_THROW(() -> void {
@@ -183,15 +181,10 @@ export fn TEST_Tokenizer_next () {
     file := files[i] as str
     if file.slice(-4) != ".txt" { continue }
 
-    content := fs_readFileSync("./test/tokenizer/" + file).str()
-    delimiter := content.find(OUT_DELIMITER) == -1 ? ERR_DELIMITER : OUT_DELIMITER
-    stdinCode := content.slice(0, content.find(delimiter) - os_EOL.len)
-    expectedStdoutCode := content.slice(content.find(delimiter) + delimiter.len)
-
-    mut reader := Reader.init(stdinCode)
+    result := parseTestFile("./test/tokenizer/" + file)
+    mut reader := Reader.init(result.in)
     mut tokenizer := Tokenizer.init(ref reader)
     actualStdoutCode := Tokenizer.stringify(ref tokenizer, allowComments: file.contains("comment"))
-
-    EXPECT_EQ(expectedStdoutCode, actualStdoutCode)
+    EXPECT_EQ(result.out, actualStdoutCode)
   }
 }

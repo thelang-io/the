@@ -54,7 +54,7 @@ export fn TEST_Reader_locate () {
   EXPECT_EQ(Reader.locate(ref reader, 80).str(), t.Location{line: 2, col: 24}.str())
   EXPECT_EQ(Reader.locate(ref reader, 450).str(), t.Location{line: 10, col: 22}.str())
   EXPECT_EQ(Reader.locate(ref reader, 480).str(), t.Location{line: 10, col: 52}.str())
-  EXPECT_EQ(Reader.locate(ref reader, 500).str(), t.Location{line: 10, col: 52}.str())
+  EXPECT_EQ(Reader.locate(ref reader, 500).str(), t.Location{line: 10, col: 53}.str())
 }
 
 export fn TEST_Reader_eof () {

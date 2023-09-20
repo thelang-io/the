@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-import * as Reader from "../src/reader"
-import * as Tokenizer from "../src/tokenizer"
+import parse, textify from "../src/parser"
 import parseTestFile from "../test/utils"
 
 main {
-  files := fs_scandirSync("./test/tokenizer")
+  files := fs_scandirSync("./test/parser")
   filesLen := files.len
 
   loop i := 0; i < filesLen; i++ {
     file := files[i]
     if file.slice(-4) != ".txt" { continue }
 
-    result := parseTestFile("./test/tokenizer/" + file)
-    mut reader := Reader.init(result.in)
-    mut tokenizer := Tokenizer.init(ref reader)
-    stdoutCode := Tokenizer.stringify(ref tokenizer, allowComments: file.contains("comment"))
+    result := parseTestFile("./test/parser/" + file)
+    mut f := parse(result.in)
+    stdoutCode := textify(ref f)
 
     fileResult := result.in + os_EOL + result.delimiter + stdoutCode
-    fs_writeFileSync("./test/tokenizer/" + file, fileResult.toBuffer())
+    fs_writeFileSync("./test/parser/" + file, fileResult.toBuffer())
   }
 }
