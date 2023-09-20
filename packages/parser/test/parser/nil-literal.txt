@@ -1,0 +1,6 @@
+nil
+===== out =====
+Program
+  ExpressionStatement(start=0, end=3)
+    NilLiteral(start=0, end=3)
+  EofStatement(start=3, end=3)

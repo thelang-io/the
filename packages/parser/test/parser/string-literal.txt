@@ -1,0 +1,27 @@
+""
+"t"
+"test"
+"multiline \n string"
+"actual
+multiline
+string"
+"
+weird
+multiline
+string
+"
+===== out =====
+Program
+  ExpressionStatement(start=0, end=2)
+    StringLiteral(start=0, end=2) 
+  ExpressionStatement(start=3, end=6)
+    StringLiteral(start=3, end=6) t
+  ExpressionStatement(start=7, end=13)
+    StringLiteral(start=7, end=13) test
+  ExpressionStatement(start=14, end=35)
+    StringLiteral(start=14, end=35) multiline \n string
+  ExpressionStatement(start=36, end=61)
+    StringLiteral(start=36, end=61) actual\nmultiline\nstring
+  ExpressionStatement(start=62, end=88)
+    StringLiteral(start=62, end=88) \nweird\nmultiline\nstring\n
+  EofStatement(start=88, end=88)

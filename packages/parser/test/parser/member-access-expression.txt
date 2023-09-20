@@ -1,0 +1,10 @@
+a := .Test
+===== out =====
+Program
+  VariableDeclaration(start=0, end=10)
+    name
+      Identifier(start=0 end=1) a
+    initializer
+      MemberAccessExpression(start=5, end=10)
+        Identifier(start=6 end=10) Test
+  EofStatement(start=10, end=10)

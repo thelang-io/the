@@ -1,0 +1,9 @@
+'n'
+'\n'
+===== out =====
+Program
+  ExpressionStatement(start=0, end=3)
+    CharacterLiteral(start=0, end=3) n
+  ExpressionStatement(start=4, end=8)
+    CharacterLiteral(start=4, end=8) \n
+  EofStatement(start=8, end=8)

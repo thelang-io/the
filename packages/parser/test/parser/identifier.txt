@@ -1,0 +1,9 @@
+t
+test
+===== out =====
+Program
+  ExpressionStatement(start=0, end=1)
+    Identifier(start=0 end=1) t
+  ExpressionStatement(start=2, end=6)
+    Identifier(start=2 end=6) test
+  EofStatement(start=6, end=6)

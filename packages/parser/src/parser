@@ -2259,6 +2259,9 @@ export fn stringify (file: ref t.File) str {
 }
 
 export fn textify (file: ref t.File) str {
+  if file.hasErrors {
+    return file.errors.join(os_EOL)
+  }
   mut result := "Program" + os_EOL
 
   loop i := 0; i < file.program.body.len; i++ {

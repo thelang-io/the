@@ -1,0 +1,132 @@
+a := Test{}
+a := Test{a: 10}
+a := Test{a: 10,}
+a := Test{a: 10, b: false}
+a := Test{a: 10, b: false,}
+a := Test{a: 10, b: false, c: 'c'}
+a := Test{a: 10, b: false, c: 'c',}
+===== out =====
+Program
+  VariableDeclaration(start=0, end=11)
+    name
+      Identifier(start=0 end=1) a
+    initializer
+      ObjectExpression(start=5, end=11)
+        id
+          IdentifierType(start=5 end=9)
+            Identifier(start=5 end=9) Test
+  VariableDeclaration(start=11, end=28)
+    name
+      Identifier(start=12 end=13) a
+    initializer
+      ObjectExpression(start=17, end=28)
+        id
+          IdentifierType(start=17 end=21)
+            Identifier(start=17 end=21) Test
+        properties
+          ObjectExpressionProperty
+            name
+              Identifier(start=22 end=23) a
+            value
+              IntegerLiteral(start=25, end=27 type=Decimal) 10
+  VariableDeclaration(start=28, end=46)
+    name
+      Identifier(start=29 end=30) a
+    initializer
+      ObjectExpression(start=34, end=46)
+        id
+          IdentifierType(start=34 end=38)
+            Identifier(start=34 end=38) Test
+        properties
+          ObjectExpressionProperty
+            name
+              Identifier(start=39 end=40) a
+            value
+              IntegerLiteral(start=42, end=44 type=Decimal) 10
+  VariableDeclaration(start=46, end=73)
+    name
+      Identifier(start=47 end=48) a
+    initializer
+      ObjectExpression(start=52, end=73)
+        id
+          IdentifierType(start=52 end=56)
+            Identifier(start=52 end=56) Test
+        properties
+          ObjectExpressionProperty
+            name
+              Identifier(start=57 end=58) a
+            value
+              IntegerLiteral(start=60, end=62 type=Decimal) 10
+          ObjectExpressionProperty
+            name
+              Identifier(start=64 end=65) b
+            value
+              BooleanLiteral(start=67, end=72) false
+  VariableDeclaration(start=73, end=101)
+    name
+      Identifier(start=74 end=75) a
+    initializer
+      ObjectExpression(start=79, end=101)
+        id
+          IdentifierType(start=79 end=83)
+            Identifier(start=79 end=83) Test
+        properties
+          ObjectExpressionProperty
+            name
+              Identifier(start=84 end=85) a
+            value
+              IntegerLiteral(start=87, end=89 type=Decimal) 10
+          ObjectExpressionProperty
+            name
+              Identifier(start=91 end=92) b
+            value
+              BooleanLiteral(start=94, end=99) false
+  VariableDeclaration(start=101, end=136)
+    name
+      Identifier(start=102 end=103) a
+    initializer
+      ObjectExpression(start=107, end=136)
+        id
+          IdentifierType(start=107 end=111)
+            Identifier(start=107 end=111) Test
+        properties
+          ObjectExpressionProperty
+            name
+              Identifier(start=112 end=113) a
+            value
+              IntegerLiteral(start=115, end=117 type=Decimal) 10
+          ObjectExpressionProperty
+            name
+              Identifier(start=119 end=120) b
+            value
+              BooleanLiteral(start=122, end=127) false
+          ObjectExpressionProperty
+            name
+              Identifier(start=129 end=130) c
+            value
+              CharacterLiteral(start=132, end=135) c
+  VariableDeclaration(start=136, end=172)
+    name
+      Identifier(start=137 end=138) a
+    initializer
+      ObjectExpression(start=142, end=172)
+        id
+          IdentifierType(start=142 end=146)
+            Identifier(start=142 end=146) Test
+        properties
+          ObjectExpressionProperty
+            name
+              Identifier(start=147 end=148) a
+            value
+              IntegerLiteral(start=150, end=152 type=Decimal) 10
+          ObjectExpressionProperty
+            name
+              Identifier(start=154 end=155) b
+            value
+              BooleanLiteral(start=157, end=162) false
+          ObjectExpressionProperty
+            name
+              Identifier(start=164 end=165) c
+            value
+              CharacterLiteral(start=167, end=170) c
+  EofStatement(start=172, end=172)
