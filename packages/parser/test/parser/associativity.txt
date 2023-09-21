@@ -1,0 +1,703 @@
+p := test1.test2.test3
+p := test as str as str as str
+p := a = b += 1
+p := a = b >>= c ||= 1
+p := await await test()
+p := a + b - c
+p := a + b * c
+p := a / b * c % d
+p := a / b + c
+p := a + b % c
+p := a >> b << c
+p := a >> b + c
+p := a + b << c
+p := a >= b <= c
+p := a >= b == c
+p := a != b == c
+p := a != b < c
+p := a & b ^ c | d
+p := a | b ^ c & d
+p := a & b + c
+p := a + b ^ c
+p := a | b + c
+p := a && b && c
+p := a || b || c
+p := a && b || c
+p := a || b && c
+p := 0 ? 1 : 2 ? 3 : 4
+p := 0 ? 1 ? 2 : 3 : 4
+p := 0 ? 1 : 2 ? 3 : 4 ? 5 : 6
+p := 0 ? 1 : 2 ? 3 ? 4 : 5 : 6
+p := 0 ? 1 ? 2 : 3 : 4 ? 5 : 6
+p := 0 ? 1 ? 2 : 3 ? 4 : 5 : 6
+p := test is str is str is str
+p := -b++
+p := -~b
+p := -~++b
+p := -~b++
+===== out =====
+Program
+  VariableDeclaration(start=0, end=22)
+    name
+      Identifier(start=0 end=1) p
+    initializer
+      PropertyAccessExpression(start=5, end=22)
+        expression
+          PropertyAccessExpression(start=5, end=16)
+            expression
+              Identifier(start=5 end=10) test1
+            name
+              Identifier(start=11 end=16) test2
+        name
+          Identifier(start=17 end=22) test3
+  VariableDeclaration(start=22, end=53)
+    name
+      Identifier(start=23 end=24) p
+    initializer
+      AsExpression(start=28, end=53)
+        expression
+          AsExpression(start=28, end=46)
+            expression
+              AsExpression(start=28, end=39)
+                expression
+                  Identifier(start=28 end=32) test
+                type
+                  IdentifierType(start=36 end=39)
+                    Identifier(start=36 end=39) str
+            type
+              IdentifierType(start=43 end=46)
+                Identifier(start=43 end=46) str
+        type
+          IdentifierType(start=50 end=53)
+            Identifier(start=50 end=53) str
+  VariableDeclaration(start=53, end=69)
+    name
+      Identifier(start=54 end=55) p
+    initializer
+      AssignmentExpression(start=59, end=69)
+        left
+          Identifier(start=59 end=60) a
+        op
+          OpEq(start=61 end=62) =
+        right
+          AssignmentExpression(start=63, end=69)
+            left
+              Identifier(start=63 end=64) b
+            op
+              OpPlusEq(start=65 end=67) +=
+            right
+              IntegerLiteral(start=68, end=69 type=Decimal) 1
+  VariableDeclaration(start=69, end=92)
+    name
+      Identifier(start=70 end=71) p
+    initializer
+      AssignmentExpression(start=75, end=92)
+        left
+          Identifier(start=75 end=76) a
+        op
+          OpEq(start=77 end=78) =
+        right
+          AssignmentExpression(start=79, end=92)
+            left
+              Identifier(start=79 end=80) b
+            op
+              OpRShiftEq(start=81 end=84) >>=
+            right
+              AssignmentExpression(start=85, end=92)
+                left
+                  Identifier(start=85 end=86) c
+                op
+                  OpPipePipeEq(start=87 end=90) ||=
+                right
+                  IntegerLiteral(start=91, end=92 type=Decimal) 1
+  VariableDeclaration(start=92, end=116)
+    name
+      Identifier(start=93 end=94) p
+    initializer
+      AwaitExpression(start=98, end=116)
+        AwaitExpression(start=104, end=116)
+          CallExpression(start=110, end=116)
+            callee
+              Identifier(start=110 end=114) test
+  VariableDeclaration(start=116, end=131)
+    name
+      Identifier(start=117 end=118) p
+    initializer
+      BinaryExpression(start=122, end=131)
+        left
+          BinaryExpression(start=122, end=127)
+            left
+              Identifier(start=122 end=123) a
+            op
+              OpPlus(start=124 end=125) +
+            right
+              Identifier(start=126 end=127) b
+        op
+          OpMinus(start=128 end=129) -
+        right
+          Identifier(start=130 end=131) c
+  VariableDeclaration(start=131, end=146)
+    name
+      Identifier(start=132 end=133) p
+    initializer
+      BinaryExpression(start=137, end=146)
+        left
+          Identifier(start=137 end=138) a
+        op
+          OpPlus(start=139 end=140) +
+        right
+          BinaryExpression(start=141, end=146)
+            left
+              Identifier(start=141 end=142) b
+            op
+              OpStar(start=143 end=144) *
+            right
+              Identifier(start=145 end=146) c
+  VariableDeclaration(start=146, end=165)
+    name
+      Identifier(start=147 end=148) p
+    initializer
+      BinaryExpression(start=152, end=165)
+        left
+          BinaryExpression(start=152, end=161)
+            left
+              BinaryExpression(start=152, end=157)
+                left
+                  Identifier(start=152 end=153) a
+                op
+                  OpSlash(start=154 end=155) /
+                right
+                  Identifier(start=156 end=157) b
+            op
+              OpStar(start=158 end=159) *
+            right
+              Identifier(start=160 end=161) c
+        op
+          OpPercent(start=162 end=163) %
+        right
+          Identifier(start=164 end=165) d
+  VariableDeclaration(start=165, end=180)
+    name
+      Identifier(start=166 end=167) p
+    initializer
+      BinaryExpression(start=171, end=180)
+        left
+          BinaryExpression(start=171, end=176)
+            left
+              Identifier(start=171 end=172) a
+            op
+              OpSlash(start=173 end=174) /
+            right
+              Identifier(start=175 end=176) b
+        op
+          OpPlus(start=177 end=178) +
+        right
+          Identifier(start=179 end=180) c
+  VariableDeclaration(start=180, end=195)
+    name
+      Identifier(start=181 end=182) p
+    initializer
+      BinaryExpression(start=186, end=195)
+        left
+          Identifier(start=186 end=187) a
+        op
+          OpPlus(start=188 end=189) +
+        right
+          BinaryExpression(start=190, end=195)
+            left
+              Identifier(start=190 end=191) b
+            op
+              OpPercent(start=192 end=193) %
+            right
+              Identifier(start=194 end=195) c
+  VariableDeclaration(start=195, end=212)
+    name
+      Identifier(start=196 end=197) p
+    initializer
+      BinaryExpression(start=201, end=212)
+        left
+          BinaryExpression(start=201, end=207)
+            left
+              Identifier(start=201 end=202) a
+            op
+              OpRShift(start=203 end=205) >>
+            right
+              Identifier(start=206 end=207) b
+        op
+          OpLShift(start=208 end=210) <<
+        right
+          Identifier(start=211 end=212) c
+  VariableDeclaration(start=212, end=228)
+    name
+      Identifier(start=213 end=214) p
+    initializer
+      BinaryExpression(start=218, end=228)
+        left
+          Identifier(start=218 end=219) a
+        op
+          OpRShift(start=220 end=222) >>
+        right
+          BinaryExpression(start=223, end=228)
+            left
+              Identifier(start=223 end=224) b
+            op
+              OpPlus(start=225 end=226) +
+            right
+              Identifier(start=227 end=228) c
+  VariableDeclaration(start=228, end=244)
+    name
+      Identifier(start=229 end=230) p
+    initializer
+      BinaryExpression(start=234, end=244)
+        left
+          BinaryExpression(start=234, end=239)
+            left
+              Identifier(start=234 end=235) a
+            op
+              OpPlus(start=236 end=237) +
+            right
+              Identifier(start=238 end=239) b
+        op
+          OpLShift(start=240 end=242) <<
+        right
+          Identifier(start=243 end=244) c
+  VariableDeclaration(start=244, end=261)
+    name
+      Identifier(start=245 end=246) p
+    initializer
+      BinaryExpression(start=250, end=261)
+        left
+          BinaryExpression(start=250, end=256)
+            left
+              Identifier(start=250 end=251) a
+            op
+              OpGtEq(start=252 end=254) >=
+            right
+              Identifier(start=255 end=256) b
+        op
+          OpLtEq(start=257 end=259) <=
+        right
+          Identifier(start=260 end=261) c
+  VariableDeclaration(start=261, end=278)
+    name
+      Identifier(start=262 end=263) p
+    initializer
+      BinaryExpression(start=267, end=278)
+        left
+          BinaryExpression(start=267, end=273)
+            left
+              Identifier(start=267 end=268) a
+            op
+              OpGtEq(start=269 end=271) >=
+            right
+              Identifier(start=272 end=273) b
+        op
+          OpEqEq(start=274 end=276) ==
+        right
+          Identifier(start=277 end=278) c
+  VariableDeclaration(start=278, end=295)
+    name
+      Identifier(start=279 end=280) p
+    initializer
+      BinaryExpression(start=284, end=295)
+        left
+          BinaryExpression(start=284, end=290)
+            left
+              Identifier(start=284 end=285) a
+            op
+              OpExclEq(start=286 end=288) !=
+            right
+              Identifier(start=289 end=290) b
+        op
+          OpEqEq(start=291 end=293) ==
+        right
+          Identifier(start=294 end=295) c
+  VariableDeclaration(start=295, end=311)
+    name
+      Identifier(start=296 end=297) p
+    initializer
+      BinaryExpression(start=301, end=311)
+        left
+          Identifier(start=301 end=302) a
+        op
+          OpExclEq(start=303 end=305) !=
+        right
+          BinaryExpression(start=306, end=311)
+            left
+              Identifier(start=306 end=307) b
+            op
+              OpLt(start=308 end=309) <
+            right
+              Identifier(start=310 end=311) c
+  VariableDeclaration(start=311, end=330)
+    name
+      Identifier(start=312 end=313) p
+    initializer
+      BinaryExpression(start=317, end=330)
+        left
+          BinaryExpression(start=317, end=326)
+            left
+              BinaryExpression(start=317, end=322)
+                left
+                  Identifier(start=317 end=318) a
+                op
+                  OpAmp(start=319 end=320) &
+                right
+                  Identifier(start=321 end=322) b
+            op
+              OpCaret(start=323 end=324) ^
+            right
+              Identifier(start=325 end=326) c
+        op
+          OpPipe(start=327 end=328) |
+        right
+          Identifier(start=329 end=330) d
+  VariableDeclaration(start=330, end=349)
+    name
+      Identifier(start=331 end=332) p
+    initializer
+      BinaryExpression(start=336, end=349)
+        left
+          Identifier(start=336 end=337) a
+        op
+          OpPipe(start=338 end=339) |
+        right
+          BinaryExpression(start=340, end=349)
+            left
+              Identifier(start=340 end=341) b
+            op
+              OpCaret(start=342 end=343) ^
+            right
+              BinaryExpression(start=344, end=349)
+                left
+                  Identifier(start=344 end=345) c
+                op
+                  OpAmp(start=346 end=347) &
+                right
+                  Identifier(start=348 end=349) d
+  VariableDeclaration(start=349, end=364)
+    name
+      Identifier(start=350 end=351) p
+    initializer
+      BinaryExpression(start=355, end=364)
+        left
+          Identifier(start=355 end=356) a
+        op
+          OpAmp(start=357 end=358) &
+        right
+          BinaryExpression(start=359, end=364)
+            left
+              Identifier(start=359 end=360) b
+            op
+              OpPlus(start=361 end=362) +
+            right
+              Identifier(start=363 end=364) c
+  VariableDeclaration(start=364, end=379)
+    name
+      Identifier(start=365 end=366) p
+    initializer
+      BinaryExpression(start=370, end=379)
+        left
+          BinaryExpression(start=370, end=375)
+            left
+              Identifier(start=370 end=371) a
+            op
+              OpPlus(start=372 end=373) +
+            right
+              Identifier(start=374 end=375) b
+        op
+          OpCaret(start=376 end=377) ^
+        right
+          Identifier(start=378 end=379) c
+  VariableDeclaration(start=379, end=394)
+    name
+      Identifier(start=380 end=381) p
+    initializer
+      BinaryExpression(start=385, end=394)
+        left
+          Identifier(start=385 end=386) a
+        op
+          OpPipe(start=387 end=388) |
+        right
+          BinaryExpression(start=389, end=394)
+            left
+              Identifier(start=389 end=390) b
+            op
+              OpPlus(start=391 end=392) +
+            right
+              Identifier(start=393 end=394) c
+  VariableDeclaration(start=394, end=411)
+    name
+      Identifier(start=395 end=396) p
+    initializer
+      BinaryExpression(start=400, end=411)
+        left
+          BinaryExpression(start=400, end=406)
+            left
+              Identifier(start=400 end=401) a
+            op
+              OpAmpAmp(start=402 end=404) &&
+            right
+              Identifier(start=405 end=406) b
+        op
+          OpAmpAmp(start=407 end=409) &&
+        right
+          Identifier(start=410 end=411) c
+  VariableDeclaration(start=411, end=428)
+    name
+      Identifier(start=412 end=413) p
+    initializer
+      BinaryExpression(start=417, end=428)
+        left
+          BinaryExpression(start=417, end=423)
+            left
+              Identifier(start=417 end=418) a
+            op
+              OpPipePipe(start=419 end=421) ||
+            right
+              Identifier(start=422 end=423) b
+        op
+          OpPipePipe(start=424 end=426) ||
+        right
+          Identifier(start=427 end=428) c
+  VariableDeclaration(start=428, end=445)
+    name
+      Identifier(start=429 end=430) p
+    initializer
+      BinaryExpression(start=434, end=445)
+        left
+          BinaryExpression(start=434, end=440)
+            left
+              Identifier(start=434 end=435) a
+            op
+              OpAmpAmp(start=436 end=438) &&
+            right
+              Identifier(start=439 end=440) b
+        op
+          OpPipePipe(start=441 end=443) ||
+        right
+          Identifier(start=444 end=445) c
+  VariableDeclaration(start=445, end=462)
+    name
+      Identifier(start=446 end=447) p
+    initializer
+      BinaryExpression(start=451, end=462)
+        left
+          Identifier(start=451 end=452) a
+        op
+          OpPipePipe(start=453 end=455) ||
+        right
+          BinaryExpression(start=456, end=462)
+            left
+              Identifier(start=456 end=457) b
+            op
+              OpAmpAmp(start=458 end=460) &&
+            right
+              Identifier(start=461 end=462) c
+  VariableDeclaration(start=462, end=485)
+    name
+      Identifier(start=463 end=464) p
+    initializer
+      ConditionalExpression(start=468, end=485)
+        condition
+          IntegerLiteral(start=468, end=469 type=Decimal) 0
+        consequent
+          IntegerLiteral(start=472, end=473 type=Decimal) 1
+        alternate
+          ConditionalExpression(start=476, end=485)
+            condition
+              IntegerLiteral(start=476, end=477 type=Decimal) 2
+            consequent
+              IntegerLiteral(start=480, end=481 type=Decimal) 3
+            alternate
+              IntegerLiteral(start=484, end=485 type=Decimal) 4
+  VariableDeclaration(start=485, end=508)
+    name
+      Identifier(start=486 end=487) p
+    initializer
+      ConditionalExpression(start=491, end=508)
+        condition
+          IntegerLiteral(start=491, end=492 type=Decimal) 0
+        consequent
+          ConditionalExpression(start=495, end=504)
+            condition
+              IntegerLiteral(start=495, end=496 type=Decimal) 1
+            consequent
+              IntegerLiteral(start=499, end=500 type=Decimal) 2
+            alternate
+              IntegerLiteral(start=503, end=504 type=Decimal) 3
+        alternate
+          IntegerLiteral(start=507, end=508 type=Decimal) 4
+  VariableDeclaration(start=508, end=539)
+    name
+      Identifier(start=509 end=510) p
+    initializer
+      ConditionalExpression(start=514, end=539)
+        condition
+          IntegerLiteral(start=514, end=515 type=Decimal) 0
+        consequent
+          IntegerLiteral(start=518, end=519 type=Decimal) 1
+        alternate
+          ConditionalExpression(start=522, end=539)
+            condition
+              IntegerLiteral(start=522, end=523 type=Decimal) 2
+            consequent
+              IntegerLiteral(start=526, end=527 type=Decimal) 3
+            alternate
+              ConditionalExpression(start=530, end=539)
+                condition
+                  IntegerLiteral(start=530, end=531 type=Decimal) 4
+                consequent
+                  IntegerLiteral(start=534, end=535 type=Decimal) 5
+                alternate
+                  IntegerLiteral(start=538, end=539 type=Decimal) 6
+  VariableDeclaration(start=539, end=570)
+    name
+      Identifier(start=540 end=541) p
+    initializer
+      ConditionalExpression(start=545, end=570)
+        condition
+          IntegerLiteral(start=545, end=546 type=Decimal) 0
+        consequent
+          IntegerLiteral(start=549, end=550 type=Decimal) 1
+        alternate
+          ConditionalExpression(start=553, end=570)
+            condition
+              IntegerLiteral(start=553, end=554 type=Decimal) 2
+            consequent
+              ConditionalExpression(start=557, end=566)
+                condition
+                  IntegerLiteral(start=557, end=558 type=Decimal) 3
+                consequent
+                  IntegerLiteral(start=561, end=562 type=Decimal) 4
+                alternate
+                  IntegerLiteral(start=565, end=566 type=Decimal) 5
+            alternate
+              IntegerLiteral(start=569, end=570 type=Decimal) 6
+  VariableDeclaration(start=570, end=601)
+    name
+      Identifier(start=571 end=572) p
+    initializer
+      ConditionalExpression(start=576, end=601)
+        condition
+          IntegerLiteral(start=576, end=577 type=Decimal) 0
+        consequent
+          ConditionalExpression(start=580, end=589)
+            condition
+              IntegerLiteral(start=580, end=581 type=Decimal) 1
+            consequent
+              IntegerLiteral(start=584, end=585 type=Decimal) 2
+            alternate
+              IntegerLiteral(start=588, end=589 type=Decimal) 3
+        alternate
+          ConditionalExpression(start=592, end=601)
+            condition
+              IntegerLiteral(start=592, end=593 type=Decimal) 4
+            consequent
+              IntegerLiteral(start=596, end=597 type=Decimal) 5
+            alternate
+              IntegerLiteral(start=600, end=601 type=Decimal) 6
+  VariableDeclaration(start=601, end=632)
+    name
+      Identifier(start=602 end=603) p
+    initializer
+      ConditionalExpression(start=607, end=632)
+        condition
+          IntegerLiteral(start=607, end=608 type=Decimal) 0
+        consequent
+          ConditionalExpression(start=611, end=628)
+            condition
+              IntegerLiteral(start=611, end=612 type=Decimal) 1
+            consequent
+              IntegerLiteral(start=615, end=616 type=Decimal) 2
+            alternate
+              ConditionalExpression(start=619, end=628)
+                condition
+                  IntegerLiteral(start=619, end=620 type=Decimal) 3
+                consequent
+                  IntegerLiteral(start=623, end=624 type=Decimal) 4
+                alternate
+                  IntegerLiteral(start=627, end=628 type=Decimal) 5
+        alternate
+          IntegerLiteral(start=631, end=632 type=Decimal) 6
+  VariableDeclaration(start=632, end=663)
+    name
+      Identifier(start=633 end=634) p
+    initializer
+      IsExpression(start=638, end=663)
+        expression
+          IsExpression(start=638, end=656)
+            expression
+              IsExpression(start=638, end=649)
+                expression
+                  Identifier(start=638 end=642) test
+                type
+                  IdentifierType(start=646 end=649)
+                    Identifier(start=646 end=649) str
+            type
+              IdentifierType(start=653 end=656)
+                Identifier(start=653 end=656) str
+        type
+          IdentifierType(start=660 end=663)
+            Identifier(start=660 end=663) str
+  VariableDeclaration(start=663, end=673)
+    name
+      Identifier(start=664 end=665) p
+    initializer
+      UnaryExpression(start=669, end=673 prefix)
+        operator
+          OpMinus(start=669 end=670) -
+        operand
+          UnaryExpression(start=670, end=673)
+            operand
+              Identifier(start=670 end=671) b
+            operator
+              OpPlusPlus(start=671 end=673) ++
+  VariableDeclaration(start=673, end=682)
+    name
+      Identifier(start=674 end=675) p
+    initializer
+      UnaryExpression(start=679, end=682 prefix)
+        operator
+          OpMinus(start=679 end=680) -
+        operand
+          UnaryExpression(start=680, end=682 prefix)
+            operator
+              OpTilde(start=680 end=681) ~
+            operand
+              Identifier(start=681 end=682) b
+  VariableDeclaration(start=682, end=693)
+    name
+      Identifier(start=683 end=684) p
+    initializer
+      UnaryExpression(start=688, end=693 prefix)
+        operator
+          OpMinus(start=688 end=689) -
+        operand
+          UnaryExpression(start=689, end=693 prefix)
+            operator
+              OpTilde(start=689 end=690) ~
+            operand
+              UnaryExpression(start=690, end=693 prefix)
+                operator
+                  OpPlusPlus(start=690 end=692) ++
+                operand
+                  Identifier(start=692 end=693) b
+  VariableDeclaration(start=693, end=704)
+    name
+      Identifier(start=694 end=695) p
+    initializer
+      UnaryExpression(start=699, end=704 prefix)
+        operator
+          OpMinus(start=699 end=700) -
+        operand
+          UnaryExpression(start=700, end=704 prefix)
+            operator
+              OpTilde(start=700 end=701) ~
+            operand
+              UnaryExpression(start=701, end=704)
+                operand
+                  Identifier(start=701 end=702) b
+                operator
+                  OpPlusPlus(start=702 end=704) ++
+  EofStatement(start=704, end=704)
