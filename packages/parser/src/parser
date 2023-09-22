@@ -211,7 +211,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    mut expression := self.nextExpression()
+    mut expression := self.nextExpression(shouldWrap: false)
 
     if expression == nil {
       self._raise(errors.E0109("await"))
@@ -1306,7 +1306,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    mut expression := self.nextExpression()
+    mut expression := self.nextExpression(shouldWrap: false)
 
     if expression == nil {
       self._raise(errors.E0109("ref"))

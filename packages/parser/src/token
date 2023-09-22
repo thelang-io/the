@@ -129,7 +129,7 @@ export fn precedence (t: t.TokenType, unary := false) int {
     return 16
   } elif t == .KwAwait || t == .KwRef {
     return 15
-  } elif unary && (t == .OpExcl || t == .OpMinus || t == .OpPlus || t == .OpTilde) {
+  } elif (unary && (t == .OpMinus || t == .OpPlus)) || t == .OpExcl || t == .OpTilde {
     return 14
   } elif t == .OpPercent || t == .OpSlash || t == .OpStar {
     return 12

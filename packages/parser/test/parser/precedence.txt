@@ -445,19 +445,19 @@ Program
     name
       Identifier(start=328 end=329) p
     initializer
-      AwaitExpression(start=333, end=362)
-        BinaryExpression(start=339, end=362)
-          left
+      BinaryExpression(start=333, end=362)
+        left
+          AwaitExpression(start=333, end=346)
             CallExpression(start=339, end=346)
               callee
                 Identifier(start=339 end=344) test1
-          op
-            OpPlus(start=347 end=348) +
-          right
-            AwaitExpression(start=349, end=362)
-              CallExpression(start=355, end=362)
-                callee
-                  Identifier(start=355 end=360) test2
+        op
+          OpPlus(start=347 end=348) +
+        right
+          AwaitExpression(start=349, end=362)
+            CallExpression(start=355, end=362)
+              callee
+                Identifier(start=355 end=360) test2
   VariableDeclaration(start=362, end=377)
     name
       Identifier(start=363 end=364) p
