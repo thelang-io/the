@@ -1,0 +1,283 @@
+loop (a < 10) { a++ }
+loop (;;) {
+  b++
+  if b == 10 { break }
+}
+loop (c := 0;;) {
+  c++
+  if c == 10 { break }
+}
+loop (; d < 10;) d++
+loop (; d < 10;) { d++ }
+loop (;; e++) {
+  if e == 10 { break }
+}
+loop (f := 0; f < 10;) { f++ }
+loop (g := 0;; g++) {
+  if g < 10 { break }
+}
+loop (; h < 10; h++) {
+  if h < 10 { break }
+}
+loop (i := 0; i < 10; i++) print(i)
+loop (i := 0; i < 10; i++) { print(i) }
+===== out =====
+Program
+  LoopStatement(start=0, end=21 parenthesized)
+    condition
+      BinaryExpression(start=6, end=12)
+        left
+          Identifier(start=6 end=7) a
+        op
+          OpLt(start=8 end=9) <
+        right
+          IntegerLiteral(start=10, end=12 type=Decimal) 10
+    body
+      BlockStatement(start=14, end=21)
+        ExpressionStatement(start=16, end=19)
+          UnaryExpression(start=16, end=19)
+            operand
+              Identifier(start=16 end=17) a
+            operator
+              OpPlusPlus(start=17 end=19) ++
+  LoopStatement(start=22, end=64 parenthesized)
+    body
+      BlockStatement(start=32, end=64)
+        ExpressionStatement(start=36, end=39)
+          UnaryExpression(start=36, end=39)
+            operand
+              Identifier(start=36 end=37) b
+            operator
+              OpPlusPlus(start=37 end=39) ++
+        IfStatement(start=42, end=62)
+          condition
+            BinaryExpression(start=45, end=52)
+              left
+                Identifier(start=45 end=46) b
+              op
+                OpEqEq(start=47 end=49) ==
+              right
+                IntegerLiteral(start=50, end=52 type=Decimal) 10
+          consequent
+            BlockStatement(start=53, end=62)
+              BreakStatement(start=55, end=60)
+  LoopStatement(start=65, end=113 parenthesized)
+    initializer
+      VariableDeclaration(start=71, end=77)
+        name
+          Identifier(start=71 end=72) c
+        initializer
+          IntegerLiteral(start=76, end=77 type=Decimal) 0
+    body
+      BlockStatement(start=81, end=113)
+        ExpressionStatement(start=85, end=88)
+          UnaryExpression(start=85, end=88)
+            operand
+              Identifier(start=85 end=86) c
+            operator
+              OpPlusPlus(start=86 end=88) ++
+        IfStatement(start=91, end=111)
+          condition
+            BinaryExpression(start=94, end=101)
+              left
+                Identifier(start=94 end=95) c
+              op
+                OpEqEq(start=96 end=98) ==
+              right
+                IntegerLiteral(start=99, end=101 type=Decimal) 10
+          consequent
+            BlockStatement(start=102, end=111)
+              BreakStatement(start=104, end=109)
+  LoopStatement(start=114, end=134 parenthesized)
+    condition
+      BinaryExpression(start=122, end=128)
+        left
+          Identifier(start=122 end=123) d
+        op
+          OpLt(start=124 end=125) <
+        right
+          IntegerLiteral(start=126, end=128 type=Decimal) 10
+    body
+      ExpressionStatement(start=131, end=134)
+        UnaryExpression(start=131, end=134)
+          operand
+            Identifier(start=131 end=132) d
+          operator
+            OpPlusPlus(start=132 end=134) ++
+  LoopStatement(start=135, end=159 parenthesized)
+    condition
+      BinaryExpression(start=143, end=149)
+        left
+          Identifier(start=143 end=144) d
+        op
+          OpLt(start=145 end=146) <
+        right
+          IntegerLiteral(start=147, end=149 type=Decimal) 10
+    body
+      BlockStatement(start=152, end=159)
+        ExpressionStatement(start=154, end=157)
+          UnaryExpression(start=154, end=157)
+            operand
+              Identifier(start=154 end=155) d
+            operator
+              OpPlusPlus(start=155 end=157) ++
+  LoopStatement(start=160, end=200 parenthesized)
+    update
+      UnaryExpression(start=169, end=172)
+        operand
+          Identifier(start=169 end=170) e
+        operator
+          OpPlusPlus(start=170 end=172) ++
+    body
+      BlockStatement(start=174, end=200)
+        IfStatement(start=178, end=198)
+          condition
+            BinaryExpression(start=181, end=188)
+              left
+                Identifier(start=181 end=182) e
+              op
+                OpEqEq(start=183 end=185) ==
+              right
+                IntegerLiteral(start=186, end=188 type=Decimal) 10
+          consequent
+            BlockStatement(start=189, end=198)
+              BreakStatement(start=191, end=196)
+  LoopStatement(start=201, end=231 parenthesized)
+    initializer
+      VariableDeclaration(start=207, end=213)
+        name
+          Identifier(start=207 end=208) f
+        initializer
+          IntegerLiteral(start=212, end=213 type=Decimal) 0
+    condition
+      BinaryExpression(start=215, end=221)
+        left
+          Identifier(start=215 end=216) f
+        op
+          OpLt(start=217 end=218) <
+        right
+          IntegerLiteral(start=219, end=221 type=Decimal) 10
+    body
+      BlockStatement(start=224, end=231)
+        ExpressionStatement(start=226, end=229)
+          UnaryExpression(start=226, end=229)
+            operand
+              Identifier(start=226 end=227) f
+            operator
+              OpPlusPlus(start=227 end=229) ++
+  LoopStatement(start=232, end=277 parenthesized)
+    initializer
+      VariableDeclaration(start=238, end=244)
+        name
+          Identifier(start=238 end=239) g
+        initializer
+          IntegerLiteral(start=243, end=244 type=Decimal) 0
+    update
+      UnaryExpression(start=247, end=250)
+        operand
+          Identifier(start=247 end=248) g
+        operator
+          OpPlusPlus(start=248 end=250) ++
+    body
+      BlockStatement(start=252, end=277)
+        IfStatement(start=256, end=275)
+          condition
+            BinaryExpression(start=259, end=265)
+              left
+                Identifier(start=259 end=260) g
+              op
+                OpLt(start=261 end=262) <
+              right
+                IntegerLiteral(start=263, end=265 type=Decimal) 10
+          consequent
+            BlockStatement(start=266, end=275)
+              BreakStatement(start=268, end=273)
+  LoopStatement(start=278, end=324 parenthesized)
+    condition
+      BinaryExpression(start=286, end=292)
+        left
+          Identifier(start=286 end=287) h
+        op
+          OpLt(start=288 end=289) <
+        right
+          IntegerLiteral(start=290, end=292 type=Decimal) 10
+    update
+      UnaryExpression(start=294, end=297)
+        operand
+          Identifier(start=294 end=295) h
+        operator
+          OpPlusPlus(start=295 end=297) ++
+    body
+      BlockStatement(start=299, end=324)
+        IfStatement(start=303, end=322)
+          condition
+            BinaryExpression(start=306, end=312)
+              left
+                Identifier(start=306 end=307) h
+              op
+                OpLt(start=308 end=309) <
+              right
+                IntegerLiteral(start=310, end=312 type=Decimal) 10
+          consequent
+            BlockStatement(start=313, end=322)
+              BreakStatement(start=315, end=320)
+  LoopStatement(start=325, end=360 parenthesized)
+    initializer
+      VariableDeclaration(start=331, end=337)
+        name
+          Identifier(start=331 end=332) i
+        initializer
+          IntegerLiteral(start=336, end=337 type=Decimal) 0
+    condition
+      BinaryExpression(start=339, end=345)
+        left
+          Identifier(start=339 end=340) i
+        op
+          OpLt(start=341 end=342) <
+        right
+          IntegerLiteral(start=343, end=345 type=Decimal) 10
+    update
+      UnaryExpression(start=347, end=350)
+        operand
+          Identifier(start=347 end=348) i
+        operator
+          OpPlusPlus(start=348 end=350) ++
+    body
+      ExpressionStatement(start=352, end=360)
+        CallExpression(start=352, end=360)
+          callee
+            Identifier(start=352 end=357) print
+          arguments
+            CallExpressionArgument
+              Identifier(start=358 end=359) i
+  LoopStatement(start=361, end=400 parenthesized)
+    initializer
+      VariableDeclaration(start=367, end=373)
+        name
+          Identifier(start=367 end=368) i
+        initializer
+          IntegerLiteral(start=372, end=373 type=Decimal) 0
+    condition
+      BinaryExpression(start=375, end=381)
+        left
+          Identifier(start=375 end=376) i
+        op
+          OpLt(start=377 end=378) <
+        right
+          IntegerLiteral(start=379, end=381 type=Decimal) 10
+    update
+      UnaryExpression(start=383, end=386)
+        operand
+          Identifier(start=383 end=384) i
+        operator
+          OpPlusPlus(start=384 end=386) ++
+    body
+      BlockStatement(start=388, end=400)
+        ExpressionStatement(start=390, end=398)
+          CallExpression(start=390, end=398)
+            callee
+              Identifier(start=390 end=395) print
+            arguments
+              CallExpressionArgument
+                Identifier(start=396 end=397) i
+  EofStatement(start=400, end=400)

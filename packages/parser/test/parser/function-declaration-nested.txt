@@ -1,0 +1,239 @@
+fn test1 (a: int, b := 1, c := 2) int {
+  fn test2 (d: int, e: int, f := 3, g := 4) int {
+    return d + e + f + g
+  }
+
+  return a + b + c +
+    test2(5, 6) +
+    test2(7, 8, f: 9) +
+    test2(10, 11, g: 12) +
+    test2(13, 14, g: 15, f: 16) +
+    test2(17, 18, 19, 20)
+}
+fn test3 () int {
+  fn test4 () int {
+    fn test5 () int {
+      return 4
+    }
+
+    return test5()
+  }
+
+  return test4()
+}
+===== out =====
+Program
+  FunctionDeclaration(start=0, end=271)
+    name
+      Identifier(start=3 end=8) test1
+    parameters
+      FunctionParameter
+        name
+          Identifier(start=10 end=11) a
+        type
+          IdentifierType(start=13 end=16)
+            Identifier(start=13 end=16) int
+      FunctionParameter
+        name
+          Identifier(start=18 end=19) b
+        initializer
+          IntegerLiteral(start=23, end=24 type=Decimal) 1
+      FunctionParameter
+        name
+          Identifier(start=26 end=27) c
+        initializer
+          IntegerLiteral(start=31, end=32 type=Decimal) 2
+    returnType
+      IdentifierType(start=34 end=37)
+        Identifier(start=34 end=37) int
+    body
+      BlockStatement(start=38, end=271)
+        FunctionDeclaration(start=39, end=118)
+          name
+            Identifier(start=45 end=50) test2
+          parameters
+            FunctionParameter
+              name
+                Identifier(start=52 end=53) d
+              type
+                IdentifierType(start=55 end=58)
+                  Identifier(start=55 end=58) int
+            FunctionParameter
+              name
+                Identifier(start=60 end=61) e
+              type
+                IdentifierType(start=63 end=66)
+                  Identifier(start=63 end=66) int
+            FunctionParameter
+              name
+                Identifier(start=68 end=69) f
+              initializer
+                IntegerLiteral(start=73, end=74 type=Decimal) 3
+            FunctionParameter
+              name
+                Identifier(start=76 end=77) g
+              initializer
+                IntegerLiteral(start=81, end=82 type=Decimal) 4
+          returnType
+            IdentifierType(start=84 end=87)
+              Identifier(start=84 end=87) int
+          body
+            BlockStatement(start=88, end=118)
+              ReturnStatement(start=94, end=114)
+                BinaryExpression(start=101, end=114)
+                  left
+                    BinaryExpression(start=101, end=110)
+                      left
+                        BinaryExpression(start=101, end=106)
+                          left
+                            Identifier(start=101 end=102) d
+                          op
+                            OpPlus(start=103 end=104) +
+                          right
+                            Identifier(start=105 end=106) e
+                      op
+                        OpPlus(start=107 end=108) +
+                      right
+                        Identifier(start=109 end=110) f
+                  op
+                    OpPlus(start=111 end=112) +
+                  right
+                    Identifier(start=113 end=114) g
+        ReturnStatement(start=122, end=269)
+          BinaryExpression(start=129, end=269)
+            left
+              BinaryExpression(start=129, end=241)
+                left
+                  BinaryExpression(start=129, end=207)
+                    left
+                      BinaryExpression(start=129, end=180)
+                        left
+                          BinaryExpression(start=129, end=156)
+                            left
+                              BinaryExpression(start=129, end=138)
+                                left
+                                  BinaryExpression(start=129, end=134)
+                                    left
+                                      Identifier(start=129 end=130) a
+                                    op
+                                      OpPlus(start=131 end=132) +
+                                    right
+                                      Identifier(start=133 end=134) b
+                                op
+                                  OpPlus(start=135 end=136) +
+                                right
+                                  Identifier(start=137 end=138) c
+                            op
+                              OpPlus(start=139 end=140) +
+                            right
+                              CallExpression(start=145, end=156)
+                                callee
+                                  Identifier(start=145 end=150) test2
+                                arguments
+                                  CallExpressionArgument
+                                    IntegerLiteral(start=151, end=152 type=Decimal) 5
+                                  CallExpressionArgument
+                                    IntegerLiteral(start=154, end=155 type=Decimal) 6
+                        op
+                          OpPlus(start=157 end=158) +
+                        right
+                          CallExpression(start=163, end=180)
+                            callee
+                              Identifier(start=163 end=168) test2
+                            arguments
+                              CallExpressionArgument
+                                IntegerLiteral(start=169, end=170 type=Decimal) 7
+                              CallExpressionArgument
+                                IntegerLiteral(start=172, end=173 type=Decimal) 8
+                              CallExpressionArgument
+                                name
+                                  Identifier(start=175 end=176) f
+                                expression
+                                  IntegerLiteral(start=178, end=179 type=Decimal) 9
+                    op
+                      OpPlus(start=181 end=182) +
+                    right
+                      CallExpression(start=187, end=207)
+                        callee
+                          Identifier(start=187 end=192) test2
+                        arguments
+                          CallExpressionArgument
+                            IntegerLiteral(start=193, end=195 type=Decimal) 10
+                          CallExpressionArgument
+                            IntegerLiteral(start=197, end=199 type=Decimal) 11
+                          CallExpressionArgument
+                            name
+                              Identifier(start=201 end=202) g
+                            expression
+                              IntegerLiteral(start=204, end=206 type=Decimal) 12
+                op
+                  OpPlus(start=208 end=209) +
+                right
+                  CallExpression(start=214, end=241)
+                    callee
+                      Identifier(start=214 end=219) test2
+                    arguments
+                      CallExpressionArgument
+                        IntegerLiteral(start=220, end=222 type=Decimal) 13
+                      CallExpressionArgument
+                        IntegerLiteral(start=224, end=226 type=Decimal) 14
+                      CallExpressionArgument
+                        name
+                          Identifier(start=228 end=229) g
+                        expression
+                          IntegerLiteral(start=231, end=233 type=Decimal) 15
+                      CallExpressionArgument
+                        name
+                          Identifier(start=235 end=236) f
+                        expression
+                          IntegerLiteral(start=238, end=240 type=Decimal) 16
+            op
+              OpPlus(start=242 end=243) +
+            right
+              CallExpression(start=248, end=269)
+                callee
+                  Identifier(start=248 end=253) test2
+                arguments
+                  CallExpressionArgument
+                    IntegerLiteral(start=254, end=256 type=Decimal) 17
+                  CallExpressionArgument
+                    IntegerLiteral(start=258, end=260 type=Decimal) 18
+                  CallExpressionArgument
+                    IntegerLiteral(start=262, end=264 type=Decimal) 19
+                  CallExpressionArgument
+                    IntegerLiteral(start=266, end=268 type=Decimal) 20
+  FunctionDeclaration(start=271, end=396)
+    name
+      Identifier(start=275 end=280) test3
+    returnType
+      IdentifierType(start=284 end=287)
+        Identifier(start=284 end=287) int
+    body
+      BlockStatement(start=288, end=396)
+        FunctionDeclaration(start=289, end=376)
+          name
+            Identifier(start=295 end=300) test4
+          returnType
+            IdentifierType(start=304 end=307)
+              Identifier(start=304 end=307) int
+          body
+            BlockStatement(start=308, end=376)
+              FunctionDeclaration(start=309, end=352)
+                name
+                  Identifier(start=317 end=322) test5
+                returnType
+                  IdentifierType(start=326 end=329)
+                    Identifier(start=326 end=329) int
+                body
+                  BlockStatement(start=330, end=352)
+                    ReturnStatement(start=338, end=346)
+                      IntegerLiteral(start=345, end=346 type=Decimal) 4
+              ReturnStatement(start=358, end=372)
+                CallExpression(start=365, end=372)
+                  callee
+                    Identifier(start=365 end=370) test5
+        ReturnStatement(start=380, end=394)
+          CallExpression(start=387, end=394)
+            callee
+              Identifier(start=387 end=392) test4
+  EofStatement(start=396, end=396)

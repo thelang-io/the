@@ -1,0 +1,9 @@
+main {
+  ;
+}
+===== out =====
+Program
+  MainDeclaration(start=0, end=12)
+    BlockStatement(start=5, end=12)
+      EmptyStatement(start=9, end=10)
+  EofStatement(start=12, end=12)

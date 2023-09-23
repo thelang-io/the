@@ -1,0 +1,11 @@
+throw Error("Test")
+===== out =====
+Program
+  ThrowStatement(start=0, end=19)
+    CallExpression(start=6, end=19)
+      callee
+        Identifier(start=6 end=11) Error
+      arguments
+        CallExpressionArgument
+          StringLiteral(start=12, end=18) Test
+  EofStatement(start=19, end=19)

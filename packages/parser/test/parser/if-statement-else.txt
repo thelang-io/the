@@ -1,0 +1,148 @@
+if true {} else {}
+if true {} elif false {}
+if true {} elif false {} else {}
+if false { return }
+elif true { return }
+elif 2 { return }
+elif 3 { return }
+elif 4 { return }
+else { return }
+
+if 1 {
+  if 0 { return }
+  else { return }
+}
+if 1 {
+  if 2 { return }
+  elif 0 { return }
+}
+if 0 {
+  if 0 { return }
+  elif 0 { return }
+} else {
+  return
+}
+===== out =====
+Program
+  IfStatement(start=0, end=18)
+    condition
+      BooleanLiteral(start=3, end=7) true
+    consequent
+      BlockStatement(start=8, end=10)
+    alternate
+      BlockStatement(start=16, end=18)
+  IfStatement(start=19, end=43)
+    condition
+      BooleanLiteral(start=22, end=26) true
+    consequent
+      BlockStatement(start=27, end=29)
+    alternate
+      IfStatement(start=30, end=43)
+        condition
+          BooleanLiteral(start=35, end=40) false
+        consequent
+          BlockStatement(start=41, end=43)
+  IfStatement(start=44, end=76)
+    condition
+      BooleanLiteral(start=47, end=51) true
+    consequent
+      BlockStatement(start=52, end=54)
+    alternate
+      IfStatement(start=55, end=76)
+        condition
+          BooleanLiteral(start=60, end=65) false
+        consequent
+          BlockStatement(start=66, end=68)
+        alternate
+          BlockStatement(start=74, end=76)
+  IfStatement(start=77, end=187)
+    condition
+      BooleanLiteral(start=80, end=85) false
+    consequent
+      BlockStatement(start=86, end=96)
+        ReturnStatement(start=88, end=94)
+    alternate
+      IfStatement(start=97, end=187)
+        condition
+          BooleanLiteral(start=102, end=106) true
+        consequent
+          BlockStatement(start=107, end=117)
+            ReturnStatement(start=109, end=115)
+        alternate
+          IfStatement(start=118, end=187)
+            condition
+              IntegerLiteral(start=123, end=124 type=Decimal) 2
+            consequent
+              BlockStatement(start=125, end=135)
+                ReturnStatement(start=127, end=133)
+            alternate
+              IfStatement(start=136, end=187)
+                condition
+                  IntegerLiteral(start=141, end=142 type=Decimal) 3
+                consequent
+                  BlockStatement(start=143, end=153)
+                    ReturnStatement(start=145, end=151)
+                alternate
+                  IfStatement(start=154, end=187)
+                    condition
+                      IntegerLiteral(start=159, end=160 type=Decimal) 4
+                    consequent
+                      BlockStatement(start=161, end=171)
+                        ReturnStatement(start=163, end=169)
+                    alternate
+                      BlockStatement(start=177, end=187)
+                        ReturnStatement(start=179, end=185)
+  IfStatement(start=189, end=233)
+    condition
+      IntegerLiteral(start=192, end=193 type=Decimal) 1
+    consequent
+      BlockStatement(start=194, end=233)
+        IfStatement(start=198, end=231)
+          condition
+            IntegerLiteral(start=201, end=202 type=Decimal) 0
+          consequent
+            BlockStatement(start=203, end=213)
+              ReturnStatement(start=205, end=211)
+          alternate
+            BlockStatement(start=221, end=231)
+              ReturnStatement(start=223, end=229)
+  IfStatement(start=234, end=280)
+    condition
+      IntegerLiteral(start=237, end=238 type=Decimal) 1
+    consequent
+      BlockStatement(start=239, end=280)
+        IfStatement(start=243, end=278)
+          condition
+            IntegerLiteral(start=246, end=247 type=Decimal) 2
+          consequent
+            BlockStatement(start=248, end=258)
+              ReturnStatement(start=250, end=256)
+          alternate
+            IfStatement(start=261, end=278)
+              condition
+                IntegerLiteral(start=266, end=267 type=Decimal) 0
+              consequent
+                BlockStatement(start=268, end=278)
+                  ReturnStatement(start=270, end=276)
+  IfStatement(start=281, end=345)
+    condition
+      IntegerLiteral(start=284, end=285 type=Decimal) 0
+    consequent
+      BlockStatement(start=286, end=327)
+        IfStatement(start=290, end=325)
+          condition
+            IntegerLiteral(start=293, end=294 type=Decimal) 0
+          consequent
+            BlockStatement(start=295, end=305)
+              ReturnStatement(start=297, end=303)
+          alternate
+            IfStatement(start=308, end=325)
+              condition
+                IntegerLiteral(start=313, end=314 type=Decimal) 0
+              consequent
+                BlockStatement(start=315, end=325)
+                  ReturnStatement(start=317, end=323)
+    alternate
+      BlockStatement(start=333, end=345)
+        ReturnStatement(start=337, end=343)
+  EofStatement(start=345, end=345)

@@ -1,0 +1,89 @@
+type Test1 = int
+type Test2 = int | str
+type Test3 = int | str | char
+type Test4 = int | str | char | bool
+type Test5 = Test1
+type Test6 = Test1 | Test2
+type Test7 = Test1 | Test2 | Test3
+type Test8 = Test1 | Test2 | Test3 | Test4
+===== out =====
+Program
+  TypeAliasDeclaration(start=0, end=16)
+    name
+      Identifier(start=5 end=10) Test1
+    type
+      IdentifierType(start=13 end=16)
+        Identifier(start=13 end=16) int
+  TypeAliasDeclaration(start=17, end=39)
+    name
+      Identifier(start=22 end=27) Test2
+    type
+      UnionType(start=30 end=39)
+        IdentifierType(start=30 end=33)
+          Identifier(start=30 end=33) int
+        IdentifierType(start=36 end=39)
+          Identifier(start=36 end=39) str
+  TypeAliasDeclaration(start=40, end=69)
+    name
+      Identifier(start=45 end=50) Test3
+    type
+      UnionType(start=53 end=69)
+        IdentifierType(start=53 end=56)
+          Identifier(start=53 end=56) int
+        IdentifierType(start=59 end=62)
+          Identifier(start=59 end=62) str
+        IdentifierType(start=65 end=69)
+          Identifier(start=65 end=69) char
+  TypeAliasDeclaration(start=70, end=106)
+    name
+      Identifier(start=75 end=80) Test4
+    type
+      UnionType(start=83 end=106)
+        IdentifierType(start=83 end=86)
+          Identifier(start=83 end=86) int
+        IdentifierType(start=89 end=92)
+          Identifier(start=89 end=92) str
+        IdentifierType(start=95 end=99)
+          Identifier(start=95 end=99) char
+        IdentifierType(start=102 end=106)
+          Identifier(start=102 end=106) bool
+  TypeAliasDeclaration(start=107, end=125)
+    name
+      Identifier(start=112 end=117) Test5
+    type
+      IdentifierType(start=120 end=125)
+        Identifier(start=120 end=125) Test1
+  TypeAliasDeclaration(start=126, end=152)
+    name
+      Identifier(start=131 end=136) Test6
+    type
+      UnionType(start=139 end=152)
+        IdentifierType(start=139 end=144)
+          Identifier(start=139 end=144) Test1
+        IdentifierType(start=147 end=152)
+          Identifier(start=147 end=152) Test2
+  TypeAliasDeclaration(start=153, end=187)
+    name
+      Identifier(start=158 end=163) Test7
+    type
+      UnionType(start=166 end=187)
+        IdentifierType(start=166 end=171)
+          Identifier(start=166 end=171) Test1
+        IdentifierType(start=174 end=179)
+          Identifier(start=174 end=179) Test2
+        IdentifierType(start=182 end=187)
+          Identifier(start=182 end=187) Test3
+  TypeAliasDeclaration(start=188, end=230)
+    name
+      Identifier(start=193 end=198) Test8
+    type
+      UnionType(start=201 end=230)
+        IdentifierType(start=201 end=206)
+          Identifier(start=201 end=206) Test1
+        IdentifierType(start=209 end=214)
+          Identifier(start=209 end=214) Test2
+        IdentifierType(start=217 end=222)
+          Identifier(start=217 end=222) Test3
+        IdentifierType(start=225 end=230)
+          Identifier(start=225 end=230) Test4
+  EofStatement(start=230, end=230)

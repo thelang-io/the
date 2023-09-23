@@ -1,0 +1,291 @@
+if test { return }
+if (test) return
+if 0 == 0 {}
+if test.d {}
+if test {}
+if test { a: int }
+if test { a: () -> int }
+if test { a: int = 1 }
+if test { a := 1 }
+if test { mut a := 1 }
+if test { a: int b: str }
+if test { a: () -> int b: str }
+if test { a: int = 1 b: str }
+if test { a := 1 b: str }
+if test { mut a := 1 b: str }
+if a = test { b: str }
+if a + test { b: str }
+if a ? b : test { b: str }
+if Test[i++] { b: str }
+if Test{} == Test{} { }
+===== out =====
+Program
+  IfStatement(start=0, end=18)
+    condition
+      Identifier(start=3 end=7) test
+    consequent
+      BlockStatement(start=8, end=18)
+        ReturnStatement(start=10, end=16)
+  IfStatement(start=19, end=35)
+    condition
+      ParenthesizedExpression(start=22, end=28)
+        Identifier(start=23 end=27) test
+    consequent
+      ReturnStatement(start=29, end=35)
+  IfStatement(start=36, end=48)
+    condition
+      BinaryExpression(start=39, end=45)
+        left
+          IntegerLiteral(start=39, end=40 type=Decimal) 0
+        op
+          OpEqEq(start=41 end=43) ==
+        right
+          IntegerLiteral(start=44, end=45 type=Decimal) 0
+    consequent
+      BlockStatement(start=46, end=48)
+  IfStatement(start=49, end=61)
+    condition
+      PropertyAccessExpression(start=52, end=58)
+        expression
+          Identifier(start=52 end=56) test
+        name
+          Identifier(start=57 end=58) d
+    consequent
+      BlockStatement(start=59, end=61)
+  IfStatement(start=62, end=72)
+    condition
+      Identifier(start=65 end=69) test
+    consequent
+      BlockStatement(start=70, end=72)
+  IfStatement(start=73, end=91)
+    condition
+      Identifier(start=76 end=80) test
+    consequent
+      BlockStatement(start=81, end=91)
+        VariableDeclaration(start=82, end=89)
+          name
+            Identifier(start=83 end=84) a
+          type
+            IdentifierType(start=86 end=89)
+              Identifier(start=86 end=89) int
+  IfStatement(start=92, end=116)
+    condition
+      Identifier(start=95 end=99) test
+    consequent
+      BlockStatement(start=100, end=116)
+        VariableDeclaration(start=101, end=114)
+          name
+            Identifier(start=102 end=103) a
+          type
+            FunctionType(start=104 end=114)
+              returnType
+                IdentifierType(start=111 end=114)
+                  Identifier(start=111 end=114) int
+  IfStatement(start=117, end=139)
+    condition
+      Identifier(start=120 end=124) test
+    consequent
+      BlockStatement(start=125, end=139)
+        VariableDeclaration(start=126, end=137)
+          name
+            Identifier(start=127 end=128) a
+          type
+            IdentifierType(start=130 end=133)
+              Identifier(start=130 end=133) int
+          initializer
+            IntegerLiteral(start=136, end=137 type=Decimal) 1
+  IfStatement(start=140, end=158)
+    condition
+      Identifier(start=143 end=147) test
+    consequent
+      BlockStatement(start=148, end=158)
+        VariableDeclaration(start=149, end=156)
+          name
+            Identifier(start=150 end=151) a
+          initializer
+            IntegerLiteral(start=155, end=156 type=Decimal) 1
+  IfStatement(start=159, end=181)
+    condition
+      Identifier(start=162 end=166) test
+    consequent
+      BlockStatement(start=167, end=181)
+        VariableDeclaration(start=168, end=179 mut)
+          name
+            Identifier(start=173 end=174) a
+          initializer
+            IntegerLiteral(start=178, end=179 type=Decimal) 1
+  IfStatement(start=182, end=207)
+    condition
+      Identifier(start=185 end=189) test
+    consequent
+      BlockStatement(start=190, end=207)
+        VariableDeclaration(start=191, end=198)
+          name
+            Identifier(start=192 end=193) a
+          type
+            IdentifierType(start=195 end=198)
+              Identifier(start=195 end=198) int
+        VariableDeclaration(start=198, end=205)
+          name
+            Identifier(start=199 end=200) b
+          type
+            IdentifierType(start=202 end=205)
+              Identifier(start=202 end=205) str
+  IfStatement(start=208, end=239)
+    condition
+      Identifier(start=211 end=215) test
+    consequent
+      BlockStatement(start=216, end=239)
+        VariableDeclaration(start=217, end=230)
+          name
+            Identifier(start=218 end=219) a
+          type
+            FunctionType(start=220 end=230)
+              returnType
+                IdentifierType(start=227 end=230)
+                  Identifier(start=227 end=230) int
+        VariableDeclaration(start=230, end=237)
+          name
+            Identifier(start=231 end=232) b
+          type
+            IdentifierType(start=234 end=237)
+              Identifier(start=234 end=237) str
+  IfStatement(start=240, end=269)
+    condition
+      Identifier(start=243 end=247) test
+    consequent
+      BlockStatement(start=248, end=269)
+        VariableDeclaration(start=249, end=260)
+          name
+            Identifier(start=250 end=251) a
+          type
+            IdentifierType(start=253 end=256)
+              Identifier(start=253 end=256) int
+          initializer
+            IntegerLiteral(start=259, end=260 type=Decimal) 1
+        VariableDeclaration(start=260, end=267)
+          name
+            Identifier(start=261 end=262) b
+          type
+            IdentifierType(start=264 end=267)
+              Identifier(start=264 end=267) str
+  IfStatement(start=270, end=295)
+    condition
+      Identifier(start=273 end=277) test
+    consequent
+      BlockStatement(start=278, end=295)
+        VariableDeclaration(start=279, end=286)
+          name
+            Identifier(start=280 end=281) a
+          initializer
+            IntegerLiteral(start=285, end=286 type=Decimal) 1
+        VariableDeclaration(start=286, end=293)
+          name
+            Identifier(start=287 end=288) b
+          type
+            IdentifierType(start=290 end=293)
+              Identifier(start=290 end=293) str
+  IfStatement(start=296, end=325)
+    condition
+      Identifier(start=299 end=303) test
+    consequent
+      BlockStatement(start=304, end=325)
+        VariableDeclaration(start=305, end=316 mut)
+          name
+            Identifier(start=310 end=311) a
+          initializer
+            IntegerLiteral(start=315, end=316 type=Decimal) 1
+        VariableDeclaration(start=316, end=323)
+          name
+            Identifier(start=317 end=318) b
+          type
+            IdentifierType(start=320 end=323)
+              Identifier(start=320 end=323) str
+  IfStatement(start=326, end=348)
+    condition
+      AssignmentExpression(start=329, end=348)
+        left
+          Identifier(start=329 end=330) a
+        op
+          OpEq(start=331 end=332) =
+        right
+          Identifier(start=333 end=337) test
+    consequent
+      BlockStatement(start=338, end=348)
+        VariableDeclaration(start=339, end=346)
+          name
+            Identifier(start=340 end=341) b
+          type
+            IdentifierType(start=343 end=346)
+              Identifier(start=343 end=346) str
+  IfStatement(start=349, end=371)
+    condition
+      BinaryExpression(start=352, end=371)
+        left
+          Identifier(start=352 end=353) a
+        op
+          OpPlus(start=354 end=355) +
+        right
+          Identifier(start=356 end=360) test
+    consequent
+      BlockStatement(start=361, end=371)
+        VariableDeclaration(start=362, end=369)
+          name
+            Identifier(start=363 end=364) b
+          type
+            IdentifierType(start=366 end=369)
+              Identifier(start=366 end=369) str
+  IfStatement(start=372, end=398)
+    condition
+      ConditionalExpression(start=375, end=398)
+        condition
+          Identifier(start=375 end=376) a
+        consequent
+          Identifier(start=379 end=380) b
+        alternate
+          Identifier(start=383 end=387) test
+    consequent
+      BlockStatement(start=388, end=398)
+        VariableDeclaration(start=389, end=396)
+          name
+            Identifier(start=390 end=391) b
+          type
+            IdentifierType(start=393 end=396)
+              Identifier(start=393 end=396) str
+  IfStatement(start=399, end=422)
+    condition
+      ElementAccessExpression(start=402, end=411)
+        expression
+          Identifier(start=402 end=406) Test
+        argument
+          UnaryExpression(start=407, end=410)
+            operand
+              Identifier(start=407 end=408) i
+            operator
+              OpPlusPlus(start=408 end=410) ++
+    consequent
+      BlockStatement(start=412, end=422)
+        VariableDeclaration(start=413, end=420)
+          name
+            Identifier(start=414 end=415) b
+          type
+            IdentifierType(start=417 end=420)
+              Identifier(start=417 end=420) str
+  IfStatement(start=423, end=446)
+    condition
+      BinaryExpression(start=426, end=442)
+        left
+          ObjectExpression(start=426, end=432)
+            id
+              IdentifierType(start=426 end=430)
+                Identifier(start=426 end=430) Test
+        op
+          OpEqEq(start=433 end=435) ==
+        right
+          ObjectExpression(start=436, end=442)
+            id
+              IdentifierType(start=436 end=440)
+                Identifier(start=436 end=440) Test
+    consequent
+      BlockStatement(start=443, end=446)
+  EofStatement(start=446, end=446)

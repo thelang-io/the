@@ -85,7 +85,7 @@ export obj Type {
   mut start: int
   mut end: int
   mut body: TypeBody
-  mut leadingComments: Token[] // todo test
+  mut leadingComments: Token[]
   mut trailingComments: Token[]
 
   fn asArray (mut self: ref Self) ArrayType { return self.body as ArrayType }

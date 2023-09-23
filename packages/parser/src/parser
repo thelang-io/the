@@ -470,7 +470,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    mut statement := self.nextStatement()
+    mut statement := self.nextStatement(shouldWrap: false)
 
     if statement == nil {
       self._raise(errors.E0172())
@@ -601,7 +601,7 @@ export obj Parser {
     mut body: t.Statement?
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
-      statement := self.nextStatement(withBlockStatement: true)
+      statement := self.nextStatement(shouldWrap: false, withBlockStatement: true)
 
       if statement == nil {
         self._raise(errors.E0150())
@@ -795,7 +795,7 @@ export obj Parser {
 
     condition := maybeCondition as t.Expression
     mut consequent := condition.isParenthesized()
-      ? self.nextStatement(withBlockStatement: true)
+      ? self.nextStatement(shouldWrap: false, withBlockStatement: true)
       : self._maybeBlockStatement()
 
     if consequent == nil && Expression.endsWithObjExpr(condition) {
@@ -803,7 +803,7 @@ export obj Parser {
       condition = Expression.subtractLastObjExpr(condition)
       self.tokenizer.errorSeek(objectExpression._errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
-      consequent = self.nextStatement(withBlockStatement: true)
+      consequent = self.nextStatement(shouldWrap: false, withBlockStatement: true)
     }
 
     if consequent == nil {
@@ -814,7 +814,7 @@ export obj Parser {
     mut alternate: t.Statement?
 
     if self.tokenizer.lookahead(.KwElif, true) || self.tokenizer.lookahead(.KwElse) {
-      alternate = self.nextStatement(withBlockStatement: true, withElifStatement: true)
+      alternate = self.nextStatement(shouldWrap: false, withBlockStatement: true, withElifStatement: true)
 
       if alternate == nil {
         self._raise(errors.E0152())
@@ -1052,7 +1052,9 @@ export obj Parser {
 
     condition2 := condition
     update2 := update
-    mut body := parenthesized ? self.nextStatement(withBlockStatement: true) : self._maybeBlockStatement()
+    mut body := parenthesized
+      ? self.nextStatement(shouldWrap: false, withBlockStatement: true)
+      : self._maybeBlockStatement()
 
     if (
       body == nil &&
@@ -1065,14 +1067,14 @@ export obj Parser {
       update = Expression.subtractLastObjExpr(update as t.Expression)
       self.tokenizer.errorSeek(objectExpression._errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
-      body = self.nextStatement(withBlockStatement: true)
+      body = self.nextStatement(shouldWrap: false, withBlockStatement: true)
     }
 
     if body == nil && !parenthesized && hasAllParts && update2 != nil {
       if update2.isMap() {
         self.tokenizer.readerSeek(update2.start)
         update = nil
-        body = self.nextStatement(withBlockStatement: true)
+        body = self.nextStatement(shouldWrap: false, withBlockStatement: true)
       }
     }
 
@@ -1087,14 +1089,14 @@ export obj Parser {
       condition = Expression.subtractLastObjExpr(condition as t.Expression)
       self.tokenizer.errorSeek(objectExpression._errorPosIdx)
       self.tokenizer.readerSeek(objectExpression.id.end)
-      body = self.nextStatement(withBlockStatement: true)
+      body = self.nextStatement(shouldWrap: false, withBlockStatement: true)
     }
 
     if body == nil && !parenthesized && !hasAllParts && condition2 != nil {
       if condition2.isMap() {
         self.tokenizer.readerSeek(condition2.start)
         condition = nil
-        body = self.nextStatement(withBlockStatement: true)
+        body = self.nextStatement(shouldWrap: false, withBlockStatement: true)
       }
     }
 
@@ -1125,7 +1127,7 @@ export obj Parser {
     mut body: t.Statement?
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
-      body = self.nextStatement(withBlockStatement: true)
+      body = self.nextStatement(shouldWrap: false, withBlockStatement: true)
 
       if body == nil {
         self._raise(errors.E0153())
@@ -1381,7 +1383,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    mut body := self.nextStatement(withBlockStatement: true)
+    mut body := self.nextStatement(shouldWrap: false, withBlockStatement: true)
 
     if body == nil {
       self._raise(errors.E0159())
@@ -1398,7 +1400,7 @@ export obj Parser {
         handlerParameter = Statement.dummy()
       }
 
-      mut handlerBody := self.nextStatement(withBlockStatement: true)
+      mut handlerBody := self.nextStatement(shouldWrap: false, withBlockStatement: true)
 
       if handlerBody == nil {
         self._raise(errors.E0162())

@@ -1,2 +1,30 @@
-`todo`
+break;
+continue;
+enum Test { One, Two };
+export fn test () {};
+export test;
+test;
+1 + 2;
+fn test () {};
+if test {};
+if test {} else {};
+if test {} elif test {};
+if test {} elif test {} else {};
+import test from "./test";
+loop {};
+main {};
+obj Test {};
+obj Test {
+  a: int;
+  mut b: str;
+};
+obj Test {
+  fn test () {};
+  async fn test () {};
+};
+return;
+throw err;
+try {} catch err: Error {};
+type Alias = str;
+var := 2;
 ===== out =====

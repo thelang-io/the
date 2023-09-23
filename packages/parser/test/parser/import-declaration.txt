@@ -1,0 +1,106 @@
+import "test"
+import id from "test"
+import * as Name from "test"
+import id1, id2 from "test"
+import id3, id4, id5 from "test"
+import id1 as id6, id2 as id7 from "test"
+import * as Base1, * as Base2 from "test"
+import id1, * as Base1 from "test"
+import * as Base2, id2 from "test"
+===== out =====
+Program
+  ImportDeclaration(start=0, end=13)
+    StringLiteral(start=7, end=13) test
+  ImportDeclaration(start=14, end=35)
+    source
+      StringLiteral(start=29, end=35) test
+    specifiers
+      ImportSpecifier
+        imported
+          Identifier(start=21 end=23) id
+        local
+          Identifier(start=21 end=23) id
+  ImportDeclaration(start=36, end=64)
+    source
+      StringLiteral(start=58, end=64) test
+    specifiers
+      ImportNamespaceSpecifier
+        Identifier(start=48 end=52) Name
+  ImportDeclaration(start=65, end=92)
+    source
+      StringLiteral(start=86, end=92) test
+    specifiers
+      ImportSpecifier
+        imported
+          Identifier(start=72 end=75) id1
+        local
+          Identifier(start=72 end=75) id1
+      ImportSpecifier
+        imported
+          Identifier(start=77 end=80) id2
+        local
+          Identifier(start=77 end=80) id2
+  ImportDeclaration(start=93, end=125)
+    source
+      StringLiteral(start=119, end=125) test
+    specifiers
+      ImportSpecifier
+        imported
+          Identifier(start=100 end=103) id3
+        local
+          Identifier(start=100 end=103) id3
+      ImportSpecifier
+        imported
+          Identifier(start=105 end=108) id4
+        local
+          Identifier(start=105 end=108) id4
+      ImportSpecifier
+        imported
+          Identifier(start=110 end=113) id5
+        local
+          Identifier(start=110 end=113) id5
+  ImportDeclaration(start=126, end=167)
+    source
+      StringLiteral(start=161, end=167) test
+    specifiers
+      ImportSpecifier
+        imported
+          Identifier(start=133 end=136) id1
+        local
+          Identifier(start=140 end=143) id6
+      ImportSpecifier
+        imported
+          Identifier(start=145 end=148) id2
+        local
+          Identifier(start=152 end=155) id7
+  ImportDeclaration(start=168, end=209)
+    source
+      StringLiteral(start=203, end=209) test
+    specifiers
+      ImportNamespaceSpecifier
+        Identifier(start=180 end=185) Base1
+      ImportNamespaceSpecifier
+        Identifier(start=192 end=197) Base2
+  ImportDeclaration(start=210, end=244)
+    source
+      StringLiteral(start=238, end=244) test
+    specifiers
+      ImportSpecifier
+        imported
+          Identifier(start=217 end=220) id1
+        local
+          Identifier(start=217 end=220) id1
+      ImportNamespaceSpecifier
+        Identifier(start=227 end=232) Base1
+  ImportDeclaration(start=245, end=279)
+    source
+      StringLiteral(start=273, end=279) test
+    specifiers
+      ImportNamespaceSpecifier
+        Identifier(start=257 end=262) Base2
+      ImportSpecifier
+        imported
+          Identifier(start=264 end=267) id2
+        local
+          Identifier(start=264 end=267) id2
+  EofStatement(start=279, end=279)

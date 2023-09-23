@@ -1,2 +1,12 @@
-`todo`
+// t1
+/* t2 */
+main /* t3 */ {
+  /* t4 */
+  if /*t5*/ test /*t6*/ + /*t7*/ test /*t8*/ {
+    /*t9*/ return /*t10*/
+  }
+  /* t11 */
+}
+/* t12 */
+`todo types`
 ===== out =====

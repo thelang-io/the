@@ -65,7 +65,7 @@ export fn parseTestFile (path: str) TestFileParseResult {
 
   return TestFileParseResult{
     delimiter: delimiter,
-    in: content.slice(0, content.find(delimiter) - os_EOL.len),
+    in: content.find(delimiter) == 0 ? "" : content.slice(0, content.find(delimiter) - os_EOL.len),
     out: content.slice(content.find(delimiter) + delimiter.len)
   }
 }
