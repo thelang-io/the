@@ -61,8 +61,8 @@ export obj Parser {
   }
 
   fn nextExpression (mut self: ref Self, shouldWrap := true) t.Expression? {
-    comments := self.comments()
     startPos := self.tokenizer.pos()
+    comments := self.comments()
     mut e: t.Expression?
 
     if (
@@ -82,6 +82,7 @@ export obj Parser {
       return shouldWrap ? self._wrapExpression(e) : e
     }
 
+    self.tokenizer.seek(startPos)
     return nil
   }
 
@@ -104,6 +105,7 @@ export obj Parser {
     withBlockStatement := false,
     withElifStatement := false
   ) t.Statement? {
+    startPos := self.tokenizer.pos()
     comments := self.comments()
 
     if self.tokenizer.lookahead(.Eof) {
@@ -149,6 +151,7 @@ export obj Parser {
       )
     }
 
+    self.tokenizer.seek(startPos)
     return nil
   }
 
@@ -1031,6 +1034,15 @@ export obj Parser {
               self.tokenizer.readerSeek(objectExpression.id.end)
               condition = nil
               shouldContinue = false
+            } elif expression.expression.isMap() {
+              mapExpression := expression.expression.asMap()
+
+              if mapExpression.elements.empty {
+                initializer = nil
+                self.tokenizer.readerSeek(expression.expression.start)
+                condition = nil
+                shouldContinue = false
+              }
             }
           }
         }
@@ -2057,7 +2069,6 @@ export obj Parser {
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     }
 
-    e.trailingComments = self.comments()
     return e
   }
 
@@ -2183,8 +2194,8 @@ export obj Parser {
 
   fn _wrapStatement (mut self: ref Self, mut statement: t.Statement) t.Statement {
     if self.tokenizer.lookahead(.OpSemi) {
-      statement.end = self.tokenizer.readerEndPos()
       statement.trailingComments = self.comments()
+      statement.end = self.tokenizer.readerEndPos()
       return statement
     }
 
@@ -2201,6 +2212,7 @@ export obj Parser {
       (!withoutUnion && (result = self._maybeWrapUnionType(typeToWrap)) != nil)
     ) {
       result.trailingComments = self.comments()
+      result.end = self.tokenizer.readerEndPos()
       return self._wrapType(result, withoutUnion)
     }
 

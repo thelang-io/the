@@ -29,7 +29,7 @@ main {
     mut f := parse(result.in)
     stdoutCode := textify(ref f)
 
-    fileResult := result.in + os_EOL + result.delimiter + stdoutCode
+    fileResult := (result.in.empty ? "" : result.in + os_EOL) + result.delimiter + stdoutCode
     fs_writeFileSync("./test/parser/" + file, fileResult.toBuffer())
   }
 }

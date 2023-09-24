@@ -3,10 +3,64 @@
 main /* t3 */ {
   /* t4 */
   if /*t5*/ test /*t6*/ + /*t7*/ test /*t8*/ {
-    /*t9*/ return /*t10*/
+    /*t9*/ a /*t10*/ : /*t11*/ int /*t12*/ = /*t13*/ 10 /*t14*/
+    /*t15*/ return /*t16*/
   }
-  /* t11 */
+  /* t17 */
 }
-/* t12 */
-`todo types`
+/* t18 */
 ===== out =====
+Program
+  MainDeclaration(start=15, end=207)
+    leadingComments:
+      CommentLine(start=0 end=5) // t1
+      CommentBlock(start=6 end=14) /* t2 */
+    BlockStatement(start=29, end=197)
+      leadingComments:
+        CommentBlock(start=20 end=28) /* t3 */
+      trailingComments:
+        CommentBlock(start=198 end=207) /* t18 */
+      IfStatement(start=44, end=195)
+        leadingComments:
+          CommentBlock(start=33 end=41) /* t4 */
+        condition
+          BinaryExpression(start=54, end=183)
+            left
+              Identifier(start=54 end=58) test
+                leadingComments:
+                  CommentBlock(start=47 end=53) /*t5*/
+                trailingComments:
+                  CommentBlock(start=59 end=65) /*t6*/
+            op
+              OpPlus(start=66 end=67) +
+            right
+              Identifier(start=75 end=79) test
+        consequent
+          BlockStatement(start=87, end=183)
+            leadingComments:
+              CommentBlock(start=80 end=86) /*t8*/
+            trailingComments:
+              CommentBlock(start=186 end=195) /* t17 */
+            VariableDeclaration(start=99, end=164)
+              leadingComments:
+                CommentBlock(start=93 end=99) /*t9*/
+              name
+                Identifier(start=100 end=101) a
+              type
+                IdentifierType(start=120 end=123)
+                  leadingComments:
+                    CommentBlock(start=112 end=119) /*t11*/
+                  trailingComments:
+                    CommentBlock(start=124 end=131) /*t12*/
+                  Identifier(start=120 end=123) int
+              initializer
+                IntegerLiteral(start=142, end=144 type=Decimal) 10
+                  leadingComments:
+                    CommentBlock(start=134 end=141) /*t13*/
+                  trailingComments:
+                    CommentBlock(start=145 end=152) /*t14*/
+                    CommentBlock(start=157 end=164) /*t15*/
+            ReturnStatement(start=165, end=171)
+              trailingComments:
+                CommentBlock(start=172 end=179) /*t16*/
+  EofStatement(start=207, end=207)

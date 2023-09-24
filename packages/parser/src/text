@@ -80,6 +80,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   if self.isIdentifier() {
     expression := self.asIdentifier()
     result += Identifier_toText(expression, indent: indent)
+    result += comments
   } elif self.isBooleanLiteral() {
     expression := self.asBooleanLiteral()
     result += ' '.repeat(indent) + "BooleanLiteral(" + beginAttrs + ")"
