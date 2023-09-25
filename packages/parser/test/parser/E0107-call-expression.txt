@@ -1,0 +1,5 @@
+a := test(a, b: )
+===== err =====
+anonymous:1:16: ParseError: E0107 - Expected expression after call expression named argument
+1 | a := test(a, b: )
+  |                ^

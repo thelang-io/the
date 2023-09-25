@@ -1,0 +1,5 @@
+a := Test{a: 1, ,}
+===== err =====
+anonymous:1:16: ParseError: E0120 - Expected object expression property name
+1 | a := Test{a: 1, ,}
+  |                ^

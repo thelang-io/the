@@ -1,0 +1,5 @@
+a := ~
+===== err =====
+anonymous:1:7: ParseError: E0122 - Expected unary expression operand after operator
+1 | a := ~
+  |       ^

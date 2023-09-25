@@ -1,0 +1,5 @@
+a := (a: int, b: str = ) -> void {}
+===== err =====
+anonymous:1:23: ParseError: E0128 - Expected closure expression parameter initializer after equals sign
+1 | a := (a: int, b: str = ) -> void {}
+  |                       ^

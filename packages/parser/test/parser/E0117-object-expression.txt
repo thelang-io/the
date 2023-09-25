@@ -1,0 +1,5 @@
+a := Test{a: 1
+===== err =====
+anonymous:1:15: ParseError: E0117 - Expected closing brace in object expression
+1 | a := Test{a: 1
+  |               ^

@@ -1,0 +1,5 @@
+main {
+===== err =====
+anonymous:1:7: ParseError: E0101 - Expected block statement closing brace
+1 | main {
+  |       ^

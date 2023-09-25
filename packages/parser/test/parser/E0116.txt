@@ -1,0 +1,5 @@
+a := [1, 2
+===== err =====
+anonymous:1:11: ParseError: E0116 - Expected closing bracket in array expression
+1 | a := [1, 2
+  |           ^

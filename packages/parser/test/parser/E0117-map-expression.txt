@@ -1,0 +1,5 @@
+a := { "key": "val"
+===== err =====
+anonymous:1:20: ParseError: E0117 - Expected closing brace in map expression
+1 | a := { "key": "val"
+  |                    ^

@@ -1,0 +1,5 @@
+a := (a: int, ,) -> void {}
+===== err =====
+anonymous:1:14: ParseError: E0125 - Expected closure expression parameter name
+1 | a := (a: int, ,) -> void {}
+  |              ^

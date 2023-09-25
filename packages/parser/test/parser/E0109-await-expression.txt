@@ -1,0 +1,5 @@
+a := await
+===== err =====
+anonymous:1:11: ParseError: E0109 - Expected expression after `await` keyword
+1 | a := await
+  |           ^

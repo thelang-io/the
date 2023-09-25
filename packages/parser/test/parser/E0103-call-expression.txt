@@ -1,0 +1,5 @@
+a := test(a
+===== err =====
+anonymous:1:12: ParseError: E0103 - Expected closing parenthesis after call expression arguments
+1 | a := test(a
+  |            ^

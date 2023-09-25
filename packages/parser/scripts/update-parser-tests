@@ -24,6 +24,7 @@ main {
   loop i := 0; i < filesLen; i++ {
     file := files[i]
     if file.slice(-4) != ".txt" { continue }
+    print(file as str)
 
     result := parseTestFile("./test/parser/" + file)
     mut f := parse(result.in)

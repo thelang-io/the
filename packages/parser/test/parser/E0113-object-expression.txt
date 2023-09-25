@@ -1,0 +1,5 @@
+a := Test{a: 1, b }
+===== err =====
+anonymous:1:18: ParseError: E0113 - Expected colon after object expression property name
+1 | a := Test{a: 1, b }
+  |                  ^

@@ -196,7 +196,12 @@ export obj Parser {
         elements.push(expression)
       }
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrack, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRBrack, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        elementStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("array expression element"))
       }
     }
@@ -354,7 +359,12 @@ export obj Parser {
         })
       }
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRPar, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        parameterStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("closure expression parameter"))
       }
     }
@@ -374,12 +384,7 @@ export obj Parser {
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
       statement := self.nextStatement(shouldWrap: false, withBlockStatement: true)
-
-      if statement == nil {
-        self._raise(errors.E0150())
-      } else {
-        body = statement
-      }
+      body = statement as t.Statement
     } else {
       self._raise(errors.E0102("expression closure return type"))
     }
@@ -455,7 +460,12 @@ export obj Parser {
 
       members.push(t.EnumDeclarationMember{name: name as t.Identifier, initializer: initializer})
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrace, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRBrace, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        memberStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("enumeration declaration member"))
       }
     }
@@ -595,7 +605,12 @@ export obj Parser {
         })
       }
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRPar, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        parameterStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("function declaration parameter"))
       }
     }
@@ -725,7 +740,12 @@ export obj Parser {
         variadic: parameterVariadic
       })
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRPar, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        parameterStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("function type parameter"))
       }
     }
@@ -923,7 +943,11 @@ export obj Parser {
         break
       }
 
-      if !self.tokenizer.lookahead(.OpComma) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        specifierStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("import declaration specifier"))
       }
     }
@@ -1213,7 +1237,12 @@ export obj Parser {
         }
       }
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrace, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRBrace, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        elementStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("map expression element"))
       }
     }
@@ -1234,7 +1263,7 @@ export obj Parser {
     mut name := self.nextIdentifier(allowKeywords: true)
 
     if name == nil {
-      self._raise(errors.E0107("dot"))
+      self._raise(errors.E0139("dot"))
       name = Expression.dummyIdentifier()
     }
 
@@ -1874,7 +1903,7 @@ export obj Parser {
 
     loop !self.tokenizer.lookahead(.OpRPar) {
       if self.tokenizer.lookahead(.Eof, true) || argumentStartPos == self.tokenizer.pos() {
-        self._raise(errors.E0103("call expression opening brace"))
+        self._raise(errors.E0103("call expression arguments"))
         break
       }
 
@@ -1902,16 +1931,16 @@ export obj Parser {
         } else {
           self.tokenizer.seek(argumentStartPos)
           expression := self.nextExpression()
-
-          if expression == nil {
-            self._raise(errors.E0105())
-          } else {
-            arguments.push(t.CallExpressionArgument{expression: expression})
-          }
+          arguments.push(t.CallExpressionArgument{expression: expression as t.Expression})
         }
       }
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRPar, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRPar, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        argumentStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("call expression argument"))
       }
     }
@@ -2148,7 +2177,12 @@ export obj Parser {
         }
       }
 
-      if !self.tokenizer.lookahead(.OpComma) && !self.tokenizer.lookahead(.OpRBrace, true) {
+      if (
+        !self.tokenizer.lookahead(.OpComma) &&
+        !self.tokenizer.lookahead(.OpRBrace, true) &&
+        !self.tokenizer.lookahead(.Eof, true) &&
+        propertyStartPos != self.tokenizer.pos()
+      ) {
         self._raise(errors.E0106("object expression property value"))
       }
     }
@@ -2167,7 +2201,7 @@ export obj Parser {
     mut name := self.nextIdentifier(allowKeywords: true)
 
     if name == nil {
-      self._raise(errors.E0107("dot"))
+      self._raise(errors.E0139("dot"))
       name = Expression.dummyIdentifier()
     }
 

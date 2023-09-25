@@ -1,0 +1,5 @@
+a := test[1
+===== err =====
+anonymous:1:12: ParseError: E0115 - Expected closing bracket after element access expression argument
+1 | a := test[1
+  |            ^

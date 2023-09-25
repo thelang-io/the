@@ -1,0 +1,5 @@
+a := (a: int b: str) -> void {}
+===== err =====
+anonymous:1:13: ParseError: E0106 - Expected comma after closure expression parameter
+1 | a := (a: int b: str) -> void {}
+  |             ^
