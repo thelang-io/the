@@ -718,16 +718,6 @@ export obj Parser {
           self.tokenizer.seek(beforeNamePos)
           parameterName = nil
           parameterType = self.nextType()
-
-          if parameterType == nil {
-            if canGoBack {
-              self.tokenizer.seek(startPos)
-              return nil
-            }
-
-            self._raise(errors.E0141())
-            parameterType = Type.dummy()
-          }
         }
       }
 

@@ -1,0 +1,5 @@
+a: (int int) -> void
+===== err =====
+anonymous:1:8: ParseError: E0106 - Expected comma after function type parameter
+1 | a: (int int) -> void
+  |        ^

@@ -1,0 +1,5 @@
+a: Test.
+===== err =====
+anonymous:1:9: ParseError: E0135 - Expected member type identifier after dot
+1 | a: Test.
+  |         ^

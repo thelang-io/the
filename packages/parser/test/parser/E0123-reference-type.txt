@@ -1,0 +1,5 @@
+a: ref
+===== err =====
+anonymous:1:7: ParseError: E0123 - Expected type after `ref` keyword
+1 | a: ref
+  |       ^

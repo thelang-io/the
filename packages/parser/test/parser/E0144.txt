@@ -1,0 +1,5 @@
+a: (int, str) ->
+===== err =====
+anonymous:1:17: ParseError: E0144 - Expected function type return type after arrow
+1 | a: (int, str) ->
+  |                 ^
