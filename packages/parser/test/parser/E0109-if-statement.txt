@@ -1,0 +1,5 @@
+if { return 2 }
+===== err =====
+anonymous:1:3: ParseError: E0109 - Expected expression after `if` keyword
+1 | if { return 2 }
+  |   ^

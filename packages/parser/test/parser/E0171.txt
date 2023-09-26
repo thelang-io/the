@@ -1,0 +1,5 @@
+obj Test { a: int
+===== err =====
+anonymous:1:18: ParseError: E0171 - Expected object declaration body closing brace
+1 | obj Test { a: int
+  |                  ^

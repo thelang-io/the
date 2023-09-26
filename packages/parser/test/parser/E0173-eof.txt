@@ -1,0 +1,5 @@
+import test
+===== err =====
+anonymous:1:12: ParseError: E0173 - Expected `from` keyword after import declaration specifiers
+1 | import test
+  |            ^

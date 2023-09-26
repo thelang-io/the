@@ -1,0 +1,5 @@
+enum Test { One, Two
+===== err =====
+anonymous:1:21: ParseError: E0146 - Expected closing brace after enumeration declaration members
+1 | enum Test { One, Two
+  |                     ^

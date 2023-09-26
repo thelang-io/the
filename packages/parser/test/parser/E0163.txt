@@ -1,0 +1,5 @@
+fn test) {}
+===== err =====
+anonymous:1:8: ParseError: E0163 - Expected opening parenthesis after function declaration name
+1 | fn test) {}
+  |        ^

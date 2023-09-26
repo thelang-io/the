@@ -1,0 +1,5 @@
+type Alias str
+===== err =====
+anonymous:1:11: ParseError: E0154 - Expected equals sign after type alias declaration name
+1 | type Alias str
+  |           ^

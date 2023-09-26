@@ -1,0 +1,5 @@
+loop (i := 0; i < 10; i++ {}
+===== err =====
+anonymous:1:26: ParseError: E0155 - Expected loop statement closing parenthesis
+1 | loop (i := 0; i < 10; i++ {}
+  |                          ^

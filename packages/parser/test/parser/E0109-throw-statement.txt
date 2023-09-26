@@ -1,0 +1,5 @@
+throw
+===== err =====
+anonymous:1:6: ParseError: E0109 - Expected expression after `throw` keyword
+1 | throw
+  |      ^

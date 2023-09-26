@@ -1,0 +1,5 @@
+fn test (a: int, b: ) {}
+===== err =====
+anonymous:1:20: ParseError: E0166 - Expected function declaration parameter type after colon
+1 | fn test (a: int, b: ) {}
+  |                    ^

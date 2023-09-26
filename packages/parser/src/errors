@@ -256,9 +256,9 @@ export fn E0149 (kw: str) str {
   return "E0149 - Expected identifier after `" + kw + "` keyword"
 }
 
-export fn E0150 () str {
-  return "E0150 - Expected closure expression body"
-}
+// export fn E0150 () str {
+//   return "E0150 - Expected closure expression body"
+// }
 
 export fn E0151 () str {
   return "E0151 - Expected if statement consequent statement"
@@ -268,9 +268,9 @@ export fn E0152 () str {
   return "E0152 - Expected if statement alternate statement"
 }
 
-export fn E0153 () str {
-  return "E0153 - Expected main declaration body"
-}
+// export fn E0153 () str {
+//   return "E0153 - Expected main declaration body"
+// }
 
 export fn E0154 () str {
   return "E0154 - Expected equals sign after type alias declaration name"

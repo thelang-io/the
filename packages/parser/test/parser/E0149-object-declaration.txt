@@ -1,0 +1,5 @@
+obj { a: int }
+===== err =====
+anonymous:1:4: ParseError: E0149 - Expected identifier after `obj` keyword
+1 | obj { a: int }
+  |    ^

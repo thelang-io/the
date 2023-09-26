@@ -1,0 +1,5 @@
+enum Test { One, , Two }
+===== err =====
+anonymous:1:17: ParseError: E0147 - Expected enumeration declaration member name
+1 | enum Test { One, , Two }
+  |                 ^

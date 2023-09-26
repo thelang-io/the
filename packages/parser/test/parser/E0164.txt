@@ -1,0 +1,5 @@
+fn test (a: int, , b: str) {}
+===== err =====
+anonymous:1:17: ParseError: E0164 - Expected function declaration parameter name
+1 | fn test (a: int, , b: str) {}
+  |                 ^

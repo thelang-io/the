@@ -49,6 +49,18 @@ export obj Parser {
   }
 
   fn next (mut self: ref Self) t.Statement {
+    if self.tokenizer.lookahead(.Eof, true) {
+      comments := self.comments()
+      self.tokenizer.next()
+
+      return Statement.create(
+        t.EofStatement{},
+        self.tokenizer.readerStartPos(),
+        self.tokenizer.readerEndPos(),
+        leadingComments: comments
+      )
+    }
+
     mut statement := self.nextStatement()
 
     if statement == nil {
@@ -105,18 +117,12 @@ export obj Parser {
     withBlockStatement := false,
     withElifStatement := false
   ) t.Statement? {
-    startPos := self.tokenizer.pos()
-    comments := self.comments()
-
-    if self.tokenizer.lookahead(.Eof) {
-      return Statement.create(
-        t.EofStatement{},
-        self.tokenizer.readerStartPos(),
-        self.tokenizer.readerEndPos(),
-        leadingComments: comments
-      )
+    if self.tokenizer.lookahead(.Eof, true) {
+      return nil
     }
 
+    startPos := self.tokenizer.pos()
+    comments := self.comments()
     mut statement: t.Statement?
 
     if (
@@ -619,13 +625,7 @@ export obj Parser {
     mut body: t.Statement?
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
-      statement := self.nextStatement(shouldWrap: false, withBlockStatement: true)
-
-      if statement == nil {
-        self._raise(errors.E0150())
-      } else {
-        body = statement
-      }
+      body = self.nextStatement(shouldWrap: false, withBlockStatement: true)
     } elif returnType == nil {
       self._raise(errors.E0169())
       returnType = Type.dummy()
@@ -876,7 +876,6 @@ export obj Parser {
           return nil
         }
 
-        self._raise(errors.E0173())
         break
       }
 
@@ -942,19 +941,22 @@ export obj Parser {
       }
     }
 
+    mut source := Expression.dummy()
+
     if !self.tokenizer.lookahead(.KwFrom) {
       self._raise(errors.E0173())
-    }
+    } else {
+      maybeSource := self._maybeLiteral()
 
-    mut source := self._maybeLiteral()
-
-    if source == nil {
-      self._raise(errors.E0177())
-      source = Expression.dummy()
+      if maybeSource == nil {
+        self._raise(errors.E0177())
+      } else {
+        source = maybeSource
+      }
     }
 
     return Statement.create(
-      t.ImportDeclaration{specifiers: specifiers, source: source as t.Expression},
+      t.ImportDeclaration{specifiers: specifiers, source: source},
       readerStartPos,
       self.tokenizer.readerEndPos()
     )
@@ -1154,11 +1156,6 @@ export obj Parser {
 
     if self.tokenizer.lookahead(.OpLBrace, true) {
       body = self.nextStatement(shouldWrap: false, withBlockStatement: true)
-
-      if body == nil {
-        self._raise(errors.E0153())
-        body = Statement.dummy()
-      }
     } else {
       self._raise(errors.E0100("main"))
       body = Statement.dummy()

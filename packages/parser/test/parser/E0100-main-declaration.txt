@@ -1,0 +1,5 @@
+main
+===== err =====
+anonymous:1:5: ParseError: E0100 - Expected opening brace after `main` keyword
+1 | main
+  |     ^

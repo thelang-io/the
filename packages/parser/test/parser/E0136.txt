@@ -1,13 +1,9 @@
-a: str[1]
+a: str[1
 ===== err =====
 anonymous:1:8: ParseError: E0136 - Expected map type value type after opening bracket
-1 | a: str[1]
+1 | a: str[1
   |        ^
 
 anonymous:1:8: ParseError: E0115 - Expected closing bracket after map type value type
-1 | a: str[1]
+1 | a: str[1
   |        ^
-
-anonymous:1:9: ParseError: E0104 - Unexpected token `]`
-1 | a: str[1]
-  |         ^

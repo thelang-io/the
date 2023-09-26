@@ -1,0 +1,5 @@
+fn test (a: int, b) {}
+===== err =====
+anonymous:1:19: ParseError: E0165 - Expected function declaration parameter type or initializer after parameter name
+1 | fn test (a: int, b) {}
+  |                   ^

@@ -1,0 +1,5 @@
+mut test
+===== err =====
+anonymous:1:9: ParseError: E0132 - Expected variable declaration type or initializer after name
+1 | mut test
+  |         ^

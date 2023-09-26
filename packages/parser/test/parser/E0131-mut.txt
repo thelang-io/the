@@ -1,0 +1,5 @@
+mut : int
+===== err =====
+anonymous:1:4: ParseError: E0131 - Expected variable declaration name after `mut` keyword
+1 | mut : int
+  |    ^
