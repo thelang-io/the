@@ -18,7 +18,7 @@ Program
         valueType
           IdentifierType(start=9 end=12)
             Identifier(start=9 end=12) str
-  VariableDeclaration(start=13, end=26)
+  VariableDeclaration(start=14, end=26)
     name
       Identifier(start=14 end=15) a
     type
@@ -29,7 +29,7 @@ Program
         valueType
           IdentifierType(start=21 end=25)
             Identifier(start=21 end=25) char
-  VariableDeclaration(start=26, end=44)
+  VariableDeclaration(start=27, end=44)
     name
       Identifier(start=27 end=28) a
     type
@@ -45,7 +45,7 @@ Program
         valueType
           IdentifierType(start=39 end=43)
             Identifier(start=39 end=43) char
-  VariableDeclaration(start=44, end=65)
+  VariableDeclaration(start=45, end=65)
     name
       Identifier(start=45 end=46) a
     type
@@ -60,7 +60,7 @@ Program
         valueType
           IdentifierType(start=60 end=64)
             Identifier(start=60 end=64) char
-  VariableDeclaration(start=65, end=79)
+  VariableDeclaration(start=66, end=79)
     name
       Identifier(start=66 end=67) a
     type
@@ -72,7 +72,7 @@ Program
         valueType
           IdentifierType(start=74 end=78)
             Identifier(start=74 end=78) char
-  VariableDeclaration(start=79, end=94)
+  VariableDeclaration(start=80, end=94)
     name
       Identifier(start=80 end=81) a
     type

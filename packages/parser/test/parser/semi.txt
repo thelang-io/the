@@ -119,13 +119,13 @@ Program
     name
       Identifier(start=256 end=260) Test
     body
-      ObjectDeclarationProperty(start=262, end=272)
+      ObjectDeclarationProperty(start=265, end=272)
         name
           Identifier(start=265 end=266) a
         type
           IdentifierType(start=268 end=271)
             Identifier(start=268 end=271) int
-      ObjectDeclarationProperty(start=272, end=286 mut)
+      ObjectDeclarationProperty(start=275, end=286 mut)
         name
           Identifier(start=279 end=280) b
         type
@@ -154,7 +154,7 @@ Program
     handlers
       TryStatementHandler
         parameter
-          VariableDeclaration(start=375, end=386)
+          VariableDeclaration(start=376, end=386)
             name
               Identifier(start=376 end=379) err
             type
@@ -168,7 +168,7 @@ Program
     type
       IdentifierType(start=404 end=407)
         Identifier(start=404 end=407) str
-  VariableDeclaration(start=408, end=418)
+  VariableDeclaration(start=409, end=418)
     name
       Identifier(start=409 end=412) var
     initializer

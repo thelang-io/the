@@ -11,7 +11,7 @@ Program
           Identifier(start=5 end=10) Test1
         name
           Identifier(start=11 end=16) Test2
-  VariableDeclaration(start=16, end=39)
+  VariableDeclaration(start=17, end=39)
     name
       Identifier(start=17 end=18) a
     initializer

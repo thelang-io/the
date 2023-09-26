@@ -14,14 +14,14 @@ Program
         ArrayType(start=3 end=8)
           IdentifierType(start=3 end=6)
             Identifier(start=3 end=6) int
-  VariableDeclaration(start=10, end=19)
+  VariableDeclaration(start=11, end=19)
     name
       Identifier(start=11 end=12) a
     type
       ArrayType(start=14 end=19)
         IdentifierType(start=14 end=17)
           Identifier(start=14 end=17) int
-  VariableDeclaration(start=19, end=33)
+  VariableDeclaration(start=20, end=33)
     name
       Identifier(start=20 end=21) a
     type
@@ -33,7 +33,7 @@ Program
           valueType
             IdentifierType(start=27 end=30)
               Identifier(start=27 end=30) str
-  VariableDeclaration(start=33, end=50)
+  VariableDeclaration(start=34, end=50)
     name
       Identifier(start=34 end=35) a
     type
@@ -44,7 +44,7 @@ Program
               Identifier(start=37 end=42) Test1
           name
             Identifier(start=43 end=48) Test2
-  VariableDeclaration(start=50, end=60)
+  VariableDeclaration(start=51, end=60)
     name
       Identifier(start=51 end=52) a
     type
@@ -52,7 +52,7 @@ Program
         OptionalType(start=54 end=58)
           IdentifierType(start=54 end=57)
             Identifier(start=54 end=57) int
-  VariableDeclaration(start=60, end=71)
+  VariableDeclaration(start=61, end=71)
     name
       Identifier(start=61 end=62) a
     type

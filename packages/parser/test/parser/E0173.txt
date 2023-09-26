@@ -1,12 +1,12 @@
-import test1,
+import test1, "./test"
 import test2 from "./test"
 ===== err =====
 anonymous:1:14: ParseError: E0139 - Expected identifier after import declaration specifier imported name
-1 | import test1,
+1 | import test1, "./test"
   |              ^
 2 | import test2 from "./test"
 
 anonymous:1:14: ParseError: E0173 - Expected `from` keyword after import declaration specifiers
-1 | import test1,
+1 | import test1, "./test"
   |              ^
 2 | import test2 from "./test"

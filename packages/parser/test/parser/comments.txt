@@ -41,7 +41,7 @@ Program
               CommentBlock(start=80 end=86) /*t8*/
             trailingComments:
               CommentBlock(start=186 end=195) /* t17 */
-            VariableDeclaration(start=99, end=164)
+            VariableDeclaration(start=100, end=164)
               leadingComments:
                 CommentBlock(start=93 end=99) /*t9*/
               name

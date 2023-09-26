@@ -96,7 +96,7 @@ Program
             type
               IdentifierType(start=23 end=26)
                 Identifier(start=23 end=26) str
-  VariableDeclaration(start=26, end=41)
+  VariableDeclaration(start=27, end=41)
     name
       Identifier(start=27 end=28) p
     initializer
@@ -113,7 +113,7 @@ Program
               OpEq(start=38 end=39) =
             right
               IntegerLiteral(start=40, end=41 type=Decimal) 1
-  VariableDeclaration(start=41, end=60)
+  VariableDeclaration(start=42, end=60)
     name
       Identifier(start=42 end=43) p
     initializer
@@ -136,7 +136,7 @@ Program
                   OpEq(start=57 end=58) =
                 right
                   IntegerLiteral(start=59, end=60 type=Decimal) 1
-  VariableDeclaration(start=60, end=81)
+  VariableDeclaration(start=61, end=81)
     name
       Identifier(start=61 end=62) p
     initializer
@@ -160,7 +160,7 @@ Program
                     OpEq(start=77 end=78) =
                   right
                     IntegerLiteral(start=79, end=80 type=Decimal) 3
-  VariableDeclaration(start=81, end=116)
+  VariableDeclaration(start=82, end=116)
     name
       Identifier(start=82 end=83) p
     initializer
@@ -203,7 +203,7 @@ Program
                     OpEq(start=112 end=113) =
                   right
                     IntegerLiteral(start=114, end=115 type=Decimal) 4
-  VariableDeclaration(start=116, end=145)
+  VariableDeclaration(start=117, end=145)
     name
       Identifier(start=117 end=118) p
     initializer
@@ -239,7 +239,7 @@ Program
                         OpEq(start=141 end=142) =
                       right
                         IntegerLiteral(start=143, end=144 type=Decimal) 3
-  VariableDeclaration(start=145, end=162)
+  VariableDeclaration(start=146, end=162)
     name
       Identifier(start=146 end=147) p
     initializer
@@ -258,7 +258,7 @@ Program
               CallExpression(start=159, end=162)
                 callee
                   Identifier(start=159 end=160) b
-  VariableDeclaration(start=162, end=183)
+  VariableDeclaration(start=163, end=183)
     name
       Identifier(start=163 end=164) p
     initializer
@@ -283,7 +283,7 @@ Program
                   CallExpression(start=180, end=183)
                     callee
                       Identifier(start=180 end=181) c
-  VariableDeclaration(start=183, end=209)
+  VariableDeclaration(start=184, end=209)
     name
       Identifier(start=184 end=185) p
     initializer
@@ -306,7 +306,7 @@ Program
                   OpEq(start=206 end=207) =
                 right
                   IntegerLiteral(start=208, end=209 type=Decimal) 1
-  VariableDeclaration(start=209, end=239)
+  VariableDeclaration(start=210, end=239)
     name
       Identifier(start=210 end=211) p
     initializer
@@ -335,7 +335,7 @@ Program
                       OpEq(start=236 end=237) =
                     right
                       IntegerLiteral(start=238, end=239 type=Decimal) 1
-  VariableDeclaration(start=239, end=263)
+  VariableDeclaration(start=240, end=263)
     name
       Identifier(start=240 end=241) p
     initializer
@@ -361,7 +361,7 @@ Program
                       Identifier(start=258 end=259) a
                     value
                       IntegerLiteral(start=261, end=262 type=Decimal) 1
-  VariableDeclaration(start=263, end=291)
+  VariableDeclaration(start=264, end=291)
     name
       Identifier(start=264 end=265) p
     initializer
@@ -393,7 +393,7 @@ Program
                           Identifier(start=286 end=287) a
                         value
                           IntegerLiteral(start=289, end=290 type=Decimal) 1
-  VariableDeclaration(start=291, end=307)
+  VariableDeclaration(start=292, end=307)
     name
       Identifier(start=292 end=293) p
     initializer
@@ -414,7 +414,7 @@ Program
                   OpExcl(start=305 end=306) !
                 operand
                   Identifier(start=306 end=307) b
-  VariableDeclaration(start=307, end=327)
+  VariableDeclaration(start=308, end=327)
     name
       Identifier(start=308 end=309) p
     initializer
@@ -441,7 +441,7 @@ Program
                       OpExcl(start=325 end=326) !
                     operand
                       Identifier(start=326 end=327) c
-  VariableDeclaration(start=327, end=362)
+  VariableDeclaration(start=328, end=362)
     name
       Identifier(start=328 end=329) p
     initializer
@@ -458,7 +458,7 @@ Program
             CallExpression(start=355, end=362)
               callee
                 Identifier(start=355 end=360) test2
-  VariableDeclaration(start=362, end=377)
+  VariableDeclaration(start=363, end=377)
     name
       Identifier(start=363 end=364) p
     initializer
@@ -475,7 +475,7 @@ Program
               OpPlus(start=374 end=375) +
             right
               IntegerLiteral(start=376, end=377 type=Decimal) 1
-  VariableDeclaration(start=377, end=394)
+  VariableDeclaration(start=378, end=394)
     name
       Identifier(start=378 end=379) p
     initializer
@@ -493,7 +493,7 @@ Program
           OpPlus(start=391 end=392) +
         right
           IntegerLiteral(start=393, end=394 type=Decimal) 1
-  VariableDeclaration(start=394, end=413)
+  VariableDeclaration(start=395, end=413)
     name
       Identifier(start=395 end=396) p
     initializer
@@ -516,7 +516,7 @@ Program
               OpMinus(start=410 end=411) -
             right
               IntegerLiteral(start=412, end=413 type=Decimal) 1
-  VariableDeclaration(start=413, end=434)
+  VariableDeclaration(start=414, end=434)
     name
       Identifier(start=414 end=415) p
     initializer
@@ -540,7 +540,7 @@ Program
           OpMinus(start=431 end=432) -
         right
           IntegerLiteral(start=433, end=434 type=Decimal) 1
-  VariableDeclaration(start=434, end=449)
+  VariableDeclaration(start=435, end=449)
     name
       Identifier(start=435 end=436) p
     initializer
@@ -557,7 +557,7 @@ Program
           OpPlus(start=446 end=447) +
         right
           IntegerLiteral(start=448, end=449 type=Decimal) 1
-  VariableDeclaration(start=449, end=466)
+  VariableDeclaration(start=450, end=466)
     name
       Identifier(start=450 end=451) p
     initializer
@@ -575,7 +575,7 @@ Program
           OpPlus(start=463 end=464) +
         right
           IntegerLiteral(start=465, end=466 type=Decimal) 1
-  VariableDeclaration(start=466, end=485)
+  VariableDeclaration(start=467, end=485)
     name
       Identifier(start=467 end=468) p
     initializer
@@ -598,7 +598,7 @@ Program
           OpMinus(start=482 end=483) -
         right
           IntegerLiteral(start=484, end=485 type=Decimal) 1
-  VariableDeclaration(start=485, end=506)
+  VariableDeclaration(start=486, end=506)
     name
       Identifier(start=486 end=487) p
     initializer
@@ -622,7 +622,7 @@ Program
           OpMinus(start=503 end=504) -
         right
           IntegerLiteral(start=505, end=506 type=Decimal) 1
-  VariableDeclaration(start=506, end=521)
+  VariableDeclaration(start=507, end=521)
     name
       Identifier(start=507 end=508) p
     initializer
@@ -639,7 +639,7 @@ Program
               OpSlash(start=518 end=519) /
             right
               IntegerLiteral(start=520, end=521 type=Decimal) 1
-  VariableDeclaration(start=521, end=538)
+  VariableDeclaration(start=522, end=538)
     name
       Identifier(start=522 end=523) p
     initializer
@@ -657,7 +657,7 @@ Program
           OpSlash(start=535 end=536) /
         right
           IntegerLiteral(start=537, end=538 type=Decimal) 1
-  VariableDeclaration(start=538, end=557)
+  VariableDeclaration(start=539, end=557)
     name
       Identifier(start=539 end=540) p
     initializer
@@ -680,7 +680,7 @@ Program
           OpMinus(start=554 end=555) -
         right
           IntegerLiteral(start=556, end=557 type=Decimal) 1
-  VariableDeclaration(start=557, end=578)
+  VariableDeclaration(start=558, end=578)
     name
       Identifier(start=558 end=559) p
     initializer
@@ -704,7 +704,7 @@ Program
           OpMinus(start=575 end=576) -
         right
           IntegerLiteral(start=577, end=578 type=Decimal) 1
-  VariableDeclaration(start=578, end=593)
+  VariableDeclaration(start=579, end=593)
     name
       Identifier(start=579 end=580) p
     initializer
@@ -719,7 +719,7 @@ Program
           CallExpression(start=590, end=593)
             callee
               Identifier(start=590 end=591) b
-  VariableDeclaration(start=593, end=614)
+  VariableDeclaration(start=594, end=614)
     name
       Identifier(start=594 end=595) p
     initializer
@@ -742,7 +742,7 @@ Program
           CallExpression(start=611, end=614)
             callee
               Identifier(start=611 end=612) c
-  VariableDeclaration(start=614, end=637)
+  VariableDeclaration(start=615, end=637)
     name
       Identifier(start=615 end=616) p
     initializer
@@ -766,7 +766,7 @@ Program
                 CallExpression(start=633, end=636)
                   callee
                     Identifier(start=633 end=634) c
-  VariableDeclaration(start=637, end=663)
+  VariableDeclaration(start=638, end=663)
     name
       Identifier(start=638 end=639) p
     initializer
@@ -789,7 +789,7 @@ Program
               OpPlus(start=660 end=661) +
             right
               IntegerLiteral(start=662, end=663 type=Decimal) 1
-  VariableDeclaration(start=663, end=691)
+  VariableDeclaration(start=664, end=691)
     name
       Identifier(start=664 end=665) p
     initializer
@@ -813,7 +813,7 @@ Program
           OpPlus(start=688 end=689) +
         right
           IntegerLiteral(start=690, end=691 type=Decimal) 1
-  VariableDeclaration(start=691, end=717)
+  VariableDeclaration(start=692, end=717)
     name
       Identifier(start=692 end=693) p
     initializer
@@ -836,7 +836,7 @@ Program
                   OpSlash(start=714 end=715) /
                 right
                   IntegerLiteral(start=716, end=717 type=Decimal) 1
-  VariableDeclaration(start=717, end=745)
+  VariableDeclaration(start=718, end=745)
     name
       Identifier(start=718 end=719) p
     initializer
@@ -860,7 +860,7 @@ Program
           OpSlash(start=742 end=743) /
         right
           IntegerLiteral(start=744, end=745 type=Decimal) 1
-  VariableDeclaration(start=745, end=760)
+  VariableDeclaration(start=746, end=760)
     name
       Identifier(start=746 end=747) p
     initializer
@@ -877,7 +877,7 @@ Program
           OpPlus(start=757 end=758) +
         right
           IntegerLiteral(start=759, end=760 type=Decimal) 3
-  VariableDeclaration(start=760, end=777)
+  VariableDeclaration(start=761, end=777)
     name
       Identifier(start=761 end=762) p
     initializer
@@ -895,7 +895,7 @@ Program
           OpPlus(start=774 end=775) +
         right
           IntegerLiteral(start=776, end=777 type=Decimal) 3
-  VariableDeclaration(start=777, end=805)
+  VariableDeclaration(start=778, end=805)
     name
       Identifier(start=778 end=779) p
     initializer
@@ -927,7 +927,7 @@ Program
                   Identifier(start=800 end=801) a
                 value
                   IntegerLiteral(start=803, end=804 type=Decimal) 1
-  VariableDeclaration(start=805, end=835)
+  VariableDeclaration(start=806, end=835)
     name
       Identifier(start=806 end=807) p
     initializer
@@ -960,7 +960,7 @@ Program
                   Identifier(start=830 end=831) a
                 value
                   IntegerLiteral(start=833, end=834 type=Decimal) 1
-  VariableDeclaration(start=835, end=854)
+  VariableDeclaration(start=836, end=854)
     name
       Identifier(start=836 end=837) p
     initializer
@@ -989,7 +989,7 @@ Program
               Identifier(start=851 end=852) c
             operator
               OpPlusPlus(start=852 end=854) ++
-  VariableDeclaration(start=854, end=875)
+  VariableDeclaration(start=855, end=875)
     name
       Identifier(start=855 end=856) p
     initializer
@@ -1019,7 +1019,7 @@ Program
               Identifier(start=872 end=873) c
             operator
               OpPlusPlus(start=873 end=875) ++
-  VariableDeclaration(start=875, end=900)
+  VariableDeclaration(start=876, end=900)
     name
       Identifier(start=876 end=877) p
     initializer
@@ -1058,7 +1058,7 @@ Program
               OpMinusMinus(start=897 end=899) --
             operand
               Identifier(start=899 end=900) d
-  VariableDeclaration(start=900, end=927)
+  VariableDeclaration(start=901, end=927)
     name
       Identifier(start=901 end=902) p
     initializer
@@ -1098,7 +1098,7 @@ Program
               OpMinusMinus(start=924 end=926) --
             operand
               Identifier(start=926 end=927) d
-  VariableDeclaration(start=927, end=940)
+  VariableDeclaration(start=928, end=940)
     name
       Identifier(start=928 end=929) p
     initializer
@@ -1111,7 +1111,7 @@ Program
           CallExpression(start=937, end=940)
             callee
               Identifier(start=937 end=938) b
-  VariableDeclaration(start=940, end=957)
+  VariableDeclaration(start=941, end=957)
     name
       Identifier(start=941 end=942) p
     initializer
@@ -1130,7 +1130,7 @@ Program
               CallExpression(start=954, end=957)
                 callee
                   Identifier(start=954 end=955) c
-  VariableDeclaration(start=957, end=970)
+  VariableDeclaration(start=958, end=970)
     name
       Identifier(start=958 end=959) p
     initializer
@@ -1143,7 +1143,7 @@ Program
           CallExpression(start=967, end=970)
             callee
               Identifier(start=967 end=968) b
-  VariableDeclaration(start=970, end=987)
+  VariableDeclaration(start=971, end=987)
     name
       Identifier(start=971 end=972) p
     initializer
@@ -1162,7 +1162,7 @@ Program
           CallExpression(start=984, end=987)
             callee
               Identifier(start=984 end=985) c
-  VariableDeclaration(start=987, end=1008)
+  VariableDeclaration(start=988, end=1008)
     name
       Identifier(start=988 end=989) p
     initializer
@@ -1175,7 +1175,7 @@ Program
           CallExpression(start=1005, end=1008)
             callee
               Identifier(start=1005 end=1006) a
-  VariableDeclaration(start=1008, end=1018)
+  VariableDeclaration(start=1009, end=1018)
     name
       Identifier(start=1009 end=1010) p
     initializer
@@ -1186,7 +1186,7 @@ Program
           CallExpression(start=1015, end=1018)
             callee
               Identifier(start=1015 end=1016) a
-  VariableDeclaration(start=1018, end=1054)
+  VariableDeclaration(start=1019, end=1054)
     name
       Identifier(start=1019 end=1020) p
     initializer
@@ -1207,7 +1207,7 @@ Program
                 Identifier(start=1047 end=1051) void
             body
               BlockStatement(start=1052, end=1054)
-  VariableDeclaration(start=1054, end=1076)
+  VariableDeclaration(start=1055, end=1076)
     name
       Identifier(start=1055 end=1056) p
     initializer
@@ -1224,7 +1224,7 @@ Program
               IntegerLiteral(start=1071, end=1072 type=Decimal) 1
             alternate
               IntegerLiteral(start=1075, end=1076 type=Decimal) 2
-  VariableDeclaration(start=1076, end=1102)
+  VariableDeclaration(start=1077, end=1102)
     name
       Identifier(start=1077 end=1078) p
     initializer
@@ -1247,7 +1247,7 @@ Program
                   IntegerLiteral(start=1097, end=1098 type=Decimal) 1
                 alternate
                   IntegerLiteral(start=1101, end=1102 type=Decimal) 2
-  VariableDeclaration(start=1102, end=1124)
+  VariableDeclaration(start=1103, end=1124)
     name
       Identifier(start=1103 end=1104) p
     initializer
@@ -1264,7 +1264,7 @@ Program
               IntegerLiteral(start=1119, end=1120 type=Decimal) 1
         alternate
           IntegerLiteral(start=1123, end=1124 type=Decimal) 2
-  VariableDeclaration(start=1124, end=1150)
+  VariableDeclaration(start=1125, end=1150)
     name
       Identifier(start=1125 end=1126) p
     initializer
@@ -1287,7 +1287,7 @@ Program
                   IntegerLiteral(start=1145, end=1146 type=Decimal) 1
         alternate
           IntegerLiteral(start=1149, end=1150 type=Decimal) 2
-  VariableDeclaration(start=1150, end=1188)
+  VariableDeclaration(start=1151, end=1188)
     name
       Identifier(start=1151 end=1152) p
     initializer
@@ -1316,7 +1316,7 @@ Program
                   IntegerLiteral(start=1183, end=1184 type=Decimal) 3
                 alternate
                   IntegerLiteral(start=1187, end=1188 type=Decimal) 4
-  VariableDeclaration(start=1188, end=1228)
+  VariableDeclaration(start=1189, end=1228)
     name
       Identifier(start=1189 end=1190) p
     initializer
@@ -1346,7 +1346,7 @@ Program
               IntegerLiteral(start=1223, end=1224 type=Decimal) 3
             alternate
               IntegerLiteral(start=1227, end=1228 type=Decimal) 4
-  VariableDeclaration(start=1228, end=1258)
+  VariableDeclaration(start=1229, end=1258)
     name
       Identifier(start=1229 end=1230) p
     initializer
@@ -1363,7 +1363,7 @@ Program
               IntegerLiteral(start=1253, end=1254 type=Decimal) 2
             alternate
               IntegerLiteral(start=1257, end=1258 type=Decimal) 3
-  VariableDeclaration(start=1258, end=1292)
+  VariableDeclaration(start=1259, end=1292)
     name
       Identifier(start=1259 end=1260) p
     initializer
@@ -1386,7 +1386,7 @@ Program
                   IntegerLiteral(start=1287, end=1288 type=Decimal) 2
                 alternate
                   IntegerLiteral(start=1291, end=1292 type=Decimal) 3
-  VariableDeclaration(start=1292, end=1314)
+  VariableDeclaration(start=1293, end=1314)
     name
       Identifier(start=1293 end=1294) p
     initializer
@@ -1409,7 +1409,7 @@ Program
               OpMinus(start=1312 end=1313) -
             operand
               Identifier(start=1313 end=1314) c
-  VariableDeclaration(start=1314, end=1338)
+  VariableDeclaration(start=1315, end=1338)
     name
       Identifier(start=1315 end=1316) p
     initializer
@@ -1433,7 +1433,7 @@ Program
                     OpMinus(start=1335 end=1336) -
                   operand
                     Identifier(start=1336 end=1337) c
-  VariableDeclaration(start=1338, end=1363)
+  VariableDeclaration(start=1339, end=1363)
     name
       Identifier(start=1339 end=1340) p
     initializer
@@ -1449,7 +1449,7 @@ Program
             type
               IdentifierType(start=1360 end=1363)
                 Identifier(start=1360 end=1363) str
-  VariableDeclaration(start=1363, end=1383)
+  VariableDeclaration(start=1364, end=1383)
     name
       Identifier(start=1364 end=1365) p
     initializer
@@ -1465,7 +1465,7 @@ Program
                 StringLiteral(start=1375, end=1378) a
               value
                 IntegerLiteral(start=1380, end=1381 type=Decimal) 1
-  VariableDeclaration(start=1383, end=1407)
+  VariableDeclaration(start=1384, end=1407)
     name
       Identifier(start=1384 end=1385) p
     initializer
@@ -1487,7 +1487,7 @@ Program
                     StringLiteral(start=1399, end=1402) a
                   value
                     IntegerLiteral(start=1404, end=1405 type=Decimal) 1
-  VariableDeclaration(start=1407, end=1427)
+  VariableDeclaration(start=1408, end=1427)
     name
       Identifier(start=1408 end=1409) p
     initializer
@@ -1503,7 +1503,7 @@ Program
                 StringLiteral(start=1419, end=1422) a
               value
                 IntegerLiteral(start=1424, end=1425 type=Decimal) 1
-  VariableDeclaration(start=1427, end=1451)
+  VariableDeclaration(start=1428, end=1451)
     name
       Identifier(start=1428 end=1429) p
     initializer
@@ -1525,7 +1525,7 @@ Program
                 StringLiteral(start=1443, end=1446) a
               value
                 IntegerLiteral(start=1448, end=1449 type=Decimal) 1
-  VariableDeclaration(start=1451, end=1479)
+  VariableDeclaration(start=1452, end=1479)
     name
       Identifier(start=1452 end=1453) p
     initializer
@@ -1541,7 +1541,7 @@ Program
                 StringLiteral(start=1471, end=1474) a
               value
                 IntegerLiteral(start=1476, end=1477 type=Decimal) 1
-  VariableDeclaration(start=1479, end=1496)
+  VariableDeclaration(start=1480, end=1496)
     name
       Identifier(start=1480 end=1481) p
     initializer
@@ -1555,7 +1555,7 @@ Program
                 StringLiteral(start=1488, end=1491) a
               value
                 IntegerLiteral(start=1493, end=1494 type=Decimal) 1
-  VariableDeclaration(start=1496, end=1516)
+  VariableDeclaration(start=1497, end=1516)
     name
       Identifier(start=1497 end=1498) p
     initializer
@@ -1575,7 +1575,7 @@ Program
                   Identifier(start=1511 end=1512) a
                 value
                   IntegerLiteral(start=1514, end=1515 type=Decimal) 1
-  VariableDeclaration(start=1516, end=1540)
+  VariableDeclaration(start=1517, end=1540)
     name
       Identifier(start=1517 end=1518) p
     initializer
@@ -1601,7 +1601,7 @@ Program
                       Identifier(start=1535 end=1536) a
                     value
                       IntegerLiteral(start=1538, end=1539 type=Decimal) 1
-  VariableDeclaration(start=1540, end=1560)
+  VariableDeclaration(start=1541, end=1560)
     name
       Identifier(start=1541 end=1542) p
     initializer
@@ -1621,7 +1621,7 @@ Program
                   Identifier(start=1555 end=1556) a
                 value
                   IntegerLiteral(start=1558, end=1559 type=Decimal) 1
-  VariableDeclaration(start=1560, end=1584)
+  VariableDeclaration(start=1561, end=1584)
     name
       Identifier(start=1561 end=1562) p
     initializer
@@ -1647,7 +1647,7 @@ Program
                   Identifier(start=1579 end=1580) a
                 value
                   IntegerLiteral(start=1582, end=1583 type=Decimal) 1
-  VariableDeclaration(start=1584, end=1612)
+  VariableDeclaration(start=1585, end=1612)
     name
       Identifier(start=1585 end=1586) p
     initializer
@@ -1667,7 +1667,7 @@ Program
                   Identifier(start=1607 end=1608) a
                 value
                   IntegerLiteral(start=1610, end=1611 type=Decimal) 1
-  VariableDeclaration(start=1612, end=1629)
+  VariableDeclaration(start=1613, end=1629)
     name
       Identifier(start=1613 end=1614) p
     initializer
@@ -1685,7 +1685,7 @@ Program
                   Identifier(start=1624 end=1625) a
                 value
                   IntegerLiteral(start=1627, end=1628 type=Decimal) 1
-  VariableDeclaration(start=1629, end=1642)
+  VariableDeclaration(start=1630, end=1642)
     name
       Identifier(start=1630 end=1631) p
     initializer
@@ -1700,7 +1700,7 @@ Program
               Identifier(start=1639 end=1640) b
             operator
               OpPlusPlus(start=1640 end=1642) ++
-  VariableDeclaration(start=1642, end=1659)
+  VariableDeclaration(start=1643, end=1659)
     name
       Identifier(start=1643 end=1644) p
     initializer
@@ -1721,7 +1721,7 @@ Program
                   Identifier(start=1656 end=1657) c
                 operator
                   OpMinusMinus(start=1657 end=1659) --
-  VariableDeclaration(start=1659, end=1676)
+  VariableDeclaration(start=1660, end=1676)
     name
       Identifier(start=1660 end=1661) p
     initializer
@@ -1742,7 +1742,7 @@ Program
                   Identifier(start=1673 end=1674) c
                 operator
                   OpPlusPlus(start=1674 end=1676) ++
-  VariableDeclaration(start=1676, end=1697)
+  VariableDeclaration(start=1677, end=1697)
     name
       Identifier(start=1677 end=1678) p
     initializer
@@ -1769,7 +1769,7 @@ Program
                   Identifier(start=1694 end=1695) d
                 operator
                   OpPlusPlus(start=1695 end=1697) ++
-  VariableDeclaration(start=1697, end=1722)
+  VariableDeclaration(start=1698, end=1722)
     name
       Identifier(start=1698 end=1699) p
     initializer
@@ -1790,7 +1790,7 @@ Program
                   Identifier(start=1719 end=1720) b
                 operator
                   OpPlusPlus(start=1720 end=1722) ++
-  VariableDeclaration(start=1722, end=1759)
+  VariableDeclaration(start=1723, end=1759)
     name
       Identifier(start=1723 end=1724) p
     initializer
@@ -1817,7 +1817,7 @@ Program
                       Identifier(start=1756 end=1757) b
                     operator
                       OpPlusPlus(start=1757 end=1759) ++
-  VariableDeclaration(start=1759, end=1773)
+  VariableDeclaration(start=1760, end=1773)
     name
       Identifier(start=1760 end=1761) p
     initializer
@@ -1836,7 +1836,7 @@ Program
                   Identifier(start=1770 end=1771) i
                 operator
                   OpMinusMinus(start=1771 end=1773) --
-  VariableDeclaration(start=1773, end=1788)
+  VariableDeclaration(start=1774, end=1788)
     name
       Identifier(start=1774 end=1775) p
     initializer

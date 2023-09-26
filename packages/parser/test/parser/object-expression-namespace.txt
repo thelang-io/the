@@ -20,7 +20,7 @@ Program
               Identifier(start=17 end=18) a
             value
               IntegerLiteral(start=20, end=22 type=Decimal) 10
-  VariableDeclaration(start=23, end=53)
+  VariableDeclaration(start=24, end=53)
     name
       Identifier(start=24 end=25) a
     initializer

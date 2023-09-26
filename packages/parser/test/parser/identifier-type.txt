@@ -8,7 +8,7 @@ Program
     type
       IdentifierType(start=3 end=6)
         Identifier(start=3 end=6) int
-  VariableDeclaration(start=6, end=14)
+  VariableDeclaration(start=7, end=14)
     name
       Identifier(start=7 end=8) a
     type

@@ -104,7 +104,7 @@ Program
       BlockStatement(start=53, end=55)
   LoopStatement(start=56, end=83)
     initializer
-      VariableDeclaration(start=60, end=67)
+      VariableDeclaration(start=61, end=67)
         name
           Identifier(start=61 end=62) i
         initializer
@@ -127,7 +127,7 @@ Program
       BlockStatement(start=81, end=83)
   LoopStatement(start=84, end=112)
     initializer
-      VariableDeclaration(start=88, end=95)
+      VariableDeclaration(start=89, end=95)
         name
           Identifier(start=89 end=90) i
         initializer
@@ -200,7 +200,7 @@ Program
       BlockStatement(start=205, end=207)
   LoopStatement(start=208, end=231)
     initializer
-      VariableDeclaration(start=212, end=219)
+      VariableDeclaration(start=213, end=219)
         name
           Identifier(start=213 end=214) i
         initializer
@@ -217,7 +217,7 @@ Program
       BlockStatement(start=229, end=231)
   LoopStatement(start=232, end=260)
     initializer
-      VariableDeclaration(start=236, end=243)
+      VariableDeclaration(start=237, end=243)
         name
           Identifier(start=237 end=238) i
         initializer
@@ -240,7 +240,7 @@ Program
               OpPlusPlus(start=256 end=258) ++
   LoopStatement(start=261, end=292)
     initializer
-      VariableDeclaration(start=265, end=272)
+      VariableDeclaration(start=266, end=272)
         name
           Identifier(start=266 end=267) i
         initializer
@@ -283,7 +283,7 @@ Program
       BlockStatement(start=341, end=343)
   LoopStatement(start=344, end=403)
     initializer
-      VariableDeclaration(start=348, end=355)
+      VariableDeclaration(start=349, end=355)
         name
           Identifier(start=349 end=350) i
         initializer
@@ -326,7 +326,7 @@ Program
               BreakStatement(start=394, end=399)
   LoopStatement(start=404, end=476)
     initializer
-      VariableDeclaration(start=408, end=415)
+      VariableDeclaration(start=409, end=415)
         name
           Identifier(start=409 end=410) i
         initializer
@@ -382,7 +382,7 @@ Program
               Identifier(start=473 end=474) i
   LoopStatement(start=477, end=540)
     initializer
-      VariableDeclaration(start=481, end=488)
+      VariableDeclaration(start=482, end=488)
         name
           Identifier(start=482 end=483) i
         initializer
@@ -425,7 +425,7 @@ Program
               Identifier(start=537 end=538) i
   LoopStatement(start=541, end=572)
     initializer
-      VariableDeclaration(start=545, end=552)
+      VariableDeclaration(start=546, end=552)
         name
           Identifier(start=546 end=547) i
         initializer
@@ -454,7 +454,7 @@ Program
               OpPlusPlus(start=568 end=570) ++
   LoopStatement(start=573, end=628)
     initializer
-      VariableDeclaration(start=577, end=586)
+      VariableDeclaration(start=578, end=586)
         name
           Identifier(start=578 end=579) i
         initializer
@@ -475,12 +475,12 @@ Program
           OpMinusMinus(start=596 end=598) --
     body
       BlockStatement(start=599, end=628)
-        VariableDeclaration(start=600, end=609)
+        VariableDeclaration(start=603, end=609)
           name
             Identifier(start=603 end=604) i
           initializer
             IntegerLiteral(start=608, end=609 type=Decimal) 0
-        VariableDeclaration(start=609, end=626)
+        VariableDeclaration(start=612, end=626)
           name
             Identifier(start=612 end=613) j
           initializer
@@ -548,7 +548,7 @@ Program
       Identifier(start=691 end=695) Test
     body
       BlockStatement(start=696, end=708)
-        VariableDeclaration(start=697, end=706)
+        VariableDeclaration(start=700, end=706)
           name
             Identifier(start=700 end=701) a
           type

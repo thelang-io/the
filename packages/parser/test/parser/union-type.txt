@@ -23,7 +23,7 @@ Program
         ArrayType(start=11 end=16)
           IdentifierType(start=11 end=14)
             Identifier(start=11 end=14) str
-  VariableDeclaration(start=16, end=42)
+  VariableDeclaration(start=17, end=42)
     name
       Identifier(start=17 end=18) a
     type
@@ -37,7 +37,7 @@ Program
         ArrayType(start=36 end=42)
           IdentifierType(start=36 end=40)
             Identifier(start=36 end=40) char
-  VariableDeclaration(start=42, end=55)
+  VariableDeclaration(start=43, end=55)
     name
       Identifier(start=43 end=44) a
     type
@@ -46,7 +46,7 @@ Program
           Identifier(start=46 end=49) int
         IdentifierType(start=52 end=55)
           Identifier(start=52 end=55) str
-  VariableDeclaration(start=55, end=75)
+  VariableDeclaration(start=56, end=75)
     name
       Identifier(start=56 end=57) a
     type
@@ -57,7 +57,7 @@ Program
           Identifier(start=65 end=68) str
         IdentifierType(start=71 end=75)
           Identifier(start=71 end=75) char
-  VariableDeclaration(start=75, end=98)
+  VariableDeclaration(start=76, end=98)
     name
       Identifier(start=76 end=77) a
     type
@@ -76,7 +76,7 @@ Program
           valueType
             IdentifierType(start=94 end=97)
               Identifier(start=94 end=97) int
-  VariableDeclaration(start=98, end=135)
+  VariableDeclaration(start=99, end=135)
     name
       Identifier(start=99 end=100) a
     type
@@ -102,7 +102,7 @@ Program
           valueType
             IdentifierType(start=129 end=134)
               Identifier(start=129 end=134) float
-  VariableDeclaration(start=135, end=164)
+  VariableDeclaration(start=136, end=164)
     name
       Identifier(start=136 end=137) a
     type
@@ -119,7 +119,7 @@ Program
               Identifier(start=153 end=158) Test3
           name
             Identifier(start=159 end=164) Test4
-  VariableDeclaration(start=164, end=207)
+  VariableDeclaration(start=165, end=207)
     name
       Identifier(start=165 end=166) a
     type
@@ -142,7 +142,7 @@ Program
               Identifier(start=196 end=201) Test5
           name
             Identifier(start=202 end=207) Test6
-  VariableDeclaration(start=207, end=222)
+  VariableDeclaration(start=208, end=222)
     name
       Identifier(start=208 end=209) a
     type
@@ -153,7 +153,7 @@ Program
         OptionalType(start=218 end=222)
           IdentifierType(start=218 end=221)
             Identifier(start=218 end=221) str
-  VariableDeclaration(start=222, end=245)
+  VariableDeclaration(start=223, end=245)
     name
       Identifier(start=223 end=224) a
     type
@@ -167,7 +167,7 @@ Program
         OptionalType(start=240 end=245)
           IdentifierType(start=240 end=244)
             Identifier(start=240 end=244) char
-  VariableDeclaration(start=245, end=262)
+  VariableDeclaration(start=246, end=262)
     name
       Identifier(start=246 end=247) a
     type
@@ -178,7 +178,7 @@ Program
         ParenthesizedType(start=256 end=262)
           IdentifierType(start=258 end=261)
             Identifier(start=258 end=261) str
-  VariableDeclaration(start=262, end=288)
+  VariableDeclaration(start=263, end=288)
     name
       Identifier(start=263 end=264) a
     type

@@ -26,7 +26,7 @@ Program
     handlers
       TryStatementHandler
         parameter
-          VariableDeclaration(start=13, end=24)
+          VariableDeclaration(start=14, end=24)
             name
               Identifier(start=14 end=17) err
             type
@@ -37,7 +37,7 @@ Program
   TryStatement(start=29, end=118)
     body
       BlockStatement(start=33, end=97)
-        VariableDeclaration(start=34, end=74)
+        VariableDeclaration(start=37, end=74)
           name
             Identifier(start=37 end=43) result
           initializer
@@ -63,7 +63,7 @@ Program
     handlers
       TryStatementHandler
         parameter
-          VariableDeclaration(start=103, end=114)
+          VariableDeclaration(start=104, end=114)
             name
               Identifier(start=104 end=107) err
             type
@@ -77,7 +77,7 @@ Program
     handlers
       TryStatementHandler
         parameter
-          VariableDeclaration(start=132, end=143)
+          VariableDeclaration(start=133, end=143)
             name
               Identifier(start=133 end=136) err
             type
@@ -107,7 +107,7 @@ Program
     handlers
       TryStatementHandler
         parameter
-          VariableDeclaration(start=194, end=207)
+          VariableDeclaration(start=195, end=207)
             name
               Identifier(start=195 end=199) err1
             type
@@ -135,7 +135,7 @@ Program
                       StringLiteral(start=245, end=253) stderr
       TryStatementHandler
         parameter
-          VariableDeclaration(start=262, end=275)
+          VariableDeclaration(start=263, end=275)
             name
               Identifier(start=263 end=267) err2
             type
@@ -163,7 +163,7 @@ Program
                       StringLiteral(start=313, end=321) stderr
       TryStatementHandler
         parameter
-          VariableDeclaration(start=330, end=343)
+          VariableDeclaration(start=331, end=343)
             name
               Identifier(start=331 end=335) err3
             type

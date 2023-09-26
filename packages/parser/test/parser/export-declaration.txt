@@ -33,13 +33,13 @@ Program
         IdentifierType(start=90 end=93)
           Identifier(start=90 end=93) str
   ExportDeclaration(start=94, end=117)
-    VariableDeclaration(start=100, end=117 const)
+    VariableDeclaration(start=101, end=117 const)
       name
         Identifier(start=107 end=111) TEST
       initializer
         IntegerLiteral(start=115, end=117 type=Decimal) 10
   ExportDeclaration(start=118, end=139)
-    VariableDeclaration(start=124, end=139 mut)
+    VariableDeclaration(start=125, end=139 mut)
       name
         Identifier(start=129 end=133) TEST
       initializer

@@ -17,7 +17,7 @@ Program
         ArrayType(start=4 end=9)
           IdentifierType(start=4 end=7)
             Identifier(start=4 end=7) int
-  VariableDeclaration(start=10, end=26)
+  VariableDeclaration(start=11, end=26)
     name
       Identifier(start=11 end=12) a
     type
@@ -26,14 +26,14 @@ Program
           returnType
             IdentifierType(start=21 end=25)
               Identifier(start=21 end=25) void
-  VariableDeclaration(start=26, end=35)
+  VariableDeclaration(start=27, end=35)
     name
       Identifier(start=27 end=28) a
     type
       ParenthesizedType(start=29 end=35)
         IdentifierType(start=31 end=34)
           Identifier(start=31 end=34) int
-  VariableDeclaration(start=35, end=49)
+  VariableDeclaration(start=36, end=49)
     name
       Identifier(start=36 end=37) a
     type
@@ -45,7 +45,7 @@ Program
           valueType
             IdentifierType(start=44 end=47)
               Identifier(start=44 end=47) str
-  VariableDeclaration(start=49, end=66)
+  VariableDeclaration(start=50, end=66)
     name
       Identifier(start=50 end=51) a
     type
@@ -56,7 +56,7 @@ Program
               Identifier(start=54 end=59) Test1
           name
             Identifier(start=60 end=65) Test2
-  VariableDeclaration(start=66, end=76)
+  VariableDeclaration(start=67, end=76)
     name
       Identifier(start=67 end=68) a
     type
@@ -64,7 +64,7 @@ Program
         OptionalType(start=71 end=75)
           IdentifierType(start=71 end=74)
             Identifier(start=71 end=74) int
-  VariableDeclaration(start=76, end=87)
+  VariableDeclaration(start=77, end=87)
     name
       Identifier(start=77 end=78) a
     type
@@ -72,7 +72,7 @@ Program
         ParenthesizedType(start=81 end=86)
           IdentifierType(start=82 end=85)
             Identifier(start=82 end=85) int
-  VariableDeclaration(start=87, end=100)
+  VariableDeclaration(start=88, end=100)
     name
       Identifier(start=88 end=89) a
     type
@@ -80,7 +80,7 @@ Program
         ReferenceType(start=92 end=99)
           IdentifierType(start=96 end=99)
             Identifier(start=96 end=99) int
-  VariableDeclaration(start=100, end=115)
+  VariableDeclaration(start=101, end=115)
     name
       Identifier(start=101 end=102) a
     type

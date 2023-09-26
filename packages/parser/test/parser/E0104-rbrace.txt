@@ -1,0 +1,5 @@
+{
+===== err =====
+anonymous:1:1: ParseError: E0104 - Unexpected token `{`
+1 | {
+  | ^

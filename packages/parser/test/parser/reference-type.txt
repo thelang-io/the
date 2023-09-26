@@ -18,7 +18,7 @@ Program
         ArrayType(start=7 end=12)
           IdentifierType(start=7 end=10)
             Identifier(start=7 end=10) int
-  VariableDeclaration(start=12, end=30)
+  VariableDeclaration(start=13, end=30)
     name
       Identifier(start=13 end=14) a
     type
@@ -27,14 +27,14 @@ Program
           returnType
             IdentifierType(start=26 end=30)
               Identifier(start=26 end=30) void
-  VariableDeclaration(start=30, end=41)
+  VariableDeclaration(start=31, end=41)
     name
       Identifier(start=31 end=32) a
     type
       ReferenceType(start=34 end=41)
         IdentifierType(start=38 end=41)
           Identifier(start=38 end=41) int
-  VariableDeclaration(start=41, end=57)
+  VariableDeclaration(start=42, end=57)
     name
       Identifier(start=42 end=43) a
     type
@@ -46,7 +46,7 @@ Program
           valueType
             IdentifierType(start=53 end=56)
               Identifier(start=53 end=56) str
-  VariableDeclaration(start=57, end=76)
+  VariableDeclaration(start=58, end=76)
     name
       Identifier(start=58 end=59) a
     type
@@ -57,7 +57,7 @@ Program
               Identifier(start=65 end=70) Test1
           name
             Identifier(start=71 end=76) Test2
-  VariableDeclaration(start=76, end=88)
+  VariableDeclaration(start=77, end=88)
     name
       Identifier(start=77 end=78) a
     type
@@ -65,7 +65,7 @@ Program
         OptionalType(start=84 end=88)
           IdentifierType(start=84 end=87)
             Identifier(start=84 end=87) int
-  VariableDeclaration(start=88, end=101)
+  VariableDeclaration(start=89, end=101)
     name
       Identifier(start=89 end=90) a
     type
@@ -73,7 +73,7 @@ Program
         ParenthesizedType(start=95 end=101)
           IdentifierType(start=97 end=100)
             Identifier(start=97 end=100) int
-  VariableDeclaration(start=101, end=116)
+  VariableDeclaration(start=102, end=116)
     name
       Identifier(start=102 end=103) a
     type
@@ -81,7 +81,7 @@ Program
         ReferenceType(start=109 end=116)
           IdentifierType(start=113 end=116)
             Identifier(start=113 end=116) int
-  VariableDeclaration(start=116, end=133)
+  VariableDeclaration(start=117, end=133)
     name
       Identifier(start=117 end=118) a
     type
@@ -91,7 +91,7 @@ Program
             Identifier(start=124 end=127) int
           IdentifierType(start=130 end=133)
             Identifier(start=130 end=133) str
-  VariableDeclaration(start=133, end=157)
+  VariableDeclaration(start=134, end=157)
     name
       Identifier(start=134 end=135) a
     type

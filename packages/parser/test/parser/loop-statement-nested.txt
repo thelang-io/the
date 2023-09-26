@@ -32,7 +32,7 @@ Program
           IntegerLiteral(start=13, end=15 type=Decimal) 20
     body
       BlockStatement(start=16, end=66)
-        VariableDeclaration(start=17, end=30 mut)
+        VariableDeclaration(start=20, end=30 mut)
           name
             Identifier(start=24 end=25) k
           initializer
@@ -90,14 +90,14 @@ Program
           OpPlusPlus(start=88 end=90) ++
     body
       BlockStatement(start=91, end=138)
-        VariableDeclaration(start=92, end=101)
+        VariableDeclaration(start=95, end=101)
           name
             Identifier(start=95 end=96) k
           initializer
             Identifier(start=100 end=101) i
         LoopStatement(start=104, end=136)
           initializer
-            VariableDeclaration(start=108, end=115)
+            VariableDeclaration(start=109, end=115)
               name
                 Identifier(start=109 end=110) i
               initializer
@@ -126,7 +126,7 @@ Program
                     OpPlusPlus(start=132 end=134) ++
   LoopStatement(start=139, end=245)
     initializer
-      VariableDeclaration(start=143, end=150)
+      VariableDeclaration(start=144, end=150)
         name
           Identifier(start=144 end=145) i
         initializer
@@ -149,7 +149,7 @@ Program
       BlockStatement(start=164, end=245)
         LoopStatement(start=168, end=243)
           initializer
-            VariableDeclaration(start=172, end=179)
+            VariableDeclaration(start=173, end=179)
               name
                 Identifier(start=173 end=174) j
               initializer

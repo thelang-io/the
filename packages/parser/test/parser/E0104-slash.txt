@@ -1,0 +1,15 @@
+loop {
+  test: /
+}
+===== err =====
+anonymous:2:8: ParseError: E0133 - Expected variable declaration type after name
+1 | loop {
+2 |   test: /
+  |        ^
+3 | }
+
+anonymous:2:9: ParseError: E0104 - Unexpected token `/`
+1 | loop {
+2 |   test: /
+  |         ^
+3 | }

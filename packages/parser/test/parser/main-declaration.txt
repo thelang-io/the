@@ -22,7 +22,7 @@ Program
     BlockStatement(start=5, end=7)
   MainDeclaration(start=9, end=190)
     BlockStatement(start=14, end=190)
-      VariableDeclaration(start=15, end=24)
+      VariableDeclaration(start=18, end=24)
         name
           Identifier(start=18 end=19) a
         initializer
@@ -49,7 +49,7 @@ Program
         name
           Identifier(start=86 end=90) Test
         body
-          ObjectDeclarationProperty(start=92, end=99)
+          ObjectDeclarationProperty(start=93, end=99)
             name
               Identifier(start=93 end=94) a
             type

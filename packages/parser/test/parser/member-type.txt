@@ -12,7 +12,7 @@ Program
             Identifier(start=3 end=8) Test1
         name
           Identifier(start=9 end=14) Test2
-  VariableDeclaration(start=14, end=35)
+  VariableDeclaration(start=15, end=35)
     name
       Identifier(start=15 end=16) a
     type

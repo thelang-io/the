@@ -98,11 +98,21 @@ export obj Parser {
     return nil
   }
 
-  fn nextIdentifier (mut self: ref Self, allowKeywords := false) t.Identifier? {
+  fn nextIdentifier (mut self: ref Self) t.Identifier? {
     startPos := self.tokenizer.pos()
     tk := self.tokenizer.next()
 
-    if tk.t == .Id || (allowKeywords && tk.t.rawValue.slice(0, 2) == "Kw") {
+    if (
+      tk.t == .Id ||
+      tk.t == .KwAs ||
+      tk.t == .KwAsync ||
+      tk.t == .KwAwait ||
+      tk.t == .KwFn ||
+      tk.t == .KwFrom ||
+      tk.t == .KwImport ||
+      tk.t == .KwIs ||
+      tk.t == .KwType
+    ) {
       return t.Identifier{name: tk.val, start: tk.start, end: tk.end}
     }
 
@@ -307,7 +317,7 @@ export obj Parser {
       parameterStartPos = self.tokenizer.pos()
       parameterMutable := self.tokenizer.lookahead(.KwMut)
       canGoBack := !asynchronous && parameters.empty && !parameterMutable
-      parameterName := self.nextIdentifier(allowKeywords: true)
+      parameterName := self.nextIdentifier()
 
       if parameterName == nil {
         if canGoBack {
@@ -446,7 +456,7 @@ export obj Parser {
       }
 
       memberStartPos = self.tokenizer.pos()
-      mut name := self.nextIdentifier(allowKeywords: true)
+      mut name := self.nextIdentifier()
 
       if name == nil {
         self._raise(errors.E0147())
@@ -563,7 +573,7 @@ export obj Parser {
 
       parameterStartPos = self.tokenizer.pos()
       parameterMutable := self.tokenizer.lookahead(.KwMut)
-      parameterName := self.nextIdentifier(allowKeywords: true)
+      parameterName := self.nextIdentifier()
 
       if parameterName == nil {
         self._raise(errors.E0164())
@@ -690,7 +700,7 @@ export obj Parser {
       parameterMutable := self.tokenizer.lookahead(.KwMut)
       canGoBack := !asynchronous && parameters.empty && !parameterMutable
       beforeNamePos := self.tokenizer.pos()
-      mut parameterName := self.nextIdentifier(allowKeywords: true)
+      mut parameterName := self.nextIdentifier()
       parameterName2 := parameterName
       mut parameterType: t.Type?
 
@@ -698,11 +708,6 @@ export obj Parser {
         parameterType = self.nextType()
 
         if parameterType == nil {
-          if canGoBack {
-            self.tokenizer.seek(startPos)
-            return nil
-          }
-
           self._raise(errors.E0140())
           parameterType = Type.dummy()
         }
@@ -1247,7 +1252,7 @@ export obj Parser {
     }
 
     readerStartPos := self.tokenizer.readerStartPos()
-    mut name := self.nextIdentifier(allowKeywords: true)
+    mut name := self.nextIdentifier()
 
     if name == nil {
       self._raise(errors.E0139("dot"))
@@ -1515,23 +1520,15 @@ export obj Parser {
 
   fn _maybeVariableDeclaration (mut self: ref Self, insideObjectDeclaration := false) t.Statement? {
     startPos := self.tokenizer.pos()
-
-    if (
-      !self.tokenizer.lookahead(.KwConst, true) &&
-      !self.tokenizer.lookahead(.KwMut, true) &&
-      !self.tokenizer.lookahead(.Id, true)
-    ) {
-      return nil
-    }
-
-    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
+    mut readerStartPos: int
     mut name: t.Identifier
     mut constant := false
     mut mutable := false
 
     if self.tokenizer.lookahead(.KwConst) {
+      readerStartPos = self.tokenizer.readerStartPos()
       constant = true
-      possibleName := self.nextIdentifier(allowKeywords: insideObjectDeclaration)
+      possibleName := self.nextIdentifier()
 
       if possibleName == nil {
         self._raise(errors.E0131("const"))
@@ -1539,8 +1536,9 @@ export obj Parser {
         name = possibleName
       }
     } elif self.tokenizer.lookahead(.KwMut) {
+      readerStartPos = self.tokenizer.readerStartPos()
       mutable = true
-      possibleName := self.nextIdentifier(allowKeywords: insideObjectDeclaration)
+      possibleName := self.nextIdentifier()
 
       if possibleName == nil {
         self._raise(errors.E0131("mut"))
@@ -1548,7 +1546,9 @@ export obj Parser {
         name = possibleName
       }
     } else {
-      possibleName := self.nextIdentifier(allowKeywords: insideObjectDeclaration)
+      possibleName := self.nextIdentifier()
+      if possibleName == nil { return nil }
+      readerStartPos = self.tokenizer.readerStartPos()
       name = possibleName as t.Identifier
 
       if !self.tokenizer.lookahead(.OpColon, true) && !self.tokenizer.lookahead(.OpColonEq, true) {
@@ -1895,7 +1895,7 @@ export obj Parser {
       }
 
       argumentStartPos = self.tokenizer.pos()
-      name := self.nextIdentifier(allowKeywords: true)
+      name := self.nextIdentifier()
 
       if name == nil {
         expression := self.nextExpression()
@@ -2129,7 +2129,7 @@ export obj Parser {
       }
 
       propertyStartPos = self.tokenizer.pos()
-      name := self.nextIdentifier(allowKeywords: true)
+      name := self.nextIdentifier()
 
       if name == nil {
         if properties.empty {
@@ -2185,7 +2185,7 @@ export obj Parser {
   }
 
   fn _wrapPropertyAccessExpression (mut self: ref Self, expression: t.Expression, startPos: int, tk: t.Token) ParserWrapOutput {
-    mut name := self.nextIdentifier(allowKeywords: true)
+    mut name := self.nextIdentifier()
 
     if name == nil {
       self._raise(errors.E0139("dot"))
