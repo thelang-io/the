@@ -11,6 +11,7 @@ import * as t from "./types"
 
 export obj Tokenizer {
   mut data: t.Token[]
+  mut dataLen: int
   mut errors: str[]
   mut reader: ref Reader.Reader
   mut state: t.TokenizerState
@@ -36,21 +37,17 @@ export obj Tokenizer {
   }
 
   fn next (mut self: ref Self, allowComments := false) t.Token {
-    if !self.data.empty && (self.state.idx == self.data.len && self.data[-1].t == .Eof) {
+    if self.dataLen != 0 && (self.state.idx == self.dataLen && self.data[-1].t == .Eof) {
       throw error_NewError("Tried next on Tokenizer eof")
     }
 
     loop {
-      mut tk: t.Token
-
-      if self.data.len > self.state.idx {
-        tk = self.data[self.state.idx]
-      } else {
-        tk = self._getToken()
-        self.data.push(tk)
+      if self.dataLen <= self.state.idx {
+        self.data.push(self._getToken())
+        self.dataLen++
       }
 
-      self.state.idx++
+      tk := self.data[self.state.idx++]
 
       if (allowComments || (tk.t != .CommentBlock && tk.t != .CommentLine)) && tk.t != .Whitespace {
         return tk
@@ -71,7 +68,7 @@ export obj Tokenizer {
   }
 
   fn readerSeek (mut self: ref Self, pos: int) int {
-    loop i := self.data.len - 1; i >= 0; i-- {
+    loop i := self.dataLen - 1; i >= 0; i-- {
       if self.data[i].start <= pos && pos <= self.data[i].end {
         self.seek(i)
         return
