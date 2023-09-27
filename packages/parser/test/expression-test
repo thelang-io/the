@@ -86,7 +86,7 @@ export fn TEST_Expression_typeToExpression () {
   EXPECT_EQ(string.expression(Expression.typeToExpression(parseType("Test1.Test2"))), "Test1.Test2")
 
   EXPECT_THROW_WITH_MESSAGE(() -> void {
-    string.expression(Expression.typeToExpression(parseType("Test{}")))
+    string.expression(Expression.typeToExpression(parseType("Test[]")))
   }, "Unable to transform type to expression")
 }
 
