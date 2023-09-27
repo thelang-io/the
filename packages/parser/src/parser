@@ -32,6 +32,10 @@ export obj ParserWrapOutput {
   mut shouldWrap: bool
 }
 
+fn commentsStartPos (comments: ref t.Token[], startPos: int) int {
+  return comments.empty ? startPos : comments[0].start
+}
+
 export obj Parser {
   mut tokenizer: ref Tokenizer.Tokenizer
 
@@ -55,7 +59,7 @@ export obj Parser {
 
       return Statement.create(
         t.EofStatement{},
-        self.tokenizer.readerStartPos(),
+        commentsStartPos(ref comments, self.tokenizer.readerStartPos()),
         self.tokenizer.readerEndPos(),
         leadingComments: comments
       )
@@ -91,6 +95,9 @@ export obj Parser {
     ) {
       e.leadingComments = comments
       e.trailingComments = self.comments()
+      e.start = commentsStartPos(ref comments, e.start)
+      e.end = self.tokenizer.readerEndPos()
+
       return shouldWrap ? self._wrapExpression(e) : e
     }
 
@@ -156,14 +163,19 @@ export obj Parser {
     ) {
       statement.leadingComments = comments
       statement.trailingComments = self.comments()
+      statement.start = commentsStartPos(ref comments, statement.start)
+      statement.end = self.tokenizer.readerEndPos()
+
       return shouldWrap ? self._wrapStatement(statement) : statement
     } elif !insideObjectDeclaration && self.tokenizer.lookahead(.OpSemi) {
+      trailingComments := self.comments()
+
       return Statement.create(
         t.EmptyStatement{},
-        self.tokenizer.readerStartPos(),
+        commentsStartPos(ref comments, self.tokenizer.readerStartPos()),
         self.tokenizer.readerEndPos(),
         leadingComments: comments,
-        trailingComments: self.comments()
+        trailingComments: trailingComments
       )
     }
 
@@ -182,6 +194,9 @@ export obj Parser {
     ) {
       possibleType.leadingComments = comments
       possibleType.trailingComments = self.comments()
+      possibleType.start = commentsStartPos(ref comments, possibleType.start)
+      possibleType.end = self.tokenizer.readerEndPos()
+
       return self._wrapType(possibleType, withoutUnion: withoutUnion)
     }
 
@@ -2004,6 +2019,7 @@ export obj Parser {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .As)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif (
       self.tokenizer.lookahead(.OpAmpEq, true) ||
@@ -2023,6 +2039,7 @@ export obj Parser {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .Assignment)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif (
       self.tokenizer.lookahead(.OpAmp, true) ||
@@ -2047,41 +2064,49 @@ export obj Parser {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .Binary)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif self.tokenizer.lookahead(.OpLPar, true) {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .Call)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif self.tokenizer.lookahead(.OpQn, true) {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .Conditional)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif self.tokenizer.lookahead(.OpLBrack, true) {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .ElementAccess)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif self.tokenizer.lookahead(.KwIs, true) {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .Is)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif self.tokenizer.lookahead(.OpLBrace, true) {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .Object)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif self.tokenizer.lookahead(.OpDot, true) {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .PropertyAccess)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     } elif self.tokenizer.lookahead(.OpMinusMinus, true) || self.tokenizer.lookahead(.OpPlusPlus, true) {
       tk := self.tokenizer.next()
       mut wrapOutput := self._precedence(e, startPos, tk, .Unary)
       wrapOutput.expression.trailingComments = self.comments()
+      wrapOutput.expression.end = self.tokenizer.readerEndPos()
       return wrapOutput.shouldWrap ? self._wrapExpression(wrapOutput.expression) : wrapOutput.expression
     }
 

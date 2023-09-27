@@ -203,7 +203,7 @@ Program
               Identifier(start=320 end=323) str
   IfStatement(start=326, end=348)
     condition
-      AssignmentExpression(start=329, end=348)
+      AssignmentExpression(start=329, end=337)
         left
           Identifier(start=329 end=330) a
         op
@@ -220,7 +220,7 @@ Program
               Identifier(start=343 end=346) str
   IfStatement(start=349, end=371)
     condition
-      BinaryExpression(start=352, end=371)
+      BinaryExpression(start=352, end=360)
         left
           Identifier(start=352 end=353) a
         op
@@ -237,7 +237,7 @@ Program
               Identifier(start=366 end=369) str
   IfStatement(start=372, end=398)
     condition
-      ConditionalExpression(start=375, end=398)
+      ConditionalExpression(start=375, end=387)
         condition
           Identifier(start=375 end=376) a
         consequent
