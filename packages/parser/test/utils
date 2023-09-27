@@ -3,7 +3,6 @@
  * Licensed under the MIT License
  */
 
-import EXPECT_EQ from "the/testing"
 import parse from "../src/parser"
 import * as t from "../src/types"
 

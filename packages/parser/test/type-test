@@ -3,7 +3,6 @@
  * Licensed under the MIT License
  */
 
-import EXPECT_EQ from "the/testing"
 import EXPECT_TRUE from "./utils"
 import dummyIdentifier from "../src/expression"
 import * as Type from "../src/type"

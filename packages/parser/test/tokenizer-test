@@ -3,7 +3,6 @@
  * Licensed under the MIT License
  */
 
-import EXPECT_EQ from "the/testing"
 import
   EXPECT_FALSE,
   EXPECT_NO_THROW,

@@ -3,7 +3,6 @@
  * Licensed under the MIT License
  */
 
-import EXPECT_EQ from "the/testing"
 import EXPECT_FALSE, EXPECT_THROW_WITH_MESSAGE, EXPECT_TRUE from "./utils"
 import * as Token from "../src/token"
 import * as t from "../src/types"
