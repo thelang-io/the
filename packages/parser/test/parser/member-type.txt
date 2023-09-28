@@ -1,0 +1,29 @@
+a: Test1.Test2
+a: Test1.Test2.Test3
+===== out =====
+Program
+  VariableDeclaration(start=0, end=14)
+    name
+      Identifier(start=0 end=1) a
+    type
+      MemberType(start=3 end=14)
+        type
+          IdentifierType(start=3 end=8)
+            Identifier(start=3 end=8) Test1
+        name
+          Identifier(start=9 end=14) Test2
+  VariableDeclaration(start=15, end=35)
+    name
+      Identifier(start=15 end=16) a
+    type
+      MemberType(start=18 end=35)
+        type
+          MemberType(start=18 end=29)
+            type
+              IdentifierType(start=18 end=23)
+                Identifier(start=18 end=23) Test1
+            name
+              Identifier(start=24 end=29) Test2
+        name
+          Identifier(start=30 end=35) Test3
+  EofStatement(start=35, end=35)

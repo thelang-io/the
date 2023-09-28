@@ -1,0 +1,5 @@
+a := { "key1": "value1", "key2" }
+===== err =====
+anonymous:1:32: ParseError: E0113 - Expected colon after map expression key
+1 | a := { "key1": "value1", "key2" }
+  |                                ^

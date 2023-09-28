@@ -1,0 +1,82 @@
+if test {}
+if test {
+  handle(test)
+}
+if (test == 2) return 2
+if (test == 2) return 2
+else return 3
+if (test == 2) return 2
+elif (test == 3) return 3
+if (test == 2) return 2
+elif (test == 3) return 3
+else return 4
+if (test == 2) {
+  return 2
+}
+if test == 2 {
+  return 2
+} else {
+  return 3
+}
+if test == 2 {
+  return 2
+} elif test == 3 {
+  return 3
+}
+if test == 2 {
+  return 2
+} elif (test == 3) return 3
+if test == 2 {
+  return 2
+} elif test == 3 {
+  return 3
+} else {
+  return 4
+}
+if test == 2 {
+  return 2
+} elif test == 3 {
+  return 3
+} else return 4
+main {
+  if test {}
+  if test {
+    handle(test)
+  }
+  if (test == 2) return 2
+  if (test == 2) return 2
+  else return 3
+  if (test == 2) return 2
+  elif (test == 3) return 3
+  if (test == 2) return 2
+  elif (test == 3) return 3
+  else return 4
+  if (test == 2) {
+    return 2
+  }
+  if test == 2 {
+    return 2
+  } else {
+    return 3
+  }
+  if test == 2 {
+    return 2
+  } elif test == 3 {
+    return 3
+  }
+  if test == 2 {
+    return 2
+  } elif (test == 3) return 3
+  if test == 2 {
+    return 2
+  } elif test == 3 {
+    return 3
+  } else {
+    return 4
+  }
+  if test == 2 {
+    return 2
+  } elif test == 3 {
+    return 3
+  } else return 4
+}

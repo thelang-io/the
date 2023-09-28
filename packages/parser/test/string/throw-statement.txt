@@ -1,0 +1,4 @@
+throw error
+main {
+  throw error
+}

@@ -1,0 +1,5 @@
+0123456789
+===== err =====
+anonymous:1:1: SyntaxError: E0008 - Leading zero integer literals are not allowed
+1 | 0123456789
+  | ~~~~~~~~~~

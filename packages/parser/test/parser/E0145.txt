@@ -1,0 +1,5 @@
+enum { One, Two }
+===== err =====
+anonymous:1:5: ParseError: E0145 - Expected enumeration declaration name after `enum` keyword
+1 | enum { One, Two }
+  |     ^

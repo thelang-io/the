@@ -1,0 +1,7 @@
+await test
+===== out =====
+Program
+  ExpressionStatement(start=0, end=10)
+    AwaitExpression(start=0, end=10)
+      Identifier(start=6 end=10) test
+  EofStatement(start=10, end=10)

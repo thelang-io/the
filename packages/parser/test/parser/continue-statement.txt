@@ -1,0 +1,14 @@
+main {
+  loop {
+    continue
+  }
+}
+===== out =====
+Program
+  MainDeclaration(start=0, end=34)
+    BlockStatement(start=5, end=34)
+      LoopStatement(start=9, end=32)
+        body
+          BlockStatement(start=14, end=32)
+            ContinueStatement(start=20, end=28)
+  EofStatement(start=34, end=34)

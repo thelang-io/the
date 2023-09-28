@@ -1,0 +1,10 @@
+a := ref test
+===== out =====
+Program
+  VariableDeclaration(start=0, end=13)
+    name
+      Identifier(start=0 end=1) a
+    initializer
+      ReferenceExpression(start=5, end=13)
+        Identifier(start=9 end=13) test
+  EofStatement(start=13, end=13)

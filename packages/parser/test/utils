@@ -1,0 +1,76 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import parse from "../src/parser"
+import * as t from "../src/types"
+
+const ERR_DELIMITER := "===== err =====" + os_EOL
+const OUT_DELIMITER := "===== out =====" + os_EOL
+
+obj TestFileParseResult {
+  delimiter: str
+  in: str
+  out: str
+}
+
+export fn EXPECT_FALSE (a: bool) {
+  EXPECT_EQ(a, false)
+}
+
+export fn EXPECT_TRUE (a: bool) {
+  EXPECT_EQ(a, true)
+}
+
+export fn EXPECT_NO_THROW (function: () -> void) bool {
+  mut message: str
+
+  try {
+    function()
+  } catch err: error_Error {
+    message = err.message
+  }
+
+  EXPECT_EQ(message, "")
+}
+
+export fn EXPECT_THROW_WITH_MESSAGE (function: () -> void, message: str) bool {
+  mut errMessage: str
+
+  try {
+    function()
+  } catch err: error_Error {
+    errMessage = err.message
+  }
+
+  EXPECT_EQ(errMessage, message)
+}
+
+export fn parseExpression (code: str) t.Expression {
+  f := parse(code)
+  statement := f.program.body[0].asExpression()
+  return statement.expression
+}
+
+export fn parseStatement (code: str) t.Statement {
+  f := parse(code)
+  return f.program.body[0]
+}
+
+export fn parseTestFile (path: str) TestFileParseResult {
+  content := fs_readFileSync(path).str()
+  delimiter := content.find(OUT_DELIMITER) == -1 ? ERR_DELIMITER : OUT_DELIMITER
+
+  return TestFileParseResult{
+    delimiter: delimiter,
+    in: content.find(delimiter) == 0 ? "" : content.slice(0, content.find(delimiter) - os_EOL.len),
+    out: content.slice(content.find(delimiter) + delimiter.len)
+  }
+}
+
+export fn parseType (code: str) t.Type {
+  f := parse("var: " + code)
+  statement := f.program.body[0].asVariableDeclaration()
+  return statement.t as t.Type
+}

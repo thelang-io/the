@@ -1,0 +1,5 @@
+0o777.14
+===== err =====
+anonymous:1:1: SyntaxError: E0012 - Octal float literals are not allowed
+1 | 0o777.14
+  | ~~~~~~~~

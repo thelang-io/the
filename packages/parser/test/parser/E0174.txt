@@ -1,0 +1,5 @@
+import test, * T from "./test"
+===== err =====
+anonymous:1:15: ParseError: E0174 - Expected `as` keyword after import declaration namespace specifier
+1 | import test, * T from "./test"
+  |               ^

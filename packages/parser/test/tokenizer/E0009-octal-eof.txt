@@ -1,0 +1,5 @@
+0o
+===== err =====
+anonymous:1:1: SyntaxError: E0009 - Invalid octal integer literal
+1 | 0o
+  | ~~

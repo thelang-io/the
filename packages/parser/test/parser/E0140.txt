@@ -1,0 +1,5 @@
+a: (int, ,) -> void
+===== err =====
+anonymous:1:9: ParseError: E0140 - Expected function type parameter type
+1 | a: (int, ,) -> void
+  |         ^

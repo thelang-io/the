@@ -1,0 +1,4 @@
+type Alias = str
+main {
+  type Alias = str
+}

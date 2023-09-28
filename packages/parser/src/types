@@ -3,6 +3,11 @@
  * Licensed under the MIT License
  */
 
+export obj ParserError {
+  message: str
+  stack: str
+}
+
 export obj Token {
   mut t: TokenType
   mut val: str
@@ -395,7 +400,7 @@ export obj ObjectExpressionProperty {
 export obj ObjectExpression {
   id: Type
   properties: ObjectExpressionProperty[]
-  errorPosIdx: int
+  _errorPosIdx: int
 }
 
 export obj ParenthesizedExpression {

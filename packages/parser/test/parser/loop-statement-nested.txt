@@ -1,0 +1,206 @@
+loop i / 3 < 20 {
+  mut k := 1
+  loop k < 10 { k *= 2 }
+  i += k
+}
+loop i = 0; i < 10; i++ {
+  k := i
+  loop i := k; i < 10; i++ { j++ }
+}
+loop i := 0; i < 10; i++ {
+  loop j := 0; j < 10; j++ {
+    if (i / 2) * 2 == i { break }
+    k += i
+  }
+}
+===== out =====
+Program
+  LoopStatement(start=0, end=66)
+    condition
+      BinaryExpression(start=5, end=15)
+        left
+          BinaryExpression(start=5, end=10)
+            left
+              Identifier(start=5 end=6) i
+            op
+              OpSlash(start=7 end=8) /
+            right
+              IntegerLiteral(start=9, end=10 type=Decimal) 3
+        op
+          OpLt(start=11 end=12) <
+        right
+          IntegerLiteral(start=13, end=15 type=Decimal) 20
+    body
+      BlockStatement(start=16, end=66)
+        VariableDeclaration(start=20, end=30 mut)
+          name
+            Identifier(start=24 end=25) k
+          initializer
+            IntegerLiteral(start=29, end=30 type=Decimal) 1
+        LoopStatement(start=33, end=55)
+          condition
+            BinaryExpression(start=38, end=44)
+              left
+                Identifier(start=38 end=39) k
+              op
+                OpLt(start=40 end=41) <
+              right
+                IntegerLiteral(start=42, end=44 type=Decimal) 10
+          body
+            BlockStatement(start=45, end=55)
+              ExpressionStatement(start=47, end=53)
+                AssignmentExpression(start=47, end=53)
+                  left
+                    Identifier(start=47 end=48) k
+                  op
+                    OpStarEq(start=49 end=51) *=
+                  right
+                    IntegerLiteral(start=52, end=53 type=Decimal) 2
+        ExpressionStatement(start=58, end=64)
+          AssignmentExpression(start=58, end=64)
+            left
+              Identifier(start=58 end=59) i
+            op
+              OpPlusEq(start=60 end=62) +=
+            right
+              Identifier(start=63 end=64) k
+  LoopStatement(start=67, end=138)
+    initializer
+      ExpressionStatement(start=72, end=77)
+        AssignmentExpression(start=72, end=77)
+          left
+            Identifier(start=72 end=73) i
+          op
+            OpEq(start=74 end=75) =
+          right
+            IntegerLiteral(start=76, end=77 type=Decimal) 0
+    condition
+      BinaryExpression(start=79, end=85)
+        left
+          Identifier(start=79 end=80) i
+        op
+          OpLt(start=81 end=82) <
+        right
+          IntegerLiteral(start=83, end=85 type=Decimal) 10
+    update
+      UnaryExpression(start=87, end=90)
+        operand
+          Identifier(start=87 end=88) i
+        operator
+          OpPlusPlus(start=88 end=90) ++
+    body
+      BlockStatement(start=91, end=138)
+        VariableDeclaration(start=95, end=101)
+          name
+            Identifier(start=95 end=96) k
+          initializer
+            Identifier(start=100 end=101) i
+        LoopStatement(start=104, end=136)
+          initializer
+            VariableDeclaration(start=109, end=115)
+              name
+                Identifier(start=109 end=110) i
+              initializer
+                Identifier(start=114 end=115) k
+          condition
+            BinaryExpression(start=117, end=123)
+              left
+                Identifier(start=117 end=118) i
+              op
+                OpLt(start=119 end=120) <
+              right
+                IntegerLiteral(start=121, end=123 type=Decimal) 10
+          update
+            UnaryExpression(start=125, end=128)
+              operand
+                Identifier(start=125 end=126) i
+              operator
+                OpPlusPlus(start=126 end=128) ++
+          body
+            BlockStatement(start=129, end=136)
+              ExpressionStatement(start=131, end=134)
+                UnaryExpression(start=131, end=134)
+                  operand
+                    Identifier(start=131 end=132) j
+                  operator
+                    OpPlusPlus(start=132 end=134) ++
+  LoopStatement(start=139, end=245)
+    initializer
+      VariableDeclaration(start=144, end=150)
+        name
+          Identifier(start=144 end=145) i
+        initializer
+          IntegerLiteral(start=149, end=150 type=Decimal) 0
+    condition
+      BinaryExpression(start=152, end=158)
+        left
+          Identifier(start=152 end=153) i
+        op
+          OpLt(start=154 end=155) <
+        right
+          IntegerLiteral(start=156, end=158 type=Decimal) 10
+    update
+      UnaryExpression(start=160, end=163)
+        operand
+          Identifier(start=160 end=161) i
+        operator
+          OpPlusPlus(start=161 end=163) ++
+    body
+      BlockStatement(start=164, end=245)
+        LoopStatement(start=168, end=243)
+          initializer
+            VariableDeclaration(start=173, end=179)
+              name
+                Identifier(start=173 end=174) j
+              initializer
+                IntegerLiteral(start=178, end=179 type=Decimal) 0
+          condition
+            BinaryExpression(start=181, end=187)
+              left
+                Identifier(start=181 end=182) j
+              op
+                OpLt(start=183 end=184) <
+              right
+                IntegerLiteral(start=185, end=187 type=Decimal) 10
+          update
+            UnaryExpression(start=189, end=192)
+              operand
+                Identifier(start=189 end=190) j
+              operator
+                OpPlusPlus(start=190 end=192) ++
+          body
+            BlockStatement(start=193, end=243)
+              IfStatement(start=199, end=228)
+                condition
+                  BinaryExpression(start=202, end=218)
+                    left
+                      BinaryExpression(start=202, end=213)
+                        left
+                          ParenthesizedExpression(start=202, end=209)
+                            BinaryExpression(start=203, end=208)
+                              left
+                                Identifier(start=203 end=204) i
+                              op
+                                OpSlash(start=205 end=206) /
+                              right
+                                IntegerLiteral(start=207, end=208 type=Decimal) 2
+                        op
+                          OpStar(start=210 end=211) *
+                        right
+                          IntegerLiteral(start=212, end=213 type=Decimal) 2
+                    op
+                      OpEqEq(start=214 end=216) ==
+                    right
+                      Identifier(start=217 end=218) i
+                consequent
+                  BlockStatement(start=219, end=228)
+                    BreakStatement(start=221, end=226)
+              ExpressionStatement(start=233, end=239)
+                AssignmentExpression(start=233, end=239)
+                  left
+                    Identifier(start=233 end=234) k
+                  op
+                    OpPlusEq(start=235 end=237) +=
+                  right
+                    Identifier(start=238 end=239) i
+  EofStatement(start=245, end=245)

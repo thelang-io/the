@@ -5,34 +5,16 @@
 
 import * as t from "./types"
 
-fn escapeVal (val: str, xml := false) str {
-  mut result := ""
-
-  loop i := 0; i < val.len; i++ {
-    ch := val[i]
-
-    if ch == '\f' {
-      result += "\\f"
-    } elif ch == '\n' {
-      result += "\\n"
-    } elif ch == '\r' {
-      result += "\\r"
-    } elif ch == '\t' {
-      result += "\\t"
-    } elif ch == '\v' {
-      result += "\\v"
-    } elif ch == '"' && xml {
-      result += "\\\""
-    } else {
-      result += ch.str()
-    }
-  }
-
-  return result
-}
-
 export fn associativity (t: t.TokenType, unary := false) t.TokenAssociativity {
   if (
+    t == .KwAs || t == .KwAwait || t == .KwIs || t == .KwRef ||
+    t == .OpLBrace || t == .OpRBrace ||
+    t == .OpLPar || t == .OpRPar ||
+    t == .OpMinusMinus || t == .OpPlusPlus ||
+    t == .OpArrow
+  ) {
+    return .None
+  } elif (
     (unary && (t == .OpExcl || t == .OpMinus || t == .OpPlus || t == .OpTilde)) ||
     t == .OpAmpEq ||
     t == .OpAmpAmpEq ||
@@ -64,7 +46,7 @@ export fn associativity (t: t.TokenType, unary := false) t.TokenAssociativity {
     return .Left
   }
 
-  return .None
+  throw error_NewError("Tried associativity on unknown token")
 }
 
 export fn isCharEsc (ch: char) bool {
@@ -147,7 +129,7 @@ export fn precedence (t: t.TokenType, unary := false) int {
     return 16
   } elif t == .KwAwait || t == .KwRef {
     return 15
-  } elif unary && (t == .OpExcl || t == .OpMinus || t == .OpPlus || t == .OpTilde) {
+  } elif (unary && (t == .OpMinus || t == .OpPlus)) || t == .OpExcl || t == .OpTilde {
     return 14
   } elif t == .OpPercent || t == .OpSlash || t == .OpStar {
     return 12
@@ -196,23 +178,6 @@ export fn precedence (t: t.TokenType, unary := false) int {
   }
 
   throw error_NewError("Tried precedence on unknown token")
-}
-
-export fn toStr (tk: t.Token) str {
-  val := escapeVal(tk.val)
-  return tk.t.rawValue +
-    "(start=" + tk.start.str() + " end=" + tk.end.str() + ")" +
-    (val.empty ? "" : " " + val)
-}
-
-export fn toXML (tk: t.Token) str {
-  return
-    "<Token" +
-    " type=\"" + tk.t.rawValue + "\"" +
-    " val=\"" + escapeVal(tk.val, true) + "\"" +
-    " start=\"" + tk.start.str() + "\"" +
-    " end=\"" + tk.end.str() + "\"" +
-    " />"
 }
 
 export fn typeToIntegerLiteralType (tokenType: t.TokenType) t.IntegerLiteralType {

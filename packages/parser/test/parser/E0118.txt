@@ -1,0 +1,13 @@
+a := { "key": "value", :
+===== err =====
+anonymous:1:23: ParseError: E0118 - Expected map expression key
+1 | a := { "key": "value", :
+  |                       ^
+
+anonymous:1:23: ParseError: E0117 - Expected closing brace in map expression
+1 | a := { "key": "value", :
+  |                       ^
+
+anonymous:1:24: ParseError: E0104 - Unexpected token `:`
+1 | a := { "key": "value", :
+  |                        ^

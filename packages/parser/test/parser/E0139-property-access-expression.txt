@@ -1,0 +1,5 @@
+a := Test.1
+===== err =====
+anonymous:1:11: ParseError: E0139 - Expected identifier after dot
+1 | a := Test.1
+  |           ^

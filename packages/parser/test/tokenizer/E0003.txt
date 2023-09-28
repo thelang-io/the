@@ -1,0 +1,5 @@
+"
+===== err =====
+anonymous:1:1: SyntaxError: E0003 - Unterminated string literal
+1 | "
+  | ^

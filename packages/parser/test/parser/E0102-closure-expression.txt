@@ -1,0 +1,5 @@
+a := () -> void
+===== err =====
+anonymous:1:16: ParseError: E0102 - Expected opening brace after expression closure return type
+1 | a := () -> void
+  |                ^

@@ -1,0 +1,42 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import EXPECT_TRUE from "./utils"
+import * as Statement from "../src/statement"
+import * as t from "../src/types"
+
+export fn TEST_Statement_creates () {
+  statement := Statement.create(t.EmptyStatement{}, 0, 0)
+  EXPECT_TRUE(statement.isEmpty())
+}
+
+export fn TEST_Statement_createsWithComments () {
+  statement1 := Statement.create(
+    t.EmptyStatement{},
+    0,
+    0,
+    leadingComments: [
+      t.Token{t: .CommentLine, val: "// test"}
+    ]
+  )
+
+  statement2 := Statement.create(
+    t.EmptyStatement{},
+    0,
+    0,
+    trailingComments: [
+      t.Token{t: .CommentLine, val: "// test1"},
+      t.Token{t: .CommentLine, val: "// test2"}
+    ]
+  )
+
+  EXPECT_EQ(statement1.leadingComments.len, 1)
+  EXPECT_EQ(statement2.trailingComments.len, 2)
+}
+
+export fn TEST_Statement_dummy () {
+  statement := Statement.dummy()
+  EXPECT_TRUE(statement.body is t.DummyStatement)
+}

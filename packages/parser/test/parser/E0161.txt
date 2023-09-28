@@ -1,0 +1,5 @@
+try {} catch {}
+===== err =====
+anonymous:1:13: ParseError: E0161 - Expected try statement handler parameter declaration after `catch` keyword
+1 | try {} catch {}
+  |             ^

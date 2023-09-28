@@ -1,0 +1,5 @@
+0xG
+===== err =====
+anonymous:1:1: SyntaxError: E0009 - Invalid hexadecimal integer literal
+1 | 0xG
+  | ~~~

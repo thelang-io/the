@@ -1,0 +1,22 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import parse, textify from "../src/parser"
+import parseTestFile from "./utils"
+import * as t from "../src/types"
+
+export fn TEST_Parser_parse () {
+  files := fs_scandirSync("./test/parser")
+
+  loop i := 0; i < files.len; i++ {
+    file := files[i] as str
+    if file.slice(-4) != ".txt" { continue }
+
+    result := parseTestFile("./test/parser/" + file)
+    mut f := parse(result.in)
+    actualStdoutCode := textify(ref f)
+    EXPECT_EQ(result.out, actualStdoutCode)
+  }
+}

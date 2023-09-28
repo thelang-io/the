@@ -1,0 +1,9 @@
+fn test (a: int, b: str, {}
+===== err =====
+anonymous:1:25: ParseError: E0164 - Expected function declaration parameter name
+1 | fn test (a: int, b: str, {}
+  |                         ^
+
+anonymous:1:25: ParseError: E0103 - Expected closing parenthesis after function declaration parameters
+1 | fn test (a: int, b: str, {}
+  |                         ^

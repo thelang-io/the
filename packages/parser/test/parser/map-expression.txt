@@ -1,0 +1,105 @@
+a := {}
+a := { "test": 10 }
+a := { "test": 10, }
+a := { "key1": 10, "key2": "value" }
+a := { "key1": 10, "key2": "value", }
+a := { "key1": 10, "key2": "value", "key3": false }
+a := { "key1": 10, "key2": "value", "key3": false, }
+===== out =====
+Program
+  VariableDeclaration(start=0, end=7)
+    name
+      Identifier(start=0 end=1) a
+    initializer
+      MapExpression(start=5, end=7)
+  VariableDeclaration(start=8, end=27)
+    name
+      Identifier(start=8 end=9) a
+    initializer
+      MapExpression(start=13, end=27)
+        MapExpressionElement
+          key
+            StringLiteral(start=15, end=21) test
+          value
+            IntegerLiteral(start=23, end=25 type=Decimal) 10
+  VariableDeclaration(start=28, end=48)
+    name
+      Identifier(start=28 end=29) a
+    initializer
+      MapExpression(start=33, end=48)
+        MapExpressionElement
+          key
+            StringLiteral(start=35, end=41) test
+          value
+            IntegerLiteral(start=43, end=45 type=Decimal) 10
+  VariableDeclaration(start=49, end=85)
+    name
+      Identifier(start=49 end=50) a
+    initializer
+      MapExpression(start=54, end=85)
+        MapExpressionElement
+          key
+            StringLiteral(start=56, end=62) key1
+          value
+            IntegerLiteral(start=64, end=66 type=Decimal) 10
+        MapExpressionElement
+          key
+            StringLiteral(start=68, end=74) key2
+          value
+            StringLiteral(start=76, end=83) value
+  VariableDeclaration(start=86, end=123)
+    name
+      Identifier(start=86 end=87) a
+    initializer
+      MapExpression(start=91, end=123)
+        MapExpressionElement
+          key
+            StringLiteral(start=93, end=99) key1
+          value
+            IntegerLiteral(start=101, end=103 type=Decimal) 10
+        MapExpressionElement
+          key
+            StringLiteral(start=105, end=111) key2
+          value
+            StringLiteral(start=113, end=120) value
+  VariableDeclaration(start=124, end=175)
+    name
+      Identifier(start=124 end=125) a
+    initializer
+      MapExpression(start=129, end=175)
+        MapExpressionElement
+          key
+            StringLiteral(start=131, end=137) key1
+          value
+            IntegerLiteral(start=139, end=141 type=Decimal) 10
+        MapExpressionElement
+          key
+            StringLiteral(start=143, end=149) key2
+          value
+            StringLiteral(start=151, end=158) value
+        MapExpressionElement
+          key
+            StringLiteral(start=160, end=166) key3
+          value
+            BooleanLiteral(start=168, end=173) false
+  VariableDeclaration(start=176, end=228)
+    name
+      Identifier(start=176 end=177) a
+    initializer
+      MapExpression(start=181, end=228)
+        MapExpressionElement
+          key
+            StringLiteral(start=183, end=189) key1
+          value
+            IntegerLiteral(start=191, end=193 type=Decimal) 10
+        MapExpressionElement
+          key
+            StringLiteral(start=195, end=201) key2
+          value
+            StringLiteral(start=203, end=210) value
+        MapExpressionElement
+          key
+            StringLiteral(start=212, end=218) key3
+          value
+            BooleanLiteral(start=220, end=225) false
+  EofStatement(start=228, end=228)

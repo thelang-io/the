@@ -1,0 +1,5 @@
+a := [1 2]
+===== err =====
+anonymous:1:8: ParseError: E0106 - Expected comma after array expression element
+1 | a := [1 2]
+  |        ^

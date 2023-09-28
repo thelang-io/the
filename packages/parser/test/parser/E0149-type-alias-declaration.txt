@@ -1,0 +1,5 @@
+type = str
+===== err =====
+anonymous:1:5: ParseError: E0149 - Expected identifier after `type` keyword
+1 | type = str
+  |     ^

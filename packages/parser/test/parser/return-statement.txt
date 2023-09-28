@@ -1,0 +1,19 @@
+return
+return true
+return 1 + 1
+return
+===== out =====
+Program
+  ReturnStatement(start=0, end=6)
+  ReturnStatement(start=7, end=18)
+    BooleanLiteral(start=14, end=18) true
+  ReturnStatement(start=19, end=31)
+    BinaryExpression(start=26, end=31)
+      left
+        IntegerLiteral(start=26, end=27 type=Decimal) 1
+      op
+        OpPlus(start=28 end=29) +
+      right
+        IntegerLiteral(start=30, end=31 type=Decimal) 1
+  ReturnStatement(start=32, end=38)
+  EofStatement(start=38, end=38)

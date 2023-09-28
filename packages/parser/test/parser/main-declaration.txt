@@ -1,0 +1,117 @@
+main {}
+
+main {
+  a := 1
+  if true { print() }
+  loop { break }
+  fn test () {}
+  obj Test { a: int }
+  a
+  a.b
+  a += 2
+  print()
+  a > 2
+  true ? print() : print()
+  0
+  Test{a: 1}
+  a--
+}
+===== out =====
+Program
+  MainDeclaration(start=0, end=7)
+    BlockStatement(start=5, end=7)
+  MainDeclaration(start=9, end=190)
+    BlockStatement(start=14, end=190)
+      VariableDeclaration(start=18, end=24)
+        name
+          Identifier(start=18 end=19) a
+        initializer
+          IntegerLiteral(start=23, end=24 type=Decimal) 1
+      IfStatement(start=27, end=46)
+        condition
+          BooleanLiteral(start=30, end=34) true
+        consequent
+          BlockStatement(start=35, end=46)
+            ExpressionStatement(start=37, end=44)
+              CallExpression(start=37, end=44)
+                callee
+                  Identifier(start=37 end=42) print
+      LoopStatement(start=49, end=63)
+        body
+          BlockStatement(start=54, end=63)
+            BreakStatement(start=56, end=61)
+      FunctionDeclaration(start=63, end=79)
+        name
+          Identifier(start=69 end=73) test
+        body
+          BlockStatement(start=77, end=79)
+      ObjectDeclaration(start=82, end=101)
+        name
+          Identifier(start=86 end=90) Test
+        body
+          ObjectDeclarationProperty(start=93, end=99)
+            name
+              Identifier(start=93 end=94) a
+            type
+              IdentifierType(start=96 end=99)
+                Identifier(start=96 end=99) int
+      ExpressionStatement(start=104, end=105)
+        Identifier(start=104 end=105) a
+      ExpressionStatement(start=108, end=111)
+        PropertyAccessExpression(start=108, end=111)
+          expression
+            Identifier(start=108 end=109) a
+          name
+            Identifier(start=110 end=111) b
+      ExpressionStatement(start=114, end=120)
+        AssignmentExpression(start=114, end=120)
+          left
+            Identifier(start=114 end=115) a
+          op
+            OpPlusEq(start=116 end=118) +=
+          right
+            IntegerLiteral(start=119, end=120 type=Decimal) 2
+      ExpressionStatement(start=123, end=130)
+        CallExpression(start=123, end=130)
+          callee
+            Identifier(start=123 end=128) print
+      ExpressionStatement(start=133, end=138)
+        BinaryExpression(start=133, end=138)
+          left
+            Identifier(start=133 end=134) a
+          op
+            OpGt(start=135 end=136) >
+          right
+            IntegerLiteral(start=137, end=138 type=Decimal) 2
+      ExpressionStatement(start=141, end=165)
+        ConditionalExpression(start=141, end=165)
+          condition
+            BooleanLiteral(start=141, end=145) true
+          consequent
+            CallExpression(start=148, end=155)
+              callee
+                Identifier(start=148 end=153) print
+          alternate
+            CallExpression(start=158, end=165)
+              callee
+                Identifier(start=158 end=163) print
+      ExpressionStatement(start=168, end=169)
+        IntegerLiteral(start=168, end=169 type=Decimal) 0
+      ExpressionStatement(start=172, end=182)
+        ObjectExpression(start=172, end=182)
+          id
+            IdentifierType(start=172 end=176)
+              Identifier(start=172 end=176) Test
+          properties
+            ObjectExpressionProperty
+              name
+                Identifier(start=177 end=178) a
+              value
+                IntegerLiteral(start=180, end=181 type=Decimal) 1
+      ExpressionStatement(start=185, end=188)
+        UnaryExpression(start=185, end=188)
+          operand
+            Identifier(start=185 end=186) a
+          operator
+            OpMinusMinus(start=186 end=188) --
+  EofStatement(start=190, end=190)

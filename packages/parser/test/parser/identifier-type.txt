@@ -1,0 +1,17 @@
+a: int
+a: Test
+===== out =====
+Program
+  VariableDeclaration(start=0, end=6)
+    name
+      Identifier(start=0 end=1) a
+    type
+      IdentifierType(start=3 end=6)
+        Identifier(start=3 end=6) int
+  VariableDeclaration(start=7, end=14)
+    name
+      Identifier(start=7 end=8) a
+    type
+      IdentifierType(start=10 end=14)
+        Identifier(start=10 end=14) Test
+  EofStatement(start=14, end=14)

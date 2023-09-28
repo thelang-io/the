@@ -3,8 +3,24 @@
  * Licensed under the MIT License
  */
 
-import * as Token from "./token"
 import * as t from "./types"
+
+export fn escape (val: str) str {
+  mut result := ""
+
+  loop i := 0; i < val.len; i++ {
+    ch := val[i]
+
+    if ch == '\f' { result += "\\f" }
+    elif ch == '\n' { result += "\\n" }
+    elif ch == '\r' { result += "\\r" }
+    elif ch == '\t' { result += "\\t" }
+    elif ch == '\v' { result += "\\v" }
+    else { result += ch.str() }
+  }
+
+  return result
+}
 
 export fn FunctionParameterArray_toText (array: t.FunctionParameter[], indent := 0) str {
   mut result := ""
@@ -49,7 +65,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     comments += ' '.repeat(indent + 2) + "leadingComments:" + os_EOL
 
     loop i := 0; i < self.leadingComments.len; i++ {
-      comments += ' '.repeat(indent + 4) + Token.toStr(self.leadingComments[i]) + os_EOL
+      comments += ' '.repeat(indent + 4) + Token_toText(self.leadingComments[i]) + os_EOL
     }
   }
 
@@ -57,13 +73,14 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     comments += ' '.repeat(indent + 2) + "trailingComments:" + os_EOL
 
     loop i := 0; i < self.trailingComments.len; i++ {
-      comments += ' '.repeat(indent + 4) + Token.toStr(self.trailingComments[i]) + os_EOL
+      comments += ' '.repeat(indent + 4) + Token_toText(self.trailingComments[i]) + os_EOL
     }
   }
 
   if self.isIdentifier() {
     expression := self.asIdentifier()
     result += Identifier_toText(expression, indent: indent)
+    result += comments
   } elif self.isBooleanLiteral() {
     expression := self.asBooleanLiteral()
     result += ' '.repeat(indent) + "BooleanLiteral(" + beginAttrs + ")"
@@ -72,7 +89,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isCharacterLiteral() {
     expression := self.asCharacterLiteral()
     result += ' '.repeat(indent) + "CharacterLiteral(" + beginAttrs + ")"
-    result += " " + expression.value + os_EOL
+    result += " " + escape(expression.value) + os_EOL
     result += comments
   } elif self.isFloatingPointLiteral() {
     expression := self.asFloatingPointLiteral()
@@ -91,7 +108,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
   } elif self.isStringLiteral() {
     expression := self.asStringLiteral()
     result += ' '.repeat(indent) + "StringLiteral(" + beginAttrs + ")"
-    result += " " + expression.value + os_EOL
+    result += " " + escape(expression.value) + os_EOL
     result += comments
   } elif self.isArray() {
     expression := self.asArray()
@@ -116,7 +133,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     result += ' '.repeat(indent + 2) + "left" + os_EOL
     result += Expression_toText(expression.left, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "op" + os_EOL
-    result += ' '.repeat(indent + 4) + Token.toStr(expression.operator) + os_EOL
+    result += ' '.repeat(indent + 4) + Token_toText(expression.operator) + os_EOL
     result += ' '.repeat(indent + 2) + "right" + os_EOL
     result += Expression_toText(expression.right, indent: indent + 4)
   } elif self.isAwait() {
@@ -131,7 +148,7 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
     result += ' '.repeat(indent + 2) + "left" + os_EOL
     result += Expression_toText(expression.left, indent: indent + 4)
     result += ' '.repeat(indent + 2) + "op" + os_EOL
-    result += ' '.repeat(indent + 4) + Token.toStr(expression.operator) + os_EOL
+    result += ' '.repeat(indent + 4) + Token_toText(expression.operator) + os_EOL
     result += ' '.repeat(indent + 2) + "right" + os_EOL
     result += Expression_toText(expression.right, indent: indent + 4)
   } elif self.isCall() {
@@ -262,14 +279,14 @@ export fn Expression_toText (self: t.Expression, indent := 0) str {
 
     if expression.prefix {
       result += ' '.repeat(indent + 2) + "operator" + os_EOL
-      result += ' '.repeat(indent + 4) + Token.toStr(expression.operator) + os_EOL
+      result += ' '.repeat(indent + 4) + Token_toText(expression.operator) + os_EOL
       result += ' '.repeat(indent + 2) + "operand" + os_EOL
       result += Expression_toText(expression.operand, indent: indent + 4)
     } else {
       result += ' '.repeat(indent + 2) + "operand" + os_EOL
       result += Expression_toText(expression.operand, indent: indent + 4)
       result += ' '.repeat(indent + 2) + "operator" + os_EOL
-      result += ' '.repeat(indent + 4) + Token.toStr(expression.operator) + os_EOL
+      result += ' '.repeat(indent + 4) + Token_toText(expression.operator) + os_EOL
     }
   }
 
@@ -295,7 +312,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     comments += ' '.repeat(indent + 2) + "leadingComments:" + os_EOL
 
     loop i := 0; i < self.leadingComments.len; i++ {
-      comments += ' '.repeat(indent + 4) + Token.toStr(self.leadingComments[i]) + os_EOL
+      comments += ' '.repeat(indent + 4) + Token_toText(self.leadingComments[i]) + os_EOL
     }
   }
 
@@ -303,7 +320,7 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
     comments += ' '.repeat(indent + 2) + "trailingComments:" + os_EOL
 
     loop i := 0; i < self.trailingComments.len; i++ {
-      comments += ' '.repeat(indent + 4) + Token.toStr(self.trailingComments[i]) + os_EOL
+      comments += ' '.repeat(indent + 4) + Token_toText(self.trailingComments[i]) + os_EOL
     }
   }
 
@@ -571,6 +588,13 @@ export fn Statement_toText (self: t.Statement, indent := 0) str {
   return result
 }
 
+export fn Token_toText (tk: t.Token) str {
+  val := escape(tk.val)
+  return tk.t.rawValue +
+    "(start=" + tk.start.str() + " end=" + tk.end.str() + ")" +
+    (val.empty ? "" : " " + val)
+}
+
 export fn Type_toText (self: t.Type, indent := 0) str {
   mut result := ""
   mut beginAttrs := "start=" + self.start.str() + " end=" + self.end.str()
@@ -580,7 +604,7 @@ export fn Type_toText (self: t.Type, indent := 0) str {
     comments += ' '.repeat(indent + 2) + "leadingComments:" + os_EOL
 
     loop i := 0; i < self.leadingComments.len; i++ {
-      comments += ' '.repeat(indent + 4) + Token.toStr(self.leadingComments[i]) + os_EOL
+      comments += ' '.repeat(indent + 4) + Token_toText(self.leadingComments[i]) + os_EOL
     }
   }
 
@@ -588,7 +612,7 @@ export fn Type_toText (self: t.Type, indent := 0) str {
     comments += ' '.repeat(indent + 2) + "trailingComments:" + os_EOL
 
     loop i := 0; i < self.trailingComments.len; i++ {
-      comments += ' '.repeat(indent + 4) + Token.toStr(self.trailingComments[i]) + os_EOL
+      comments += ' '.repeat(indent + 4) + Token_toText(self.trailingComments[i]) + os_EOL
     }
   }
 

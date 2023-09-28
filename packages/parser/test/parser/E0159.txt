@@ -1,0 +1,5 @@
+try catch err: Error {}
+===== err =====
+anonymous:1:4: ParseError: E0159 - Expected try statement body
+1 | try catch err: Error {}
+  |    ^

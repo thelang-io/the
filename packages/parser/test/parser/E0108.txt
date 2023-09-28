@@ -1,0 +1,5 @@
+a := [1, ,]
+===== err =====
+anonymous:1:9: ParseError: E0108 - Expected expression in array expression
+1 | a := [1, ,]
+  |         ^

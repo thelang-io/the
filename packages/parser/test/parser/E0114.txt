@@ -1,0 +1,5 @@
+a := test[]
+===== err =====
+anonymous:1:11: ParseError: E0114 - Expected element access expression argument after opening bracket
+1 | a := test[]
+  |           ^

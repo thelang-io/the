@@ -1,0 +1,11 @@
+test is int
+===== out =====
+Program
+  ExpressionStatement(start=0, end=11)
+    IsExpression(start=0, end=11)
+      expression
+        Identifier(start=0 end=4) test
+      type
+        IdentifierType(start=8 end=11)
+          Identifier(start=8 end=11) int
+  EofStatement(start=11, end=11)

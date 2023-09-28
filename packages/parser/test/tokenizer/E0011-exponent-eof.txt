@@ -1,0 +1,5 @@
+0.1234E
+===== err =====
+anonymous:1:7: SyntaxError: E0011 - Invalid float literal exponent
+1 | 0.1234E
+  |       ^

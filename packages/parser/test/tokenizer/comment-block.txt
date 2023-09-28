@@ -1,0 +1,13 @@
+/**/
+/*test*/
+/* test */
+/*
+multiline
+comment
+*/
+===== out =====
+CommentBlock(start=0 end=4) /**/
+CommentBlock(start=5 end=13) /*test*/
+CommentBlock(start=14 end=24) /* test */
+CommentBlock(start=25 end=48) /*\nmultiline\ncomment\n*/
+Eof(start=48 end=48)

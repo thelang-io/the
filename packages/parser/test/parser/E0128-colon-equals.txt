@@ -1,0 +1,5 @@
+a := (a: int, b := ) -> void {}
+===== err =====
+anonymous:1:19: ParseError: E0128 - Expected closure expression parameter initializer after colon equals sign
+1 | a := (a: int, b := ) -> void {}
+  |                   ^

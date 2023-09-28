@@ -1,0 +1,5 @@
+a := (a: int, b: str) -> {}
+===== err =====
+anonymous:1:25: ParseError: E0130 - Expected closure expression return type after arrow
+1 | a := (a: int, b: str) -> {}
+  |                         ^

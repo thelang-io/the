@@ -1,0 +1,58 @@
+as
+async
+await
+break
+catch
+const
+continue
+elif
+else
+enum
+export
+false
+fn
+from
+if
+import
+is
+loop
+main
+mut
+nil
+obj
+ref
+return
+throw
+true
+try
+type
+===== out =====
+KwAs(start=0 end=2) as
+KwAsync(start=3 end=8) async
+KwAwait(start=9 end=14) await
+KwBreak(start=15 end=20) break
+KwCatch(start=21 end=26) catch
+KwConst(start=27 end=32) const
+KwContinue(start=33 end=41) continue
+KwElif(start=42 end=46) elif
+KwElse(start=47 end=51) else
+KwEnum(start=52 end=56) enum
+KwExport(start=57 end=63) export
+KwFalse(start=64 end=69) false
+KwFn(start=70 end=72) fn
+KwFrom(start=73 end=77) from
+KwIf(start=78 end=80) if
+KwImport(start=81 end=87) import
+KwIs(start=88 end=90) is
+KwLoop(start=91 end=95) loop
+KwMain(start=96 end=100) main
+KwMut(start=101 end=104) mut
+KwNil(start=105 end=108) nil
+KwObj(start=109 end=112) obj
+KwRef(start=113 end=116) ref
+KwReturn(start=117 end=123) return
+KwThrow(start=124 end=129) throw
+KwTrue(start=130 end=134) true
+KwTry(start=135 end=138) try
+KwType(start=139 end=143) type
+Eof(start=143 end=143)

@@ -1,0 +1,5 @@
+if test
+===== err =====
+anonymous:1:8: ParseError: E0151 - Expected if statement consequent statement
+1 | if test
+  |        ^

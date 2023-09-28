@@ -1,0 +1,21 @@
+0.0
+1.2
+1234.5678
+0.0e1
+1.2e+10
+1234.5678e-314
+===== out =====
+Program
+  ExpressionStatement(start=0, end=3)
+    FloatingPointLiteral(start=0, end=3) 0.0
+  ExpressionStatement(start=4, end=7)
+    FloatingPointLiteral(start=4, end=7) 1.2
+  ExpressionStatement(start=8, end=17)
+    FloatingPointLiteral(start=8, end=17) 1234.5678
+  ExpressionStatement(start=18, end=23)
+    FloatingPointLiteral(start=18, end=23) 0.0e1
+  ExpressionStatement(start=24, end=31)
+    FloatingPointLiteral(start=24, end=31) 1.2e+10
+  ExpressionStatement(start=32, end=46)
+    FloatingPointLiteral(start=32, end=46) 1234.5678e-314
+  EofStatement(start=46, end=46)

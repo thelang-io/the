@@ -1,0 +1,5 @@
+enum Test { One, Two = }
+===== err =====
+anonymous:1:23: ParseError: E0148 - Expected enumeration declaration member initializer after colon
+1 | enum Test { One, Two = }
+  |                       ^

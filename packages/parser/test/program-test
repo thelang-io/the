@@ -1,0 +1,198 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import Program_traverse, Statement_traverse from "../src/program"
+import parse from "../src/parser"
+import * as t from "../src/types"
+
+obj StatementTraverseResult {
+  mut countBlock: int
+  mut countBreak: int
+  mut countContinue: int
+  mut countEmpty: int
+  mut countEnumDeclaration: int
+  mut countExportDeclaration: int
+  mut countExportNamedDeclaration: int
+  mut countExpression: int
+  mut countFunctionDeclaration: int
+  mut countIf: int
+  mut countImportDeclaration: int
+  mut countLoop: int
+  mut countMainDeclaration: int
+  mut countObjectDeclaration: int
+  mut countObjectDeclarationMethod: int
+  mut countObjectDeclarationProperty: int
+  mut countReturn: int
+  mut countThrow: int
+  mut countTry: int
+  mut countTypeAliasDeclaration: int
+  mut countVariableDeclaration: int
+}
+
+fn statementTraverseHelper (code: str) StatementTraverseResult {
+  f := parse(code)
+  bodyLen := f.program.body.len
+  mut result := StatementTraverseResult{}
+
+  loop i := 0; i < bodyLen; i++ {
+    Statement_traverse(f.program.body[i], (it: t.Statement) -> void {
+      if it.isBlock() { result.countBlock++ }
+      elif it.isBreak() { result.countBreak++ }
+      elif it.isContinue() { result.countContinue++ }
+      elif it.isEmpty() { result.countEmpty++ }
+      elif it.isEnumDeclaration() { result.countEnumDeclaration++ }
+      elif it.isExportDeclaration() { result.countExportDeclaration++ }
+      elif it.isExportNamedDeclaration() { result.countExportNamedDeclaration++ }
+      elif it.isExpression() { result.countExpression++ }
+      elif it.isFunctionDeclaration() { result.countFunctionDeclaration++ }
+      elif it.isIf() { result.countIf++ }
+      elif it.isImportDeclaration() { result.countImportDeclaration++ }
+      elif it.isLoop() { result.countLoop++ }
+      elif it.isMainDeclaration() { result.countMainDeclaration++ }
+      elif it.isObjectDeclaration() { result.countObjectDeclaration++ }
+      elif it.isObjectDeclarationMethod() { result.countObjectDeclarationMethod++ }
+      elif it.isObjectDeclarationProperty() { result.countObjectDeclarationProperty++ }
+      elif it.isReturn() { result.countReturn++ }
+      elif it.isThrow() { result.countThrow++ }
+      elif it.isTry() { result.countTry++ }
+      elif it.isTypeAliasDeclaration() { result.countTypeAliasDeclaration++ }
+      elif it.isVariableDeclaration() { result.countVariableDeclaration++ }
+    })
+  }
+
+  return result
+}
+
+export fn TEST_Program_traverse () {
+  f := parse(
+    "import Tests from \"the/testing\"" + os_EOL + os_EOL +
+    "main {" + os_EOL +
+    "  mut b := 0" + os_EOL +
+    "  1 + b" + os_EOL +
+    "}"
+  )
+
+  mut expressionCount := 0
+  mut importDeclarationCount := 0
+  mut mainDeclarationCount := 0
+  mut variableDeclarationCount := 0
+
+  Program_traverse(ref f.program, (it: t.Statement) -> void {
+    if it.isExpression() { expressionCount++ }
+    if it.isImportDeclaration() { importDeclarationCount++ }
+    if it.isMainDeclaration() { mainDeclarationCount++ }
+    if it.isVariableDeclaration() { variableDeclarationCount++ }
+  })
+
+  EXPECT_EQ(expressionCount, 1)
+  EXPECT_EQ(importDeclarationCount, 1)
+  EXPECT_EQ(mainDeclarationCount, 1)
+  EXPECT_EQ(variableDeclarationCount, 1)
+}
+
+export fn TEST_Statement_traverse () {
+  EXPECT_EQ(
+    statementTraverseHelper("export fn test () {}").str(),
+    StatementTraverseResult{countBlock: 1, countExportDeclaration: 1, countFunctionDeclaration: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper("fn test () {}").str(),
+    StatementTraverseResult{countBlock: 1, countFunctionDeclaration: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper("if (test) return 1").str(),
+    StatementTraverseResult{countIf: 1, countReturn: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper("if (test) return 1 else return 2").str(),
+    StatementTraverseResult{countIf: 1, countReturn: 2}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper("if (test1) return 1 elif (test2) return 2 else return 3").str(),
+    StatementTraverseResult{countIf: 2, countReturn: 3}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper("loop { break }").str(),
+    StatementTraverseResult{countBlock: 1, countBreak: 1, countLoop: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper("loop i := 0; i < 10; i++ { print(i) }").str(),
+    StatementTraverseResult{countBlock: 1, countExpression: 1, countLoop: 1, countVariableDeclaration: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper(
+      "main {" + os_EOL +
+      "  if test {}" + os_EOL +
+      "  loop test {}" + os_EOL +
+      "}"
+    ).str(),
+    StatementTraverseResult{countBlock: 3, countIf: 1, countLoop: 1, countMainDeclaration: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper("obj Test {}").str(),
+    StatementTraverseResult{countObjectDeclaration: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper(
+      "obj Test {" + os_EOL +
+      "  fn test1 () {}" + os_EOL +
+      "  fn test2 () int {" + os_EOL +
+      "    print(1)" + os_EOL +
+      "    return 1" + os_EOL +
+      "  }" + os_EOL +
+      "}"
+    ).str(),
+    StatementTraverseResult{
+      countBlock: 2,
+      countExpression: 1,
+      countObjectDeclaration: 1,
+      countObjectDeclarationMethod: 2,
+      countReturn: 1
+    }.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper(
+      "obj Test {" + os_EOL +
+      "  mut a: int" + os_EOL +
+      "  mut b: int" + os_EOL +
+      "}"
+    ).str(),
+    StatementTraverseResult{countObjectDeclaration: 1, countObjectDeclarationProperty: 2}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper(
+      "try {" + os_EOL +
+      "  return 1" + os_EOL +
+      "} catch err: Error {" + os_EOL +
+      "  return 2" + os_EOL +
+      "}"
+    ).str(),
+    StatementTraverseResult{countBlock: 2, countReturn: 2, countTry: 1, countVariableDeclaration: 1}.str()
+  )
+
+  EXPECT_EQ(
+    statementTraverseHelper(
+      "try {" + os_EOL +
+      "  return 1" + os_EOL +
+      "} catch err1: Error {" + os_EOL +
+      "  return err1.message" + os_EOL +
+      "} catch err2: Error {" + os_EOL +
+      "  return err2.message" + os_EOL +
+      "}"
+    ).str(),
+    StatementTraverseResult{countBlock: 3, countReturn: 3, countTry: 1, countVariableDeclaration: 2}.str()
+  )
+}

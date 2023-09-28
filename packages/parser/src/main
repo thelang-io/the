@@ -73,7 +73,7 @@ import
   Type_toText
 from "./text"
 import Program_traverse from "./program"
-import parse, report, stringify from "./parser"
+import parse, report from "./parser"
 
 export ArrayType
 export FunctionType

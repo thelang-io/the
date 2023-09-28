@@ -1,0 +1,5 @@
+export
+===== err =====
+anonymous:1:7: ParseError: E0172 - Expected export declaration or expression after `export` keyword
+1 | export
+  |       ^

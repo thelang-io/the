@@ -1,0 +1,27 @@
+a := Test1.Test2
+a := Test1.Test2.Test3
+===== out =====
+Program
+  VariableDeclaration(start=0, end=16)
+    name
+      Identifier(start=0 end=1) a
+    initializer
+      PropertyAccessExpression(start=5, end=16)
+        expression
+          Identifier(start=5 end=10) Test1
+        name
+          Identifier(start=11 end=16) Test2
+  VariableDeclaration(start=17, end=39)
+    name
+      Identifier(start=17 end=18) a
+    initializer
+      PropertyAccessExpression(start=22, end=39)
+        expression
+          PropertyAccessExpression(start=22, end=33)
+            expression
+              Identifier(start=22 end=27) Test1
+            name
+              Identifier(start=28 end=33) Test2
+        name
+          Identifier(start=34 end=39) Test3
+  EofStatement(start=39, end=39)

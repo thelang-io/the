@@ -1,0 +1,5 @@
+fn test (a: int, b: str = ) {}
+===== err =====
+anonymous:1:26: ParseError: E0167 - Expected function declaration parameter initializer after equals sign
+1 | fn test (a: int, b: str = ) {}
+  |                          ^

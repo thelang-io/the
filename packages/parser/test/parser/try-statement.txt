@@ -1,0 +1,192 @@
+try {
+} catch err: Error {
+}
+try {
+  result := request("GET", "localhost")
+  print(result.body)
+} catch err: Error {
+}
+try {
+} catch err: Error {
+  print(err.stack, to: "stderr")
+}
+try {
+} catch err1: Error1 {
+  print("Error1:", err1.stack, to: "stderr")
+} catch err2: Error2 {
+  print("Error2:", err2.stack, to: "stderr")
+} catch err3: Error3 {
+  print("Error3:", err3.stack, to: "stderr")
+}
+===== out =====
+Program
+  TryStatement(start=0, end=28)
+    body
+      BlockStatement(start=4, end=7)
+    handlers
+      TryStatementHandler
+        parameter
+          VariableDeclaration(start=14, end=24)
+            name
+              Identifier(start=14 end=17) err
+            type
+              IdentifierType(start=19 end=24)
+                Identifier(start=19 end=24) Error
+        body
+          BlockStatement(start=25, end=28)
+  TryStatement(start=29, end=118)
+    body
+      BlockStatement(start=33, end=97)
+        VariableDeclaration(start=37, end=74)
+          name
+            Identifier(start=37 end=43) result
+          initializer
+            CallExpression(start=47, end=74)
+              callee
+                Identifier(start=47 end=54) request
+              arguments
+                CallExpressionArgument
+                  StringLiteral(start=55, end=60) GET
+                CallExpressionArgument
+                  StringLiteral(start=62, end=73) localhost
+        ExpressionStatement(start=77, end=95)
+          CallExpression(start=77, end=95)
+            callee
+              Identifier(start=77 end=82) print
+            arguments
+              CallExpressionArgument
+                PropertyAccessExpression(start=83, end=94)
+                  expression
+                    Identifier(start=83 end=89) result
+                  name
+                    Identifier(start=90 end=94) body
+    handlers
+      TryStatementHandler
+        parameter
+          VariableDeclaration(start=104, end=114)
+            name
+              Identifier(start=104 end=107) err
+            type
+              IdentifierType(start=109 end=114)
+                Identifier(start=109 end=114) Error
+        body
+          BlockStatement(start=115, end=118)
+  TryStatement(start=119, end=180)
+    body
+      BlockStatement(start=123, end=126)
+    handlers
+      TryStatementHandler
+        parameter
+          VariableDeclaration(start=133, end=143)
+            name
+              Identifier(start=133 end=136) err
+            type
+              IdentifierType(start=138 end=143)
+                Identifier(start=138 end=143) Error
+        body
+          BlockStatement(start=144, end=180)
+            ExpressionStatement(start=148, end=178)
+              CallExpression(start=148, end=178)
+                callee
+                  Identifier(start=148 end=153) print
+                arguments
+                  CallExpressionArgument
+                    PropertyAccessExpression(start=154, end=163)
+                      expression
+                        Identifier(start=154 end=157) err
+                      name
+                        Identifier(start=158 end=163) stack
+                  CallExpressionArgument
+                    name
+                      Identifier(start=165 end=167) to
+                    expression
+                      StringLiteral(start=169, end=177) stderr
+  TryStatement(start=181, end=392)
+    body
+      BlockStatement(start=185, end=188)
+    handlers
+      TryStatementHandler
+        parameter
+          VariableDeclaration(start=195, end=207)
+            name
+              Identifier(start=195 end=199) err1
+            type
+              IdentifierType(start=201 end=207)
+                Identifier(start=201 end=207) Error1
+        body
+          BlockStatement(start=208, end=256)
+            ExpressionStatement(start=212, end=254)
+              CallExpression(start=212, end=254)
+                callee
+                  Identifier(start=212 end=217) print
+                arguments
+                  CallExpressionArgument
+                    StringLiteral(start=218, end=227) Error1:
+                  CallExpressionArgument
+                    PropertyAccessExpression(start=229, end=239)
+                      expression
+                        Identifier(start=229 end=233) err1
+                      name
+                        Identifier(start=234 end=239) stack
+                  CallExpressionArgument
+                    name
+                      Identifier(start=241 end=243) to
+                    expression
+                      StringLiteral(start=245, end=253) stderr
+      TryStatementHandler
+        parameter
+          VariableDeclaration(start=263, end=275)
+            name
+              Identifier(start=263 end=267) err2
+            type
+              IdentifierType(start=269 end=275)
+                Identifier(start=269 end=275) Error2
+        body
+          BlockStatement(start=276, end=324)
+            ExpressionStatement(start=280, end=322)
+              CallExpression(start=280, end=322)
+                callee
+                  Identifier(start=280 end=285) print
+                arguments
+                  CallExpressionArgument
+                    StringLiteral(start=286, end=295) Error2:
+                  CallExpressionArgument
+                    PropertyAccessExpression(start=297, end=307)
+                      expression
+                        Identifier(start=297 end=301) err2
+                      name
+                        Identifier(start=302 end=307) stack
+                  CallExpressionArgument
+                    name
+                      Identifier(start=309 end=311) to
+                    expression
+                      StringLiteral(start=313, end=321) stderr
+      TryStatementHandler
+        parameter
+          VariableDeclaration(start=331, end=343)
+            name
+              Identifier(start=331 end=335) err3
+            type
+              IdentifierType(start=337 end=343)
+                Identifier(start=337 end=343) Error3
+        body
+          BlockStatement(start=344, end=392)
+            ExpressionStatement(start=348, end=390)
+              CallExpression(start=348, end=390)
+                callee
+                  Identifier(start=348 end=353) print
+                arguments
+                  CallExpressionArgument
+                    StringLiteral(start=354, end=363) Error3:
+                  CallExpressionArgument
+                    PropertyAccessExpression(start=365, end=375)
+                      expression
+                        Identifier(start=365 end=369) err3
+                      name
+                        Identifier(start=370 end=375) stack
+                  CallExpressionArgument
+                    name
+                      Identifier(start=377 end=379) to
+                    expression
+                      StringLiteral(start=381, end=389) stderr
+  EofStatement(start=392, end=392)

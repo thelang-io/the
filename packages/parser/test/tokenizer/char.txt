@@ -1,0 +1,14 @@
+'a'
+'\f'
+'\n'
+'\r'
+'\t'
+'\v'
+===== out =====
+LitChar(start=0 end=3) 'a'
+LitChar(start=4 end=8) '\f'
+LitChar(start=9 end=13) '\n'
+LitChar(start=14 end=18) '\r'
+LitChar(start=19 end=23) '\t'
+LitChar(start=24 end=28) '\v'
+Eof(start=28 end=28)

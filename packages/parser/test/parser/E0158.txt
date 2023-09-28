@@ -1,0 +1,5 @@
+loop i := 0; i < 10; i++
+===== err =====
+anonymous:1:25: ParseError: E0158 - Expected loop statement body
+1 | loop i := 0; i < 10; i++
+  |                         ^

@@ -1,0 +1,5 @@
+obj Test a: int }
+===== err =====
+anonymous:1:9: ParseError: E0102 - Expected opening brace after object declaration name
+1 | obj Test a: int }
+  |         ^

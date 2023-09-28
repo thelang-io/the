@@ -1,0 +1,5 @@
+a: int[str
+===== err =====
+anonymous:1:11: ParseError: E0115 - Expected closing bracket after map type value type
+1 | a: int[str
+  |           ^

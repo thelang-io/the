@@ -1,0 +1,5 @@
+obj Test { throw err
+===== err =====
+anonymous:1:11: ParseError: E0170 - Expected object declaration body property or method
+1 | obj Test { throw err
+  |           ^

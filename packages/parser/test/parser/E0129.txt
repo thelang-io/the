@@ -1,0 +1,5 @@
+a := (a: int, b: str) void {}
+===== err =====
+anonymous:1:22: ParseError: E0129 - Expected arrow after closure expression parameters
+1 | a := (a: int, b: str) void {}
+  |                      ^

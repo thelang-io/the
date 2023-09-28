@@ -1,0 +1,5 @@
+a :=
+===== err =====
+anonymous:1:5: ParseError: E0134 - Expected variable declaration initializer after colon equals sign
+1 | a :=
+  |     ^

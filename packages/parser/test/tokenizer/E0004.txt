@@ -1,0 +1,5 @@
+''
+===== err =====
+anonymous:1:1: SyntaxError: E0004 - Empty character literal
+1 | ''
+  | ~~

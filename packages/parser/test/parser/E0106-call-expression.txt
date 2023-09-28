@@ -1,0 +1,5 @@
+a := test(1 2)
+===== err =====
+anonymous:1:12: ParseError: E0106 - Expected comma after call expression argument
+1 | a := test(1 2)
+  |            ^

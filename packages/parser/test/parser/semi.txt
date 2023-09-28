@@ -1,0 +1,176 @@
+break;
+continue;
+enum Test { One, Two };
+export fn test () {};
+export test;
+test;
+1 + 2;
+fn test () {};
+if test {};
+if test {} else {};
+if test {} elif test {};
+if test {} elif test {} else {};
+import test from "./test";
+loop {};
+main {};
+obj Test {};
+obj Test {
+  a: int;
+  mut b: str;
+};
+obj Test {
+  fn test () {};
+  async fn test () {};
+};
+return;
+throw err;
+try {} catch err: Error {};
+type Alias = str;
+var := 2;
+===== out =====
+Program
+  BreakStatement(start=0, end=6)
+  ContinueStatement(start=7, end=16)
+  EnumDeclaration(start=17, end=40)
+    name
+      Identifier(start=22 end=26) Test
+    members
+      EnumDeclarationMember
+        Identifier(start=29 end=32) One
+      EnumDeclarationMember
+        Identifier(start=34 end=37) Two
+  ExportDeclaration(start=41, end=62)
+    FunctionDeclaration(start=47, end=61)
+      name
+        Identifier(start=51 end=55) test
+      body
+        BlockStatement(start=59, end=61)
+  ExportNamedDeclaration(start=63, end=75)
+    Identifier(start=70 end=74) test
+  ExpressionStatement(start=76, end=81)
+    Identifier(start=76 end=80) test
+  ExpressionStatement(start=82, end=88)
+    BinaryExpression(start=82, end=87)
+      left
+        IntegerLiteral(start=82, end=83 type=Decimal) 1
+      op
+        OpPlus(start=84 end=85) +
+      right
+        IntegerLiteral(start=86, end=87 type=Decimal) 2
+  FunctionDeclaration(start=88, end=103)
+    name
+      Identifier(start=92 end=96) test
+    body
+      BlockStatement(start=100, end=102)
+  IfStatement(start=104, end=115)
+    condition
+      Identifier(start=107 end=111) test
+    consequent
+      BlockStatement(start=112, end=114)
+  IfStatement(start=116, end=135)
+    condition
+      Identifier(start=119 end=123) test
+    consequent
+      BlockStatement(start=124, end=126)
+    alternate
+      BlockStatement(start=132, end=134)
+  IfStatement(start=136, end=160)
+    condition
+      Identifier(start=139 end=143) test
+    consequent
+      BlockStatement(start=144, end=146)
+    alternate
+      IfStatement(start=147, end=159)
+        condition
+          Identifier(start=152 end=156) test
+        consequent
+          BlockStatement(start=157, end=159)
+  IfStatement(start=161, end=193)
+    condition
+      Identifier(start=164 end=168) test
+    consequent
+      BlockStatement(start=169, end=171)
+    alternate
+      IfStatement(start=172, end=192)
+        condition
+          Identifier(start=177 end=181) test
+        consequent
+          BlockStatement(start=182, end=184)
+        alternate
+          BlockStatement(start=190, end=192)
+  ImportDeclaration(start=194, end=220)
+    source
+      StringLiteral(start=211, end=219) ./test
+    specifiers
+      ImportSpecifier
+        imported
+          Identifier(start=201 end=205) test
+        local
+          Identifier(start=201 end=205) test
+  LoopStatement(start=221, end=229)
+    body
+      BlockStatement(start=226, end=228)
+  MainDeclaration(start=230, end=238)
+    BlockStatement(start=235, end=237)
+  ObjectDeclaration(start=239, end=251)
+    name
+      Identifier(start=243 end=247) Test
+  ObjectDeclaration(start=252, end=289)
+    name
+      Identifier(start=256 end=260) Test
+    body
+      ObjectDeclarationProperty(start=265, end=272)
+        name
+          Identifier(start=265 end=266) a
+        type
+          IdentifierType(start=268 end=271)
+            Identifier(start=268 end=271) int
+      ObjectDeclarationProperty(start=275, end=286 mut)
+        name
+          Identifier(start=279 end=280) b
+        type
+          IdentifierType(start=282 end=285)
+            Identifier(start=282 end=285) str
+  ObjectDeclaration(start=290, end=343)
+    name
+      Identifier(start=294 end=298) Test
+    body
+      ObjectDeclarationMethod(start=300, end=317)
+        name
+          Identifier(start=306 end=310) test
+        body
+          BlockStatement(start=314, end=316)
+      ObjectDeclarationMethod(start=317, end=340 async)
+        name
+          Identifier(start=329 end=333) test
+        body
+          BlockStatement(start=337, end=339)
+  ReturnStatement(start=344, end=351)
+  ThrowStatement(start=352, end=362)
+    Identifier(start=358 end=361) err
+  TryStatement(start=363, end=390)
+    body
+      BlockStatement(start=367, end=369)
+    handlers
+      TryStatementHandler
+        parameter
+          VariableDeclaration(start=376, end=386)
+            name
+              Identifier(start=376 end=379) err
+            type
+              IdentifierType(start=381 end=386)
+                Identifier(start=381 end=386) Error
+        body
+          BlockStatement(start=387, end=389)
+  TypeAliasDeclaration(start=391, end=408)
+    name
+      Identifier(start=396 end=401) Alias
+    type
+      IdentifierType(start=404 end=407)
+        Identifier(start=404 end=407) str
+  VariableDeclaration(start=409, end=418)
+    name
+      Identifier(start=409 end=412) var
+    initializer
+      IntegerLiteral(start=416, end=417 type=Decimal) 2
+  EofStatement(start=418, end=418)

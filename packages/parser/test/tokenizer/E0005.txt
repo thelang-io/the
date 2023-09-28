@@ -1,0 +1,5 @@
+'\w'
+===== err =====
+anonymous:1:2: SyntaxError: E0005 - Illegal character escape sequence
+1 | '\w'
+  |  ~~

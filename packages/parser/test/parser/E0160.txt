@@ -1,0 +1,5 @@
+try {}
+===== err =====
+anonymous:1:7: ParseError: E0160 - Expected `catch` keyword after try statement body
+1 | try {}
+  |       ^

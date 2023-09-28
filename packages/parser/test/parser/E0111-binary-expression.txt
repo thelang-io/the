@@ -1,0 +1,5 @@
+a := b +
+===== err =====
+anonymous:1:9: ParseError: E0111 - Expected right-hand expression after `+` operator
+1 | a := b +
+  |         ^

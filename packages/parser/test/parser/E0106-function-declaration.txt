@@ -1,0 +1,5 @@
+fn test (a: int b: str) {}
+===== err =====
+anonymous:1:16: ParseError: E0106 - Expected comma after function declaration parameter
+1 | fn test (a: int b: str) {}
+  |                ^

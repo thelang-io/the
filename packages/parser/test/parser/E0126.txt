@@ -1,0 +1,5 @@
+a := (a: int, b) -> void {}
+===== err =====
+anonymous:1:16: ParseError: E0126 - Expected closure expression parameter type or initializer after parameter name
+1 | a := (a: int, b) -> void {}
+  |                ^

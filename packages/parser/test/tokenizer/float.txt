@@ -1,0 +1,37 @@
+0.0
+0.1234567890
+3.0
+3.1234567890
+3e1
+3e+314
+3e-314
+3E1
+3E+314
+3E-314
+3.14e1
+3.14e+314
+3.14e-314
+3.14E1
+3.14E+314
+3.14E-314
+3...
+===== out =====
+LitFloat(start=0 end=3) 0.0
+LitFloat(start=4 end=16) 0.1234567890
+LitFloat(start=17 end=20) 3.0
+LitFloat(start=21 end=33) 3.1234567890
+LitFloat(start=34 end=37) 3e1
+LitFloat(start=38 end=44) 3e+314
+LitFloat(start=45 end=51) 3e-314
+LitFloat(start=52 end=55) 3E1
+LitFloat(start=56 end=62) 3E+314
+LitFloat(start=63 end=69) 3E-314
+LitFloat(start=70 end=76) 3.14e1
+LitFloat(start=77 end=86) 3.14e+314
+LitFloat(start=87 end=96) 3.14e-314
+LitFloat(start=97 end=103) 3.14E1
+LitFloat(start=104 end=113) 3.14E+314
+LitFloat(start=114 end=123) 3.14E-314
+LitIntDec(start=124 end=125) 3
+OpEllipsis(start=125 end=128) ...
+Eof(start=128 end=128)

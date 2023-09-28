@@ -3,6 +3,7 @@
  * Licensed under the MIT License
  */
 
+import Token_toText from "./text"
 import * as Reader from "./reader"
 import * as Token from "./token"
 import * as errors from "./errors"
@@ -10,9 +11,18 @@ import * as t from "./types"
 
 export obj Tokenizer {
   mut data: t.Token[]
+  mut dataLen: int
   mut errors: str[]
   mut reader: ref Reader.Reader
   mut state: t.TokenizerState
+
+  fn errorSeek (mut self: ref Self, pos: int) {
+    if pos == -1 {
+      self.errors.clear()
+    } else {
+      self.errors = self.errors.slice(0, pos + 1)
+    }
+  }
 
   fn lookahead (mut self: ref Self, t: t.TokenType, alwaysGoBack := false, allowComments := false) bool {
     startPos := self.state.idx
@@ -27,21 +37,17 @@ export obj Tokenizer {
   }
 
   fn next (mut self: ref Self, allowComments := false) t.Token {
-    if !self.data.empty && (self.state.idx == self.data.len && self.data[-1].t == .Eof) {
+    if self.dataLen != 0 && (self.state.idx == self.dataLen && self.data[-1].t == .Eof) {
       throw error_NewError("Tried next on Tokenizer eof")
     }
 
     loop {
-      mut tk: t.Token
-
-      if self.data.len > self.state.idx {
-        tk = self.data[self.state.idx]
-      } else {
-        tk = self._getToken()
-        self.data.push(tk)
+      if self.dataLen <= self.state.idx {
+        self.data.push(self._getToken())
+        self.dataLen++
       }
 
-      self.state.idx++
+      tk := self.data[self.state.idx++]
 
       if (allowComments || (tk.t != .CommentBlock && tk.t != .CommentLine)) && tk.t != .Whitespace {
         return tk
@@ -53,14 +59,6 @@ export obj Tokenizer {
     return self.state.idx
   }
 
-  fn errorSeek (mut self: ref Self, pos: int) int {
-    if pos == -1 {
-      self.errors.clear()
-    } else {
-      self.errors = self.errors.slice(0, pos + 1)
-    }
-  }
-
   fn readerStartPos (mut self: ref Self, offset := 0) int {
     return self.state.idx == 0 ? 0 : self.data[self.state.idx - 1 + offset].start
   }
@@ -70,7 +68,7 @@ export obj Tokenizer {
   }
 
   fn readerSeek (mut self: ref Self, pos: int) int {
-    loop i := self.data.len - 1; i >= 0; i-- {
+    loop i := self.dataLen - 1; i >= 0; i-- {
       if self.data[i].start <= pos && pos <= self.data[i].end {
         self.seek(i)
         return
@@ -125,6 +123,7 @@ export obj Tokenizer {
       return self._wrapToken(.LitChar)
     }
 
+    pos1 := self.reader.pos
     ch1 := self.reader.next()
 
     if ch1 == '\n' {
@@ -142,7 +141,7 @@ export obj Tokenizer {
       ch2 := self.reader.next()
 
       if !Token.isCharEsc(ch2) {
-        self._raise(errors.E0005(), self.state.pos)
+        self._raise(errors.E0005(), pos1)
       }
     }
 
@@ -254,6 +253,7 @@ export obj Tokenizer {
       ch := self.reader.next()
 
       if Token.isIntDec(ch) {
+        self.reader.seek(pos)
         self.reader.walk(Token.isId)
         self._raise(errors.E0008(), self.state.pos)
 
@@ -495,7 +495,7 @@ export obj Tokenizer {
       errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(endLoc.col - startLoc.col))
     } else {
       errorLine := lines[startLoc.line - 1]
-      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col))
+      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col + 1))
     }
 
     errorLinesNumbers.push(startLoc.line)
@@ -539,6 +539,7 @@ export obj Tokenizer {
     ch1 := self.reader.next()
 
     if Token.isId(ch1) && ch1 != 'E' && ch1 != 'e' {
+      self.reader.seek(pos1)
       self.reader.walk(Token.isId)
       self._raise(errorMessage, self.state.pos)
 
@@ -563,6 +564,7 @@ export obj Tokenizer {
         self.reader.seek(pos1)
         return self._wrapToken(t)
       } elif !Token.isIntDec(ch2) {
+        self.reader.seek(pos2)
         self.reader.walk(Token.isId)
         self._raise(errors.E0010(), self.state.pos)
 
@@ -579,6 +581,7 @@ export obj Tokenizer {
       ch3 := self.reader.next()
 
       if Token.isId(ch3) && ch3 != 'E' && ch3 != 'e' {
+        self.reader.seek(pos3)
         self.reader.walk(Token.isId)
         self._raise(errors.E0010(), self.state.pos)
 
@@ -596,9 +599,11 @@ export obj Tokenizer {
       return self._wrapToken(.LitFloat)
     }
 
+    pos4 := self.reader.pos
     ch4 := self.reader.next()
 
     if !Token.isIntDec(ch4) && ch4 != '+' && ch4 != '-' {
+      self.reader.seek(pos4)
       self.reader.walk(Token.isId)
       self._raise(errors.E0011(), expStartPos)
 
@@ -611,9 +616,11 @@ export obj Tokenizer {
         return self._wrapToken(.LitFloat)
       }
 
+      pos5 := self.reader.pos
       ch5 := self.reader.next()
 
       if !Token.isIntDec(ch5) {
+        self.reader.seek(pos5)
         self.reader.walk(Token.isId)
         self._raise(errors.E0011(), expStartPos)
 
@@ -632,9 +639,11 @@ export obj Tokenizer {
         return self._wrapToken(t)
       }
 
+      pos := self.reader.pos
       ch := self.reader.next()
 
-      if t != .LitIntDec && !check(ch) {
+      if !check(ch) {
+        self.reader.seek(pos)
         self.reader.walk(Token.isId)
         self._raise(errorMessage, self.state.pos)
 
@@ -666,6 +675,7 @@ export obj Tokenizer {
       ch := self.reader.next()
 
       if Token.isId(ch) {
+        self.reader.seek(pos)
         self.reader.walk(Token.isId)
         self._raise(errors.E0010(), self.state.pos)
 
@@ -689,4 +699,16 @@ export obj Tokenizer {
 
 export fn init (mut reader: ref Reader.Reader) Tokenizer {
   return Tokenizer{reader: reader}
+}
+
+export fn stringify (mut tokenizer: ref Tokenizer, allowComments: bool) str {
+  mut result := ""
+
+  loop {
+    tk := tokenizer.next(allowComments: allowComments)
+    result += Token_toText(tk) + os_EOL
+    if tk.t == .Eof { break }
+  }
+
+  return tokenizer.errors.empty ? result : tokenizer.errors.join(os_EOL)
 }

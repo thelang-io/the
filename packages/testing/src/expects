@@ -8,3 +8,43 @@ import MATCH_ANY from "./matchers"
 export fn EXPECT_EQ (a: any, b: any) {
   MATCH_ANY(a, b)
 }
+
+export fn EXPECT_FALSE (a: bool) {
+  MATCH_ANY(a, false)
+}
+
+export fn EXPECT_NO_THROW (function: () -> void) bool {
+  mut message: str
+
+  try {
+    function()
+  } catch err: error_Error {
+    message = err.message
+  }
+
+  if !message.empty {
+    FAIL_TEST("Expected no throw, thrown instead: " + message)
+  }
+}
+
+export fn EXPECT_THROW_WITH_MESSAGE (function: () -> void, message: str) bool {
+  mut errMessage: str
+
+  try {
+    function()
+  } catch err: error_Error {
+    errMessage = err.message
+  }
+
+  if errMessage != message {
+    FAIL_TEST(
+      "Expected equality of these throw messages:" + os_EOL +
+      "  " + message + os_EOL +
+      "  " + errMessage
+    )
+  }
+}
+
+export fn EXPECT_TRUE (a: bool) {
+  MATCH_ANY(a, true)
+}

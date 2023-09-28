@@ -1,0 +1,9 @@
+true
+false
+===== out =====
+Program
+  ExpressionStatement(start=0, end=4)
+    BooleanLiteral(start=0, end=4) true
+  ExpressionStatement(start=5, end=10)
+    BooleanLiteral(start=5, end=10) false
+  EofStatement(start=10, end=10)

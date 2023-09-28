@@ -1,0 +1,97 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import
+  EXPECT_NO_THROW,
+  EXPECT_THROW_WITH_MESSAGE,
+  EXPECT_TRUE,
+  EXPECT_FALSE,
+  parseExpression,
+  parseType
+from "./utils"
+import * as Expression from "../src/expression"
+import * as string from "../src/string"
+import * as t from "../src/types"
+
+export fn TEST_Expression_creates () {
+  expr := Expression.create(t.NilLiteral{}, 0, 0)
+  EXPECT_TRUE(expr.isNilLiteral())
+}
+
+export fn TEST_Expression_dummy () {
+  expr := Expression.dummy()
+  EXPECT_TRUE(expr.body is t.DummyExpression)
+}
+
+export fn TEST_Expression_dummyIdentifier () {
+  id := Expression.dummyIdentifier()
+  EXPECT_TRUE(id.name.empty)
+}
+
+export fn TEST_Expression_endsWithObjExpr () {
+  EXPECT_TRUE(Expression.endsWithObjExpr(parseExpression("a = Test{}")))
+  EXPECT_TRUE(Expression.endsWithObjExpr(parseExpression("await Test{}")))
+  EXPECT_TRUE(Expression.endsWithObjExpr(parseExpression("a + Test{}")))
+  EXPECT_TRUE(Expression.endsWithObjExpr(parseExpression("a ? b : Test{}")))
+  EXPECT_TRUE(Expression.endsWithObjExpr(parseExpression("Test{}")))
+  EXPECT_TRUE(Expression.endsWithObjExpr(parseExpression("ref Test{}")))
+  EXPECT_TRUE(Expression.endsWithObjExpr(parseExpression("!Test{}")))
+  EXPECT_FALSE(Expression.endsWithObjExpr(parseExpression("Test")))
+  EXPECT_FALSE(Expression.endsWithObjExpr(parseExpression("Test{}++")))
+}
+
+export fn TEST_Expression_extractLastObjExpr () {
+  EXPECT_EQ(string.expression(Expression.create(Expression.extractLastObjExpr(parseExpression("a = Test{}")), 0, 0)), "Test{}")
+  EXPECT_EQ(string.expression(Expression.create(Expression.extractLastObjExpr(parseExpression("await Test{}")), 0, 0)), "Test{}")
+  EXPECT_EQ(string.expression(Expression.create(Expression.extractLastObjExpr(parseExpression("a + Test{}")), 0, 0)), "Test{}")
+  EXPECT_EQ(string.expression(Expression.create(Expression.extractLastObjExpr(parseExpression("a ? b : Test{}")), 0, 0)), "Test{}")
+  EXPECT_EQ(string.expression(Expression.create(Expression.extractLastObjExpr(parseExpression("Test{}")), 0, 0)), "Test{}")
+  EXPECT_EQ(string.expression(Expression.create(Expression.extractLastObjExpr(parseExpression("ref Test{}")), 0, 0)), "Test{}")
+  EXPECT_EQ(string.expression(Expression.create(Expression.extractLastObjExpr(parseExpression("!Test{}")), 0, 0)), "Test{}")
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    Expression.extractLastObjExpr(parseExpression("Test"))
+  }, "Unable to extract last object expression")
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    Expression.extractLastObjExpr(parseExpression("Test{}++"))
+  }, "Unable to extract last object expression")
+}
+
+export fn TEST_Expression_subtractLastObjExpr () {
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("a = Test{}"))), "a = Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("await Test{}"))), "await Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("a + Test{}"))), "a + Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("a ? b : Test{}"))), "a ? b : Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("Test{}"))), "Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("ref Test{}"))), "ref Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("!Test{}"))), "!Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("Test"))), "Test")
+  EXPECT_EQ(string.expression(Expression.subtractLastObjExpr(parseExpression("Test{}++"))), "Test{}++")
+}
+
+export fn TEST_Expression_toType () {
+  EXPECT_EQ(string.typeT(Expression.toType(parseExpression("Test"))), "Test")
+  EXPECT_EQ(string.typeT(Expression.toType(parseExpression("Test1.Test2"))), "Test1.Test2")
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    string.typeT(Expression.toType(parseExpression("Test{}")))
+  }, "Unable to transform expression to type")
+}
+
+export fn TEST_Expression_typeToExpression () {
+  EXPECT_EQ(string.expression(Expression.typeToExpression(parseType("Test"))), "Test")
+  EXPECT_EQ(string.expression(Expression.typeToExpression(parseType("Test1.Test2"))), "Test1.Test2")
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    string.expression(Expression.typeToExpression(parseType("Test[]")))
+  }, "Unable to transform type to expression")
+}
+
+export fn TEST_Expression_validObjExprId () {
+  EXPECT_TRUE(Expression.validObjExprId(parseExpression("Test")))
+  EXPECT_TRUE(Expression.validObjExprId(parseExpression("Test1.Test2")))
+  EXPECT_FALSE(Expression.validObjExprId(parseExpression("Test{}")))
+}

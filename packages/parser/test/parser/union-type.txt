@@ -1,0 +1,195 @@
+a: int[] | str[]
+a: int[] | str[] | char[]
+a: int | str
+a: int | str | char
+a: int[str] | str[int]
+a: int[str] | str[int] | char[float]
+a: Test1.Test2 | Test3.Test4
+a: Test1.Test2 | Test3.Test4 | Test5.Test6
+a: int? | str?
+a: int? | str? | char?
+a: (int) | (str)
+a: (int) | (str) | (char)
+===== out =====
+Program
+  VariableDeclaration(start=0, end=16)
+    name
+      Identifier(start=0 end=1) a
+    type
+      UnionType(start=3 end=16)
+        ArrayType(start=3 end=8)
+          IdentifierType(start=3 end=6)
+            Identifier(start=3 end=6) int
+        ArrayType(start=11 end=16)
+          IdentifierType(start=11 end=14)
+            Identifier(start=11 end=14) str
+  VariableDeclaration(start=17, end=42)
+    name
+      Identifier(start=17 end=18) a
+    type
+      UnionType(start=20 end=42)
+        ArrayType(start=20 end=25)
+          IdentifierType(start=20 end=23)
+            Identifier(start=20 end=23) int
+        ArrayType(start=28 end=33)
+          IdentifierType(start=28 end=31)
+            Identifier(start=28 end=31) str
+        ArrayType(start=36 end=42)
+          IdentifierType(start=36 end=40)
+            Identifier(start=36 end=40) char
+  VariableDeclaration(start=43, end=55)
+    name
+      Identifier(start=43 end=44) a
+    type
+      UnionType(start=46 end=55)
+        IdentifierType(start=46 end=49)
+          Identifier(start=46 end=49) int
+        IdentifierType(start=52 end=55)
+          Identifier(start=52 end=55) str
+  VariableDeclaration(start=56, end=75)
+    name
+      Identifier(start=56 end=57) a
+    type
+      UnionType(start=59 end=75)
+        IdentifierType(start=59 end=62)
+          Identifier(start=59 end=62) int
+        IdentifierType(start=65 end=68)
+          Identifier(start=65 end=68) str
+        IdentifierType(start=71 end=75)
+          Identifier(start=71 end=75) char
+  VariableDeclaration(start=76, end=98)
+    name
+      Identifier(start=76 end=77) a
+    type
+      UnionType(start=79 end=98)
+        MapType(start=79 end=87)
+          keyType
+            IdentifierType(start=79 end=82)
+              Identifier(start=79 end=82) int
+          valueType
+            IdentifierType(start=83 end=86)
+              Identifier(start=83 end=86) str
+        MapType(start=90 end=98)
+          keyType
+            IdentifierType(start=90 end=93)
+              Identifier(start=90 end=93) str
+          valueType
+            IdentifierType(start=94 end=97)
+              Identifier(start=94 end=97) int
+  VariableDeclaration(start=99, end=135)
+    name
+      Identifier(start=99 end=100) a
+    type
+      UnionType(start=102 end=135)
+        MapType(start=102 end=110)
+          keyType
+            IdentifierType(start=102 end=105)
+              Identifier(start=102 end=105) int
+          valueType
+            IdentifierType(start=106 end=109)
+              Identifier(start=106 end=109) str
+        MapType(start=113 end=121)
+          keyType
+            IdentifierType(start=113 end=116)
+              Identifier(start=113 end=116) str
+          valueType
+            IdentifierType(start=117 end=120)
+              Identifier(start=117 end=120) int
+        MapType(start=124 end=135)
+          keyType
+            IdentifierType(start=124 end=128)
+              Identifier(start=124 end=128) char
+          valueType
+            IdentifierType(start=129 end=134)
+              Identifier(start=129 end=134) float
+  VariableDeclaration(start=136, end=164)
+    name
+      Identifier(start=136 end=137) a
+    type
+      UnionType(start=139 end=164)
+        MemberType(start=139 end=150)
+          type
+            IdentifierType(start=139 end=144)
+              Identifier(start=139 end=144) Test1
+          name
+            Identifier(start=145 end=150) Test2
+        MemberType(start=153 end=164)
+          type
+            IdentifierType(start=153 end=158)
+              Identifier(start=153 end=158) Test3
+          name
+            Identifier(start=159 end=164) Test4
+  VariableDeclaration(start=165, end=207)
+    name
+      Identifier(start=165 end=166) a
+    type
+      UnionType(start=168 end=207)
+        MemberType(start=168 end=179)
+          type
+            IdentifierType(start=168 end=173)
+              Identifier(start=168 end=173) Test1
+          name
+            Identifier(start=174 end=179) Test2
+        MemberType(start=182 end=193)
+          type
+            IdentifierType(start=182 end=187)
+              Identifier(start=182 end=187) Test3
+          name
+            Identifier(start=188 end=193) Test4
+        MemberType(start=196 end=207)
+          type
+            IdentifierType(start=196 end=201)
+              Identifier(start=196 end=201) Test5
+          name
+            Identifier(start=202 end=207) Test6
+  VariableDeclaration(start=208, end=222)
+    name
+      Identifier(start=208 end=209) a
+    type
+      UnionType(start=211 end=222)
+        OptionalType(start=211 end=215)
+          IdentifierType(start=211 end=214)
+            Identifier(start=211 end=214) int
+        OptionalType(start=218 end=222)
+          IdentifierType(start=218 end=221)
+            Identifier(start=218 end=221) str
+  VariableDeclaration(start=223, end=245)
+    name
+      Identifier(start=223 end=224) a
+    type
+      UnionType(start=226 end=245)
+        OptionalType(start=226 end=230)
+          IdentifierType(start=226 end=229)
+            Identifier(start=226 end=229) int
+        OptionalType(start=233 end=237)
+          IdentifierType(start=233 end=236)
+            Identifier(start=233 end=236) str
+        OptionalType(start=240 end=245)
+          IdentifierType(start=240 end=244)
+            Identifier(start=240 end=244) char
+  VariableDeclaration(start=246, end=262)
+    name
+      Identifier(start=246 end=247) a
+    type
+      UnionType(start=248 end=262)
+        ParenthesizedType(start=248 end=254)
+          IdentifierType(start=250 end=253)
+            Identifier(start=250 end=253) int
+        ParenthesizedType(start=256 end=262)
+          IdentifierType(start=258 end=261)
+            Identifier(start=258 end=261) str
+  VariableDeclaration(start=263, end=288)
+    name
+      Identifier(start=263 end=264) a
+    type
+      UnionType(start=265 end=288)
+        ParenthesizedType(start=265 end=271)
+          IdentifierType(start=267 end=270)
+            Identifier(start=267 end=270) int
+        ParenthesizedType(start=273 end=279)
+          IdentifierType(start=275 end=278)
+            Identifier(start=275 end=278) str
+        ParenthesizedType(start=281 end=288)
+          IdentifierType(start=283 end=287)
+            Identifier(start=283 end=287) char
+  EofStatement(start=288, end=288)

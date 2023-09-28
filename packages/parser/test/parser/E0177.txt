@@ -1,0 +1,5 @@
+import test from
+===== err =====
+anonymous:1:17: ParseError: E0177 - Expected import declaration source after `from` keyword
+1 | import test from
+  |                 ^

@@ -1,0 +1,5 @@
+a := test ? a b
+===== err =====
+anonymous:1:14: ParseError: E0113 - Expected colon after conditional expression consequent
+1 | a := test ? a b
+  |              ^

@@ -1,0 +1,24 @@
+loop {}
+loop true {}
+loop 1 + 1 {}
+loop (1 + 1) {}
+loop i := 0;; {}
+loop i := 0; i < 10; {}
+loop i := 0; i < 10; i++ {}
+loop (i := 0; i < 10; i++) {}
+loop (i := 0; i < 10; i++) {
+  break
+}
+main {
+  loop {}
+  loop true {}
+  loop 1 + 1 {}
+  loop (1 + 1) {}
+  loop i := 0;; {}
+  loop i := 0; i < 10; {}
+  loop i := 0; i < 10; i++ {}
+  loop (i := 0; i < 10; i++) {}
+  loop (i := 0; i < 10; i++) {
+    break
+  }
+}

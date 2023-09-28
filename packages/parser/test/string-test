@@ -1,0 +1,128 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import
+  EXPECT_NO_THROW,
+  EXPECT_THROW_WITH_MESSAGE,
+  EXPECT_TRUE,
+  EXPECT_FALSE,
+  parseExpression,
+  parseStatement,
+  parseType
+from "./utils"
+import parse from "../src/parser"
+import * as Expression from "../src/expression"
+import * as Statement from "../src/statement"
+import * as Type from "../src/type"
+import * as string from "../src/string"
+import * as t from "../src/types"
+
+export fn TEST_string_expression () {
+  expressions := [
+    "test",
+    "false",
+    "true",
+    "'a'",
+    "'\\n'",
+    "0.1",
+    "3.14e+3",
+    "0b01",
+    "1234",
+    "0xF1",
+    "0o77",
+    "nil",
+    "\"string\"",
+    "\"multiline\\nstring\"",
+    "[]",
+    "[0]",
+    "[0, true, nil]",
+    "test as str",
+    "test = 2",
+    "test += 2",
+    "await test",
+    "a == b",
+    "a + b",
+    "test()",
+    "test(a)",
+    "test(a, 1, c: 2)",
+    "() -> void {}",
+    "async (a: int) -> void {}",
+    "(mut a: int = 2, b := 3, c: int...) -> int {" + os_EOL +
+    "  return a" + os_EOL +
+    "}",
+    "a ? b : c",
+    "a[b]",
+    "test is str",
+    "{}",
+    "{\"key\": \"value\"}",
+    "{\"key1\": 1, \"key2\": 2}",
+    ".Test",
+    "Test{}",
+    "Test{a: 1}",
+    "Test{a: 1, b: \"test\"}",
+    "(a = 2)",
+    "Test1.Test2",
+    "ref test",
+    "!test",
+    "++test",
+    "test++"
+  ]
+
+  loop i := 0; i < expressions.len; i++ {
+    expression := expressions[i] as str
+    EXPECT_EQ(string.expression(parseExpression(expression)), expression)
+  }
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    string.expression(Expression.dummy())
+  }, "Unable to stringify expression")
+}
+
+export fn TEST_string_statement () {
+  files := fs_scandirSync("./test/string")
+
+  loop i := 0; i < files.len; i++ {
+    file := files[i] as str
+    if file.slice(-4) != ".txt" { continue }
+    content := fs_readFileSync("./test/string/" + file).str()
+    f := parse(content)
+    bodyLen := f.program.body.len
+    mut result: str
+    loop j := 0; j < bodyLen; j++ {
+      result += string.statement(f.program.body[j]) + os_EOL
+    }
+    EXPECT_EQ(content, result)
+  }
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    string.statement(Statement.dummy())
+  }, "Unable to stringify statement")
+}
+
+export fn TEST_string_type () {
+  types := [
+    "test[]",
+    "async () -> void",
+    "(a: int) -> int",
+    "(b: int, mut c: int, d: int...) -> int",
+    "int",
+    "int[str]",
+    "Test1.Test2",
+    "int?",
+    "(int)",
+    "ref int",
+    "int | str",
+    "int | str | char"
+  ]
+
+  loop i := 0; i < types.len; i++ {
+    t := types[i] as str
+    EXPECT_EQ(string.typeT(parseType(t)), t)
+  }
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    string.typeT(Type.dummy())
+  }, "Unable to stringify type")
+}

@@ -5,25 +5,21 @@
 
 import * as t from "./types"
 
-export obj ParserError {
-  message: str
-  stack: str
-}
-
 export obj Reader {
   path: str
   content: str
+  contentLen: int
   mut pos: int
 
   fn eof (self: ref Self) bool {
-    return self.pos >= self.content.len
+    return self.pos >= self.contentLen
   }
 
   fn lookahead (mut self: ref Self, check: char) bool {
     if check == '\n' && os_NAME == "Windows" && self.content.slice(self.pos, self.pos + 2) == "\r\n" {
       self.pos += 2
       return true
-    } elif self.pos < self.content.len && self.content[self.pos] == check {
+    } elif self.pos < self.contentLen && self.content[self.pos] == check {
       self.pos += 1
       return true
     }
@@ -62,15 +58,31 @@ export obj Reader {
   }
 }
 
-export fn init (path: str) Reader {
-  p := fs_realpathSync(path)
+export fn init (pathOrCode: str) Reader {
+  pathFirstChar := pathOrCode.slice(0, 1)
+
+  if (
+    pathOrCode.slice(0, 2) != "./" &&
+    !(pathFirstChar == "/" && pathOrCode.slice(0, 2) != "//" && pathOrCode.slice(0, 2) != "/*") &&
+    pathFirstChar != "\\"
+  ) {
+    return Reader{path: "anonymous", content: pathOrCode, contentLen: pathOrCode.len}
+  }
+
+  mut p: str
+
+  try {
+    p = fs_realpathSync(pathOrCode)
+  } catch err: error_Error {
+    throw t.ParserError{message: "Path `" + pathOrCode + "` doesn't exists"}
+  }
 
   if !fs_isFileSync(p) {
-    throw ParserError{message: "Path `" + p + "` is not a file"}
+    throw t.ParserError{message: "Path `" + pathOrCode + "` is not a file"}
   }
 
   content := fs_readFileSync(p).str()
-  return Reader{path: p, content: content}
+  return Reader{path: p, content: content, contentLen: content.len}
 }
 
 export fn locate (reader: ref Reader, pos: int) t.Location {
@@ -91,5 +103,5 @@ export fn locate (reader: ref Reader, pos: int) t.Location {
     curPos += line.len
   }
 
-  return t.Location{line: lines.len, col: lines[-1].len}
+  return t.Location{line: lines.len, col: lines[-1].len + 1}
 }

@@ -1,0 +1,5 @@
+a: (int, str) void
+===== err =====
+anonymous:1:14: ParseError: E0143 - Expected arrow after function type parameters
+1 | a: (int, str) void
+  |              ^

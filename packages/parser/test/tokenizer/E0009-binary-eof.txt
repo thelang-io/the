@@ -1,0 +1,5 @@
+0b
+===== err =====
+anonymous:1:1: SyntaxError: E0009 - Invalid binary integer literal
+1 | 0b
+  | ~~

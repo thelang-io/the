@@ -1,0 +1,5 @@
+1234a10
+===== err =====
+anonymous:1:1: SyntaxError: E0009 - Invalid decimal integer literal
+1 | 1234a10
+  | ~~~~~~~

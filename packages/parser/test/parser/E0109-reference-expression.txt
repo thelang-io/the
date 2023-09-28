@@ -1,0 +1,5 @@
+a := ref
+===== err =====
+anonymous:1:9: ParseError: E0109 - Expected expression after `ref` keyword
+1 | a := ref
+  |         ^

@@ -1,0 +1,30 @@
+try {} catch err1: Error {} catch err2: Error {}
+try {
+  statement
+} catch err: Error {
+  handle(err)
+}
+try {
+  statement1
+  statement2
+} catch err1: Error {
+  handle(err1)
+} catch err2: Error {
+  handle(err2)
+}
+main {
+  try {} catch err1: Error {} catch err2: Error {}
+  try {
+    statement
+  } catch err: Error {
+    handle(err)
+  }
+  try {
+    statement1
+    statement2
+  } catch err1: Error {
+    handle(err1)
+  } catch err2: Error {
+    handle(err2)
+  }
+}

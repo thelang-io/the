@@ -1,0 +1,8 @@
+(a: int, b: str) -> int {
+  return a
+}
+main {
+  (a: int, b: str) -> int {
+    return a
+  }
+}

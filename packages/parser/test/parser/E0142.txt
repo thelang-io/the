@@ -1,0 +1,5 @@
+a: (int, a: ) -> void {}
+===== err =====
+anonymous:1:12: ParseError: E0142 - Expected function type parameter type after colon
+1 | a: (int, a: ) -> void {}
+  |            ^

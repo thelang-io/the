@@ -1,0 +1,47 @@
+export enum Test { One, Two }
+export fn test () {}
+export obj Test {}
+export type Alias = str
+export const TEST := 10
+export mut TEST := 10
+===== out =====
+Program
+  ExportDeclaration(start=0, end=29)
+    EnumDeclaration(start=7, end=29)
+      name
+        Identifier(start=12 end=16) Test
+      members
+        EnumDeclarationMember
+          Identifier(start=19 end=22) One
+        EnumDeclarationMember
+          Identifier(start=24 end=27) Two
+  ExportDeclaration(start=30, end=50)
+    FunctionDeclaration(start=36, end=50)
+      name
+        Identifier(start=40 end=44) test
+      body
+        BlockStatement(start=48, end=50)
+  ExportDeclaration(start=51, end=69)
+    ObjectDeclaration(start=58, end=69)
+      name
+        Identifier(start=62 end=66) Test
+  ExportDeclaration(start=70, end=93)
+    TypeAliasDeclaration(start=77, end=93)
+      name
+        Identifier(start=82 end=87) Alias
+      type
+        IdentifierType(start=90 end=93)
+          Identifier(start=90 end=93) str
+  ExportDeclaration(start=94, end=117)
+    VariableDeclaration(start=101, end=117 const)
+      name
+        Identifier(start=107 end=111) TEST
+      initializer
+        IntegerLiteral(start=115, end=117 type=Decimal) 10
+  ExportDeclaration(start=118, end=139)
+    VariableDeclaration(start=125, end=139 mut)
+      name
+        Identifier(start=129 end=133) TEST
+      initializer
+        IntegerLiteral(start=137, end=139 type=Decimal) 10
+  EofStatement(start=139, end=139)

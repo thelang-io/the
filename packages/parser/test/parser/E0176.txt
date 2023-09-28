@@ -1,0 +1,5 @@
+import test as , test2 from "./test"
+===== err =====
+anonymous:1:15: ParseError: E0176 - Expected import declaration specifier local name after `as` keyword
+1 | import test as , test2 from "./test"
+  |               ^

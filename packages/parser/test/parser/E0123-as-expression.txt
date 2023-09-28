@@ -1,0 +1,5 @@
+a := test as 1
+===== err =====
+anonymous:1:13: ParseError: E0123 - Expected type after `as` keyword
+1 | a := test as 1
+  |             ^

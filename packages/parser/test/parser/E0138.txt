@@ -1,0 +1,5 @@
+type Alias =
+===== err =====
+anonymous:1:13: ParseError: E0138 - Expected type after equals sign
+1 | type Alias =
+  |             ^

@@ -1,0 +1,5 @@
+a: int =
+===== err =====
+anonymous:1:9: ParseError: E0134 - Expected variable declaration initializer after equals sign
+1 | a: int =
+  |         ^

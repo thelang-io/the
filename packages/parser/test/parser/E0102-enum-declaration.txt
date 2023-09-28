@@ -1,0 +1,5 @@
+enum Test One, Two }
+===== err =====
+anonymous:1:10: ParseError: E0102 - Expected opening brace after enumeration declaration name
+1 | enum Test One, Two }
+  |          ^

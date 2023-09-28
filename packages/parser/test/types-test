@@ -1,0 +1,402 @@
+import EXPECT_NO_THROW, EXPECT_TRUE from "./utils"
+import * as Expression from "../src/expression"
+import * as Statement from "../src/statement"
+import * as Type from "../src/type"
+import * as t from "../src/types"
+
+export fn TEST_types_expression () {
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(Expression.dummyIdentifier(), 0, 0)
+    expression.asIdentifier()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.BooleanLiteral{}, 0, 0)
+    expression.asBooleanLiteral()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.CharacterLiteral{}, 0, 0)
+    expression.asCharacterLiteral()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.FloatingPointLiteral{}, 0, 0)
+    expression.asFloatingPointLiteral()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.IntegerLiteral{}, 0, 0)
+    expression.asIntegerLiteral()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.NilLiteral{}, 0, 0)
+    expression.asNilLiteral()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.StringLiteral{}, 0, 0)
+    expression.asStringLiteral()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.ArrayExpression{}, 0, 0)
+    expression.asArray()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.AsExpression{expression: Expression.dummy(), t: Type.dummy()}, 0, 0)
+    expression.asAs()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.AssignmentExpression{left: Expression.dummy(), right: Expression.dummy()}, 0, 0)
+    expression.asAssignment()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.AwaitExpression{expression: Expression.dummy()}, 0, 0)
+    expression.asAwait()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.BinaryExpression{left: Expression.dummy(), right: Expression.dummy()}, 0, 0)
+    expression.asBinary()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.CallExpression{callee: Expression.dummy()}, 0, 0)
+    expression.asCall()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.ClosureExpression{returnType: Type.dummy(), body: Statement.dummy()}, 0, 0)
+    expression.asClosure()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.ConditionalExpression{condition: Expression.dummy(), consequent: Expression.dummy(), alternate: Expression.dummy()}, 0, 0)
+    expression.asConditional()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.ElementAccessExpression{expression: Expression.dummy(), argument: Expression.dummy()}, 0, 0)
+    expression.asElementAccess()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.IsExpression{expression: Expression.dummy(), t: Type.dummy()}, 0, 0)
+    expression.asIs()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.MapExpression{}, 0, 0)
+    expression.asMap()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.MemberAccessExpression{name: Expression.dummyIdentifier()}, 0, 0)
+    expression.asMemberAccess()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.ObjectExpression{id: Type.dummy()}, 0, 0)
+    expression.asObject()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.ParenthesizedExpression{expression: Expression.dummy()}, 0, 0)
+    expression.asParenthesized()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.PropertyAccessExpression{expression: Expression.dummy(), name: Expression.dummyIdentifier()}, 0, 0)
+    expression.asPropertyAccess()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.ReferenceExpression{expression: Expression.dummy()}, 0, 0)
+    expression.asReference()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    expression := Expression.create(t.UnaryExpression{operand: Expression.dummy()}, 0, 0)
+    expression.asUnary()
+  })
+
+  expression1 := Expression.create(Expression.dummyIdentifier(), 0, 0)
+  expression2 := Expression.create(t.BooleanLiteral{}, 0, 0)
+  expression3 := Expression.create(t.CharacterLiteral{}, 0, 0)
+  expression4 := Expression.create(t.FloatingPointLiteral{}, 0, 0)
+  expression5 := Expression.create(t.IntegerLiteral{}, 0, 0)
+  expression6 := Expression.create(t.NilLiteral{}, 0, 0)
+  expression7 := Expression.create(t.StringLiteral{}, 0, 0)
+  expression8 := Expression.create(t.ArrayExpression{}, 0, 0)
+  expression9 := Expression.create(t.AsExpression{expression: Expression.dummy(), t: Type.dummy()}, 0, 0)
+  expression10 := Expression.create(t.AssignmentExpression{left: Expression.dummy(), right: Expression.dummy()}, 0, 0)
+  expression11 := Expression.create(t.AwaitExpression{expression: Expression.dummy()}, 0, 0)
+  expression12 := Expression.create(t.BinaryExpression{left: Expression.dummy(), right: Expression.dummy()}, 0, 0)
+  expression13 := Expression.create(t.CallExpression{callee: Expression.dummy()}, 0, 0)
+  expression14 := Expression.create(t.ClosureExpression{returnType: Type.dummy(), body: Statement.dummy()}, 0, 0)
+  expression15 := Expression.create(t.ConditionalExpression{condition: Expression.dummy(), consequent: Expression.dummy(), alternate: Expression.dummy()}, 0, 0)
+  expression16 := Expression.create(t.ElementAccessExpression{expression: Expression.dummy(), argument: Expression.dummy()}, 0, 0)
+  expression17 := Expression.create(t.IsExpression{expression: Expression.dummy(), t: Type.dummy()}, 0, 0)
+  expression18 := Expression.create(t.MapExpression{}, 0, 0)
+  expression19 := Expression.create(t.MemberAccessExpression{name: Expression.dummyIdentifier()}, 0, 0)
+  expression20 := Expression.create(t.ObjectExpression{id: Type.dummy()}, 0, 0)
+  expression21 := Expression.create(t.ParenthesizedExpression{expression: Expression.dummy()}, 0, 0)
+  expression22 := Expression.create(t.PropertyAccessExpression{expression: Expression.dummy(), name: Expression.dummyIdentifier()}, 0, 0)
+  expression23 := Expression.create(t.ReferenceExpression{expression: Expression.dummy()}, 0, 0)
+  expression24 := Expression.create(t.UnaryExpression{operand: Expression.dummy()}, 0, 0)
+
+  EXPECT_TRUE(expression1.isIdentifier())
+  EXPECT_TRUE(expression2.isBooleanLiteral())
+  EXPECT_TRUE(expression3.isCharacterLiteral())
+  EXPECT_TRUE(expression4.isFloatingPointLiteral())
+  EXPECT_TRUE(expression5.isIntegerLiteral())
+  EXPECT_TRUE(expression6.isNilLiteral())
+  EXPECT_TRUE(expression7.isStringLiteral())
+  EXPECT_TRUE(expression8.isArray())
+  EXPECT_TRUE(expression9.isAs())
+  EXPECT_TRUE(expression10.isAssignment())
+  EXPECT_TRUE(expression11.isAwait())
+  EXPECT_TRUE(expression12.isBinary())
+  EXPECT_TRUE(expression13.isCall())
+  EXPECT_TRUE(expression14.isClosure())
+  EXPECT_TRUE(expression15.isConditional())
+  EXPECT_TRUE(expression16.isElementAccess())
+  EXPECT_TRUE(expression17.isIs())
+  EXPECT_TRUE(expression18.isMap())
+  EXPECT_TRUE(expression19.isMemberAccess())
+  EXPECT_TRUE(expression20.isObject())
+  EXPECT_TRUE(expression21.isParenthesized())
+  EXPECT_TRUE(expression22.isPropertyAccess())
+  EXPECT_TRUE(expression23.isReference())
+  EXPECT_TRUE(expression24.isUnary())
+}
+
+export fn TEST_types_statement () {
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.BlockStatement{}, 0, 0)
+    statement.asBlock()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.BreakStatement{}, 0, 0)
+    statement.asBreak()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ContinueStatement{}, 0, 0)
+    statement.asContinue()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.EmptyStatement{}, 0, 0)
+    statement.asEmpty()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.EnumDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+    statement.asEnumDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.EofStatement{}, 0, 0)
+    statement.asEof()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ExportDeclaration{statement: Statement.dummy()}, 0, 0)
+    statement.asExportDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ExportNamedDeclaration{expression: Expression.dummy()}, 0, 0)
+    statement.asExportNamedDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ExpressionStatement{expression: Expression.dummy()}, 0, 0)
+    statement.asExpression()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.FunctionDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+    statement.asFunctionDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.IfStatement{condition: Expression.dummy(), consequent: Statement.dummy()}, 0, 0)
+    statement.asIf()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ImportDeclaration{source: Expression.dummy()}, 0, 0)
+    statement.asImportDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.LoopStatement{body: Statement.dummy()}, 0, 0)
+    statement.asLoop()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.MainDeclaration{body: Statement.dummy()}, 0, 0)
+    statement.asMainDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ObjectDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+    statement.asObjectDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ObjectDeclarationMethod{name: Expression.dummyIdentifier()}, 0, 0)
+    statement.asObjectDeclarationMethod()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ObjectDeclarationProperty{name: Expression.dummyIdentifier()}, 0, 0)
+    statement.asObjectDeclarationProperty()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ReturnStatement{}, 0, 0)
+    statement.asReturn()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.ThrowStatement{expression: Expression.dummy()}, 0, 0)
+    statement.asThrow()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.TryStatement{body: Statement.dummy()}, 0, 0)
+    statement.asTry()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.TypeAliasDeclaration{name: Expression.dummyIdentifier(), t: Type.dummy()}, 0, 0)
+    statement.asTypeAliasDeclaration()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    statement := Statement.create(t.VariableDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+    statement.asVariableDeclaration()
+  })
+
+  statement1 := Statement.create(t.BlockStatement{}, 0, 0)
+  statement2 := Statement.create(t.BreakStatement{}, 0, 0)
+  statement3 := Statement.create(t.ContinueStatement{}, 0, 0)
+  statement4 := Statement.create(t.EmptyStatement{}, 0, 0)
+  statement5 := Statement.create(t.EnumDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement6 := Statement.create(t.EofStatement{}, 0, 0)
+  statement7 := Statement.create(t.ExportDeclaration{statement: Statement.dummy()}, 0, 0)
+  statement8 := Statement.create(t.ExportNamedDeclaration{expression: Expression.dummy()}, 0, 0)
+  statement9 := Statement.create(t.ExpressionStatement{expression: Expression.dummy()}, 0, 0)
+  statement10 := Statement.create(t.FunctionDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement11 := Statement.create(t.IfStatement{condition: Expression.dummy(), consequent: Statement.dummy()}, 0, 0)
+  statement12 := Statement.create(t.ImportDeclaration{source: Expression.dummy()}, 0, 0)
+  statement13 := Statement.create(t.LoopStatement{body: Statement.dummy()}, 0, 0)
+  statement14 := Statement.create(t.MainDeclaration{body: Statement.dummy()}, 0, 0)
+  statement15 := Statement.create(t.ObjectDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement16 := Statement.create(t.ObjectDeclarationMethod{name: Expression.dummyIdentifier()}, 0, 0)
+  statement17 := Statement.create(t.ObjectDeclarationProperty{name: Expression.dummyIdentifier()}, 0, 0)
+  statement18 := Statement.create(t.ReturnStatement{}, 0, 0)
+  statement19 := Statement.create(t.ThrowStatement{expression: Expression.dummy()}, 0, 0)
+  statement20 := Statement.create(t.TryStatement{body: Statement.dummy()}, 0, 0)
+  statement21 := Statement.create(t.TypeAliasDeclaration{name: Expression.dummyIdentifier(), t: Type.dummy()}, 0, 0)
+  statement22 := Statement.create(t.VariableDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+
+  EXPECT_TRUE(statement1.isBlock())
+  EXPECT_TRUE(statement2.isBreak())
+  EXPECT_TRUE(statement3.isContinue())
+  EXPECT_TRUE(statement4.isEmpty())
+  EXPECT_TRUE(statement5.isEnumDeclaration())
+  EXPECT_TRUE(statement6.isEof())
+  EXPECT_TRUE(statement7.isExportDeclaration())
+  EXPECT_TRUE(statement8.isExportNamedDeclaration())
+  EXPECT_TRUE(statement9.isExpression())
+  EXPECT_TRUE(statement10.isFunctionDeclaration())
+  EXPECT_TRUE(statement11.isIf())
+  EXPECT_TRUE(statement12.isImportDeclaration())
+  EXPECT_TRUE(statement13.isLoop())
+  EXPECT_TRUE(statement14.isMainDeclaration())
+  EXPECT_TRUE(statement15.isObjectDeclaration())
+  EXPECT_TRUE(statement16.isObjectDeclarationMethod())
+  EXPECT_TRUE(statement17.isObjectDeclarationProperty())
+  EXPECT_TRUE(statement18.isReturn())
+  EXPECT_TRUE(statement19.isThrow())
+  EXPECT_TRUE(statement20.isTry())
+  EXPECT_TRUE(statement21.isTypeAliasDeclaration())
+  EXPECT_TRUE(statement22.isVariableDeclaration())
+}
+
+export fn TEST_types_type () {
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.ArrayType{elementType: Type.dummy()}, 0, 0)
+    t.asArray()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.FunctionType{returnType: Type.dummy()}, 0, 0)
+    t.asFunction()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.IdentifierType{name: Expression.dummyIdentifier()}, 0, 0)
+    t.asIdentifier()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.MapType{keyType: Type.dummy(), valueType: Type.dummy()}, 0, 0)
+    t.asMap()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.MemberType{t: Type.dummy(), name: Expression.dummyIdentifier()}, 0, 0)
+    t.asMember()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.OptionalType{t: Type.dummy()}, 0, 0)
+    t.asOptional()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.ParenthesizedType{t: Type.dummy()}, 0, 0)
+    t.asParenthesized()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.ReferenceType{t: Type.dummy()}, 0, 0)
+    t.asReference()
+  })
+
+  EXPECT_NO_THROW(() -> void {
+    t := Type.create(t.UnionType{types: [Type.dummy(), Type.dummy()]}, 0, 0)
+    t.asUnion()
+  })
+
+  t1 := Type.create(t.ArrayType{elementType: Type.dummy()}, 0, 0)
+  t2 := Type.create(t.FunctionType{returnType: Type.dummy()}, 0, 0)
+  t3 := Type.create(t.IdentifierType{name: Expression.dummyIdentifier()}, 0, 0)
+  t4 := Type.create(t.MapType{keyType: Type.dummy(), valueType: Type.dummy()}, 0, 0)
+  t5 := Type.create(t.MemberType{t: Type.dummy(), name: Expression.dummyIdentifier()}, 0, 0)
+  t6 := Type.create(t.OptionalType{t: Type.dummy()}, 0, 0)
+  t7 := Type.create(t.ParenthesizedType{t: Type.dummy()}, 0, 0)
+  t8 := Type.create(t.ReferenceType{t: Type.dummy()}, 0, 0)
+  t9 := Type.create(t.UnionType{types: [Type.dummy(), Type.dummy()]}, 0, 0)
+
+  EXPECT_TRUE(t1.isArray())
+  EXPECT_TRUE(t2.isFunction())
+  EXPECT_TRUE(t3.isIdentifier())
+  EXPECT_TRUE(t4.isMap())
+  EXPECT_TRUE(t5.isMember())
+  EXPECT_TRUE(t6.isOptional())
+  EXPECT_TRUE(t7.isParenthesized())
+  EXPECT_TRUE(t8.isReference())
+  EXPECT_TRUE(t9.isUnion())
+}

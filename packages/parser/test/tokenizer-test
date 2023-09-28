@@ -1,0 +1,189 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import
+  EXPECT_FALSE,
+  EXPECT_NO_THROW,
+  EXPECT_THROW_WITH_MESSAGE,
+  EXPECT_TRUE,
+  parseTestFile
+from "./utils"
+import * as Reader from "../src/reader"
+import * as Tokenizer from "../src/tokenizer"
+import * as t from "../src/types"
+
+export fn TEST_Tokenizer_init () {
+  EXPECT_NO_THROW(() -> void {
+    mut r := Reader.init("test")
+    Tokenizer.init(ref r)
+  })
+}
+
+export fn TEST_Tokenizer_errorSeek () {
+  mut r := Reader.init("3.'")
+  mut t := Tokenizer.init(ref r)
+
+  EXPECT_EQ(t.errors.len, 0)
+  tk1 := t.next()
+  EXPECT_EQ(t.errors.len, 1)
+  tk2 := t.next()
+  EXPECT_EQ(t.errors.len, 2)
+  t.errorSeek(0)
+  EXPECT_EQ(t.errors.len, 1)
+  t.errorSeek(-1)
+  EXPECT_EQ(t.errors.len, 0)
+}
+
+export fn TEST_Tokenizer_lookahead () {
+  mut r := Reader.init("1 // comment")
+  mut t := Tokenizer.init(ref r)
+
+  EXPECT_FALSE(t.lookahead(.LitStr))
+  pos := t.pos()
+  EXPECT_TRUE(t.lookahead(.LitIntDec, alwaysGoBack: true))
+  EXPECT_EQ(t.pos(), pos)
+  EXPECT_TRUE(t.lookahead(.LitIntDec))
+  EXPECT_TRUE(t.lookahead(.Eof, alwaysGoBack: true))
+  EXPECT_TRUE(t.lookahead(.CommentLine, allowComments: true))
+  EXPECT_TRUE(t.lookahead(.Eof, alwaysGoBack: true))
+  EXPECT_TRUE(t.lookahead(.Eof))
+}
+
+export fn TEST_Tokenizer_nextComments () {
+  mut r := Reader.init("// test\n/* comment */ 1")
+  mut tokenizer := Tokenizer.init(ref r)
+
+  tk1 := tokenizer.next(allowComments: true)
+  tk2 := tokenizer.next(allowComments: true)
+  tk3 := tokenizer.next(allowComments: true)
+
+  EXPECT_EQ(tk1.t.rawValue, t.TokenType.CommentLine.rawValue)
+  EXPECT_EQ(tk2.t.rawValue, t.TokenType.CommentBlock.rawValue)
+  EXPECT_EQ(tk3.t.rawValue, t.TokenType.LitIntDec.rawValue)
+}
+
+export fn TEST_Tokenizer_nextCaches () {
+  mut r := Reader.init("1 2 3")
+  mut t := Tokenizer.init(ref r)
+
+  EXPECT_EQ(t.data.len, 0)
+  t.next()
+  EXPECT_EQ(t.data.len, 1)
+  t.next()
+  EXPECT_EQ(t.data.len, 3)
+  t.seek(0)
+  EXPECT_EQ(t.data.len, 3)
+  t.next()
+  EXPECT_EQ(t.data.len, 3)
+  t.next()
+  EXPECT_EQ(t.data.len, 3)
+}
+
+export fn TEST_Tokenizer_nextThrows () {
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    mut r := Reader.init("")
+    mut t := Tokenizer.init(ref r)
+    t.next()
+    t.next()
+  }, "Tried next on Tokenizer eof")
+}
+
+export fn TEST_Tokenizer_pos () {
+  mut r := Reader.init("1 2 3")
+  mut t := Tokenizer.init(ref r)
+
+  EXPECT_EQ(t.pos(), 0)
+  t.next()
+  EXPECT_EQ(t.pos(), 1)
+  t.next()
+  EXPECT_EQ(t.pos(), 3)
+  t.next()
+  EXPECT_EQ(t.pos(), 5)
+}
+
+export fn TEST_Tokenizer_readerStartPos () {
+  mut r := Reader.init("10 'a' true")
+  mut t := Tokenizer.init(ref r)
+
+  EXPECT_EQ(t.readerStartPos(), 0)
+  t.next()
+  t.lookahead(.Id)
+  EXPECT_EQ(t.readerStartPos(), 0)
+  EXPECT_EQ(t.readerStartPos(offset: 1), 2)
+  t.next()
+  t.lookahead(.Id)
+  EXPECT_EQ(t.readerStartPos(), 3)
+  EXPECT_EQ(t.readerStartPos(offset: 1), 6)
+  t.next()
+  t.lookahead(.Id)
+  EXPECT_EQ(t.readerStartPos(), 7)
+  EXPECT_EQ(t.readerStartPos(offset: 1), 11)
+}
+
+export fn TEST_Tokenizer_readerEndPos () {
+  mut r := Reader.init("10 'a' true")
+  mut t := Tokenizer.init(ref r)
+
+  EXPECT_EQ(t.readerEndPos(), 0)
+  t.next()
+  EXPECT_EQ(t.readerEndPos(), 2)
+  t.next()
+  EXPECT_EQ(t.readerEndPos(), 6)
+  t.next()
+  EXPECT_EQ(t.readerEndPos(), 11)
+}
+
+export fn TEST_Tokenizer_readerSeek () {
+  mut r := Reader.init("10 'a' true")
+  mut t := Tokenizer.init(ref r)
+
+  t.next()
+  t.next()
+  t.next()
+  EXPECT_EQ(t.pos(), 5)
+  t.readerSeek(10)
+  EXPECT_EQ(t.pos(), 4)
+  t.readerSeek(5)
+  EXPECT_EQ(t.pos(), 2)
+  t.readerSeek(1)
+  EXPECT_EQ(t.pos(), 0)
+  t.readerSeek(-10)
+  EXPECT_EQ(t.pos(), 0)
+  t.readerSeek(10)
+  EXPECT_EQ(t.pos(), 4)
+  t.readerSeek(20)
+  EXPECT_EQ(t.pos(), 0)
+}
+
+export fn TEST_Tokenizer_seek () {
+  mut r := Reader.init("10 'a' true")
+  mut t := Tokenizer.init(ref r)
+
+  t.next()
+  t.next()
+  t.next()
+  EXPECT_EQ(t.pos(), 5)
+  t.seek(4)
+  EXPECT_EQ(t.pos(), 4)
+  t.seek(3)
+  EXPECT_EQ(t.pos(), 3)
+  t.seek(0)
+  EXPECT_EQ(t.pos(), 0)
+}
+
+export fn TEST_Tokenizer_next () {
+  files := fs_scandirSync("./test/tokenizer")
+
+  loop i := 0; i < files.len; i++ {
+    file := files[i] as str
+    if file.slice(-4) != ".txt" { continue }
+
+    result := parseTestFile("./test/tokenizer/" + file)
+    mut reader := Reader.init(result.in)
+    mut tokenizer := Tokenizer.init(ref reader)
+    actualStdoutCode := Tokenizer.stringify(ref tokenizer, allowComments: file.contains("comment"))
+    EXPECT_EQ(result.out, actualStdoutCode)
+  }
+}

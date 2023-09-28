@@ -1,0 +1,141 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import EXPECT_FALSE, EXPECT_THROW_WITH_MESSAGE, EXPECT_TRUE from "./utils"
+import * as Reader from "../src/reader"
+import * as Token from "../src/token"
+import * as t from "../src/types"
+
+export fn TEST_Reader_initWithCode () {
+  reader1 := Reader.init("test")
+  EXPECT_EQ(reader1.path, "anonymous")
+  EXPECT_EQ(reader1.content, "test")
+
+  reader2 := Reader.init("//")
+  EXPECT_EQ(reader2.path, "anonymous")
+  EXPECT_EQ(reader2.content, "//")
+
+  reader3 := Reader.init(".Test")
+  EXPECT_EQ(reader3.path, "anonymous")
+  EXPECT_EQ(reader3.content, ".Test")
+}
+
+export fn TEST_Reader_initWithPath () {
+  reader := Reader.init("./test/fixtures/test-reader.txt")
+  EXPECT_EQ(reader.path, process_cwd() + path_SEP + "test" + path_SEP + "fixtures" + path_SEP + "test-reader.txt")
+  EXPECT_EQ(reader.content, "Hello, World!" + os_EOL)
+}
+
+export fn TEST_Reader_initThrows () {
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    try {
+      Reader.init("./test/fixtures/test-non-existing.txt")
+    } catch err: t.ParserError {
+      throw error_NewError(err.message)
+    }
+  }, "Path `./test/fixtures/test-non-existing.txt` doesn't exists")
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    try {
+      Reader.init("./test/fixtures")
+    } catch err: t.ParserError {
+      throw error_NewError(err.message)
+    }
+  }, "Path `./test/fixtures` is not a file")
+}
+
+export fn TEST_Reader_locate () {
+  reader := Reader.init("./test/fixtures/test-reader-multiline.txt")
+  EXPECT_EQ(Reader.locate(ref reader, 0).str(), t.Location{line: 1, col: 1}.str())
+  EXPECT_EQ(Reader.locate(ref reader, 10).str(), t.Location{line: 1, col: 11}.str())
+  EXPECT_EQ(Reader.locate(ref reader, 80).str(), t.Location{line: 2, col: 24}.str())
+  EXPECT_EQ(Reader.locate(ref reader, 450).str(), t.Location{line: 10, col: 22}.str())
+  EXPECT_EQ(Reader.locate(ref reader, 480).str(), t.Location{line: 10, col: 52}.str())
+  EXPECT_EQ(Reader.locate(ref reader, 500).str(), t.Location{line: 10, col: 53}.str())
+}
+
+export fn TEST_Reader_eof () {
+  mut reader := Reader.init("./test/fixtures/test-reader.txt")
+  EXPECT_FALSE(reader.eof())
+  reader.next()
+  EXPECT_FALSE(reader.eof())
+  loop i := 0; i < 12; i++ {
+    reader.next()
+  }
+  EXPECT_FALSE(reader.eof())
+  reader.next()
+  EXPECT_TRUE(reader.eof())
+}
+
+export fn TEST_Reader_lookahead () {
+  mut reader := Reader.init("./test/fixtures/test-reader-multiline.txt")
+  EXPECT_TRUE(reader.lookahead('L'))
+  EXPECT_FALSE(reader.lookahead('I'))
+  EXPECT_TRUE(reader.lookahead('o'))
+  EXPECT_TRUE(reader.lookahead('r'))
+  EXPECT_TRUE(reader.lookahead('e'))
+  EXPECT_TRUE(reader.lookahead('m'))
+  EXPECT_TRUE(reader.lookahead(' '))
+  reader.walk(Token.isNotNewLine)
+  EXPECT_TRUE(reader.lookahead('\n'))
+}
+
+export fn TEST_Reader_next () {
+  mut reader := Reader.init("./test/fixtures/test-reader-multiline.txt")
+
+  EXPECT_EQ(reader.next(), 'L')
+  EXPECT_EQ(reader.next(), 'o')
+  EXPECT_EQ(reader.next(), 'r')
+  EXPECT_EQ(reader.next(), 'e')
+  EXPECT_EQ(reader.next(), 'm')
+  EXPECT_EQ(reader.next(), ' ')
+  reader.walk(Token.isNotNewLine)
+  EXPECT_EQ(reader.next(), '\n')
+  EXPECT_EQ(reader.next(), 'C')
+  EXPECT_EQ(reader.next(), 'r')
+  EXPECT_EQ(reader.next(), 'a')
+  EXPECT_EQ(reader.next(), 's')
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    mut reader2 := Reader.init("./test/fixtures/test-reader.txt")
+    loop i := 0; i < 15; i++ {
+      reader2.next()
+    }
+  }, "Tried next on Reader eof")
+}
+
+export fn TEST_Reader_seek () {
+  mut reader := Reader.init("./test/fixtures/test-reader.txt")
+
+  loop i := 0; i < 14; i++ {
+    reader.next()
+  }
+
+  reader.seek(0)
+  EXPECT_EQ(reader.pos, 0)
+
+  loop i := 0; i < 14; i++ {
+    reader.next()
+  }
+}
+
+export fn TEST_Reader_slice () {
+  mut reader := Reader.init("./test/fixtures/test-reader.txt")
+  EXPECT_EQ(reader.slice(0, 5), "Hello")
+  EXPECT_EQ(reader.slice(7, 12), "World")
+}
+
+export fn TEST_Reader_walk () {
+  mut reader := Reader.init("./test/fixtures/test-reader.txt")
+  EXPECT_EQ(reader.pos, 0)
+
+  reader.walk((ch: char) -> bool {
+    return ch != 'W'
+  })
+
+  EXPECT_EQ(reader.pos, 7)
+  reader.walk(Token.isNotNewLine)
+  EXPECT_EQ(reader.pos, 13)
+}

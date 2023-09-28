@@ -1,0 +1,5 @@
+if test {} else
+===== err =====
+anonymous:1:16: ParseError: E0152 - Expected if statement alternate statement
+1 | if test {} else
+  |                ^

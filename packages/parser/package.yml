@@ -1,5 +1,12 @@
 name: the/parser
-version: 0.3.3
+version: 0.4.1
 description: The programming language parser
 license: MIT
 main: src/main
+
+packages:
+  the/testing: 0.3.0
+
+scripts:
+  update-parser-tests: the run scripts/update-parser-tests
+  update-tokenizer-tests: the run scripts/update-tokenizer-tests

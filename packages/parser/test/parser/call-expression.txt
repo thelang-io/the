@@ -1,0 +1,192 @@
+test()
+Test1.Test2()
+Test1.Test3()
+test(1)
+test(1,)
+test(1, 2)
+test(1, 2,)
+test(1, 2, 3)
+test(1, 2, 3,)
+test(a: 1)
+test(a: 1,)
+test(a: 1, 2)
+test(a: 1, 2,)
+test(1, a: 2)
+test(1, a: 2,)
+test(a: 1, b: 2)
+test(a: 1, b: 2,)
+===== out =====
+Program
+  ExpressionStatement(start=0, end=6)
+    CallExpression(start=0, end=6)
+      callee
+        Identifier(start=0 end=4) test
+  ExpressionStatement(start=7, end=20)
+    CallExpression(start=7, end=20)
+      callee
+        PropertyAccessExpression(start=7, end=18)
+          expression
+            Identifier(start=7 end=12) Test1
+          name
+            Identifier(start=13 end=18) Test2
+  ExpressionStatement(start=21, end=34)
+    CallExpression(start=21, end=34)
+      callee
+        PropertyAccessExpression(start=21, end=32)
+          expression
+            Identifier(start=21 end=26) Test1
+          name
+            Identifier(start=27 end=32) Test3
+  ExpressionStatement(start=35, end=42)
+    CallExpression(start=35, end=42)
+      callee
+        Identifier(start=35 end=39) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=40, end=41 type=Decimal) 1
+  ExpressionStatement(start=43, end=51)
+    CallExpression(start=43, end=51)
+      callee
+        Identifier(start=43 end=47) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=48, end=49 type=Decimal) 1
+  ExpressionStatement(start=52, end=62)
+    CallExpression(start=52, end=62)
+      callee
+        Identifier(start=52 end=56) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=57, end=58 type=Decimal) 1
+        CallExpressionArgument
+          IntegerLiteral(start=60, end=61 type=Decimal) 2
+  ExpressionStatement(start=63, end=74)
+    CallExpression(start=63, end=74)
+      callee
+        Identifier(start=63 end=67) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=68, end=69 type=Decimal) 1
+        CallExpressionArgument
+          IntegerLiteral(start=71, end=72 type=Decimal) 2
+  ExpressionStatement(start=75, end=88)
+    CallExpression(start=75, end=88)
+      callee
+        Identifier(start=75 end=79) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=80, end=81 type=Decimal) 1
+        CallExpressionArgument
+          IntegerLiteral(start=83, end=84 type=Decimal) 2
+        CallExpressionArgument
+          IntegerLiteral(start=86, end=87 type=Decimal) 3
+  ExpressionStatement(start=89, end=103)
+    CallExpression(start=89, end=103)
+      callee
+        Identifier(start=89 end=93) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=94, end=95 type=Decimal) 1
+        CallExpressionArgument
+          IntegerLiteral(start=97, end=98 type=Decimal) 2
+        CallExpressionArgument
+          IntegerLiteral(start=100, end=101 type=Decimal) 3
+  ExpressionStatement(start=104, end=114)
+    CallExpression(start=104, end=114)
+      callee
+        Identifier(start=104 end=108) test
+      arguments
+        CallExpressionArgument
+          name
+            Identifier(start=109 end=110) a
+          expression
+            IntegerLiteral(start=112, end=113 type=Decimal) 1
+  ExpressionStatement(start=115, end=126)
+    CallExpression(start=115, end=126)
+      callee
+        Identifier(start=115 end=119) test
+      arguments
+        CallExpressionArgument
+          name
+            Identifier(start=120 end=121) a
+          expression
+            IntegerLiteral(start=123, end=124 type=Decimal) 1
+  ExpressionStatement(start=127, end=140)
+    CallExpression(start=127, end=140)
+      callee
+        Identifier(start=127 end=131) test
+      arguments
+        CallExpressionArgument
+          name
+            Identifier(start=132 end=133) a
+          expression
+            IntegerLiteral(start=135, end=136 type=Decimal) 1
+        CallExpressionArgument
+          IntegerLiteral(start=138, end=139 type=Decimal) 2
+  ExpressionStatement(start=141, end=155)
+    CallExpression(start=141, end=155)
+      callee
+        Identifier(start=141 end=145) test
+      arguments
+        CallExpressionArgument
+          name
+            Identifier(start=146 end=147) a
+          expression
+            IntegerLiteral(start=149, end=150 type=Decimal) 1
+        CallExpressionArgument
+          IntegerLiteral(start=152, end=153 type=Decimal) 2
+  ExpressionStatement(start=156, end=169)
+    CallExpression(start=156, end=169)
+      callee
+        Identifier(start=156 end=160) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=161, end=162 type=Decimal) 1
+        CallExpressionArgument
+          name
+            Identifier(start=164 end=165) a
+          expression
+            IntegerLiteral(start=167, end=168 type=Decimal) 2
+  ExpressionStatement(start=170, end=184)
+    CallExpression(start=170, end=184)
+      callee
+        Identifier(start=170 end=174) test
+      arguments
+        CallExpressionArgument
+          IntegerLiteral(start=175, end=176 type=Decimal) 1
+        CallExpressionArgument
+          name
+            Identifier(start=178 end=179) a
+          expression
+            IntegerLiteral(start=181, end=182 type=Decimal) 2
+  ExpressionStatement(start=185, end=201)
+    CallExpression(start=185, end=201)
+      callee
+        Identifier(start=185 end=189) test
+      arguments
+        CallExpressionArgument
+          name
+            Identifier(start=190 end=191) a
+          expression
+            IntegerLiteral(start=193, end=194 type=Decimal) 1
+        CallExpressionArgument
+          name
+            Identifier(start=196 end=197) b
+          expression
+            IntegerLiteral(start=199, end=200 type=Decimal) 2
+  ExpressionStatement(start=202, end=219)
+    CallExpression(start=202, end=219)
+      callee
+        Identifier(start=202 end=206) test
+      arguments
+        CallExpressionArgument
+          name
+            Identifier(start=207 end=208) a
+          expression
+            IntegerLiteral(start=210, end=211 type=Decimal) 1
+        CallExpressionArgument
+          name
+            Identifier(start=213 end=214) b
+          expression
+            IntegerLiteral(start=216, end=217 type=Decimal) 2
+  EofStatement(start=219, end=219)

@@ -1,0 +1,13 @@
+a: (
+===== err =====
+anonymous:1:3: ParseError: E0133 - Expected variable declaration type after name
+1 | a: (
+  |   ^
+
+anonymous:1:5: ParseError: E0107 - Expected expression after left parenthesis
+1 | a: (
+  |     ^
+
+anonymous:1:5: ParseError: E0103 - Expected closing parenthesis after parenthesized expression
+1 | a: (
+  |     ^

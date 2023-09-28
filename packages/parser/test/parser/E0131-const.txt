@@ -1,0 +1,5 @@
+const : int
+===== err =====
+anonymous:1:6: ParseError: E0131 - Expected variable declaration name after `const` keyword
+1 | const : int
+  |      ^

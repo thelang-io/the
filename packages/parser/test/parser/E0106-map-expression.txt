@@ -1,0 +1,5 @@
+a := { "key1": "value" "key2": "value2" }
+===== err =====
+anonymous:1:23: ParseError: E0106 - Expected comma after map expression element
+1 | a := { "key1": "value" "key2": "value2" }
+  |                       ^

@@ -1,0 +1,107 @@
+enum Test {}
+
+enum Test {
+  One,
+  Two
+}
+
+enum Test {
+  One,
+  Two,
+}
+
+enum Test {
+  One = 1,
+  Two = 0xF << 0xF,
+  Three = 1 + 2
+}
+
+enum Test {
+  One = 1,
+  Two = 0xF << 0xF,
+  Three = 1 + 2,
+}
+===== out =====
+Program
+  EnumDeclaration(start=0, end=12)
+    name
+      Identifier(start=5 end=9) Test
+  EnumDeclaration(start=14, end=40)
+    name
+      Identifier(start=19 end=23) Test
+    members
+      EnumDeclarationMember
+        Identifier(start=28 end=31) One
+      EnumDeclarationMember
+        Identifier(start=35 end=38) Two
+  EnumDeclaration(start=42, end=69)
+    name
+      Identifier(start=47 end=51) Test
+    members
+      EnumDeclarationMember
+        Identifier(start=56 end=59) One
+      EnumDeclarationMember
+        Identifier(start=63 end=66) Two
+  EnumDeclaration(start=71, end=131)
+    name
+      Identifier(start=76 end=80) Test
+    members
+      EnumDeclarationMember
+        name
+          Identifier(start=85 end=88) One
+        initializer
+          IntegerLiteral(start=91, end=92 type=Decimal) 1
+      EnumDeclarationMember
+        name
+          Identifier(start=96 end=99) Two
+        initializer
+          BinaryExpression(start=102, end=112)
+            left
+              IntegerLiteral(start=102, end=105 type=Hexadecimal) 0xF
+            op
+              OpLShift(start=106 end=108) <<
+            right
+              IntegerLiteral(start=109, end=112 type=Hexadecimal) 0xF
+      EnumDeclarationMember
+        name
+          Identifier(start=116 end=121) Three
+        initializer
+          BinaryExpression(start=124, end=129)
+            left
+              IntegerLiteral(start=124, end=125 type=Decimal) 1
+            op
+              OpPlus(start=126 end=127) +
+            right
+              IntegerLiteral(start=128, end=129 type=Decimal) 2
+  EnumDeclaration(start=133, end=194)
+    name
+      Identifier(start=138 end=142) Test
+    members
+      EnumDeclarationMember
+        name
+          Identifier(start=147 end=150) One
+        initializer
+          IntegerLiteral(start=153, end=154 type=Decimal) 1
+      EnumDeclarationMember
+        name
+          Identifier(start=158 end=161) Two
+        initializer
+          BinaryExpression(start=164, end=174)
+            left
+              IntegerLiteral(start=164, end=167 type=Hexadecimal) 0xF
+            op
+              OpLShift(start=168 end=170) <<
+            right
+              IntegerLiteral(start=171, end=174 type=Hexadecimal) 0xF
+      EnumDeclarationMember
+        name
+          Identifier(start=178 end=183) Three
+        initializer
+          BinaryExpression(start=186, end=191)
+            left
+              IntegerLiteral(start=186, end=187 type=Decimal) 1
+            op
+              OpPlus(start=188 end=189) +
+            right
+              IntegerLiteral(start=190, end=191 type=Decimal) 2
+  EofStatement(start=194, end=194)

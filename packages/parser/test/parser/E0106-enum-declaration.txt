@@ -1,0 +1,5 @@
+enum Test { One Two }
+===== err =====
+anonymous:1:16: ParseError: E0106 - Expected comma after enumeration declaration member
+1 | enum Test { One Two }
+  |                ^

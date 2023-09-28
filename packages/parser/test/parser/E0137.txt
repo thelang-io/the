@@ -1,0 +1,5 @@
+a: int |
+===== err =====
+anonymous:1:9: ParseError: E0137 - Expected union subtype after pipe operator
+1 | a: int |
+  |         ^

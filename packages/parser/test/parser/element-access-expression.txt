@@ -1,0 +1,17 @@
+test[a]
+test[10]
+===== out =====
+Program
+  ExpressionStatement(start=0, end=7)
+    ElementAccessExpression(start=0, end=7)
+      expression
+        Identifier(start=0 end=4) test
+      argument
+        Identifier(start=5 end=6) a
+  ExpressionStatement(start=8, end=16)
+    ElementAccessExpression(start=8, end=16)
+      expression
+        Identifier(start=8 end=12) test
+      argument
+        IntegerLiteral(start=13, end=15 type=Decimal) 10
+  EofStatement(start=16, end=16)

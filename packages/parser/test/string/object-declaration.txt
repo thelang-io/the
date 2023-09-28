@@ -1,0 +1,4 @@
+obj Test {}
+main {
+  obj Test {}
+}

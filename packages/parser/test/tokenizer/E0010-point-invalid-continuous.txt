@@ -1,0 +1,5 @@
+0.1231ABC
+===== err =====
+anonymous:1:1: SyntaxError: E0010 - Invalid float literal
+1 | 0.1231ABC
+  | ~~~~~~~~~

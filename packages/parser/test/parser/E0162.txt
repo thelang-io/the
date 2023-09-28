@@ -1,0 +1,5 @@
+try {} catch err: Error
+===== err =====
+anonymous:1:24: ParseError: E0162 - Expected try statement handler body after handler parameter declaration
+1 | try {} catch err: Error
+  |                        ^

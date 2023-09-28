@@ -1,0 +1,219 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import EXPECT_FALSE, EXPECT_THROW_WITH_MESSAGE, EXPECT_TRUE from "./utils"
+import * as Token from "../src/token"
+import * as t from "../src/types"
+
+export fn TEST_Token_associativity () {
+  EXPECT_EQ(Token.associativity(.KwAs).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.KwAwait).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.KwIs).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.KwRef).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.OpLBrace).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.OpRBrace).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.OpLPar).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.OpRPar).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.OpMinusMinus).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPlusPlus).rawValue, t.TokenAssociativity.None.rawValue)
+  EXPECT_EQ(Token.associativity(.OpArrow).rawValue, t.TokenAssociativity.None.rawValue)
+
+  EXPECT_EQ(Token.associativity(.OpExcl, unary: true).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpMinus, unary: true).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPlus, unary: true).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpTilde, unary: true).rawValue, t.TokenAssociativity.Right.rawValue)
+
+  EXPECT_EQ(Token.associativity(.OpAmpEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpAmpAmpEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpCaretEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpLShiftEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpMinusEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPercentEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPipeEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPipePipeEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPlusEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpRShiftEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpSlashEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpStarEq).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpColon).rawValue, t.TokenAssociativity.Right.rawValue)
+  EXPECT_EQ(Token.associativity(.OpQn).rawValue, t.TokenAssociativity.Right.rawValue)
+
+  EXPECT_EQ(Token.associativity(.OpDot).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpLBrack).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpRBrack).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPercent).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpSlash).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpStar).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpMinus).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPlus).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpLShift).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpRShift).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpGt).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpGtEq).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpLt).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpLtEq).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpEqEq).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpExclEq).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpAmp).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpCaret).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPipe).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpAmpAmp).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpPipePipe).rawValue, t.TokenAssociativity.Left.rawValue)
+  EXPECT_EQ(Token.associativity(.OpComma).rawValue, t.TokenAssociativity.Left.rawValue)
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    Token.associativity(.KwFn)
+  }, "Tried associativity on unknown token")
+}
+
+export fn TEST_Token_isCharEsc () {
+  EXPECT_TRUE(Token.isCharEsc('0'))
+  EXPECT_TRUE(Token.isCharEsc('b'))
+  EXPECT_TRUE(Token.isCharEsc('f'))
+  EXPECT_TRUE(Token.isCharEsc('n'))
+  EXPECT_TRUE(Token.isCharEsc('r'))
+  EXPECT_TRUE(Token.isCharEsc('t'))
+  EXPECT_TRUE(Token.isCharEsc('v'))
+  EXPECT_TRUE(Token.isCharEsc('"'))
+  EXPECT_TRUE(Token.isCharEsc('\''))
+  EXPECT_TRUE(Token.isCharEsc('\\'))
+}
+
+export fn TEST_Token_isId () {
+  EXPECT_TRUE(Token.isId('a'))
+  EXPECT_TRUE(Token.isId('z'))
+  EXPECT_TRUE(Token.isId('A'))
+  EXPECT_TRUE(Token.isId('Z'))
+  EXPECT_TRUE(Token.isId('0'))
+  EXPECT_TRUE(Token.isId('9'))
+  EXPECT_TRUE(Token.isId('_'))
+}
+
+export fn TEST_Token_isIdStart () {
+  EXPECT_TRUE(Token.isIdStart('a'))
+  EXPECT_TRUE(Token.isIdStart('z'))
+  EXPECT_TRUE(Token.isIdStart('A'))
+  EXPECT_TRUE(Token.isIdStart('Z'))
+  EXPECT_TRUE(Token.isIdStart('_'))
+}
+
+export fn TEST_Token_isIntBin () {
+  EXPECT_TRUE(Token.isIntBin('0'))
+  EXPECT_TRUE(Token.isIntBin('1'))
+}
+
+export fn TEST_Token_isIntDec () {
+  EXPECT_TRUE(Token.isIntDec('0'))
+  EXPECT_TRUE(Token.isIntDec('9'))
+}
+
+export fn TEST_Token_isIntHex () {
+  EXPECT_TRUE(Token.isIntHex('0'))
+  EXPECT_TRUE(Token.isIntHex('9'))
+  EXPECT_TRUE(Token.isIntHex('A'))
+  EXPECT_TRUE(Token.isIntHex('F'))
+  EXPECT_TRUE(Token.isIntHex('a'))
+  EXPECT_TRUE(Token.isIntHex('f'))
+}
+
+export fn TEST_Token_isIntOct () {
+  EXPECT_TRUE(Token.isIntOct('0'))
+  EXPECT_TRUE(Token.isIntOct('7'))
+}
+
+export fn TEST_Token_isNotNewLine () {
+  EXPECT_FALSE(Token.isNotNewLine('\n'))
+  EXPECT_TRUE(Token.isNotNewLine('a'))
+}
+
+export fn TEST_Token_isStrEsc () {
+  EXPECT_TRUE(Token.isStrEsc('0'))
+  EXPECT_TRUE(Token.isStrEsc('b'))
+  EXPECT_TRUE(Token.isStrEsc('f'))
+  EXPECT_TRUE(Token.isStrEsc('n'))
+  EXPECT_TRUE(Token.isStrEsc('r'))
+  EXPECT_TRUE(Token.isStrEsc('t'))
+  EXPECT_TRUE(Token.isStrEsc('v'))
+  EXPECT_TRUE(Token.isStrEsc('"'))
+  EXPECT_TRUE(Token.isStrEsc('\''))
+  EXPECT_TRUE(Token.isStrEsc('\\'))
+  EXPECT_TRUE(Token.isStrEsc('{'))
+}
+
+export fn TEST_Token_isWhitespace () {
+  EXPECT_TRUE(Token.isWhitespace(' '))
+  EXPECT_TRUE(Token.isWhitespace('\f'))
+  EXPECT_TRUE(Token.isWhitespace('\n'))
+  EXPECT_TRUE(Token.isWhitespace('\r'))
+  EXPECT_TRUE(Token.isWhitespace('\t'))
+  EXPECT_TRUE(Token.isWhitespace('\v'))
+}
+
+export fn TEST_Token_precedence () {
+  EXPECT_EQ(Token.precedence(.OpLBrace), 18)
+  EXPECT_EQ(Token.precedence(.OpRBrace), 18)
+  EXPECT_EQ(Token.precedence(.OpLPar), 18)
+  EXPECT_EQ(Token.precedence(.OpRPar), 18)
+  EXPECT_EQ(Token.precedence(.OpDot), 17)
+  EXPECT_EQ(Token.precedence(.OpLBrack), 17)
+  EXPECT_EQ(Token.precedence(.OpRBrack), 17)
+  EXPECT_EQ(Token.precedence(.OpMinusMinus), 16)
+  EXPECT_EQ(Token.precedence(.OpPlusPlus), 16)
+  EXPECT_EQ(Token.precedence(.KwAwait), 15)
+  EXPECT_EQ(Token.precedence(.KwRef), 15)
+  EXPECT_EQ(Token.precedence(.OpExcl, unary: true), 14)
+  EXPECT_EQ(Token.precedence(.OpMinus, unary: true), 14)
+  EXPECT_EQ(Token.precedence(.OpPlus, unary: true), 14)
+  EXPECT_EQ(Token.precedence(.OpTilde, unary: true), 14)
+  EXPECT_EQ(Token.precedence(.OpPercent), 12)
+  EXPECT_EQ(Token.precedence(.OpSlash), 12)
+  EXPECT_EQ(Token.precedence(.OpStar), 12)
+  EXPECT_EQ(Token.precedence(.OpMinus), 11)
+  EXPECT_EQ(Token.precedence(.OpPlus), 11)
+  EXPECT_EQ(Token.precedence(.OpLShift), 10)
+  EXPECT_EQ(Token.precedence(.OpRShift), 10)
+  EXPECT_EQ(Token.precedence(.KwAs), 9)
+  EXPECT_EQ(Token.precedence(.KwIs), 9)
+  EXPECT_EQ(Token.precedence(.OpGt), 9)
+  EXPECT_EQ(Token.precedence(.OpGtEq), 9)
+  EXPECT_EQ(Token.precedence(.OpLt), 9)
+  EXPECT_EQ(Token.precedence(.OpLtEq), 9)
+  EXPECT_EQ(Token.precedence(.OpEqEq), 8)
+  EXPECT_EQ(Token.precedence(.OpExclEq), 8)
+  EXPECT_EQ(Token.precedence(.OpAmp), 7)
+  EXPECT_EQ(Token.precedence(.OpCaret), 6)
+  EXPECT_EQ(Token.precedence(.OpPipe), 5)
+  EXPECT_EQ(Token.precedence(.OpAmpAmp), 4)
+  EXPECT_EQ(Token.precedence(.OpPipePipe), 3)
+  EXPECT_EQ(Token.precedence(.OpAmpEq), 2)
+  EXPECT_EQ(Token.precedence(.OpAmpAmpEq), 2)
+  EXPECT_EQ(Token.precedence(.OpCaretEq), 2)
+  EXPECT_EQ(Token.precedence(.OpEq), 2)
+  EXPECT_EQ(Token.precedence(.OpLShiftEq), 2)
+  EXPECT_EQ(Token.precedence(.OpMinusEq), 2)
+  EXPECT_EQ(Token.precedence(.OpPercentEq), 2)
+  EXPECT_EQ(Token.precedence(.OpPipeEq), 2)
+  EXPECT_EQ(Token.precedence(.OpPipePipeEq), 2)
+  EXPECT_EQ(Token.precedence(.OpPlusEq), 2)
+  EXPECT_EQ(Token.precedence(.OpRShiftEq), 2)
+  EXPECT_EQ(Token.precedence(.OpSlashEq), 2)
+  EXPECT_EQ(Token.precedence(.OpStarEq), 2)
+  EXPECT_EQ(Token.precedence(.OpColon), 2)
+  EXPECT_EQ(Token.precedence(.OpQn), 2)
+  EXPECT_EQ(Token.precedence(.OpArrow), 2)
+  EXPECT_EQ(Token.precedence(.OpComma), 1)
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    Token.precedence(.KwFn)
+  }, "Tried precedence on unknown token")
+}
+
+export fn TEST_Token_typeToIntegerLiteralType () {
+  EXPECT_EQ(Token.typeToIntegerLiteralType(.LitIntBin).rawValue, t.IntegerLiteralType.Binary.rawValue)
+  EXPECT_EQ(Token.typeToIntegerLiteralType(.LitIntDec).rawValue, t.IntegerLiteralType.Decimal.rawValue)
+  EXPECT_EQ(Token.typeToIntegerLiteralType(.LitIntHex).rawValue, t.IntegerLiteralType.Hexadecimal.rawValue)
+  EXPECT_EQ(Token.typeToIntegerLiteralType(.LitIntOct).rawValue, t.IntegerLiteralType.Octal.rawValue)
+}

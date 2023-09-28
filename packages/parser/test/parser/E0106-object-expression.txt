@@ -1,0 +1,5 @@
+a := Test{a: 1 b: 2}
+===== err =====
+anonymous:1:15: ParseError: E0106 - Expected comma after object expression property value
+1 | a := Test{a: 1 b: 2}
+  |               ^

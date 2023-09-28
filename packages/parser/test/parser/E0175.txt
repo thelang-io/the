@@ -1,0 +1,5 @@
+import * as , test from "./test"
+===== err =====
+anonymous:1:12: ParseError: E0175 - Expected import declaration namespace specifier name after `as` keyword
+1 | import * as , test from "./test"
+  |            ^

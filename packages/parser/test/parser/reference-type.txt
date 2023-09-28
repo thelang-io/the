@@ -1,0 +1,106 @@
+a: ref int[]
+a: ref () -> void
+a: ref int
+a: ref int[str]
+a: ref Test1.Test2
+a: ref int?
+a: ref (int)
+a: ref ref int
+a: ref int | str
+a: ref int | str | char
+===== out =====
+Program
+  VariableDeclaration(start=0, end=12)
+    name
+      Identifier(start=0 end=1) a
+    type
+      ReferenceType(start=3 end=12)
+        ArrayType(start=7 end=12)
+          IdentifierType(start=7 end=10)
+            Identifier(start=7 end=10) int
+  VariableDeclaration(start=13, end=30)
+    name
+      Identifier(start=13 end=14) a
+    type
+      ReferenceType(start=16 end=30)
+        FunctionType(start=19 end=30)
+          returnType
+            IdentifierType(start=26 end=30)
+              Identifier(start=26 end=30) void
+  VariableDeclaration(start=31, end=41)
+    name
+      Identifier(start=31 end=32) a
+    type
+      ReferenceType(start=34 end=41)
+        IdentifierType(start=38 end=41)
+          Identifier(start=38 end=41) int
+  VariableDeclaration(start=42, end=57)
+    name
+      Identifier(start=42 end=43) a
+    type
+      ReferenceType(start=45 end=57)
+        MapType(start=49 end=57)
+          keyType
+            IdentifierType(start=49 end=52)
+              Identifier(start=49 end=52) int
+          valueType
+            IdentifierType(start=53 end=56)
+              Identifier(start=53 end=56) str
+  VariableDeclaration(start=58, end=76)
+    name
+      Identifier(start=58 end=59) a
+    type
+      ReferenceType(start=61 end=76)
+        MemberType(start=65 end=76)
+          type
+            IdentifierType(start=65 end=70)
+              Identifier(start=65 end=70) Test1
+          name
+            Identifier(start=71 end=76) Test2
+  VariableDeclaration(start=77, end=88)
+    name
+      Identifier(start=77 end=78) a
+    type
+      ReferenceType(start=80 end=88)
+        OptionalType(start=84 end=88)
+          IdentifierType(start=84 end=87)
+            Identifier(start=84 end=87) int
+  VariableDeclaration(start=89, end=101)
+    name
+      Identifier(start=89 end=90) a
+    type
+      ReferenceType(start=92 end=101)
+        ParenthesizedType(start=95 end=101)
+          IdentifierType(start=97 end=100)
+            Identifier(start=97 end=100) int
+  VariableDeclaration(start=102, end=116)
+    name
+      Identifier(start=102 end=103) a
+    type
+      ReferenceType(start=105 end=116)
+        ReferenceType(start=109 end=116)
+          IdentifierType(start=113 end=116)
+            Identifier(start=113 end=116) int
+  VariableDeclaration(start=117, end=133)
+    name
+      Identifier(start=117 end=118) a
+    type
+      ReferenceType(start=120 end=133)
+        UnionType(start=124 end=133)
+          IdentifierType(start=124 end=127)
+            Identifier(start=124 end=127) int
+          IdentifierType(start=130 end=133)
+            Identifier(start=130 end=133) str
+  VariableDeclaration(start=134, end=157)
+    name
+      Identifier(start=134 end=135) a
+    type
+      ReferenceType(start=137 end=157)
+        UnionType(start=141 end=157)
+          IdentifierType(start=141 end=144)
+            Identifier(start=141 end=144) int
+          IdentifierType(start=147 end=150)
+            Identifier(start=147 end=150) str
+          IdentifierType(start=153 end=157)
+            Identifier(start=153 end=157) char
+  EofStatement(start=157, end=157)

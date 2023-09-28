@@ -30,9 +30,6 @@ export fn endsWithObjExpr (self: t.Expression) bool {
   } elif self.isConditional() {
     selfBody := self.asConditional()
     return endsWithObjExpr(selfBody.alternate)
-  } elif self.isObject() {
-    selfBody := self.asObject()
-    return true
   } elif self.isReference() {
     selfBody := self.asReference()
     return endsWithObjExpr(selfBody.expression)
@@ -43,7 +40,7 @@ export fn endsWithObjExpr (self: t.Expression) bool {
     }
   }
 
-  return false
+  return self.isObject()
 }
 
 export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
@@ -78,46 +75,58 @@ export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
 export fn subtractLastObjExpr (self: t.Expression) t.Expression {
   if self.isAssignment() {
     selfBody := self.asAssignment()
+    right := subtractLastObjExpr(selfBody.right)
+
     return create(t.AssignmentExpression{
       left: selfBody.left,
       operator: selfBody.operator,
-      right: subtractLastObjExpr(selfBody.right)
-    }, self.start, self.end)
+      right: right
+    }, self.start, right.end)
   } elif self.isAwait() {
     selfBody := self.asAwait()
+    expression := subtractLastObjExpr(selfBody.expression)
+
     return create(t.AwaitExpression{
-      expression: subtractLastObjExpr(selfBody.expression)
-    }, self.start, self.end)
+      expression: expression
+    }, self.start, expression.end)
   } elif self.isBinary() {
     selfBody := self.asBinary()
+    right := subtractLastObjExpr(selfBody.right)
+
     return create(t.BinaryExpression{
       left: selfBody.left,
       operator: selfBody.operator,
-      right: subtractLastObjExpr(selfBody.right)
-    }, self.start, self.end)
+      right: right
+    }, self.start, right.end)
   } elif self.isConditional() {
     selfBody := self.asConditional()
+    alternate := subtractLastObjExpr(selfBody.alternate)
+
     return create(t.ConditionalExpression{
       condition: selfBody.condition,
       consequent: selfBody.consequent,
-      alternate: subtractLastObjExpr(selfBody.alternate)
-    }, self.start, self.end)
+      alternate: alternate
+    }, self.start, alternate.end)
   } elif self.isObject() {
     selfBody := self.asObject()
     return typeToExpression(selfBody.id)
   } elif self.isReference() {
     selfBody := self.asReference()
+    expression := subtractLastObjExpr(selfBody.expression)
+
     return create(t.ReferenceExpression{
-      expression: subtractLastObjExpr(selfBody.expression)
-    }, self.start, self.end)
+      expression: expression
+    }, self.start, expression.end)
   } elif self.isUnary() {
     selfBody := self.asUnary()
     if selfBody.prefix {
+      operand := subtractLastObjExpr(selfBody.operand)
+
       return create(t.UnaryExpression{
         operator: selfBody.operator,
-        operand: subtractLastObjExpr(selfBody.operand),
+        operand: operand,
         prefix: selfBody.prefix
-      }, self.start, self.end)
+      }, self.start, operand.end)
     }
   }
 
@@ -131,7 +140,9 @@ export fn toType (self: t.Expression) t.Type {
     return t.Type{
       body: t.IdentifierType{name: selfBody},
       start: self.start,
-      end: self.end
+      end: self.end,
+      leadingComments: self.leadingComments,
+      trailingComments: self.trailingComments
     }
   } elif self.isPropertyAccess() {
     selfBody := self.asPropertyAccess()
@@ -139,7 +150,9 @@ export fn toType (self: t.Expression) t.Type {
     return t.Type{
       body: t.MemberType{t: toType(selfBody.expression), name: selfBody.name},
       start: self.start,
-      end: self.end
+      end: self.end,
+      leadingComments: self.leadingComments,
+      trailingComments: self.trailingComments
     }
   }
 
@@ -153,7 +166,9 @@ export fn typeToExpression (self: t.Type) t.Expression {
     return t.Expression{
       body: selfBody.name,
       start: self.start,
-      end: self.end
+      end: self.end,
+      leadingComments: self.leadingComments,
+      trailingComments: self.trailingComments
     }
   } elif self.isMember() {
     selfBody := self.asMember()
@@ -161,7 +176,9 @@ export fn typeToExpression (self: t.Type) t.Expression {
     return t.Expression{
       body: t.PropertyAccessExpression{expression: typeToExpression(selfBody.t), name: selfBody.name},
       start: self.start,
-      end: self.end
+      end: self.end,
+      leadingComments: self.leadingComments,
+      trailingComments: self.trailingComments
     }
   }
 
