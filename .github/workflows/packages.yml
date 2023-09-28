@@ -1,0 +1,21 @@
+name: Packages
+
+on:
+  push:
+    branches: ['main', 'release-*']
+    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/packages.yml']
+  pull_request:
+    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/packages.yml']
+
+concurrency:
+  cancel-in-progress: true
+  group: test-${{ github.event.pull_request.number || github.sha }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: thelang-io/setup-the@v1
+      - run: (cd packages/algorithm && the test test)
+      - run: (cd packages/parser && the test test)
