@@ -9,7 +9,7 @@ on:
 
 concurrency:
   cancel-in-progress: true
-  group: test-${{ github.event.pull_request.number || github.sha }}
+  group: packages-${{ github.event.pull_request.number || github.sha }}
 
 jobs:
   test:
