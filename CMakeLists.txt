@@ -15,7 +15,7 @@
 #
 
 cmake_minimum_required(VERSION 3.14)
-project(the VERSION 0.14.4)
+project(the VERSION 0.14.5)
 
 option(BUILD_COVERAGE "Build coverage" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
