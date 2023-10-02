@@ -17,6 +17,7 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 #include "../config.hpp"
+#include "../utils.hpp"
 
 void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, const std::string &name) {
   (*c)->append(
@@ -24,7 +25,7 @@ void Codegen::_fnDeclInitErrorHandling (std::shared_ptr<CodegenASTStmt> *c, cons
       CodegenASTExprAccess::create(this->_("error_stack_push")),
       {
         this->_genErrState(false, false),
-        CodegenASTExprLiteral::create(R"(")" + this->readerPath + R"(")"),
+        CodegenASTExprLiteral::create(R"(")" + str_replace_all(this->readerPath, "\\", "\\\\") + R"(")"),
         CodegenASTExprLiteral::create(R"(")" + name + R"(")"),
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "line", true),
         CodegenASTExprAccess::create(CodegenASTExprAccess::create("p"), "col", true)

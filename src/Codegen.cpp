@@ -20,6 +20,7 @@
 #include <fstream>
 #include "codegen-api.hpp"
 #include "config.hpp"
+#include "utils.hpp"
 
 const auto banner = std::string(
   "/*!" EOL
@@ -202,7 +203,7 @@ std::tuple<std::string, std::vector<std::string>> Codegen::gen () {
         CodegenASTExprAccess::create(this->_("error_stack_push")),
         {
           this->_genErrState(true, false),
-          CodegenASTExprLiteral::create(R"(")" + this->reader->path + R"(")"),
+          CodegenASTExprLiteral::create(R"(")" + str_replace_all(this->reader->path, "\\", "\\\\") + R"(")"),
           CodegenASTExprLiteral::create(R"("main")"),
           CodegenASTExprLiteral::create("0"),
           CodegenASTExprLiteral::create("0")

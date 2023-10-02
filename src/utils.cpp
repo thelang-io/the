@@ -94,6 +94,18 @@ std::vector<std::string> str_lines (const std::string &str) {
   return result;
 }
 
+std::string str_replace_all (const std::string &s, const std::string &from, const std::string &to) {
+  auto str = s;
+  auto startPos = static_cast<std::size_t>(0);
+
+  while ((startPos = str.find(from, startPos)) != std::string::npos) {
+    str.replace(startPos, from.length(), to);
+    startPos += to.length();
+  }
+
+  return str;
+}
+
 std::optional<std::string> parse_package_yaml_main (const std::string &packageName) {
   try {
     auto d = std::filesystem::current_path() / ".packages" / packageName;
