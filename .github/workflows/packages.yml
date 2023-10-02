@@ -12,8 +12,19 @@ concurrency:
   group: packages-${{ github.event.pull_request.number || github.sha }}
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  packages:
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - os: macos-11
+          - os: macos-12
+          - os: macos-13
+          - os: ubuntu-20.04
+          - os: ubuntu-22.04
+          - os: windows-2019
+          - os: windows-2022
     steps:
       - uses: actions/checkout@v4
       - uses: thelang-io/setup-the@v1

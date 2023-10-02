@@ -28,6 +28,12 @@ export fn TEST_Reader_initWithPath () {
   EXPECT_EQ(reader.content, "Hello, World!" + os_EOL)
 }
 
+export fn TEST_Reader_initWithFullPath () {
+  reader := Reader.init(fs_realpathSync("./test/fixtures/test-reader.txt"))
+  EXPECT_EQ(reader.path, process_cwd() + path_SEP + "test" + path_SEP + "fixtures" + path_SEP + "test-reader.txt")
+  EXPECT_EQ(reader.content, "Hello, World!" + os_EOL)
+}
+
 export fn TEST_Reader_initThrows () {
   EXPECT_THROW_WITH_MESSAGE(() -> void {
     try {
