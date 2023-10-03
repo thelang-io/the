@@ -8,6 +8,31 @@ export obj ZipError {
   stack: str
 }
 
+fn install7z () str {
+  version := "2301"
+  binDir := process_home + path_SEP + "The" + path_SEP + "bin"
+  exePath := binDir + path_SEP + "7z-" + version + ".exe"
+
+  if fs_existsSync(exePath) {
+    return "\"" + exePath + "\""
+  }
+
+  archPostfix := os_ARCH == "x86_64" ? "-x64" : os_ARCH == "arm64" ? "-arm64" : ""
+  installDir := binDir + path_SEP + "7-Zip-" + version
+  installerPath := binDir + path_SEP + "7z-installer.exe"
+
+  mut req := request_open("GET", "https://www.7-zip.org/a/7z" + version + archPostfix + ".exe")
+  res := req.read()
+  req.close()
+
+  fs_writeFileSync(installerPath, res.data)
+  process_runSync("start /wait \"\" \"" + installerPath + "\" /S /D=\"" + installDir + "\"")
+  fs_rmSync(installerPath)
+  fs_linkSync(installDir + path_SEP + "7z.exe", exePath)
+
+  return "\"" + exePath + "\""
+}
+
 export fn zip (name: str, path: str, cwd: str? = nil) {
   if path != "*" && !fs_existsSync(path) {
     throw ZipError{message: "Can't perform zip operation, path doesn't exists"}
@@ -16,7 +41,8 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
   mut cmd: str
 
   if os_NAME == "Windows" {
-    cmd = "powershell Compress-Archive -Path " + (path == "*" ? "*" : "\"" + path + "\"") + " -DestinationPath \"" + name + "\""
+    path7z := install7z()
+    cmd = path7z + " a -r -tzip \"" + name + "\" " + (path == "*" ? "*" : "\"" + path + "\"") + " > nul"
     cmd = cwd == nil ? "" : ("(cd \"" + cwd + "\" && " + cmd + ")")
   } else {
     cmd = "zip -qr '" + name + "' " + (path == "*" ? "*" : "'" + path + "'")
@@ -34,7 +60,8 @@ export fn unzip (source: str, destination: str) {
   mut cmd: str
 
   if os_NAME == "Windows" {
-    cmd = "powershell Expand-Archive -Path \"" + source + "\" -DestinationPath \"" + destination + "\""
+    path7z := install7z()
+    cmd = path7z + " x -r -y \"" + source + "\" \"-o" + destination + "\" > nul"
   } else {
     cmd = "unzip -q '" + source + "' -d '" + destination + "'"
   }
