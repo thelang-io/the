@@ -10,11 +10,20 @@ export obj ZipError {
 
 fn install7z () str {
   version := "2301"
-  binDir := process_home + path_SEP + "The" + path_SEP + "bin"
+  homeDir := process_home + path_SEP + "The"
+  binDir := homeDir + path_SEP + "bin"
   exePath := binDir + path_SEP + "7z-" + version + ".exe"
 
   if fs_existsSync(exePath) {
     return "\"" + exePath + "\""
+  }
+
+  if !fs_existsSync(homeDir) {
+    fs_mkdirSync(homeDir)
+  }
+
+  if !fs_existsSync(binDir) {
+    fs_mkdirSync(binDir)
   }
 
   archPostfix := os_ARCH == "x86_64" ? "-x64" : os_ARCH == "arm64" ? "-arm64" : ""
