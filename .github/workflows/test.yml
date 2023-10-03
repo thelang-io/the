@@ -27,6 +27,9 @@ jobs:
           - os: macos-13
             platform: macos
             generator: Ninja
+          - os: macos-13-xlarge
+            platform: macos
+            generator: Ninja
           - os: ubuntu-20.04
             platform: linux
             generator: Ninja
