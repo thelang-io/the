@@ -3,10 +3,20 @@
  * Licensed under the MIT License
  */
 
-import EXPECT_EQ from "./expects"
+import
+  EXPECT_EQ,
+  EXPECT_FALSE,
+  EXPECT_NO_THROW,
+  EXPECT_THROW_WITH_MESSAGE,
+  EXPECT_TRUE
+from "./expects"
 import FAIL_TEST, TEST_FAILED from "./matchers"
 
 export EXPECT_EQ
+export EXPECT_FALSE
+export EXPECT_NO_THROW
+export EXPECT_THROW_WITH_MESSAGE
+export EXPECT_TRUE
 
 export obj Test {
   name: str
