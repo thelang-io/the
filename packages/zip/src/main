@@ -3,38 +3,65 @@
  * Licensed under the MIT License
  */
 
+const ENV := process_env
+const ZIP_VERBOSE := ENV.has("ZIP_VERBOSE")
+
+fn info (message: str) {
+  if ZIP_VERBOSE {
+    print(message.trim())
+  }
+}
+
 export obj ZipError {
   message: str
   stack: str
 }
 
 fn install7z () str {
+  info("zip: installing 7z")
+
   version := "2301"
   homeDir := process_home + path_SEP + "The"
   binDir := homeDir + path_SEP + "bin"
   exePath := binDir + path_SEP + "7z-" + version + ".exe"
 
-  if fs_existsSync(exePath) { return "\"" + exePath + "\"" }
-  if !fs_existsSync(homeDir) { fs_mkdirSync(homeDir) }
-  if !fs_existsSync(binDir) { fs_mkdirSync(binDir) }
+  if fs_existsSync(exePath) {
+    info("zip: 7z exists")
+    return "\"" + exePath + "\""
+  }
+
+  if !fs_existsSync(homeDir) {
+    info("zip: creating home dir")
+    fs_mkdirSync(homeDir)
+  }
+
+  if !fs_existsSync(binDir) {
+    info("zip: creating bin dir")
+    fs_mkdirSync(binDir)
+  }
 
   archPostfix := os_ARCH == "x86_64" ? "-x64" : os_ARCH == "arm64" ? "-arm64" : ""
   installDir := binDir + path_SEP + "7-Zip-" + version
   installerPath := binDir + path_SEP + "7z-installer.exe"
 
+  info("zip: downloading 7z")
   mut req := request_open("GET", "https://www.7-zip.org/a/7z" + version + archPostfix + ".exe")
   res := req.read()
   req.close()
-
   fs_writeFileSync(installerPath, res.data)
+
+  info("zip: installing 7z")
   process_runSync("start /wait \"\" \"" + installerPath + "\" /S /D=\"" + installDir + "\"")
   fs_rmSync(installerPath)
   fs_linkSync(installDir + path_SEP + "7z.exe", exePath)
 
+  info("zip: installed 7z")
   return "\"" + exePath + "\""
 }
 
 export fn zip (name: str, path: str, cwd: str? = nil) {
+  info("zip: zipping")
+
   if path != "*" && !fs_existsSync(path) {
     throw ZipError{message: "Can't perform zip operation, path doesn't exists"}
   }
@@ -49,10 +76,14 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
     cmd = cwd == nil ? cmd : ("(cd '" + cwd + "' && " + cmd + ")")
   }
 
-  process_runSync(cmd)
+  info("zip: " + cmd)
+  stdout := process_runSync(cmd)
+  info("zip: stdout - " + stdout.str())
 }
 
 export fn unzip (source: str, destination: str) {
+  info("zip: unzipping")
+
   if !fs_existsSync(source) {
     throw ZipError{message: "Can't perform unzip operation, path doesn't exists"}
   }
@@ -65,5 +96,7 @@ export fn unzip (source: str, destination: str) {
     cmd = "unzip -q '" + source + "' -d '" + destination + "'"
   }
 
-  process_runSync(cmd)
+  info("zip: " + cmd)
+  stdout := process_runSync(cmd)
+  info("zip: stdout - " + stdout.str())
 }
