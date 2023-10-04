@@ -1,4 +1,8 @@
-import EXPECT_NO_THROW, EXPECT_TRUE from "./utils"
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
 import * as Expression from "../src/expression"
 import * as Statement from "../src/statement"
 import * as Type from "../src/type"

@@ -3,15 +3,7 @@
  * Licensed under the MIT License
  */
 
-import
-  EXPECT_NO_THROW,
-  EXPECT_THROW_WITH_MESSAGE,
-  EXPECT_TRUE,
-  EXPECT_FALSE,
-  parseExpression,
-  parseStatement,
-  parseType
-from "./utils"
+import parseExpression, parseStatement, parseType from "./utils"
 import parse from "../src/parser"
 import * as Expression from "../src/expression"
 import * as Statement from "../src/statement"
