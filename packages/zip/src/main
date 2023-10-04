@@ -14,17 +14,9 @@ fn install7z () str {
   binDir := homeDir + path_SEP + "bin"
   exePath := binDir + path_SEP + "7z-" + version + ".exe"
 
-  if fs_existsSync(exePath) {
-    return "\"" + exePath + "\""
-  }
-
-  if !fs_existsSync(homeDir) {
-    fs_mkdirSync(homeDir)
-  }
-
-  if !fs_existsSync(binDir) {
-    fs_mkdirSync(binDir)
-  }
+  if fs_existsSync(exePath) { return "\"" + exePath + "\"" }
+  if !fs_existsSync(homeDir) { fs_mkdirSync(homeDir) }
+  if !fs_existsSync(binDir) { fs_mkdirSync(binDir) }
 
   archPostfix := os_ARCH == "x86_64" ? "-x64" : os_ARCH == "arm64" ? "-arm64" : ""
   installDir := binDir + path_SEP + "7-Zip-" + version
@@ -50,12 +42,11 @@ export fn zip (name: str, path: str, cwd: str? = nil) {
   mut cmd: str
 
   if os_NAME == "Windows" {
-    path7z := install7z()
-    cmd = path7z + " a -r -tzip \"" + name + "\" " + (path == "*" ? "*" : "\"" + path + "\"") + " > nul"
-    cmd = cwd == nil ? "" : ("(cd \"" + cwd + "\" && " + cmd + ")")
+    cmd = install7z() + " a \"" + name + "\" " + (path == "*" ? "*" : "\"" + path + "\"") + " > nul"
+    cmd = cwd == nil ? cmd : ("(cd \"" + cwd + "\" && " + cmd + ")")
   } else {
     cmd = "zip -qr '" + name + "' " + (path == "*" ? "*" : "'" + path + "'")
-    cmd = cwd == nil ? "" : ("(cd '" + cwd + "' && " + cmd + ")")
+    cmd = cwd == nil ? cmd : ("(cd '" + cwd + "' && " + cmd + ")")
   }
 
   process_runSync(cmd)
@@ -69,8 +60,7 @@ export fn unzip (source: str, destination: str) {
   mut cmd: str
 
   if os_NAME == "Windows" {
-    path7z := install7z()
-    cmd = path7z + " x -r -y \"" + source + "\" \"-o" + destination + "\" > nul"
+    cmd = install7z() + " x -y \"" + source + "\" \"-o" + destination + "\" > nul"
   } else {
     cmd = "unzip -q '" + source + "' -d '" + destination + "'"
   }
