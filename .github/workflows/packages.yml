@@ -3,9 +3,9 @@ name: Packages
 on:
   push:
     branches: ['main', 'release-*']
-    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/packages.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', 'src/**/*', 'test/**/*', '!.github/workflows/packages.yml']
   pull_request:
-    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/packages.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', 'src/**/*', 'test/**/*', '!.github/workflows/packages.yml']
 
 concurrency:
   cancel-in-progress: true
