@@ -16,10 +16,7 @@ export obj Reader {
   }
 
   fn lookahead (mut self: ref Self, check: char) bool {
-    if check == '\n' && os_NAME == "Windows" && self.content.slice(self.pos, self.pos + 2) == "\r\n" {
-      self.pos += 2
-      return true
-    } elif self.pos < self.contentLen && self.content[self.pos] == check {
+    if self.pos < self.contentLen && self.content[self.pos] == check {
       self.pos += 1
       return true
     }
@@ -30,8 +27,6 @@ export obj Reader {
   fn next (mut self: ref Self) char {
     if self.eof() {
       throw error_NewError("Tried next on Reader eof")
-    } elif os_NAME == "Windows" && self.content.slice(self.pos, self.pos + 2) == "\r\n" {
-      self.pos++
     }
 
     return self.content[self.pos++]
