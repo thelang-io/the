@@ -3,17 +3,158 @@
  * Licensed under the MIT License
  */
 
-import File, Program_traverse, Statement, parse from "the/parser"
+import * as Parser from "the/parser"
+import * as TypeMap, Type from "./type-map"
+import * as VarMap from "./var-map"
 
-export fn analyze (f: ref File) {
-  Program_traverse(ref f.program, (it: Statement) -> void {
+fn validLeftHand (it: ref Parser.Expression) bool {
+  if it.isElementAccess() {
+    expression := it.asElementAccess()
+    return validLeftHand(ref expression.expression)
+  } elif it.isParenthesized() {
+    expression := it.asParenthesized()
+    return validLeftHand(ref expression.expression)
+  } elif it.isPropertyAccess() {
+    expression := it.asPropertyAccess()
+    return validLeftHand(ref expression.expression)
+  }
+
+  return it.isIdentifier()
+}
+
+fn variableDeclarationInitializer (statement: ref Parser.VariableDeclaration) ref Parser.Expression {
+  initializer := statement.initializer as Parser.Expression
+  return ref initializer
+}
+
+export obj Analyzer {
+  mut tm: TypeMap.TypeMap
+  mut vm: VarMap.VarMap
+
+  fn analyze (mut self: ref Self, it: ref Parser.Statement) {
     if it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
+
+      if self.vm.has(statement.name.name) {
+        // todo throw error
+        return
+      }
+
+      varType := statement.t == nil
+        ? self.expressionType(variableDeclarationInitializer(ref statement))
+        : self.t(ref statement.t)
+
+      if statement.initializer != nil {
+        self.expression(ref statement.initializer)
+      }
+
+      self.vm.add(statement.name.name, varType, statement.mutable, statement.constant)
     }
-  })
+  }
+
+  fn expression (mut self: ref Self, it: ref Parser.Expression) {
+  }
+
+  fn expressionType (mut self: ref Self, it: ref Parser.Expression, targetType: (ref Type)? = nil) ref Type {
+    if it.isIdentifier() {
+      expression := it.asIdentifier()
+
+      if !self.vm.has(expression.name) {
+        // todo throw variable doesn't exists
+      }
+
+      var := self.vm.get(expression.name)
+      return var.currentType
+    } elif it.isBooleanLiteral() {
+      return self.tm.get("bool")
+    } elif it.isCharacterLiteral() {
+      return self.tm.get("char")
+    } elif it.isFloatingPointLiteral() {
+      return self.tm.get("float")
+    } elif it.isIntegerLiteral() {
+      return self.tm.get("int")
+    } elif it.isNilLiteral() {
+      expression := it.asNilLiteral()
+
+      if targetType != nil {
+        return targetType
+      }
+
+      // todo throw unable to deduce nil type
+    } elif it.isStringLiteral() {
+      return self.tm.get("str")
+    } elif it.isArray() {
+      expression := it.asArray()
+      // todo
+    } elif it.isAs() {
+      expression := it.asAs()
+      // todo
+    } elif it.isAssignment() {
+      expression := it.asAssignment()
+      // todo
+    } elif it.isAwait() {
+      expression := it.asAwait()
+      // todo
+    } elif it.isBinary() {
+      expression := it.asBinary()
+      // todo
+    } elif it.isCall() {
+      expression := it.asCall()
+      // todo
+    } elif it.isClosure() {
+      expression := it.asClosure()
+      // todo
+    } elif it.isConditional() {
+      expression := it.asConditional()
+      // todo
+    } elif it.isElementAccess() {
+      expression := it.asElementAccess()
+      // todo
+    } elif it.isIs() {
+      expression := it.asIs()
+      // todo
+    } elif it.isMap() {
+      expression := it.asMap()
+      // todo
+    } elif it.isMemberAccess() {
+      expression := it.asMemberAccess()
+      // todo
+    } elif it.isObject() {
+      expression := it.asObject()
+      // todo
+    } elif it.isParenthesized() {
+      expression := it.asParenthesized()
+      // todo
+    } elif it.isPropertyAccess() {
+      expression := it.asPropertyAccess()
+      // todo
+    } elif it.isReference() {
+      expression := it.asReference()
+      // todo
+    } elif it.isUnary() {
+      expression := it.asUnary()
+      // todo
+    }
+  }
+
+  fn t (mut self: ref Self, it: ref Parser.Type) ref Type {
+    return self.tm.get("void")
+  }
+}
+
+export fn analyze (f: ref Parser.File) {
+  bodyLen := f.program.body.len
+  mut analyzer := Analyzer{}
+
+  analyzer.tm = TypeMap.init()
+  analyzer.vm = VarMap.init(ref analyzer.tm)
+
+  loop i := 0; i < bodyLen; i++ {
+    analyzer.analyze(f.program.body[i])
+  }
 }
 
 main {
-  mut f := parse("test: str = 1")
+  mut f := Parser.parse("test: str = 1")
   analyze(ref f)
 }
