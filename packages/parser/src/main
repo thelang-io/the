@@ -13,6 +13,7 @@ import
   ParenthesizedType,
   ReferenceType,
   UnionType,
+  FunctionParameter,
   Identifier,
   BooleanLiteral,
   CharacterLiteral,
@@ -84,6 +85,7 @@ export OptionalType
 export ParenthesizedType
 export ReferenceType
 export UnionType
+export FunctionParameter
 export Identifier
 export BooleanLiteral
 export CharacterLiteral
