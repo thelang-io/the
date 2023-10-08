@@ -185,7 +185,7 @@ VarStack VarMap::varStack () const {
   for (auto it = this->_items.rbegin(); it != this->_items.rend(); it++) {
     if (!(*it)->builtin && !(*it)->ctxIgnored) {
       auto stackVar = std::find_if(result.begin(), result.end(), [&] (const auto &it2) -> bool {
-        return it2->name == (*it)->name;
+        return it2->codeName == (*it)->codeName;
       });
 
       if (stackVar == result.end()) {
