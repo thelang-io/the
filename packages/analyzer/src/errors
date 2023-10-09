@@ -1,0 +1,16 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export fn E1000 (name: str) str {
+  return "E1000 - Redifinition of `" + name + "`"
+}
+
+export fn E1001 (name: str) str {
+  return "E1001 - Use of undeclaraed type `" + name + "`"
+}
+
+export fn E1002 (name: str) str {
+  return "E1002 - Use of non-existing property `" + name + "`"
+}

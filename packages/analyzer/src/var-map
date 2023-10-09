@@ -7,29 +7,34 @@ import * as TypeMap, Type from "./type-map"
 
 export obj Var {
   name: str
-  initialType: ref Type
-  currentType: ref Type
+  t: Type
   mutable: bool
-  constant: bool
   scope: int
 }
 
 export obj VarMap {
-  items: Var[]
-  scope: int
+  mut items: Var[]
+  mut scope: int
 
-  fn add (mut self: ref Self, name: str, initialType: ref Type, mutable: bool, constant: bool) {
+  fn add (mut self: ref Self, name: str, t: Type, mutable: bool) {
+    typeString := t.body.str()
+    typeName := typeString.slice(0, typeString.find("{"))
+
+    print("var:", name, ":", t.name, typeName) // todo delete
+
     self.items.push(Var{
       name: name,
-      initialType: initialType,
-      currentType: initialType,
+      t: t,
       mutable: mutable,
-      constant: constant,
       scope: self.scope
     })
   }
 
-  fn get (mut self: ref Self, name: str) ref Var {
+  fn decrease (mut self: ref Self) {
+    self.scope--
+  }
+
+  fn get (mut self: ref Self, name: str) Var {
     loop i := self.items.len - 1; i >= 0; i-- {
       item := self.items[i]
 
@@ -52,12 +57,16 @@ export obj VarMap {
 
     return false
   }
+
+  fn increase (mut self: ref Self) {
+    self.scope++
+  }
 }
 
 export fn init (tm: ref TypeMap.TypeMap) VarMap {
   mut vm := VarMap{}
 
-  vm.add("Error", tm.get("str"), false, true)
+  vm.add("Error", tm.get("str"), false)
 
   return vm
 }

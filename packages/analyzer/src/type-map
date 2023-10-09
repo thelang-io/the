@@ -3,26 +3,350 @@
  * Licensed under the MIT License
  */
 
+export type TypeBody =
+  AliasType |
+  ArrayType |
+  EnumType |
+  EnumeratorType |
+  FunctionType |
+  MapType |
+  MethodType |
+  NamespaceType |
+  ObjectType |
+  OptionalType |
+  ReferenceType |
+  UnionType
+
 export obj Type {
   name: str
-  fields: TypeField[]
-  body: str
+  properties: TypeProperty[]
+  body: TypeBody
+
+  fn asAlias (mut self: ref Self) AliasType { return self.body as AliasType }
+  fn asArray (mut self: ref Self) ArrayType { return self.body as ArrayType }
+  fn asEnum (mut self: ref Self) EnumType { return self.body as EnumType }
+  fn asEnumerator (mut self: ref Self) EnumeratorType { return self.body as EnumeratorType }
+  fn asFunction (mut self: ref Self) FunctionType { return self.body as FunctionType }
+  fn asMap (mut self: ref Self) MapType { return self.body as MapType }
+  fn asMethod (mut self: ref Self) MethodType { return self.body as MethodType }
+  fn asNamespace (mut self: ref Self) NamespaceType { return self.body as NamespaceType }
+  fn asObject (mut self: ref Self) ObjectType { return self.body as ObjectType }
+  fn asOptional (mut self: ref Self) OptionalType { return self.body as OptionalType }
+  fn asReference (mut self: ref Self) ReferenceType { return self.body as ReferenceType }
+  fn asUnion (mut self: ref Self) UnionType { return self.body as UnionType }
+
+  fn isAlias (self: ref Self) bool { return self.body is AliasType }
+  fn isArray (self: ref Self) bool { return self.body is ArrayType }
+  fn isEnum (self: ref Self) bool { return self.body is EnumType }
+  fn isEnumerator (self: ref Self) bool { return self.body is EnumeratorType }
+  fn isFunction (self: ref Self) bool { return self.body is FunctionType }
+  fn isMap (self: ref Self) bool { return self.body is MapType }
+  fn isMethod (self: ref Self) bool { return self.body is MethodType }
+  fn isNamespace (self: ref Self) bool { return self.body is NamespaceType }
+  fn isObject (self: ref Self) bool { return self.body is ObjectType }
+  fn isOptional (self: ref Self) bool { return self.body is OptionalType }
+  fn isReference (self: ref Self) bool { return self.body is ReferenceType }
+  fn isUnion (self: ref Self) bool { return self.body is UnionType }
+
+  fn get (self: ref Self, name: str) TypeProperty {
+    t := unwrap(self, withOptional: false)
+    propertiesLen := t.properties.len
+
+    loop i := 0; i < propertiesLen; i++ {
+      property := t.properties[i]
+
+      if property.name == name {
+        return property
+      }
+    }
+
+    throw error_NewError("Tried to get non-existing property `" + name + "`")
+  }
+
+  fn getEnumerator (self: ref Self, name: str) Type {
+    t := self.asEnum()
+    membersLen := t.members.len
+
+    loop i := 0; i < membersLen; i++ {
+      member := t.members[i]
+
+      if member.name == name {
+        return member
+      }
+    }
+
+    throw error_NewError("Tried to get non-existing enumerator `" + name + "`")
+  }
+
+  fn has (self: ref Self, name: str) bool {
+    t := unwrap(self, withOptional: false)
+    propertiesLen := t.properties.len
+
+    loop i := 0; i < propertiesLen; i++ {
+      property := t.properties[i]
+
+      if property.name == name {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn hasEnumerator (self: ref Self, name: str) bool {
+    t := self.asEnum()
+    membersLen := t.members.len
+
+    loop i := 0; i < membersLen; i++ {
+      member := t.members[i]
+
+      if member.name == name {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn hasType (self: ref Self, search: Type) bool {
+    t := self.asUnion()
+
+    loop i := t.types.len - 1; i >= 0; i-- {
+      if match(t.types[i], search) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn isFloat (self: ref Self) bool {
+    return ["float", "f32", "f64"].contains(self.name)
+  }
+
+  fn isInt (self: ref Self) bool {
+    return ["int", "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64"].contains(self.name)
+  }
+
+  fn isNumber (self: ref Self) bool {
+    return self.isInt() || self.isFloat()
+  }
 }
 
-export obj TypeField {
+export obj TypeProperty {
   name: str
-  t: ref Type
+  t: Type
   mutable: bool
 }
 
-export obj TypeMap {
-  items: Type[]
+export obj TypeParameter {
+  name: str?
+  t: Type
+  mutable: bool
+  required: bool
+  variadic: bool
+}
 
-  fn add (mut self: ref Self, name: str) {
-    self.items.push(Type{name: name})
+export obj AliasType {
+  t: Type
+}
+
+export obj ArrayType {
+  elementType: Type
+}
+
+export obj EnumType {
+  members: Type[]
+}
+
+export obj EnumeratorType {
+}
+
+export obj FunctionType {
+  asynchronous: bool
+  parameters: TypeParameter[]
+  returnType: Type
+}
+
+export obj MapType {
+  keyType: Type
+  valueType: Type
+}
+
+export obj MethodType {
+  asynchronous: bool
+  parameters: TypeParameter[]
+  returnType: Type
+  withSelf: bool
+  selfMutable: bool
+  selfName: str
+  selfType: Type
+}
+
+export obj NamespaceType {
+}
+
+export obj ObjectType {
+}
+
+export obj OptionalType {
+  t: Type
+}
+
+export obj ReferenceType {
+  t: Type
+}
+
+export obj UnionType {
+  types: Type[]
+}
+
+export obj TypeMap {
+  mut items: Type[]
+
+  // tood insert actual properties for each type
+
+  fn createAlias (mut self: ref Self, name: str, t: Type) Type {
+    self.items.push(Type{name: name, body: AliasType{t: t}})
+    return self.items.last
   }
 
-  fn get (mut self: ref Self, name: str) ref Type {
+  fn createArray (mut self: ref Self, elementType: Type) Type {
+    self.items.push(Type{body: ArrayType{elementType: elementType}})
+    result := self.items.last as Type
+    self.items.last.properties.push(TypeProperty{
+      name: "str",
+      t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
+      mutable: false
+    })
+    return result
+  }
+
+  fn createEnum (mut self: ref Self, name: str, members: Type[]) Type {
+    self.items.push(Type{name: name, body: EnumType{members: members}})
+    result := self.items.last as Type
+    self.items.last.properties.push(TypeProperty{
+      name: "str",
+      t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
+      mutable: false
+    })
+    return result
+  }
+
+  fn createEnumerator (mut self: ref Self, name: str) Type {
+    self.items.push(Type{name: name, body: EnumeratorType{}})
+    return self.items.last
+  }
+
+  fn createFunction (
+    mut self: ref Self,
+    asynchronous: bool,
+    parameters: TypeParameter[],
+    returnType: Type
+  ) Type {
+    self.items.push(Type{
+      body: FunctionType{asynchronous: asynchronous, parameters: parameters, returnType: returnType}
+    })
+
+    result := self.items.last as Type
+
+    self.items.last.properties.push(TypeProperty{
+      name: "name",
+      t: self.get("str"),
+      mutable: true
+    })
+
+    return result
+  }
+
+  fn createMap (mut self: ref Self, keyType: Type, valueType: Type) Type {
+    self.items.push(Type{body: MapType{keyType: keyType, valueType: valueType}})
+    result := self.items.last as Type
+    self.items.last.properties.push(TypeProperty{
+      name: "str",
+      t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
+      mutable: false
+    })
+    return result
+  }
+
+  fn createMethod (
+    mut self: ref Self,
+    asynchronous: bool,
+    parameters: TypeParameter[],
+    returnType: Type,
+    withSelf: bool,
+    selfMutable: bool,
+    selfName: str,
+    selfType: Type
+  ) Type {
+    self.items.push(Type{
+      body: MethodType{
+        asynchronous: asynchronous,
+        parameters: parameters,
+        returnType: returnType,
+        withSelf: withSelf,
+        selfMutable: selfMutable,
+        selfName: selfName,
+        selfType: selfType
+      }
+    })
+
+    result := self.items.last as Type
+
+    self.items.last.properties.push(TypeProperty{
+      name: "name",
+      t: self.get("str"),
+      mutable: true
+    })
+
+    return result
+  }
+
+  fn createNamespace (mut self: ref Self, name: str, properties: TypeProperty[] = []) Type {
+    self.items.push(Type{name: name, properties: properties, body: NamespaceType{}})
+    return self.items.last
+  }
+
+  fn createObject (mut self: ref Self, name: str, properties: TypeProperty[] = []) Type {
+    self.items.push(Type{name: name, properties: properties, body: ObjectType{}})
+    result := self.items.last as Type
+    self.items.last.properties.push(TypeProperty{
+      name: "str",
+      t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
+      mutable: false
+    })
+    return result
+  }
+
+  fn createOptional (mut self: ref Self, t: Type) Type {
+    self.items.push(Type{body: OptionalType{t: t}})
+    result := self.items.last as Type
+    self.items.last.properties.push(TypeProperty{
+      name: "str",
+      t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
+      mutable: false
+    })
+    return result
+  }
+
+  fn createReference (mut self: ref Self, t: Type) Type {
+    self.items.push(Type{body: ReferenceType{t: t}})
+    return self.items.last
+  }
+
+  fn createUnion (mut self: ref Self, types: Type[]) Type {
+    self.items.push(Type{body: UnionType{types: types}})
+    result := self.items.last as Type
+    self.items.last.properties.push(TypeProperty{
+      name: "str",
+      t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
+      mutable: false
+    })
+    return result
+  }
+
+  fn get (mut self: ref Self, name: str) Type {
     loop i := self.items.len - 1; i >= 0; i-- {
       item := self.items[i]
 
@@ -45,29 +369,285 @@ export obj TypeMap {
 
     return false
   }
+
+  fn unionAdd (mut self: ref Self, a: Type, b: Type) Type {
+    if !a.isUnion() {
+      return self.createUnion([a, b])
+    }
+
+    t := a.asUnion()
+    types := t.types
+    types.push(b)
+    return self.createUnion(types)
+  }
+
+  fn unionSub (mut self: ref Self, a: Type, b: Type) Type {
+    t := a.asUnion()
+    mut types := t.types
+
+    loop i := types.len - 1; i >= 0; i-- {
+      subType := types[i]
+
+      if match(subType, b) {
+        types.remove(i)
+      }
+    }
+
+    if types.len == 1 {
+      return types[0]
+    }
+
+    return self.createUnion(types)
+  }
 }
 
 export fn init () TypeMap {
   mut tm := TypeMap{}
 
-  tm.add("any")
-  tm.add("bool")
-  tm.add("byte")
-  tm.add("char")
-  tm.add("float")
-  tm.add("f32")
-  tm.add("f64")
-  tm.add("int")
-  tm.add("i8")
-  tm.add("i16")
-  tm.add("i32")
-  tm.add("i64")
-  tm.add("str")
-  tm.add("u8")
-  tm.add("u16")
-  tm.add("u32")
-  tm.add("u64")
-  tm.add("void")
+  tm.items.push(Type{name: "str", body: ObjectType{}})
+  tm.createObject("any")
+  tm.createObject("bool")
+  tm.createObject("byte")
+  tm.createObject("char")
+  tm.createObject("f32")
+  tm.createObject("f64")
+  tm.createAlias("float", tm.get("f64"))
+  tm.createObject("i8")
+  tm.createObject("i16")
+  tm.createObject("i32")
+  tm.createObject("i64")
+  tm.createAlias("int", tm.get("i32"))
+  tm.createObject("u8")
+  tm.createObject("u16")
+  tm.createObject("u32")
+  tm.createObject("u64")
+  tm.createObject("void")
 
   return tm
+}
+
+export fn largest (a: Type, b: Type) Type {
+  return (
+    ((a.name == "f64" || a.name == "float") && (b.name == "f64" || b.name == "float")) ||
+    ((a.name == "f64" || a.name == "float") && b.name == "f32") ||
+    ((a.name == "f64" || a.name == "float") && b.name == "u32") ||
+    ((a.name == "f64" || a.name == "float") && b.name == "u16") ||
+    ((a.name == "f64" || a.name == "float") && b.name == "u8") ||
+    ((a.name == "f64" || a.name == "float") && b.name == "i64") ||
+    ((a.name == "f64" || a.name == "float") && (b.name == "i32" || b.name == "int")) ||
+    ((a.name == "f64" || a.name == "float") && b.name == "i16") ||
+    ((a.name == "f64" || a.name == "float") && b.name == "i8") ||
+
+    (a.name == "f32" && b.name == "f32") ||
+    (a.name == "f32" && b.name == "u16") ||
+    (a.name == "f32" && b.name == "u8") ||
+    (a.name == "f32" && (b.name == "i32" || b.name == "int")) ||
+    (a.name == "f32" && b.name == "i16") ||
+    (a.name == "f32" && b.name == "i8") ||
+
+    (a.name == "i64" && b.name == "u32") ||
+    (a.name == "i64" && b.name == "u16") ||
+    (a.name == "i64" && b.name == "u8") ||
+    (a.name == "i64" && b.name == "i64") ||
+    (a.name == "i64" && (b.name == "i32" || b.name == "int")) ||
+    (a.name == "i64" && b.name == "i16") ||
+    (a.name == "i64" && b.name == "i8") ||
+    (a.name == "u64" && b.name == "u64") ||
+    (a.name == "u64" && b.name == "u32") ||
+    (a.name == "u64" && b.name == "u16") ||
+    (a.name == "u64" && b.name == "u8") ||
+
+    ((a.name == "i32" || a.name == "int") && b.name == "u16") ||
+    ((a.name == "i32" || a.name == "int") && b.name == "u8") ||
+    ((a.name == "i32" || a.name == "int") && (b.name == "i32" || b.name == "int")) ||
+    ((a.name == "i32" || a.name == "int") && b.name == "i16") ||
+    ((a.name == "i32" || a.name == "int") && b.name == "i8") ||
+    (a.name == "u32" && b.name == "u32") ||
+    (a.name == "u32" && b.name == "u16") ||
+    (a.name == "u32" && b.name == "u8") ||
+
+    (a.name == "i16" && b.name == "u8") ||
+    (a.name == "i16" && b.name == "i16") ||
+    (a.name == "i16" && b.name == "i8") ||
+    (a.name == "u16" && b.name == "u16") ||
+    (a.name == "u16" && b.name == "u8") ||
+
+    (a.name == "i8" && b.name == "i8") ||
+    (a.name == "u8" && b.name == "u8")
+  ) ? a : b
+}
+
+export fn numberMatch (a: str, b: str) bool {
+  return (a == "i8" && b == "i8") ||
+    (a == "i16" && (b == "i16" || b == "u8" || numberMatch("i8", b))) ||
+    ((a == "i32" || a == "int") && (b == "i32" || b == "int" || b == "u16" || numberMatch("i16", b))) ||
+    (a == "i64" && (b == "i64" || b == "u32" || numberMatch("i32", b))) ||
+    (a == "u8" && b == "u8") ||
+    (a == "u16" && (b == "u16" || numberMatch("u8", b))) ||
+    (a == "u32" && (b == "u32" || numberMatch("u16", b))) ||
+    (a == "u64" && (b == "u64" || numberMatch("u32", b))) ||
+    (a == "f32" && (b == "f32" || numberMatch("i32", b))) ||
+    ((a == "f64" || a == "float") && (b == "f32" || b == "f64" || b == "float" || numberMatch("i64", b)))
+}
+
+export fn match (mut a: Type, mut b: Type) bool {
+  a = unwrap(a, withOptional: false, withReference: false)
+  b = unwrap(a, withOptional: false, withReference: false)
+
+  if (
+    a.name == "any" ||
+    (a.name == "bool" && b.name == "bool") ||
+    (a.name == "byte" && (b.name == "byte" || b.isInt())) ||
+    (b.name == "byte" && (a.name == "byte" || a.isInt())) ||
+    (a.name == "char" && b.name == "char") ||
+    (a.name == "str" && b.name == "str") ||
+    (a.name == "void" && b.name == "void") ||
+    (a.isNumber() && b.isNumber() && numberMatch(a.name, b.name))
+  ) {
+    return true
+  } elif a.isReference() || b.isReference() {
+    if a.isReference() && b.isReference() {
+      t1 := a.asReference()
+      t2 := b.asReference()
+      return match(t1.t, t2.t)
+    } elif a.isReference() {
+      t := a.asReference()
+      return match(t.t, b)
+    } else {
+      t := b.asReference()
+      return match(a, t.t)
+    }
+  } elif a.isArray() && b.isArray() {
+    t1 := a.asArray()
+    t2 := b.asArray()
+    return match(t1.elementType, t2.elementType)
+  } elif a.isEnum() || b.isEnum() {
+    if a.isEnum() && b.isEnum() {
+      return a.name == b.name
+    } elif a.isEnum() {
+      return b.isInt()
+    } else {
+      return a.isInt()
+    }
+  } elif a.isMap() && b.isMap() {
+    t1 := a.asMap()
+    t2 := b.asMap()
+    return match(t1.keyType, t2.keyType) && match(t1.valueType, t2.valueType)
+  } elif a.isFunction() && b.isFunction() {
+    t1 := a.asFunction()
+    t2 := b.asFunction()
+    parameters1Len := t1.parameters.len
+    parameters2Len := t2.parameters.len
+
+    if (
+      t1.asynchronous != t2.asynchronous ||
+      parameters1Len != parameters2Len ||
+      !match(t1.returnType, t2.returnType)
+    ) {
+      return false
+    }
+
+    loop i := 0; i < parameters1Len; i++ {
+      parameter1 := t1.parameters[i]
+      parameter2 := t2.parameters[i]
+
+      if (
+        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        !match(parameter1.t, parameter2.t) ||
+        parameter1.mutable != parameter2.mutable ||
+        parameter1.variadic != parameter2.variadic ||
+        parameter1.required != parameter2.required
+      ) {
+        return false
+      }
+    }
+
+    return true
+  } elif a.isMethod() && b.isMethod() {
+    t1 := a.asMethod()
+    t2 := b.asMethod()
+    parameters1Len := t1.parameters.len
+    parameters2Len := t2.parameters.len
+
+    if (
+      t1.asynchronous != t2.asynchronous ||
+      parameters1Len != parameters2Len ||
+      !match(t1.returnType, t2.returnType) ||
+      t1.withSelf != t2.withSelf ||
+      (t1.withSelf && t1.selfMutable != t2.selfMutable) ||
+      (t1.withSelf && !match(t1.selfType, t2.selfType))
+    ) {
+      return false
+    }
+
+    loop i := 0; i < parameters1Len; i++ {
+      parameter1 := t1.parameters[i]
+      parameter2 := t2.parameters[i]
+
+      if (
+        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        !match(parameter1.t, parameter2.t) ||
+        parameter1.mutable != parameter2.mutable ||
+        parameter1.variadic != parameter2.variadic ||
+        parameter1.required != parameter2.required
+      ) {
+        return false
+      }
+    }
+
+    return true
+  } elif (a.isNamespace() && b.isNamespace()) || (a.isObject() && b.isObject()) {
+    return a.name == b.name
+  } elif a.isOptional() || b.isOptional() {
+    if !a.isOptional() {
+      t := b.asOptional()
+      return match(a, t.t)
+    } elif !b.isOptional() {
+      t := a.asOptional()
+      return match(t.t, b)
+    }
+    t1 := a.asOptional()
+    t2 := b.asOptional()
+    return match(t1.t, t2.t)
+  } elif a.isUnion() || b.isUnion() {
+    if !a.isUnion() {
+      return b.hasType(a)
+    } elif !b.isUnion() {
+      return a.hasType(b)
+    }
+
+    t1 := a.asUnion()
+    t2 := b.asUnion()
+    types1Len := t1.types.len
+    types2Len := t2.types.len
+
+    if types1Len != types2Len {
+      return false
+    }
+
+    loop i := 0; i < types1Len; i++ {
+      if !b.hasType(t1.types[i]) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  return false
+}
+
+export fn unwrap (t: Type, withAlias := true, withOptional := true, withReference := true) Type {
+  if withAlias && t.isAlias() {
+    unwrappedType := t.asAlias()
+    return unwrappedType.t
+  } elif withOptional && t.isOptional() {
+    unwrappedType := t.asOptional()
+    return unwrappedType.t
+  } elif withReference && t.isReference() {
+    unwrappedType := t.asOptional()
+    return unwrappedType.t
+  }
+
+  return t
 }
