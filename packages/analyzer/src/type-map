@@ -17,6 +17,11 @@ export type TypeBody =
   ReferenceType |
   UnionType
 
+export fn toStringChild (t: Type) str {
+  result := t.toString()
+  return t.isFunction() || t.isMethod() || t.isReference() || t.isUnion() ? "(" + result + ")" : result
+}
+
 export obj Type {
   name: str
   properties: TypeProperty[]
@@ -130,6 +135,74 @@ export obj Type {
 
   fn isNumber (self: ref Self) bool {
     return self.isInt() || self.isFloat()
+  }
+
+  fn toString (self: ref Self) str {
+    if self.isAlias() {
+      return self.name
+    } elif self.isArray() {
+      t := self.asArray()
+      return toStringChild(t.elementType) + "[]"
+    } elif self.isEnum() {
+      return self.name
+    } elif self.isFunction() {
+      t := self.asFunction()
+      mut parameters := ""
+      parametersLen := t.parameters.len
+      loop i := 0; i < parametersLen; i++ {
+        parameter := t.parameters[i]
+
+        parameters += i == 0 ? "" : ", "
+        parameters += parameter.mutable ? "mut " : ""
+        parameters += parameter.name == nil ? "" : parameter.name + ": "
+        parameters += parameter.t.toString()
+        parameters += parameter.variadic ? "..." : ""
+      }
+      return (t.asynchronous ? "async " : "") + "(" + parameters + ") -> " + t.returnType.toString()
+    } elif self.isMap() {
+      t := self.asMap()
+      return toStringChild(t.keyType) + "[" + t.valueType.toString() + "]"
+    } elif self.isMethod() {
+      t := self.asMethod()
+      mut parameters := ""
+      parametersLen := t.parameters.len
+      if t.withSelf {
+        parameters += t.selfMutable ? "mut " : ""
+        parameters += t.selfName + ": "
+        parameters += t.selfType.toString()
+      }
+      loop i := 0; i < parametersLen; i++ {
+        parameter := t.parameters[i]
+
+        parameters += i == 0 && !t.withSelf ? "" : ", "
+        parameters += parameter.mutable ? "mut " : ""
+        parameters += parameter.name == nil ? "" : parameter.name + ": "
+        parameters += parameter.t.toString()
+        parameters += parameter.variadic ? "..." : ""
+      }
+      return (t.asynchronous ? "async " : "") + "(" + parameters + ") -> " + t.returnType.toString()
+    } elif self.isNamespace() {
+      return self.name
+    } elif self.isObject() {
+      return self.name
+    } elif self.isOptional() {
+      t := self.asOptional()
+      return toStringChild(t.t) + "?"
+    } elif self.isReference() {
+      t := self.asReference()
+      return "ref " + t.t.toString()
+    } elif self.isUnion() {
+      t := self.asUnion()
+      typesLen := t.types.len
+      mut result := ""
+      loop i := 0; i < typesLen; i++ {
+        result += i == 0 ? "" : " | "
+        result += toStringChild(t.types[i])
+      }
+      return result
+    }
+
+    throw error_NewError("Tried stringify on unknown type")
   }
 }
 
@@ -492,7 +565,7 @@ export fn numberMatch (a: str, b: str) bool {
 
 export fn match (mut a: Type, mut b: Type) bool {
   a = unwrap(a, withOptional: false, withReference: false)
-  b = unwrap(a, withOptional: false, withReference: false)
+  b = unwrap(b, withOptional: false, withReference: false)
 
   if (
     a.name == "any" ||
