@@ -23,6 +23,7 @@ export fn E1004 () str {
   return "E1004 - Unable to deduce type of `nil`"
 }
 
+
 export fn E1005 (initializerType: str, declarationType: str) str {
   return "E1005 - Initializer type `" + initializerType + "` " +
     "mismatch declaration type `" + declarationType + "`"
@@ -30,4 +31,24 @@ export fn E1005 (initializerType: str, declarationType: str) str {
 
 export fn E1006 (t: str) str {
   return "E1006 - Literal `nil` is not assignable to type `" + t + "`"
+}
+
+export fn E1007 () str {
+  return "E1007 - Unable to deduce array literal type"
+}
+
+export fn E1008 (t: str) str {
+  return "E1008 - Incompatible array literal element of type `" + t + "`"
+}
+
+export fn E1009 (a: str, b: str) str {
+  return "E1009 - Type casting is not possible from `" + a + "` to `" + b + "`"
+}
+
+export fn E1010 () str {
+  return "E1010 - Left-hand side of assignment expression should be a variable, property access or member access"
+}
+
+export fn E1011 (name: str) str {
+  return "E1011 - Cannot assign to immutable variable `" + name + "`"
 }

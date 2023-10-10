@@ -53,6 +53,10 @@ export obj Type {
   fn isReference (self: ref Self) bool { return self.body is ReferenceType }
   fn isUnion (self: ref Self) bool { return self.body is UnionType }
 
+  fn canBe (self: ref Self, t: Type) bool {
+    return false
+  }
+
   fn get (self: ref Self, name: str) TypeProperty {
     t := unwrap(self, withOptional: false)
     propertiesLen := t.properties.len

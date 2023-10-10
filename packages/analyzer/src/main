@@ -9,7 +9,33 @@ import * as TypeMap from "./type-map"
 import * as VarMap from "./var-map"
 import * as errors from "./errors"
 
-fn validLeftHand (it: Parser.Expression) bool {
+export fn mutableLeftHand (it: Parser.Expression) Type {
+  if it.isIdentifier() {
+    expression := it.asIdentifier()
+    var := self.vm.get(expression.name)
+
+    if !var.mutable {
+      self.raise(errors.E1011(), it.start, it.end)
+    }
+
+    return var.t
+  } elif it.isElementAccess() {
+    expression := it.asElementAccess()
+    return mutableLeftHand(expression.expression)
+  } elif it.isParenthesized() {
+    expression := it.asParenthesized()
+    return mutableLeftHand(expression.expression)
+  } elif it.isPropertyAccess() {
+    expression := it.asPropertyAccess()
+    result := mutableLeftHand(expression.expression)
+
+    if !result.has(expression.)
+  }
+
+  throw error_NewError("Tried mutable left hand on unknown expression")
+}
+
+export fn validLeftHand (it: Parser.Expression) bool {
   if it.isElementAccess() {
     expression := it.asElementAccess()
     return validLeftHand(expression.expression)
@@ -18,17 +44,18 @@ fn validLeftHand (it: Parser.Expression) bool {
     return validLeftHand(expression.expression)
   } elif it.isPropertyAccess() {
     expression := it.asPropertyAccess()
+    // todo check property exists
     return validLeftHand(expression.expression)
   }
 
   return it.isIdentifier()
 }
 
-fn functionParameterInitializer (parameter: Parser.FunctionParameter) Parser.Expression {
+export fn functionParameterInitializer (parameter: Parser.FunctionParameter) Parser.Expression {
   return parameter.initializer as Parser.Expression
 }
 
-fn variableDeclarationInitializer (statement: Parser.VariableDeclaration) Parser.Expression {
+export fn variableDeclarationInitializer (statement: Parser.VariableDeclaration) Parser.Expression {
   return statement.initializer as Parser.Expression
 }
 
@@ -43,7 +70,10 @@ export obj Analyzer {
   mut vm: VarMap.VarMap
 
   fn analyze (mut self: ref Self, it: Parser.Statement) {
-    if it.isVariableDeclaration() {
+    if it.isExpression() {
+      statement := it.asExpression()
+      self.e(statement.expression)
+    } elif it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
 
       // todo global non-const
@@ -128,10 +158,6 @@ export obj Analyzer {
     } elif it.isStringLiteral() {
       return self.tm.get("str")
     } elif it.isArray() {
-      // todo Unable to deduce array literal type
-      // todo Incompatible array literal element types
-      // todo Index type expected to be integer
-      // todo Indexing allowed only on arrays and strings
       expression := it.asArray()
       mut elementType: Type?
 
@@ -146,6 +172,7 @@ export obj Analyzer {
 
       if expression.elements.empty {
         if elementType == nil {
+          self.raise(errors.E1007(), it.start, it.end)
           return self.tm.createArray(self.tm.get("any"))
         }
       }
@@ -159,23 +186,36 @@ export obj Analyzer {
 
         if elementType == nil {
           elementType = t
-        } elif !TypeMap.match(elementType, t) && !elementTypeForced {
-          elementType = self.tm.unionAdd(elementType, t)
+        } elif !TypeMap.match(elementType, t) {
+          if elementTypeForced {
+            self.raise(errors.E1008(t.toString()), element.start, element.end)
+          } else {
+            elementType = self.tm.unionAdd(elementType, t)
+          }
         }
       }
 
       return self.tm.createArray(elementType as Type)
     } elif it.isAs() {
-      // todo Type casting is not possible in this case
       expression := it.asAs()
-      return self.t(expression.t)
+      expressionType := self.e(expression.expression)
+      t := self.t(expression.t)
+
+      if !expressionType.canBe(t) {
+        self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
+      }
+
+      return t
     } elif it.isAssignment() {
       // todo non mutable
-      // todo check lval
       expression := it.asAssignment()
       leftType := self.e(expression.left)
       leftType2: Type? = leftType
       rightType := self.e(expression.left, leftType2)
+
+      if !validLeftHand(expression.left) {
+        self.raise(errors.E1010(), expression.left.start, expression.left.end)
+      }
 
       return leftType.isReference() && !rightType.isReference()
         ? TypeMap.unwrap(leftType, withOptional: false)
@@ -296,8 +336,8 @@ export obj Analyzer {
 
       return consequentType
     } elif it.isElementAccess() {
-      // todo only on array|string
-      // todo only int index type
+      // todo Index type expected to be integer
+      // todo Indexing allowed only on arrays and strings
       expression := it.asElementAccess()
       t := TypeMap.unwrap(self.e(expression.expression), withOptional: false)
 
