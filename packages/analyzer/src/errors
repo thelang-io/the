@@ -52,3 +52,7 @@ export fn E1010 () str {
 export fn E1011 (name: str) str {
   return "E1011 - Cannot assign to immutable variable `" + name + "`"
 }
+
+export fn E1012 (name: str) str {
+  return "E1012 - Cannot assign to immutable property `" + name + "`"
+}

@@ -9,50 +9,17 @@ import * as TypeMap from "./type-map"
 import * as VarMap from "./var-map"
 import * as errors from "./errors"
 
-export fn mutableLeftHand (it: Parser.Expression) Type {
-  if it.isIdentifier() {
-    expression := it.asIdentifier()
-    var := self.vm.get(expression.name)
-
-    if !var.mutable {
-      self.raise(errors.E1011(), it.start, it.end)
-    }
-
-    return var.t
-  } elif it.isElementAccess() {
-    expression := it.asElementAccess()
-    return mutableLeftHand(expression.expression)
-  } elif it.isParenthesized() {
-    expression := it.asParenthesized()
-    return mutableLeftHand(expression.expression)
-  } elif it.isPropertyAccess() {
-    expression := it.asPropertyAccess()
-    result := mutableLeftHand(expression.expression)
-
-    if !result.has(expression.)
-  }
-
-  throw error_NewError("Tried mutable left hand on unknown expression")
-}
-
-export fn validLeftHand (it: Parser.Expression) bool {
-  if it.isElementAccess() {
-    expression := it.asElementAccess()
-    return validLeftHand(expression.expression)
-  } elif it.isParenthesized() {
-    expression := it.asParenthesized()
-    return validLeftHand(expression.expression)
-  } elif it.isPropertyAccess() {
-    expression := it.asPropertyAccess()
-    // todo check property exists
-    return validLeftHand(expression.expression)
-  }
-
-  return it.isIdentifier()
-}
-
 export fn functionParameterInitializer (parameter: Parser.FunctionParameter) Parser.Expression {
   return parameter.initializer as Parser.Expression
+}
+
+export fn expressionUnwrap (it: Parser.Expression) Parser.Expression {
+  if it.isParenthesized() {
+    expression := it.asParenthesized()
+    return expressionUnwrap(expression.expression)
+  }
+
+  return it
 }
 
 export fn variableDeclarationInitializer (statement: Parser.VariableDeclaration) Parser.Expression {
@@ -105,7 +72,7 @@ export obj Analyzer {
   }
 
   // todo check everywhere for void type used
-  fn e (mut self: ref Self, it: Parser.Expression, targetType: Type? = nil) Type {
+  fn e (mut self: ref Self, it: Parser.Expression, targetType: Type? = nil, withMutable := false) Type {
     if it.isIdentifier() {
       expression := it.asIdentifier()
 
@@ -115,6 +82,11 @@ export obj Analyzer {
       }
 
       var := self.vm.get(expression.name)
+
+      if withMutable && !var.mutable {
+        self.raise(errors.E1011(expression.name), it.start, it.end)
+      }
+
       return var.t
     } elif it.isBooleanLiteral() {
       return self.tm.get("bool")
@@ -198,7 +170,7 @@ export obj Analyzer {
       return self.tm.createArray(elementType as Type)
     } elif it.isAs() {
       expression := it.asAs()
-      expressionType := self.e(expression.expression)
+      expressionType := self.e(expression.expression, withMutable: withMutable)
       t := self.t(expression.t)
 
       if !expressionType.canBe(t) {
@@ -207,13 +179,18 @@ export obj Analyzer {
 
       return t
     } elif it.isAssignment() {
-      // todo non mutable
       expression := it.asAssignment()
-      leftType := self.e(expression.left)
+      leftType := self.e(expression.left, withMutable: true)
+      leftExpression := expressionUnwrap(expression.left)
       leftType2: Type? = leftType
       rightType := self.e(expression.left, leftType2)
 
-      if !validLeftHand(expression.left) {
+      if (
+        !leftExpression.isIdentifier() &&
+        !it.isElementAccess() &&
+        !it.isPropertyAccess() &&
+        !it.isPropertyAccess()
+      ) {
         self.raise(errors.E1010(), expression.left.start, expression.left.end)
       }
 
@@ -314,10 +291,10 @@ export obj Analyzer {
       typeCastResult := self.typeCast(expression.condition)
 
       self.tc.merge(typeCastResult.consequent)
-      consequentType := TypeMap.unwrap(self.e(expression.consequent), withOptional: false)
+      consequentType := TypeMap.unwrap(self.e(expression.consequent, withMutable: withMutable), withOptional: false)
       self.tc = initialTC
       self.tc.merge(typeCastResult.alternate)
-      alternateType := TypeMap.unwrap(self.e(expression.alternate), withOptional: false)
+      alternateType := TypeMap.unwrap(self.e(expression.alternate, withMutable: withMutable), withOptional: false)
       self.tc = initialTC
 
       if consequentType.name == "any" || alternateType.name == "any" {
@@ -339,7 +316,7 @@ export obj Analyzer {
       // todo Index type expected to be integer
       // todo Indexing allowed only on arrays and strings
       expression := it.asElementAccess()
-      t := TypeMap.unwrap(self.e(expression.expression), withOptional: false)
+      t := TypeMap.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
 
       if t.isArray() {
         arrayType := t.asArray()
@@ -347,6 +324,8 @@ export obj Analyzer {
       } elif t.name == "str" {
         return self.tm.createReference(self.tm.get("char"))
       }
+
+      return self.tm.get("any")
     } elif it.isIs() {
       // todo Type casting is not possible in this case
       expression := it.asIs()
@@ -427,12 +406,12 @@ export obj Analyzer {
       return self.t(expression.id)
     } elif it.isParenthesized() {
       expression := it.asParenthesized()
-      return self.e(expression.expression, targetType)
+      return self.e(expression.expression, targetType, withMutable: withMutable)
     } elif it.isPropertyAccess() {
       // todo non existign access
       // todo Tried accessing non-existing enumeration member
       expression := it.asPropertyAccess()
-      t := TypeMap.unwrap(self.e(expression.expression), withOptional: false)
+      t := TypeMap.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
 
       if t.isEnum() && t.hasEnumerator(expression.name.name) {
         return t
@@ -443,10 +422,15 @@ export obj Analyzer {
       }
 
       property := t.get(expression.name.name)
+
+      if withMutable && !property.mutable {
+        self.raise(errors.E1012(expression.name.name), it.start, it.end)
+      }
+
       return property.t
     } elif it.isReference() {
       expression := it.asReference()
-      return self.tm.createReference(self.e(expression.expression))
+      return self.tm.createReference(self.e(expression.expression, withMutable: withMutable))
     } elif it.isUnary() {
       expression := it.asUnary()
       // todo unary bitwise on float
