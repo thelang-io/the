@@ -54,7 +54,30 @@ export obj Type {
   fn isUnion (self: ref Self) bool { return self.body is UnionType }
 
   fn canBe (self: ref Self, t: Type) bool {
-    return false
+    a := unwrap(self, withReference: false, withOptional: false)
+    b := unwrap(t, withReference: false, withOptional: false)
+
+    if a.isOptional() {
+      t1 := a.asOptional()
+      return match(t1.t, b)
+    } elif a.isReference() {
+      if b.name == "i32" {
+        return true
+      }
+
+      t1 := a.asReference()
+      return match(t1.t, b)
+    }
+
+    return
+      a.name == "any" ||
+      (a.name == "bool" && b.isNumber()) ||
+      (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
+      (a.name == "char" && (b.name == "byte" || b.isNumber())) ||
+      (a.isEnum() && b.name == "i32") ||
+      (a.isFunction() && b.isFunction() && match(b, a)) ||
+      (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name)) ||
+      (a.isUnion() && a.hasType(b))
   }
 
   fn get (self: ref Self, name: str) TypeProperty {

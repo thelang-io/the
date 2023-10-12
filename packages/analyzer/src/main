@@ -71,6 +71,7 @@ export obj Analyzer {
     }
   }
 
+  // todo find why `mut a: int; a[1] = 2` throw twice 1015
   // todo check everywhere for void type used
   fn e (mut self: ref Self, it: Parser.Expression, targetType: Type? = nil, withMutable := false) Type {
     if it.isIdentifier() {
@@ -187,9 +188,8 @@ export obj Analyzer {
 
       if (
         !leftExpression.isIdentifier() &&
-        !it.isElementAccess() &&
-        !it.isPropertyAccess() &&
-        !it.isPropertyAccess()
+        !leftExpression.isElementAccess() &&
+        !leftExpression.isPropertyAccess()
       ) {
         self.raise(errors.E1010(), expression.left.start, expression.left.end)
       }
@@ -198,9 +198,21 @@ export obj Analyzer {
         ? TypeMap.unwrap(leftType, withOptional: false)
         : leftType
     } elif it.isAwait() {
-      // todo Awaiting is only possible on asynchronous functions
       expression := it.asAwait()
-      return self.e(expression.expression)
+      expressionType := TypeMap.unwrap(self.e(expression.expression), withOptional: false)
+
+      if !expressionType.isFunction() {
+        self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
+        return self.tm.get("any")
+      } else {
+        t := expressionType.asFunction()
+
+        if !t.asynchronous {
+          self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
+        }
+
+        return t.returnType
+      }
     } elif it.isBinary() {
       expression := it.asBinary()
       // todo unary bitwise on float
@@ -313,18 +325,22 @@ export obj Analyzer {
 
       return consequentType
     } elif it.isElementAccess() {
-      // todo Index type expected to be integer
-      // todo Indexing allowed only on arrays and strings
       expression := it.asElementAccess()
-      t := TypeMap.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
+      expressionType := TypeMap.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
+      argumentType := TypeMap.unwrap(self.e(expression.argument), withOptional: false)
 
-      if t.isArray() {
-        arrayType := t.asArray()
+      if argumentType.name != "i32" {
+        self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
+      }
+
+      if expressionType.isArray() {
+        arrayType := expressionType.asArray()
         return self.tm.createReference(arrayType.elementType)
-      } elif t.name == "str" {
+      } elif expressionType.name == "str" {
         return self.tm.createReference(self.tm.get("char"))
       }
 
+      self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
       return self.tm.get("any")
     } elif it.isIs() {
       // todo Type casting is not possible in this case
@@ -415,9 +431,7 @@ export obj Analyzer {
 
       if t.isEnum() && t.hasEnumerator(expression.name.name) {
         return t
-      }
-
-      if !t.has(expression.name.name) {
+      } elif !t.has(expression.name.name) {
         return self.tm.get("any")
       }
 
