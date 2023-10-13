@@ -215,7 +215,6 @@ export obj Analyzer {
       }
     } elif it.isBinary() {
       expression := it.asBinary()
-      // todo unary bitwise on float
       // todo bitwise only on i8-i64, u8-u64
       // todo Binary operator cannot be applied to these operands
 
@@ -343,9 +342,15 @@ export obj Analyzer {
       self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
       return self.tm.get("any")
     } elif it.isIs() {
-      // todo Type casting is not possible in this case
       expression := it.asIs()
-      return self.t(expression.t)
+      expressionType := self.e(expression.expression, withMutable: withMutable)
+      t := self.t(expression.expression)
+
+      if !expressionType.canBe() {
+        self.raise(errors.E1009(expressionType.toString(), t.toString()), expression.expression.start, expression.expression.end)
+      }
+
+      return self.tm.get("bool")
     } elif it.isMap() {
       // todo Unable to deduce map type
       expression := it.asMap()
