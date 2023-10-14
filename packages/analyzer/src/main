@@ -26,15 +26,23 @@ export fn variableDeclarationInitializer (statement: Parser.VariableDeclaration)
   return statement.initializer as Parser.Expression
 }
 
+export obj GuessTypeResult {
+  first: Type
+  second: Type
+}
+
 export obj TypeCastResult {
   consequent: Type[str]
   alternate: Type[str]
 }
 
 export obj Analyzer {
+  mut errors: str[]
   mut tc: Type[str]
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
+
+  // todo object declaration builtin method `str` should have strict signature
 
   fn analyze (mut self: ref Self, it: Parser.Statement) {
     if it.isExpression() {
@@ -295,31 +303,36 @@ export obj Analyzer {
       self.vm.decrease()
       return self.tm.createFunction(expression.asynchronous, parameters, self.t(expression.returnType))
     } elif it.isConditional() {
-      // todo condition only bool
-      // todo Incompatible operand types
       initialTC := self.tc
       expression := it.asConditional()
       typeCastResult := self.typeCast(expression.condition)
+      conditionType := TypeMap.unwrap(self.e(expression.condition), withOptional: false)
 
-      self.tc.merge(typeCastResult.consequent)
-      consequentType := TypeMap.unwrap(self.e(expression.consequent, withMutable: withMutable), withOptional: false)
-      self.tc = initialTC
-      self.tc.merge(typeCastResult.alternate)
-      alternateType := TypeMap.unwrap(self.e(expression.alternate, withMutable: withMutable), withOptional: false)
-      self.tc = initialTC
+      if conditionType.name != "bool" {
+        self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
+      }
 
-      if consequentType.name == "any" || alternateType.name == "any" {
-        return self.tm.get("any")
-      } elif consequentType.isOptional() && !alternateType.isOptional() {
-        return consequentType
-      } elif !consequentType.isOptional() && alternateType.isOptional() {
-        return alternateType
-      } elif consequentType.isReference() && !alternateType.isReference() {
-        return alternateType
-      } elif !consequentType.isReference() && alternateType.isReference() {
-        return consequentType
-      } elif consequentType.isNumber() && alternateType.isNumber() {
+      guessTypeResult := self.guessType((operandType: Type?) -> Type {
+        self.tc.merge(typeCastResult.consequent)
+        result := TypeMap.unwrap(self.e(expression.consequent, operandType, withMutable: withMutable), withOptional: false)
+        self.tc = initialTC
+
+        return result
+      }, (operandType: Type?) -> Type {
+        self.tc.merge(typeCastResult.alternate)
+        result := TypeMap.unwrap(self.e(expression.alternate, operandType, withMutable: withMutable), withOptional: false)
+        self.tc = initialTC
+
+        return result
+      })
+
+      consequentType := guessTypeResult.first
+      alternateType := guessTypeResult.second
+
+      if consequentType.isNumber() && alternateType.isNumber() {
         return TypeMap.largest(consequentType, alternateType)
+      } elif !TypeMap.match(consequentType, alternateType) {
+        self.raise(errors.E1019(consequentType.toString(), alternateType.toString()), expression.consequent.start, expression.alternate.end)
       }
 
       return consequentType
@@ -344,15 +357,14 @@ export obj Analyzer {
     } elif it.isIs() {
       expression := it.asIs()
       expressionType := self.e(expression.expression, withMutable: withMutable)
-      t := self.t(expression.expression)
+      t := self.t(expression.t)
 
-      if !expressionType.canBe() {
+      if !expressionType.canBe(t) {
         self.raise(errors.E1009(expressionType.toString(), t.toString()), expression.expression.start, expression.expression.end)
       }
 
       return self.tm.get("bool")
     } elif it.isMap() {
-      // todo Unable to deduce map type
       expression := it.asMap()
       mut t: Type?
 
@@ -365,6 +377,7 @@ export obj Analyzer {
       }
 
       if expression.elements.empty && t == nil {
+        self.raise(errors.E1016(), it.start, it.end)
         return self.tm.createMap(self.tm.get("any"), self.tm.get("any"))
       } elif expression.elements.empty {
         return t
@@ -390,13 +403,17 @@ export obj Analyzer {
 
         if keyType == nil {
           keyType = elementKeyType
-        } elif !TypeMap.match(keyType, elementKeyType) && !keyTypeForced {
+        } elif !TypeMap.match(keyType, elementKeyType) && keyTypeForced {
+          self.raise(errors.E1017(keyType.toString(), elementKeyType.toString()), element.key.start, element.key.end)
+        } elif !TypeMap.match(keyType, elementKeyType) {
           keyType = self.tm.unionAdd(keyType, elementKeyType)
         }
 
         if valueType == nil {
           valueType = elementValueType
-        } elif !TypeMap.match(valueType, elementValueType) && !valueTypeForced {
+        } elif !TypeMap.match(valueType, elementValueType) && valueTypeForced {
+          self.raise(errors.E1017(valueType.toString(), elementValueType.toString()), element.value.start, element.value.end)
+        } elif !TypeMap.match(valueType, elementValueType) {
           valueType = self.tm.unionAdd(valueType, elementValueType)
         }
       }
@@ -466,9 +483,37 @@ export obj Analyzer {
     throw error_NewError("Tried analyzing unknown expression")
   }
 
+  fn guessType (mut self: ref Self, cb1: (Type?) -> Type, cb2: (Type?) -> Type) GuessTypeResult {
+    initialErrorsLen := self.errors.len
+    mut targetType: Type? = nil
+    mut firstType := cb1(targetType)
+    firstTypeFailed := self.errors.len != initialErrorsLen
+
+    if firstTypeFailed {
+      self.errors = self.errors.slice(0, initialErrorsLen)
+    } else {
+      targetType = firstType
+    }
+
+    secondType := cb2(targetType)
+    secondTypeFailed := self.errors.len != initialErrorsLen
+
+    if !secondTypeFailed {
+      targetType = secondType
+    }
+
+    if firstTypeFailed {
+      firstType = cb1(targetType)
+    }
+
+    return GuessTypeResult{
+      first: firstType,
+      second: secondType
+    }
+  }
+
   fn raise (mut self: ref Self, message: str, start: int, end: int) {
-    // todo
-    print(message)
+    self.errors.push(message)
   }
 
   fn t (mut self: ref Self, it: Parser.Type) Type {
@@ -543,10 +588,14 @@ export obj Analyzer {
 
   fn typeCast (mut self: ref Self, expression: Parser.Expression) TypeCastResult {
     // todo
+    return TypeCastResult{
+      consequent: {},
+      alternate: {}
+    }
   }
 }
 
-export fn analyze (f: ref Parser.File) {
+export fn analyze (f: ref Parser.File) str[] {
   bodyLen := f.program.body.len
   mut analyzer := Analyzer{}
 
@@ -556,10 +605,16 @@ export fn analyze (f: ref Parser.File) {
   loop i := 0; i < bodyLen; i++ {
     analyzer.analyze(f.program.body[i])
   }
+
+  return analyzer.errors
 }
 
 main {
   args := process_args
   mut f := Parser.parse(args[1])
-  analyze(ref f)
+  errors := analyze(ref f)
+
+  loop i := 0; i < errors.len; i++ {
+    print(errors[i] as str)
+  }
 }

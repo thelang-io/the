@@ -57,7 +57,9 @@ export obj Type {
     a := unwrap(self, withReference: false, withOptional: false)
     b := unwrap(t, withReference: false, withOptional: false)
 
-    if a.isOptional() {
+    if a.isEnum() {
+      return b.name == "i32"
+    } elif a.isOptional() {
       t1 := a.asOptional()
       return match(t1.t, b)
     } elif a.isReference() {
@@ -67,17 +69,35 @@ export obj Type {
 
       t1 := a.asReference()
       return match(t1.t, b)
+    } elif a.isUnion() {
+      return a.hasType(b)
+    }
+
+    if b.isEnum() {
+      return a.name == "i32"
+    } elif b.isOptional() {
+      t1 := b.asOptional()
+      return match(t1.t, a)
+    } elif b.isReference() {
+      if a.name == "i32" {
+        return true
+      }
+
+      t1 := b.asReference()
+      return match(t1.t, a)
+    } elif b.isUnion() {
+      return b.hasType(a)
     }
 
     return
       a.name == "any" ||
+      b.name == "any" ||
       (a.name == "bool" && b.isNumber()) ||
+      (b.name == "bool" && a.isNumber()) ||
       (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
-      (a.name == "char" && (b.name == "byte" || b.isNumber())) ||
-      (a.isEnum() && b.name == "i32") ||
+      (b.name == "byte" && (a.name == "char" || a.isNumber())) ||
       (a.isFunction() && b.isFunction() && match(b, a)) ||
-      (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name)) ||
-      (a.isUnion() && a.hasType(b))
+      (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
   fn get (self: ref Self, name: str) TypeProperty {
