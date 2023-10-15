@@ -48,7 +48,7 @@ Program
         Identifier(start=34 end=37) int
     body
       BlockStatement(start=38, end=271)
-        FunctionDeclaration(start=39, end=118)
+        FunctionDeclaration(start=42, end=118)
           name
             Identifier(start=45 end=50) test2
           parameters
@@ -202,7 +202,7 @@ Program
                     IntegerLiteral(start=262, end=264 type=Decimal) 19
                   CallExpressionArgument
                     IntegerLiteral(start=266, end=268 type=Decimal) 20
-  FunctionDeclaration(start=271, end=396)
+  FunctionDeclaration(start=272, end=396)
     name
       Identifier(start=275 end=280) test3
     returnType
@@ -210,7 +210,7 @@ Program
         Identifier(start=284 end=287) int
     body
       BlockStatement(start=288, end=396)
-        FunctionDeclaration(start=289, end=376)
+        FunctionDeclaration(start=292, end=376)
           name
             Identifier(start=295 end=300) test4
           returnType
@@ -218,7 +218,7 @@ Program
               Identifier(start=304 end=307) int
           body
             BlockStatement(start=308, end=376)
-              FunctionDeclaration(start=309, end=352)
+              FunctionDeclaration(start=314, end=352)
                 name
                   Identifier(start=317 end=322) test5
                 returnType

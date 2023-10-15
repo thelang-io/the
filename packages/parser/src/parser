@@ -306,13 +306,15 @@ export obj Parser {
       return nil
     }
 
-    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
     startPos := self.tokenizer.pos()
     asynchronous := self.tokenizer.lookahead(.KwAsync)
+    mut readerStartPos := self.tokenizer.readerStartPos()
 
     if !self.tokenizer.lookahead(.OpLPar) {
       self.tokenizer.seek(startPos)
       return nil
+    } elif !asynchronous {
+      readerStartPos = self.tokenizer.readerStartPos()
     }
 
     mut parameters: t.FunctionParameter[]
@@ -558,12 +560,14 @@ export obj Parser {
       return nil
     }
 
-    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
     asynchronous := self.tokenizer.lookahead(.KwAsync)
+    mut readerStartPos := self.tokenizer.readerStartPos()
 
     if !self.tokenizer.lookahead(.KwFn) {
       self.tokenizer.seek(startPos)
       return nil
+    } elif !asynchronous {
+      readerStartPos = self.tokenizer.readerStartPos()
     }
 
     name := self.nextIdentifier()
@@ -688,13 +692,15 @@ export obj Parser {
       return nil
     }
 
-    readerStartPos := self.tokenizer.readerStartPos(offset: 1)
     startPos := self.tokenizer.pos()
     asynchronous := self.tokenizer.lookahead(.KwAsync)
+    mut readerStartPos := self.tokenizer.readerStartPos()
 
     if !self.tokenizer.lookahead(.OpLPar) {
       self.tokenizer.seek(startPos)
       return nil
+    } elif !asynchronous {
+      readerStartPos = self.tokenizer.readerStartPos()
     }
 
     mut parameters: t.FunctionTypeParameter[]

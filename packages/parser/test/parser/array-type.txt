@@ -56,8 +56,8 @@ Program
     name
       Identifier(start=61 end=62) a
     type
-      ArrayType(start=63 end=71)
-        ParenthesizedType(start=63 end=69)
+      ArrayType(start=64 end=71)
+        ParenthesizedType(start=64 end=69)
           IdentifierType(start=65 end=68)
             Identifier(start=65 end=68) int
   EofStatement(start=71, end=71)

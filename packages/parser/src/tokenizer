@@ -59,8 +59,8 @@ export obj Tokenizer {
     return self.state.idx
   }
 
-  fn readerStartPos (mut self: ref Self, offset := 0) int {
-    return self.state.idx == 0 ? 0 : self.data[self.state.idx - 1 + offset].start
+  fn readerStartPos (mut self: ref Self) int {
+    return self.state.idx == 0 ? 0 : self.data[self.state.idx - 1].start
   }
 
   fn readerEndPos (mut self: ref Self) int {

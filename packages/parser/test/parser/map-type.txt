@@ -76,9 +76,9 @@ Program
     name
       Identifier(start=80 end=81) a
     type
-      MapType(start=82 end=94)
+      MapType(start=83 end=94)
         keyType
-          ParenthesizedType(start=82 end=88)
+          ParenthesizedType(start=83 end=88)
             IdentifierType(start=84 end=87)
               Identifier(start=84 end=87) int
         valueType

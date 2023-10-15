@@ -45,7 +45,7 @@ Program
         name
           Identifier(start=37 end=40) age
         type
-          ParenthesizedType(start=41 end=47)
+          ParenthesizedType(start=42 end=47)
             IdentifierType(start=43 end=46)
               Identifier(start=43 end=46) int
   ObjectDeclaration(start=50, end=95)
@@ -62,14 +62,14 @@ Program
         name
           Identifier(start=83 end=86) age
         type
-          ParenthesizedType(start=87 end=93)
+          ParenthesizedType(start=88 end=93)
             IdentifierType(start=89 end=92)
               Identifier(start=89 end=92) int
   ObjectDeclaration(start=96, end=122)
     name
       Identifier(start=100 end=105) Test2
     body
-      ObjectDeclarationMethod(start=107, end=120)
+      ObjectDeclarationMethod(start=110, end=120)
         name
           Identifier(start=113 end=114) a
         body
@@ -84,7 +84,7 @@ Program
         type
           IdentifierType(start=140 end=143)
             Identifier(start=140 end=143) int
-      ObjectDeclarationMethod(start=143, end=164)
+      ObjectDeclarationMethod(start=146, end=164)
         name
           Identifier(start=149 end=150) b
         body
@@ -100,13 +100,13 @@ Program
         type
           IdentifierType(start=186 end=189)
             Identifier(start=186 end=189) int
-      ObjectDeclarationMethod(start=189, end=210)
+      ObjectDeclarationMethod(start=192, end=210)
         name
           Identifier(start=195 end=196) b
         body
           BlockStatement(start=200, end=210)
             ReturnStatement(start=202, end=208)
-      ObjectDeclarationMethod(start=210, end=231)
+      ObjectDeclarationMethod(start=213, end=231)
         name
           Identifier(start=216 end=217) c
         body
@@ -128,7 +128,7 @@ Program
         type
           IdentifierType(start=262 end=265)
             Identifier(start=262 end=265) int
-      ObjectDeclarationMethod(start=265, end=286)
+      ObjectDeclarationMethod(start=268, end=286)
         name
           Identifier(start=271 end=272) b
         body
@@ -140,7 +140,7 @@ Program
         type
           IdentifierType(start=292 end=295)
             Identifier(start=292 end=295) int
-      ObjectDeclarationMethod(start=295, end=316)
+      ObjectDeclarationMethod(start=298, end=316)
         name
           Identifier(start=301 end=302) d
         body

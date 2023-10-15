@@ -14,7 +14,7 @@ Program
     name
       Identifier(start=0 end=1) p
     initializer
-      ClosureExpression(start=4, end=17)
+      ClosureExpression(start=5, end=17)
         returnType
           IdentifierType(start=11 end=14)
             Identifier(start=11 end=14) int
@@ -24,7 +24,7 @@ Program
     name
       Identifier(start=18 end=19) p
     initializer
-      ClosureExpression(start=22, end=41 async)
+      ClosureExpression(start=23, end=41 async)
         returnType
           IdentifierType(start=35 end=38)
             Identifier(start=35 end=38) int
@@ -34,7 +34,7 @@ Program
     name
       Identifier(start=42 end=43) p
     initializer
-      ClosureExpression(start=46, end=66)
+      ClosureExpression(start=47, end=66)
         parameters
           FunctionParameter
             name
@@ -51,7 +51,7 @@ Program
     name
       Identifier(start=67 end=68) p
     initializer
-      ClosureExpression(start=71, end=92)
+      ClosureExpression(start=72, end=92)
         parameters
           FunctionParameter
             name
@@ -68,7 +68,7 @@ Program
     name
       Identifier(start=93 end=94) p
     initializer
-      ClosureExpression(start=97, end=155)
+      ClosureExpression(start=98, end=155)
         parameters
           FunctionParameter(mut)
             name
@@ -100,7 +100,7 @@ Program
     name
       Identifier(start=156 end=157) p
     initializer
-      ClosureExpression(start=160, end=219)
+      ClosureExpression(start=161, end=219)
         parameters
           FunctionParameter(mut)
             name

@@ -171,25 +171,25 @@ Program
     name
       Identifier(start=246 end=247) a
     type
-      UnionType(start=248 end=262)
-        ParenthesizedType(start=248 end=254)
+      UnionType(start=249 end=262)
+        ParenthesizedType(start=249 end=254)
           IdentifierType(start=250 end=253)
             Identifier(start=250 end=253) int
-        ParenthesizedType(start=256 end=262)
+        ParenthesizedType(start=257 end=262)
           IdentifierType(start=258 end=261)
             Identifier(start=258 end=261) str
   VariableDeclaration(start=263, end=288)
     name
       Identifier(start=263 end=264) a
     type
-      UnionType(start=265 end=288)
-        ParenthesizedType(start=265 end=271)
+      UnionType(start=266 end=288)
+        ParenthesizedType(start=266 end=271)
           IdentifierType(start=267 end=270)
             Identifier(start=267 end=270) int
-        ParenthesizedType(start=273 end=279)
+        ParenthesizedType(start=274 end=279)
           IdentifierType(start=275 end=278)
             Identifier(start=275 end=278) str
-        ParenthesizedType(start=281 end=288)
+        ParenthesizedType(start=282 end=288)
           IdentifierType(start=283 end=287)
             Identifier(start=283 end=287) char
   EofStatement(start=288, end=288)

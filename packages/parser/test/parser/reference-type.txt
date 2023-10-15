@@ -23,7 +23,7 @@ Program
       Identifier(start=13 end=14) a
     type
       ReferenceType(start=16 end=30)
-        FunctionType(start=19 end=30)
+        FunctionType(start=20 end=30)
           returnType
             IdentifierType(start=26 end=30)
               Identifier(start=26 end=30) void
@@ -70,7 +70,7 @@ Program
       Identifier(start=89 end=90) a
     type
       ReferenceType(start=92 end=101)
-        ParenthesizedType(start=95 end=101)
+        ParenthesizedType(start=96 end=101)
           IdentifierType(start=97 end=100)
             Identifier(start=97 end=100) int
   VariableDeclaration(start=102, end=116)
