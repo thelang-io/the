@@ -177,11 +177,19 @@ export obj Type {
   }
 
   fn isInt (self: ref Self) bool {
-    return ["int", "i8", "i16", "i32", "i64", "u8", "u16", "u32", "u64"].contains(self.name)
+    return self.isSignedInt() || self.isUnsignedInt()
   }
 
   fn isNumber (self: ref Self) bool {
     return self.isInt() || self.isFloat()
+  }
+
+  fn isSignedInt (self: ref Self) bool {
+    return ["int", "i8", "i16", "i32", "i64"].contains(self.name)
+  }
+
+  fn isUnsignedInt (self: ref Self) bool {
+    return ["u8", "u16", "u32", "u64"].contains(self.name)
   }
 
   fn toString (self: ref Self) str {
@@ -324,7 +332,7 @@ export obj UnionType {
 export obj TypeMap {
   mut items: Type[]
 
-  // tood insert actual properties for each type
+  // todo insert actual properties for each type
 
   fn createAlias (mut self: ref Self, name: str, t: Type) Type {
     self.items.push(Type{name: name, body: AliasType{t: t}})

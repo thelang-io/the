@@ -9,8 +9,14 @@ import * as TypeMap from "./type-map"
 import * as VarMap from "./var-map"
 import * as errors from "./errors"
 
-export fn functionParameterInitializer (parameter: Parser.FunctionParameter) Parser.Expression {
-  return parameter.initializer as Parser.Expression
+export obj GuessTypeResult {
+  first: Type
+  second: Type
+}
+
+export obj TypeCastResult {
+  consequent: Type[str]
+  alternate: Type[str]
 }
 
 export fn expressionUnwrap (it: Parser.Expression) Parser.Expression {
@@ -22,26 +28,22 @@ export fn expressionUnwrap (it: Parser.Expression) Parser.Expression {
   return it
 }
 
+export fn functionParameterInitializer (parameter: Parser.FunctionParameter) Parser.Expression {
+  return parameter.initializer as Parser.Expression
+}
+
 export fn variableDeclarationInitializer (statement: Parser.VariableDeclaration) Parser.Expression {
   return statement.initializer as Parser.Expression
 }
 
-export obj GuessTypeResult {
-  first: Type
-  second: Type
-}
-
-export obj TypeCastResult {
-  consequent: Type[str]
-  alternate: Type[str]
-}
-
 export obj Analyzer {
   mut errors: str[]
+  mut reader: Parser.Reader
   mut tc: Type[str]
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
 
+  // todo function|method missing return
   // todo object declaration builtin method `str` should have strict signature
 
   fn analyze (mut self: ref Self, it: Parser.Statement) {
@@ -79,8 +81,8 @@ export obj Analyzer {
     }
   }
 
-  // todo find why `mut a: int; a[1] = 2` throw twice 1015
-  // todo check everywhere for void type used
+  // todo check ref being passed into non ref
+
   fn e (mut self: ref Self, it: Parser.Expression, targetType: Type? = nil, withMutable := false) Type {
     if it.isIdentifier() {
       expression := it.asIdentifier()
@@ -169,7 +171,7 @@ export obj Analyzer {
           elementType = t
         } elif !TypeMap.match(elementType, t) {
           if elementTypeForced {
-            self.raise(errors.E1008(t.toString()), element.start, element.end)
+            self.raise(errors.E1008(t.toString(), elementType.toString()), element.start, element.end)
           } else {
             elementType = self.tm.unionAdd(elementType, t)
           }
@@ -189,10 +191,22 @@ export obj Analyzer {
       return t
     } elif it.isAssignment() {
       expression := it.asAssignment()
-      leftType := self.e(expression.left, withMutable: true)
       leftExpression := expressionUnwrap(expression.left)
-      leftType2: Type? = leftType
-      rightType := self.e(expression.left, leftType2)
+
+      guessTypeResult := self.guessType((operandType: Type?) -> Type {
+        initialTC := ref self.tc
+        return TypeMap.unwrap(self.e(expression.left, operandType, withMutable: true), withOptional: false, withReference: false)
+      }, (operandType: Type?) -> Type {
+        initialTC := ref self.tc
+        return TypeMap.unwrap(self.e(expression.right, operandType), withOptional: false, withReference: false)
+      })
+
+      leftType := guessTypeResult.first
+      rightType := guessTypeResult.second
+
+      if !self.operands(expression.operator, leftType, rightType) {
+        self.raise(errors.E1027(expression.operator.val, leftType.toString()), expression.operator.start, expression.operator.end)
+      }
 
       if (
         !leftExpression.isIdentifier() &&
@@ -223,8 +237,21 @@ export obj Analyzer {
       }
     } elif it.isBinary() {
       expression := it.asBinary()
-      // todo bitwise only on i8-i64, u8-u64
-      // todo Binary operator cannot be applied to these operands
+
+      guessTypeResult := self.guessType((operandType: Type?) -> Type {
+        initialTC := ref self.tc
+        return TypeMap.unwrap(self.e(expression.left, operandType), withOptional: false)
+      }, (operandType: Type?) -> Type {
+        initialTC := ref self.tc
+        return TypeMap.unwrap(self.e(expression.right, operandType), withOptional: false)
+      })
+
+      leftType := guessTypeResult.first
+      rightType := guessTypeResult.second
+
+      if !self.operands(expression.operator, leftType, rightType) {
+        self.raise(errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()), expression.operator.start, expression.operator.end)
+      }
 
       if (
         expression.operator.t == .OpEqEq ||
@@ -235,19 +262,13 @@ export obj Analyzer {
         expression.operator.t == .OpLtEq
       ) {
         return self.tm.get("bool")
-      }
-
-      leftType := TypeMap.unwrap(self.e(expression.left), withOptional: false)
-      leftType2: Type? = leftType
-      rightType := TypeMap.unwrap(self.e(expression.right, leftType2), withOptional: false)
-
-      if leftType.name == "str" && rightType.name == "str" && expression.operator.t == .OpPlus {
+      } elif leftType.name == "str" && rightType.name == "str" {
         return self.tm.get("str")
       } elif leftType.isNumber() && rightType.isNumber() {
         return TypeMap.largest(leftType, rightType)
       }
 
-      return self.tm.get("any")
+      return leftType
     } elif it.isCall() {
       // todo print void
       // todo required passed (Missing required arguments)
@@ -257,6 +278,7 @@ export obj Analyzer {
       // todo Named arguments can't be followed by regular arguments
       // todo Argument type doesn't match parameter type
       // todo Called object expected to be a function
+
       expression := it.asCall()
       calleeType := TypeMap.unwrap(self.e(expression.callee), withOptional: false)
 
@@ -420,8 +442,6 @@ export obj Analyzer {
 
       return self.tm.createMap(keyType as Type, valueType as Type)
     } elif it.isMemberAccess() {
-      // todo Unable to deduce enumeration member type
-      // todo Tried accessing non-existing enumeration member
       expression := it.asMemberAccess()
       mut t: Type?
 
@@ -434,26 +454,49 @@ export obj Analyzer {
       }
 
       if t == nil {
+        self.raise(errors.E1020(), it.start, it.end)
         return self.tm.get("any")
+      } elif !t.hasEnumerator(expression.name.name) {
+        self.raise(errors.E1021(expression.name.name), it.start, it.end)
       }
 
       return t as Type
     } elif it.isObject() {
-      // todo non existing object declaration (Tried setting non-existing object property)
       expression := it.asObject()
-      return self.t(expression.id)
+      t := self.t(expression.id)
+      propertiesLen := expression.properties.len
+
+      loop i := 0; i < propertiesLen; i++ {
+        property := expression.properties[i]
+
+        if !t.has(property.name.name) {
+          self.raise(errors.E1002(property.name.name, t.toString()), property.name.start, property.name.end)
+          self.e(property.value)
+        } else {
+          p := t.get(property.name.name)
+          propertyType := self.e(property.value, p.t)
+
+          if !TypeMap.match(p.t, propertyType) {
+            self.raise(errors.E1017(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
+          }
+        }
+      }
+
+      return t
     } elif it.isParenthesized() {
       expression := it.asParenthesized()
       return self.e(expression.expression, targetType, withMutable: withMutable)
     } elif it.isPropertyAccess() {
-      // todo non existign access
-      // todo Tried accessing non-existing enumeration member
       expression := it.asPropertyAccess()
       t := TypeMap.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
 
-      if t.isEnum() && t.hasEnumerator(expression.name.name) {
+      if t.isEnum() {
+        if !t.hasEnumerator(expression.name.name) {
+          self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
+        }
         return t
       } elif !t.has(expression.name.name) {
+        self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
         return self.tm.get("any")
       }
 
@@ -469,15 +512,40 @@ export obj Analyzer {
       return self.tm.createReference(self.e(expression.expression, withMutable: withMutable))
     } elif it.isUnary() {
       expression := it.asUnary()
-      // todo unary bitwise on float
-      // todo increment decrement on lval
-      // todo unary only on integers (no char/str/bool) (only i8-i32,u8-u16, int)
+      operandExpression := expressionUnwrap(expression.operand)
+      operandType := TypeMap.unwrap(self.e(expression.operand), withOptional: false)
 
       if expression.operator.t == .OpExcl {
+        if operandType.name != "bool" && operandType.name != "byte" && !operandType.isNumber() {
+          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+        }
+
         return self.tm.get("bool")
+      } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
+        if (
+          !operandExpression.isIdentifier() &&
+          !operandExpression.isElementAccess() &&
+          !operandExpression.isPropertyAccess()
+        ) {
+          self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
+        } elif !operandType.isNumber() {
+          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+        }
+      } elif expression.operator.t == .OpMinus {
+        if !operandType.isSignedInt() && !operandType.isFloat() {
+          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+        }
+      } elif expression.operator.t == .OpPlus {
+        if !operandType.isNumber() {
+          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+        }
+      } elif expression.operator.t == .OpTilde {
+        if !operandType.isInt() {
+          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+        }
       }
 
-      return TypeMap.unwrap(self.e(expression.operand), withOptional: false)
+      return operandType
     }
 
     throw error_NewError("Tried analyzing unknown expression")
@@ -512,8 +580,64 @@ export obj Analyzer {
     }
   }
 
+  fn operands (mut self: ref Self, op: Parser.Token, t1: Type, t2: Type) bool {
+    if op.t == .OpEqEq || op.t == .OpExclEq {
+      if t1.name == "void" || t2.name == "void" || !TypeMap.match(t1, t2) {
+        return false
+      }
+    } elif op.t == .OpGt || op.t == .OpGtEq || op.t == .OpLt || op.t == .OpLtEq {
+      if (
+        !(t1.isNumber() || t1.name == "byte" || t1.name == "char" || t1.name == "str") ||
+        !(t2.isNumber() || t2.name == "byte" || t2.name == "char" || t2.name == "str") ||
+        !TypeMap.match(t1, t2)
+      ) {
+        return false
+      }
+    } elif op.t == .OpPlus || op.t == .OpPlusEq {
+      if (
+        !(t1.isNumber() || t1.name == "byte" || t1.name == "str") ||
+        !(t2.isNumber() || t2.name == "byte" || t2.name == "str") ||
+        !TypeMap.match(t1, t2)
+      ) {
+        return false
+      }
+    } elif (
+      op.t == .OpMinus || op.t == .OpMinusEq ||
+      op.t == .OpPercent || op.t == .OpPercentEq ||
+      op.t == .OpSlash || op.t == .OpSlashEq ||
+      op.t == .OpStar || op.t == .OpStarEq
+    ) {
+      if (
+        !(t1.isNumber() || t1.name == "byte") ||
+        !(t2.isNumber() || t2.name == "byte")
+      ) {
+        return false
+      }
+    } elif op.t == .OpAmpAmp || op.t == .OpAmpAmpEq || op.t == .OpPipePipe || op.t == .OpPipePipeEq {
+      if (
+        !(t1.isNumber() || t1.name == "bool" || t1.name == "byte") ||
+        !(t2.isNumber() || t2.name == "bool" || t2.name == "byte")
+      ) {
+        return false
+      }
+    } elif (
+      op.t == .OpAmp || op.t == .OpAmpEq ||
+      op.t == .OpCaret || op.t == .OpCaretEq ||
+      op.t == .OpLShift || op.t == .OpLShiftEq ||
+      op.t == .OpPipe || op.t == .OpPipeEq ||
+      op.t == .OpRShift || op.t == .OpRShiftEq
+    ) {
+      if !t1.isInt() || !t2.isInt() {
+        return false
+      }
+    }
+
+    return true
+  }
+
   fn raise (mut self: ref Self, message: str, start: int, end: int) {
-    self.errors.push(message)
+    error := Parser.Reader_error(ref self.reader, "AnalyzeError", message, start, end)
+    self.errors.push(error)
   }
 
   fn t (mut self: ref Self, it: Parser.Type) Type {
@@ -553,10 +677,13 @@ export obj Analyzer {
       return self.tm.createMap(self.t(t.keyType), self.t(t.valueType))
     } elif it.isMember() {
       t := it.asMember()
-      leftType := self.t(t.t)
+      leftType := TypeMap.unwrap(self.t(t.t), withReference: false, withOptional: false)
 
-      if !leftType.has(t.name.name) {
-        self.raise(errors.E1002(t.name.name), t.name.start, t.name.end)
+      if !leftType.isNamespace() {
+        self.raise(errors.E1022(leftType.toString()), t.name.start, t.name.end)
+        return self.tm.get("any")
+      } elif !leftType.has(t.name.name) {
+        self.raise(errors.E1023(leftType.toString(), t.name.name), t.name.start, t.name.end)
         return self.tm.get("any")
       }
 
@@ -596,9 +723,14 @@ export obj Analyzer {
 }
 
 export fn analyze (f: ref Parser.File) str[] {
+  if f.hasErrors {
+    return f.errors
+  }
+
   bodyLen := f.program.body.len
   mut analyzer := Analyzer{}
 
+  analyzer.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
   analyzer.tm = TypeMap.init()
   analyzer.vm = VarMap.init(ref analyzer.tm)
 
@@ -615,6 +747,11 @@ main {
   errors := analyze(ref f)
 
   loop i := 0; i < errors.len; i++ {
-    print(errors[i] as str)
+    if i != 0 { print(to: "stderr") }
+    print(errors[i] as str, terminator: "", to: "stderr")
+  }
+
+  if errors.len != 0 {
+    process_exit(1)
   }
 }

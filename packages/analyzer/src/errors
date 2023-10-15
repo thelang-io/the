@@ -4,19 +4,19 @@
  */
 
 export fn E1000 (name: str) str {
-  return "E1000 - Redifinition of `" + name + "`"
+  return "E1000 - Redefinition of '" + name + "'"
 }
 
 export fn E1001 (name: str) str {
-  return "E1001 - Use of undeclaraed type `" + name + "`"
+  return "E1001 - Use of undeclared type `" + name + "`"
 }
 
-export fn E1002 (name: str) str {
-  return "E1002 - Use of non-existing property `" + name + "`"
+export fn E1002 (name: str, t: str) str {
+  return "E1002 - Property '" + name + "' does not exist on type `" + t + "`"
 }
 
 export fn E1003 (name: str) str {
-  return "E1003 - Use of undeclared variable `" + name + "`"
+  return "E1003 - Use of undeclared variable '" + name + "'"
 }
 
 export fn E1004 () str {
@@ -36,8 +36,8 @@ export fn E1007 () str {
   return "E1007 - Unable to deduce array literal type"
 }
 
-export fn E1008 (t: str) str {
-  return "E1008 - Incompatible array literal element of type `" + t + "`"
+export fn E1008 (t: str, expectedType: str) str {
+  return "E1008 - Incompatible array literal element of type `" + t + "`, expected `" + expectedType + "`"
 }
 
 export fn E1009 (a: str, b: str) str {
@@ -45,15 +45,15 @@ export fn E1009 (a: str, b: str) str {
 }
 
 export fn E1010 () str {
-  return "E1010 - Left-hand side of assignment expression should be a variable, property access or member access"
+  return "E1010 - Left-hand side of assignment expression should be a variable, property access or element access"
 }
 
 export fn E1011 (name: str) str {
-  return "E1011 - Cannot assign to immutable variable `" + name + "`"
+  return "E1011 - Cannot assign to immutable variable '" + name + "'"
 }
 
 export fn E1012 (name: str) str {
-  return "E1012 - Cannot assign to immutable property `" + name + "`"
+  return "E1012 - Cannot assign to immutable property '" + name + "'"
 }
 
 export fn E1013 () str {
@@ -61,7 +61,7 @@ export fn E1013 () str {
 }
 
 export fn E1014 (t: str) str {
-  return "E1014 - Index type expected to be `int` got `" + t + "`"
+  return "E1014 - Index type expected to be `int`, got `" + t + "`"
 }
 
 export fn E1015 (t: str) str {
@@ -73,13 +73,45 @@ export fn E1016 () str {
 }
 
 export fn E1017 (a: str, b: str) str {
-  return "E1017 - Type `" + a + "` is not assignable to `" + b + "`"
+  return "E1017 - Type `" + a + "` is not assignable to type `" + b + "`"
 }
 
 export fn E1018 (t: str) str {
-  return "E1018 - Unexpected `" + t + "` value in conditional. The condition should always be of `bool` type"
+  return "E1018 - Unexpected `" + t + "` type in conditional. The condition should always be of `bool` type"
 }
 
 export fn E1019 (consequentType: str, alternateType: str) str {
   return "E1019 - Incompatible consequent `" + consequentType + "` type and alternate `" + alternateType + "` type"
+}
+
+export fn E1020 () str {
+  return "E1020 - Unable to deduce type of enumeration member"
+}
+
+export fn E1021 (member: str) str {
+  return "E1021 - Use of non-existing enumeration member '" + member + "'"
+}
+
+export fn E1022 (name: str) str {
+  return "E1022 - '" + name + "' refers to a type, but is being used as a namespace"
+}
+
+export fn E1023 (ns: str, member: str) str {
+  return "E1023 - Namespace '" + ns + "' has no exported member '" + member + "'"
+}
+
+export fn E1024 () str {
+  return "E1024 - Operand of an increment/decrement operator should be a variable, property access or element access"
+}
+
+export fn E1025 (operator: str, t: str) str {
+  return "E1025 - Cannot apply unary operator '" + operator + "' to type `" + t + "`"
+}
+
+export fn E1026 (operator: str, t1: str, t2: str) str {
+  return "E1026 - Cannot apply binary operator '" + operator + "' to operands of type `" + t1 + "` and `" + t2 + "`"
+}
+
+export fn E1027 (operator: str, t: str) str {
+  return "E1027 - Cannot apply binary assignment operator '" + operator + "' to type `" + t + "`"
 }
