@@ -558,7 +558,8 @@ export obj VariableDeclaration {
 }
 
 export obj File {
-  mut path: str
+  path: str
+  content: str
   mut errors: str[]
   mut hasErrors: bool
   mut program: Program

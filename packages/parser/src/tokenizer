@@ -474,60 +474,8 @@ export obj Tokenizer {
   }
 
   fn _raiseException (mut self: ref Self, errorType: str, message: str, start: int, end: int) {
-    startLoc := Reader.locate(self.reader, start)
-    endLoc := Reader.locate(self.reader, end)
-    lines := self.reader.content.lines()
-
-    mut errorLines: str[]
-    mut errorLinesNumbers: int[]
-
-    if startLoc.line != 1 {
-      errorLines.push(lines[startLoc.line - 2])
-      errorLinesNumbers.push(startLoc.line - 1)
-    }
-
-    errorLines.push(lines[startLoc.line - 1])
-    errorLinesNumbers.push(startLoc.line)
-
-    if startLoc.line == endLoc.line && (startLoc.col == endLoc.col || startLoc.col + 1 == endLoc.col) {
-      errorLines.push(' '.repeat(startLoc.col - 1) + "^")
-    } elif startLoc.line == endLoc.line {
-      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(endLoc.col - startLoc.col))
-    } else {
-      errorLine := lines[startLoc.line - 1]
-      errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col + 1))
-    }
-
-    errorLinesNumbers.push(startLoc.line)
-
-    if startLoc.line != lines.len && !lines[startLoc.line].empty {
-      errorLines.push(lines[startLoc.line])
-      errorLinesNumbers.push(startLoc.line + 1)
-    }
-
-    gutterLen := errorLinesNumbers[-1].str().len + 1
-
-    mut error := self.reader.path + ":" + startLoc.line.str() + ":" +
-      startLoc.col.str() + ": " + errorType + ": " + message + os_EOL
-
-    mut prevLineNum := 0
-
-    loop i := 0; i < errorLinesNumbers.len; i++ {
-      errorLineNum := errorLinesNumbers[i]
-
-      if prevLineNum == errorLineNum {
-        error += ' '.repeat(gutterLen)
-      } else {
-        errorLineNumLen := errorLineNum.str().len
-        error += errorLineNum.str() + ' '.repeat(gutterLen - errorLineNumLen)
-      }
-
-      error += "| " + errorLines[i] + os_EOL
-      prevLineNum = errorLineNum
-    }
-
+    error := Reader.error(self.reader, errorType, message, start, end)
     self.errors.push(error)
-    self.state.handled = true
   }
 
   fn _wrapFloat (mut self: ref Self, t: t.TokenType, errorMessage: str) t.Token {

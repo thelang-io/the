@@ -62,6 +62,7 @@ import
   VariableDeclaration,
   Expression,
   Statement,
+  Token,
   Type,
   File,
   Program
@@ -74,6 +75,7 @@ import
   Type_toText
 from "./text"
 import Program_traverse from "./program"
+import Reader, error as Reader_error, init as Reader_init from "./reader"
 import parse, report from "./parser"
 
 export ArrayType
@@ -134,6 +136,7 @@ export TypeAliasDeclaration
 export VariableDeclaration
 export Expression
 export Statement
+export Token
 export Type
 export File
 export Program
@@ -143,5 +146,8 @@ export Identifier_toText
 export Statement_toText
 export Type_toText
 export Program_traverse
+export Reader
+export Reader_error
+export Reader_init
 export parse
 export report
