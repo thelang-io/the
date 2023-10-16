@@ -622,7 +622,9 @@ export fn match (mut a: Type, mut b: Type) bool {
   a = unwrap(a, withOptional: false, withReference: false)
   b = unwrap(b, withOptional: false, withReference: false)
 
-  if (
+  if a.name == "void" || b.name == "void" {
+    return a.name == b.name
+  } elif (
     a.name == "any" ||
     (a.name == "bool" && b.name == "bool") ||
     (a.name == "byte" && (b.name == "byte" || b.isInt())) ||
@@ -639,8 +641,7 @@ export fn match (mut a: Type, mut b: Type) bool {
       t2 := b.asReference()
       return match(t1.t, t2.t)
     } elif a.isReference() {
-      t := a.asReference()
-      return match(t.t, b)
+      return false
     } else {
       t := b.asReference()
       return match(a, t.t)
@@ -728,18 +729,18 @@ export fn match (mut a: Type, mut b: Type) bool {
     return a.name == b.name
   } elif a.isOptional() || b.isOptional() {
     if !a.isOptional() {
-      t := b.asOptional()
-      return match(a, t.t)
+      return false
     } elif !b.isOptional() {
       t := a.asOptional()
       return match(t.t, b)
     }
+
     t1 := a.asOptional()
     t2 := b.asOptional()
     return match(t1.t, t2.t)
   } elif a.isUnion() || b.isUnion() {
     if !a.isUnion() {
-      return b.hasType(a)
+      return false
     } elif !b.isUnion() {
       return a.hasType(b)
     }

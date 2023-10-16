@@ -28,14 +28,6 @@ export fn expressionUnwrap (it: Parser.Expression) Parser.Expression {
   return it
 }
 
-export fn functionParameterInitializer (parameter: Parser.FunctionParameter) Parser.Expression {
-  return parameter.initializer as Parser.Expression
-}
-
-export fn variableDeclarationInitializer (statement: Parser.VariableDeclaration) Parser.Expression {
-  return statement.initializer as Parser.Expression
-}
-
 export obj Analyzer {
   mut errors: str[]
   mut reader: Parser.Reader
@@ -45,9 +37,25 @@ export obj Analyzer {
 
   // todo function|method missing return
   // todo object declaration builtin method `str` should have strict signature
+  // todo Void type can only be used as function return type
+  // - exports
+  // - func decl
+  // - loop init
+  // - object method params
+  // - object prop
+  // - try catch
+  // todo throw only specific type
+  // todo enum member of int type
 
   fn analyze (mut self: ref Self, it: Parser.Statement) {
-    if it.isExpression() {
+    if it.isBlock() {
+      statement := it.asBlock()
+      bodyLen := statement.body.len
+
+      loop i := 0; i < bodyLen; i++ {
+        self.analyze(statement.body[i])
+      }
+    } elif it.isExpression() {
       statement := it.asExpression()
       self.e(statement.expression)
     } elif it.isVariableDeclaration() {
@@ -62,26 +70,33 @@ export obj Analyzer {
       }
 
       varType := statement.t == nil
-        ? self.e(statement.initializer as Parser.Expression)
-        : self.t(statement.t)
+        ? TypeMap.unwrap(
+            self.e(statement.initializer as Parser.Expression, withMutable: statement.mutable),
+            withOptional: false,
+            withReference: false
+          )
+        : TypeMap.unwrap(self.t(statement.t), withOptional: false, withReference: false)
+
+      if varType.name == "void" {
+        if statement.t == nil {
+          initializer := statement.initializer as Parser.Expression
+          self.raise(errors.E1017(), initializer.start, initializer.end)
+        } else {
+          self.raise(errors.E1017(), statement.t.start, statement.t.end)
+        }
+      }
 
       if statement.t != nil && statement.initializer != nil {
-        initializerType := self.e(statement.initializer, varType)
+        initializerType := self.e(statement.initializer, varType, withMutable: statement.mutable)
 
         if !TypeMap.match(varType, initializerType) {
-          self.raise(
-            errors.E1005(initializerType.toString(), varType.toString()),
-            statement.initializer.start,
-            statement.initializer.end
-          )
+          self.raise(errors.E1005(initializerType.toString(), varType.toString()), statement.initializer.start, statement.initializer.end)
         }
       }
 
       self.vm.add(statement.name.name, varType, statement.mutable)
     }
   }
-
-  // todo check ref being passed into non ref
 
   fn e (mut self: ref Self, it: Parser.Expression, targetType: Type? = nil, withMutable := false) Type {
     if it.isIdentifier() {
@@ -104,26 +119,49 @@ export obj Analyzer {
     } elif it.isCharacterLiteral() {
       return self.tm.get("char")
     } elif it.isFloatingPointLiteral() {
-      // todo validate float
-      // todo too long number
-      // todo validate exponent
-      return self.tm.get("float")
-    } elif it.isIntegerLiteral() {
-      // todo if number more than 4M and targetType empty then explicitly should specify i64
-      // todo too long number
-      if targetType != nil {
-        t := TypeMap.unwrap(targetType)
+      expression := it.asFloatingPointLiteral()
+      definiteTargetType := TypeMap.unwrap(targetType == nil ? self.tm.get("float") : targetType)
+      t := TypeMap.unwrap(definiteTargetType.isFloat() ? definiteTargetType : self.tm.get("float"))
 
-        if (
-          TypeMap.match(t, self.tm.get("i64")) ||
-          TypeMap.match(t, self.tm.get("u32")) ||
-          TypeMap.match(t, self.tm.get("u64"))
-        ) {
-          return t
+      try {
+        if t.name == "f32" {
+          expression.value.toF32()
+        } else {
+          expression.value.toF64()
         }
+      } catch err: error_Error {
+        self.raise(errors.E1030(t.toString()), it.start, it.end)
       }
 
-      return self.tm.get("int")
+      return t
+    } elif it.isIntegerLiteral() {
+      expression := it.asIntegerLiteral()
+      definiteTargetType := TypeMap.unwrap(targetType == nil ? self.tm.get("int") : targetType)
+      t := TypeMap.unwrap(definiteTargetType.isInt() ? definiteTargetType : self.tm.get("int"))
+
+      try {
+        if t.name == "i8" {
+          expression.value.toI8()
+        } elif t.name == "i16" {
+          expression.value.toI16()
+        } elif t.name == "i32" {
+          expression.value.toI32()
+        } elif t.name == "i64" {
+          expression.value.toI64()
+        } elif t.name == "u8" {
+          expression.value.toU8()
+        } elif t.name == "u16" {
+          expression.value.toU16()
+        } elif t.name == "u32" {
+          expression.value.toU32()
+        } elif t.name == "u64" {
+          expression.value.toU64()
+        }
+      } catch err: error_Error {
+        self.raise(errors.E1029(t.toString()), it.start, it.end)
+      }
+
+      return t
     } elif it.isNilLiteral() {
       if targetType == nil {
         self.raise(errors.E1004(), it.start, it.end)
@@ -270,59 +308,131 @@ export obj Analyzer {
 
       return leftType
     } elif it.isCall() {
-      // todo print void
-      // todo required passed (Missing required arguments)
-      // todo Extraneous passed
-      // todo Extra argument
-      // todo Variadic argument can't be passed by name
-      // todo Named arguments can't be followed by regular arguments
-      // todo Argument type doesn't match parameter type
-      // todo Called object expected to be a function
-
+      initialErrorsLen := self.errors.len
       expression := it.asCall()
       calleeType := TypeMap.unwrap(self.e(expression.callee), withOptional: false)
+      mut asynchronous: bool
+      mut parameters: TypeMap.TypeParameter[]
+      mut returnType := self.tm.get("void")
 
       if calleeType.isFunction() {
         t := calleeType.asFunction()
-        return t.returnType
+        asynchronous = t.asynchronous
+        parameters = t.parameters
+        returnType = t.returnType
       } elif calleeType.isMethod() {
         t := calleeType.asMethod()
-        return t.returnType
+        asynchronous = t.asynchronous
+        parameters = t.parameters
+        returnType = t.returnType
+
+        if t.withSelf && t.selfMutable {
+          self.errors = self.errors.slice(0, initialErrorsLen)
+          self.e(expression.callee, withMutable: true)
+        }
+      } else {
+        self.raise(errors.E1031(calleeType.toString()), expression.callee.start, expression.callee.end)
+        return self.tm.get("void")
       }
 
-      return self.tm.get("void")
-    } elif it.isClosure() {
-      // todo variadic with initializer
-      // todo Void type can only be used as function return type
-      expression := it.asClosure()
-      mut parameters: TypeMap.TypeParameter[]
-      parametersLen := expression.parameters.len
+      argumentsLen := expression.arguments.len
+      parametersLen := parameters.len
+      mut passedParameters: str[]
+      mut hasNamed := false
+      mut isVariadic := false
+      mut variadicParameter: TypeMap.TypeParameter?
+      mut parameterIdx := 0
 
-      self.vm.increase()
+      loop i := 0; i < argumentsLen; i++ {
+        argument := expression.arguments[i]
+        mut parameter: TypeMap.TypeParameter?
 
-      loop i := 0; i < parametersLen; i++ {
-        parameter := expression.parameters[i]
+        if argument.name != nil {
+          if passedParameters.contains(argument.name.name) {
+            self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
+            break
+          }
 
-        mut t := parameter.t == nil
-          ? self.e(functionParameterInitializer(parameter))
-          : self.t(parameter.t)
+          loop j := 0; j < parametersLen; j++ {
+            typeParameter := parameters[j]
 
-        if parameter.variadic {
-          t = self.tm.createArray(t)
+            if typeParameter.name != nil {
+              if typeParameter.name == argument.name.name {
+                parameter = typeParameter
+                break
+              }
+            }
+          }
+
+          if parameter == nil {
+            self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
+            break
+          } elif parameter.variadic {
+            self.raise(errors.E1033(argument.name.name), argument.name.start, argument.name.end)
+            break
+          }
+
+          hasNamed = true
+          isVariadic = false
+          variadicParameter = nil
+        } elif hasNamed {
+          self.raise(errors.E1034(), argument.expression.start, argument.expression.end)
+          break
+        } elif isVariadic {
+          parameter = variadicParameter
+        } elif parameterIdx >= parametersLen {
+          self.raise(errors.E1032(), argument.expression.start, argument.expression.end)
+          break
+        } else {
+          parameter = parameters[parameterIdx]
         }
 
-        self.vm.add(parameter.name.name, t, parameter.mutable)
+        definiteParameter := parameter as TypeMap.TypeParameter
 
-        parameters.push(TypeMap.TypeParameter{
-          name: parameter.name.name,
-          t: t,
-          mutable: parameter.mutable,
-          required: parameter.initializer == nil && !parameter.variadic,
-          variadic: parameter.variadic
-        })
+        if !isVariadic && definiteParameter.variadic {
+          isVariadic = true
+          variadicParameter = definiteParameter
+        }
+
+        mut parameterType := definiteParameter.t
+
+        if definiteParameter.variadic {
+          t := parameterType.asArray()
+          parameterType = t.elementType
+        }
+
+        t := TypeMap.unwrap(self.e(argument.expression, parameterType), withReference: false)
+
+        if !TypeMap.match(parameterType, t) {
+          self.raise(errors.E1035(t.toString(), parameterType.toString()), argument.expression.start, argument.expression.end)
+        } elif !isVariadic {
+          if definiteParameter.name != nil {
+            passedParameters.push(definiteParameter.name)
+          }
+
+          parameterIdx++
+        }
       }
 
+      loop ; parameterIdx < parametersLen; parameterIdx++ {
+        parameter := parameters[parameterIdx]
+
+        if parameter.required && parameter.name != nil {
+          self.raise(errors.E1036(parameter.name), it.start, it.end)
+        } elif parameter.required {
+          self.raise(errors.E1037(), it.start, it.end)
+        }
+      }
+
+      return asynchronous ? calleeType : returnType
+    } elif it.isClosure() {
+      expression := it.asClosure()
+
+      self.vm.increase()
+      parameters := self.functionParameters(expression.parameters)
       self.vm.decrease()
+      self.analyze(expression.body)
+
       return self.tm.createFunction(expression.asynchronous, parameters, self.t(expression.returnType))
     } elif it.isConditional() {
       initialTC := self.tc
@@ -353,11 +463,11 @@ export obj Analyzer {
 
       if consequentType.isNumber() && alternateType.isNumber() {
         return TypeMap.largest(consequentType, alternateType)
-      } elif !TypeMap.match(consequentType, alternateType) {
+      } elif !TypeMap.match(consequentType, alternateType) && !TypeMap.match(alternateType, consequentType) {
         self.raise(errors.E1019(consequentType.toString(), alternateType.toString()), expression.consequent.start, expression.alternate.end)
       }
 
-      return consequentType
+      return TypeMap.match(consequentType, alternateType) ? consequentType : alternateType
     } elif it.isElementAccess() {
       expression := it.asElementAccess()
       expressionType := TypeMap.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
@@ -426,7 +536,7 @@ export obj Analyzer {
         if keyType == nil {
           keyType = elementKeyType
         } elif !TypeMap.match(keyType, elementKeyType) && keyTypeForced {
-          self.raise(errors.E1017(keyType.toString(), elementKeyType.toString()), element.key.start, element.key.end)
+          self.raise(errors.E1005(keyType.toString(), elementKeyType.toString()), element.key.start, element.key.end)
         } elif !TypeMap.match(keyType, elementKeyType) {
           keyType = self.tm.unionAdd(keyType, elementKeyType)
         }
@@ -434,7 +544,7 @@ export obj Analyzer {
         if valueType == nil {
           valueType = elementValueType
         } elif !TypeMap.match(valueType, elementValueType) && valueTypeForced {
-          self.raise(errors.E1017(valueType.toString(), elementValueType.toString()), element.value.start, element.value.end)
+          self.raise(errors.E1005(valueType.toString(), elementValueType.toString()), element.value.start, element.value.end)
         } elif !TypeMap.match(valueType, elementValueType) {
           valueType = self.tm.unionAdd(valueType, elementValueType)
         }
@@ -462,6 +572,8 @@ export obj Analyzer {
 
       return t as Type
     } elif it.isObject() {
+      // todo iterate and see what fields require value, function, method, namespace, reference, iterate object, union
+      // todo same inside map?
       expression := it.asObject()
       t := self.t(expression.id)
       propertiesLen := expression.properties.len
@@ -477,7 +589,7 @@ export obj Analyzer {
           propertyType := self.e(property.value, p.t)
 
           if !TypeMap.match(p.t, propertyType) {
-            self.raise(errors.E1017(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
+            self.raise(errors.E1005(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
           }
         }
       }
@@ -549,6 +661,56 @@ export obj Analyzer {
     }
 
     throw error_NewError("Tried analyzing unknown expression")
+  }
+
+  fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) TypeMap.TypeParameter[] {
+    mut result: TypeMap.TypeParameter[]
+    parametersLen := parameters.len
+
+    loop i := 0; i < parametersLen; i++ {
+      parameter := parameters[i]
+
+      mut t := parameter.t == nil
+        ? TypeMap.unwrap(self.e(parameter.initializer as Parser.Expression), withOptional: false, withReference: false)
+        : TypeMap.unwrap(self.t(parameter.t), withOptional: false, withReference: false)
+
+      if t.name == "void" {
+        if parameter.t == nil {
+          initializer := parameter.initializer as Parser.Expression
+          self.raise(errors.E1017(), initializer.start, initializer.end)
+        } else {
+          self.raise(errors.E1017(), parameter.t.start, parameter.t.end)
+        }
+      }
+
+      if parameter.variadic {
+        t = self.tm.createArray(t)
+
+        if parameter.initializer != nil {
+          self.raise(errors.E1028(), parameter.initializer.start, parameter.initializer.end)
+        }
+      }
+
+      if parameter.t != nil && parameter.initializer != nil {
+        initializerType := self.e(parameter.initializer, t)
+
+        if !TypeMap.match(t, initializerType) {
+          self.raise(errors.E1005(initializerType.toString(), t.toString()), parameter.initializer.start, parameter.initializer.end)
+        }
+      }
+
+      self.vm.add(parameter.name.name, t, parameter.mutable)
+
+      result.push(TypeMap.TypeParameter{
+        name: parameter.name.name,
+        t: t,
+        mutable: parameter.mutable,
+        required: parameter.initializer == nil && !parameter.variadic,
+        variadic: parameter.variadic
+      })
+    }
+
+    return result
   }
 
   fn guessType (mut self: ref Self, cb1: (Type?) -> Type, cb2: (Type?) -> Type) GuessTypeResult {
@@ -746,12 +908,14 @@ main {
   mut f := Parser.parse(args[1])
   errors := analyze(ref f)
 
-  loop i := 0; i < errors.len; i++ {
-    if i != 0 { print(to: "stderr") }
-    print(errors[i] as str, terminator: "", to: "stderr")
-  }
-
   if errors.len != 0 {
+    print()
+
+    loop i := 0; i < errors.len; i++ {
+      if i != 0 { print(to: "stderr") }
+      print(errors[i] as str, terminator: "", to: "stderr")
+    }
+
     process_exit(1)
   }
 }
