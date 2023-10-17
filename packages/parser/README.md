@@ -312,6 +312,96 @@ Checks whether statement's body contains corresponding type.
 statement.isBlock()
 ```
 
+### `Statement.hasNext () bool`
+Check if statement has next sibling.
+
+**Return value**
+
+Whether statement has next sibling.
+
+**Examples**
+
+```the
+statement.hasNext()
+```
+
+### `Statement.hasParent () bool`
+Check if statement has parent.
+
+**Return value**
+
+Whether statement has parent.
+
+**Examples**
+
+```the
+statement.hasParent()
+```
+
+### `Statement.hasPrev () bool`
+Check if statement has previous sibling.
+
+**Return value**
+
+Whether statement has previous sibling.
+
+**Examples**
+
+```the
+statement.hasPrev()
+```
+
+### `Statement.next () ref Statement`
+Return statement's next sibling.
+
+**Return value**
+
+Statement's next sibling.
+
+**Examples**
+
+```the
+statement.next()
+```
+
+**Exceptions**
+
+- `ParserError` - thrown if tried accessing nil next
+
+### `Statement.parent () ref Statement`
+Return statement's parent.
+
+**Return value**
+
+Statement's parent.
+
+**Examples**
+
+```the
+statement.next()
+```
+
+**Exceptions**
+
+- `ParserError` - thrown if tried accessing nil parent
+
+### `Statement.prev () ref Statement`
+Return statement's prev sibling.
+
+**Return value**
+
+Statement's prev sibling.
+
+**Examples**
+
+```the
+statement.prev()
+```
+
+**Exceptions**
+
+- `ParserError` - thrown if tried accessing nil prev
+
 ### `Type.asArray () ArrayType`
 ### `Type.asFunction () FunctionType`
 ### `Type.asIdentifier () IdentifierType`

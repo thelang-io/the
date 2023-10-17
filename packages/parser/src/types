@@ -173,6 +173,9 @@ export obj Statement {
   mut body: StatementBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut _next: (ref Statement)?
+  mut _parent: (ref Statement)?
+  mut _prev: (ref Statement)?
 
   fn asBlock (mut self: ref Self) BlockStatement { return self.body as BlockStatement }
   fn asBreak (mut self: ref Self) BreakStatement { return self.body as BreakStatement }
@@ -219,6 +222,39 @@ export obj Statement {
   fn isTry (self: ref Self) bool { return self.body is TryStatement }
   fn isTypeAliasDeclaration (self: ref Self) bool { return self.body is TypeAliasDeclaration }
   fn isVariableDeclaration (self: ref Self) bool { return self.body is VariableDeclaration }
+
+  fn hasNext (self: ref Self) bool {
+    return self._next != nil
+  }
+
+  fn hasParent (self: ref Self) bool {
+    return self._parent != nil
+  }
+
+  fn hasPrev (self: ref Self) bool {
+    return self._prev != nil
+  }
+
+  fn next (self: ref Self) ref Statement {
+    if self._next == nil {
+      throw ParserError{message: "Tried accessing nil next"}
+    }
+    return self._next
+  }
+
+  fn parent (self: ref Self) ref Statement {
+    if self._parent == nil {
+      throw ParserError{message: "Tried accessing nil parent"}
+    }
+    return self._parent
+  }
+
+  fn prev (self: ref Self) ref Statement {
+    if self._prev == nil {
+      throw ParserError{message: "Tried accessing nil prev"}
+    }
+    return self._prev
+  }
 }
 
 export obj Identifier {

@@ -203,6 +203,73 @@ export obj Parser {
     return nil
   }
 
+  fn _connect (mut self: ref Self, mut statement: ref t.Statement, parent: (ref t.Statement)?) {
+    statement2: ref t.Statement? = statement
+    statement._parent = parent
+    mut next: (ref t.Statement)?
+    mut prev: (ref t.Statement)?
+
+    if statement.isBlock() {
+      body := statement.asBlock()
+      bodyLen := body.body.len
+      loop i := 0; i < bodyLen; i++ {
+        mut item := body.body[i]
+        self._connect(item, statement2)
+        if prev != nil { prev._next = item }
+        item._prev = prev
+        prev = item
+      }
+    } elif statement.isExportDeclaration() {
+      body := statement.asExportDeclaration()
+      self._connect(body.statement, statement2)
+    } elif statement.isFunctionDeclaration() {
+      body := statement.asFunctionDeclaration()
+      if body.body != nil {
+        self._connect(body.body, statement2)
+      }
+    } elif statement.isIf() {
+      body := statement.asIf()
+      self._connect(body.consequent, statement2)
+
+      if body.alternate != nil {
+        self._connect(body.alternate, statement2)
+      }
+    } elif statement.isLoop() {
+      body := statement.asLoop()
+      if body.initializer != nil {
+        self._connect(body.initializer, statement2)
+      }
+      self._connect(body.body, statement2)
+    } elif statement.isMainDeclaration() {
+      body := statement.asMainDeclaration()
+      self._connect(body.body, statement2)
+    } elif statement.isObjectDeclaration() {
+      body := statement.asObjectDeclaration()
+      bodyLen := body.body.len
+      loop i := 0; i < bodyLen; i++ {
+        mut item := body.body[i]
+        self._connect(item, statement2)
+        if prev != nil { prev._next = item }
+        item._prev = prev
+        prev = item
+      }
+    } elif statement.isObjectDeclarationMethod() {
+      body := statement.asObjectDeclarationMethod()
+      if body.body != nil {
+        self._connect(body.body, statement2)
+      }
+    } elif statement.isTry() {
+      body := statement.asTry()
+      self._connect(body.body, statement2)
+      handlersLen := body.handlers.len
+      loop i := 0; i < handlersLen; i++ {
+        handler := body.handlers[i]
+        self._connect(handler.parameter, statement2)
+        self._connect(handler.body, statement2)
+      }
+    }
+  }
+
   fn _maybeArrayExpression (mut self: ref Self) t.Expression? {
     if !self.tokenizer.lookahead(.OpLBrack) {
       return nil
@@ -2290,13 +2357,14 @@ export fn parse (pathOrCode: str) t.File {
   }
 
   loop {
-    statement := parser.next()
+    mut statement := parser.next()
 
     if statement.isEof() {
       f.program.eof = statement
       break
     }
 
+    parser._connect(statement, nil)
     f.program.body.push(statement)
   }
 
