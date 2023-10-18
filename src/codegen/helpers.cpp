@@ -565,7 +565,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genCopyFn (Type *type, const std::shar
     auto typeInfo = this->_typeInfo(type);
 
     result = CodegenASTExprCall::create(
-      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_copy")),
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_copy")),
       {result}
     );
   } else if (type->isStr()) {
@@ -576,31 +576,32 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genCopyFn (Type *type, const std::shar
 }
 
 std::shared_ptr<CodegenASTExpr> Codegen::_genEqFn (Type *type, const std::shared_ptr<CodegenASTExpr> &leftExpr, const std::shared_ptr<CodegenASTExpr> &rightExpr, bool reverse) {
-  auto realType = Type::real(type);
   auto direction = std::string(reverse ? "ne" : "eq");
 
-  if (realType->isObj() && realType->builtin && realType->codeName == "@buffer_Buffer") {
+  if (type->isAlias()) {
+    return this->_genEqFn(std::get<TypeAlias>(type->body).type, leftExpr, rightExpr, reverse);
+  } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
     return CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("buffer_" + direction)),
-      {this->_genCopyFn(realType, leftExpr), this->_genCopyFn(realType, rightExpr)}
+      {this->_genCopyFn(type, leftExpr), this->_genCopyFn(type, rightExpr)}
     );
   } else if (
-    realType->isArray() ||
-    realType->isMap() ||
-    realType->isObj() ||
-    realType->isOpt() ||
-    realType->isUnion()
+    type->isArray() ||
+    type->isMap() ||
+    type->isObj() ||
+    type->isOpt() ||
+    type->isUnion()
   ) {
-    auto typeInfo = this->_typeInfo(realType);
+    auto typeInfo = this->_typeInfo(type);
 
     return CodegenASTExprCall::create(
-      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_" + direction)),
-      {this->_genCopyFn(typeInfo.realType, leftExpr), this->_genCopyFn(typeInfo.realType, rightExpr)}
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_" + direction)),
+      {this->_genCopyFn(typeInfo.type, leftExpr), this->_genCopyFn(typeInfo.type, rightExpr)}
     );
-  } else if (realType->isStr()) {
+  } else if (type->isStr()) {
     return CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("str_" + direction + "_str")),
-      {this->_genCopyFn(realType, leftExpr), this->_genCopyFn(realType, rightExpr)}
+      {this->_genCopyFn(type, leftExpr), this->_genCopyFn(type, rightExpr)}
     );
   } else {
     return CodegenASTExprAssign::create(leftExpr, reverse ? "!=" : "==", rightExpr);
@@ -658,8 +659,8 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genFreeFn (Type *type, const std::shar
     auto typeInfo = this->_typeInfo(type);
 
     result = CodegenASTExprCall::create(
-      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_free")),
-      {CodegenASTExprCast::create(CodegenASTType::create(typeInfo.realTypeCodeTrimmed), result)}
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_free")),
+      {CodegenASTExprCast::create(CodegenASTType::create(typeInfo.typeCodeTrimmed), result)}
     );
   } else if (type->isStr()) {
     result = CodegenASTExprCall::create(
@@ -674,7 +675,9 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genFreeFn (Type *type, const std::shar
 std::shared_ptr<CodegenASTExpr> Codegen::_genReallocFn (Type *type, const std::shared_ptr<CodegenASTExpr> &leftExpr, const std::shared_ptr<CodegenASTExpr> &rightExpr) {
   auto result = CodegenASTExprNull::create();
 
-  if (type->isAny()) {
+  if (type->isAlias()) {
+    result = this->_genReallocFn(std::get<TypeAlias>(type->body).type, leftExpr, rightExpr);
+  } else if (type->isAny()) {
     result = CodegenASTExprAssign::create(
       leftExpr,
       "=",

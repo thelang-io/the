@@ -177,7 +177,14 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       }
 
       auto nodeExprTypeRefAny = targetType->isAny() && !nodeExpr.type->isRefOf(targetType);
-      auto shouldCopyVar = !objType->isRef() || (!targetType->isRef() && !targetType->hasSubType(objType) && !nodeExprTypeRefAny);
+      auto nodeExprTypeRefOpt = targetType->isOpt() && !nodeExpr.type->isRefOf(targetType);
+
+      auto shouldCopyVar = !objType->isRef() || (
+        !targetType->isRef() &&
+        !targetType->hasSubType(objType) &&
+        !nodeExprTypeRefAny &&
+        !nodeExprTypeRefOpt
+      );
 
       if (!root && shouldCopyVar) {
         expr = this->_genCopyFn(Type::real(objType), expr);

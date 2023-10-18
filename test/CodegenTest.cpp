@@ -764,6 +764,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
   "builtin-opt-eq",
   "builtin-opt-eq-ref",
   "builtin-opt-eq-root",
+  "builtin-opt-ref",
   "builtin-opt-str",
   "builtin-opt-str-ref",
   "builtin-opt-str-root"

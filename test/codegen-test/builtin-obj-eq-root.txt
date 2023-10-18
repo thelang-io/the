@@ -526,7 +526,7 @@ struct __THE_1_test_TestRefOptInt_0 *__THE_1_test_TestRefOptInt_0_alloc (int32_t
   return r;
 }
 bool __THE_1_test_TestRefOptInt_0_eq (struct __THE_1_test_TestRefOptInt_0 *n1, struct __THE_1_test_TestRefOptInt_0 *n2) {
-  bool r = __THE_1_opt_int_eq(__THE_1_opt_int_copy(n1->__THE_0_a), __THE_1_opt_int_copy(n2->__THE_0_a));
+  bool r = n1->__THE_0_a == n2->__THE_0_a;
   __THE_1_test_TestRefOptInt_0_free((struct __THE_1_test_TestRefOptInt_0 *) n1);
   __THE_1_test_TestRefOptInt_0_free((struct __THE_1_test_TestRefOptInt_0 *) n2);
   return r;
@@ -535,7 +535,7 @@ void __THE_1_test_TestRefOptInt_0_free (struct __THE_1_test_TestRefOptInt_0 *n) 
   free(n);
 }
 bool __THE_1_test_TestRefOptInt_0_ne (struct __THE_1_test_TestRefOptInt_0 *n1, struct __THE_1_test_TestRefOptInt_0 *n2) {
-  bool r = __THE_1_opt_int_ne(__THE_1_opt_int_copy(n1->__THE_0_a), __THE_1_opt_int_copy(n2->__THE_0_a));
+  bool r = n1->__THE_0_a != n2->__THE_0_a;
   __THE_1_test_TestRefOptInt_0_free((struct __THE_1_test_TestRefOptInt_0 *) n1);
   __THE_1_test_TestRefOptInt_0_free((struct __THE_1_test_TestRefOptInt_0 *) n2);
   return r;
