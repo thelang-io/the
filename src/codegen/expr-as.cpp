@@ -47,6 +47,10 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAs (const ASTNodeExpr &nodeExpr, T
     expr = CodegenASTExprCast::create(CodegenASTType::create(typeInfo.typeCode), expr);
   }
 
+  if ((!t2->isRef() && targetType->isRef()) || targetType->isRefOf(t2)) {
+    expr = CodegenASTExprUnary::create("&", expr);
+  }
+
   if (!root) {
     expr = this->_genCopyFn(t2, expr);
   }

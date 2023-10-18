@@ -1179,6 +1179,7 @@ INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenPassTest, testing::Values(
   "expr-ref-alias",
   "expr-ref-any",
   "expr-ref-array",
+  "expr-ref-as",
   "expr-ref-enum",
   "expr-ref-fn",
   "expr-ref-fn-async",

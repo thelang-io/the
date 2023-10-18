@@ -823,7 +823,10 @@ std::optional<ParserStmtExpr> Parser::_stmtExpr (bool root) {
 
     if (exprRefExpr == std::nullopt) {
       throw Error(this->reader, this->lexer->loc, E0147);
-    } else if (!std::holds_alternative<ParserExprAccess>(*exprRefExpr->body)) {
+    } else if (
+      !std::holds_alternative<ParserExprAccess>(*exprRefExpr->body) &&
+      !std::holds_alternative<ParserExprAs>(*exprRefExpr->body)
+    ) {
       throw Error(this->reader, exprRefExpr->start, E0148);
     }
 
