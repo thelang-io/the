@@ -15,6 +15,20 @@ import parse from "the/parser"
 
 ## API
 
+### `interconnect () void`
+Populates parent, next, prev properties with references.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+mut f := parse("./path")
+interconnect(ref f)
+```
+
 ### `parse (pathOrCode: str) File`
 Parses path into `File` object.
 
@@ -172,30 +186,30 @@ Type_toText(type)
 Type_toText(type, indent: 2)
 ```
 
-### `Expression.asIdentifier () Identifier`
-### `Expression.asBooleanLiteral () BooleanLiteral`
-### `Expression.asCharacterLiteral () CharacterLiteral`
-### `Expression.asFloatingPointLiteral () FloatingPointLiteral`
-### `Expression.asIntegerLiteral () IntegerLiteral`
-### `Expression.asNilLiteral () NilLiteral`
-### `Expression.asStringLiteral () StringLiteral`
-### `Expression.asArray () ArrayExpression`
-### `Expression.asAs () AsExpression`
-### `Expression.asAssignment () AssignmentExpression`
-### `Expression.asAwait () AwaitExpression`
-### `Expression.asBinary () BinaryExpression`
-### `Expression.asCall () CallExpression`
-### `Expression.asClosure () ClosureExpression`
-### `Expression.asConditional () ConditionalExpression`
-### `Expression.asElementAccess () ElementAccessExpression`
-### `Expression.asIs () IsExpression`
-### `Expression.asMap () MapExpression`
-### `Expression.asMemberAccess () MemberAccessExpression`
-### `Expression.asObject () ObjectExpression`
-### `Expression.asParenthesized () ParenthesizedExpression`
-### `Expression.asPropertyAccess () PropertyAccessExpression`
-### `Expression.asReference () ReferenceExpression`
-### `Expression.asUnary () UnaryExpression`
+### `Expression.asIdentifier () ref Identifier`
+### `Expression.asBooleanLiteral () ref BooleanLiteral`
+### `Expression.asCharacterLiteral () ref CharacterLiteral`
+### `Expression.asFloatingPointLiteral () ref FloatingPointLiteral`
+### `Expression.asIntegerLiteral () ref IntegerLiteral`
+### `Expression.asNilLiteral () ref NilLiteral`
+### `Expression.asStringLiteral () ref StringLiteral`
+### `Expression.asArray () ref ArrayExpression`
+### `Expression.asAs () ref AsExpression`
+### `Expression.asAssignment () ref AssignmentExpression`
+### `Expression.asAwait () ref AwaitExpression`
+### `Expression.asBinary () ref BinaryExpression`
+### `Expression.asCall () ref CallExpression`
+### `Expression.asClosure () ref ClosureExpression`
+### `Expression.asConditional () ref ConditionalExpression`
+### `Expression.asElementAccess () ref ElementAccessExpression`
+### `Expression.asIs () ref IsExpression`
+### `Expression.asMap () ref MapExpression`
+### `Expression.asMemberAccess () ref MemberAccessExpression`
+### `Expression.asObject () ref ObjectExpression`
+### `Expression.asParenthesized () ref ParenthesizedExpression`
+### `Expression.asPropertyAccess () ref PropertyAccessExpression`
+### `Expression.asReference () ref ReferenceExpression`
+### `Expression.asUnary () ref UnaryExpression`
 These methods are shortcuts for `as` expression.
 
 **Return value**
@@ -244,28 +258,28 @@ Checks whether expression's body contains corresponding type.
 expression.isIdentifier()
 ```
 
-### `Statement.asBlock () BlockStatement`
-### `Statement.asBreak () BreakStatement`
-### `Statement.asContinue () ContinueStatement`
-### `Statement.asEmpty () EmptyStatement`
-### `Statement.asEnumDeclaration () EnumDeclaration`
-### `Statement.asEof () EofStatement`
-### `Statement.asExportDeclaration () ExportDeclaration`
-### `Statement.asExportNamedDeclaration () ExportNamedDeclaration`
-### `Statement.asExpression () ExpressionStatement`
-### `Statement.asFunctionDeclaration () FunctionDeclaration`
-### `Statement.asIf () IfStatement`
-### `Statement.asImportDeclaration () ImportDeclaration`
-### `Statement.asLoop () LoopStatement`
-### `Statement.asMainDeclaration () MainDeclaration`
-### `Statement.asObjectDeclaration () ObjectDeclaration`
-### `Statement.asObjectDeclarationMethod () ObjectDeclarationMethod`
-### `Statement.asObjectDeclarationProperty () ObjectDeclarationProperty`
-### `Statement.asReturn () ReturnStatement`
-### `Statement.asThrow () ThrowStatement`
-### `Statement.asTry () TryStatement`
-### `Statement.asTypeAliasDeclaration () TypeAliasDeclaration`
-### `Statement.asVariableDeclaration () VariableDeclaration`
+### `Statement.asBlock () ref BlockStatement`
+### `Statement.asBreak () ref BreakStatement`
+### `Statement.asContinue () ref ContinueStatement`
+### `Statement.asEmpty () ref EmptyStatement`
+### `Statement.asEnumDeclaration () ref EnumDeclaration`
+### `Statement.asEof () ref EofStatement`
+### `Statement.asExportDeclaration () ref ExportDeclaration`
+### `Statement.asExportNamedDeclaration () ref ExportNamedDeclaration`
+### `Statement.asExpression () ref ExpressionStatement`
+### `Statement.asFunctionDeclaration () ref FunctionDeclaration`
+### `Statement.asIf () ref IfStatement`
+### `Statement.asImportDeclaration () ref ImportDeclaration`
+### `Statement.asLoop () ref LoopStatement`
+### `Statement.asMainDeclaration () ref MainDeclaration`
+### `Statement.asObjectDeclaration () ref ObjectDeclaration`
+### `Statement.asObjectDeclarationMethod () ref ObjectDeclarationMethod`
+### `Statement.asObjectDeclarationProperty () ref ObjectDeclarationProperty`
+### `Statement.asReturn () ref ReturnStatement`
+### `Statement.asThrow () ref ThrowStatement`
+### `Statement.asTry () ref TryStatement`
+### `Statement.asTypeAliasDeclaration () ref TypeAliasDeclaration`
+### `Statement.asVariableDeclaration () ref VariableDeclaration`
 These methods are shortcuts for `as` expression.
 
 **Return value**
@@ -313,7 +327,7 @@ statement.isBlock()
 ```
 
 ### `Statement.hasNext () bool`
-Check if statement has next sibling.
+Check if statement has next sibling. Make sure to `interconnect` references.
 
 **Return value**
 
@@ -326,7 +340,7 @@ statement.hasNext()
 ```
 
 ### `Statement.hasParent () bool`
-Check if statement has parent.
+Check if statement has parent. Make sure to `interconnect` references.
 
 **Return value**
 
@@ -339,7 +353,7 @@ statement.hasParent()
 ```
 
 ### `Statement.hasPrev () bool`
-Check if statement has previous sibling.
+Check if statement has previous sibling. Make sure to `interconnect` references.
 
 **Return value**
 
@@ -352,7 +366,7 @@ statement.hasPrev()
 ```
 
 ### `Statement.next () ref Statement`
-Return statement's next sibling.
+Return statement's next sibling. Make sure to `interconnect` references.
 
 **Return value**
 
@@ -369,7 +383,7 @@ statement.next()
 - `ParserError` - thrown if tried accessing nil next
 
 ### `Statement.parent () ref Statement`
-Return statement's parent.
+Return statement's parent. Make sure to `interconnect` references.
 
 **Return value**
 
@@ -386,11 +400,11 @@ statement.next()
 - `ParserError` - thrown if tried accessing nil parent
 
 ### `Statement.prev () ref Statement`
-Return statement's prev sibling.
+Return statement's previous sibling. Make sure to `interconnect` references.
 
 **Return value**
 
-Statement's prev sibling.
+Statement's previous sibling.
 
 **Examples**
 
@@ -402,15 +416,15 @@ statement.prev()
 
 - `ParserError` - thrown if tried accessing nil prev
 
-### `Type.asArray () ArrayType`
-### `Type.asFunction () FunctionType`
-### `Type.asIdentifier () IdentifierType`
-### `Type.asMap () MapType`
-### `Type.asMember () MemberType`
-### `Type.asOptional () OptionalType`
-### `Type.asParenthesized () ParenthesizedType`
-### `Type.asReference () ReferenceType`
-### `Type.asUnion () UnionType`
+### `Type.asArray () ref ArrayType`
+### `Type.asFunction () ref FunctionType`
+### `Type.asIdentifier () ref IdentifierType`
+### `Type.asMap () ref MapType`
+### `Type.asMember () ref MemberType`
+### `Type.asOptional () ref OptionalType`
+### `Type.asParenthesized () ref ParenthesizedType`
+### `Type.asReference () ref ReferenceType`
+### `Type.asUnion () ref UnionType`
 These methods are shortcuts for `as` expression.
 
 **Return value**

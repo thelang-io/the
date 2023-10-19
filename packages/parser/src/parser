@@ -203,73 +203,6 @@ export obj Parser {
     return nil
   }
 
-  fn _connect (mut self: ref Self, mut statement: ref t.Statement, parent: (ref t.Statement)?) {
-    statement2: ref t.Statement? = statement
-    statement._parent = parent
-    mut next: (ref t.Statement)?
-    mut prev: (ref t.Statement)?
-
-    if statement.isBlock() {
-      body := statement.asBlock()
-      bodyLen := body.body.len
-      loop i := 0; i < bodyLen; i++ {
-        mut item := body.body[i]
-        self._connect(item, statement2)
-        if prev != nil { prev._next = item }
-        item._prev = prev
-        prev = item
-      }
-    } elif statement.isExportDeclaration() {
-      body := statement.asExportDeclaration()
-      self._connect(body.statement, statement2)
-    } elif statement.isFunctionDeclaration() {
-      body := statement.asFunctionDeclaration()
-      if body.body != nil {
-        self._connect(body.body, statement2)
-      }
-    } elif statement.isIf() {
-      body := statement.asIf()
-      self._connect(body.consequent, statement2)
-
-      if body.alternate != nil {
-        self._connect(body.alternate, statement2)
-      }
-    } elif statement.isLoop() {
-      body := statement.asLoop()
-      if body.initializer != nil {
-        self._connect(body.initializer, statement2)
-      }
-      self._connect(body.body, statement2)
-    } elif statement.isMainDeclaration() {
-      body := statement.asMainDeclaration()
-      self._connect(body.body, statement2)
-    } elif statement.isObjectDeclaration() {
-      body := statement.asObjectDeclaration()
-      bodyLen := body.body.len
-      loop i := 0; i < bodyLen; i++ {
-        mut item := body.body[i]
-        self._connect(item, statement2)
-        if prev != nil { prev._next = item }
-        item._prev = prev
-        prev = item
-      }
-    } elif statement.isObjectDeclarationMethod() {
-      body := statement.asObjectDeclarationMethod()
-      if body.body != nil {
-        self._connect(body.body, statement2)
-      }
-    } elif statement.isTry() {
-      body := statement.asTry()
-      self._connect(body.body, statement2)
-      handlersLen := body.handlers.len
-      loop i := 0; i < handlersLen; i++ {
-        handler := body.handlers[i]
-        self._connect(handler.parameter, statement2)
-        self._connect(handler.body, statement2)
-      }
-    }
-  }
-
   fn _maybeArrayExpression (mut self: ref Self) t.Expression? {
     if !self.tokenizer.lookahead(.OpLBrack) {
       return nil
@@ -2343,6 +2276,84 @@ export fn init (mut tokenizer: ref Tokenizer) Parser {
   return Parser{tokenizer: tokenizer}
 }
 
+export fn interconnect (mut f: ref t.File) {
+  bodyLen := f.program.body.len
+  mut prev: (ref t.Statement)?
+
+  loop i := 0; i < bodyLen; i++ {
+    mut item := f.program.body[i]
+    interconnectStatement(item, nil)
+    if prev != nil { prev._next = item }
+    item._prev = prev
+    prev = item
+  }
+}
+
+export fn interconnectStatement (mut statement: ref t.Statement, parent: (ref t.Statement)?) {
+  statement2: (ref t.Statement)? = statement
+  statement._parent = parent
+  mut prev: (ref t.Statement)?
+
+  if statement.isBlock() {
+    mut body := statement.asBlock()
+    bodyLen := body.body.len
+    loop i := 0; i < bodyLen; i++ {
+      mut item := body.body[i]
+      interconnectStatement(item, statement2)
+      if prev != nil { prev._next = item }
+      item._prev = prev
+      prev = item
+    }
+  } elif statement.isExportDeclaration() {
+    mut body := statement.asExportDeclaration()
+    interconnectStatement(ref body.statement, statement2)
+  } elif statement.isFunctionDeclaration() {
+    mut body := statement.asFunctionDeclaration()
+    if body.body != nil {
+      interconnectStatement(ref body.body, statement2)
+    }
+  } elif statement.isIf() {
+    mut body := statement.asIf()
+    interconnectStatement(ref body.consequent, statement2)
+    if body.alternate != nil {
+      interconnectStatement(ref body.alternate, statement2)
+    }
+  } elif statement.isLoop() {
+    mut body := statement.asLoop()
+    if body.initializer != nil {
+      interconnectStatement(ref body.initializer, statement2)
+    }
+    interconnectStatement(ref body.body, statement2)
+  } elif statement.isMainDeclaration() {
+    mut body := statement.asMainDeclaration()
+    interconnectStatement(ref body.body, statement2)
+  } elif statement.isObjectDeclaration() {
+    mut body := statement.asObjectDeclaration()
+    bodyLen := body.body.len
+    loop i := 0; i < bodyLen; i++ {
+      mut item := body.body[i]
+      interconnectStatement(item, statement2)
+      if prev != nil { prev._next = item }
+      item._prev = prev
+      prev = item
+    }
+  } elif statement.isObjectDeclarationMethod() {
+    mut body := statement.asObjectDeclarationMethod()
+    if body.body != nil {
+      interconnectStatement(ref body.body, statement2)
+    }
+  } elif statement.isTry() {
+    mut body := statement.asTry()
+    interconnectStatement(ref body.body, statement2)
+    handlersLen := body.handlers.len
+    loop i := 0; i < handlersLen; i++ {
+      mut handler := body.handlers[i]
+      interconnectStatement(ref handler.parameter, statement2)
+      interconnectStatement(ref handler.body, statement2)
+    }
+  }
+}
+
 export fn parse (pathOrCode: str) t.File {
   mut reader := Reader.init(pathOrCode)
   mut tokenizer := Tokenizer.init(ref reader)
@@ -2364,7 +2375,6 @@ export fn parse (pathOrCode: str) t.File {
       break
     }
 
-    parser._connect(statement, nil)
     f.program.body.push(statement)
   }
 

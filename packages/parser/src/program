@@ -33,7 +33,6 @@ export fn Statement_traverse (statement: t.Statement, cb: (it: t.Statement) -> v
   } elif statement.isIf() {
     body := statement.asIf()
     Statement_traverse(body.consequent, cb)
-
     if body.alternate != nil {
       Statement_traverse(body.alternate, cb)
     }
