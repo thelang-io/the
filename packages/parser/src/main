@@ -76,7 +76,7 @@ import
 from "./text"
 import Program_traverse from "./program"
 import Reader, error as Reader_error, init as Reader_init from "./reader"
-import parse, report from "./parser"
+import interconnect, parse, report from "./parser"
 
 export ArrayType
 export FunctionType
@@ -149,5 +149,6 @@ export Program_traverse
 export Reader
 export Reader_error
 export Reader_init
+export interconnect
 export parse
 export report
