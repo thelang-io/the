@@ -58,11 +58,11 @@ export obj Analyzer {
     } elif it.isExpression() {
       statement := it.asExpression()
       self.e(statement.expression)
+    } elif it.isMainDeclaration() {
+      statement := it.asMainDeclaration()
+      self.analyze(statement.body)
     } elif it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
-
-      // todo global non-const
-      // todo non-global const
 
       if self.vm.has(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
@@ -95,6 +95,12 @@ export obj Analyzer {
       }
 
       self.vm.add(statement.name.name, varType, statement.mutable)
+
+      if statement.constant && it.hasParent() {
+        self.raise(errors.E1038(), statement.name.start, statement.name.end)
+      } elif !statement.constant && !statement.mutable && !it.hasParent() {
+        self.raise(errors.E1039(), statement.name.start, statement.name.end)
+      }
     }
   }
 
@@ -906,6 +912,7 @@ export fn analyze (f: ref Parser.File) str[] {
 main {
   args := process_args
   mut f := Parser.parse(args[1])
+  Parser.interconnect(ref f)
   errors := analyze(ref f)
 
   if errors.len != 0 {

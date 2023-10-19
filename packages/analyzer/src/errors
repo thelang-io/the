@@ -154,3 +154,11 @@ export fn E1036 (name: str) str {
 export fn E1037 () str {
   return "E1037 - Missing argument for required parameter"
 }
+
+export fn E1038 () str {
+  return "E1038 - Constant declaration can only be used at the top level"
+}
+
+export fn E1039 () str {
+  return "E1039 - Variables declared at the top level are required to be constants"
+}
