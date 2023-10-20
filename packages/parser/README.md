@@ -258,6 +258,19 @@ Checks whether expression's body contains corresponding type.
 expression.isIdentifier()
 ```
 
+### `Expression.isAccess () bool`
+Checks whether expression is `Identifier`, `ElementAccess` or `PropertyAccess`.
+
+**Return value**
+
+Whether expression is `Identifier`, `ElementAccess` or `PropertyAccess`.
+
+**Examples**
+
+```the
+expression.isAccess()
+```
+
 ### `Statement.asBlock () ref BlockStatement`
 ### `Statement.asBreak () ref BreakStatement`
 ### `Statement.asContinue () ref ContinueStatement`

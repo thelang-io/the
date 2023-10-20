@@ -165,6 +165,10 @@ export obj Expression {
   fn isPropertyAccess (self: ref Self) bool { return self.body is PropertyAccessExpression }
   fn isReference (self: ref Self) bool { return self.body is ReferenceExpression }
   fn isUnary (self: ref Self) bool { return self.body is UnaryExpression }
+
+  fn isAccess (self: ref Self) bool {
+    return self.isIdentifier() || self.isElementAccess() || self.isPropertyAccess()
+  }
 }
 
 export obj Statement {
