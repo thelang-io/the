@@ -71,5 +71,7 @@ export fn init (tm: ref TypeMap.TypeMap) VarMap {
     TypeMap.TypeProperty{name: "stack", t: tm.get("str"), mutable: false}
   ]), false)
 
+  // todo insert all built-in variables
+
   return vm
 }

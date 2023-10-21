@@ -184,6 +184,27 @@ export obj Type {
     return self.isInt() || self.isFloat()
   }
 
+  fn isRequired (self: ref Self) bool {
+    if self.isAlias() {
+      t := self.asAlias()
+      return t.t.isRequired()
+    } elif self.isObject() {
+      propertiesLen := self.properties.len
+
+      loop i := 0; i < propertiesLen; i++ {
+        property := self.properties[i]
+
+        if !property.builtin && property.t.isRequired() {
+          return true
+        }
+      }
+
+      return false
+    }
+
+    return self.isFunction() || self.isNamespace() || self.isReference() || self.isUnion()
+  }
+
   fn isSignedInt (self: ref Self) bool {
     return ["int", "i8", "i16", "i32", "i64"].contains(self.name)
   }
@@ -265,6 +286,7 @@ export obj TypeProperty {
   name: str
   t: Type
   mutable: bool
+  builtin: bool
 }
 
 export obj TypeParameter {
@@ -345,7 +367,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
-      mutable: false
+      mutable: false,
+      builtin: true
     })
     return result
   }
@@ -356,7 +379,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
-      mutable: false
+      mutable: false,
+      builtin: true
     })
     return result
   }
@@ -381,7 +405,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "name",
       t: self.get("str"),
-      mutable: true
+      mutable: true,
+      builtin: true
     })
 
     return result
@@ -393,7 +418,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
-      mutable: false
+      mutable: false,
+      builtin: true
     })
     return result
   }
@@ -425,7 +451,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "name",
       t: self.get("str"),
-      mutable: true
+      mutable: true,
+      builtin: true
     })
 
     return result
@@ -442,7 +469,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
-      mutable: false
+      mutable: false,
+      builtin: true
     })
     return result
   }
@@ -453,7 +481,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
-      mutable: false
+      mutable: false,
+      builtin: true
     })
     return result
   }
@@ -469,7 +498,8 @@ export obj TypeMap {
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
-      mutable: false
+      mutable: false,
+      builtin: true
     })
     return result
   }

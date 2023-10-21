@@ -162,3 +162,11 @@ export fn E1038 () str {
 export fn E1039 () str {
   return "E1039 - Variables declared at the top level are required to be constants"
 }
+
+export fn E1040 (name: str, t: str) str {
+  return "E1040 - Variable '" + name + "' of type `" + t + "` is missing initializer"
+}
+
+export fn E1041 (name: str, t: str) str {
+  return "E1041 - Property '" + name + "' of type `" + t + "` is missing initializer"
+}

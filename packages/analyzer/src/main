@@ -71,7 +71,6 @@ export obj Analyzer {
 
       if self.vm.has(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
-        return
       }
 
       varType := statement.t == nil
@@ -97,6 +96,10 @@ export obj Analyzer {
         if !TypeMap.match(varType, initializerType) {
           self.raise(errors.E1005(initializerType.toString(), varType.toString()), statement.initializer.start, statement.initializer.end)
         }
+      }
+
+      if statement.initializer == nil && varType.isRequired() {
+        self.raise(errors.E1040(statement.name.name, varType.toString()), statement.name.start, statement.name.end)
       }
 
       self.vm.add(statement.name.name, varType, statement.mutable)
@@ -583,11 +586,10 @@ export obj Analyzer {
 
       return t as Type
     } elif it.isObject() {
-      // todo iterate and see what fields require value, function, method, namespace, reference, iterate object, union
-      // todo same inside map?
       expression := it.asObject()
       t := self.t(expression.id)
       propertiesLen := expression.properties.len
+      mut propertyNames: str[]
 
       loop i := 0; i < propertiesLen; i++ {
         property := expression.properties[i]
@@ -602,6 +604,18 @@ export obj Analyzer {
           if !TypeMap.match(p.t, propertyType) {
             self.raise(errors.E1005(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
           }
+
+          propertyNames.push(property.name.name)
+        }
+      }
+
+      typePropertiesLen := t.properties.len
+
+      loop i := 0; i < typePropertiesLen; i++ {
+        property := t.properties[i]
+
+        if !property.builtin && property.t.isRequired() && !propertyNames.contains(property.name) {
+          self.raise(errors.E1041(property.name, property.t.toString()), expression.id.start, expression.id.end)
         }
       }
 
