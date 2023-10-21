@@ -180,6 +180,24 @@ export fn TEST_types_expression () {
   EXPECT_TRUE(expression24.isUnary())
 }
 
+export fn TEST_types_expressionIsAccess () {
+  expression1 := Expression.create(Expression.dummyIdentifier(), 0, 0)
+  expression2 := Expression.create(t.ElementAccessExpression{expression: Expression.dummy(), argument: Expression.dummy()}, 0, 0)
+  expression3 := Expression.create(t.PropertyAccessExpression{expression: Expression.dummy(), name: Expression.dummyIdentifier()}, 0, 0)
+  expression4 := Expression.create(t.ParenthesizedExpression{expression: Expression.dummy()}, 0, 0)
+  expression5 := Expression.create(t.ParenthesizedExpression{expression: expression1}, 0, 0)
+  expression6 := Expression.create(t.ParenthesizedExpression{expression: expression2}, 0, 0)
+  expression7 := Expression.create(t.ParenthesizedExpression{expression: expression3}, 0, 0)
+
+  EXPECT_TRUE(expression1.isAccess())
+  EXPECT_TRUE(expression2.isAccess())
+  EXPECT_TRUE(expression3.isAccess())
+  EXPECT_FALSE(expression4.isAccess())
+  EXPECT_TRUE(expression5.isAccess())
+  EXPECT_TRUE(expression6.isAccess())
+  EXPECT_TRUE(expression7.isAccess())
+}
+
 export fn TEST_types_statement () {
   EXPECT_NO_THROW(() -> void {
     statement := Statement.create(t.BlockStatement{}, 0, 0)

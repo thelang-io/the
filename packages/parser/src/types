@@ -167,6 +167,11 @@ export obj Expression {
   fn isUnary (self: ref Self) bool { return self.body is UnaryExpression }
 
   fn isAccess (self: ref Self) bool {
+    if self.isParenthesized() {
+      expression := self.asParenthesized()
+      return expression.expression.isAccess()
+    }
+
     return self.isIdentifier() || self.isElementAccess() || self.isPropertyAccess()
   }
 }
