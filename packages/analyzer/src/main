@@ -49,6 +49,9 @@ export obj Analyzer {
   // function has exact return type
   // return is placed within function
 
+  // todo check all self.t and see if it needs self.checkType
+  // because some types are required to have initializer
+
   fn analyze (mut self: ref Self, it: Parser.Statement) {
     if it.isBlock() {
       statement := it.asBlock()
@@ -121,7 +124,8 @@ export obj Analyzer {
         self.raise(errors.E1011(expression.name), it.start, it.end)
       }
 
-      return var.t
+      code := Parser.stringifyExpression(it)
+      return self.tc.has(code) ? self.tc.get(code) : var.t
     } elif it.isBooleanLiteral() {
       return self.tm.get("bool")
     } elif it.isCharacterLiteral() {
@@ -480,15 +484,19 @@ export obj Analyzer {
         self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
       }
 
+      mut t := self.tm.createReference(self.tm.get("any"))
+
       if expressionType.isArray() {
         arrayType := expressionType.asArray()
-        return self.tm.createReference(arrayType.elementType)
+        t = self.tm.createReference(arrayType.elementType)
       } elif expressionType.name == "str" {
-        return self.tm.createReference(self.tm.get("char"))
+        t = self.tm.createReference(self.tm.get("char"))
+      } else {
+        self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
       }
 
-      self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
-      return self.tm.get("any")
+      code := Parser.stringifyExpression(it)
+      return self.tc.has(code) ? self.tc.get(code) : t
     } elif it.isIs() {
       expression := it.asIs()
       expressionType := self.e(expression.expression, withMutable: withMutable)
@@ -621,7 +629,8 @@ export obj Analyzer {
         self.raise(errors.E1012(expression.name.name), it.start, it.end)
       }
 
-      return property.t
+      code := Parser.stringifyExpression(it)
+      return self.tc.has(code) ? self.tc.get(code) : property.t
     } elif it.isReference() {
       expression := it.asReference()
       return self.tm.createReference(self.e(expression.expression, withMutable: withMutable))
