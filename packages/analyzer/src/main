@@ -19,15 +19,6 @@ export obj TypeCastResult {
   alternate: Type[str]
 }
 
-export fn expressionUnwrap (it: Parser.Expression) Parser.Expression {
-  if it.isParenthesized() {
-    expression := it.asParenthesized()
-    return expressionUnwrap(expression.expression)
-  }
-
-  return it
-}
-
 export obj Analyzer {
   mut errors: str[]
   mut reader: Parser.Reader
@@ -37,15 +28,26 @@ export obj Analyzer {
 
   // todo function|method missing return
   // todo object declaration builtin method `str` should have strict signature
-  // todo Void type can only be used as function return type
+  // todo if statement condition expected to be of `bool` type
+  // E1022 - Void type can only be used as function return type
   // - exports
   // - func decl
   // - loop init
   // - object method params
   // - object prop
   // - try catch
-  // todo throw only specific type
-  // todo enum member of int type
+
+  // E1023 - Unable to deduce enumeration member type
+  // E1023_2 - enum member of int type
+  // E1028 - Throw argument required to be object with first field string `message` and second field string `stack`
+  // E1029 - Catch block can only catch object with first field string `message` and second field string `stack`
+  // E1032 - Circular imports are not allowed
+  // E1033 - Object is not exported
+  // E1034 - Namespace member doesn't exists
+  // E1035 - Package not installed
+  // break/continue is within loop
+  // function has exact return type
+  // return is placed within function
 
   fn analyze (mut self: ref Self, it: Parser.Statement) {
     if it.isBlock() {
@@ -235,7 +237,6 @@ export obj Analyzer {
       return t
     } elif it.isAssignment() {
       expression := it.asAssignment()
-      leftExpression := expressionUnwrap(expression.left)
 
       guessTypeResult := self.guessType((operandType: Type?) -> Type {
         initialTC := ref self.tc
@@ -252,11 +253,7 @@ export obj Analyzer {
         self.raise(errors.E1027(expression.operator.val, leftType.toString()), expression.operator.start, expression.operator.end)
       }
 
-      if (
-        !leftExpression.isIdentifier() &&
-        !leftExpression.isElementAccess() &&
-        !leftExpression.isPropertyAccess()
-      ) {
+      if !expression.left.isAccess() {
         self.raise(errors.E1010(), expression.left.start, expression.left.end)
       }
 
@@ -630,7 +627,6 @@ export obj Analyzer {
       return self.tm.createReference(self.e(expression.expression, withMutable: withMutable))
     } elif it.isUnary() {
       expression := it.asUnary()
-      operandExpression := expressionUnwrap(expression.operand)
       operandType := TypeMap.unwrap(self.e(expression.operand), withOptional: false)
 
       if expression.operator.t == .OpExcl {
@@ -640,11 +636,7 @@ export obj Analyzer {
 
         return self.tm.get("bool")
       } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
-        if (
-          !operandExpression.isIdentifier() &&
-          !operandExpression.isElementAccess() &&
-          !operandExpression.isPropertyAccess()
-        ) {
+        if !expression.operand.isAccess() {
           self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
         } elif !operandType.isNumber() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -667,6 +659,17 @@ export obj Analyzer {
     }
 
     throw error_NewError("Tried analyzing unknown expression")
+  }
+
+  fn eNice (mut self: ref Self, it: Parser.Expression) Type {
+    initialErrorsLen := self.errors.len
+    result := self.e(it)
+
+    if self.errors.len != initialErrorsLen {
+      self.errors = self.errors.slice(0, initialErrorsLen)
+    }
+
+    return result
   }
 
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) TypeMap.TypeParameter[] {
@@ -881,11 +884,75 @@ export obj Analyzer {
     throw error_NewError("Tried analyzing unknown type")
   }
 
-  fn typeCast (mut self: ref Self, expression: Parser.Expression) TypeCastResult {
-    // todo
+  fn typeCast (mut self: ref Self, it: Parser.Expression) TypeCastResult {
+    initialTC := self.tc
+    mut consequent: Type[str]
+    mut alternate: Type[str]
+
+    if it.isBinary() {
+      expression := it.asBinary()
+
+      if expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
+        leftTypeCastResult := self.typeCast(expression.left)
+
+        if expression.operator.t == .OpAmpAmp {
+          self.tc.merge(leftTypeCastResult.consequent)
+        }
+
+        rightTypeCastResult := self.typeCast(expression.right)
+
+        if expression.operator.t == .OpAmpAmp {
+          consequent.merge(leftTypeCastResult.consequent)
+          consequent.merge(rightTypeCastResult.consequent)
+          alternate.merge(leftTypeCastResult.alternate)
+          alternate.merge(rightTypeCastResult.alternate)
+        } else {
+          consequent.merge(rightTypeCastResult.consequent)
+          alternate.merge(rightTypeCastResult.alternate)
+        }
+      } elif expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq {
+        if (
+          (expression.left.isAccess() && expression.right.isNilLiteral()) ||
+          (expression.right.isAccess() && expression.left.isNilLiteral())
+        ) {
+          left := expression.left.isAccess() ? expression.left : expression.right
+          leftType := TypeMap.unwrap(self.eNice(left), withOptional: false)
+
+          if left.isAccess() && leftType.isOptional() {
+            code := Parser.stringifyExpression(left)
+            t := leftType.asOptional()
+
+            if expression.operator.t == .OpEqEq {
+              alternate.set(code, t.t)
+            } else {
+              consequent.set(code, t.t)
+            }
+          }
+        }
+      }
+    } elif it.isIs() {
+      expression := it.asIs()
+
+      if expression.expression.isAccess() {
+        expressionType := TypeMap.unwrap(self.eNice(expression.expression), withOptional: false, withReference: false)
+
+        if expressionType.name == "any" || expressionType.isOptional() || expressionType.isUnion() {
+          t := self.t(expression.t)
+          code := Parser.stringifyExpression(expression.expression)
+          consequent.set(code, t)
+
+          if expressionType.isUnion() {
+            alternate.set(code, self.tm.unionSub(expressionType, t))
+          }
+        }
+      }
+    }
+
+    self.tc = initialTC
+
     return TypeCastResult{
-      consequent: {},
-      alternate: {}
+      consequent: consequent,
+      alternate: alternate
     }
   }
 }
