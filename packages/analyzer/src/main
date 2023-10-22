@@ -26,33 +26,9 @@ export obj Analyzer {
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
 
-  // todo function|method missing return
-  // todo object declaration builtin method `str` should have strict signature
-  // todo if statement condition expected to be of `bool` type
-  // E1022 - Void type can only be used as function return type
-  // - exports
-  // - func decl
-  // - loop init
-  // - object method params
-  // - object prop
-  // - try catch
+  // todo check all self.t and see if it needs self.checkType, because some types are required to have initializer
 
-  // E1023 - Unable to deduce enumeration member type
-  // E1023_2 - enum member of int type
-  // E1028 - Throw argument required to be object with first field string `message` and second field string `stack`
-  // E1029 - Catch block can only catch object with first field string `message` and second field string `stack`
-  // E1032 - Circular imports are not allowed
-  // E1033 - Object is not exported
-  // E1034 - Namespace member doesn't exists
-  // E1035 - Package not installed
-  // break/continue is within loop
-  // function has exact return type
-  // return is placed within function
-
-  // todo check all self.t and see if it needs self.checkType
-  // because some types are required to have initializer
-
-  fn analyze (mut self: ref Self, it: Parser.Statement) {
+  fn analyze (mut self: ref Self, it: Parser.Statement) { // todo should return type?
     if it.isBlock() {
       statement := it.asBlock()
       bodyLen := statement.body.len
@@ -60,12 +36,131 @@ export obj Analyzer {
       loop i := 0; i < bodyLen; i++ {
         self.analyze(statement.body[i])
       }
+    } elif it.isBreak() {
+      // todo break is within loop
+      statement := it.asBreak()
+    } elif it.isContinue() {
+      // todo continue is within loop
+      statement := it.asContinue()
+    } elif it.isEmpty() {
+      // todo return void
+    } elif it.isEnumDeclaration() {
+      // todo E1023 - Unable to deduce enumeration member type
+      // todo E1023_2 - enum member of int type
+      // todo check name exists
+      // todo check duplicated member names
+      statement := it.asEnumDeclaration()
+    } elif it.isExportDeclaration() {
+      // todo E1022 - Void type can only be used as function return type
+      // todo check duplicate export names
+      statement := it.asExportDeclaration()
+
+      if it.hasParent() {
+        self.raise(errors.E1044(), it.start, it.end)
+      }
+    } elif it.isExportNamedDeclaration() {
+      // todo check if left-hand value
+      // todo E1022 - Void type can only be used as function return type
+      // todo check duplicate export names
+      statement := it.asExportNamedDeclaration()
+
+      if it.hasParent() {
+        self.raise(errors.E1044(), it.start, it.end)
+      }
     } elif it.isExpression() {
       statement := it.asExpression()
       self.e(statement.expression)
+
+      if !it.hasParent() {
+        self.raise(errors.E1049(), it.start, it.end)
+      }
+    } elif it.isFunctionDeclaration() {
+      // todo check duplicate name
+      // todo check duplicate params
+      // todo missing return
+      // todo E1022 - Void type can only be used as function return type
+      statement := it.asFunctionDeclaration()
+    } elif it.isIf() {
+      // todo if statement condition expected to be of `bool` type
+      // todo if body is block and contains return, then alternate type cast doesn't need reset
+      statement := it.asIf()
+
+      if !it.hasParent() {
+        self.raise(errors.E1045(), it.start, it.end)
+      }
+    } elif it.isImportDeclaration() {
+      // todo E1032 - Circular imports are not allowed
+      // todo E1033 - Object is not exported
+      // todo E1035 - Package not installed
+      // todo Path not found
+      // todo duplicate declaration of specifier
+      // todo specifier name = existing type or variable
+      statement := it.asImportDeclaration()
+
+      if it.hasParent() {
+        self.raise(errors.E1043(), it.start, it.end)
+      }
+    } elif it.isLoop() {
+      // todo
+      // todo check initializer is var decl or expr
+      // todo check condition is of bool type
+      // todo check update?
+      statement := it.asLoop()
+
+      if !it.hasParent() {
+        self.raise(errors.E1046(), it.start, it.end)
+      }
     } elif it.isMainDeclaration() {
       statement := it.asMainDeclaration()
       self.analyze(statement.body)
+
+      if it.hasParent() {
+        self.raise(errors.E1042(), it.start, it.end)
+      }
+    } elif it.isObjectDeclaration() {
+      // todo check name
+      // todo check duplicate properties/methods
+      statement := it.asObjectDeclaration()
+    } elif it.isObjectDeclarationMethod() {
+      // todo builtin method `str` should have strict signature, and other methods
+      // todo method missing return
+      // todo duplicate name
+      // todo duplicate params
+      // todo params E1022 - Void type can only be used as function return type
+      statement := it.asObjectDeclarationMethod()
+    } elif it.isObjectDeclarationProperty() {
+      // todo same as variable declaration
+      // todo can't have initializer
+      statement := it.asObjectDeclarationProperty()
+    } elif it.isReturn() {
+      // todo return is placed within function
+      // todo return of exact type
+      statement := it.asReturn()
+    } elif it.isThrow() {
+      // todo E1028 - Throw argument required to be object with first field string `message` and second field string `stack`
+      statement := it.asThrow()
+
+      if !it.hasParent() {
+        self.raise(errors.E1047(), it.start, it.end)
+      }
+    } elif it.isTry() {
+      // todo catch handle param can't be mutable
+      // todo E1029 - Catch block can only catch object with first field string `message` and second field string `stack`
+      // todo E1022 - Void type can only be used as function return type
+      statement := it.asTry()
+
+      if !it.hasParent() {
+        self.raise(errors.E1048(), it.start, it.end)
+      }
+    } elif it.isTypeAliasDeclaration() {
+      statement := it.asTypeAliasDeclaration()
+
+      if self.tm.has(statement.name.name) {
+        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      t := TypeMap.unwrap(self.t(statement.t), withOptional: false, withReference: false)
+      self.tm.createAlias(statement.name.name, t)
     } elif it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
 

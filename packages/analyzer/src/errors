@@ -170,3 +170,35 @@ export fn E1040 (name: str, t: str) str {
 export fn E1041 (name: str, t: str) str {
   return "E1041 - Property '" + name + "' of type `" + t + "` is missing initializer"
 }
+
+export fn E1042 () str {
+  return "E1042 - Main declaration can only be used at the top level"
+}
+
+export fn E1043 () str {
+  return "E1043 - Import declaration can only be used at the top level"
+}
+
+export fn E1044 () str {
+  return "E1044 - Export declaration can only be used at the top level"
+}
+
+export fn E1045 () str {
+  return "E1045 - If statement cannot be used at the top level"
+}
+
+export fn E1046 () str {
+  return "E1046 - Loop statement cannot be used at the top level"
+}
+
+export fn E1047 () str {
+  return "E1047 - Throw statement cannot be used at the top level"
+}
+
+export fn E1048 () str {
+  return "E1048 - Try statement cannot be used at the top level"
+}
+
+export fn E1049 () str {
+  return "E1049 - Expression statement cannot be used at the top level"
+}
