@@ -3,8 +3,15 @@
  * Licensed under the MIT License
  */
 
+import parse from "../src/parser"
 import * as Statement from "../src/statement"
 import * as t from "../src/types"
+
+fn testDeadEnd (code: str, allowLoopStatements := true) bool {
+  f := parse("main {" + code + "}")
+  mainDeclaration := f.program.body[0].asMainDeclaration()
+  return mainDeclaration.body.isDeadEnd(allowLoopStatements: allowLoopStatements)
+}
 
 export fn TEST_Statement_creates () {
   statement := Statement.create(t.EmptyStatement{}, 0, 0)
@@ -38,4 +45,41 @@ export fn TEST_Statement_createsWithComments () {
 export fn TEST_Statement_dummy () {
   statement := Statement.dummy()
   EXPECT_TRUE(statement.body is t.DummyStatement)
+}
+
+export fn TEST_Statement_isDeadEnd () {
+  EXPECT_FALSE(testDeadEnd(""))
+  EXPECT_TRUE(testDeadEnd("return"))
+  EXPECT_TRUE(testDeadEnd("throw NewError()"))
+  EXPECT_TRUE(testDeadEnd("break"))
+  EXPECT_FALSE(testDeadEnd("break", allowLoopStatements: false))
+  EXPECT_TRUE(testDeadEnd("continue"))
+  EXPECT_FALSE(testDeadEnd("continue", allowLoopStatements: false))
+  EXPECT_FALSE(testDeadEnd("var1 := 1"))
+  EXPECT_FALSE(testDeadEnd("var1 := 1 var2 := 2"))
+  EXPECT_TRUE(testDeadEnd("var := 1 return"))
+  EXPECT_TRUE(testDeadEnd("var1 := 1 return; var2 := 2"))
+  EXPECT_TRUE(testDeadEnd("return; var2 := 2"))
+  EXPECT_TRUE(testDeadEnd("if (a == nil) return"))
+  EXPECT_TRUE(testDeadEnd("if a == nil { return }"))
+  EXPECT_FALSE(testDeadEnd("if a == nil { print() }"))
+  EXPECT_TRUE(testDeadEnd("if a == nil { return } elif a == 2 { return }"))
+  EXPECT_FALSE(testDeadEnd("if a == nil { return } elif a == 2 { print() }"))
+  EXPECT_TRUE(testDeadEnd("if a == nil { return } elif a == 2 { return } else { return }"))
+  EXPECT_FALSE(testDeadEnd("if a == nil { return } elif a == 2 { return } else { print() }"))
+  EXPECT_FALSE(testDeadEnd("loop { a := 1 }"))
+  EXPECT_TRUE(testDeadEnd("loop { return }"))
+  EXPECT_TRUE(testDeadEnd("loop { throw NewError() }"))
+  EXPECT_FALSE(testDeadEnd("loop { break }"))
+  EXPECT_FALSE(testDeadEnd("loop { continue }"))
+  EXPECT_TRUE(testDeadEnd("loop { if a == nil { return } }"))
+  EXPECT_TRUE(testDeadEnd("loop { if a == nil { throw NewError() } }"))
+  EXPECT_FALSE(testDeadEnd("loop { if a == nil { break } }"))
+  EXPECT_FALSE(testDeadEnd("loop { if a == nil { continue } }"))
+  EXPECT_TRUE(testDeadEnd("try { return }"))
+  EXPECT_TRUE(testDeadEnd("try { return } catch err: Error { return }"))
+  EXPECT_FALSE(testDeadEnd("try { print() } catch err: Error { return }"))
+  EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { print() }"))
+  EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { return }"))
+  EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { print() }"))
 }

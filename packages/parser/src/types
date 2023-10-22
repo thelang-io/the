@@ -244,6 +244,55 @@ export obj Statement {
     return self._prev != nil
   }
 
+  fn isDeadEnd (self: ref Self, allowLoopStatements := true) bool {
+    if self.isBlock() {
+      statement := self.asBlock()
+      bodyLen := statement.body.len
+
+      loop i := 0; i < bodyLen; i++ {
+        if statement.body[i].isDeadEnd(allowLoopStatements: allowLoopStatements) {
+          return true
+        }
+      }
+
+      return false
+    } elif self.isIf() {
+      statement := self.asIf()
+
+      if !statement.consequent.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+        return false
+      } elif statement.alternate != nil {
+        if !statement.alternate.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+          return false
+        }
+      }
+
+      return true
+    } elif self.isLoop() {
+      statement := self.asLoop()
+      return statement.body.isDeadEnd(allowLoopStatements: false)
+    } elif self.isTry() {
+      statement := self.asTry()
+
+      if !statement.body.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+        return false
+      }
+
+      handlersLen := statement.handlers.len
+
+      loop i := 0; i < handlersLen; i++ {
+        if !statement.handlers[i].body.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+          return false
+        }
+      }
+
+      return true
+    }
+
+    isLoopStatement := allowLoopStatements && (self.isBreak() || self.isContinue())
+    return isLoopStatement || self.isReturn() || self.isThrow()
+  }
+
   fn next (self: ref Self) ref Statement {
     if self._next != nil {
       return self._next

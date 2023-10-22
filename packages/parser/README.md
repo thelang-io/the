@@ -378,6 +378,23 @@ Whether statement has previous sibling.
 statement.hasPrev()
 ```
 
+### `Statement.isDeadEnd (allowLoopStatements := true) bool`
+Checks whether statements is dead end.
+
+**Parameters**
+
+- `allowLoopStatements` - whether `break` and `continue` statements should count for dead end.
+
+**Return value**
+
+Whether statements is dead end.
+
+**Examples**
+
+```the
+statement.isDeadEnd()
+```
+
 ### `Statement.next () ref Statement`
 Return statement's next sibling. Make sure to `interconnect` references.
 
