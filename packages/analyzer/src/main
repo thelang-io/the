@@ -26,22 +26,31 @@ export obj Analyzer {
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
 
+  // todo forward declaration
+
   // todo check all self.t and see if it needs self.checkType, because some types are required to have initializer
+  // todo test redefinition if variable in upper scope
+  // todo test use of initial variable type after type cast
 
   fn analyze (mut self: ref Self, it: Parser.Statement) { // todo should return type?
     if it.isBlock() {
       statement := it.asBlock()
       bodyLen := statement.body.len
+      self.vm.increase()
 
       loop i := 0; i < bodyLen; i++ {
         self.analyze(statement.body[i])
       }
+
+      self.vm.decrease()
     } elif it.isBreak() {
-      // todo break is within loop
-      statement := it.asBreak()
+      if !it.hasLoopParent() {
+        self.raise(errors.E1050("break"), it.start, it.end)
+      }
     } elif it.isContinue() {
-      // todo continue is within loop
-      statement := it.asContinue()
+      if !it.hasLoopParent() {
+        self.raise(errors.E1050("continue"), it.start, it.end)
+      }
     } elif it.isEmpty() {
       // todo return void
     } elif it.isEnumDeclaration() {
@@ -53,6 +62,7 @@ export obj Analyzer {
     } elif it.isExportDeclaration() {
       // todo E1022 - Void type can only be used as function return type
       // todo check duplicate export names
+      // todo only specific declarations enum | alias | function | etc
       statement := it.asExportDeclaration()
 
       if it.hasParent() {
@@ -62,6 +72,7 @@ export obj Analyzer {
       // todo check if left-hand value
       // todo E1022 - Void type can only be used as function return type
       // todo check duplicate export names
+      // todo can't export element access
       statement := it.asExportNamedDeclaration()
 
       if it.hasParent() {
@@ -81,12 +92,31 @@ export obj Analyzer {
       // todo E1022 - Void type can only be used as function return type
       statement := it.asFunctionDeclaration()
     } elif it.isIf() {
-      // todo if statement condition expected to be of `bool` type
-      // todo if body is block and contains return, then alternate type cast doesn't need reset
+      initialTC := self.tc
       statement := it.asIf()
 
       if !it.hasParent() {
         self.raise(errors.E1045(), it.start, it.end)
+      }
+
+      typeCastResult := self.typeCast(statement.condition)
+      conditionType := TypeMap.unwrap(self.e(statement.condition, self.tm.get("bool")), withOptional: false)
+
+      if !TypeMap.match(conditionType, self.tm.get("bool")) {
+        self.raise(errors.E1018(conditionType.toString()), statement.condition.start, statement.condition.end)
+      }
+
+      self.tc.merge(typeCastResult.consequent)
+      self.analyze(statement.consequent)
+      self.tc = initialTC
+      self.tc.merge(typeCastResult.alternate)
+
+      if statement.alternate != nil {
+        self.analyze(statement.alternate)
+      }
+
+      if !statement.consequent.isDeadEnd() {
+        self.tc = initialTC
       }
     } elif it.isImportDeclaration() {
       // todo E1032 - Circular imports are not allowed
@@ -101,9 +131,9 @@ export obj Analyzer {
         self.raise(errors.E1043(), it.start, it.end)
       }
     } elif it.isLoop() {
-      // todo
       // todo check initializer is var decl or expr
       // todo check condition is of bool type
+      // todo check condition type cast
       // todo check update?
       statement := it.asLoop()
 
@@ -144,6 +174,7 @@ export obj Analyzer {
         self.raise(errors.E1047(), it.start, it.end)
       }
     } elif it.isTry() {
+      // todo at least one handler
       // todo catch handle param can't be mutable
       // todo E1029 - Catch block can only catch object with first field string `message` and second field string `stack`
       // todo E1022 - Void type can only be used as function return type
@@ -535,8 +566,8 @@ export obj Analyzer {
 
       self.vm.increase()
       parameters := self.functionParameters(expression.parameters)
-      self.vm.decrease()
       self.analyze(expression.body)
+      self.vm.decrease()
 
       return self.tm.createFunction(expression.asynchronous, parameters, self.t(expression.returnType))
     } elif it.isConditional() {

@@ -202,3 +202,7 @@ export fn E1048 () str {
 export fn E1049 () str {
   return "E1049 - Expression statement cannot be used at the top level"
 }
+
+export fn E1050 (name: str) str {
+  return "E1050 - A '" + name + "' statement can only be used within an enclosing loop statement"
+}
