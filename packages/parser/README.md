@@ -339,6 +339,32 @@ Checks whether statement's body contains corresponding type.
 statement.isBlock()
 ```
 
+### `Statement.hasFunctionOrMainParent () bool`
+Check whether statement is placed inside function or main declaration.
+
+**Return value**
+
+Whether statement is placed inside function or main declaration.
+
+**Examples**
+
+```the
+statement.hasFunctionOrMainParent()
+```
+
+### `Statement.hasLoopParent () bool`
+Check whether statement is placed inside loop statement.
+
+**Return value**
+
+Whether statement is placed inside loop statement.
+
+**Examples**
+
+```the
+statement.hasLoopParent()
+```
+
 ### `Statement.hasNext () bool`
 Check if statement has next sibling. Make sure to `interconnect` references.
 

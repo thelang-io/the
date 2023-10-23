@@ -232,6 +232,48 @@ export obj Statement {
   fn isTypeAliasDeclaration (self: ref Self) bool { return self.body is TypeAliasDeclaration }
   fn isVariableDeclaration (self: ref Self) bool { return self.body is VariableDeclaration }
 
+  fn hasFunctionOrMainParent (self: ref Self) bool {
+    mut it := self
+
+    loop it.hasParent() {
+      p := it.parent()
+
+      if (
+        p.isFunctionDeclaration() ||
+        p.isMainDeclaration() ||
+        p.isObjectDeclarationMethod()
+      ) {
+        return true
+      }
+
+      it = p
+    }
+
+    return false
+  }
+
+  fn hasLoopParent (self: ref Self) bool {
+    mut it := self
+
+    loop it.hasParent() {
+      p := it.parent()
+
+      if p.isLoop() {
+        return true
+      } elif (
+        p.isFunctionDeclaration() ||
+        p.isMainDeclaration() ||
+        p.isObjectDeclarationMethod()
+      ) {
+        return false
+      }
+
+      it = p
+    }
+
+    return false
+  }
+
   fn hasNext (self: ref Self) bool {
     return self._next != nil
   }

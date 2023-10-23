@@ -3,7 +3,7 @@
  * Licensed under the MIT License
  */
 
-import parse from "../src/parser"
+import interconnect, parse from "../src/parser"
 import * as Statement from "../src/statement"
 import * as t from "../src/types"
 
@@ -47,6 +47,76 @@ export fn TEST_Statement_dummy () {
   EXPECT_TRUE(statement.body is t.DummyStatement)
 }
 
+export fn TEST_Statement_hasFunctionOrMainParent () {
+  mut f1 := parse("return")
+  interconnect(ref f1)
+  EXPECT_FALSE(f1.program.body[0].hasFunctionOrMainParent())
+
+  mut f2 := parse("main { return }")
+  interconnect(ref f2)
+  mainDeclaration2 := f2.program.body[0].asMainDeclaration()
+  mainDeclarationBody2 := mainDeclaration2.body.asBlock()
+  EXPECT_TRUE(mainDeclarationBody2.body[0].hasFunctionOrMainParent())
+
+  mut f3 := parse("fn test () { return }")
+  interconnect(ref f3)
+  functionDeclaration3 := f3.program.body[0].asFunctionDeclaration()
+  if functionDeclaration3.body != nil {
+    functionDeclarationBody3 := functionDeclaration3.body.asBlock()
+    EXPECT_TRUE(functionDeclarationBody3.body[0].hasFunctionOrMainParent())
+  }
+
+  mut f4 := parse("obj Test { fn test () { return } }")
+  interconnect(ref f4)
+  objectDeclaration4 := f4.program.body[0].asObjectDeclaration()
+  methodDeclaration4 := objectDeclaration4.body[0].asObjectDeclarationMethod()
+  if methodDeclaration4.body != nil {
+    methodDeclarationBody4 := methodDeclaration4.body.asBlock()
+    EXPECT_TRUE(methodDeclarationBody4.body[0].hasFunctionOrMainParent())
+  }
+}
+
+export fn TEST_Statement_hasLoopParent () {
+  mut f1 := parse("break")
+  interconnect(ref f1)
+  EXPECT_FALSE(f1.program.body[0].hasLoopParent())
+
+  mut f2 := parse("loop { break }")
+  interconnect(ref f2)
+  loopStatement2 := f2.program.body[0].asLoop()
+  loopBodyStatement2 := loopStatement2.body.asBlock()
+  EXPECT_TRUE(loopBodyStatement2.body[0].hasLoopParent())
+
+  mut f3 := parse("loop { fn test () { break } }")
+  interconnect(ref f3)
+  loopStatement3 := f3.program.body[0].asLoop()
+  loopBodyStatement3 := loopStatement3.body.asBlock()
+  functionDeclaration3 := loopBodyStatement3.body[0].asFunctionDeclaration()
+  if functionDeclaration3.body != nil {
+    functionDeclarationBody3 := functionDeclaration3.body.asBlock()
+    EXPECT_FALSE(functionDeclarationBody3.body[0].hasLoopParent())
+  }
+
+  mut f4 := parse("loop { obj Test { fn test () { break } } }")
+  interconnect(ref f4)
+  loopStatement4 := f4.program.body[0].asLoop()
+  loopBodyStatement4 := loopStatement4.body.asBlock()
+  objectDeclaration4 := loopBodyStatement4.body[0].asObjectDeclaration()
+  methodDeclaration4 := objectDeclaration4.body[0].asObjectDeclarationMethod()
+  if methodDeclaration4.body != nil {
+    methodDeclarationBody4 := methodDeclaration4.body.asBlock()
+    EXPECT_FALSE(methodDeclarationBody4.body[0].hasLoopParent())
+  }
+
+  mut f5 := parse("loop { main { break } }")
+  interconnect(ref f5)
+  loopStatement5 := f5.program.body[0].asLoop()
+  loopBodyStatement5 := loopStatement5.body.asBlock()
+  mainDeclaration5 := loopBodyStatement5.body[0].asMainDeclaration()
+  mainDeclarationBody5 := mainDeclaration5.body.asBlock()
+  EXPECT_FALSE(mainDeclarationBody5.body[0].hasLoopParent())
+}
+
 export fn TEST_Statement_isDeadEnd () {
   EXPECT_FALSE(testDeadEnd(""))
   EXPECT_TRUE(testDeadEnd("return"))
@@ -80,6 +150,6 @@ export fn TEST_Statement_isDeadEnd () {
   EXPECT_TRUE(testDeadEnd("try { return } catch err: Error { return }"))
   EXPECT_FALSE(testDeadEnd("try { print() } catch err: Error { return }"))
   EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { print() }"))
-  EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { return }"))
+  EXPECT_TRUE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { return }"))
   EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { print() }"))
 }
