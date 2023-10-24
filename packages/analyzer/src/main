@@ -19,6 +19,11 @@ export obj TypeCastResult {
   alternate: Type[str]
 }
 
+export enum ForwardPhase {
+  .Declaration,
+  .Definition,
+}
+
 export obj Analyzer {
   mut errors: str[]
   mut reader: Parser.Reader
@@ -26,22 +31,16 @@ export obj Analyzer {
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
 
-  // todo forward declaration
-
   // todo check all self.t and see if it needs self.checkType, because some types are required to have initializer
   // todo test redefinition if variable in upper scope
   // todo test use of initial variable type after type cast
 
-  fn analyze (mut self: ref Self, it: Parser.Statement) { // todo should return type?
+  fn analyze (mut self: ref Self, it: Parser.Statement) {
     if it.isBlock() {
       statement := it.asBlock()
-      bodyLen := statement.body.len
       self.vm.increase()
-
-      loop i := 0; i < bodyLen; i++ {
-        self.analyze(statement.body[i])
-      }
-
+      self.forward(ref statement.body, .Declaration)
+      self.forward(ref statement.body, .Definition)
       self.vm.decrease()
     } elif it.isBreak() {
       if !it.hasLoopParent() {
@@ -51,8 +50,6 @@ export obj Analyzer {
       if !it.hasLoopParent() {
         self.raise(errors.E1050("continue"), it.start, it.end)
       }
-    } elif it.isEmpty() {
-      // todo return void
     } elif it.isEnumDeclaration() {
       // todo E1023 - Unable to deduce enumeration member type
       // todo E1023_2 - enum member of int type
@@ -819,6 +816,36 @@ export obj Analyzer {
     }
 
     return result
+  }
+
+  fn forward (mut self: ref Self, items: ref Parser.Statement, phase: ForwardPhase) {
+    len := items.len
+
+    loop i := 0; i < len; i++ {
+      item := items[i]
+
+      if phase == .Declaration {
+        if item.isEnumDeclaration() {
+        } elif item.isExportDeclaration() {
+        } elif item.isExportNamedDeclaration() {
+        } elif item.isFunctionDeclaration() {
+        } elif item.isImportDeclaration() {
+        } elif item.isObjectDeclaration() {
+        } elif item.isTypeAliasDeclaration() {
+        }
+      } else {
+        if item.isEnumDeclaration() {
+        } elif item.isExportDeclaration() {
+        } elif item.isExportNamedDeclaration() {
+        } elif item.isFunctionDeclaration() {
+        } elif item.isImportDeclaration() {
+        } elif item.isObjectDeclaration() {
+        } elif item.isTypeAliasDeclaration() {
+        }
+
+        self.analyze(item)
+      }
+    }
   }
 
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) TypeMap.TypeParameter[] {
