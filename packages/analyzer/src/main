@@ -19,11 +19,6 @@ export obj TypeCastResult {
   alternate: Type[str]
 }
 
-export enum ForwardPhase {
-  .Declaration,
-  .Definition,
-}
-
 export obj Analyzer {
   mut errors: str[]
   mut reader: Parser.Reader
@@ -38,9 +33,31 @@ export obj Analyzer {
   fn analyze (mut self: ref Self, it: Parser.Statement) {
     if it.isBlock() {
       statement := it.asBlock()
+      items := ref statement.body
+      len := items.len
+
       self.vm.increase()
-      self.forward(ref statement.body, .Declaration)
-      self.forward(ref statement.body, .Definition)
+
+      loop i := 0; i < len; i++ {
+        if items[i].isDeclaration() {
+          loop j := i; j < len && items[j].isDeclaration(); j++ {
+            self.declare(items[j])
+          }
+
+          loop j := i; j < len && items[j].isDeclaration(); j++ {
+            if items[j].isObjectDeclaration() {
+              self.declareObject(items[j])
+            }
+          }
+
+          loop ; i < len && items[i].isDeclaration(); i++ {
+            self.analyze(items[i])
+          }
+        } else {
+          self.analyze(items[i])
+        }
+      }
+
       self.vm.decrease()
     } elif it.isBreak() {
       if !it.hasLoopParent() {
@@ -233,6 +250,12 @@ export obj Analyzer {
         self.raise(errors.E1039(), statement.name.start, statement.name.end)
       }
     }
+  }
+
+  fn declare (mut self: ref Self, it: ref Parser.Statement) {
+  }
+
+  fn declareObject (mut self: ref Self, it: ref Parser.Statement) {
   }
 
   fn e (mut self: ref Self, it: Parser.Expression, targetType: Type? = nil, withMutable := false) Type {
@@ -818,34 +841,7 @@ export obj Analyzer {
     return result
   }
 
-  fn forward (mut self: ref Self, items: ref Parser.Statement, phase: ForwardPhase) {
-    len := items.len
-
-    loop i := 0; i < len; i++ {
-      item := items[i]
-
-      if phase == .Declaration {
-        if item.isEnumDeclaration() {
-        } elif item.isExportDeclaration() {
-        } elif item.isExportNamedDeclaration() {
-        } elif item.isFunctionDeclaration() {
-        } elif item.isImportDeclaration() {
-        } elif item.isObjectDeclaration() {
-        } elif item.isTypeAliasDeclaration() {
-        }
-      } else {
-        if item.isEnumDeclaration() {
-        } elif item.isExportDeclaration() {
-        } elif item.isExportNamedDeclaration() {
-        } elif item.isFunctionDeclaration() {
-        } elif item.isImportDeclaration() {
-        } elif item.isObjectDeclaration() {
-        } elif item.isTypeAliasDeclaration() {
-        }
-
-        self.analyze(item)
-      }
-    }
+  fn forward (mut self: ref Self, items: ref Parser.Statement) {
   }
 
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) TypeMap.TypeParameter[] {
