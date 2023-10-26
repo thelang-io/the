@@ -404,6 +404,19 @@ Whether statement has previous sibling.
 statement.hasPrev()
 ```
 
+### `Statement.isDeclaration () bool`
+Checks whether statements is declaration.
+
+**Return value**
+
+Whether statements is declaration.
+
+**Examples**
+
+```the
+statement.isDeclaration()
+```
+
 ### `Statement.isDeadEnd (allowLoopStatements := true) bool`
 Checks whether statements is dead end.
 

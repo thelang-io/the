@@ -335,6 +335,17 @@ export obj Statement {
     return isLoopStatement || self.isReturn() || self.isThrow()
   }
 
+  fn isDeclaration (self: ref Self) bool {
+    return
+      self.isEnumDeclaration() ||
+      self.isExportDeclaration() ||
+      self.isExportNamedDeclaration() ||
+      self.isFunctionDeclaration() ||
+      self.isImportDeclaration() ||
+      self.isObjectDeclaration() ||
+      self.isTypeAliasDeclaration()
+  }
+
   fn next (self: ref Self) ref Statement {
     if self._next != nil {
       return self._next
