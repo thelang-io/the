@@ -7,7 +7,7 @@ import * as TypeMap, Type from "./type-map"
 
 export obj Var {
   name: str
-  t: Type
+  t: ref Type
   mutable: bool
   scope: int
 }
@@ -16,7 +16,16 @@ export obj VarMap {
   mut items: Var[]
   mut scope: int
 
-  fn add (mut self: ref Self, name: str, t: Type, mutable: bool) {
+  fn init (mut self: ref Self, tm: ref TypeMap.TypeMap) {
+    self.add("Error", tm.createObject("Error", [
+      TypeMap.TypeProperty{name: "message", t: tm.get("str"), mutable: false},
+      TypeMap.TypeProperty{name: "stack", t: tm.get("str"), mutable: false}
+    ]), false)
+
+    // todo insert all built-in variables
+  }
+
+  fn add (mut self: ref Self, name: str, t: ref Type, mutable: bool) {
     typeString := t.body.str()
     typeName := typeString.slice(0, typeString.find("{"))
 
@@ -61,17 +70,4 @@ export obj VarMap {
   fn increase (mut self: ref Self) {
     self.scope++
   }
-}
-
-export fn init (tm: ref TypeMap.TypeMap) VarMap {
-  mut vm := VarMap{}
-
-  vm.add("Error", tm.createObject("Error", [
-    TypeMap.TypeProperty{name: "message", t: tm.get("str"), mutable: false},
-    TypeMap.TypeProperty{name: "stack", t: tm.get("str"), mutable: false}
-  ]), false)
-
-  // todo insert all built-in variables
-
-  return vm
 }

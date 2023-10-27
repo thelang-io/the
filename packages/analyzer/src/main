@@ -10,19 +10,24 @@ import * as VarMap from "./var-map"
 import * as errors from "./errors"
 
 export obj GuessTypeResult {
-  first: Type
-  second: Type
+  first: ref Type
+  second: ref Type
 }
 
 export obj TypeCastResult {
-  consequent: Type[str]
-  alternate: Type[str]
+  consequent: (ref Type)[str]
+  alternate: (ref Type)[str]
+}
+
+export fn opt (t: ref Type) (ref Type)? {
+  mut a: (ref Type)? = t
+  return a
 }
 
 export obj Analyzer {
   mut errors: str[]
   mut reader: Parser.Reader
-  mut tc: Type[str]
+  mut tc: (ref Type)[str]
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
 
@@ -114,7 +119,7 @@ export obj Analyzer {
       }
 
       typeCastResult := self.typeCast(statement.condition)
-      conditionType := TypeMap.unwrap(self.e(statement.condition, self.tm.get("bool")), withOptional: false)
+      conditionType := TypeMap.unwrap(self.e(statement.condition, opt(self.tm.get("bool"))), withOptional: false)
 
       if !TypeMap.match(conditionType, self.tm.get("bool")) {
         self.raise(errors.E1018(conditionType.toString()), statement.condition.start, statement.condition.end)
@@ -207,19 +212,22 @@ export obj Analyzer {
       t := TypeMap.unwrap(self.t(statement.t), withOptional: false, withReference: false)
       self.tm.createAlias(statement.name.name, t)
     } elif it.isVariableDeclaration() {
+      print("here")
       statement := it.asVariableDeclaration()
 
       if self.vm.has(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
-      varType := statement.t == nil
-        ? TypeMap.unwrap(
-            self.e(statement.initializer as Parser.Expression, withMutable: statement.mutable),
-            withOptional: false,
-            withReference: false
-          )
-        : TypeMap.unwrap(self.t(statement.t), withOptional: false, withReference: false)
+      varTypeBefore := statement.t == nil
+        ? self.e(statement.initializer as Parser.Expression, withMutable: statement.mutable)
+        : self.t(statement.t)
+
+      varType := TypeMap.unwrap(
+        varTypeBefore,
+        withOptional: false,
+        withReference: false
+      )
 
       if varType.name == "void" {
         if statement.t == nil {
@@ -231,7 +239,7 @@ export obj Analyzer {
       }
 
       if statement.t != nil && statement.initializer != nil {
-        initializerType := self.e(statement.initializer, varType, withMutable: statement.mutable)
+        initializerType := self.e(statement.initializer, opt(varType), withMutable: statement.mutable)
 
         if !TypeMap.match(varType, initializerType) {
           self.raise(errors.E1005(initializerType.toString(), varType.toString()), statement.initializer.start, statement.initializer.end)
@@ -256,9 +264,21 @@ export obj Analyzer {
   }
 
   fn declareObject (mut self: ref Self, it: ref Parser.Statement) {
+    statement := it.asObjectDeclaration()
+    len := statement.body.len
+
+    loop i := 0; i < len; i++ {
+      item := statement.body[i]
+
+      if item.isObjectDeclarationMethod() {
+        // todo declare method
+      } else {
+        // todo declare property
+      }
+    }
   }
 
-  fn e (mut self: ref Self, it: Parser.Expression, targetType: Type? = nil, withMutable := false) Type {
+  fn e (mut self: ref Self, it: Parser.Expression, targetType: (ref Type)? = nil, withMutable := false) ref Type {
     if it.isIdentifier() {
       expression := it.asIdentifier()
 
@@ -329,7 +349,7 @@ export obj Analyzer {
         return self.tm.createOptional(self.tm.get("any"))
       }
 
-      t := TypeMap.unwrap(targetType as Type, withOptional: false)
+      t := TypeMap.unwrap(targetType as ref Type, withOptional: false)
 
       if t.isOptional() {
         return t
@@ -341,14 +361,14 @@ export obj Analyzer {
       return self.tm.get("str")
     } elif it.isArray() {
       expression := it.asArray()
-      mut elementType: Type?
+      mut elementType: (ref Type)?
 
       if targetType != nil {
         t := TypeMap.unwrap(targetType)
 
         if t.isArray() {
           t := t.asArray()
-          elementType = t.elementType
+          elementType = opt(t.elementType)
         }
       }
 
@@ -377,7 +397,7 @@ export obj Analyzer {
         }
       }
 
-      return self.tm.createArray(elementType as Type)
+      return self.tm.createArray(elementType as ref Type)
     } elif it.isAs() {
       expression := it.asAs()
       expressionType := self.e(expression.expression, withMutable: withMutable)
@@ -391,10 +411,10 @@ export obj Analyzer {
     } elif it.isAssignment() {
       expression := it.asAssignment()
 
-      guessTypeResult := self.guessType((operandType: Type?) -> Type {
+      guessTypeResult := self.guessType((operandType: (ref Type)?) -> ref Type {
         initialTC := ref self.tc
         return TypeMap.unwrap(self.e(expression.left, operandType, withMutable: true), withOptional: false, withReference: false)
-      }, (operandType: Type?) -> Type {
+      }, (operandType: (ref Type)?) -> ref Type {
         initialTC := ref self.tc
         return TypeMap.unwrap(self.e(expression.right, operandType), withOptional: false, withReference: false)
       })
@@ -432,10 +452,10 @@ export obj Analyzer {
     } elif it.isBinary() {
       expression := it.asBinary()
 
-      guessTypeResult := self.guessType((operandType: Type?) -> Type {
+      guessTypeResult := self.guessType((operandType: (ref Type)?) -> ref Type {
         initialTC := ref self.tc
         return TypeMap.unwrap(self.e(expression.left, operandType), withOptional: false)
-      }, (operandType: Type?) -> Type {
+      }, (operandType: (ref Type)?) -> ref Type {
         initialTC := ref self.tc
         return TypeMap.unwrap(self.e(expression.right, operandType), withOptional: false)
       })
@@ -514,7 +534,7 @@ export obj Analyzer {
 
             if typeParameter.name != nil {
               if typeParameter.name == argument.name.name {
-                parameter = typeParameter
+                parameter = typeParameter as TypeMap.TypeParameter
                 break
               }
             }
@@ -557,7 +577,7 @@ export obj Analyzer {
           parameterType = t.elementType
         }
 
-        t := TypeMap.unwrap(self.e(argument.expression, parameterType), withReference: false)
+        t := TypeMap.unwrap(self.e(argument.expression, opt(parameterType)), withReference: false)
 
         if !TypeMap.match(parameterType, t) {
           self.raise(errors.E1035(t.toString(), parameterType.toString()), argument.expression.start, argument.expression.end)
@@ -600,13 +620,13 @@ export obj Analyzer {
         self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
       }
 
-      guessTypeResult := self.guessType((operandType: Type?) -> Type {
+      guessTypeResult := self.guessType((operandType: (ref Type)?) -> ref Type {
         self.tc.merge(typeCastResult.consequent)
         result := TypeMap.unwrap(self.e(expression.consequent, operandType, withMutable: withMutable), withOptional: false)
         self.tc = initialTC
 
         return result
-      }, (operandType: Type?) -> Type {
+      }, (operandType: (ref Type)?) -> ref Type {
         self.tc.merge(typeCastResult.alternate)
         result := TypeMap.unwrap(self.e(expression.alternate, operandType, withMutable: withMutable), withOptional: false)
         self.tc = initialTC
@@ -658,7 +678,7 @@ export obj Analyzer {
       return self.tm.get("bool")
     } elif it.isMap() {
       expression := it.asMap()
-      mut t: Type?
+      mut t: (ref Type)?
 
       if targetType != nil {
         maybeMapType := TypeMap.unwrap(targetType)
@@ -675,13 +695,13 @@ export obj Analyzer {
         return t
       }
 
-      mut keyType: Type?
-      mut valueType: Type?
+      mut keyType: (ref Type)?
+      mut valueType: (ref Type)?
 
       if t != nil {
         mapType := t.asMap()
-        keyType = mapType.keyType
-        valueType = mapType.valueType
+        keyType = opt(mapType.keyType)
+        valueType = opt(mapType.valueType)
       }
 
       keyTypeForced := keyType != nil
@@ -710,10 +730,10 @@ export obj Analyzer {
         }
       }
 
-      return self.tm.createMap(keyType as Type, valueType as Type)
+      return self.tm.createMap(keyType as ref Type, valueType as ref Type)
     } elif it.isMemberAccess() {
       expression := it.asMemberAccess()
-      mut t: Type?
+      mut t: (ref Type)?
 
       if targetType != nil {
         maybeEnumType := TypeMap.unwrap(targetType, withOptional: false)
@@ -730,7 +750,7 @@ export obj Analyzer {
         self.raise(errors.E1021(expression.name.name), it.start, it.end)
       }
 
-      return t as Type
+      return t as ref Type
     } elif it.isObject() {
       expression := it.asObject()
       t := self.t(expression.id)
@@ -745,7 +765,7 @@ export obj Analyzer {
           self.e(property.value)
         } else {
           p := t.get(property.name.name)
-          propertyType := self.e(property.value, p.t)
+          propertyType := self.e(property.value, opt(p.t))
 
           if !TypeMap.match(p.t, propertyType) {
             self.raise(errors.E1005(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
@@ -830,7 +850,7 @@ export obj Analyzer {
     throw error_NewError("Tried analyzing unknown expression")
   }
 
-  fn eNice (mut self: ref Self, it: Parser.Expression) Type {
+  fn eNice (mut self: ref Self, it: Parser.Expression) ref Type {
     initialErrorsLen := self.errors.len
     result := self.e(it)
 
@@ -839,9 +859,6 @@ export obj Analyzer {
     }
 
     return result
-  }
-
-  fn forward (mut self: ref Self, items: ref Parser.Statement) {
   }
 
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) TypeMap.TypeParameter[] {
@@ -873,7 +890,7 @@ export obj Analyzer {
       }
 
       if parameter.t != nil && parameter.initializer != nil {
-        initializerType := self.e(parameter.initializer, t)
+        initializerType := self.e(parameter.initializer, opt(t))
 
         if !TypeMap.match(t, initializerType) {
           self.raise(errors.E1005(initializerType.toString(), t.toString()), parameter.initializer.start, parameter.initializer.end)
@@ -894,9 +911,9 @@ export obj Analyzer {
     return result
   }
 
-  fn guessType (mut self: ref Self, cb1: (Type?) -> Type, cb2: (Type?) -> Type) GuessTypeResult {
+  fn guessType (mut self: ref Self, cb1: ((ref Type)?) -> ref Type, cb2: ((ref Type)?) -> ref Type) GuessTypeResult {
     initialErrorsLen := self.errors.len
-    mut targetType: Type? = nil
+    mut targetType: (ref Type)? = nil
     mut firstType := cb1(targetType)
     firstTypeFailed := self.errors.len != initialErrorsLen
 
@@ -923,7 +940,7 @@ export obj Analyzer {
     }
   }
 
-  fn operands (mut self: ref Self, op: Parser.Token, t1: Type, t2: Type) bool {
+  fn operands (mut self: ref Self, op: Parser.Token, t1: ref Type, t2: ref Type) bool {
     if op.t == .OpEqEq || op.t == .OpExclEq {
       if t1.name == "void" || t2.name == "void" || !TypeMap.match(t1, t2) {
         return false
@@ -983,7 +1000,7 @@ export obj Analyzer {
     self.errors.push(error)
   }
 
-  fn t (mut self: ref Self, it: Parser.Type) Type {
+  fn t (mut self: ref Self, it: Parser.Type) ref Type {
     if it.isArray() {
       t := it.asArray()
       return self.tm.createArray(self.t(t.elementType))
@@ -1043,7 +1060,7 @@ export obj Analyzer {
       return self.tm.createReference(self.t(t.t))
     } elif it.isUnion() {
       t := it.asUnion()
-      mut types: Type[]
+      mut types: (ref Type)[]
       typesLen := t.types.len
 
       loop i := 0; i < typesLen; i++ {
@@ -1058,8 +1075,8 @@ export obj Analyzer {
 
   fn typeCast (mut self: ref Self, it: Parser.Expression) TypeCastResult {
     initialTC := self.tc
-    mut consequent: Type[str]
-    mut alternate: Type[str]
+    mut consequent: (ref Type)[str]
+    mut alternate: (ref Type)[str]
 
     if it.isBinary() {
       expression := it.asBinary()
@@ -1138,8 +1155,8 @@ export fn analyze (f: ref Parser.File) str[] {
   mut analyzer := Analyzer{}
 
   analyzer.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
-  analyzer.tm = TypeMap.init()
-  analyzer.vm = VarMap.init(ref analyzer.tm)
+  analyzer.tm.init()
+  analyzer.vm.init(ref analyzer.tm)
 
   loop i := 0; i < bodyLen; i++ {
     analyzer.analyze(f.program.body[i])

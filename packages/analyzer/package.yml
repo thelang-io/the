@@ -5,4 +5,4 @@ license: MIT
 main: src/main
 
 packages:
-  the/parser: 0.4.10
+  the/parser: 0.4.11

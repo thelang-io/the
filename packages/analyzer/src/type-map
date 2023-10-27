@@ -17,7 +17,7 @@ export type TypeBody =
   ReferenceType |
   UnionType
 
-export fn toStringChild (t: Type) str {
+export fn toStringChild (t: ref Type) str {
   result := t.toString()
   return t.isFunction() || t.isMethod() || t.isReference() || t.isUnion() ? "(" + result + ")" : result
 }
@@ -27,18 +27,18 @@ export obj Type {
   properties: TypeProperty[]
   body: TypeBody
 
-  fn asAlias (mut self: ref Self) AliasType { return self.body as AliasType }
-  fn asArray (mut self: ref Self) ArrayType { return self.body as ArrayType }
-  fn asEnum (mut self: ref Self) EnumType { return self.body as EnumType }
-  fn asEnumerator (mut self: ref Self) EnumeratorType { return self.body as EnumeratorType }
-  fn asFunction (mut self: ref Self) FunctionType { return self.body as FunctionType }
-  fn asMap (mut self: ref Self) MapType { return self.body as MapType }
-  fn asMethod (mut self: ref Self) MethodType { return self.body as MethodType }
-  fn asNamespace (mut self: ref Self) NamespaceType { return self.body as NamespaceType }
-  fn asObject (mut self: ref Self) ObjectType { return self.body as ObjectType }
-  fn asOptional (mut self: ref Self) OptionalType { return self.body as OptionalType }
-  fn asReference (mut self: ref Self) ReferenceType { return self.body as ReferenceType }
-  fn asUnion (mut self: ref Self) UnionType { return self.body as UnionType }
+  fn asAlias (mut self: ref Self) ref AliasType { return ref (self.body as AliasType) }
+  fn asArray (mut self: ref Self) ref ArrayType { return ref (self.body as ArrayType) }
+  fn asEnum (mut self: ref Self) ref EnumType { return ref (self.body as EnumType) }
+  fn asEnumerator (mut self: ref Self) ref EnumeratorType { return ref (self.body as EnumeratorType) }
+  fn asFunction (mut self: ref Self) ref FunctionType { return ref (self.body as FunctionType) }
+  fn asMap (mut self: ref Self) ref MapType { return ref (self.body as MapType) }
+  fn asMethod (mut self: ref Self) ref MethodType { return ref (self.body as MethodType) }
+  fn asNamespace (mut self: ref Self) ref NamespaceType { return ref (self.body as NamespaceType) }
+  fn asObject (mut self: ref Self) ref ObjectType { return ref (self.body as ObjectType) }
+  fn asOptional (mut self: ref Self) ref OptionalType { return ref (self.body as OptionalType) }
+  fn asReference (mut self: ref Self) ref ReferenceType { return ref (self.body as ReferenceType) }
+  fn asUnion (mut self: ref Self) ref UnionType { return ref (self.body as UnionType) }
 
   fn isAlias (self: ref Self) bool { return self.body is AliasType }
   fn isArray (self: ref Self) bool { return self.body is ArrayType }
@@ -53,7 +53,7 @@ export obj Type {
   fn isReference (self: ref Self) bool { return self.body is ReferenceType }
   fn isUnion (self: ref Self) bool { return self.body is UnionType }
 
-  fn canBe (self: ref Self, t: Type) bool {
+  fn canBe (self: ref Self, t: ref Type) bool {
     a := unwrap(self, withReference: false, withOptional: false)
     b := unwrap(t, withReference: false, withOptional: false)
 
@@ -115,7 +115,7 @@ export obj Type {
     throw error_NewError("Tried to get non-existing property `" + name + "`")
   }
 
-  fn getEnumerator (self: ref Self, name: str) Type {
+  fn getEnumerator (self: ref Self, name: str) ref Type {
     t := self.asEnum()
     membersLen := t.members.len
 
@@ -160,11 +160,11 @@ export obj Type {
     return false
   }
 
-  fn hasType (self: ref Self, search: Type) bool {
+  fn hasType (self: ref Self, search: ref Type) bool {
     t := self.asUnion()
 
     loop i := t.types.len - 1; i >= 0; i-- {
-      if match(t.types[i], search) {
+      if match(t.types[i] as ref Type, search) {
         return true
       }
     }
@@ -273,7 +273,7 @@ export obj Type {
       mut result := ""
       loop i := 0; i < typesLen; i++ {
         result += i == 0 ? "" : " | "
-        result += toStringChild(t.types[i])
+        result += toStringChild(t.types[i] as ref Type)
       }
       return result
     }
@@ -284,29 +284,29 @@ export obj Type {
 
 export obj TypeProperty {
   name: str
-  t: Type
+  t: ref Type
   mutable: bool
   builtin: bool
 }
 
 export obj TypeParameter {
   name: str?
-  t: Type
+  t: ref Type
   mutable: bool
   required: bool
   variadic: bool
 }
 
 export obj AliasType {
-  t: Type
+  t: ref Type
 }
 
 export obj ArrayType {
-  elementType: Type
+  elementType: ref Type
 }
 
 export obj EnumType {
-  members: Type[]
+  members: (ref Type)[]
 }
 
 export obj EnumeratorType {
@@ -315,22 +315,22 @@ export obj EnumeratorType {
 export obj FunctionType {
   asynchronous: bool
   parameters: TypeParameter[]
-  returnType: Type
+  returnType: ref Type
 }
 
 export obj MapType {
-  keyType: Type
-  valueType: Type
+  keyType: ref Type
+  valueType: ref Type
 }
 
 export obj MethodType {
   asynchronous: bool
   parameters: TypeParameter[]
-  returnType: Type
+  returnType: ref Type
   withSelf: bool
   selfMutable: bool
   selfName: str
-  selfType: Type
+  selfType: ref Type
 }
 
 export obj NamespaceType {
@@ -340,30 +340,51 @@ export obj ObjectType {
 }
 
 export obj OptionalType {
-  t: Type
+  t: ref Type
 }
 
 export obj ReferenceType {
-  t: Type
+  t: ref Type
 }
 
 export obj UnionType {
-  types: Type[]
+  types: (ref Type)[]
 }
 
 export obj TypeMap {
   mut items: Type[]
 
+  fn init (mut self: ref Self) {
+    self.items.push(Type{name: "str", body: ObjectType{}})
+    self.createObject("any")
+    self.createObject("bool")
+    self.createObject("byte")
+    self.createObject("char")
+    self.createObject("f32")
+    self.createObject("f64")
+    self.createAlias("float", self.get("f64"))
+    self.createObject("i8")
+    self.createObject("i16")
+    self.createObject("i32")
+    self.createObject("i64")
+    self.createAlias("int", self.get("i32"))
+    self.createObject("u8")
+    self.createObject("u16")
+    self.createObject("u32")
+    self.createObject("u64")
+    self.createObject("void")
+  }
+
   // todo insert actual properties for each type
 
-  fn createAlias (mut self: ref Self, name: str, t: Type) Type {
+  fn createAlias (mut self: ref Self, name: str, t: ref Type) ref Type {
     self.items.push(Type{name: name, body: AliasType{t: t}})
     return self.items.last
   }
 
-  fn createArray (mut self: ref Self, elementType: Type) Type {
+  fn createArray (mut self: ref Self, elementType: ref Type) ref Type {
     self.items.push(Type{body: ArrayType{elementType: elementType}})
-    result := self.items.last as Type
+    result := self.items.last
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
@@ -373,9 +394,9 @@ export obj TypeMap {
     return result
   }
 
-  fn createEnum (mut self: ref Self, name: str, members: Type[]) Type {
+  fn createEnum (mut self: ref Self, name: str, members: (ref Type)[]) ref Type {
     self.items.push(Type{name: name, body: EnumType{members: members}})
-    result := self.items.last as Type
+    result := self.items.last
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
@@ -385,7 +406,7 @@ export obj TypeMap {
     return result
   }
 
-  fn createEnumerator (mut self: ref Self, name: str) Type {
+  fn createEnumerator (mut self: ref Self, name: str) ref Type {
     self.items.push(Type{name: name, body: EnumeratorType{}})
     return self.items.last
   }
@@ -394,13 +415,13 @@ export obj TypeMap {
     mut self: ref Self,
     asynchronous: bool,
     parameters: TypeParameter[],
-    returnType: Type
-  ) Type {
+    returnType: ref Type
+  ) ref Type {
     self.items.push(Type{
       body: FunctionType{asynchronous: asynchronous, parameters: parameters, returnType: returnType}
     })
 
-    result := self.items.last as Type
+    result := self.items.last
 
     self.items.last.properties.push(TypeProperty{
       name: "name",
@@ -412,9 +433,9 @@ export obj TypeMap {
     return result
   }
 
-  fn createMap (mut self: ref Self, keyType: Type, valueType: Type) Type {
+  fn createMap (mut self: ref Self, keyType: ref Type, valueType: ref Type) ref Type {
     self.items.push(Type{body: MapType{keyType: keyType, valueType: valueType}})
-    result := self.items.last as Type
+    result := self.items.last
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
@@ -428,12 +449,12 @@ export obj TypeMap {
     mut self: ref Self,
     asynchronous: bool,
     parameters: TypeParameter[],
-    returnType: Type,
+    returnType: ref Type,
     withSelf: bool,
     selfMutable: bool,
     selfName: str,
-    selfType: Type
-  ) Type {
+    selfType: ref Type
+  ) ref Type {
     self.items.push(Type{
       body: MethodType{
         asynchronous: asynchronous,
@@ -446,7 +467,7 @@ export obj TypeMap {
       }
     })
 
-    result := self.items.last as Type
+    result := self.items.last
 
     self.items.last.properties.push(TypeProperty{
       name: "name",
@@ -458,14 +479,14 @@ export obj TypeMap {
     return result
   }
 
-  fn createNamespace (mut self: ref Self, name: str, properties: TypeProperty[] = []) Type {
+  fn createNamespace (mut self: ref Self, name: str, properties: TypeProperty[] = []) ref Type {
     self.items.push(Type{name: name, properties: properties, body: NamespaceType{}})
     return self.items.last
   }
 
-  fn createObject (mut self: ref Self, name: str, properties: TypeProperty[] = []) Type {
+  fn createObject (mut self: ref Self, name: str, properties: TypeProperty[] = []) ref Type {
     self.items.push(Type{name: name, properties: properties, body: ObjectType{}})
-    result := self.items.last as Type
+    result := self.items.last
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
@@ -475,9 +496,9 @@ export obj TypeMap {
     return result
   }
 
-  fn createOptional (mut self: ref Self, t: Type) Type {
+  fn createOptional (mut self: ref Self, t: ref Type) ref Type {
     self.items.push(Type{body: OptionalType{t: t}})
-    result := self.items.last as Type
+    result := self.items.last
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
@@ -487,14 +508,14 @@ export obj TypeMap {
     return result
   }
 
-  fn createReference (mut self: ref Self, t: Type) Type {
+  fn createReference (mut self: ref Self, t: ref Type) ref Type {
     self.items.push(Type{body: ReferenceType{t: t}})
     return self.items.last
   }
 
-  fn createUnion (mut self: ref Self, types: Type[]) Type {
+  fn createUnion (mut self: ref Self, types: (ref Type)[]) ref Type {
     self.items.push(Type{body: UnionType{types: types}})
-    result := self.items.last as Type
+    result := self.items.last
     self.items.last.properties.push(TypeProperty{
       name: "str",
       t: self.createMethod(false, [], self.get("str"), true, false, "self", self.items.last),
@@ -504,7 +525,7 @@ export obj TypeMap {
     return result
   }
 
-  fn get (mut self: ref Self, name: str) Type {
+  fn get (mut self: ref Self, name: str) ref Type {
     loop i := self.items.len - 1; i >= 0; i-- {
       item := self.items[i]
 
@@ -528,7 +549,7 @@ export obj TypeMap {
     return false
   }
 
-  fn unionAdd (mut self: ref Self, a: Type, b: Type) Type {
+  fn unionAdd (mut self: ref Self, a: ref Type, b: ref Type) ref Type {
     if !a.isUnion() {
       return self.createUnion([a, b])
     }
@@ -539,20 +560,18 @@ export obj TypeMap {
     return self.createUnion(types)
   }
 
-  fn unionSub (mut self: ref Self, a: Type, b: Type) Type {
+  fn unionSub (mut self: ref Self, a: ref Type, b: ref Type) ref Type {
     t := a.asUnion()
     mut types := t.types
 
     loop i := types.len - 1; i >= 0; i-- {
-      subType := types[i]
-
-      if match(subType, b) {
+      if match(types[i] as ref Type, b) {
         types.remove(i)
       }
     }
 
     if types.len == 1 {
-      return types[0]
+      return types[0] as ref Type
     }
 
     return self.createUnion(types)
@@ -584,7 +603,7 @@ export fn init () TypeMap {
   return tm
 }
 
-export fn largest (a: Type, b: Type) Type {
+export fn largest (a: ref Type, b: ref Type) ref Type {
   return (
     ((a.name == "f64" || a.name == "float") && (b.name == "f64" || b.name == "float")) ||
     ((a.name == "f64" || a.name == "float") && b.name == "f32") ||
@@ -648,7 +667,7 @@ export fn numberMatch (a: str, b: str) bool {
     ((a == "f64" || a == "float") && (b == "f32" || b == "f64" || b == "float" || numberMatch("i64", b)))
 }
 
-export fn match (mut a: Type, mut b: Type) bool {
+export fn match (mut a: ref Type, mut b: ref Type) bool {
   a = unwrap(a, withOptional: false, withReference: false)
   b = unwrap(b, withOptional: false, withReference: false)
 
@@ -785,7 +804,7 @@ export fn match (mut a: Type, mut b: Type) bool {
     }
 
     loop i := 0; i < types1Len; i++ {
-      if !b.hasType(t1.types[i]) {
+      if !b.hasType(t1.types[i] as ref Type) {
         return false
       }
     }
@@ -796,8 +815,8 @@ export fn match (mut a: Type, mut b: Type) bool {
   return false
 }
 
-export fn unwrap (t: Type, withAlias := true, withOptional := true, withReference := true) Type {
-  if withAlias && t.isAlias() {
+export fn unwrap (t: ref Type, withOptional := true, withReference := true) ref Type {
+  if t.isAlias() {
     unwrappedType := t.asAlias()
     return unwrappedType.t
   } elif withOptional && t.isOptional() {
