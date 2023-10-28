@@ -3,14 +3,9 @@
  * Licensed under the MIT License
  */
 
-import * as TypeMap, Type from "./type-map"
-
-export obj Var {
-  name: str
-  t: ref Type
-  mutable: bool
-  scope: int
-}
+import Var from "./var"
+import * as Type from "./type"
+import * as TypeMap from "./type-map"
 
 export obj VarMap {
   mut items: Var[]
@@ -18,14 +13,14 @@ export obj VarMap {
 
   fn init (mut self: ref Self, tm: ref TypeMap.TypeMap) {
     self.add("Error", tm.createObject("Error", [
-      TypeMap.TypeProperty{name: "message", t: tm.get("str"), mutable: false},
-      TypeMap.TypeProperty{name: "stack", t: tm.get("str"), mutable: false}
+      Type.TypeProperty{name: "message", t: tm.get("str"), mutable: false},
+      Type.TypeProperty{name: "stack", t: tm.get("str"), mutable: false}
     ]), false)
 
     // todo insert all built-in variables
   }
 
-  fn add (mut self: ref Self, name: str, t: ref Type, mutable: bool) {
+  fn add (mut self: ref Self, name: str, t: ref Type.Type, mutable: bool) {
     typeString := t.body.str()
     typeName := typeString.slice(0, typeString.find("{"))
 
