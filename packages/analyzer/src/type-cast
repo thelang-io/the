@@ -1,0 +1,25 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Type from "./type"
+
+export obj TypeCastItem {
+  t: ref Type.Type
+  scope: int
+}
+
+export obj TypeCast {
+  mut scope: int
+  mut items: (ref Type.Type)[str]
+
+  fn decrease (mut self: ref Self) {
+    // todo remove items out of scope
+    self.scope--
+  }
+
+  fn increase (mut self: ref Self) {
+    self.scope++
+  }
+}

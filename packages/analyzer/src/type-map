@@ -8,6 +8,7 @@ import * as Type from "./type"
 
 export obj TypeMap {
   mut items: TypeArray
+  mut _placeholder: (ref Type.Type)?
 
   fn init (mut self: ref Self) {
     self.items.push(Type.Type{name: "str", body: Type.ObjectType{}})
@@ -28,11 +29,23 @@ export obj TypeMap {
     self.createObject("u32")
     self.createObject("u64")
     self.createObject("void")
+
+    print(self.get("int").str())
+  }
+
+  fn placeholder (mut self: ref Self) ref Type.Type {
+    if self._placeholder != nil {
+      return self._placeholder
+    }
+
+    self.items.push(Type.Type{body: Type.EmptyType{}})
+    self._placeholder = Type.opt(self.items.last())
+    return self.placeholder()
   }
 
   // todo insert actual properties for each type
 
-  fn createAlias (mut self: ref Self, name: str, t: ref Type.Type) ref Type.Type {
+  fn createAlias (mut self: ref Self, name: str, t := self.placeholder()) ref Type.Type {
     self.items.push(Type.Type{name: name, body: Type.AliasType{t: t}})
     return self.items.last()
   }
@@ -49,7 +62,7 @@ export obj TypeMap {
     return result
   }
 
-  fn createEnum (mut self: ref Self, name: str, members: (ref Type.Type)[]) ref Type.Type {
+  fn createEnum (mut self: ref Self, name: str, members: (ref Type.Type)[] = []) ref Type.Type {
     self.items.push(Type.Type{name: name, body: Type.EnumType{members: members}})
     result := self.items.last()
     result.properties.push(Type.TypeProperty{
@@ -80,7 +93,11 @@ export obj TypeMap {
     returnType: ref Type.Type
   ) ref Type.Type {
     self.items.push(Type.Type{
-      body: Type.FunctionType{asynchronous: asynchronous, parameters: parameters, returnType: returnType}
+      body: Type.FunctionType{
+        asynchronous: asynchronous,
+        parameters: parameters,
+        returnType: returnType
+      }
     })
 
     result := self.items.last()
@@ -233,5 +250,27 @@ export obj TypeMap {
     }
 
     return self.createUnion(types)
+  }
+
+  fn updateAlias (mut self: ref Self, name: str, aliasedType: ref Type.Type) ref Type.Type {
+    mut foundType := self.get(name)
+
+    if foundType.isAlias() {
+      mut t := foundType.asAlias()
+      t.t = aliasedType
+    }
+
+    return foundType
+  }
+
+  fn updateEnum (mut self: ref Self, name: str, members: (ref Type.Type)[]) ref Type.Type {
+    mut foundType := self.get(name)
+
+    if foundType.isEnum() {
+      mut t := foundType.asEnum()
+      t.members = members
+    }
+
+    return foundType
   }
 }

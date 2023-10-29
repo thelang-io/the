@@ -6,6 +6,7 @@
 export type TypeBody =
   AliasType |
   ArrayType |
+  EmptyType |
   EnumType |
   EnumeratorType |
   FunctionType |
@@ -298,39 +299,42 @@ export obj TypeParameter {
 }
 
 export obj AliasType {
-  t: ref Type
+  mut t: ref Type
 }
 
 export obj ArrayType {
-  elementType: ref Type
+  mut elementType: ref Type
+}
+
+export obj EmptyType {
 }
 
 export obj EnumType {
-  members: (ref Type)[]
+  mut members: (ref Type)[]
 }
 
 export obj EnumeratorType {
 }
 
 export obj FunctionType {
-  asynchronous: bool
-  parameters: TypeParameter[]
-  returnType: ref Type
+  mut asynchronous: bool
+  mut parameters: TypeParameter[]
+  mut returnType: ref Type
 }
 
 export obj MapType {
-  keyType: ref Type
-  valueType: ref Type
+  mut keyType: ref Type
+  mut valueType: ref Type
 }
 
 export obj MethodType {
-  asynchronous: bool
-  parameters: TypeParameter[]
-  returnType: ref Type
-  withSelf: bool
-  selfMutable: bool
-  selfName: str
-  selfType: ref Type
+  mut asynchronous: bool
+  mut parameters: TypeParameter[]
+  mut returnType: ref Type
+  mut withSelf: bool
+  mut selfMutable: bool
+  mut selfName: str
+  mut selfType: ref Type
 }
 
 export obj NamespaceType {
@@ -340,15 +344,15 @@ export obj ObjectType {
 }
 
 export obj OptionalType {
-  t: ref Type
+  mut t: ref Type
 }
 
 export obj ReferenceType {
-  t: ref Type
+  mut t: ref Type
 }
 
 export obj UnionType {
-  types: (ref Type)[]
+  mut types: (ref Type)[]
 }
 
 export fn largest (a: ref Type, b: ref Type) ref Type {
@@ -561,6 +565,11 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
   }
 
   return false
+}
+
+export fn opt (t: ref Type) (ref Type)? {
+  mut a: (ref Type)? = t
+  return a
 }
 
 export fn unwrap (t: ref Type, withOptional := true, withReference := true) ref Type {
