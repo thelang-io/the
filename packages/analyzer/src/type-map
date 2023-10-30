@@ -29,8 +29,6 @@ export obj TypeMap {
     self.createObject("u32")
     self.createObject("u64")
     self.createObject("void")
-
-    print(self.get("int").str())
   }
 
   fn placeholder (mut self: ref Self) ref Type.Type {
