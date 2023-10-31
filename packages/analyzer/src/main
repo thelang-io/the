@@ -45,18 +45,8 @@ export obj Analyzer {
           }
 
           loop j := i; j < len && items[j].isDeclaration(); j++ {
-            self.define(items[j])
-          }
-
-          loop j := i; j < len && items[j].isDeclaration(); j++ {
             if items[j].isObjectDeclaration() {
               self.declareObject(items[j])
-            }
-          }
-
-          loop j := i; j < len && items[j].isDeclaration(); j++ {
-            if items[j].isObjectDeclaration() {
-              self.defineObject(items[j])
             }
           }
 
@@ -310,43 +300,6 @@ export obj Analyzer {
         // todo check property doesn't have initializer
         // todo check property is not constant
       }
-    }
-  }
-
-  fn define (mut self: ref Self, it: ref Parser.Statement) {
-    if it.isEnumDeclaration() {
-      statement := it.asEnumDeclaration()
-      // todo
-    } elif it.isExportDeclaration() {
-      statement := it.asExportDeclaration()
-      self.define(ref statement.statement)
-    } elif it.isFunctionDeclaration() {
-      statement := it.asFunctionDeclaration()
-      // todo
-    } elif it.isImportDeclaration() {
-      statement := it.asImportDeclaration()
-      // todo
-    } elif it.isObjectDeclaration() {
-      statement := it.asObjectDeclaration()
-      // todo
-    } elif it.isTypeAliasDeclaration() {
-      statement := it.asTypeAliasDeclaration()
-      // todo
-    }
-  }
-
-  fn defineObject (mut self: ref Self, it: ref Parser.Statement) {
-    statement := it.asObjectDeclaration()
-    len := statement.body.len
-
-    loop i := 0; i < len; i++ {
-      item := statement.body[i]
-
-      if !item.isObjectDeclarationMethod() {
-        continue
-      }
-
-      // todo define method
     }
   }
 
