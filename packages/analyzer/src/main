@@ -104,6 +104,7 @@ export obj Analyzer {
       // todo check duplicate params
       // todo missing return
       // todo E1022 - Void type can only be used as function return type
+      // todo params with initializer
       statement := it.asFunctionDeclaration()
     } elif it.isIf() {
       initialTC := self.tc
@@ -251,6 +252,7 @@ export obj Analyzer {
       }
 
       self.tm.createEnum(statement.name.name)
+      // todo members
     } elif it.isExportDeclaration() {
       statement := it.asExportDeclaration()
       self.declare(ref statement.statement)
@@ -262,6 +264,7 @@ export obj Analyzer {
       }
 
       self.vm.add(statement.name.name, self.tm.placeholder(), false)
+      // todo params (without initializer)
     } elif it.isImportDeclaration() {
       statement := it.asImportDeclaration()
       // todo
@@ -280,13 +283,16 @@ export obj Analyzer {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
-      self.tm.createAlias(statement.name.name)
+      self.tm.createAlias(statement.name.name, self.t(statement.t))
     }
   }
 
   // todo check circular objects
   fn declareObject (mut self: ref Self, it: ref Parser.Statement) {
+    initialSelf := self.tm.getSelf()
     statement := it.asObjectDeclaration()
+    t := self.tm.get(statement.name.name)
+    self.tm.setSelf(t)
     len := statement.body.len
 
     loop i := 0; i < len; i++ {
@@ -296,11 +302,30 @@ export obj Analyzer {
       if item.isObjectDeclarationMethod() {
         // todo declare method
       } else {
-        // todo declare property
+        // todo check duplicate property
         // todo check property doesn't have initializer
         // todo check property is not constant
+        property := item.asObjectDeclarationProperty()
+
+        if t.has(property.name.name) {
+          self.raise(errors.E1051(property.name.name), property.name.start, property.name.end)
+        }
+
+        propertyType := self.t(property.t as Parser.Type)
+
+        if Type.match(propertyType, self.tm.get("void")) {
+          self.raise(errors.E1017(), property.name.start, property.name.end)
+        }
+
+        t.properties.push(Type.TypeProperty{
+          name: property.name.name,
+          t: propertyType,
+          mutable: property.mutable
+        })
       }
     }
+
+    self.tm.setSelf(initialSelf)
   }
 
   fn e (mut self: ref Self, it: Parser.Expression, targetType: (ref Type.Type)? = nil, withMutable := false) ref Type.Type {
@@ -459,6 +484,7 @@ export obj Analyzer {
         ? Type.unwrap(leftType, withOptional: false)
         : leftType
     } elif it.isAwait() {
+      // todo check is used within async method or main
       expression := it.asAwait()
       expressionType := Type.unwrap(self.e(expression.expression), withOptional: false)
 
@@ -1082,6 +1108,7 @@ export obj Analyzer {
       t := it.asReference()
       return self.tm.createReference(self.t(t.t))
     } elif it.isUnion() {
+      // todo void can only be used as a standalone type
       t := it.asUnion()
       mut types: (ref Type.Type)[]
       typesLen := t.types.len
