@@ -104,6 +104,7 @@ export obj Analyzer {
       // todo check duplicate params
       // todo missing return
       // todo E1022 - Void type can only be used as function return type
+      // todo parameter with type void not allowed
       // todo params with initializer
       statement := it.asFunctionDeclaration()
     } elif it.isIf() {
@@ -198,9 +199,6 @@ export obj Analyzer {
       if !it.hasParent() {
         self.raise(errors.E1048(), it.start, it.end)
       }
-    } elif it.isTypeAliasDeclaration() {
-      statement := it.asTypeAliasDeclaration()
-      self.tm.updateAlias(statement.name.name, self.t(statement.t))
     } elif it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
 
@@ -263,8 +261,31 @@ export obj Analyzer {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
-      self.vm.add(statement.name.name, self.tm.placeholder(), false)
-      // todo params (without initializer)
+      self.vm.increase()
+      mut parameters: Type.TypeParameter[]
+      parametersLen := statement.parameters.len
+
+      loop i := 0; i < parametersLen; i++ {
+        parameter := statement.parameters[i]
+
+        mut parameterType := Type.unwrap(
+          parameter.t != nil ? self.t(parameter.t) : self.e(parameter.initializer as Parser.Expression),
+          withOptional: false,
+          withReference: false
+        )
+
+        if parameter.variadic {
+          parameterType = self.tm.createArray(parameterType)
+        }
+
+        self.vm.add(parameter.name.name, parameterType, parameter.mutable)
+      }
+
+      returnType := statement.returnType == nil ? self.tm.get("void") : self.t(statement.returnType)
+      t := self.tm.createFunction(statement.asynchronous, parameters, returnType)
+
+      self.vm.decrease()
+      self.vm.add(statement.name.name, t, false)
     } elif it.isImportDeclaration() {
       statement := it.asImportDeclaration()
       // todo
@@ -292,7 +313,7 @@ export obj Analyzer {
     initialSelf := self.tm.getSelf()
     statement := it.asObjectDeclaration()
     t := self.tm.get(statement.name.name)
-    self.tm.setSelf(t)
+    self.tm.setSelf(Type.opt(t))
     len := statement.body.len
 
     loop i := 0; i < len; i++ {
