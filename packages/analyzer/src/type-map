@@ -50,20 +50,8 @@ export obj TypeMap {
     return result
   }
 
-  fn createEnum (mut self: ref Self, name: str, members: (ref Type.Type)[] = []) ref Type.Type {
+  fn createEnum (mut self: ref Self, name: str, members: str[]) ref Type.Type {
     self.items.push(Type.Type{name: name, body: Type.EnumType{members: members}})
-    result := self.items.last()
-    result.properties.push(Type.TypeProperty{
-      name: "str",
-      t: self.createMethod(false, [], self.get("str"), true, false, "self", result),
-      mutable: false,
-      builtin: true
-    })
-    return result
-  }
-
-  fn createEnumerator (mut self: ref Self, name: str) ref Type.Type {
-    self.items.push(Type.Type{name: name, body: Type.EnumeratorType{}})
     result := self.items.last()
     result.properties.push(Type.TypeProperty{
       name: "str",
@@ -254,16 +242,5 @@ export obj TypeMap {
     }
 
     return self.createUnion(types)
-  }
-
-  fn updateEnum (mut self: ref Self, name: str, members: (ref Type.Type)[]) ref Type.Type {
-    mut foundType := self.get(name)
-
-    if foundType.isEnum() {
-      mut t := foundType.asEnum()
-      t.members = members
-    }
-
-    return foundType
   }
 }

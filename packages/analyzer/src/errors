@@ -210,3 +210,7 @@ export fn E1050 (name: str) str {
 export fn E1051 (property: str) str {
   return "E1051 - Duplicate declaration of property '" + property + "'"
 }
+
+export fn E1052 (enumerator: str) str {
+  return "E1052 - Duplicate declaration of enumerator '" + enumerator + "'"
+}

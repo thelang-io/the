@@ -70,8 +70,6 @@ export obj Analyzer {
     } elif it.isEnumDeclaration() {
       // todo E1023 - Unable to deduce enumeration member type
       // todo E1023_2 - enum member of int type
-      // todo check name exists
-      // todo check duplicated member names
       statement := it.asEnumDeclaration()
     } elif it.isExportDeclaration() {
       // todo E1022 - Void type can only be used as function return type
@@ -249,12 +247,25 @@ export obj Analyzer {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
-      self.tm.createEnum(statement.name.name)
-      // todo members
+      membersLen := statement.members.len
+      mut members: str[]
+
+      loop i := 0; i < membersLen; i++ {
+        member := statement.members[i]
+
+        if members.contains(member.name.name) {
+          self.raise(errors.E1052(member.name.name), member.name.start, member.name.end)
+        } else {
+          members.push(member.name.name)
+        }
+      }
+
+      self.tm.createEnum(statement.name.name, members)
     } elif it.isExportDeclaration() {
       statement := it.asExportDeclaration()
       self.declare(ref statement.statement)
     } elif it.isFunctionDeclaration() {
+      // todo check duplicate params
       statement := it.asFunctionDeclaration()
 
       if self.vm.has(statement.name.name) {

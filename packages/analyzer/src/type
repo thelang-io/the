@@ -8,7 +8,6 @@ export type TypeBody =
   ArrayType |
   EmptyType |
   EnumType |
-  EnumeratorType |
   FunctionType |
   MapType |
   MethodType |
@@ -31,7 +30,6 @@ export obj Type {
   fn asAlias (mut self: ref Self) ref AliasType { return ref (self.body as AliasType) }
   fn asArray (mut self: ref Self) ref ArrayType { return ref (self.body as ArrayType) }
   fn asEnum (mut self: ref Self) ref EnumType { return ref (self.body as EnumType) }
-  fn asEnumerator (mut self: ref Self) ref EnumeratorType { return ref (self.body as EnumeratorType) }
   fn asFunction (mut self: ref Self) ref FunctionType { return ref (self.body as FunctionType) }
   fn asMap (mut self: ref Self) ref MapType { return ref (self.body as MapType) }
   fn asMethod (mut self: ref Self) ref MethodType { return ref (self.body as MethodType) }
@@ -44,7 +42,6 @@ export obj Type {
   fn isAlias (self: ref Self) bool { return self.body is AliasType }
   fn isArray (self: ref Self) bool { return self.body is ArrayType }
   fn isEnum (self: ref Self) bool { return self.body is EnumType }
-  fn isEnumerator (self: ref Self) bool { return self.body is EnumeratorType }
   fn isFunction (self: ref Self) bool { return self.body is FunctionType }
   fn isMap (self: ref Self) bool { return self.body is MapType }
   fn isMethod (self: ref Self) bool { return self.body is MethodType }
@@ -116,21 +113,6 @@ export obj Type {
     throw error_NewError("Tried to get non-existing property `" + name + "`")
   }
 
-  fn getEnumerator (self: ref Self, name: str) ref Type {
-    t := self.asEnum()
-    membersLen := t.members.len
-
-    loop i := 0; i < membersLen; i++ {
-      member := t.members[i]
-
-      if member.name == name {
-        return member
-      }
-    }
-
-    throw error_NewError("Tried to get non-existing enumerator `" + name + "`")
-  }
-
   fn has (self: ref Self, name: str) bool {
     t := unwrap(self, withOptional: false)
     propertiesLen := t.properties.len
@@ -148,17 +130,7 @@ export obj Type {
 
   fn hasEnumerator (self: ref Self, name: str) bool {
     t := self.asEnum()
-    membersLen := t.members.len
-
-    loop i := 0; i < membersLen; i++ {
-      member := t.members[i]
-
-      if member.name == name {
-        return true
-      }
-    }
-
-    return false
+    return t.members.contains(name)
   }
 
   fn hasType (self: ref Self, search: ref Type) bool {
@@ -310,10 +282,7 @@ export obj EmptyType {
 }
 
 export obj EnumType {
-  mut members: (ref Type)[]
-}
-
-export obj EnumeratorType {
+  mut members: str[]
 }
 
 export obj FunctionType {
