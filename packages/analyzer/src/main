@@ -20,13 +20,12 @@ export obj TypeCastResult {
 }
 
 export obj AnalyzerState {
-  loopInit: bool
-  returnType: (ref Type.Type)?
-  selfType: (ref Type.Type)?
+  mut loopInit: bool
+  mut returnType: (ref Type.Type)?
+  mut selfType: (ref Type.Type)?
 }
 
 // todo plan:
-//   method/function
 //   try/throw
 //   property circular object
 //   import/export
@@ -120,35 +119,10 @@ export obj Analyzer {
       self.define(ref statement.statement)
     } elif it.isFunctionDeclaration() {
       statement := it.asFunctionDeclaration()
+
       self.vm.increase()
-
-      mut parameters: Type.TypeParameter[]
-      parametersLen := statement.parameters.len
-
-      loop i := 0; i < parametersLen; i++ {
-        parameter := statement.parameters[i]
-
-        mut t := parameter.t == nil
-          ? self.e(parameter.initializer as Parser.Expression)
-          : self.t(parameter.t)
-
-        if parameter.variadic {
-          t = self.tm.createArray(t)
-        }
-
-        self.vm.add(parameter.name.name, t, parameter.mutable)
-
-        parameters.push(Type.TypeParameter{
-          name: parameter.name.name,
-          t: t,
-          mutable: parameter.mutable,
-          required: parameter.initializer == nil && !parameter.variadic,
-          variadic: parameter.variadic
-        })
-      }
-
+      parameters := self.functionParametersLight(statement.parameters)
       self.vm.decrease()
-
       returnType := statement.returnType == nil ? self.tm.get("void") : self.t(statement.returnType)
       t := self.tm.createFunction(statement.asynchronous, parameters, returnType)
 
@@ -172,10 +146,50 @@ export obj Analyzer {
       self.tm.setSelf(initialTmSelf)
     } elif it.isObjectDeclarationMethod() {
       statement := it.asObjectDeclarationMethod()
-      // todo define method
+      selfType := self.state.selfType as ref Type.Type
+
+      if selfType.has(statement.name.name) {
+        self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
+      } else {
+        print("method doesn't exists")
+      }
+
+      self.vm.increase()
+      parameters := self.functionParametersLight(statement.parameters)
+      self.vm.decrease()
+
+      mut selfParameter: Type.TypeParameter?
+
+      if !parameters.empty && Type.match(parameters[0].t, selfType) {
+        selfParameter = parameters[0]
+        parameters.remove(0)
+      }
+
+      returnType := statement.returnType == nil ? self.tm.get("void") : self.t(statement.returnType)
+
+      t := self.tm.createMethod(
+        statement.asynchronous,
+        parameters,
+        returnType,
+        withSelf: selfParameter != nil,
+        selfMutable: selfParameter != nil ? selfParameter.mutable : false,
+        selfName: selfParameter != nil ? selfParameter.name != nil ? selfParameter.name : "" : "",
+        selfType: selfType
+      )
+
+      selfType.properties.push(Type.TypeProperty{
+        name: statement.name.name,
+        t: t,
+        mutable: false
+      })
     } elif it.isObjectDeclarationProperty() {
       statement := it.asObjectDeclarationProperty()
       selfType := self.state.selfType as ref Type.Type
+
+      if selfType.has(statement.name.name) {
+        self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
+      }
+
       t := statement.t == nil ? self.e(statement.initializer as Parser.Expression) : self.t(statement.t)
 
       selfType.properties.push(Type.TypeProperty{
@@ -350,14 +364,11 @@ export obj Analyzer {
         ? Type.unwrap(leftType, withOptional: false)
         : leftType
     } elif it.isAwait() {
-      // todo check is used within async method or main
+      // todo check is used within async method|function or main
       expression := it.asAwait()
       expressionType := Type.unwrap(self.e(expression.expression), withOptional: false)
 
-      if !expressionType.isFunction() {
-        self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
-        return self.tm.get("any")
-      } else {
+      if expressionType.isFunction() {
         t := expressionType.asFunction()
 
         if !t.asynchronous {
@@ -365,6 +376,9 @@ export obj Analyzer {
         }
 
         return t.returnType
+      } else {
+        self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
+        return self.tm.get("any")
       }
     } elif it.isBinary() {
       expression := it.asBinary()
@@ -850,6 +864,36 @@ export obj Analyzer {
     return result
   }
 
+  fn functionParametersLight (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
+    mut parameterNames: str[]
+    mut result: Type.TypeParameter[]
+    parametersLen := parameters.len
+
+    loop i := 0; i < parametersLen; i++ {
+      parameter := parameters[i]
+
+      mut t := parameter.t == nil
+        ? self.e(parameter.initializer as Parser.Expression)
+        : self.t(parameter.t)
+
+      if parameter.variadic {
+        t = self.tm.createArray(t)
+      }
+
+      self.vm.add(parameter.name.name, t, parameter.mutable)
+
+      result.push(Type.TypeParameter{
+        name: parameter.name.name,
+        t: t,
+        mutable: parameter.mutable,
+        required: parameter.initializer == nil && !parameter.variadic,
+        variadic: parameter.variadic
+      })
+    }
+
+    return result
+  }
+
   fn guessType (mut self: ref Self, cb1: ((ref Type.Type)?) -> ref Type.Type, cb2: ((ref Type.Type)?) -> ref Type.Type) GuessTypeResult {
     initialErrorsLen := self.errors.len
     mut targetType: (ref Type.Type)? = nil
@@ -1004,10 +1048,35 @@ export obj Analyzer {
         self.raise(errors.E1049(), it.start, it.end)
       }
     } elif it.isFunctionDeclaration() {
-      // todo missing return (use deadEnd to check?)
-      // todo check params with initializer
-      // todo check body
       statement := it.asFunctionDeclaration()
+      initialStateReturnType := self.state.returnType
+      var := self.vm.get(statement.name.name)
+
+      if !var.t.isFunction() {
+        return
+      }
+
+      t := var.t.asFunction()
+
+      self.vm.increase()
+      self.functionParameters(statement.parameters)
+      self.state.returnType = Type.opt(t.returnType)
+
+      if statement.body != nil {
+        if (
+          !Type.match(t.returnType, self.tm.get("void")) &&
+          !statement.body.isDeadEnd() &&
+          statement.returnType != nil
+        ) {
+          returnType := statement.returnType
+          self.raise(errors.E1061(), returnType.start, returnType.end)
+        }
+
+        self.statement(statement.body)
+      }
+
+      self.state.returnType = initialStateReturnType
+      self.vm.decrease()
     } elif it.isIf() {
       initialTC := self.tc
       statement := it.asIf()
@@ -1036,6 +1105,7 @@ export obj Analyzer {
         self.tc = initialTC
       }
     } elif it.isLoop() {
+      initialTC := self.tc
       statement := it.asLoop()
       initialLoopInit := self.state.loopInit
 
@@ -1064,15 +1134,18 @@ export obj Analyzer {
       }
 
       if statement.condition != nil {
-        // todo check condition type cast
+        typeCastResult := self.typeCast(statement.condition)
+
         conditionType := Type.unwrap(
-          self.e(statement.condition, self.tm.get("bool")),
+          self.e(statement.condition, Type.opt(self.tm.get("bool"))),
           withOptional: false
         )
 
         if !Type.match(self.tm.get("bool"), conditionType) {
           self.raise(errors.E1060(conditionType.toString()), statement.condition.start, statement.condition.end)
         }
+
+        self.tc.merge(typeCastResult.consequent)
       }
 
       if statement.update != nil {
@@ -1081,6 +1154,8 @@ export obj Analyzer {
 
       self.statement(statement.body)
       self.vm.decrease()
+
+      self.tc = initialTC
     } elif it.isMainDeclaration() {
       statement := it.asMainDeclaration()
       initialReturnType := self.state.returnType
@@ -1091,7 +1166,6 @@ export obj Analyzer {
 
       self.state.returnType = Type.opt(self.tm.get("void"))
       self.statement(statement.body)
-
       self.state.returnType = initialReturnType
     } elif it.isObjectDeclaration() {
       statement := it.asObjectDeclaration()
@@ -1105,20 +1179,38 @@ export obj Analyzer {
       self.state.selfType = initialStateSelf
       self.tm.setSelf(initialTmSelf)
     } elif it.isObjectDeclarationMethod() {
-      // todo method missing return (use deadEnd to check?)
-      // todo duplicate method
-      // todo duplicate params
-      // todo params E1022 - Void type can only be used as function return type
-      // todo analyze body
       statement := it.asObjectDeclarationMethod()
+      initialStateReturnType := self.state.returnType
+      selfType := self.state.selfType as ref Type.Type
+      property := selfType.get(statement.name.name)
+
+      if !property.t.isMethod() {
+        return
+      }
+
+      t := property.t.asMethod()
+
+      self.vm.increase()
+      self.functionParameters(statement.parameters)
+      self.state.returnType = Type.opt(t.returnType)
+
+      if statement.body != nil {
+        if (
+          !Type.match(t.returnType, self.tm.get("void")) &&
+          !statement.body.isDeadEnd() &&
+          statement.returnType != nil
+        ) {
+          self.raise(errors.E1061(), statement.returnType.start, statement.returnType.end)
+        }
+
+        self.statement(statement.body)
+      }
+
+      self.state.returnType = initialStateReturnType
+      self.vm.decrease()
     } elif it.isObjectDeclarationProperty() {
       // todo check that property not referencing self object causing circular object
       statement := it.asObjectDeclarationProperty()
-      selfType := self.state.selfType as ref Type.Type
-
-      if selfType.has(statement.name.name) {
-        self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
-      }
 
       propertyType := statement.t == nil
         ? self.e(statement.initializer as Parser.Expression, withMutable: statement.mutable)
@@ -1221,12 +1313,28 @@ export obj Analyzer {
       return self.tm.createArray(self.t(t.elementType))
     } elif it.isFunction() {
       t := it.asFunction()
+      mut parameterNames: str[]
       mut parameters: Type.TypeParameter[]
       parametersLen := t.parameters.len
 
       loop i := 0; i < parametersLen; i++ {
         parameter := t.parameters[i]
-        t := parameter.variadic ? self.tm.createArray(self.t(parameter.t)) : self.t(parameter.t)
+
+        if parameter.name != nil {
+          if parameterNames.contains(parameter.name.name) {
+            self.raise(errors.E1054(parameter.name.name), parameter.name.start, parameter.name.end)
+          }
+        }
+
+        mut t := self.t(parameter.t)
+
+        if Type.match(t, self.tm.get("void")) {
+          self.raise(errors.E1017(), parameter.t.start, parameter.t.end)
+        }
+
+        if parameter.variadic {
+          t = self.tm.createArray(t)
+        }
 
         parameters.push(Type.TypeParameter{
           name: parameter.name == nil ? nil : parameter.name.name,
@@ -1249,6 +1357,7 @@ export obj Analyzer {
       return self.tm.get(t.name.name)
     } elif it.isMap() {
       t := it.asMap()
+      // todo void can only be used as a standalone type
       return self.tm.createMap(self.t(t.keyType), self.t(t.valueType))
     } elif it.isMember() {
       t := it.asMember()
@@ -1280,7 +1389,7 @@ export obj Analyzer {
       typesLen := t.types.len
 
       loop i := 0; i < typesLen; i++ {
-        types.push(self.t(t.types[i] as Parser.Type))
+        types.push(self.t(t.types[i]))
       }
 
       return self.tm.createUnion(types)

@@ -246,3 +246,7 @@ export fn E1059 () str {
 export fn E1060 (t: str) str {
   return "E1060 - Loop condition expected to be of type `bool`, got `" + t + "` type"
 }
+
+export fn E1061 () str {
+  return "E1061 - Function declaration whose return type is not `void` should return a value"
+}
