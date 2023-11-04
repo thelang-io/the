@@ -40,9 +40,7 @@ export obj Analyzer {
         }
 
         loop j := i; j < len && items[j].isDeclaration(); j++ {
-          if items[j].isObjectDeclaration() {
-            self.declareObject(items[j])
-          }
+          self.define(items[j])
         }
 
         loop ; i < len && items[i].isDeclaration(); i++ {
@@ -80,12 +78,43 @@ export obj Analyzer {
       statement := it.asExportDeclaration()
       self.declare(ref statement.statement)
     } elif it.isFunctionDeclaration() {
-      // todo check duplicate params
       statement := it.asFunctionDeclaration()
 
       if self.vm.has(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
+    } elif it.isImportDeclaration() {
+      statement := it.asImportDeclaration()
+      // todo
+      // todo check that on top-most level of root
+
+      // todo E1032 - Circular imports are not allowed
+      // todo E1033 - Object is not exported
+      // todo E1035 - Package not installed
+      // todo Path not found
+      // todo duplicate declaration of specifier
+      // todo specifier name = existing type or variable
+
+      if it.hasParent() {
+        self.raise(errors.E1043(), it.start, it.end)
+      }
+    } elif it.isObjectDeclaration() {
+      statement := it.asObjectDeclaration()
+
+      if self.tm.has(statement.name.name) {
+        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      self.tm.createObject(statement.name.name)
+    }
+  }
+
+  fn define (mut self: ref Self, it: ref Parser.Statement) {
+    if it.isExportDeclaration() {
+      statement := it.asExportDeclaration()
+      self.define(ref statement.statement)
+    } elif it.isFunctionDeclaration() {
+      statement := it.asFunctionDeclaration()
 
       self.vm.increase()
       mut parameters: Type.TypeParameter[]
@@ -103,6 +132,7 @@ export obj Analyzer {
         if parameter.variadic {
           parameterType = self.tm.createArray(parameterType)
         }
+        // todo check initializer
 
         self.vm.add(parameter.name.name, parameterType, parameter.mutable)
       }
@@ -112,17 +142,47 @@ export obj Analyzer {
 
       self.vm.decrease()
       self.vm.add(statement.name.name, t, false)
-    } elif it.isImportDeclaration() {
-      statement := it.asImportDeclaration()
-      // todo
     } elif it.isObjectDeclaration() {
       statement := it.asObjectDeclaration()
 
-      if self.tm.has(statement.name.name) {
-        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      initialSelf := self.tm.getSelf()
+      statement := it.asObjectDeclaration()
+      t := self.tm.get(statement.name.name)
+      self.tm.setSelf(Type.opt(t))
+      len := statement.body.len
+
+      loop i := 0; i < len; i++ {
+        item := statement.body[i]
+
+        if item.isObjectDeclarationMethod() {
+          // todo builtin method `str` should have strict signature, and other methods
+          // todo method missing return
+          // todo duplicate name
+          // todo duplicate params
+          // todo params E1022 - Void type can only be used as function return type
+          // todo define method
+        } else {
+          property := item.asObjectDeclarationProperty()
+
+          if t.has(property.name.name) {
+            self.raise(errors.E1051(property.name.name), property.name.start, property.name.end)
+          }
+
+          propertyType := self.t(property.t as Parser.Type)
+
+          if Type.match(propertyType, self.tm.get("void")) {
+            self.raise(errors.E1017(), property.name.start, property.name.end)
+          }
+
+          t.properties.push(Type.TypeProperty{
+            name: property.name.name,
+            t: propertyType,
+            mutable: property.mutable
+          })
+        }
       }
 
-      self.tm.createObject(statement.name.name)
+      self.tm.setSelf(initialSelf)
     } elif it.isTypeAliasDeclaration() {
       statement := it.asTypeAliasDeclaration()
 
@@ -132,47 +192,6 @@ export obj Analyzer {
 
       self.tm.createAlias(statement.name.name, self.t(statement.t))
     }
-  }
-
-  // todo check circular objects
-  fn declareObject (mut self: ref Self, it: ref Parser.Statement) {
-    initialSelf := self.tm.getSelf()
-    statement := it.asObjectDeclaration()
-    t := self.tm.get(statement.name.name)
-    self.tm.setSelf(Type.opt(t))
-    len := statement.body.len
-
-    loop i := 0; i < len; i++ {
-      item := statement.body[i]
-      // todo first go through and add method names
-
-      if item.isObjectDeclarationMethod() {
-        // todo declare method
-      } else {
-        // todo check duplicate property
-        // todo check property doesn't have initializer
-        // todo check property is not constant
-        property := item.asObjectDeclarationProperty()
-
-        if t.has(property.name.name) {
-          self.raise(errors.E1051(property.name.name), property.name.start, property.name.end)
-        }
-
-        propertyType := self.t(property.t as Parser.Type)
-
-        if Type.match(propertyType, self.tm.get("void")) {
-          self.raise(errors.E1017(), property.name.start, property.name.end)
-        }
-
-        t.properties.push(Type.TypeProperty{
-          name: property.name.name,
-          t: propertyType,
-          mutable: property.mutable
-        })
-      }
-    }
-
-    self.tm.setSelf(initialSelf)
   }
 
   fn e (mut self: ref Self, it: Parser.Expression, targetType: (ref Type.Type)? = nil, withMutable := false) ref Type.Type {
@@ -912,9 +931,23 @@ export obj Analyzer {
         self.raise(errors.E1050("continue"), it.start, it.end)
       }
     } elif it.isEnumDeclaration() {
-      // todo E1023 - Unable to deduce enumeration member type
-      // todo E1023_2 - enum member of int type
       statement := it.asEnumDeclaration()
+      membersLen := statement.membersLen
+
+      loop i := 0; i < membersLen; i++ {
+        member := statement.members[i]
+
+        if member.initializer == nil {
+          continue
+        }
+
+        initializer := member.initializer as Parser.Expression
+        memberType := self.e(initializer, self.tm.get("int"))
+
+        if !Type.match(memberType, self.tm.get("int")) {
+          self.raise(errors.E1053(memberType.toString()), initializer.start, initializer.end)
+        }
+      }
     } elif it.isExportDeclaration() {
       // todo E1022 - Void type can only be used as function return type
       // todo check duplicate export names
@@ -976,18 +1009,6 @@ export obj Analyzer {
       if !statement.consequent.isDeadEnd() {
         self.tc = initialTC
       }
-    } elif it.isImportDeclaration() {
-      // todo E1032 - Circular imports are not allowed
-      // todo E1033 - Object is not exported
-      // todo E1035 - Package not installed
-      // todo Path not found
-      // todo duplicate declaration of specifier
-      // todo specifier name = existing type or variable
-      statement := it.asImportDeclaration()
-
-      if it.hasParent() {
-        self.raise(errors.E1043(), it.start, it.end)
-      }
     } elif it.isLoop() {
       // todo check initializer is var decl or expr
       // todo check condition is of bool type
@@ -1015,10 +1036,13 @@ export obj Analyzer {
       // todo duplicate name
       // todo duplicate params
       // todo params E1022 - Void type can only be used as function return type
+      // todo analyze body
       statement := it.asObjectDeclarationMethod()
     } elif it.isObjectDeclarationProperty() {
       // todo same as variable declaration
-      // todo can't have initializer
+      // todo check property doesn't have initializer
+      // todo check property is not constant
+      // todo check that property not referencing self object causing circular object
       statement := it.asObjectDeclarationProperty()
     } elif it.isReturn() {
       // todo return is placed within function

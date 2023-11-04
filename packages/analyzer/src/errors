@@ -214,3 +214,7 @@ export fn E1051 (property: str) str {
 export fn E1052 (enumerator: str) str {
   return "E1052 - Duplicate declaration of enumerator '" + enumerator + "'"
 }
+
+export fn E1053 (t: str) str {
+  return "E1053 - Enumerator type expected to be `int`, got `" + t + "`"
+}
