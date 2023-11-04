@@ -19,9 +19,23 @@ export obj TypeCastResult {
   alternate: (ref Type.Type)[str]
 }
 
+export obj AnalyzerState {
+  loopInit: bool
+  returnType: (ref Type.Type)?
+  selfType: (ref Type.Type)?
+}
+
+// todo plan:
+//   method/function
+//   try/throw
+//   property circular object
+//   import/export
+// todo left overs
+
 export obj Analyzer {
   mut errors: str[]
   mut reader: Parser.Reader
+  mut state: AnalyzerState
   mut tc: (ref Type.Type)[str]
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
@@ -64,13 +78,7 @@ export obj Analyzer {
       mut members: str[]
 
       loop i := 0; i < membersLen; i++ {
-        member := statement.members[i]
-
-        if members.contains(member.name.name) {
-          self.raise(errors.E1052(member.name.name), member.name.start, member.name.end)
-        } else {
-          members.push(member.name.name)
-        }
+        members.push(statement.members[i].name.name)
       }
 
       self.tm.createEnum(statement.name.name, members)
@@ -85,9 +93,6 @@ export obj Analyzer {
       }
     } elif it.isImportDeclaration() {
       statement := it.asImportDeclaration()
-      // todo
-      // todo check that on top-most level of root
-
       // todo E1032 - Circular imports are not allowed
       // todo E1033 - Object is not exported
       // todo E1035 - Package not installed
@@ -115,74 +120,69 @@ export obj Analyzer {
       self.define(ref statement.statement)
     } elif it.isFunctionDeclaration() {
       statement := it.asFunctionDeclaration()
-
       self.vm.increase()
+
       mut parameters: Type.TypeParameter[]
       parametersLen := statement.parameters.len
 
       loop i := 0; i < parametersLen; i++ {
         parameter := statement.parameters[i]
 
-        mut parameterType := Type.unwrap(
-          parameter.t != nil ? self.t(parameter.t) : self.e(parameter.initializer as Parser.Expression),
-          withOptional: false,
-          withReference: false
-        )
+        mut t := parameter.t == nil
+          ? self.e(parameter.initializer as Parser.Expression)
+          : self.t(parameter.t)
 
         if parameter.variadic {
-          parameterType = self.tm.createArray(parameterType)
+          t = self.tm.createArray(t)
         }
-        // todo check initializer
 
-        self.vm.add(parameter.name.name, parameterType, parameter.mutable)
+        self.vm.add(parameter.name.name, t, parameter.mutable)
+
+        parameters.push(Type.TypeParameter{
+          name: parameter.name.name,
+          t: t,
+          mutable: parameter.mutable,
+          required: parameter.initializer == nil && !parameter.variadic,
+          variadic: parameter.variadic
+        })
       }
+
+      self.vm.decrease()
 
       returnType := statement.returnType == nil ? self.tm.get("void") : self.t(statement.returnType)
       t := self.tm.createFunction(statement.asynchronous, parameters, returnType)
 
-      self.vm.decrease()
       self.vm.add(statement.name.name, t, false)
     } elif it.isObjectDeclaration() {
       statement := it.asObjectDeclaration()
+      initialTmSelf := self.tm.getSelf()
+      initialStateSelf := self.state.selfType
 
-      initialSelf := self.tm.getSelf()
-      statement := it.asObjectDeclaration()
       t := self.tm.get(statement.name.name)
-      self.tm.setSelf(Type.opt(t))
       len := statement.body.len
 
+      self.state.selfType = Type.opt(t)
+      self.tm.setSelf(Type.opt(t))
+
       loop i := 0; i < len; i++ {
-        item := statement.body[i]
-
-        if item.isObjectDeclarationMethod() {
-          // todo builtin method `str` should have strict signature, and other methods
-          // todo method missing return
-          // todo duplicate name
-          // todo duplicate params
-          // todo params E1022 - Void type can only be used as function return type
-          // todo define method
-        } else {
-          property := item.asObjectDeclarationProperty()
-
-          if t.has(property.name.name) {
-            self.raise(errors.E1051(property.name.name), property.name.start, property.name.end)
-          }
-
-          propertyType := self.t(property.t as Parser.Type)
-
-          if Type.match(propertyType, self.tm.get("void")) {
-            self.raise(errors.E1017(), property.name.start, property.name.end)
-          }
-
-          t.properties.push(Type.TypeProperty{
-            name: property.name.name,
-            t: propertyType,
-            mutable: property.mutable
-          })
-        }
+        self.define(statement.body[i])
       }
 
-      self.tm.setSelf(initialSelf)
+      self.state.selfType = initialStateSelf
+      self.tm.setSelf(initialTmSelf)
+    } elif it.isObjectDeclarationMethod() {
+      statement := it.asObjectDeclarationMethod()
+      // todo define method
+    } elif it.isObjectDeclarationProperty() {
+      statement := it.asObjectDeclarationProperty()
+      selfType := self.state.selfType as ref Type.Type
+      t := statement.t == nil ? self.e(statement.initializer as Parser.Expression) : self.t(statement.t)
+
+      selfType.properties.push(Type.TypeProperty{
+        name: statement.name.name,
+        t: t,
+        mutable: statement.mutable
+      })
     } elif it.isTypeAliasDeclaration() {
       statement := it.asTypeAliasDeclaration()
 
@@ -734,35 +734,52 @@ export obj Analyzer {
       return self.tm.createReference(self.e(expression.expression, withMutable: withMutable))
     } elif it.isUnary() {
       expression := it.asUnary()
-      operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
 
       if expression.operator.t == .OpExcl {
+        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+
         if !Type.match(operandType, self.tm.get("bool")) && Type.match(operandType, self.tm.get("byte")) && !operandType.isNumber() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
         }
 
         return self.tm.get("bool")
       } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
+        operandType := Type.unwrap(self.e(expression.operand, withMutable: true), withOptional: false)
+
         if !expression.operand.isAccess() {
           self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
         } elif !operandType.isNumber() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
         }
+
+        return operandType
       } elif expression.operator.t == .OpMinus {
+        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+
         if !operandType.isSignedInt() && !operandType.isFloat() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
         }
+
+        return operandType
       } elif expression.operator.t == .OpPlus {
+        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+
         if !operandType.isNumber() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
         }
+
+        return operandType
       } elif expression.operator.t == .OpTilde {
+        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+
         if !operandType.isInt() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
         }
-      }
 
-      return operandType
+        return operandType
+      } else {
+        return Type.unwrap(self.e(expression.operand), withOptional: false)
+      }
     }
 
     throw error_NewError("Tried analyzing unknown expression")
@@ -780,11 +797,17 @@ export obj Analyzer {
   }
 
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
+    mut parameterNames: str[]
     mut result: Type.TypeParameter[]
     parametersLen := parameters.len
 
     loop i := 0; i < parametersLen; i++ {
       parameter := parameters[i]
+
+      if parameterNames.contains(parameter.name.name) {
+        self.raise(errors.E1054(parameter.name.name), parameter.name.start, parameter.name.end)
+      }
+
       mut t := parameter.t == nil ? self.e(parameter.initializer as Parser.Expression) : self.t(parameter.t)
 
       if Type.match(t, self.tm.get("void")) {
@@ -812,6 +835,7 @@ export obj Analyzer {
         }
       }
 
+      parameterNames.push(parameter.name.name)
       self.vm.add(parameter.name.name, t, parameter.mutable)
 
       result.push(Type.TypeParameter{
@@ -924,25 +948,30 @@ export obj Analyzer {
       self.vm.decrease()
     } elif it.isBreak() {
       if !it.hasLoopParent() {
-        self.raise(errors.E1050("break"), it.start, it.end)
+        self.raise(errors.E1050("Break"), it.start, it.end)
       }
     } elif it.isContinue() {
       if !it.hasLoopParent() {
-        self.raise(errors.E1050("continue"), it.start, it.end)
+        self.raise(errors.E1050("Continue"), it.start, it.end)
       }
     } elif it.isEnumDeclaration() {
       statement := it.asEnumDeclaration()
-      membersLen := statement.membersLen
+      membersLen := statement.members.len
+      mut members: str[]
 
       loop i := 0; i < membersLen; i++ {
         member := statement.members[i]
+
+        if members.contains(member.name.name) {
+          self.raise(errors.E1052(member.name.name), member.name.start, member.name.end)
+        }
 
         if member.initializer == nil {
           continue
         }
 
         initializer := member.initializer as Parser.Expression
-        memberType := self.e(initializer, self.tm.get("int"))
+        memberType := self.e(initializer, Type.opt(self.tm.get("int")))
 
         if !Type.match(memberType, self.tm.get("int")) {
           self.raise(errors.E1053(memberType.toString()), initializer.start, initializer.end)
@@ -975,12 +1004,9 @@ export obj Analyzer {
         self.raise(errors.E1049(), it.start, it.end)
       }
     } elif it.isFunctionDeclaration() {
-      // todo check duplicate name
-      // todo check duplicate params
-      // todo missing return
-      // todo E1022 - Void type can only be used as function return type
-      // todo parameter with type void not allowed
-      // todo params with initializer
+      // todo missing return (use deadEnd to check?)
+      // todo check params with initializer
+      // todo check body
       statement := it.asFunctionDeclaration()
     } elif it.isIf() {
       initialTC := self.tc
@@ -1010,44 +1036,126 @@ export obj Analyzer {
         self.tc = initialTC
       }
     } elif it.isLoop() {
-      // todo check initializer is var decl or expr
-      // todo check condition is of bool type
-      // todo check condition type cast
-      // todo check update?
       statement := it.asLoop()
+      initialLoopInit := self.state.loopInit
 
       if !it.hasParent() {
         self.raise(errors.E1046(), it.start, it.end)
       }
+
+      self.vm.increase()
+
+      if statement.initializer != nil {
+        initializer := statement.initializer
+
+        if initializer.isVariableDeclaration() {
+          initializerStatement := initializer.asVariableDeclaration()
+
+          if initializerStatement.mutable {
+            self.raise(errors.E1059(), initializerStatement.name.start, initializerStatement.name.end)
+          }
+        } elif !initializer.isExpression() {
+          self.raise(errors.E1058(), initializer.start, initializer.end)
+        }
+
+        self.state.loopInit = true
+        self.statement(initializer)
+        self.state.loopInit = initialLoopInit
+      }
+
+      if statement.condition != nil {
+        // todo check condition type cast
+        conditionType := Type.unwrap(
+          self.e(statement.condition, self.tm.get("bool")),
+          withOptional: false
+        )
+
+        if !Type.match(self.tm.get("bool"), conditionType) {
+          self.raise(errors.E1060(conditionType.toString()), statement.condition.start, statement.condition.end)
+        }
+      }
+
+      if statement.update != nil {
+        self.e(statement.update)
+      }
+
+      self.statement(statement.body)
+      self.vm.decrease()
     } elif it.isMainDeclaration() {
       statement := it.asMainDeclaration()
-      self.statement(statement.body)
+      initialReturnType := self.state.returnType
 
       if it.hasParent() {
         self.raise(errors.E1042(), it.start, it.end)
       }
+
+      self.state.returnType = Type.opt(self.tm.get("void"))
+      self.statement(statement.body)
+
+      self.state.returnType = initialReturnType
     } elif it.isObjectDeclaration() {
-      // todo check name
-      // todo check duplicate properties/methods
       statement := it.asObjectDeclaration()
+      initialTmSelf := self.tm.getSelf()
+      initialStateSelf := self.state.selfType
+      t := self.tm.get(statement.name.name)
+
+      self.state.selfType = Type.opt(t)
+      self.tm.setSelf(Type.opt(t))
+      self.analyze(ref statement.body)
+      self.state.selfType = initialStateSelf
+      self.tm.setSelf(initialTmSelf)
     } elif it.isObjectDeclarationMethod() {
-      // todo builtin method `str` should have strict signature, and other methods
-      // todo method missing return
-      // todo duplicate name
+      // todo method missing return (use deadEnd to check?)
+      // todo duplicate method
       // todo duplicate params
       // todo params E1022 - Void type can only be used as function return type
       // todo analyze body
       statement := it.asObjectDeclarationMethod()
     } elif it.isObjectDeclarationProperty() {
-      // todo same as variable declaration
-      // todo check property doesn't have initializer
-      // todo check property is not constant
       // todo check that property not referencing self object causing circular object
       statement := it.asObjectDeclarationProperty()
+      selfType := self.state.selfType as ref Type.Type
+
+      if selfType.has(statement.name.name) {
+        self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      propertyType := statement.t == nil
+        ? self.e(statement.initializer as Parser.Expression, withMutable: statement.mutable)
+        : self.t(statement.t)
+
+      if Type.match(propertyType, self.tm.get("void")) {
+        if statement.t == nil {
+          initializer := statement.initializer as Parser.Expression
+          self.raise(errors.E1017(), initializer.start, initializer.end)
+        } else {
+          self.raise(errors.E1017(), statement.t.start, statement.t.end)
+        }
+      }
+
+      if statement.initializer != nil {
+        self.raise(errors.E1056(), statement.initializer.start, statement.initializer.end)
+      }
+
+      if statement.constant {
+        self.raise(errors.E1055(), statement.name.start, statement.name.end)
+      }
     } elif it.isReturn() {
-      // todo return is placed within function
-      // todo return of exact type
       statement := it.asReturn()
+
+      if !it.hasFunctionOrMainParent() {
+        self.raise(errors.E1057(), it.start, it.end)
+      }
+
+      returnType := statement.expression == nil
+        ? self.tm.get("void")
+        : self.e(statement.expression, self.state.returnType)
+
+      if self.state.returnType != nil {
+        if !Type.match(self.state.returnType, returnType) {
+          self.raise(errors.E1005(self.state.returnType.toString(), returnType.toString()), it.start, it.end)
+        }
+      }
     } elif it.isThrow() {
       // todo E1028 - Throw argument required to be object with first field string `message` and second field string `stack`
       statement := it.asThrow()
@@ -1097,7 +1205,7 @@ export obj Analyzer {
         self.raise(errors.E1040(statement.name.name, varType.toString()), statement.name.start, statement.name.end)
       }
 
-      self.vm.add(statement.name.name, varType, statement.mutable)
+      self.vm.add(statement.name.name, varType, statement.mutable || self.state.loopInit)
 
       if statement.constant && it.hasParent() {
         self.raise(errors.E1038(), statement.name.start, statement.name.end)

@@ -204,7 +204,7 @@ export fn E1049 () str {
 }
 
 export fn E1050 (name: str) str {
-  return "E1050 - A '" + name + "' statement can only be used within an enclosing loop statement"
+  return "E1050 - " + name + " statement can only be used within an enclosing loop statement"
 }
 
 export fn E1051 (property: str) str {
@@ -216,5 +216,33 @@ export fn E1052 (enumerator: str) str {
 }
 
 export fn E1053 (t: str) str {
-  return "E1053 - Enumerator type expected to be `int`, got `" + t + "`"
+  return "E1053 - Enumerator type expected to be of type `int`, got `" + t + "` type"
+}
+
+export fn E1054 (parameter: str) str {
+  return "E1054 - Duplicate declaration of parameter '" + parameter + "'"
+}
+
+export fn E1055 () str {
+  return "E1055 - Object properties cannot be declared as constants"
+}
+
+export fn E1056 () str {
+  return "E1056 - Object properties cannot have an initializer"
+}
+
+export fn E1057 () str {
+  return "E1057 - Return statement can only be used within an enclosing function or main declaration"
+}
+
+export fn E1058 () str {
+  return "E1058 - Only expression statement or variable declaration are allowed as loop initializer"
+}
+
+export fn E1059 () str {
+  return "E1059 - Loop initializer is mutable by default"
+}
+
+export fn E1060 (t: str) str {
+  return "E1060 - Loop condition expected to be of type `bool`, got `" + t + "` type"
 }
