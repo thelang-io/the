@@ -1,5 +1,5 @@
 name: the/parser
-version: 0.4.11
+version: 0.4.12
 description: The programming language parser
 license: MIT
 main: src/main
