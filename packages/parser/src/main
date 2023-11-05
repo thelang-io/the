@@ -76,6 +76,7 @@ import
 from "./text"
 import Program_traverse from "./program"
 import Reader, error as Reader_error, init as Reader_init from "./reader"
+import toType as expressionToType, typeToExpression, validObjExprId from "./expression"
 import interconnect, parse, report from "./parser"
 import expression as stringifyExpression, statement as stringifyStatement, typeT as stringifyType from "./string"
 
@@ -150,6 +151,9 @@ export Program_traverse
 export Reader
 export Reader_error
 export Reader_init
+export expressionToType
+export typeToExpression
+export validObjExprId
 export interconnect
 export parse
 export report

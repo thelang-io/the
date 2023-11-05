@@ -526,3 +526,62 @@ Checks whether type's body contains corresponding type.
 ```the
 type.isArray()
 ```
+
+### `expressionToType (expression: Expression) Type`
+Converts expression to type.
+
+**Parameters**
+
+- `expression` - expression to convert to type.
+
+**Return value**
+
+Type representation of the expression.
+
+**Examples**
+
+```the
+expressionToType(expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to transform
+
+### `validObjExprId (expression: Expression) bool`
+Checks whether expression is valid `ObjectExpression` identifier.
+
+**Parameters**
+
+- `expression` - expression to check.
+
+**Return value**
+
+Whether expression is valid `ObjectExpression` identifier.
+
+**Examples**
+
+```the
+validObjExprId(expression)
+```
+
+### `typeToExpression (type: Type) Expression`
+Converts type to expression.
+
+**Parameters**
+
+- `type` - type to convert to expression.
+
+**Return value**
+
+Expression representation of the type.
+
+**Examples**
+
+```the
+typeToExpression(type)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to transform
