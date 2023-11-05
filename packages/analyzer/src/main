@@ -56,8 +56,10 @@ export obj Analyzer {
           self.define(items[j])
         }
 
-        loop ; i < len && items[i].isDeclaration(); i++ {
-          self.statement(items[i])
+        self.statement(items[i])
+
+        loop i + 1 < len && items[i + 1].isDeclaration() {
+          self.statement(items[++i])
         }
       } else {
         self.statement(items[i])
@@ -150,8 +152,6 @@ export obj Analyzer {
 
       if selfType.has(statement.name.name) {
         self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
-      } else {
-        print("method doesn't exists")
       }
 
       self.vm.increase()
@@ -1228,10 +1228,6 @@ export obj Analyzer {
       if statement.initializer != nil {
         self.raise(errors.E1056(), statement.initializer.start, statement.initializer.end)
       }
-
-      if statement.constant {
-        self.raise(errors.E1055(), statement.name.start, statement.name.end)
-      }
     } elif it.isReturn() {
       statement := it.asReturn()
 
@@ -1257,27 +1253,46 @@ export obj Analyzer {
 
       t := self.e(statement.expression)
 
-      if (
-        !t.isObject() ||
-        !t.has(0) ||
-        !t.get(0).name != "message" ||
-        !Type.match(t.get(0).t, self.tm.get("str")) ||
-        !t.has(1) ||
-        !t.get(1).name != "stack" ||
-        !Type.match(t.get(1).t, self.tm.get("str"))
-      ) {
+      if !t.isErrorLike() {
         self.raise(errors.E1062(), statement.expression.start, statement.expression.end)
       }
     } elif it.isTry() {
-      // todo at least one handler
-      // todo catch handle param can't be mutable
-      // todo E1029 - Catch block can only catch object with first field string `message` and second field string `stack`
-      // todo E1022 - Void type can only be used as function return type
       statement := it.asTry()
 
       if !it.hasParent() {
         self.raise(errors.E1048(), it.start, it.end)
       }
+
+      self.vm.increase()
+      self.statement(statement.body)
+      handlersLen := statement.handlers.len
+
+      loop i := 0; i < handlersLen; i++ {
+        handler := statement.handlers[i]
+        self.vm.increase()
+
+        if !handler.parameter.isVariableDeclaration() {
+          self.raise(errors.E1064(), handler.parameter.start, handler.parameter.end)
+        } else {
+          parameterStatement := handler.parameter.asVariableDeclaration()
+
+          if parameterStatement.mutable {
+            self.raise(errors.E1055(), parameterStatement.name.start, parameterStatement.name.end)
+          }
+
+          self.statement(handler.parameter)
+          var := self.vm.get(parameterStatement.name.name)
+
+          if !var.t.isErrorLike() {
+            self.raise(errors.E1065(), parameterStatement.name.start, parameterStatement.name.end)
+          }
+        }
+
+        self.statement(handler.body)
+        self.vm.decrease()
+      }
+
+      self.vm.decrease()
     } elif it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
 
@@ -1402,7 +1417,8 @@ export obj Analyzer {
       typesLen := t.types.len
 
       loop i := 0; i < typesLen; i++ {
-        types.push(self.t(t.types[i]))
+        subType := t.types[i] as Parser.Type
+        types.push(self.t(subType))
       }
 
       return self.tm.createUnion(types)

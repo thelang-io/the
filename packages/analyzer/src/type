@@ -98,30 +98,56 @@ export obj Type {
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
-  fn get (self: ref Self, name: str) TypeProperty {
+  fn get (self: ref Self, nameOrIndex: int | str) TypeProperty {
     t := unwrap(self, withOptional: false)
     propertiesLen := t.properties.len
+    mut j := 0
 
     loop i := 0; i < propertiesLen; i++ {
       property := t.properties[i]
 
-      if property.name == name {
-        return property
+      if nameOrIndex is str {
+        if property.name == nameOrIndex {
+          return property
+        }
+      } else {
+        if property.builtin {
+          continue
+        } elif j == nameOrIndex {
+          return property
+        }
+
+        j++
       }
     }
 
-    throw error_NewError("Tried to get non-existing property `" + name + "`")
+    if nameOrIndex is str {
+      throw error_NewError("Tried to get non-existing property `" + nameOrIndex + "`")
+    } else {
+      throw error_NewError("Tried to get non-existing property at position `" + nameOrIndex.str() + "`")
+    }
   }
 
-  fn has (self: ref Self, name: str) bool {
+  fn has (self: ref Self, nameOrIndex: int | str) bool {
     t := unwrap(self, withOptional: false)
     propertiesLen := t.properties.len
+    mut j := 0
 
     loop i := 0; i < propertiesLen; i++ {
       property := t.properties[i]
 
-      if property.name == name {
-        return true
+      if nameOrIndex is str {
+        if property.name == nameOrIndex {
+          return true
+        }
+      } else {
+        if property.builtin {
+          continue
+        } elif j == nameOrIndex {
+          return true
+        }
+
+        j++
       }
     }
 
@@ -138,6 +164,26 @@ export obj Type {
 
     loop i := t.types.len - 1; i >= 0; i-- {
       if match(t.types[i] as ref Type, search) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn isErrorLike (self: ref Self) bool {
+    if self.isObject() && self.has(0) && self.has(1) {
+      property1 := self.get(0)
+      property1Type := unwrap(property1.t, withOptional: false, withReference: false)
+      property2 := self.get(1)
+      property2Type := unwrap(property2.t, withOptional: false, withReference: false)
+
+      if (
+        property1.name == "message" &&
+        property1Type.name == "str" &&
+        property2.name == "stack" &&
+        property2Type.name == "str"
+      ) {
         return true
       }
     }
