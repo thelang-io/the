@@ -1249,11 +1249,24 @@ export obj Analyzer {
         }
       }
     } elif it.isThrow() {
-      // todo E1028 - Throw argument required to be object with first field string `message` and second field string `stack`
       statement := it.asThrow()
 
       if !it.hasParent() {
         self.raise(errors.E1047(), it.start, it.end)
+      }
+
+      t := self.e(statement.expression)
+
+      if (
+        !t.isObject() ||
+        !t.has(0) ||
+        !t.get(0).name != "message" ||
+        !Type.match(t.get(0).t, self.tm.get("str")) ||
+        !t.has(1) ||
+        !t.get(1).name != "stack" ||
+        !Type.match(t.get(1).t, self.tm.get("str"))
+      ) {
+        self.raise(errors.E1062(), statement.expression.start, statement.expression.end)
       }
     } elif it.isTry() {
       // todo at least one handler
@@ -1448,7 +1461,7 @@ export obj Analyzer {
       expression := it.asIs()
 
       if expression.expression.isAccess() {
-        expressionType := Type.unwrap(self.eNice(expression.expression), withOptional: false, withReference: false)
+        expressionType := self.eNice(expression.expression)
 
         if Type.match(expressionType, self.tm.get("any")) || expressionType.isOptional() || expressionType.isUnion() {
           t := self.t(expression.t)

@@ -250,3 +250,7 @@ export fn E1060 (t: str) str {
 export fn E1061 () str {
   return "E1061 - Function declaration whose return type is not `void` should return a value"
 }
+
+export fn E1062 () str {
+  return "E1062 - Throw expression required to be of type object with first property 'message' of type `str` and second property 'stack' of type `str`"
+}
