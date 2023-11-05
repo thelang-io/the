@@ -25,14 +25,9 @@ export obj AnalyzerState {
   mut selfType: (ref Type.Type)?
 }
 
-// todo plan:
-//   try/throw
-//   property circular object
-//   import/export
-// todo left overs
-
 export obj Analyzer {
   mut errors: str[]
+  mut exports: (ref Type.Type)[str]
   mut reader: Parser.Reader
   mut state: AnalyzerState
   mut tc: (ref Type.Type)[str]
@@ -1338,7 +1333,13 @@ export obj Analyzer {
   fn t (mut self: ref Self, it: Parser.Type) ref Type.Type {
     if it.isArray() {
       t := it.asArray()
-      return self.tm.createArray(self.t(t.elementType))
+      elementType := self.t(t.elementType)
+
+      if Type.match(elementType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.elementType.start, t.elementType.end)
+      }
+
+      return self.tm.createArray(elementType)
     } elif it.isFunction() {
       t := it.asFunction()
       mut parameterNames: str[]
@@ -1385,8 +1386,16 @@ export obj Analyzer {
       return self.tm.get(t.name.name)
     } elif it.isMap() {
       t := it.asMap()
-      // todo void can only be used as a standalone type
-      return self.tm.createMap(self.t(t.keyType), self.t(t.valueType))
+      keyType := self.t(t.keyType)
+      valueType := self.t(t.valueType)
+
+      if Type.match(keyType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.keyType.start, t.keyType.end)
+      } elif Type.match(valueType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.valueType.start, t.valueType.end)
+      }
+
+      return self.tm.createMap(keyType, valueType)
     } elif it.isMember() {
       t := it.asMember()
       leftType := self.t(t.t)
@@ -1403,22 +1412,39 @@ export obj Analyzer {
       return property.t
     } elif it.isOptional() {
       t := it.asOptional()
-      return self.tm.createOptional(self.t(t.t))
+      underlyingType := self.t(t.t)
+
+      if Type.match(underlyingType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.t.start, t.t.end)
+      }
+
+      return self.tm.createOptional(underlyingType)
     } elif it.isParenthesized() {
       t := it.asParenthesized()
       return self.t(t.t)
     } elif it.isReference() {
       t := it.asReference()
-      return self.tm.createReference(self.t(t.t))
+      underlyingType := self.t(t.t)
+
+      if Type.match(underlyingType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.t.start, t.t.end)
+      }
+
+      return self.tm.createReference(underlyingType)
     } elif it.isUnion() {
-      // todo void can only be used as a standalone type
       t := it.asUnion()
       mut types: (ref Type.Type)[]
       typesLen := t.types.len
 
       loop i := 0; i < typesLen; i++ {
-        subType := t.types[i] as Parser.Type
-        types.push(self.t(subType))
+        parserType := t.types[i] as Parser.Type
+        subType := self.t(parserType)
+
+        if Type.match(subType, self.tm.get("void")) {
+          self.raise(errors.E1063(), parserType.start, parserType.end)
+        }
+
+        types.push(subType)
       }
 
       return self.tm.createUnion(types)

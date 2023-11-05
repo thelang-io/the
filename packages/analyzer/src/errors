@@ -255,9 +255,9 @@ export fn E1062 () str {
   return "E1062 - Throw expression required to be of type object with first property 'message' of type `str` and second property 'stack' of type `str`"
 }
 
-// export fn E1063 () str {
-//   return "E1063 - Try statement requires at least one handler"
-// }
+export fn E1063 () str {
+  return "E1063 - Type `void` can only be used as a standalone type"
+}
 
 export fn E1064 () str {
   return "E1064 - Only variable declaration is allowed as try statement handler parameter"
