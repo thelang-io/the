@@ -6,8 +6,14 @@
 import * as Parser from "the/parser"
 import * as Type from "./type"
 import * as TypeMap from "./type-map"
+import * as Var from "./var"
 import * as VarMap from "./var-map"
 import * as errors from "./errors"
+
+export obj AnalyzerExport {
+  t: (ref Type.Type)?
+  var: Var?
+}
 
 export obj GuessTypeResult {
   first: ref Type.Type
@@ -27,7 +33,7 @@ export obj AnalyzerState {
 
 export obj Analyzer {
   mut errors: str[]
-  mut exports: (ref Type.Type)[str]
+  mut exports: AnalyzerExport[str]
   mut reader: Parser.Reader
   mut state: AnalyzerState
   mut tc: (ref Type.Type)[str]
@@ -889,6 +895,18 @@ export obj Analyzer {
     return result
   }
 
+  fn guard (mut self: ref Self, cb: () -> void) bool {
+    initialErrorsLen := self.errors.len
+    cb()
+    failed := self.errors.len != initialErrorsLen
+
+    if failed {
+      self.errors = self.errors.slice(0, initialErrorsLen)
+    }
+
+    return failed
+  }
+
   fn guessType (mut self: ref Self, cb1: ((ref Type.Type)?) -> ref Type.Type, cb2: ((ref Type.Type)?) -> ref Type.Type) GuessTypeResult {
     initialErrorsLen := self.errors.len
     mut targetType: (ref Type.Type)? = nil
@@ -1017,23 +1035,106 @@ export obj Analyzer {
         }
       }
     } elif it.isExportDeclaration() {
-      // todo E1022 - Void type can only be used as function return type
-      // todo check duplicate export names
-      // todo only specific declarations enum | alias | function | etc
       statement := it.asExportDeclaration()
 
       if it.hasParent() {
         self.raise(errors.E1044(), it.start, it.end)
       }
+
+      self.statement(statement.statement)
+
+      if statement.statement.isEnumDeclaration() {
+        innerStatement := statement.statement.asEnumDeclaration()
+        name := innerStatement.name.name
+
+        if self.exports.has(name) {
+          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
+        } elif self.tm.has(name) {
+          self.exports.set(name, AnalyzerExport{t: self.tm.get(name)})
+        }
+      } elif statement.statement.isFunctionDeclaration() {
+        innerStatement := statement.statement.asFunctionDeclaration()
+        name := innerStatement.name.name
+
+        if self.exports.has(name) {
+          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
+        } elif self.vm.has(name) {
+          self.exports.set(name, AnalyzerExport{var: self.vm.get(name)})
+        }
+      } elif statement.statement.isObjectDeclaration() {
+        innerStatement := statement.statement.asObjectDeclaration()
+        name := innerStatement.name.name
+
+        if self.exports.has(name) {
+          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
+        } elif self.tm.has(name) {
+          self.exports.set(name, AnalyzerExport{t: self.tm.get(name)})
+        }
+      } elif statement.statement.isTypeAliasDeclaration() {
+        innerStatement := statement.statement.asTypeAliasDeclaration()
+        name := innerStatement.name.name
+
+        if self.exports.has(name) {
+          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
+        } elif self.tm.has(name) {
+          self.exports.set(name, AnalyzerExport{t: self.tm.get(name)})
+        }
+      } elif statement.statement.isVariableDeclaration() {
+        innerStatement := statement.statement.asVariableDeclaration()
+        name := innerStatement.name.name
+
+        if self.exports.has(name) {
+          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
+        } elif self.vm.has(name) {
+          self.exports.set(name, AnalyzerExport{var: self.vm.get(name)})
+        }
+      } else {
+        self.raise(errors.E1066(), it.start, it.end)
+      }
     } elif it.isExportNamedDeclaration() {
-      // todo check if left-hand value
-      // todo E1022 - Void type can only be used as function return type
-      // todo check duplicate export names
-      // todo can't export element access
       statement := it.asExportNamedDeclaration()
 
       if it.hasParent() {
         self.raise(errors.E1044(), it.start, it.end)
+      }
+
+      if !Parser.validObjExprId(statement.expression) {
+        self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
+      } else {
+        parserType := Parser.expressionToType(statement.expression)
+        mut exportName := ""
+
+        if statement.expression.isIdentifier() {
+          expression := statement.expression.asIdentifier()
+          exportName = expression.name
+        } elif statement.expression.isPropertyAccess() {
+          expression := statement.expression.asPropertyAccess()
+          exportName = expression.name.name
+        }
+
+        mut exportType: (ref Type.Type)?
+
+        guardResult := self.guard(() -> void {
+          initialTC := ref self.tc
+          exportType = Type.opt(self.t(parserType))
+        })
+
+        if guardResult && self.exports.has(exportName) {
+          self.raise(errors.E1067(exportName), statement.expression.start, statement.expression.end)
+        } elif guardResult {
+          self.exports.set(exportName, AnalyzerExport{t: exportType as ref Type.Type})
+        } elif !statement.expression.isIdentifier() {
+          self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
+        } else {
+          id := statement.expression.asIdentifier()
+          self.e(statement.expression)
+
+          if self.vm.has(id.name) && self.exports.has(id.name) {
+            self.raise(errors.E1067(id.name), statement.expression.start, statement.expression.end)
+          } elif self.vm.has(id.name) {
+            self.exports.set(id.name, AnalyzerExport{var: self.vm.get(id.name)})
+          }
+        }
       }
     } elif it.isExpression() {
       statement := it.asExpression()

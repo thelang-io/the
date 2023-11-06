@@ -266,3 +266,15 @@ export fn E1064 () str {
 export fn E1065 () str {
   return "E1065 - Try statement handler parameter required to be of type object with first property 'message' of type `str` and second property 'stack' of type `str`"
 }
+
+export fn E1066 () str {
+  return "E1066 - Exporting only allowed on declarations"
+}
+
+export fn E1067 (name: str) str {
+  return "E1067 - Duplicate export of '" + name + "'"
+}
+
+export fn E1068 () str {
+  return "E1068 - Named export allows exporting only identifiers and property access"
+}
