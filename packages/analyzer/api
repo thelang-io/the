@@ -19,89 +19,82 @@ obj Error {
   stack: str
 }
 
-obj std_File {
+obj builtin_Constants {}
+obj builtin {}
+const builtin_constants: builtin_Constants
+
+// arpa/inet.h
+// netinet/in.h
+// sys/socket.h
+// sys/stat.h
+// sys/syscall.h
+// sys/types.h
+// sys/utsname.h
+
+fn assert (assertion: any) void
+
+fn isalnum (ch: int) int
+fn isalpha (ch: int) int
+fn isascii (ch: int) int
+fn isblank (ch: int) int
+fn iscntrl (ch: int) int
+fn isdigit (ch: int) int
+fn isgraph (ch: int) int
+fn islower (ch: int) int
+fn isprint (ch: int) int
+fn ispunct (ch: int) int
+fn isspace (ch: int) int
+fn isupper (ch: int) int
+fn isxdigit (ch: int) int
+fn toascii (ch: int) int
+fn tolower (ch: int) int
+fn toupper (ch: int) int
+
+
+obj builtin_DIR {
 }
 
-obj std {
-  fn clearerr (stream: ref std_File) void
-  fn fclose (stream: ref std_File) int
-  fn feof () void
-  fn ferror () void
-  fn fflush () void
-  fn fgetc () void
-  fn fgetpos () void
-  fn fgets () void
-  fn fgetwc () void
-  fn fgetws () void
-  fn fopen () void
-  fn fprintf () void
-  fn fputc () void
-  fn fputs () void
-  fn fputwc () void
-  fn fputws () void
-  fn fread () void
-  fn freopen () void
-  fn fscanf () void
-  fn fseek () void
-  fn fsetpos () void
-  fn ftell () void
-  fn fwide () void
-  fn fwprintf () void
-  fn fwrite () void
-  fn fwscanf () void
-  fn getc () void
-  fn getchar () void
-  fn gets () void
-  fn getwc () void
-  fn getwchar () void
-  fn perror () void
-  fn printf () void
-  fn putc () void
-  fn putchar () void
-  fn puts () void
-  fn putwc () void
-  fn putwchar () void
-  fn remove () void
-  fn rename () void
-  fn rewind () void
-  fn scanf () void
-  fn setbuf () void
-  fn setvbuf () void
-  fn snprintf () void
-  fn sprintf () void
-  fn sscanf () void
-  fn swprintf () void
-  fn swscanf () void
-  fn tmpfile () void
-  fn tmpnam () void
-  fn ungetc () void
-  fn ungetwc () void
-  fn vfprintf () void
-  fn vfscanf () void
-  fn vfwprintf () void
-  fn vfwscanf () void
-  fn vprintf () void
-  fn vscanf () void
-  fn vsnprintf () void
-  fn vsprintf () void
-  fn vsscanf () void
-  fn vswprintf () void
-  fn vswscanf () void
-  fn vwprintf () void
-  fn vwscanf () void
-  fn wprintf () void
-  fn wscanf () void
+obj builtin_dirent {
+  ino: u64
+  name: str
 }
 
-obj std_Constants {
-  EOF: int
-  FOPEN_MAX: int
-  FILENAME_MAX: int
-  BUFSIZ: int
-  SEEK_SET: int
-  SEEK_CUR: int
-  SEEK_END: int
-  TMP_MAX: int
-}
+fn alphasort (a: ref ref builtin_dirent, b: ref ref builtin_dirent) int
+fn closedir (handle: ref builtin_DIR) int
+fn dirfd (handle: ref builtin_DIR) int
+fn fdopendir (fd: int) ref builtin_DIR
+fn opendir (dir: str) ref builtin_DIR
+fn readdir (handle: ref builtin_DIR) ref builtin_dirent
+fn rewinddir (handle: ref builtin_DIR) void
+fn scandir (
+  dir: str,
+  namelist: ref (ref builtin_dirent)[],
+  filter: (a: ref builtin_dirent) -> int,
+  comparator: (a: ref ref builtin_dirent, b: ref ref builtin_dirent) -> int
+) int
+fn seekdir (handle: ref builtin_DIR, location: i64) void
+fn telldir (handle: ref builtin_DIR) i64
 
-const std_constants: std_Constants
+// errno.h
+// fcntl.h
+// fenv.h
+// float.h
+// inttypes.h
+// limits.h
+// math.h
+// netdb.h
+// pthread.h
+// pwd.h
+// setjmp.h
+// signal.h
+// stdarg.h
+// stddef.h
+// stdint.h
+// stdio.h
+// stdlib.h
+// string.h
+// time.h
+// uchar.h
+// unistd.h
+// wchar.h
+// wctype.h
