@@ -19,67 +19,336 @@ obj Error {
   stack: str
 }
 
-obj builtin_Constants {}
-obj builtin {}
-const builtin_constants: builtin_Constants
+obj builtin_Constants {
+  // errno.h
+  E2BIG: int
+  EACCES: int
+  EADDRINUSE: int
+  EADDRNOTAVAIL: int
+  EAFNOSUPPORT: int
+  EAGAIN: int
+  EALREADY: int
+  EBADF: int
+  EBADMSG: int
+  EBUSY: int
+  ECANCELED: int
+  ECHILD: int
+  ECONNABORTED: int
+  ECONNREFUSED: int
+  ECONNRESET: int
+  EDEADLK: int
+  EDESTADDRREQ: int
+  EDOM: int
+  EDQUOT: int
+  EEXIST: int
+  EFAULT: int
+  EFBIG: int
+  EHOSTUNREACH: int
+  EIDRM: int
+  EILSEQ: int
+  EINPROGRESS: int
+  EINTR: int
+  EINVAL: int
+  EIO: int
+  EISCONN: int
+  EISDIR: int
+  ELOOP: int
+  EMFILE: int
+  EMLINK: int
+  EMSGSIZE: int
+  EMULTIHOP: int
+  ENAMETOOLONG: int
+  ENETDOWN: int
+  ENETRESET: int
+  ENETUNREACH: int
+  ENFILE: int
+  ENOBUFS: int
+  ENODATA: int
+  ENODEV: int
+  ENOENT: int
+  ENOEXEC: int
+  ENOLCK: int
+  ENOLINK: int
+  ENOMEM: int
+  ENOMSG: int
+  ENOPROTOOPT: int
+  ENOSPC: int
+  ENOSR: int
+  ENOSTR: int
+  ENOSYS: int
+  ENOTCONN: int
+  ENOTDIR: int
+  ENOTEMPTY: int
+  ENOTRECOVERABLE: int
+  ENOTSOCK: int
+  ENOTSUP: int
+  ENOTTY: int
+  ENXIO: int
+  EOPNOTSUPP: int
+  EOVERFLOW: int
+  EOWNERDEAD: int
+  EPERM: int
+  EPIPE: int
+  EPROTO: int
+  EPROTONOSUPPORT: int
+  EPROTOTYPE: int
+  ERANGE: int
+  EROFS: int
+  ESPIPE: int
+  ESRCH: int
+  ESTALE: int
+  ETIME: int
+  ETIMEDOUT: int
+  ETXTBSY: int
+  EWOULDBLOCK: int
+  EXDEV: int
 
-// arpa/inet.h
-// netinet/in.h
-// sys/socket.h
-// sys/stat.h
-// sys/syscall.h
-// sys/types.h
-// sys/utsname.h
+  // fcntl.h
+  F_DUPFD: int
+  F_GETFD: int
+  F_SETFD: int
+  F_GETFL: int
+  F_SETFL: int
+  F_GETLK: int
+  F_SETLK: int
+  F_SETLKW: int
+  F_GETOWN: int
+  F_SETOWN: int
+  FD_CLOEXEC: int
+  F_RDLCK: int
+  F_UNLCK: int
+  F_WRLCK: int
+  O_CREAT: int
+  O_EXCL: int
+  O_NOCTTY: int
+  O_TRUNC: int
+  O_APPEND: int
+  O_DSYNC: int
+  O_NONBLOCK: int
+  O_RSYNC: int
+  O_SYNC: int
+  O_ACCMODE: int
+  O_RDONLY: int
+  O_RDWR: int
+  O_WRONLY: int
 
-fn assert (assertion: any) void
+  // fenv.h
+  FE_DFL_ENV: int
+  FE_DOWNWARD: int
+  FE_TONEAREST: int
+  FE_TOWARDZERO: int
+  FE_UPWARD: int
+  FE_ALL_EXCEPT: int
+  FE_DIVBYZERO: int
+  FE_INEXACT: int
+  FE_INVALID: int
+  FE_OVERFLOW: int
+  FE_UNDERFLOW: int
 
-fn isalnum (ch: int) int
-fn isalpha (ch: int) int
-fn isascii (ch: int) int
-fn isblank (ch: int) int
-fn iscntrl (ch: int) int
-fn isdigit (ch: int) int
-fn isgraph (ch: int) int
-fn islower (ch: int) int
-fn isprint (ch: int) int
-fn ispunct (ch: int) int
-fn isspace (ch: int) int
-fn isupper (ch: int) int
-fn isxdigit (ch: int) int
-fn toascii (ch: int) int
-fn tolower (ch: int) int
-fn toupper (ch: int) int
+  // float.h
+  FLT_RADIX: int
+  DECIMAL_DIG: int
+  FLT_DECIMAL_DIG: int
+  DBL_DECIMAL_DIG: int
+  LDBL_DECIMAL_DIG: int
+  FLT_MIN: int
+  DBL_MIN: int
+  LDBL_MIN: int
+  FLT_TRUE_MIN: int
+  DBL_TRUE_MIN: int
+  LDBL_TRUE_MIN: int
+  FLT_MAX: int
+  DBL_MAX: int
+  LDBL_MAX: int
+  FLT_EPSILON: int
+  DBL_EPSILON: int
+  LDBL_EPSILON: int
+  FLT_DIG: int
+  DBL_DIG: int
+  LDBL_DIG: int
+  FLT_MANT_DIG: int
+  DBL_MANT_DIG: int
+  LDBL_MANT_DIG: int
+  FLT_MIN_EXP: int
+  DBL_MIN_EXP: int
+  LDBL_MIN_EXP: int
+  FLT_MIN_10_EXP: int
+  DBL_MIN_10_EXP: int
+  LDBL_MIN_10_EXP: int
+  FLT_MAX_EXP: int
+  DBL_MAX_EXP: int
+  LDBL_MAX_EXP: int
+  FLT_MAX_10_EXP: int
+  DBL_MAX_10_EXP: int
+  LDBL_MAX_10_EXP: int
+  FLT_ROUNDS: int
+  FLT_EVAL_METHOD: int
+  FLT_HAS_SUBNORM: int
+  DBL_HAS_SUBNORM: int
+  LDBL_HAS_SUBNORM: int
 
+  // inttypes.h
+
+  PRIdN: char[]
+  PRIdLEASTN: char[]
+  PRIdFASTN: char[]
+  PRIdMAX: char[]
+  PRIdPTR: char[]
+  PRIiN: char[]
+  PRIiLEASTN: char[]
+  PRIiFASTN: char[]
+  PRIiMAX: char[]
+  PRIiPTR: char[]
+  PRIoN: char[]
+  PRIoLEASTN: char[]
+  PRIoFASTN: char[]
+  PRIoMAX: char[]
+  PRIoPTR: char[]
+  PRIuN: char[]
+  PRIuLEASTN: char[]
+  PRIuFASTN: char[]
+  PRIuMAX: char[]
+  PRIuPTR: char[]
+  PRIxN: char[]
+  PRIxLEASTN: char[]
+  PRIxFASTN: char[]
+  PRIxMAX: char[]
+  PRIxPTR: char[]
+  PRIXN: char[]
+  PRIXLEASTN: char[]
+  PRIXFASTN: char[]
+  PRIXMAX: char[]
+  PRIXPTR: char[]
+  SCNdN: char[]
+  SCNdLEASTN: char[]
+  SCNdFASTN: char[]
+  SCNdMAX: char[]
+  SCNdPTR: char[]
+  SCNiN: char[]
+  SCNiLEASTN: char[]
+  SCNiFASTN: char[]
+  SCNiMAX: char[]
+  SCNiPTR: char[]
+  SCNoN: char[]
+  SCNoLEASTN: char[]
+  SCNoFASTN: char[]
+  SCNoMAX: char[]
+  SCNoPTR: char[]
+  SCNuN: char[]
+  SCNuLEASTN: char[]
+  SCNuFASTN: char[]
+  SCNuMAX: char[]
+  SCNuPTR: char[]
+  SCNxN: char[]
+  SCNxLEASTN: char[]
+  SCNxFASTN: char[]
+  SCNxMAX: char[]
+  SCNxPTR: char[]
+}
+
+obj builtin {
+  // errno.h
+  mut errno: int
+
+  // assert.h
+  fn assert (assertion: any) void
+
+  // ctype.h
+  fn isalnum (ch: rune) int
+  fn isalpha (ch: rune) int
+  fn isascii (ch: rune) int
+  fn isblank (ch: rune) int
+  fn iscntrl (ch: rune) int
+  fn isdigit (ch: rune) int
+  fn isgraph (ch: rune) int
+  fn islower (ch: rune) int
+  fn isprint (ch: rune) int
+  fn ispunct (ch: rune) int
+  fn isspace (ch: rune) int
+  fn isupper (ch: rune) int
+  fn isxdigit (ch: rune) int
+  fn toascii (ch: rune) int
+  fn tolower (ch: rune) int
+  fn toupper (ch: rune) int
+
+  // dirent.h
+  fn alphasort (a: ref ref builtin_dirent, b: ref ref builtin_dirent) int
+  fn closedir (mut handle: ref builtin_DIR) int
+  fn dirfd (mut handle: ref builtin_DIR) int
+  fn fdopendir (fd: int) ref builtin_DIR
+  fn opendir (dir: char[]) ref builtin_DIR
+  fn readdir (mut handle: ref builtin_DIR) ref builtin_dirent
+  fn rewinddir (mut handle: ref builtin_DIR) void
+  fn scandir (
+    dir: char[],
+    mut namelist: ref (ref builtin_dirent)[],
+    filter: (a: ref builtin_dirent) -> int,
+    comparator: (a: ref ref builtin_dirent, b: ref ref builtin_dirent) -> int
+  ) int
+  fn seekdir (mut handle: ref builtin_DIR, location: i64) void
+  fn telldir (mut handle: ref builtin_DIR) i64
+
+  // fcntl.h
+  fn creat (path: char[], mode: u32) int
+  fn fcntl (fd: int, cmd: int, args: any...) int
+  fn open (path: char[], flags: int, mode: u32? = nil) int
+
+  // fenv.h
+  fn feclearexcept (excepts: int) int
+  fn fegetexceptflag (mut flag: ref u32, excepts: int) int
+  fn feraiseexcept (excepts: int) int
+  fn fesetexceptflag (flag: ref u32, excepts: int) int
+  fn fetestexcept (excepts: int) int
+  fn fegetround () int
+  fn fesetround (round: int) int
+  fn fegetenv (mut env: ref builtin_fenv) int
+  fn feholdexcept (mut env: ref builtin_fenv) int
+  fn fesetenv (env: ref builtin_fenv) int
+  fn feupdateenv (env: ref builtin_fenv) int
+
+  // inttypes.h
+  fn imaxabs (j: i64) i64
+  fn imaxdiv (numer: i64, denom: i64) builtin_imaxdiv
+  fn strtoimax (string: char[], mut end: ref char[], base: int) i64
+  fn strtoumax (string: char[], mut end: ref char[], base: int) u64
+  fn wcstoimax (string: str, mut end: ref str, base: int) i64
+  fn wcstoumax (string: str, mut end: ref str, base: int) u64
+}
+
+// dirent.h
 
 obj builtin_DIR {
 }
 
 obj builtin_dirent {
-  ino: u64
-  name: str
+  mut ino: u64
+  mut name: char[]
 }
 
-fn alphasort (a: ref ref builtin_dirent, b: ref ref builtin_dirent) int
-fn closedir (handle: ref builtin_DIR) int
-fn dirfd (handle: ref builtin_DIR) int
-fn fdopendir (fd: int) ref builtin_DIR
-fn opendir (dir: str) ref builtin_DIR
-fn readdir (handle: ref builtin_DIR) ref builtin_dirent
-fn rewinddir (handle: ref builtin_DIR) void
-fn scandir (
-  dir: str,
-  namelist: ref (ref builtin_dirent)[],
-  filter: (a: ref builtin_dirent) -> int,
-  comparator: (a: ref ref builtin_dirent, b: ref ref builtin_dirent) -> int
-) int
-fn seekdir (handle: ref builtin_DIR, location: i64) void
-fn telldir (handle: ref builtin_DIR) i64
-
-// errno.h
 // fcntl.h
+
+obj builtin_flock {
+  mut type: int
+  mut whence: int
+  mut start: i64
+  mut len: i64
+  mut pid: int
+}
+
 // fenv.h
-// float.h
+
+obj builtin_fenv {
+}
+
+const builtin_constants: builtin_Constants
+
 // inttypes.h
+
+obj builtin_imaxdiv {
+  mut quot: i64
+  mut rem: i64
+}
+
 // limits.h
 // math.h
 // netdb.h
@@ -98,3 +367,11 @@ fn telldir (handle: ref builtin_DIR) i64
 // unistd.h
 // wchar.h
 // wctype.h
+
+// arpa/inet.h
+// netinet/in.h
+// sys/socket.h
+// sys/stat.h
+// sys/syscall.h
+// sys/types.h
+// sys/utsname.h
