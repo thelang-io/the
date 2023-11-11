@@ -1,0 +1,526 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// <aio.h>
+export const AIO_ALLDONE: int
+export const AIO_CANCELED: int
+export const AIO_NOTCANCELED: int
+export const LIO_NOP: int
+export const LIO_NOWAIT: int
+export const LIO_READ: int
+export const LIO_WAIT: int
+export const LIO_WRITE: int
+
+// <cpio.h>
+export const C_IRUSR: int
+export const C_IWUSR: int
+export const C_IXUSR: int
+export const C_IRGRP: int
+export const C_IWGRP: int
+export const C_IXGRP: int
+export const C_IROTH: int
+export const C_IWOTH: int
+export const C_IXOTH: int
+export const C_ISUID: int
+export const C_ISGID: int
+export const C_ISVTX: int
+export const C_ISDIR: int
+export const C_ISFIFO: int
+export const C_ISREG: int
+export const C_ISBLK: int
+export const C_ISCHR: int
+export const C_ISCTG: int
+export const C_ISLNK: int
+export const C_ISSOCK: int
+export const MAGIC: char[]
+
+// <dlfcn.h>
+export const RTLD_LAZY: int
+export const RTLD_NOW: int
+export const RTLD_GLOBAL: int
+export const RTLD_LOCAL: int
+
+// <errno.h>
+export const E2BIG: int
+export const EACCES: int
+export const EADDRINUSE: int
+export const EADDRNOTAVAIL: int
+export const EAFNOSUPPORT: int
+export const EAGAIN: int
+export const EALREADY: int
+export const EBADF: int
+export const EBADMSG: int
+export const EBUSY: int
+export const ECANCELED: int
+export const ECHILD: int
+export const ECONNABORTED: int
+export const ECONNREFUSED: int
+export const ECONNRESET: int
+export const EDEADLK: int
+export const EDESTADDRREQ: int
+export const EDOM: int
+export const EDQUOT: int
+export const EEXIST: int
+export const EFAULT: int
+export const EFBIG: int
+export const EHOSTUNREACH: int
+export const EIDRM: int
+export const EILSEQ: int
+export const EINPROGRESS: int
+export const EINTR: int
+export const EINVAL: int
+export const EIO: int
+export const EISCONN: int
+export const EISDIR: int
+export const ELOOP: int
+export const EMFILE: int
+export const EMLINK: int
+export const EMSGSIZE: int
+export const EMULTIHOP: int
+export const ENAMETOOLONG: int
+export const ENETDOWN: int
+export const ENETRESET: int
+export const ENETUNREACH: int
+export const ENFILE: int
+export const ENOBUFS: int
+export const ENODATA: int
+export const ENODEV: int
+export const ENOENT: int
+export const ENOEXEC: int
+export const ENOLCK: int
+export const ENOLINK: int
+export const ENOMEM: int
+export const ENOMSG: int
+export const ENOPROTOOPT: int
+export const ENOSPC: int
+export const ENOSR: int
+export const ENOSTR: int
+export const ENOSYS: int
+export const ENOTCONN: int
+export const ENOTDIR: int
+export const ENOTEMPTY: int
+export const ENOTRECOVERABLE: int
+export const ENOTSOCK: int
+export const ENOTSUP: int
+export const ENOTTY: int
+export const ENXIO: int
+export const EOPNOTSUPP: int
+export const EOVERFLOW: int
+export const EOWNERDEAD: int
+export const EPERM: int
+export const EPIPE: int
+export const EPROTO: int
+export const EPROTONOSUPPORT: int
+export const EPROTOTYPE: int
+export const ERANGE: int
+export const EROFS: int
+export const ESPIPE: int
+export const ESRCH: int
+export const ESTALE: int
+export const ETIME: int
+export const ETIMEDOUT: int
+export const ETXTBSY: int
+export const EWOULDBLOCK: int
+export const EXDEV: int
+
+// <fcntl.h>
+export const F_DUPFD: int
+export const F_DUPFD_CLOEXEC: int
+export const F_GETFD: int
+export const F_SETFD: int
+export const F_GETFL: int
+export const F_SETFL: int
+export const F_GETLK: int
+export const F_SETLK: int
+export const F_SETLKW: int
+export const F_GETOWN: int
+export const F_SETOWN: int
+export const FD_CLOEXEC: int
+export const F_RDLCK: int
+export const F_UNLCK: int
+export const F_WRLCK: int
+export const O_CLOEXEC: int
+export const O_CREAT: int
+export const O_DIRECTORY: int
+export const O_EXCL: int
+export const O_NOCTTY: int
+export const O_NOFOLLOW: int
+export const O_TRUNC: int
+export const O_TTY_INIT: int
+export const O_APPEND: int
+export const O_DSYNC: int
+export const O_NONBLOCK: int
+export const O_RSYNC: int
+export const O_SYNC: int
+export const O_ACCMODE: int
+export const O_EXEC: int
+export const O_RDONLY: int
+export const O_RDWR: int
+export const O_SEARCH: int
+export const O_WRONLY: int
+export const AT_FDCWD: int
+export const AT_EACCESS: int
+export const AT_SYMLINK_NOFOLLOW: int
+export const AT_SYMLINK_FOLLOW: int
+export const AT_REMOVEDIR: int
+
+// <fenv.h>
+export const FE_ALL_EXCEPT: int
+export const FE_DIVBYZERO: int
+export const FE_INEXACT: int
+export const FE_INVALID: int
+export const FE_OVERFLOW: int
+export const FE_UNDERFLOW: int
+export const FE_DOWNWARD: int
+export const FE_TONEAREST: int
+export const FE_TOWARDZERO: int
+export const FE_UPWARD: int
+export const FE_DFL_ENV: int
+
+// <float.h>
+export const FLT_ROUNDS: int
+export const FLT_RADIX: int
+export const FLT_EVAL_METHOD: int
+export const FLT_MANT_DIG: int
+export const DBL_MANT_DIG: int
+export const DECIMAL_DIG: int
+export const FLT_DIG: int
+export const DBL_DIG: int
+export const FLT_MIN_EXP: int
+export const DBL_MIN_EXP: int
+export const FLT_MIN_10_EXP: int
+export const DBL_MIN_10_EXP: int
+export const FLT_MAX_EXP: int
+export const DBL_MAX_EXP: int
+export const FLT_MAX_10_EXP: int
+export const DBL_MAX_10_EXP: int
+export const FLT_MAX: f32
+export const DBL_MAX: float
+export const FLT_EPSILON: f32
+export const DBL_EPSILON: float
+export const FLT_MIN: f32
+export const DBL_MIN: float
+
+// <fmtmsg.h>
+export const MM_HARD: int
+export const MM_SOFT: int
+export const MM_FIRM: int
+export const MM_APPL: int
+export const MM_UTIL: int
+export const MM_OPSYS: int
+export const MM_RECOVER: int
+export const MM_NRECOV: int
+export const MM_HALT: int
+export const MM_ERROR: int
+export const MM_WARNING: int
+export const MM_INFO: int
+export const MM_NOSEV: int
+export const MM_PRINT: int
+export const MM_CONSOLE: int
+export const MM_NULLLBL: char[]
+export const MM_NULLSEV: int
+export const MM_NULLMC: i64
+export const MM_NULLTXT: char[]
+export const MM_NULLACT: char[]
+export const MM_NULLTAG: char[]
+export const MM_OK: int
+export const MM_NOTOK: int
+export const MM_NOMSG: int
+export const MM_NOCON: int
+
+// <fnmatch.h>
+export const FNM_NOMATCH: int
+export const FNM_PATHNAME: int
+export const FNM_PERIOD: int
+export const FNM_NOESCAPE: int
+
+// <ftw.h>
+export const FTW_F: int
+export const FTW_D: int
+export const FTW_DNR: int
+export const FTW_DP: int
+export const FTW_NS: int
+export const FTW_SL: int
+export const FTW_SLN: int
+export const FTW_PHYS: int
+export const FTW_MOUNT: int
+export const FTW_DEPTH: int
+export const FTW_CHDIR: int
+
+// <glob.h>
+export const GLOB_APPEND: int
+export const GLOB_DOOFFS: int
+export const GLOB_ERR: int
+export const GLOB_MARK: int
+export const GLOB_NOCHECK: int
+export const GLOB_NOESCAPE: int
+export const GLOB_NOSORT: int
+export const GLOB_ABORTED: int
+export const GLOB_NOMATCH: int
+export const GLOB_NOSPACE: int
+
+// <errno.h>
+export mut errno: int
+
+// <fenv.h>
+export type fexcept_t = u16
+
+// <iconv.h>
+export type iconv_t = ref any
+
+// <aio.h>
+
+export obj aiocb {
+  mut aio_fildes: int
+  mut aio_offset: off_t
+  mut aio_buf: ref any
+  mut aio_nbytes: usize
+  mut aio_reqprio: int
+  mut aio_sigevent: sigevent
+  mut aio_lio_opcode: int
+}
+
+// <dirent.h>
+
+export obj DIR {
+}
+
+export obj dirent {
+  mut d_ino: ino_t
+  mut d_name: char[]
+}
+
+// <fcntl.h>
+
+export obj flock {
+  mut l_type: u16
+  mut l_whence: u16
+  mut l_start: off_t
+  mut l_len: off_t
+  mut l_pid: pid_t
+}
+
+// <fenv.h>
+
+export obj fenv_t {
+}
+
+// <ftw.h>
+
+export obj FTW {
+  mut base: int
+  mut level: int
+}
+
+// <glob.h>
+export obj glob_t {
+  mut gl_pathc: usize
+  mut gl_pathv: ref char[]
+  mut gl_offs: usize
+}
+
+// <grp.h>
+
+export obj group {
+  mut gr_name: char[]
+  mut gr_gid: gid_t
+  mut gr_mem: ref char[]
+}
+
+// <aio.h>
+export fn aio_cancel (fd: int, mut cb: ref aiocb) int
+export fn aio_error (cb: ref aiocb) int
+export fn aio_fsync (op: int, mut cb: ref aiocb) int
+export fn aio_read (mut cb: ref aiocb) int
+export fn aio_return (mut cb: ref aiocb) isize
+export fn aio_suspend (list: (ref aiocb)[], length: int, timeout: ref timespec) int
+export fn aio_write (mut cb: ref aiocb) int
+export fn lio_listio (mode: int, list: (ref aiocb)[], length: int, mut sig: ref sigevent) int
+
+// <arpa/inet.h>
+export fn htonl (host: u32) u32
+export fn htons (host: u16) u16
+export fn ntohl (net: u32) u32
+export fn ntohs (net: u16) u16
+export fn inet_addr (cp: char[]) in_addr_t
+export fn inet_ntoa (in: in_addr) char[]
+export fn inet_ntop (af: int, src: ref any, mut dest: ref char, size: socklen_t) ref char
+export fn inet_pton (af: int, src: ref char, mut dest: ref any) int
+
+// assert.h
+export fn assert (expression: any) void
+
+// <ctype.h>
+export fn isalnum (c: int) int
+export fn isalnum_l (c: int, locale: locale_t) int
+export fn isalpha (c: int) int
+export fn isalpha_l (c: int, locale: locale_t) int
+export fn isascii (c: int) int
+export fn isblank (c: int) int
+export fn isblank_l (c: int, locale: locale_t) int
+export fn iscntrl (c: int) int
+export fn iscntrl_l (c: int, locale: locale_t) int
+export fn isdigit (c: int) int
+export fn isdigit_l (c: int, locale: locale_t) int
+export fn isgraph (c: int) int
+export fn isgraph_l (c: int, locale: locale_t) int
+export fn islower (c: int) int
+export fn islower_l (c: int, locale: locale_t) int
+export fn isprint (c: int) int
+export fn isprint_l (c: int, locale: locale_t) int
+export fn ispunct (c: int) int
+export fn ispunct_l (c: int, locale: locale_t) int
+export fn isspace (c: int) int
+export fn isspace_l (c: int, locale: locale_t) int
+export fn isupper (c: int) int
+export fn isupper_l (c: int, locale: locale_t) int
+export fn isxdigit (c: int) int
+export fn isxdigit_l (c: int, locale: locale_t) int
+export fn toascii (c: int) int
+export fn tolower (c: int) int
+export fn tolower_l (c: int, locale: locale_t) int
+export fn toupper (c: int) int
+export fn toupper_l (c: int, locale: locale_t) int
+
+// <dirent.h>
+export fn alphasort (a: ref ref dirent, b: ref ref dirent) int
+export fn closedir (mut dir: ref DIR) int
+export fn dirfd (mut dir: ref DIR) int
+export fn fdopendir (fd: int) ref DIR
+export fn opendir (dirname: char[]) ref DIR
+export fn readdir (mut dir: ref DIR) ref dirent
+export fn readdir_r (mut dir: ref DIR, mut entry: ref dirent, mut result: ref ref dirent) int
+export fn rewinddir (mut dir: ref DIR) void
+export fn scandir (dirname: char[], mut list: ref (ref dirent)[], filter: (it: ref dirent) -> int, comparator: (a: ref ref dirent, b: ref ref dirent) -> int) int
+export fn seekdir (mut dir: ref DIR, loc: i64) void
+export fn telldir (mut dir: ref DIR) i64
+
+// <dlfcn.h>
+export fn dlclose (mut handle: ref any) int
+export fn dlerror () char[]
+export fn dlopen (filename: char[], mode: int) ref any
+export fn dlsym (mut handle: ref any, name: char[]) ref any
+
+// <fcntl.h>
+export fn creat (path: char[], mode: mode_t) int
+export fn fcntl (fd: int, cmd: int, args: any...) int
+export fn open (path: char[], flag: int, mode: mode_t? = nil) int
+export fn openat (fd: int, path: char[], flag: int, mode: mode_t? = nil) int
+
+// <fenv.h>
+export fn feclearexcept (excepts: int) int
+export fn fegetenv (mut env: ref fenv_t) int
+export fn fegetexceptflag (mut flag: ref fexcept_t, excepts: int) int
+export fn fegetround () int
+export fn feholdexcept (mut env: ref fenv_t) int
+export fn feraiseexcept (excepts: int) int
+export fn fesetenv (env: ref fenv_t) int
+export fn fesetexceptflag (flag: ref fexcept_t, excepts: int) int
+export fn fesetround (round: int) int
+export fn fetestexcept (excepts: int) int
+export fn feupdateenv (env: ref fenv_t) int
+
+// <fmtmsg.h>
+export fn fmtmsg (classification: i64, label: char[], severity: int, text: char[], action: char[], tag: char[]) int
+
+// <fnmatch.h>
+export fn fnmatch (pattern: char[], string: char[], flags: int) int
+
+// <ftw.h>
+export fn ftw (dirpath: char[], fn: (filepath: char[], sb: ref stat, flag: int) -> int, limit: int) int
+export fn nftw (dirpath: char[], fn: (filepath: char[], sb: ref stat, flag: int, mut ftw: ref FTW) -> int, limit: int, flags: int) int
+
+// <glob.h>
+export fn glob (pattern: char[], flags: int, err: (path: char[], number: int) -> int, mut glob: ref glob_t) int
+export fn globfree (mut glob: ref glob_t) void
+
+// <grp.h>
+export fn endgrent () void
+export fn getgrent () ref group
+export fn getgrgid (gid: gid_t) ref group
+export fn getgrgid_r (gid: gid_t, mut grp: ref group, mut buffer: ref char, size: usize, mut result: ref ref group) int
+export fn getgrnam (name: char[]) ref group
+export fn getgrnam_r (name: char[], mut grp: ref group, mut buffer: ref char, size: usize, mut result: ref ref group) int
+export fn setgrent () void
+
+// <iconv.h>
+export fn iconv (cd: iconv_t, mut inbuf: ref char[], mut inBytesLeft: ref usize, mut outbuf: ref char[], mut outBytesLeft: ref usize) usize
+export fn iconv_close (cd: iconv_t) int
+export fn iconv_open (toCode: char[], fromCode: char[]) iconv_t
+
+// <inttypes.h>
+// <langinfo.h>
+// <libgen.h>
+// <limits.h>
+// <locale.h>
+// <math.h>
+// <monetary.h>
+// <mqueue.h>
+// <ndbm.h>
+// <net/if.h>
+// <netdb.h>
+// <netinet/in.h>
+// <netinet/tcp.h>
+// <nl_types.h>
+// <poll.h>
+// <pthread.h>
+// <pwd.h>
+// <regex.h>
+// <sched.h>
+// <search.h>
+// <semaphore.h>
+// <setjmp.h>
+// <signal.h>
+// <spawn.h>
+// <stdarg.h>
+// <stdbool.h>
+// <stddef.h>
+// <stdint.h>
+// <stdio.h>
+// <stdlib.h>
+// <string.h>
+// <strings.h>
+// <stropts.h>
+// <sys/ipc.h>
+// <sys/mman.h>
+// <sys/msg.h>
+// <sys/resource.h>
+// <sys/select.h>
+// <sys/sem.h>
+// <sys/shm.h>
+// <sys/socket.h>
+// <sys/stat.h>
+// <sys/statvfs.h>
+// <sys/time.h>
+// <sys/times.h>
+// <sys/types.h>
+// <sys/uio.h>
+// <sys/un.h>
+// <sys/utsname.h>
+// <sys/wait.h>
+// <syslog.h>
+// <tar.h>
+// <termios.h>
+// <tgmath.h>
+// <time.h>
+// <trace.h>
+// <ulimit.h>
+// <unistd.h>
+// <utime.h>
+// <utmpx.h>
+// <wchar.h>
+// <wctype.h>
+// <wordexp.h>

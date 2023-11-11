@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-obj Error {
+export obj Error {
   message: str
   stack: str
 }
 
-obj builtin_Constants {
-}
-
-obj builtin {
+export fn NewError (message: str) Error {
+  return Error{message: message}
 }
