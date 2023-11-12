@@ -610,6 +610,43 @@ export const IPV6_V6ONLY: int
 export const NL_SETD: int
 export const NL_CAT_LOCALE: int
 
+// <poll.h>
+export const POLLIN: int
+export const POLLRDNORM: int
+export const POLLRDBAND: int
+export const POLLPRI: int
+export const POLLOUT: int
+export const POLLWRNORM: int
+export const POLLWRBAND: int
+export const POLLERR: int
+export const POLLHUP: int
+export const POLLNVAL: int
+
+// <pthread.h>
+export const PTHREAD_BARRIER_SERIAL_THREAD: int
+export const PTHREAD_CANCEL_ASYNCHRONOUS: int
+export const PTHREAD_CANCEL_ENABLE: int
+export const PTHREAD_CANCEL_DEFERRED: int
+export const PTHREAD_CANCEL_DISABLE: int
+export const PTHREAD_CANCELED: ref any
+export const PTHREAD_CREATE_DETACHED: int
+export const PTHREAD_CREATE_JOINABLE: int
+export const PTHREAD_EXPLICIT_SCHED: int
+export const PTHREAD_INHERIT_SCHED: int
+export const PTHREAD_MUTEX_DEFAULT: int
+export const PTHREAD_MUTEX_ERRORCHECK: int
+export const PTHREAD_MUTEX_NORMAL: int
+export const PTHREAD_MUTEX_RECURSIVE: int
+export const PTHREAD_MUTEX_ROBUST: int
+export const PTHREAD_MUTEX_STALLED: int
+export const PTHREAD_PRIO_INHERIT: int
+export const PTHREAD_PRIO_NONE: int
+export const PTHREAD_PRIO_PROTECT: int
+export const PTHREAD_PROCESS_SHARED: int
+export const PTHREAD_PROCESS_PRIVATE: int
+export const PTHREAD_SCOPE_PROCESS: int
+export const PTHREAD_SCOPE_SYSTEM: int
+
 // <aio.h>
 
 export obj aiocb {
@@ -734,7 +771,7 @@ export obj mq_attr {
 // <ndbm.h>
 
 export obj datum {
-  mut dptr: any
+  mut dptr: ref any
   mut dsize: usize
 }
 
@@ -826,6 +863,16 @@ export obj ipv6_mreq {
 export type nl_item = int
 
 export obj nl_catd {
+}
+
+// <poll.h>
+
+export type nfds_t = u32
+
+export obj pollfd {
+  mut fd: int
+  mut events: u16
+  mut revents: u16
 }
 
 // <errno.h>
@@ -1189,7 +1236,110 @@ export fn catgets (catalog: nl_catd, set_id: int, msg_id: int, message: char[]) 
 export fn catopen (name: char[], flag: int) nl_catd
 
 // <poll.h>
+export fn poll (mut fds: ref pollfd, nfds: nfds_t, timeout: int) int
+
 // <pthread.h>
+export fn pthread_atfork (prepare: () -> void, parent: () -> void, child: () -> void) int
+export fn pthread_attr_destroy (mut attr: ref pthread_attr_t) int
+export fn pthread_attr_getdetachstate (attr: ref pthread_attr_t, mut detachstate: ref int) int
+export fn pthread_attr_getguardsize (attr: ref pthread_attr_t, mut guardsize: ref usize) int
+export fn pthread_attr_getinheritsched (attr: ref pthread_attr_t, mut inheritsched: ref int) int
+export fn pthread_attr_getschedparam (attr: ref pthread_attr_t, mut param: ref sched_param) int
+export fn pthread_attr_getschedpolicy (attr: ref pthread_attr_t, mut policy: ref int) int
+export fn pthread_attr_getscope (attr: ref pthread_attr_t, mut scope: ref int) int
+export fn pthread_attr_getstack (attr: ref pthread_attr_t, mut stack: ref ref any, mut length: ref usize) int
+export fn pthread_attr_getstacksize (attr: ref pthread_attr_t, mut size: ref usize) int
+export fn pthread_attr_init (mut attr: ref pthread_attr_t) int
+export fn pthread_attr_setdetachstate (mut attr: ref pthread_attr_t, detachstate: int) int
+export fn pthread_attr_setguardsize (mut attr: ref pthread_attr_t, guardsize: usize) int
+export fn pthread_attr_setinheritsched (mut attr: ref pthread_attr_t, inheritsched: int) int
+export fn pthread_attr_setschedparam (mut attr: ref pthread_attr_t, param: ref sched_param) int
+export fn pthread_attr_setschedpolicy (mut attr: ref pthread_attr_t, policy: int) int
+export fn pthread_attr_setscope (mut attr: ref pthread_attr_t, scope: int) int
+export fn pthread_attr_setstack (mut attr: ref pthread_attr_t, stack: ref any, length: usize) int
+export fn pthread_attr_setstacksize (mut attr: ref pthread_attr_t, size: usize) int
+export fn pthread_barrier_destroy (mut barrier: ref pthread_barrier_t) int
+export fn pthread_barrier_init (mut barrier: ref pthread_barrier_t, attr: ref pthread_barrierattr_t, count: u32) int
+export fn pthread_barrier_wait (mut barrier: ref pthread_barrier_t) int
+export fn pthread_barrierattr_destroy (mut attr: ref pthread_barrierattr_t) int
+export fn pthread_barrierattr_getpshared (attr: ref pthread_barrierattr_t, mut pshared: ref int) int
+export fn pthread_barrierattr_init (mut attr: ref pthread_barrierattr_t) int
+export fn pthread_barrierattr_setpshared (mut attr: ref pthread_barrierattr_t, pshared: int) int
+export fn pthread_cancel (thread: pthread_t) int
+export fn pthread_cond_broadcast (mut cond: ref pthread_cond_t) int
+export fn pthread_cond_destroy (mut cond: ref pthread_cond_t) int
+export fn pthread_cond_init (mut cond: ref pthread_cond_t, attr: ref pthread_condattr_t) int
+export fn pthread_cond_signal (mut cond: ref pthread_cond_t) int
+export fn pthread_cond_timedwait (mut cond: ref pthread_cond_t, mut mutex: ref pthread_mutex_t, timeout: ref timespec) int
+export fn pthread_cond_wait (mut cond: ref pthread_cond_t, mut mutex: ref pthread_mutex_t) int
+export fn pthread_condattr_destroy (mut attr: ref pthread_condattr_t) int
+export fn pthread_condattr_getclock (attr: ref pthread_condattr_t, mut clock: ref clockid_t) int
+export fn pthread_condattr_getpshared (atrr: ref pthread_condattr_t, mut pshared: ref int) int
+export fn pthread_condattr_init (mut attr: ref pthread_condattr_t) int
+export fn pthread_condattr_setclock (mut attr: ref pthread_condattr_t, clock: clockid_t) int
+export fn pthread_condattr_setpshared (mut attr: ref pthread_condattr_t, pshared: int) int
+export fn pthread_create (mut thread: ref pthread_t, attr: ref pthread_attr_t, routine: (arg: ref any) -> ref any, arg: ref any) int
+export fn pthread_detach (thread: pthread_t) int
+export fn pthread_equal (a: pthread_t, b: pthread_t) int
+export fn pthread_exit (mut value: ref any) void
+export fn pthread_getconcurrency () int
+export fn pthread_getcpuclockid (thread: pthread_t, mut clock: ref clockid_t) int
+export fn pthread_getschedparam (thread: pthread_t, mut policy: ref int, mut param: ref sched_param) int
+export fn pthread_getspecific (key: pthread_key_t) ref any
+export fn pthread_join (thread: pthread_t, mut value: ref ref any) int
+export fn pthread_key_create (mut key: ref pthread_key_t, destructor: (arg: ref any) -> void) int
+export fn pthread_key_delete (key: pthread_key_t) int
+export fn pthread_mutex_consistent (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_destroy (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_getprioceiling (mutex: ref pthread_mutex_t, mut prioceiling: ref int) int
+export fn pthread_mutex_init (mut mutex: ref pthread_mutex_t, attr: ref pthread_mutexattr_t) int
+export fn pthread_mutex_lock (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_setprioceiling (mut mutex: ref pthread_mutex_t, prioceiling: int, mut old_ceiling: ref int) int
+export fn pthread_mutex_timedlock (mut mutex: ref pthread_mutex_t, timeout: ref timespec) int
+export fn pthread_mutex_trylock (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_unlock (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutexattr_destroy (mut attr: ref pthread_mutexattr_t) int
+export fn pthread_mutexattr_getprioceiling (attr: ref pthread_mutexattr_t, mut prioceiling: ref int) int
+export fn pthread_mutexattr_getprotocol (attr: ref pthread_mutexattr_t, mut protocol: ref int) int
+export fn pthread_mutexattr_getpshared (attr: ref pthread_mutexattr_t, mut pshared: ref int) int
+export fn pthread_mutexattr_getrobust (attr: ref pthread_mutexattr_t, mut robust: ref int) int
+export fn pthread_mutexattr_gettype (attr: ref pthread_mutexattr_t, mut type: ref int) int
+export fn pthread_mutexattr_init (mut attr: ref pthread_mutexattr_t) int
+export fn pthread_mutexattr_setprioceiling (mut attr: ref pthread_mutexattr_t, prioceiling: int) int
+export fn pthread_mutexattr_setprotocol (mut attr: ref pthread_mutexattr_t, protocol: int) int
+export fn pthread_mutexattr_setpshared (mut attr: ref pthread_mutexattr_t, pshared: int) int
+export fn pthread_mutexattr_setrobust (mut attr: ref pthread_mutexattr_t, robust: int) int
+export fn pthread_mutexattr_settype (mut attr: ref pthread_mutexattr_t, type: int) int
+export fn pthread_once (mut once: ref pthread_once_t, routine: () -> void) int
+export fn pthread_rwlock_destroy (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_init (mut rwlock: ref pthread_rwlock_t, attr: ref pthread_rwlockattr_t) int
+export fn pthread_rwlock_rdlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_timedrdlock (mut rwlock: ref pthread_rwlock_t, timeout: ref timespec) int
+export fn pthread_rwlock_timedwrlock (mut rwlock: ref pthread_rwlock_t, timeout: ref timespec) int
+export fn pthread_rwlock_tryrdlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_trywrlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_unlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_wrlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlockattr_destroy (mut attr: ref pthread_rwlockattr_t) int
+export fn pthread_rwlockattr_getpshared (attr: ref pthread_rwlockattr_t, mut pshared: ref int) int
+export fn pthread_rwlockattr_init (mut attr: ref pthread_rwlockattr_t) int
+export fn pthread_rwlockattr_setpshared (mut attr: ref pthread_rwlockattr_t, pshared: int) int
+export fn pthread_self () pthread_t
+export fn pthread_setcancelstate (state: int, mut oldstate: ref int) int
+export fn pthread_setcanceltype (type: int, mut oldtype: ref int) int
+export fn pthread_setconcurrency (level: int) int
+export fn pthread_setschedparam (thread: pthread_t, policy: int, param: ref sched_param) int
+export fn pthread_setschedprio (thread: pthread_t, priority: int) int
+export fn pthread_setspecific (key: pthread_key_t, value: ref any) int
+export fn pthread_spin_destroy (mut lock: ref pthread_spinlock_t) int
+export fn pthread_spin_init (mut lock: ref pthread_spinlock_t, pshared: int) int
+export fn pthread_spin_lock (mut lock: ref pthread_spinlock_t) int
+export fn pthread_spin_trylock (mut lock: ref pthread_spinlock_t) int
+export fn pthread_spin_unlock (mut lock: ref pthread_spinlock_t) int
+export fn pthread_testcancel () void
+export fn pthread_cleanup_pop (execute: int) void
+export fn pthread_cleanup_push (routine: (arg: ref any) -> void, arg: ref any) void
+
 // <pwd.h>
 // <regex.h>
 // <sched.h>
