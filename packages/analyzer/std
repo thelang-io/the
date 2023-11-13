@@ -647,6 +647,137 @@ export const PTHREAD_PROCESS_PRIVATE: int
 export const PTHREAD_SCOPE_PROCESS: int
 export const PTHREAD_SCOPE_SYSTEM: int
 
+// <regex.h>
+export const REG_EXTENDED: int
+export const REG_ICASE: int
+export const REG_NOSUB: int
+export const REG_NEWLINE: int
+export const REG_NOTBOL: int
+export const REG_NOTEOL: int
+export const REG_NOMATCH: int
+export const REG_BADPAT: int
+export const REG_ECOLLATE: int
+export const REG_ECTYPE: int
+export const REG_EESCAPE: int
+export const REG_ESUBREG: int
+export const REG_EBRACK: int
+export const REG_EPAREN: int
+export const REG_EBRACE: int
+export const REG_BADBR: int
+export const REG_ERANGE: int
+export const REG_ESPACE: int
+export const REG_BADRPT: int
+
+// <sched.h>
+export const SCHED_FIFO: int
+export const SCHED_RR: int
+export const SCHED_SPORADIC: int
+export const SCHED_OTHER: int
+
+// <semaphore.h>
+export const SEM_FAILED: ref sem_t
+
+// <signal.h>
+export const SIG_DFL: (int) -> void
+export const SIG_ERR: (int) -> void
+export const SIG_HOLD: (int) -> void
+export const SIG_IGN: (int) -> void
+export const SIGEV_NONE: int
+export const SIGEV_SIGNAL: int
+export const SIGEV_THREAD: int
+export const SIGRTMIN: int
+export const SIGRTMAX: int
+export const SIGABRT: int
+export const SIGALRM: int
+export const SIGBUS: int
+export const SIGCHLD: int
+export const SIGCONT: int
+export const SIGFPE: int
+export const SIGHUP: int
+export const SIGILL: int
+export const SIGINT: int
+export const SIGKILL: int
+export const SIGPIPE: int
+export const SIGQUIT: int
+export const SIGSEGV: int
+export const SIGSTOP: int
+export const SIGTERM: int
+export const SIGTSTP: int
+export const SIGTTIN: int
+export const SIGTTOU: int
+export const SIGUSR1: int
+export const SIGUSR2: int
+export const SIGPOLL: int
+export const SIGPROF: int
+export const SIGSYS: int
+export const SIGTRAP: int
+export const SIGURG: int
+export const SIGVTALRM: int
+export const SIGXCPU: int
+export const SIGXFSZ: int
+export const SIG_BLOCK: int
+export const SIG_UNBLOCK: int
+export const SIG_SETMASK: int
+export const SA_NOCLDSTOP: int
+export const SA_ONSTACK: int
+export const SA_RESETHAND: int
+export const SA_RESTART: int
+export const SA_SIGINFO: int
+export const SA_NOCLDWAIT: int
+export const SA_NODEFER: int
+export const SS_ONSTACK: int
+export const SS_DISABLE: int
+export const MINSIGSTKSZ: int
+export const SIGSTKSZ: int
+export const ILL_ILLOPC: int
+export const ILL_ILLOPN: int
+export const ILL_ILLADR: int
+export const ILL_ILLTRP: int
+export const ILL_PRVOPC: int
+export const ILL_PRVREG: int
+export const ILL_COPROC: int
+export const ILL_BADSTK: int
+export const FPE_INTDIV: int
+export const FPE_INTOVF: int
+export const FPE_FLTDIV: int
+export const FPE_FLTOVF: int
+export const FPE_FLTUND: int
+export const FPE_FLTRES: int
+export const FPE_FLTINV: int
+export const FPE_FLTSUB: int
+export const SEGV_MAPERR: int
+export const SEGV_ACCERR: int
+export const BUS_ADRALN: int
+export const BUS_ADRERR: int
+export const BUS_OBJERR: int
+export const TRAP_BRKPT: int
+export const TRAP_TRACE: int
+export const CLD_EXITED: int
+export const CLD_KILLED: int
+export const CLD_DUMPED: int
+export const CLD_TRAPPED: int
+export const CLD_STOPPED: int
+export const CLD_CONTINUED: int
+export const POLL_IN: int
+export const POLL_OUT: int
+export const POLL_MSG: int
+export const POLL_ERR: int
+export const POLL_PRI: int
+export const POLL_HUP: int
+export const SI_USER: int
+export const SI_QUEUE: int
+export const SI_TIMER: int
+export const SI_ASYNCIO: int
+export const SI_MESGQ: int
+
+// <spawn.h>
+export const POSIX_SPAWN_RESETIDS: int
+export const POSIX_SPAWN_SETPGROUP: int
+export const POSIX_SPAWN_SETSCHEDPARAM: int
+export const POSIX_SPAWN_SETSCHEDULER: int
+export const POSIX_SPAWN_SETSIGDEF: int
+export const POSIX_SPAWN_SETSIGMASK: int
+
 // <aio.h>
 
 export obj aiocb {
@@ -875,6 +1006,120 @@ export obj pollfd {
   mut revents: u16
 }
 
+// <pwd.h>
+
+export obj passwd {
+  mut pw_name: char[]
+  mut pw_uid: uid_t
+  mut pw_gid: gid_t
+  mut pw_dir: char[]
+  mut pw_shell: char[]
+}
+
+// <regex.h>
+
+export type regoff_t = i64
+
+export obj regex_t {
+  mut re_nsub: usize
+}
+
+export obj regmatch_t {
+  mut rm_so: regoff_t
+  mut rm_eo: regoff_t
+}
+
+// <sched.h>
+
+export obj sched_param {
+  mut sched_priority: int
+}
+
+// <search.h>
+
+export obj ENTRY {
+  mut key: ref char
+  mut data: ref any
+}
+
+export enum ACTION {
+  FIND,
+  ENTER,
+}
+
+export enum VISIT {
+  preorder,
+  postorder,
+  endorder,
+  leaf,
+}
+
+// <semaphore.h>
+
+export type sem_t = int
+
+// <setjmp.h>
+
+export obj jmp_buf {
+}
+
+export obj sigjmp_buf {
+}
+
+// <signal.h>
+
+export type sig_atomic_t = int
+export type sigset_t = u32
+export type sigval = int | ref any
+
+export obj sigevent {
+  mut sigev_notify: int
+  mut sigev_signo: int
+  mut sigev_value: sigval
+  mut sigev_notify_function: (sigval) -> void
+  mut sigev_notify_attributes: ref pthread_attr_t
+}
+
+export obj sigaction {
+  mut sa_handler: (int) -> void
+  mut sa_mask: sigset_t
+  mut sa_flags: int
+  mut sa_sigaction: (signum: int, mut info: ref siginfo_t, mut ctx: ref any) -> void
+}
+
+export obj mcontext_t {
+}
+
+export obj ucontext_t {
+  mut uc_link: ref ucontext_t
+  mut uc_sigmask: sigset_t
+  mut uc_stack: stack_t
+  mut uc_mcontext: ref mcontext_t
+}
+
+export obj stack_t {
+  mut ss_sp: ref any
+  mut ss_size: usize
+  mut ss_flags: int
+}
+
+export obj siginfo_t {
+  mut si_signo: int
+  mut si_code: int
+  mut si_errno: int
+  mut si_pid: pid_t
+  mut si_uid: uid_t
+  mut si_addr: ref any
+  mut si_status: int
+  mut si_band: i64
+  mut si_value: sigval
+}
+
+// <spawn.h>
+
+export type posix_spawnattr_t = ref any
+export type posix_spawn_file_actions_t = ref any
+
 // <errno.h>
 export mut errno: int
 
@@ -946,7 +1191,7 @@ export fn opendir (dirname: char[]) ref DIR
 export fn readdir (mut dir: ref DIR) ref dirent
 export fn readdir_r (mut dir: ref DIR, mut entry: ref dirent, mut result: ref ref dirent) int
 export fn rewinddir (mut dir: ref DIR) void
-export fn scandir (dirname: char[], mut list: ref (ref dirent)[], filter: (it: ref dirent) -> int, comparator: (a: ref ref dirent, b: ref ref dirent) -> int) int
+export fn scandir (dirname: char[], mut list: ref (ref dirent)[], filter: (ref dirent) -> int, comparator: (ref ref dirent, ref ref dirent) -> int) int
 export fn seekdir (mut dir: ref DIR, loc: i64) void
 export fn telldir (mut dir: ref DIR) i64
 
@@ -982,11 +1227,11 @@ export fn fmtmsg (classification: i64, label: char[], severity: int, text: char[
 export fn fnmatch (pattern: char[], string: char[], flags: int) int
 
 // <ftw.h>
-export fn ftw (dirpath: char[], fn: (filepath: char[], sb: ref stat, flag: int) -> int, limit: int) int
-export fn nftw (dirpath: char[], fn: (filepath: char[], sb: ref stat, flag: int, mut ftw: ref FTW) -> int, limit: int, flags: int) int
+export fn ftw (dirpath: char[], fn: (char[], ref stat, int) -> int, limit: int) int
+export fn nftw (dirpath: char[], fn: (char[], ref stat, int, mut ftw: ref FTW) -> int, limit: int, flags: int) int
 
 // <glob.h>
-export fn glob (pattern: char[], flags: int, err: (path: char[], number: int) -> int, mut glob: ref glob_t) int
+export fn glob (pattern: char[], flags: int, err: (char[], int) -> int, mut glob: ref glob_t) int
 export fn globfree (mut glob: ref glob_t) void
 
 // <grp.h>
@@ -1278,7 +1523,7 @@ export fn pthread_condattr_getpshared (atrr: ref pthread_condattr_t, mut pshared
 export fn pthread_condattr_init (mut attr: ref pthread_condattr_t) int
 export fn pthread_condattr_setclock (mut attr: ref pthread_condattr_t, clock: clockid_t) int
 export fn pthread_condattr_setpshared (mut attr: ref pthread_condattr_t, pshared: int) int
-export fn pthread_create (mut thread: ref pthread_t, attr: ref pthread_attr_t, routine: (arg: ref any) -> ref any, arg: ref any) int
+export fn pthread_create (mut thread: ref pthread_t, attr: ref pthread_attr_t, routine: (ref any) -> ref any, arg: ref any) int
 export fn pthread_detach (thread: pthread_t) int
 export fn pthread_equal (a: pthread_t, b: pthread_t) int
 export fn pthread_exit (mut value: ref any) void
@@ -1287,7 +1532,7 @@ export fn pthread_getcpuclockid (thread: pthread_t, mut clock: ref clockid_t) in
 export fn pthread_getschedparam (thread: pthread_t, mut policy: ref int, mut param: ref sched_param) int
 export fn pthread_getspecific (key: pthread_key_t) ref any
 export fn pthread_join (thread: pthread_t, mut value: ref ref any) int
-export fn pthread_key_create (mut key: ref pthread_key_t, destructor: (arg: ref any) -> void) int
+export fn pthread_key_create (mut key: ref pthread_key_t, destructor: (ref any) -> void) int
 export fn pthread_key_delete (key: pthread_key_t) int
 export fn pthread_mutex_consistent (mut mutex: ref pthread_mutex_t) int
 export fn pthread_mutex_destroy (mut mutex: ref pthread_mutex_t) int
@@ -1338,16 +1583,117 @@ export fn pthread_spin_trylock (mut lock: ref pthread_spinlock_t) int
 export fn pthread_spin_unlock (mut lock: ref pthread_spinlock_t) int
 export fn pthread_testcancel () void
 export fn pthread_cleanup_pop (execute: int) void
-export fn pthread_cleanup_push (routine: (arg: ref any) -> void, arg: ref any) void
+export fn pthread_cleanup_push (routine: (ref any) -> void, arg: ref any) void
 
 // <pwd.h>
+export fn endpwent () void
+export fn getpwent () ref passwd
+export fn getpwnam (name: char[]) ref passwd
+export fn getpwnam_r (name: char[], mut pwd: ref passwd, mut buffer: ref char, length: usize, mut result: ref ref passwd) int
+export fn getpwuid (uid: uid_t) ref passwd
+export fn getpwuid_r (uid: uid_t, mut pwd: ref passwd, mut buffer: ref char, length: usize, mut result: ref ref passwd) int
+export fn setpwent () void
+
 // <regex.h>
+export fn regcomp (mut preg: ref regex_t, pattern: char[], flags: int) int
+export fn regerror (code: int, preg: ref regex_t, mut buffer: ref char, length: usize) usize
+export fn regexec (preg: ref regex_t, string: char[], matches: usize, mut match: ref regmatch_t, flags: int) int
+export fn regfree (mut preg: ref regex_t) void
+
 // <sched.h>
+export fn sched_get_priority_max (policy: int) int
+export fn sched_get_priority_min (policy: int) int
+export fn sched_getparam (pid: pid_t, mut param: ref sched_param) int
+export fn sched_getscheduler (pid: pid_t) int
+export fn sched_rr_get_interval (pid: pid_t, mut interval: ref timespec) int
+export fn sched_setparam (pid: pid_t, param: ref sched_param) int
+export fn sched_setscheduler (pid: pid_t, policy: int, param: ref sched_param) int
+export fn sched_yield () int
+
 // <search.h>
+export fn hcreate (nel: usize) int
+export fn hdestroy () void
+export fn hsearch (item: ENTRY, action: ACTION) ref ENTRY
+export fn insque (mut element: ref any, mut pred: ref any) void
+export fn lfind (key: ref any, base: ref any, mut nel: ref usize, width: usize, comparator: (ref any, ref any) -> int) ref any
+export fn lsearch (key: ref any, mut base: ref any, mut nel: ref usize, width: usize, comparator: (ref any, ref any) -> int) ref any
+export fn remque (mut element: ref any) void
+export fn tdelete (key: ref any, mut root: ref ref any, comparator: (ref any, ref any) -> int) ref any
+export fn tfind (key: ref any, root: ref ref any, comparator: (ref any, ref any) -> int) ref any
+export fn tsearch (key: ref any, mut root: ref ref any, comparator: (ref any, ref any) -> int) ref any
+export fn twalk (root: ref any, action: (ref any, VISIT, int) -> void) void
+
 // <semaphore.h>
+export fn sem_close (sem: ref sem_t) int
+export fn sem_destroy (sem: ref sem_t) int
+export fn sem_getvalue (sem: ref sem_t, mut val: ref int) int
+export fn sem_init (sem: ref sem_t, pshared: int, value: u32) int
+export fn sem_open (name: char[], flag: int, mode: mode_t? = nil, value: u32? = nil) ref sem_t
+export fn sem_post (sem: ref sem_t) int
+export fn sem_timedwait (sem: ref sem_t, timeout: ref timespec) int
+export fn sem_trywait (sem: ref sem_t) int
+export fn sem_unlink (name: char[]) int
+export fn sem_wait (sem: ref sem_t) int
+
 // <setjmp.h>
+export fn longjmp (env: jmp_buf, val: int) void
+export fn siglongjmp (env: sigjmp_buf, val: int) void
+export fn setjmp (env: jmp_buf) int
+export fn sigsetjmp (env: sigjmp_buf, mask: int) int
+
 // <signal.h>
+export fn kill (pid: pid_t, sig: int) int
+export fn killpg (pgrp: pid_t, sig: int) int
+export fn psiginfo (info: ref siginfo_t, message: char[]) void
+export fn psignal (signum: int, message: char[]) void
+export fn pthread_kill (thread: pthread_t, sig: int) int
+export fn pthread_sigmask (how: int, set: ref sigset_t, mut oldset: ref sigset_t) int
+export fn raise (sig: int) int
+export fn sigaction (sig: int, action: ref sigaction, mut oldaction: ref sigaction) int
+export fn sigaddset (mut set: ref sigset_t, signum: int) int
+export fn sigaltstack (stack: ref stack_t, mut oldstack: ref stack_t) int
+export fn sigdelset (mut set: ref sigset_t, signum: int) int
+export fn sigemptyset (mut set: ref sigset_t) int
+export fn sigfillset (mut set: ref sigset_t) int
+export fn sighold (sig: int) int
+export fn sigignore (sig: int) int
+export fn siginterrupt (sig: int, flag: int) int
+export fn sigismember (set: ref sigset_t, signum: int) int
+export fn sigpause (int) int
+export fn sigpending (mut set: ref sigset_t) int
+export fn sigprocmask (how: int, set: ref sigset_t, mut oldset: ref sigset_t) int
+export fn sigqueue (pid: pid_t, signum: int, value: sigval) int
+export fn sigrelse (sig: int) int
+export fn sigsuspend (sigmask: ref sigset_t) int
+export fn sigtimedwait (set: ref sigset_t, mut info: ref siginfo_t, timeout: ref timespec) int
+export fn sigwait (set: ref sigset_t, mut sig: ref int) int
+export fn sigwaitinfo (set: ref sigset_t, mut info: ref siginfo_t) int
+export fn signal (sig: int, func: (int) -> void) void
+export fn sigset (sig: int, disp: (int) -> void) void
+
 // <spawn.h>
+export fn posix_spawn (mut pid: ref pid_t, path: char[], file_actions: ref posix_spawn_file_actions_t, attr: ref posix_spawnattr_t, args: ref char[], env: ref char[]) int
+export fn posix_spawn_file_actions_addclose (mut file_actions: ref posix_spawn_file_actions_t, fd: int) int
+export fn posix_spawn_file_actions_adddup2 (mut file_actions: ref posix_spawn_file_actions_t, fd: int, newfd: int) int
+export fn posix_spawn_file_actions_addopen (mut file_actions: ref posix_spawn_file_actions_t, fd: int, path: char[], flag: int, mode: mode_t) int
+export fn posix_spawn_file_actions_destroy (mut file_actions: ref posix_spawn_file_actions_t) int
+export fn posix_spawn_file_actions_init (mut file_actions: ref posix_spawn_file_actions_t) int
+export fn posix_spawnattr_destroy (mut attr: ref posix_spawnattr_t) int
+export fn posix_spawnattr_getflags (attr: ref posix_spawnattr_t, mut flags: ref u16) int
+export fn posix_spawnattr_getpgroup (attr: ref posix_spawnattr_t, mut pgroup: ref pid_t) int
+export fn posix_spawnattr_getschedparam (attr: ref posix_spawnattr_t, mut schedparam: ref sched_param) int
+export fn posix_spawnattr_getschedpolicy (attr: ref posix_spawnattr_t, mut schedpolicy: ref int) int
+export fn posix_spawnattr_getsigdefault (attr: ref posix_spawnattr_t, mut sigdefault: ref sigset_t) int
+export fn posix_spawnattr_getsigmask (attr: ref posix_spawnattr_t, mut sigmask: ref sigset_t) int
+export fn posix_spawnattr_init (mut attr: ref posix_spawnattr_t) int
+export fn posix_spawnattr_setflags (mut attr: ref posix_spawnattr_t, flags: u16) int
+export fn posix_spawnattr_setpgroup (mut attr: ref posix_spawnattr_t, pgroup: pid_t) int
+export fn posix_spawnattr_setschedparam (mut attr: ref posix_spawnattr_t, schedparam: ref sched_param) int
+export fn posix_spawnattr_setschedpolicy (mut attr: ref posix_spawnattr_t, schedpolicy: int) int
+export fn posix_spawnattr_setsigdefault (mut attr: ref posix_spawnattr_t, sigdefault: ref sigset_t) int
+export fn posix_spawnattr_setsigmask (mut attr: ref posix_spawnattr_t, sigmask: ref sigset_t) int
+export fn posix_spawnp (mut pid: ref pid_t, path: char[], file_actions: ref posix_spawn_file_actions_t, attr: ref posix_spawnattr_t, args: ref char[], env: ref char[]) int
+
 // <stdarg.h>
 // <stdbool.h>
 // <stddef.h>
