@@ -106,8 +106,6 @@ export const ENOMEM: int
 export const ENOMSG: int
 export const ENOPROTOOPT: int
 export const ENOSPC: int
-export const ENOSR: int
-export const ENOSTR: int
 export const ENOSYS: int
 export const ENOTCONN: int
 export const ENOTDIR: int
@@ -130,7 +128,6 @@ export const EROFS: int
 export const ESPIPE: int
 export const ESRCH: int
 export const ESTALE: int
-export const ETIME: int
 export const ETIMEDOUT: int
 export const ETXTBSY: int
 export const EWOULDBLOCK: int
@@ -246,19 +243,6 @@ export const FNM_NOMATCH: int
 export const FNM_PATHNAME: int
 export const FNM_PERIOD: int
 export const FNM_NOESCAPE: int
-
-// <ftw.h>
-export const FTW_F: int
-export const FTW_D: int
-export const FTW_DNR: int
-export const FTW_DP: int
-export const FTW_NS: int
-export const FTW_SL: int
-export const FTW_SLN: int
-export const FTW_PHYS: int
-export const FTW_MOUNT: int
-export const FTW_DEPTH: int
-export const FTW_CHDIR: int
 
 // <glob.h>
 export const GLOB_APPEND: int
@@ -532,7 +516,6 @@ export const M_2_PI: float
 export const M_2_SQRTPI: float
 export const M_SQRT2: float
 export const M_SQRT1_2: float
-export const MAXFLOAT: f32
 export const HUGE_VAL: float
 export const HUGE_VALF: f32
 export const INFINITY: f32
@@ -771,12 +754,83 @@ export const SI_ASYNCIO: int
 export const SI_MESGQ: int
 
 // <spawn.h>
-export const POSIX_SPAWN_RESETIDS: int
-export const POSIX_SPAWN_SETPGROUP: int
-export const POSIX_SPAWN_SETSCHEDPARAM: int
-export const POSIX_SPAWN_SETSCHEDULER: int
-export const POSIX_SPAWN_SETSIGDEF: int
-export const POSIX_SPAWN_SETSIGMASK: int
+export const SPAWN_RESETIDS: int
+export const SPAWN_SETPGROUP: int
+export const SPAWN_SETSCHEDPARAM: int
+export const SPAWN_SETSCHEDULER: int
+export const SPAWN_SETSIGDEF: int
+export const SPAWN_SETSIGMASK: int
+
+// <stdint.h>
+export const INT8_MIN: i8
+export const INT16_MIN: i16
+export const INT32_MIN: i32
+export const INT64_MIN: i64
+export const INT8_MAX: i8
+export const INT16_MAX: i16
+export const INT32_MAX: i32
+export const INT64_MAX: i64
+export const UINT8_MAX: u8
+export const UINT16_MAX: u16
+export const UINT32_MAX: u32
+export const UINT64_MAX: u64
+export const INT_LEAST8_MIN: i8
+export const INT_LEAST16_MIN: i16
+export const INT_LEAST32_MIN: i32
+export const INT_LEAST64_MIN: i64
+export const INT_LEAST8_MAX: i8
+export const INT_LEAST16_MAX: i16
+export const INT_LEAST32_MAX: i32
+export const INT_LEAST64_MAX: i64
+export const UINT_LEAST8_MAX: u8
+export const UINT_LEAST16_MAX: u16
+export const UINT_LEAST32_MAX: u32
+export const UINT_LEAST64_MAX: u64
+export const INT_FAST8_MIN: i8
+export const INT_FAST16_MIN: i16
+export const INT_FAST32_MIN: i32
+export const INT_FAST64_MIN: i64
+export const INT_FAST8_MAX: i8
+export const INT_FAST16_MAX: i16
+export const INT_FAST32_MAX: i32
+export const INT_FAST64_MAX: i64
+export const UINT_FAST8_MAX: u8
+export const UINT_FAST16_MAX: u16
+export const UINT_FAST32_MAX: u32
+export const UINT_FAST64_MAX: u64
+export const INTPTR_MIN: i64
+export const INTPTR_MAX: i64
+export const UINTPTR_MAX: u64
+export const INTMAX_MIN: i64
+export const INTMAX_MAX: i64
+export const UINTMAX_MAX: u64
+export const PTRDIFF_MIN: i64
+export const PTRDIFF_MAX: i64
+export const SIG_ATOMIC_MIN: i32
+export const SIG_ATOMIC_MAX: i32
+export const SIZE_MAX: u64
+export const WCHAR_MIN: i32
+export const WCHAR_MAX: i32
+export const WINT_MIN: i32
+export const WINT_MAX: i32
+
+// <stdio.h>
+export const BUFSIZ: int
+export const SEEK_CUR: int
+export const SEEK_END: int
+export const SEEK_SET: int
+export const FILENAME_MAX: int
+export const FOPEN_MAX: int
+export const TMP_MAX: int
+export const EOF: int
+
+// <stdlib.h>
+export const EXIT_FAILURE: int
+export const EXIT_SUCCESS: int
+export const RAND_MAX: int
+export const MB_CUR_MAX: int
+export const WNOHANG: int
+export const WUNTRACED: int
 
 // <aio.h>
 
@@ -815,13 +869,6 @@ export obj flock {
 export type fexcept_t = u16
 
 export obj fenv_t {
-}
-
-// <ftw.h>
-
-export obj FTW {
-  mut base: int
-  mut level: int
 }
 
 // <glob.h>
@@ -1117,8 +1164,36 @@ export obj siginfo_t {
 
 // <spawn.h>
 
-export type posix_spawnattr_t = ref any
-export type posix_spawn_file_actions_t = ref any
+export type spawnattr_t = ref any
+export type spawn_file_actions_t = ref any
+
+// <stddef.h>
+
+export type ptrdiff_t = i64
+
+// <stdio.h>
+
+export type fpos_t = i64
+
+export obj FILE {
+}
+
+// <stdlib.h>
+
+export obj div_t {
+  mut quot: int
+  mut rem: int
+}
+
+export obj ldiv_t {
+  mut quot: i64
+  mut rem: i64
+}
+
+export obj lldiv_t {
+  mut quot: int
+  mut rem: int
+}
 
 // <errno.h>
 export mut errno: int
@@ -1126,6 +1201,11 @@ export mut errno: int
 // <netinet/in.h>
 export const in6addr_any: in6_addr
 export const in6addr_loopback: in6_addr
+
+// <stdio.h>
+export const stderr: ref FILE
+export const stdin: ref FILE
+export const stdout: ref FILE
 
 // <aio.h>
 export fn aio_cancel (fd: int, mut cb: ref aiocb) int
@@ -1226,10 +1306,6 @@ export fn fmtmsg (classification: i64, label: char[], severity: int, text: char[
 // <fnmatch.h>
 export fn fnmatch (pattern: char[], string: char[], flags: int) int
 
-// <ftw.h>
-export fn ftw (dirpath: char[], fn: (char[], ref stat, int) -> int, limit: int) int
-export fn nftw (dirpath: char[], fn: (char[], ref stat, int, mut ftw: ref FTW) -> int, limit: int, flags: int) int
-
 // <glob.h>
 export fn glob (pattern: char[], flags: int, err: (char[], int) -> int, mut glob: ref glob_t) int
 export fn globfree (mut glob: ref glob_t) void
@@ -1244,8 +1320,8 @@ export fn getgrnam_r (name: char[], mut grp: ref group, mut buffer: ref char, si
 export fn setgrent () void
 
 // <iconv.h>
-export fn iconv (cd: iconv_t, mut inbuf: ref char[], mut inBytesLeft: ref usize, mut outbuf: ref char[], mut outBytesLeft: ref usize) usize
-export fn iconv_close (cd: iconv_t) int
+export fn iconv (mut cd: iconv_t, mut inbuf: ref char[], mut inBytesLeft: ref usize, mut outbuf: ref char[], mut outBytesLeft: ref usize) usize
+export fn iconv_close (mut cd: iconv_t) int
 export fn iconv_open (toCode: char[], fromCode: char[]) iconv_t
 
 // <inttypes.h>
@@ -1253,8 +1329,8 @@ export fn imaxabs (j: intmax_t) intmax_t
 export fn imaxdiv (numer: intmax_t, denom: intmax_t) imaxdiv_t
 export fn strtoimax (string: char[], mut end: ref char[], base: int) intmax_t
 export fn strtoumax (string: char[], mut end: ref char[], base: int) uintmax_t
-export fn wcstoimax (string: wchar_t[], mut end: ref wchar_t[], base: int) intmax_t
-export fn wcstoumax (string: wchar_t[], mut end: ref wchar_t[], base: int) uintmax_t
+export fn wcstoimax (string: rune[], mut end: ref rune[], base: int) intmax_t
+export fn wcstoumax (string: rune[], mut end: ref rune[], base: int) uintmax_t
 
 // <langinfo.h>
 export fn nl_langinfo (item: nl_item) char[]
@@ -1672,37 +1748,202 @@ export fn signal (sig: int, func: (int) -> void) void
 export fn sigset (sig: int, disp: (int) -> void) void
 
 // <spawn.h>
-export fn posix_spawn (mut pid: ref pid_t, path: char[], file_actions: ref posix_spawn_file_actions_t, attr: ref posix_spawnattr_t, args: ref char[], env: ref char[]) int
-export fn posix_spawn_file_actions_addclose (mut file_actions: ref posix_spawn_file_actions_t, fd: int) int
-export fn posix_spawn_file_actions_adddup2 (mut file_actions: ref posix_spawn_file_actions_t, fd: int, newfd: int) int
-export fn posix_spawn_file_actions_addopen (mut file_actions: ref posix_spawn_file_actions_t, fd: int, path: char[], flag: int, mode: mode_t) int
-export fn posix_spawn_file_actions_destroy (mut file_actions: ref posix_spawn_file_actions_t) int
-export fn posix_spawn_file_actions_init (mut file_actions: ref posix_spawn_file_actions_t) int
-export fn posix_spawnattr_destroy (mut attr: ref posix_spawnattr_t) int
-export fn posix_spawnattr_getflags (attr: ref posix_spawnattr_t, mut flags: ref u16) int
-export fn posix_spawnattr_getpgroup (attr: ref posix_spawnattr_t, mut pgroup: ref pid_t) int
-export fn posix_spawnattr_getschedparam (attr: ref posix_spawnattr_t, mut schedparam: ref sched_param) int
-export fn posix_spawnattr_getschedpolicy (attr: ref posix_spawnattr_t, mut schedpolicy: ref int) int
-export fn posix_spawnattr_getsigdefault (attr: ref posix_spawnattr_t, mut sigdefault: ref sigset_t) int
-export fn posix_spawnattr_getsigmask (attr: ref posix_spawnattr_t, mut sigmask: ref sigset_t) int
-export fn posix_spawnattr_init (mut attr: ref posix_spawnattr_t) int
-export fn posix_spawnattr_setflags (mut attr: ref posix_spawnattr_t, flags: u16) int
-export fn posix_spawnattr_setpgroup (mut attr: ref posix_spawnattr_t, pgroup: pid_t) int
-export fn posix_spawnattr_setschedparam (mut attr: ref posix_spawnattr_t, schedparam: ref sched_param) int
-export fn posix_spawnattr_setschedpolicy (mut attr: ref posix_spawnattr_t, schedpolicy: int) int
-export fn posix_spawnattr_setsigdefault (mut attr: ref posix_spawnattr_t, sigdefault: ref sigset_t) int
-export fn posix_spawnattr_setsigmask (mut attr: ref posix_spawnattr_t, sigmask: ref sigset_t) int
-export fn posix_spawnp (mut pid: ref pid_t, path: char[], file_actions: ref posix_spawn_file_actions_t, attr: ref posix_spawnattr_t, args: ref char[], env: ref char[]) int
+export fn spawn (mut pid: ref pid_t, path: char[], file_actions: ref spawn_file_actions_t, attr: ref spawnattr_t, args: ref char[], env: ref char[]) int
+export fn spawn_file_actions_addclose (mut file_actions: ref spawn_file_actions_t, fd: int) int
+export fn spawn_file_actions_adddup2 (mut file_actions: ref spawn_file_actions_t, fd: int, newfd: int) int
+export fn spawn_file_actions_addopen (mut file_actions: ref spawn_file_actions_t, fd: int, path: char[], flag: int, mode: mode_t) int
+export fn spawn_file_actions_destroy (mut file_actions: ref spawn_file_actions_t) int
+export fn spawn_file_actions_init (mut file_actions: ref spawn_file_actions_t) int
+export fn spawnattr_destroy (mut attr: ref spawnattr_t) int
+export fn spawnattr_getflags (attr: ref spawnattr_t, mut flags: ref u16) int
+export fn spawnattr_getpgroup (attr: ref spawnattr_t, mut pgroup: ref pid_t) int
+export fn spawnattr_getschedparam (attr: ref spawnattr_t, mut schedparam: ref sched_param) int
+export fn spawnattr_getschedpolicy (attr: ref spawnattr_t, mut schedpolicy: ref int) int
+export fn spawnattr_getsigdefault (attr: ref spawnattr_t, mut sigdefault: ref sigset_t) int
+export fn spawnattr_getsigmask (attr: ref spawnattr_t, mut sigmask: ref sigset_t) int
+export fn spawnattr_init (mut attr: ref spawnattr_t) int
+export fn spawnattr_setflags (mut attr: ref spawnattr_t, flags: u16) int
+export fn spawnattr_setpgroup (mut attr: ref spawnattr_t, pgroup: pid_t) int
+export fn spawnattr_setschedparam (mut attr: ref spawnattr_t, schedparam: ref sched_param) int
+export fn spawnattr_setschedpolicy (mut attr: ref spawnattr_t, schedpolicy: int) int
+export fn spawnattr_setsigdefault (mut attr: ref spawnattr_t, sigdefault: ref sigset_t) int
+export fn spawnattr_setsigmask (mut attr: ref spawnattr_t, sigmask: ref sigset_t) int
+export fn spawnp (mut pid: ref pid_t, path: char[], file_actions: ref spawn_file_actions_t, attr: ref spawnattr_t, args: ref char[], env: ref char[]) int
 
-// <stdarg.h>
-// <stdbool.h>
-// <stddef.h>
-// <stdint.h>
 // <stdio.h>
+export fn clearerr (mut stream: ref FILE) void
+export fn ctermid (mut s: ref char) char[]
+export fn dprintf (fd: int, format: char[], values: any...) int
+export fn fclose (mut stream: ref FILE) int
+export fn fdopen (fd: int, mode: char[]) ref FILE
+export fn feof (mut stream: ref FILE) int
+export fn ferror (mut stream: ref FILE) int
+export fn fflush (mut stream: ref FILE) int
+export fn fgetc (mut stream: ref FILE) int
+export fn fgetpos (mut stream: ref FILE, mut pos: ref fpos_t) int
+export fn fgets (mut buffer: ref char, length: int, mut stream: ref FILE) char[]
+export fn fileno (mut stream: ref FILE) int
+export fn flockfile (mut file: ref FILE) void
+export fn fmemopen (mut buf: ref any, length: usize, mode: char[]) ref FILE
+export fn fopen (pathname: char[], mode: char[]) ref FILE
+export fn fprintf (mut stream: ref FILE, format: char[], values: any...) int
+export fn fputc (c: int, mut stream: ref FILE) int
+export fn fputs (s: char[], mut stream: ref FILE) int
+export fn fread (mut buf: ref any, length: usize, nitems: usize, mut stream: ref FILE) usize
+export fn freopen (pathname: char[], mode: char[], mut stream: ref FILE) ref FILE
+export fn fscanf (mut stream: ref FILE, format: char[], values: any...) int
+export fn fseek (mut stream: ref FILE, offset: i64, whence: int) int
+export fn fseeko (mut stream: ref FILE, offset: off_t, whence: int) int
+export fn fsetpos (mut stream: ref FILE, pos: ref fpos_t) int
+export fn ftell (mut stream: ref FILE) i64
+export fn ftello (mut stream: ref FILE) off_t
+export fn ftrylockfile (mut stream: ref FILE) int
+export fn funlockfile (mut stream: ref FILE) void
+export fn fwrite (buf: ref any, length: usize, nitems: usize, mut stream: ref FILE) usize
+export fn getc (mut stream: ref FILE) int
+export fn getchar () int
+export fn getc_unlocked (mut stream: ref FILE) int
+export fn getchar_unlocked () int
+export fn getdelim (mut buf: ref char[], mut length: ref usize, delimiter: int, mut stream: ref FILE) isize
+export fn getline (mut buf: ref char[], mut length: ref usize, mut stream: ref FILE) isize
+export fn gets (mut s: ref char) char[]
+export fn open_memstream (mut buf: ref char[], mut length: ref usize) ref FILE
+export fn pclose (mut stream: ref FILE) int
+export fn perror (s: char[]) void
+export fn popen (command: char[], mode: char[]) ref FILE
+export fn printf (format: char[], values: any...) int
+export fn putc (c: int, mut stream: ref FILE) int
+export fn putchar (c: int) int
+export fn putc_unlocked (c: int, mut stream: ref FILE) int
+export fn putchar_unlocked (c: int) int
+export fn puts (s: char[]) int
+export fn remove (path: char[]) int
+export fn rename (old: char[], new: char[]) int
+export fn renameat (oldfd: int, oldpath: char[], newfd: int, newpath: char[]) int
+export fn rewind (mut stream: ref FILE) void
+export fn scanf (format: char[], values: any...) int
+export fn setbuf (mut stream: ref FILE, mut buf: ref char) void
+export fn setvbuf (mut stream: ref FILE, mut buf: ref char, type: int, length: usize) int
+export fn snprintf (mut buf: ref char, length: usize, format: char[], values: any...) int
+export fn sprintf (mut buf: ref char, format: char[], values: any...) int
+export fn sscanf (s: char[], format: char[], values: any...) int
+export fn tempnam (dir: char[], prefix: char[]) char[]
+export fn tmpfile () ref FILE
+export fn tmpnam (mut s: ref char) char[]
+export fn ungetc (c: int, mut stream: ref FILE) int
+
 // <stdlib.h>
+export fn WEXITSTATUS (x: int) int
+export fn WIFEXITED (x: int) bool
+export fn WIFSIGNALED (x: int) bool
+export fn WIFSTOPPED (x: int) bool
+export fn WSTOPSIG (x: int) int
+export fn WTERMSIG (x: int) int
+export fn a64l (s: char[]) i64
+export fn abort () void
+export fn abs (i: int) int
+export fn atexit (func: () -> void) int
+export fn atof (s: char[]) float
+export fn atoi (s: char[]) int
+export fn atol (s: char[]) i64
+export fn atoll (s: char[]) i64
+export fn bsearch (key: ref any, ptr: ref any, count: usize, size: usize, comparator: (ref any, ref any) -> int) ref any
+export fn calloc (count: usize, size: usize) ref any
+export fn div (numer: int, denom: int) div_t
+export fn drand48 () float
+export fn erand48 (xsubi: u16[]) float
+export fn exit (status: int) void
+export fn free (ptr: ref any) void
+export fn getenv (name: char[]) char[]
+export fn getsubopt (mut option: ref char[], keys: ref char[], mut value: ref char[]) int
+export fn grantpt (fd: int) int
+export fn initstate (seed: u32, mut state: ref char, size: usize) char[]
+export fn jrand48 (xsubi: u16[]) i64
+export fn l64a (value: i64) char[]
+export fn labs (i: i64) i64
+export fn lcong48 (param: u16[]) void
+export fn ldiv (numer: i64, denom: i64) ldiv_t
+export fn llabs (i: i64) i64
+export fn lldiv (numer: i64, denom: i64) lldiv_t
+export fn lrand48 () i64
+export fn malloc (size: usize) ref any
+export fn mblen (s: char[], n: usize) int
+export fn mbstowcs (mut pwcs: ref rune, s: char[], n: usize) usize
+export fn mbtowc (mut pwc: ref rune, s: char[], n: usize) int
+export fn mkdtemp (mut template: ref char) char[]
+export fn mkstemp (mut template: ref char) int
+export fn mrand48 () i64
+export fn nrand48 (xsubi: u16[]) i64
+export fn posix_memalign (memptr: ref ref any, alignment: usize, size: usize) int
+export fn posix_openpt (flag: int) int
+export fn ptsname (fd: int) char[]
+export fn putenv (mut string: ref char) int
+export fn qsort (ptr: ref any, count: usize, size: usize, comparator: (ref any, ref any) -> int) void
+export fn rand () int
+export fn random () i64
+export fn realloc (ptr: ref any, size: usize) ref any
+export fn realpath (path: char[], mut resolved_path: ref char) char[]
+export fn seed48 (seed16v: u16 [3]) ref u16
+export fn setenv (name: char[], value: char[], overwrite: int) int
+export fn setkey (key: char[]) void
+export fn setstate (mut state: ref char) char[]
+export fn srand (seed: u32) void
+export fn srand48 (seedval: i64) void
+export fn srandom (seed: u32) void
+export fn strtod (n: char[], mut end: ref char[]) float
+export fn strtof (n: char[], mut end: ref char[]) f32
+export fn strtol (n: char[], mut end: ref char[], base: int) i64
+export fn strtoll (n: char[], mut end: ref char[], base: int) i64
+export fn strtoul (n: char[], mut end: ref char[], base: int) u64
+export fn strtoull (n: char[], mut end: ref char[], base: int) u64
+export fn system (command: char[]) int
+export fn unlockpt (fd: int) int
+export fn unsetenv (name: char[]) int
+export fn wcstombs (mut dest: ref char, src: rune[], max: usize) usize
+export fn wctomb (mut s: ref char, wc: rune) int
+
 // <string.h>
+export fn memccpy (mut s1: ref any, s2: ref any, c: int, n: usize) ref any
+export fn memchr (s: ref any, c: int, n: usize) ref any
+export fn memcmp (s1: ref any, s2: ref any, n: usize) int
+export fn memcpy (mut s1: ref any, s2: ref any, n: usize) ref any
+export fn memmove (mut s1: ref any, s2: ref any, n: usize) ref any
+export fn memset (mut s: ref any, c: int, n: usize) ref any
+export fn stpcpy (mut s1: ref char, s2: char[]) char[]
+export fn stpncpy (mut s1: ref char, s2: char[], n: usize) char[]
+export fn strcat (mut s1: ref char, s2: char[]) char[]
+export fn strchr (s: char[], c: int) char[]
+export fn strcmp (s1: char[], s2: char[]) int
+export fn strcoll (s1: char[], s2: char[]) int
+export fn strcoll_l (s1: char[], s2: char[], locale: locale_t) int
+export fn strcpy (mut s1: ref char, s2: char[]) char[]
+export fn strcspn (s1: char[], s2: char[]) usize
+export fn strdup (s: char[]) char[]
+export fn strerror (int) char[]
+export fn strerror_l (errnum: int, locale: locale_t) char[]
+export fn strerror_r (errnum: int, mut buf: ref char, length: usize) int
+export fn strlen (s: char[]) usize
+export fn strncat (mut s1: ref char, s2: char[], n: usize) char[]
+export fn strncmp (s1: char[], s2: char[], n: usize) int
+export fn strncpy (mut s1: ref char, s2: char[], n: usize) char[]
+export fn strndup (s: char[], size: usize) char[]
+export fn strnlen (s: char[], n: usize) usize
+export fn strpbrk (s1: char[], s2: char[]) char[]
+export fn strrchr (s: char[], c: int) char[]
+export fn strsignal (signum: int) char[]
+export fn strspn (s1: char[], s2: char[]) usize
+export fn strstr (s1: char[], s2: char[]) char[]
+export fn strtok (mut s: ref char, sep: char[]) char[]
+export fn strtok_r (mut s: ref char, sep: char[], mut state: ref char[]) char[]
+export fn strxfrm (mut s1: ref char, s2: char[], n: usize) usize
+export fn strxfrm_l (mut s1: ref char, s2: char[], n: usize, locale: locale_t) usize
+
 // <strings.h>
-// <stropts.h>
+export fn ffs (i: int) int
+export fn strcasecmp (s1: char[], s2: char[]) int
+export fn strcasecmp_l (s1: char[], s2: char[], locale: locale_t) int
+export fn strncasecmp (s1: char[], s2: char[], n: usize) int
+export fn strncasecmp_l (s1: char[], s2: char[], n: usize, locale: locale_t) int
 
 // <sys/ipc.h>
 // <sys/mman.h>
@@ -1726,10 +1967,7 @@ export fn posix_spawnp (mut pid: ref pid_t, path: char[], file_actions: ref posi
 // <termios.h>
 // <tgmath.h>
 // <time.h>
-// <trace.h>
-// <ulimit.h>
 // <unistd.h>
-// <utime.h>
 // <utmpx.h>
 // <wchar.h>
 // <wctype.h>
