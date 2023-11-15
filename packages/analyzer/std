@@ -761,6 +761,9 @@ export const SPAWN_SETSCHEDULER: int
 export const SPAWN_SETSIGDEF: int
 export const SPAWN_SETSIGMASK: int
 
+// <stddef.h>
+export const NULL: ref any
+
 // <stdint.h>
 export const INT8_MIN: i8
 export const INT16_MIN: i16
@@ -832,6 +835,76 @@ export const MB_CUR_MAX: int
 export const WNOHANG: int
 export const WUNTRACED: int
 
+// <sys/ipc.h>
+export const IPC_CREAT: int
+export const IPC_EXCL: int
+export const IPC_NOWAIT: int
+export const IPC_PRIVATE: int
+export const IPC_RMID: int
+export const IPC_SET: int
+export const IPC_STAT: int
+
+// <sys/mman.h>
+export const PROT_EXEC: int
+export const PROT_NONE: int
+export const PROT_READ: int
+export const PROT_WRITE: int
+export const MAP_FIXED: int
+export const MAP_PRIVATE: int
+export const MAP_SHARED: int
+export const MAP_FAILED: ref any
+export const MS_ASYNC: int
+export const MS_INVALIDATE: int
+export const MS_SYNC: int
+export const MCL_CURRENT: int
+export const MCL_FUTURE: int
+export const MADV_DONTNEED: int
+export const MADV_NORMAL: int
+export const MADV_RANDOM: int
+export const MADV_SEQUENTIAL: int
+export const MADV_WILLNEED: int
+export const TYPED_MEM_ALLOCATE: int
+export const TYPED_MEM_ALLOCATE_CONTIG: int
+export const TYPED_MEM_MAP_ALLOCATABLE: int
+
+// <sys/msg.h>
+export const MSG_NOERROR: int
+
+// <sys/resource.h>
+export const PRIO_PROCESS: int
+export const PRIO_PGRP: int
+export const PRIO_USER: int
+export const RLIM_INFINITY: u64
+export const RLIM_SAVED_MAX: u64
+export const RLIM_SAVED_CUR: u64
+export const RUSAGE_SELF: int
+export const RUSAGE_CHILDREN: int
+export const RLIMIT_CORE: int
+export const RLIMIT_CPU: int
+export const RLIMIT_DATA: int
+export const RLIMIT_FSIZE: int
+export const RLIMIT_NOFILE: int
+export const RLIMIT_STACK: int
+export const RLIMIT_AS: int
+
+// <sys/select.h>
+export const FD_SETSIZE: int
+
+// <sys/sem.h>
+export const SEM_UNDO: int
+export const GETNCNT: int
+export const GETPID: int
+export const GETVAL: int
+export const GETALL: int
+export const GETZCNT: int
+export const SETVAL: int
+export const SETALL: int
+
+// <sys/shm.h>
+export const SHM_RDONLY: int
+export const SHM_RND: int
+export const SHMLBA: int
+
 // <aio.h>
 
 export obj aiocb {
@@ -872,6 +945,7 @@ export obj fenv_t {
 }
 
 // <glob.h>
+
 export obj glob_t {
   mut gl_pathc: usize
   mut gl_pathv: ref char[]
@@ -1193,6 +1267,101 @@ export obj ldiv_t {
 export obj lldiv_t {
   mut quot: int
   mut rem: int
+}
+
+// <sys/ipc.h>
+
+export obj ipc_perm {
+  mut uid: uid_t
+  mut gid: gid_t
+  mut cuid: uid_t
+  mut cgid: gid_t
+  mut mode: mode_t
+}
+
+// <sys/mman.h>
+
+export obj typed_mem_info {
+  mut tmi_length: usize
+}
+
+// <sys/msg.h>
+
+export type msgqnum_t = u64
+export type msglen_t = u64
+
+export obj msqid_ds {
+  mut msg_perm: ipc_perm
+  mut msg_qnum: msgqnum_t
+  mut msg_qbytes: msglen_t
+  mut msg_lspid: pid_t
+  mut msg_lrpid: pid_t
+  mut msg_stime: time_t
+  mut msg_rtime: time_t
+  mut msg_ctime: time_t
+}
+
+// <sys/resource.h>
+
+export type rlim_t = u64
+
+export obj rlimit {
+  mut rlim_cur: rlim_t
+  mut rlim_max: rlim_t
+}
+
+export obj rusage {
+  mut ru_utime: timeval
+  mut ru_stime: timeval
+}
+
+// <sys/select.h>
+
+export obj timeval {
+  mut tv_sec: time_t
+  mut tv_usec: suseconds_t
+}
+
+export obj fd_set {
+}
+
+// <sys/sem.h>
+
+export type semun = int | ref semid_ds | ref u16
+
+export obj semid_ds {
+  mut sem_perm: ipc_perm
+  mut sem_nsems: u16
+  mut sem_otime: time_t
+  mut sem_ctime: time_t
+}
+
+export obj sem {
+  mut semval: u16
+  mut sempid: pid_t
+  mut semncnt: u16
+  mut semzcnt: u16
+}
+
+export obj sembuf {
+  mut sem_num: u16
+  mut sem_op: i16
+  mut sem_flg: i16
+}
+
+// <sys/shm.h>
+
+export type shmatt_t = u16
+
+export obj shmid_ds {
+  mut shm_perm: ipc_perm
+  mut shm_segsz: usize
+  mut shm_lpid: pid_t
+  mut shm_cpid: pid_t
+  mut shm_nattch: shmatt_t
+  mut shm_atime: time_t
+  mut shm_dtime: time_t
+  mut shm_ctime: time_t
 }
 
 // <errno.h>
@@ -1874,8 +2043,8 @@ export fn mkdtemp (mut template: ref char) char[]
 export fn mkstemp (mut template: ref char) int
 export fn mrand48 () i64
 export fn nrand48 (xsubi: u16[]) i64
-export fn posix_memalign (memptr: ref ref any, alignment: usize, size: usize) int
-export fn posix_openpt (flag: int) int
+export fn memalign (memptr: ref ref any, alignment: usize, size: usize) int
+export fn openpt (flag: int) int
 export fn ptsname (fd: int) char[]
 export fn putenv (mut string: ref char) int
 export fn qsort (ptr: ref any, count: usize, size: usize, comparator: (ref any, ref any) -> int) void
@@ -1946,12 +2115,56 @@ export fn strncasecmp (s1: char[], s2: char[], n: usize) int
 export fn strncasecmp_l (s1: char[], s2: char[], n: usize, locale: locale_t) int
 
 // <sys/ipc.h>
+export fn ftok (path: char[], id: int) key_t
+
 // <sys/mman.h>
+export fn mlock (addr: ref any, length: usize) int
+export fn mlockall (flags: int) int
+export fn mmap (mut addr: ref any, length: usize, protection: int, flags: int, fd: int, offset: off_t) ref any
+export fn mprotect (mut addr: ref any, length: usize, protection: int) int
+export fn msync (mut addr: ref any, length: usize, flags: int) int
+export fn munlock (addr: ref any, length: usize) int
+export fn munlockall () int
+export fn munmap (mut addr: ref any, length: usize) int
+export fn madvise (mut addr: ref any, length: usize, advice: int) int
+export fn mem_offset (addr: ref any, length: usize, mut offset: ref , mut config_length: ref usize, mut fd: ref int) int
+export fn typed_mem_get_info (fd: int, mut info: ref typed_mem_info) int
+export fn typed_mem_open (name: char[], oflag: int, tflag: int) int
+export fn shm_open (name: char[], flag: int, mode: mode_t) int
+export fn shm_unlink (name: char[]) int
+
 // <sys/msg.h>
+export fn msgctl (msqid: int, cmd: int, mut buf: ref msqid_ds) int
+export fn msgget (key: key_t, flag: int) int
+export fn msgrcv (msqid: int, mut buf: ref any, length: usize, type: long, flag: int) isize
+export fn msgsnd (msqid: int, buf: ref any, length: usize, flag: int) int
+
 // <sys/resource.h>
+export fn getpriority (which: int, who: id_t) int
+export fn getrlimit (resource: int, mut rl: ref rlimit) int
+export fn getrusage (whoe: int, mut ru: ref rusage) int
+export fn setpriority (which: int, who: id_t, value: int) int
+export fn setrlimit (resource: int, rl: ref rlimit) int
+
 // <sys/select.h>
+export fn FD_CLR (fd: int, mut fdset: ref fd_set) void
+export fn FD_ISSET (fd: int, mut fdset: ref fd_set) int
+export fn FD_SET (fd: int, mut fdset: ref fd_set) void
+export fn FD_ZERO (mut fdset: ref fd_set) void
+export fn pselect (fd: int, mut readfds: ref fd_set, mut writefds: ref fd_set, mut errorfds: ref fd_set, timeout: ref timespec, mask: ref sigset_t) int
+export fn select (fd: int, mut readfds: ref fd_set, mut writefds: ref fd_set, mut errorfds: ref fd_set, mut timeout: ref timeval) int
+
 // <sys/sem.h>
+export fn semctl (semid: int, semnum: int, cmd: int, arg: semun? = nil) int
+export fn semget (key: key_t, count: int, flag: int) int
+export fn semop (semid: int, mut operations: ref sembuf, count: usize) int
+
 // <sys/shm.h>
+export fn shmat (shmid: int, addr: ref any, flag: int) ref any
+export fn shmctl (shmid: int, cmd: int, mut buf: ref shmid_ds) int
+export fn shmdt (addr: ref any) int
+export fn shmget (key: key_t, size: usize, flag: int) int
+
 // <sys/socket.h>
 // <sys/stat.h>
 // <sys/statvfs.h>
