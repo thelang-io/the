@@ -905,6 +905,90 @@ export const SHM_RDONLY: int
 export const SHM_RND: int
 export const SHMLBA: int
 
+// <sys/socket.h>
+export const SCM_RIGHTS: int
+export const SOCK_DGRAM: int
+export const SOCK_RAW: int
+export const SOCK_SEQPACKET: int
+export const SOCK_STREAM: int
+export const SOL_SOCKET: int
+export const SO_ACCEPTCONN: int
+export const SO_BROADCAST: int
+export const SO_DEBUG: int
+export const SO_DONTROUTE: int
+export const SO_ERROR: int
+export const SO_KEEPALIVE: int
+export const SO_LINGER: int
+export const SO_OOBINLINE: int
+export const SO_RCVBUF: int
+export const SO_RCVLOWAT: int
+export const SO_RCVTIMEO: int
+export const SO_REUSEADDR: int
+export const SO_SNDBUF: int
+export const SO_SNDLOWAT: int
+export const SO_SNDTIMEO: int
+export const SO_TYPE: int
+export const SOMAXCONN: int
+export const MSG_CTRUNC: int
+export const MSG_DONTROUTE: int
+export const MSG_EOR: int
+export const MSG_OOB: int
+export const MSG_NOSIGNAL: int
+export const MSG_PEEK: int
+export const MSG_TRUNC: int
+export const MSG_WAITALL: int
+export const AF_INET: int
+export const AF_INET6: int
+export const AF_UNIX: int
+export const AF_UNSPEC: int
+export const SHUT_RD: int
+export const SHUT_RDWR: int
+export const SHUT_WR: int
+
+// <sys/stat.h>
+export const S_IFMT: int
+export const S_IFBLK: int
+export const S_IFCHR: int
+export const S_IFIFO: int
+export const S_IFREG: int
+export const S_IFDIR: int
+export const S_IFLNK: int
+export const S_IFSOCK: int
+export const S_IRWXU: int
+export const S_IRUSR: int
+export const S_IWUSR: int
+export const S_IXUSR: int
+export const S_IRWXG: int
+export const S_IRGRP: int
+export const S_IWGRP: int
+export const S_IXGRP: int
+export const S_IRWXO: int
+export const S_IROTH: int
+export const S_IWOTH: int
+export const S_IXOTH: int
+export const S_ISUID: int
+export const S_ISGID: int
+export const S_ISVTX: int
+export const UTIME_NOW: int
+export const UTIME_OMIT: int
+
+// <sys/statvfs.h>
+export const ST_RDONLY: int
+export const ST_NOSUID: int
+
+// <sys/time.h>
+export const ITIMER_REAL: int
+export const ITIMER_VIRTUAL: int
+export const ITIMER_PROF: int
+
+// <sys/wait.h>
+export const WCONTINUED: int
+export const WNOHANG: int
+export const WUNTRACED: int
+export const WEXITED: int
+export const WNOWAIT: int
+export const WSTOPPED: int
+
 // <aio.h>
 
 export obj aiocb {
@@ -939,7 +1023,7 @@ export obj flock {
 
 // <fenv.h>
 
-export type fexcept_t = u16
+export obj fexcept_t {}
 
 export obj fenv_t {
 }
@@ -1005,8 +1089,8 @@ export obj locale_t {
 
 // <math.h>
 
-export type float_t = f32
-export type double_t = f64
+export obj float_t {}
+export obj double_t {}
 
 // <mqueue.h>
 
@@ -1080,8 +1164,8 @@ export obj addrinfo {
 
 // <netinet/in.h>
 
-export type in_port_t = u16
-export type in_addr_t = u32
+export obj in_port_t {}
+export obj in_addr_t {}
 
 export obj in_addr {
   mut s_addr: in_addr_t
@@ -1112,14 +1196,14 @@ export obj ipv6_mreq {
 
 // <nl_types.h>
 
-export type nl_item = int
+export obj nl_item {}
 
 export obj nl_catd {
 }
 
 // <poll.h>
 
-export type nfds_t = u32
+export obj nfds_t {}
 
 export obj pollfd {
   mut fd: int
@@ -1139,7 +1223,7 @@ export obj passwd {
 
 // <regex.h>
 
-export type regoff_t = i64
+export obj regoff_t {}
 
 export obj regex_t {
   mut re_nsub: usize
@@ -1177,7 +1261,7 @@ export enum VISIT {
 
 // <semaphore.h>
 
-export type sem_t = int
+export obj sem_t {}
 
 // <setjmp.h>
 
@@ -1189,9 +1273,9 @@ export obj sigjmp_buf {
 
 // <signal.h>
 
-export type sig_atomic_t = int
-export type sigset_t = u32
 export type sigval = int | ref any
+export obj sig_atomic_t {}
+export obj sigset_t {}
 
 export obj sigevent {
   mut sigev_notify: int
@@ -1243,11 +1327,11 @@ export type spawn_file_actions_t = ref any
 
 // <stddef.h>
 
-export type ptrdiff_t = i64
+export obj ptrdiff_t {}
 
 // <stdio.h>
 
-export type fpos_t = i64
+export obj fpos_t {}
 
 export obj FILE {
 }
@@ -1287,8 +1371,8 @@ export obj typed_mem_info {
 
 // <sys/msg.h>
 
-export type msgqnum_t = u64
-export type msglen_t = u64
+export obj msgqnum_t {}
+export obj msglen_t {}
 
 export obj msqid_ds {
   mut msg_perm: ipc_perm
@@ -1303,7 +1387,7 @@ export obj msqid_ds {
 
 // <sys/resource.h>
 
-export type rlim_t = u64
+export obj rlim_t {}
 
 export obj rlimit {
   mut rlim_cur: rlim_t
@@ -1351,7 +1435,7 @@ export obj sembuf {
 
 // <sys/shm.h>
 
-export type shmatt_t = u16
+export obj shmatt_t {}
 
 export obj shmid_ds {
   mut shm_perm: ipc_perm
@@ -1362,6 +1446,158 @@ export obj shmid_ds {
   mut shm_atime: time_t
   mut shm_dtime: time_t
   mut shm_ctime: time_t
+}
+
+// <sys/socket.h>
+
+export obj socklen_t {}
+export obj sa_family_t {}
+
+export obj sockaddr {
+  mut sa_family: sa_family_t
+  mut sa_data: char[]
+}
+
+export obj sockaddr_storage {
+  mut ss_family: sa_family_t
+}
+
+export obj msghdr {
+  mut msg_name: ref any
+  mut msg_namelen: socklen_t
+  mut msg_iov: ref iovec
+  mut msg_iovlen: int
+  mut msg_control: ref any
+  mut msg_controllen: socklen_t
+  mut msg_flags: int
+}
+
+export obj cmsghdr {
+  mut cmsg_len: socklen_t
+  mut cmsg_level: int
+  mut cmsg_type: int
+}
+
+export obj linger {
+  mut l_onoff: int
+  mut l_linger: int
+}
+
+// <sys/stat.h>
+
+export obj stat {
+  mut st_dev: dev_t
+  mut st_ino: ino_t
+  mut st_mode: mode_t
+  mut st_nlink: nlink_t
+  mut st_uid: uid_t
+  mut st_gid: gid_t
+  mut st_rdev: dev_t
+  mut st_size: off_t
+  mut st_atim: timespec
+  mut st_mtim: timespec
+  mut st_ctim: timespec
+  mut st_blksize: blksize_t
+  mut st_blocks: blkcnt_t
+}
+
+// <sys/statvfs.h>
+
+export obj statvfs {
+  mut f_bsize: u64
+  mut f_frsize: u64
+  mut f_blocks: fsblkcnt_t
+  mut f_bfree: fsblkcnt_t
+  mut f_bavail: fsblkcnt_t
+  mut f_files: fsfilcnt_t
+  mut f_ffree: fsfilcnt_t
+  mut f_favail: fsfilcnt_t
+  mut f_fsid: u64
+  mut f_flag: u64
+  mut f_namemax: u64
+}
+
+// <sys/time.h>
+
+export obj timeval {
+  mut tv_sec: time_t
+  mut tv_usec: suseconds_t
+}
+
+export obj itimerval {
+  mut it_interval: timeval
+  mut it_value: timeval
+}
+
+// <sys/types.h>
+
+export obj blkcnt_t {}
+export obj blksize_t {}
+export obj clock_t {}
+export obj clockid_t {}
+export obj dev_t {}
+export obj fsblkcnt_t {}
+export obj fsfilcnt_t {}
+export obj gid_t {}
+export obj id_t {}
+export obj ino_t {}
+export obj key_t {}
+export obj mode_t {}
+export obj nlink_t {}
+export obj off_t {}
+export obj pid_t {}
+export obj pthread_attr_t {}
+export obj pthread_barrier_t {}
+export obj pthread_barrierattr_t {}
+export obj pthread_cond_t {}
+export obj pthread_condattr_t {}
+export obj pthread_key_t {}
+export obj pthread_mutex_t {}
+export obj pthread_mutexattr_t {}
+export obj pthread_once_t {}
+export obj pthread_rwlock_t {}
+export obj pthread_rwlockattr_t {}
+export obj pthread_spinlock_t {}
+export obj pthread_t {}
+export obj suseconds_t {}
+export obj time_t {}
+export obj timer_t {}
+export obj trace_attr_t {}
+export obj trace_event_id_t {}
+export obj trace_event_set_t {}
+export obj trace_id_t {}
+export obj uid_t {}
+
+// <sys/uio.h>
+
+export obj iovec {
+  mut iov_base: ref any
+  mut iov_len: usize
+}
+
+// <sys/un.h>
+
+export obj sockaddr_un {
+  mut sun_family: sa_family_t
+  mut sun_path: char[]
+}
+
+// <sys/utsname.h>
+
+export obj utsname {
+  mut sysname: char[]
+  mut nodename: char[]
+  mut release: char[]
+  mut version: char[]
+  mut machine: char[]
+}
+
+// <sys/wait.h>
+
+export enum idtype_t {
+  P_ALL,
+  P_PGID,
+  P_PID
 }
 
 // <errno.h>
@@ -2136,7 +2372,7 @@ export fn shm_unlink (name: char[]) int
 // <sys/msg.h>
 export fn msgctl (msqid: int, cmd: int, mut buf: ref msqid_ds) int
 export fn msgget (key: key_t, flag: int) int
-export fn msgrcv (msqid: int, mut buf: ref any, length: usize, type: long, flag: int) isize
+export fn msgrcv (msqid: int, mut buf: ref any, length: usize, type: i64, flag: int) isize
 export fn msgsnd (msqid: int, buf: ref any, length: usize, flag: int) int
 
 // <sys/resource.h>
@@ -2166,147 +2402,27 @@ export fn shmdt (addr: ref any) int
 export fn shmget (key: key_t, size: usize, flag: int) int
 
 // <sys/socket.h>
-
-export type socklen_t = u32
-export type sa_family_t = u8
-
-export obj sockaddr {
-  mut sa_family: sa_family_t
-  mut sa_data: char[]
-}
-
-export obj sockaddr_storage {
-  mut ss_family: sa_family_t
-}
-
-export obj msghdr {
-  mut msg_name: ref any
-  mut msg_namelen: socklen_t
-  mut msg_iov: ref iovec
-  mut msg_iovlen: int
-  mut msg_control: ref any
-  mut msg_controllen: socklen_t
-  mut msg_flags: int
-}
-
-export obj cmsghdr {
-  mut cmsg_len: socklen_t
-  mut cmsg_level: int
-  mut cmsg_type: int
-}
-
-export obj linger {
-  mut l_onoff: int
-  mut l_linger: int
-}
-
-// <sys/socket.h>
-export const SCM_RIGHTS: int
-export const SOCK_DGRAM: int
-export const SOCK_RAW: int
-export const SOCK_SEQPACKET: int
-export const SOCK_STREAM: int
-export const SOL_SOCKET: int
-export const SO_ACCEPTCONN: int
-export const SO_BROADCAST: int
-export const SO_DEBUG: int
-export const SO_DONTROUTE: int
-export const SO_ERROR: int
-export const SO_KEEPALIVE: int
-export const SO_LINGER: int
-export const SO_OOBINLINE: int
-export const SO_RCVBUF: int
-export const SO_RCVLOWAT: int
-export const SO_RCVTIMEO: int
-export const SO_REUSEADDR: int
-export const SO_SNDBUF: int
-export const SO_SNDLOWAT: int
-export const SO_SNDTIMEO: int
-export const SO_TYPE: int
-export const SOMAXCONN: int
-export const MSG_CTRUNC: int
-export const MSG_DONTROUTE: int
-export const MSG_EOR: int
-export const MSG_OOB: int
-export const MSG_NOSIGNAL: int
-export const MSG_PEEK: int
-export const MSG_TRUNC: int
-export const MSG_WAITALL: int
-export const AF_INET: int
-export const AF_INET6: int
-export const AF_UNIX: int
-export const AF_UNSPEC: int
-export const SHUT_RD: int
-export const SHUT_RDWR: int
-export const SHUT_WR: int
-
-// <sys/socket.h>
-export fn CMSG_DATA (cmsg: struct cmsghdr *) ref any
-export fn CMSG_NXTHDR (mhdr: struct msghdr *, cmsg: struct cmsghdr *) ref cmsghdr
-export fn CMSG_FIRSTHDR (mhdr: struct msghdr *) ref cmsghdr
-export fn accept (socket: int, address: struct sockaddr *restrict, length: socklen_t *restrict) int
-export fn bind (socket: int, address: const struct sockaddr *, length: socklen_t) int
-export fn connect (socket: int, address: const struct sockaddr *, length: socklen_t) int
-export fn getpeername (socket: int, address: struct sockaddr *restrict, length: socklen_t *restrict) int
-export fn getsockname (socket: int, address: struct sockaddr *restrict, length: socklen_t *restrict) int
-export fn getsockopt (socket: int, level: int, option: int, value: void *restrict, length: socklen_t *restrict) int
+export fn CMSG_DATA (mut cmsg: ref cmsghdr) ref any
+export fn CMSG_NXTHDR (mut mhdr: ref msghdr, mut cmsg: ref cmsghdr) ref cmsghdr
+export fn CMSG_FIRSTHDR (mut mhdr: ref msghdr) ref cmsghdr
+export fn accept (socket: int, mut address: ref sockaddr, mut length: ref socklen_t) int
+export fn bind (socket: int, address: ref sockaddr, length: socklen_t) int
+export fn connect (socket: int, address: ref sockaddr, length: socklen_t) int
+export fn getpeername (socket: int, mut address: ref sockaddr, mut length: ref socklen_t) int
+export fn getsockname (socket: int, mut address: ref sockaddr, mut length: ref socklen_t) int
+export fn getsockopt (socket: int, level: int, option: int, mut value: ref any, mut length: ref socklen_t) int
 export fn listen (socket: int, backlog: int) int
-export fn recv (socket: int, buf: void *, length: size_t, flags: int) ssize_t
-export fn recvfrom (socket: int, buf: void *restrict, length: size_t, flags: int, address: struct sockaddr *restrict, address_len: socklen_t *restrict) ssize_t
-export fn recvmsg (socket: int, message: struct msghdr *, flags: int) ssize_t
-export fn send (socket: int, buf: const void *, length: size_t, flags: int) ssize_t
-export fn sendmsg (socket: int, message: const struct msghdr *, flags: int) ssize_t
-export fn sendto (socket: int, message: const void *, length: size_t, flags: int, address: const struct sockaddr *, address_len: socklen_t) ssize_t
-export fn setsockopt (socket: int, level: int, option: int, value: const void *, length: socklen_t) int
+export fn recv (socket: int, mut buf: ref any, length: usize, flags: int) isize
+export fn recvfrom (socket: int, mut buf: ref any, length: usize, flags: int, mut address: ref sockaddr, mut address_len: ref socklen_t) isize
+export fn recvmsg (socket: int, mut message: ref msghdr, flags: int) isize
+export fn send (socket: int, buf: ref any, length: usize, flags: int) isize
+export fn sendmsg (socket: int, message: ref msghdr, flags: int) isize
+export fn sendto (socket: int, message: ref any, length: usize, flags: int, address: ref sockaddr, address_len: socklen_t) isize
+export fn setsockopt (socket: int, level: int, option: int, value: ref any, length: socklen_t) int
 export fn shutdown (socket: int, how: int) int
 export fn sockatmark (s: int) int
 export fn socket (domain: int, type: int, protocol: int) int
 export fn socketpair (domain: int, type: int, protocol: int, mut socket: ref int) int
-
-// <sys/stat.h>
-
-export obj stat {
-  mut st_dev: dev_t
-  mut st_ino: ino_t
-  mut st_mode: mode_t
-  mut st_nlink: nlink_t
-  mut st_uid: uid_t
-  mut st_gid: gid_t
-  mut st_rdev: dev_t
-  mut st_size: off_t
-  mut st_atim: struct timespec
-  mut st_mtim: struct timespec
-  mut st_ctim: struct timespec
-  mut st_blksize: blksize_t
-  mut st_blocks: blkcnt_t
-}
-
-// <sys/stat.h>
-export const S_IFMT: int
-export const S_IFBLK: int
-export const S_IFCHR: int
-export const S_IFIFO: int
-export const S_IFREG: int
-export const S_IFDIR: int
-export const S_IFLNK: int
-export const S_IFSOCK: int
-export const S_IRWXU: int
-export const S_IRUSR: int
-export const S_IWUSR: int
-export const S_IXUSR: int
-export const S_IRWXG: int
-export const S_IRGRP: int
-export const S_IWGRP: int
-export const S_IXGRP: int
-export const S_IRWXO: int
-export const S_IROTH: int
-export const S_IWOTH: int
-export const S_IXOTH: int
-export const S_ISUID: int
-export const S_ISGID: int
-export const S_ISVTX: int
-export const UTIME_NOW: int
-export const UTIME_OMIT: int
 
 // <sys/stat.h>
 export fn S_ISBLK (m: mode_t) bool
@@ -2320,74 +2436,40 @@ export fn S_TYPEISMQ (buf: ref stat) bool
 export fn S_TYPEISSEM (buf: ref stat) bool
 export fn S_TYPEISSHM (buf: ref stat) bool
 export fn S_TYPEISTMO (buf: ref stat) bool
-export fn chmod (path: const char *, mode: mode_t) int
+export fn chmod (path: char[], mode: mode_t) int
 export fn fchmod (fd: int, mode: mode_t) int
-export fn fchmodat (fd: int, path: const char *, mode: mode_t, flag: int) int
-export fn fstat (fd: int, buf: struct stat *) int
-export fn fstatat (fd: int, path: const char *restrict, buf: struct stat *restrict, flag: int) int
-export fn futimens (fd: int, times: const struct timespec [2]) int
-export fn lstat (path: const char *restrict, buf: struct stat *restrict) int
-export fn mkdir (path: const char *, mode: mode_t) int
-export fn mkdirat (fd: int, path: const char *, mode: mode_t) int
-export fn mkfifo (path: const char *, mode: mode_t) int
-export fn mkfifoat (fd: int, path: const char *, mode: mode_t) int
-export fn mknod (path: const char *, mode: mode_t, dev: dev_t) int
-export fn mknodat (fd: int, path: const char *, mode: mode_t, dev: dev_t) int
-export fn stat (path: const char *restrict, buf: struct stat *restrict) int
+export fn fchmodat (fd: int, path: char[], mode: mode_t, flag: int) int
+export fn fstat (fd: int, mut buf: ref stat) int
+export fn fstatat (fd: int, path: char[], mut buf: ref stat, flag: int) int
+export fn futimens (fd: int, times: timespec[]) int
+export fn lstat (path: char[], mut buf: ref stat) int
+export fn mkdir (path: char[], mode: mode_t) int
+export fn mkdirat (fd: int, path: char[], mode: mode_t) int
+export fn mkfifo (path: char[], mode: mode_t) int
+export fn mkfifoat (fd: int, path: char[], mode: mode_t) int
+export fn mknod (path: char[], mode: mode_t, dev: dev_t) int
+export fn mknodat (fd: int, path: char[], mode: mode_t, dev: dev_t) int
+export fn stat (path: char[], mut buf: ref stat) int
 export fn umask (mask: mode_t) mode_t
-export fn utimensat (fd: int, path: const char *, times: const struct timespec [2], flag: int) int
+export fn utimensat (fd: int, path: char[], times: timespec[], flag: int) int
 
 // <sys/statvfs.h>
-
-export obj statvfs {
-  mut f_bsize: unsigned long
-  mut f_frsize: unsigned long
-  mut f_blocks: fsblkcnt_t
-  mut f_bfree: fsblkcnt_t
-  mut f_bavail: fsblkcnt_t
-  mut f_files: fsfilcnt_t
-  mut f_ffree: fsfilcnt_t
-  mut f_favail: fsfilcnt_t
-  mut f_fsid: unsigned long
-  mut f_flag: unsigned long
-  mut f_namemax: unsigned long
-}
-
-// <sys/statvfs.h>
-export const ST_RDONLY: int
-export const ST_NOSUID: int
-
-export const fstatvfs (fd: int, buf: struct statvfs *) int
-export const statvfs (path: const char *restrict, buf: struct statvfs *restrict) int
+export fn fstatvfs (fd: int, mut buf: ref statvfs) int
+export fn statvfs (path: char[], mut buf: ref statvfs) int
 
 // <sys/time.h>
-//https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_time.h.html#tag_13_64
+export fn getitimer (which: int, mut value: ref itimerval) int
+export fn gettimeofday (mut tv: ref timeval, mut tz: ref any) int
+export fn setitimer (which: int, value: ref itimerval, mut old_value: ref itimerval) int
+export fn select (fd: int, mut readfds: ref fd_set, mut writefds: ref fd_set, mut errorfds: ref fd_set, mut timeout: ref timeval) int
+export fn utimes (path: char[], times: timeval[]) int
+
 // <sys/times.h>
-//https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_times.h.html#tag_13_66
-// <sys/types.h>
-//https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_types.h.html#tag_13_67
+export fn times (mut buf: ref tms) clock_t
+
 // <sys/uio.h>
-//https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_uio.h.html#tag_13_68
-// <sys/un.h>
-//https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_un.h.html#tag_13_69
-// <sys/utsname.h>
-//https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_utsname.h.html#tag_13_70
-
-// <sys/wait.h>
-export const WCONTINUED: int
-export const WNOHANG: int
-export const WUNTRACED: int
-export const WEXITED: int
-export const WNOWAIT: int
-export const WSTOPPED: int
-
-// <sys/wait.h>
-
-export enum idtype_t {
-  P_ALL,
-  P_PGID,
-  P_PID
-}
+export fn readv (fd: int, iov: ref iovec, count: int) isize
+export fn writev (fd: int, iov: ref iovec, count: int) isize
 
 // <sys/wait.h>
 export fn WEXITSTATUS (status: int) int
@@ -2397,9 +2479,9 @@ export fn WIFSIGNALED (status: int) int
 export fn WIFSTOPPED (status: int) int
 export fn WSTOPSIG (status: int) int
 export fn WTERMSIG (status: int) int
-export fn wait (loc: int *) pid_t
-export fn waitid (idtype: idtype_t, id: id_t, info: siginfo_t *, options: int) int
-export fn waitpid (pid: pid_t, loc: int *, options: int) pid_t
+export fn wait (mut loc: ref int) pid_t
+export fn waitid (idtype: idtype_t, id: id_t, mut info: ref siginfo_t, options: int) int
+export fn waitpid (pid: pid_t, mut loc: ref int, options: int) pid_t
 
 // <syslog.h>
 // <tar.h>
