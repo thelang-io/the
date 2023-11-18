@@ -989,6 +989,195 @@ export const WEXITED: int
 export const WNOWAIT: int
 export const WSTOPPED: int
 
+// <syslog.h>
+export const LOG_PID: int
+export const LOG_CONS: int
+export const LOG_NDELAY: int
+export const LOG_ODELAY: int
+export const LOG_NOWAIT: int
+export const LOG_KERN: int
+export const LOG_USER: int
+export const LOG_MAIL: int
+export const LOG_NEWS: int
+export const LOG_UUCP: int
+export const LOG_DAEMON: int
+export const LOG_AUTH: int
+export const LOG_CRON: int
+export const LOG_LPR: int
+export const LOG_LOCAL0: int
+export const LOG_LOCAL1: int
+export const LOG_LOCAL2: int
+export const LOG_LOCAL3: int
+export const LOG_LOCAL4: int
+export const LOG_LOCAL5: int
+export const LOG_LOCAL6: int
+export const LOG_LOCAL7: int
+export const LOG_EMERG: int
+export const LOG_ALERT: int
+export const LOG_CRIT: int
+export const LOG_ERR: int
+export const LOG_WARNING: int
+export const LOG_NOTICE: int
+export const LOG_INFO: int
+export const LOG_DEBUG: int
+
+// <tar.h>
+export const TMAGIC: char[]
+export const TMAGLEN: int
+export const TVERSION: char[]
+export const TVERSLEN: int
+export const REGTYPE: char
+export const AREGTYPE: char
+export const LNKTYPE: char
+export const SYMTYPE: char
+export const CHRTYPE: char
+export const BLKTYPE: char
+export const DIRTYPE: char
+export const FIFOTYPE: char
+export const CONTTYPE: char
+export const TSUID: int
+export const TSGID: int
+export const TSVTX: int
+export const TUREAD: int
+export const TUWRITE: int
+export const TUEXEC: int
+export const TGREAD: int
+export const TGWRITE: int
+export const TGEXEC: int
+export const TOREAD: int
+export const TOWRITE: int
+export const TOEXEC: int
+
+// <termios.h>
+export const NCCS: int
+export const VEOF: int
+export const VEOL: int
+export const VERASE: int
+export const VINTR: int
+export const VKILL: int
+export const VMIN: int
+export const VQUIT: int
+export const VSTART: int
+export const VSTOP: int
+export const VSUSP: int
+export const VTIME: int
+export const BRKINT: int
+export const ICRNL: int
+export const IGNBRK: int
+export const IGNCR: int
+export const IGNPAR: int
+export const INLCR: int
+export const INPCK: int
+export const ISTRIP: int
+export const IXANY: int
+export const IXOFF: int
+export const IXON: int
+export const PARMRK: int
+export const OPOST: int
+export const ONLCR: int
+export const OCRNL: int
+export const ONOCR: int
+export const ONLRET: int
+export const OFDEL: int
+export const OFILL: int
+export const NLDLY: int
+export const CRDLY: int
+export const CR0: int
+export const CR1: int
+export const CR2: int
+export const CR3: int
+export const TABDLY: int
+export const TAB0: int
+export const TAB1: int
+export const TAB2: int
+export const TAB3: int
+export const BSDLY: int
+export const BS0: int
+export const BS1: int
+export const VTDLY: int
+export const VT0: int
+export const VT1: int
+export const FFDLY: int
+export const FF0: int
+export const FF1: int
+export const B0: int
+export const B50: int
+export const B75: int
+export const B110: int
+export const B134: int
+export const B150: int
+export const B200: int
+export const B300: int
+export const B600: int
+export const B1200: int
+export const B1800: int
+export const B2400: int
+export const B4800: int
+export const B9600: int
+export const B19200: int
+export const B38400: int
+export const CSIZE: int
+export const CS5: int
+export const CS6: int
+export const CS7: int
+export const CS8: int
+export const CSTOPB: int
+export const CREAD: int
+export const PARENB: int
+export const PARODD: int
+export const HUPCL: int
+export const CLOCAL: int
+export const ECHO: int
+export const ECHOE: int
+export const ECHOK: int
+export const ECHONL: int
+export const ICANON: int
+export const IEXTEN: int
+export const ISIG: int
+export const NOFLSH: int
+export const TOSTOP: int
+export const TCSANOW: int
+export const TCSADRAIN: int
+export const TCSAFLUSH: int
+export const TCIFLUSH: int
+export const TCIOFLUSH: int
+export const TCOFLUSH: int
+export const TCIOFF: int
+export const TCION: int
+export const TCOOFF: int
+export const TCOON: int
+
+// <time.h>
+export const CLOCKS_PER_SEC: clock_t
+export const CLOCK_MONOTONIC: int
+export const CLOCK_PROCESS_CPUTIME_ID: int
+export const CLOCK_REALTIME: int
+export const CLOCK_THREAD_CPUTIME_ID: int
+export const TIMER_ABSTIME: int
+
+// <unistd.h>
+export const F_OK: int
+export const R_OK: int
+export const W_OK: int
+export const X_OK: int
+export const F_LOCK: int
+export const F_TEST: int
+export const F_TLOCK: int
+export const F_ULOCK: int
+export const STDERR_FILENO: int
+export const STDIN_FILENO: int
+export const STDOUT_FILENO: int
+
+// <utmpx.h>
+export const EMPTY: int
+export const BOOT_TIME: int
+export const OLD_TIME: int
+export const NEW_TIME: int
+export const USER_PROCESS: int
+export const INIT_PROCESS: int
+export const LOGIN_PROCESS: int
+export const DEAD_PROCESS: int
+
 // <aio.h>
 
 export obj aiocb {
@@ -1014,8 +1203,8 @@ export obj dirent {
 // <fcntl.h>
 
 export obj flock {
-  mut l_type: u16
-  mut l_whence: u16
+  mut l_type: i16
+  mut l_whence: i16
   mut l_start: off_t
   mut l_len: off_t
   mut l_pid: pid_t
@@ -1207,8 +1396,8 @@ export obj nfds_t {}
 
 export obj pollfd {
   mut fd: int
-  mut events: u16
-  mut revents: u16
+  mut events: i16
+  mut revents: i16
 }
 
 // <pwd.h>
@@ -1600,6 +1789,55 @@ export enum idtype_t {
   P_PID
 }
 
+// <termios.h>
+
+export obj cc_t {}
+export obj speed_t {}
+export obj tcflag_t {}
+
+export obj termios {
+  mut c_iflag: tcflag_t
+  mut c_oflag: tcflag_t
+  mut c_cflag: tcflag_t
+  mut c_lflag: tcflag_t
+  mut c_cc: cc_t[]
+}
+
+// <time.h>
+
+export obj tm {
+  mut tm_sec: int
+  mut tm_min: int
+  mut tm_hour: int
+  mut tm_mday: int
+  mut tm_mon: int
+  mut tm_year: int
+  mut tm_wday: int
+  mut tm_yday: int
+  mut tm_isdst: int
+}
+
+export obj timespec {
+  mut tv_sec: time_t
+  mut tv_nsec: i64
+}
+
+export obj itimerspec {
+  mut it_interval: timespec
+  mut it_value: timespec
+}
+
+// <utmpx.h>
+
+export obj utmpx {
+  mut ut_user: char[]
+  mut ut_id: char[]
+  mut ut_line: char[]
+  mut ut_pid: pid_t
+  mut ut_type: i16
+  mut ut_tv: timeval
+}
+
 // <errno.h>
 export mut errno: int
 
@@ -1611,6 +1849,18 @@ export const in6addr_loopback: in6_addr
 export const stderr: ref FILE
 export const stdin: ref FILE
 export const stdout: ref FILE
+
+// <time.h>
+export const daylight: int
+export const getdate_err: int
+export const timezone: i64
+export const tzname: ref char[]
+
+// <unistd.h>
+export const optarg: char[]
+export const opterr: int
+export const optind: int
+export const optopt: int
 
 // <aio.h>
 export fn aio_cancel (fd: int, mut cb: ref aiocb) int
@@ -1630,7 +1880,7 @@ export fn ntohs (net: u16) u16
 export fn inet_addr (cp: char[]) in_addr_t
 export fn inet_ntoa (in: in_addr) char[]
 export fn inet_ntop (af: int, src: ref any, mut dest: ref char, size: socklen_t) ref char
-export fn inet_pton (af: int, src: ref char, mut dest: ref any) int
+export fn inet_pton (af: int, src: char[], mut dest: ref any) int
 
 // <assert.h>
 export fn assert (expression: any) void
@@ -1719,9 +1969,9 @@ export fn globfree (mut glob: ref glob_t) void
 export fn endgrent () void
 export fn getgrent () ref group
 export fn getgrgid (gid: gid_t) ref group
-export fn getgrgid_r (gid: gid_t, mut grp: ref group, mut buf: ref char, size: usize, mut result: ref ref group) int
+export fn getgrgid_r (gid: gid_t, mut grp: ref group, mut buf: ref char, length: usize, mut result: ref ref group) int
 export fn getgrnam (name: char[]) ref group
-export fn getgrnam_r (name: char[], mut grp: ref group, mut buf: ref char, size: usize, mut result: ref ref group) int
+export fn getgrnam_r (name: char[], mut grp: ref group, mut buf: ref char, length: usize, mut result: ref ref group) int
 export fn setgrent () void
 
 // <iconv.h>
@@ -2160,14 +2410,14 @@ export fn spawn_file_actions_addopen (mut file_actions: ref spawn_file_actions_t
 export fn spawn_file_actions_destroy (mut file_actions: ref spawn_file_actions_t) int
 export fn spawn_file_actions_init (mut file_actions: ref spawn_file_actions_t) int
 export fn spawnattr_destroy (mut attr: ref spawnattr_t) int
-export fn spawnattr_getflags (attr: ref spawnattr_t, mut flags: ref u16) int
+export fn spawnattr_getflags (attr: ref spawnattr_t, mut flags: ref i16) int
 export fn spawnattr_getpgroup (attr: ref spawnattr_t, mut pgroup: ref pid_t) int
 export fn spawnattr_getschedparam (attr: ref spawnattr_t, mut schedparam: ref sched_param) int
 export fn spawnattr_getschedpolicy (attr: ref spawnattr_t, mut schedpolicy: ref int) int
 export fn spawnattr_getsigdefault (attr: ref spawnattr_t, mut sigdefault: ref sigset_t) int
 export fn spawnattr_getsigmask (attr: ref spawnattr_t, mut sigmask: ref sigset_t) int
 export fn spawnattr_init (mut attr: ref spawnattr_t) int
-export fn spawnattr_setflags (mut attr: ref spawnattr_t, flags: u16) int
+export fn spawnattr_setflags (mut attr: ref spawnattr_t, flags: i16) int
 export fn spawnattr_setpgroup (mut attr: ref spawnattr_t, pgroup: pid_t) int
 export fn spawnattr_setschedparam (mut attr: ref spawnattr_t, schedparam: ref sched_param) int
 export fn spawnattr_setschedpolicy (mut attr: ref spawnattr_t, schedpolicy: int) int
@@ -2484,12 +2734,146 @@ export fn waitid (idtype: idtype_t, id: id_t, mut info: ref siginfo_t, options: 
 export fn waitpid (pid: pid_t, mut loc: ref int, options: int) pid_t
 
 // <syslog.h>
-// <tar.h>
+export fn LOG_MASK (pri: int) int
+export fn closelog () void
+export fn openlog (ident: char[], option: int, facility: int) void
+export fn setlogmask (mask: int) int
+export fn syslog (priority: int, format: char[], values: any...) void
+
 // <termios.h>
-// <tgmath.h>
+export fn cfgetispeed (termios: ref termios) speed_t
+export fn cfgetospeed (termios: ref termios) speed_t
+export fn cfsetispeed (mut termios: ref termios, speed: speed_t) int
+export fn cfsetospeed (mut termios: ref termios, speed: speed_t) int
+export fn tcdrain (fd: int) int
+export fn tcflow (fd: int, action: int) int
+export fn tcflush (fd: int, queue_selector: int) int
+export fn tcgetattr (fd: int, mut termios: ref termios) int
+export fn tcgetsid (fd: int) pid_t
+export fn tcsendbreak (fd: int, duration: int) int
+export fn tcsetattr (fd: int, actions: int, termios: ref termios) int
+
 // <time.h>
+export fn asctime (time: ref tm) ref char
+export fn asctime_r (time: ref tm, mut buf: ref char) ref char
+export fn clock () clock_t
+export fn clock_getcpuclockid (pid: pid_t, mut clock: ref clockid_t) int
+export fn clock_getres (clock: clockid_t, mut result: ref timespec) int
+export fn clock_gettime (clock: clockid_t, mut result: ref timespec) int
+export fn clock_nanosleep (clock: clockid_t, flags: int, req: ref timespec, mut rem: ref timespec) int
+export fn clock_settime (clock: clockid_t, result: ref timespec) int
+export fn ctime (clock: ref time_t) ref char
+export fn ctime_r (clock: ref time_t, mut buf: ref char) ref char
+export fn difftime (t1: time_t, t2: time_t) float
+export fn getdate (string: char[]) ref tm
+export fn gmtime (timer: ref time_t) ref tm
+export fn gmtime_r (timer: ref time_t, mut result: ref tm) ref tm
+export fn localtime (timer: ref time_t) ref tm
+export fn localtime_r (timer: ref time_t, mut result: ref tm) ref tm
+export fn mktime (mut time: ref tm) time_t
+export fn nanosleep (req: ref timespec, mut rem: ref timespec) int
+export fn strftime (mut string: ref char, count: usize, format: char[], time: ref tm) usize
+export fn strftime_l (mut string: ref char, count: usize, format: char[], time: ref tm, locale: locale_t) usize
+export fn strptime (buf: char[], format: char[], mut time: ref tm) ref char
+export fn time (mut clock: ref time_t) time_t
+export fn timer_create (clock: clockid_t, mut sig: ref sigevent, mut timer: ref timer_t) int
+export fn timer_delete (timer: timer_t) int
+export fn timer_getoverrun (timer: timer_t) int
+export fn timer_gettime (timer: timer_t, mut value: ref itimerspec) int
+export fn timer_settime (timer: timer_t, flags: int, value: ref itimerspec, mut oldvalue: ref itimerspec) int
+export fn tzset () void
+
 // <unistd.h>
+export fn access (path: char[], mode: int) int
+export fn alarm (seconds: u32) u32
+export fn chdir (path: char[]) int
+export fn chown (path: char[], owner: uid_t, group: gid_t) int
+export fn close (fd: int) int
+export fn confstr (name: int, mut buf: ref char, length: usize) usize
+export fn crypt (key: char[], salt: char[]) ref char
+export fn dup (fd: int) int
+export fn dup2 (fd1: int, fd2: int) int
+export fn encrypt (mut block: char[], flag: int) void
+export fn execl (path: char[], arg0: char[], values: any...) int
+export fn execle (path: char[], arg0: char[], values: any..., env: ref char[]) int
+export fn execlp (file: char[], arg0: char[], value: any...) int
+export fn execv (path: char[], args: ref char[]) int
+export fn execve (path: char[], args: ref char[], env: ref char[]) int
+export fn execvp (file: char[], args: ref char[]) int
+export fn faccessat (fd: int, path: char[], mode: int, flag: int) int
+export fn fchdir (fd: int) int
+export fn fchown (fd: int, owner: uid_t, group: gid_t) int
+export fn fchownat (fd: int, path: char[], owner: uid_t, group: gid_t, flag: int) int
+export fn fdatasync (fd: int) int
+export fn fexecve (fd: int, args: ref char[], env: ref char[]) int
+export fn fork () pid_t
+export fn fpathconf (fd: int, name: int) i64
+export fn fsync (fd: int) int
+export fn ftruncate (fd: int, length: off_t) int
+export fn getcwd (mut buf: ref char, length: usize) ref char
+export fn getegid () gid_t
+export fn geteuid () uid_t
+export fn getgid () gid_t
+export fn getgroups (length: int, mut groups: ref gid_t) int
+export fn gethostid () i64
+export fn gethostname (mut buf: ref char, length: usize) int
+export fn getlogin () ref char
+export fn getlogin_r (mut buf: ref char, length: usize) int
+export fn getopt (argc: int, argv: ref char[], option: char[]) int
+export fn getpgid (pid: pid_t) pid_t
+export fn getpgrp () pid_t
+export fn getpid () pid_t
+export fn getppid () pid_t
+export fn getsid (pid: pid_t) pid_t
+export fn getuid () uid_t
+export fn isatty (fd: int) int
+export fn lchown (path: char[], owner: uid_t, group: gid_t) int
+export fn link (target: char[], path: char[]) int
+export fn linkat (fd1: int, target: char[], fd2: int, path: char[], flag: int) int
+export fn lockf (fd: int, function: int, size: off_t) int
+export fn lseek (fd: int, offset: off_t, whence: int) off_t
+export fn nice (increment: int) int
+export fn pathconf (path: char[], name: int) i64
+export fn pause () int
+export fn pipe (mut: fd: int[]) int
+export fn pread (fd: int, mut buf: ref any, length: usize, offset: off_t) isize
+export fn pwrite (fd: int, buf: ref any, length: usize, offset: off_t) isize
+export fn read (fd: int, mut buf: ref any, length: usize) isize
+export fn readlink (path: char[], mut buf: ref char, length: usize) isize
+export fn readlinkat (fd: int, path: char[], mut buf: ref char, length: usize) isize
+export fn rmdir (path: char[]) int
+export fn setegid (group: gid_t) int
+export fn seteuid (user: uid_t) int
+export fn setgid (group: gid_t) int
+export fn setpgid (pid: pid_t, pgid: pid_t) int
+export fn setpgrp () pid_t
+export fn setregid (rgid: gid_t, egid: gid_t) int
+export fn setreuid (ruid: uid_t, euid: uid_t) int
+export fn setsid () pid_t
+export fn setuid (user: uid_t) int
+export fn sleep (seconds: u32) u32
+export fn swab (src: ref any, mut dest: ref any, length: isize) void
+export fn symlink (target: char[], path: char[]) int
+export fn symlinkat (target: char[], fd: int, path: char[]) int
+export fn sync () void
+export fn sysconf (name: int) i64
+export fn tcgetpgrp (fd: int) pid_t
+export fn tcsetpgrp (fd: int, group: pid_t) int
+export fn truncate (path: char[], length: off_t) int
+export fn ttyname (fd: int) ref char
+export fn ttyname_r (fd: int, mut buf: ref char, length: usize) int
+export fn unlink (path: char[]) int
+export fn unlinkat (fd: int, path: char[], flag: int) int
+export fn write (fd: int, buf: ref any, length: usize) isize
+
 // <utmpx.h>
+export fn endutxent () void
+export fn getutxent () ref utmpx
+export fn getutxid (id: ref utmpx) ref utmpx
+export fn getutxline (line: ref utmpx) ref utmpx
+export fn pututxline (line: ref utmpx) ref utmpx
+export fn setutxent () void
+
 // <wchar.h>
 // <wctype.h>
 // <wordexp.h>
