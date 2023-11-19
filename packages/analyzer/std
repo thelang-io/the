@@ -15,6 +15,669 @@
  */
 
 // <aio.h>
+
+export obj aiocb {
+  mut aio_fildes: int
+  mut aio_offset: off_t
+  mut aio_buf: ref any
+  mut aio_nbytes: usize
+  mut aio_reqprio: int
+  mut aio_sigevent: sigevent
+  mut aio_lio_opcode: int
+}
+
+// <dirent.h>
+
+export obj DIR {}
+
+export obj dirent {
+  mut d_ino: ino_t
+  mut d_name: char[]
+}
+
+// <fcntl.h>
+
+export obj flock {
+  mut l_type: i16
+  mut l_whence: i16
+  mut l_start: off_t
+  mut l_len: off_t
+  mut l_pid: pid_t
+}
+
+// <fenv.h>
+
+export obj fenv_t {}
+export obj fexcept_t {}
+
+// <glob.h>
+
+export obj glob_t {
+  mut gl_pathc: usize
+  mut gl_pathv: ref char[]
+  mut gl_offs: usize
+}
+
+// <grp.h>
+
+export obj group {
+  mut gr_name: char[]
+  mut gr_gid: gid_t
+  mut gr_mem: ref char[]
+}
+
+// <iconv.h>
+
+export type iconv_t = ref any
+
+// <inttypes.h>
+
+export obj imaxdiv_t {
+  mut quot: intmax_t
+	mut rem: intmax_t
+}
+
+// <locale.h>
+
+export obj locale_t {}
+
+export obj lconv {
+  mut currency_symbol: char[]
+  mut decimal_point: char[]
+  mut frac_digits: char
+  mut grouping: char[]
+  mut int_curr_symbol: char[]
+  mut int_frac_digits: char
+  mut int_n_cs_precedes: char
+  mut int_n_sep_by_space: char
+  mut int_n_sign_posn: char
+  mut int_p_cs_precedes: char
+  mut int_p_sep_by_space: char
+  mut int_p_sign_posn: char
+  mut mon_decimal_point: char[]
+  mut mon_grouping: char[]
+  mut mon_thousands_sep: char[]
+  mut negative_sign: char[]
+  mut n_cs_precedes: char
+  mut n_sep_by_space: char
+  mut n_sign_posn: char
+  mut positive_sign: char[]
+  mut p_cs_precedes: char
+  mut p_sep_by_space: char
+  mut p_sign_posn: char
+  mut thousands_sep: char[]
+}
+
+// <math.h>
+
+export obj float_t {}
+export obj double_t {}
+
+// <mqueue.h>
+
+export obj mqd_t {}
+
+export obj mq_attr {
+  mut mq_flags: i64
+  mut mq_maxmsg: i64
+  mut mq_msgsize: i64
+  mut mq_curmsgs: i64
+}
+
+// <ndbm.h>
+
+export obj DBM {}
+
+export obj datum {
+  mut dptr: ref any
+  mut dsize: usize
+}
+
+// <net/if.h>
+
+export obj if_nameindex {
+  mut if_index: u32
+  mut if_name: char[]
+}
+
+// <netdb.h>
+
+export obj hostent {
+  mut h_name: char[]
+  mut h_aliases: ref char[]
+  mut h_addrtype: int
+  mut h_length: int
+  mut h_addr_list: ref char[]
+}
+
+export obj netent {
+  mut n_name: char[]
+  mut n_aliases: ref char[]
+  mut n_addrtype: int
+  mut n_net: u32
+}
+
+export obj protoent {
+  mut p_name: char[]
+  mut p_aliases: ref char[]
+  mut p_proto: int
+}
+
+export obj servent {
+  mut s_name: char[]
+  mut s_aliases: ref char[]
+  mut s_port: int
+  mut s_proto: char[]
+}
+
+export obj addrinfo {
+  mut ai_flags: int
+  mut ai_family: int
+  mut ai_socktype: int
+  mut ai_protocol: int
+  mut ai_addrlen: socklen_t
+  mut ai_addr: ref sockaddr
+  mut ai_canonname: char[]
+  mut ai_next: ref addrinfo
+}
+
+// <netinet/in.h>
+
+export obj in_port_t {}
+export obj in_addr_t {}
+
+export obj in_addr {
+  mut s_addr: in_addr_t
+}
+
+export obj sockaddr_in {
+  mut sin_family: sa_family_t
+  mut sin_port: in_port_t
+  mut sin_addr: in_addr
+}
+
+export obj in6_addr {
+  mut s6_addr: u8[]
+}
+
+export obj sockaddr_in6 {
+  mut sin6_family: sa_family_t
+  mut sin6_port: in_port_t
+  mut sin6_flowinfo: u32
+  mut sin6_addr: in6_addr
+  mut sin6_scope_id: u32
+}
+
+export obj ipv6_mreq {
+  mut ipv6mr_multiaddr: in6_addr
+  mut ipv6mr_interface: u32
+}
+
+// <nl_types.h>
+
+export obj nl_catd {}
+export obj nl_item {}
+
+// <poll.h>
+
+export obj nfds_t {}
+
+export obj pollfd {
+  mut fd: int
+  mut events: i16
+  mut revents: i16
+}
+
+// <pwd.h>
+
+export obj passwd {
+  mut pw_name: char[]
+  mut pw_uid: uid_t
+  mut pw_gid: gid_t
+  mut pw_dir: char[]
+  mut pw_shell: char[]
+}
+
+// <regex.h>
+
+export obj regoff_t {}
+
+export obj regex_t {
+  mut re_nsub: usize
+}
+
+export obj regmatch_t {
+  mut rm_so: regoff_t
+  mut rm_eo: regoff_t
+}
+
+// <sched.h>
+
+export obj sched_param {
+  mut sched_priority: int
+}
+
+// <search.h>
+
+export obj ENTRY {
+  mut key: char[]
+  mut data: ref any
+}
+
+export enum ACTION {
+  FIND,
+  ENTER,
+}
+
+export enum VISIT {
+  preorder,
+  postorder,
+  endorder,
+  leaf,
+}
+
+// <semaphore.h>
+
+export obj sem_t {}
+
+// <setjmp.h>
+
+export obj jmp_buf {}
+export obj sigjmp_buf {}
+
+// <signal.h>
+
+export obj mcontext_t {}
+export obj sig_atomic_t {}
+export obj sigset_t {}
+
+export type sigval = int | ref any
+
+export obj sigevent {
+  mut sigev_notify: int
+  mut sigev_signo: int
+  mut sigev_value: sigval
+  mut sigev_notify_function: (sigval) -> void
+  mut sigev_notify_attributes: ref pthread_attr_t
+}
+
+export obj sigaction {
+  mut sa_handler: (int) -> void
+  mut sa_mask: sigset_t
+  mut sa_flags: int
+  mut sa_sigaction: (signum: int, mut info: ref siginfo_t, mut ctx: ref any) -> void
+}
+
+export obj ucontext_t {
+  mut uc_link: ref ucontext_t
+  mut uc_sigmask: sigset_t
+  mut uc_stack: stack_t
+  mut uc_mcontext: ref mcontext_t
+}
+
+export obj stack_t {
+  mut ss_sp: ref any
+  mut ss_size: usize
+  mut ss_flags: int
+}
+
+export obj siginfo_t {
+  mut si_signo: int
+  mut si_code: int
+  mut si_errno: int
+  mut si_pid: pid_t
+  mut si_uid: uid_t
+  mut si_addr: ref any
+  mut si_status: int
+  mut si_band: i64
+  mut si_value: sigval
+}
+
+// <spawn.h>
+
+export type spawnattr_t = ref any
+export type spawn_file_actions_t = ref any
+
+// <stddef.h>
+
+export obj ptrdiff_t {}
+
+// <stdio.h>
+
+export obj FILE {}
+export obj fpos_t {}
+
+// <stdlib.h>
+
+export obj div_t {
+  mut quot: int
+  mut rem: int
+}
+
+export obj ldiv_t {
+  mut quot: i64
+  mut rem: i64
+}
+
+export obj lldiv_t {
+  mut quot: int
+  mut rem: int
+}
+
+// <sys/ipc.h>
+
+export obj ipc_perm {
+  mut uid: uid_t
+  mut gid: gid_t
+  mut cuid: uid_t
+  mut cgid: gid_t
+  mut mode: mode_t
+}
+
+// <sys/mman.h>
+
+export obj typed_mem_info {
+  mut tmi_length: usize
+}
+
+// <sys/msg.h>
+
+export obj msgqnum_t {}
+export obj msglen_t {}
+
+export obj msqid_ds {
+  mut msg_perm: ipc_perm
+  mut msg_qnum: msgqnum_t
+  mut msg_qbytes: msglen_t
+  mut msg_lspid: pid_t
+  mut msg_lrpid: pid_t
+  mut msg_stime: time_t
+  mut msg_rtime: time_t
+  mut msg_ctime: time_t
+}
+
+// <sys/resource.h>
+
+export obj rlim_t {}
+
+export obj rlimit {
+  mut rlim_cur: rlim_t
+  mut rlim_max: rlim_t
+}
+
+export obj rusage {
+  mut ru_utime: timeval
+  mut ru_stime: timeval
+}
+
+// <sys/select.h>
+
+export obj fd_set {}
+
+export obj timeval {
+  mut tv_sec: time_t
+  mut tv_usec: suseconds_t
+}
+
+// <sys/sem.h>
+
+export type semun = int | ref semid_ds | ref u16
+
+export obj semid_ds {
+  mut sem_perm: ipc_perm
+  mut sem_nsems: u16
+  mut sem_otime: time_t
+  mut sem_ctime: time_t
+}
+
+export obj sem {
+  mut semval: u16
+  mut sempid: pid_t
+  mut semncnt: u16
+  mut semzcnt: u16
+}
+
+export obj sembuf {
+  mut sem_num: u16
+  mut sem_op: i16
+  mut sem_flg: i16
+}
+
+// <sys/shm.h>
+
+export obj shmatt_t {}
+
+export obj shmid_ds {
+  mut shm_perm: ipc_perm
+  mut shm_segsz: usize
+  mut shm_lpid: pid_t
+  mut shm_cpid: pid_t
+  mut shm_nattch: shmatt_t
+  mut shm_atime: time_t
+  mut shm_dtime: time_t
+  mut shm_ctime: time_t
+}
+
+// <sys/socket.h>
+
+export obj socklen_t {}
+export obj sa_family_t {}
+
+export obj sockaddr {
+  mut sa_family: sa_family_t
+  mut sa_data: char[]
+}
+
+export obj sockaddr_storage {
+  mut ss_family: sa_family_t
+}
+
+export obj msghdr {
+  mut msg_name: ref any
+  mut msg_namelen: socklen_t
+  mut msg_iov: ref iovec
+  mut msg_iovlen: int
+  mut msg_control: ref any
+  mut msg_controllen: socklen_t
+  mut msg_flags: int
+}
+
+export obj cmsghdr {
+  mut cmsg_len: socklen_t
+  mut cmsg_level: int
+  mut cmsg_type: int
+}
+
+export obj linger {
+  mut l_onoff: int
+  mut l_linger: int
+}
+
+// <sys/stat.h>
+
+export obj stat {
+  mut st_dev: dev_t
+  mut st_ino: ino_t
+  mut st_mode: mode_t
+  mut st_nlink: nlink_t
+  mut st_uid: uid_t
+  mut st_gid: gid_t
+  mut st_rdev: dev_t
+  mut st_size: off_t
+  mut st_atim: timespec
+  mut st_mtim: timespec
+  mut st_ctim: timespec
+  mut st_blksize: blksize_t
+  mut st_blocks: blkcnt_t
+}
+
+// <sys/statvfs.h>
+
+export obj statvfs {
+  mut f_bsize: u64
+  mut f_frsize: u64
+  mut f_blocks: fsblkcnt_t
+  mut f_bfree: fsblkcnt_t
+  mut f_bavail: fsblkcnt_t
+  mut f_files: fsfilcnt_t
+  mut f_ffree: fsfilcnt_t
+  mut f_favail: fsfilcnt_t
+  mut f_fsid: u64
+  mut f_flag: u64
+  mut f_namemax: u64
+}
+
+// <sys/time.h>
+
+export obj timeval {
+  mut tv_sec: time_t
+  mut tv_usec: suseconds_t
+}
+
+export obj itimerval {
+  mut it_interval: timeval
+  mut it_value: timeval
+}
+
+// <sys/types.h>
+
+export obj blkcnt_t {}
+export obj blksize_t {}
+export obj clock_t {}
+export obj clockid_t {}
+export obj dev_t {}
+export obj fsblkcnt_t {}
+export obj fsfilcnt_t {}
+export obj gid_t {}
+export obj id_t {}
+export obj ino_t {}
+export obj key_t {}
+export obj mode_t {}
+export obj nlink_t {}
+export obj off_t {}
+export obj pid_t {}
+export obj pthread_attr_t {}
+export obj pthread_barrier_t {}
+export obj pthread_barrierattr_t {}
+export obj pthread_cond_t {}
+export obj pthread_condattr_t {}
+export obj pthread_key_t {}
+export obj pthread_mutex_t {}
+export obj pthread_mutexattr_t {}
+export obj pthread_once_t {}
+export obj pthread_rwlock_t {}
+export obj pthread_rwlockattr_t {}
+export obj pthread_spinlock_t {}
+export obj pthread_t {}
+export obj suseconds_t {}
+export obj time_t {}
+export obj timer_t {}
+export obj trace_attr_t {}
+export obj trace_event_id_t {}
+export obj trace_event_set_t {}
+export obj trace_id_t {}
+export obj uid_t {}
+
+// <sys/uio.h>
+
+export obj iovec {
+  mut iov_base: ref any
+  mut iov_len: usize
+}
+
+// <sys/un.h>
+
+export obj sockaddr_un {
+  mut sun_family: sa_family_t
+  mut sun_path: char[]
+}
+
+// <sys/utsname.h>
+
+export obj utsname {
+  mut sysname: char[]
+  mut nodename: char[]
+  mut release: char[]
+  mut version: char[]
+  mut machine: char[]
+}
+
+// <sys/wait.h>
+
+export enum idtype_t {
+  P_ALL,
+  P_PGID,
+  P_PID
+}
+
+// <termios.h>
+
+export obj cc_t {}
+export obj speed_t {}
+export obj tcflag_t {}
+
+export obj termios {
+  mut c_iflag: tcflag_t
+  mut c_oflag: tcflag_t
+  mut c_cflag: tcflag_t
+  mut c_lflag: tcflag_t
+  mut c_cc: cc_t[]
+}
+
+// <time.h>
+
+export obj tm {
+  mut tm_sec: int
+  mut tm_min: int
+  mut tm_hour: int
+  mut tm_mday: int
+  mut tm_mon: int
+  mut tm_year: int
+  mut tm_wday: int
+  mut tm_yday: int
+  mut tm_isdst: int
+}
+
+export obj timespec {
+  mut tv_sec: time_t
+  mut tv_nsec: i64
+}
+
+export obj itimerspec {
+  mut it_interval: timespec
+  mut it_value: timespec
+}
+
+// <utmpx.h>
+
+export obj utmpx {
+  mut ut_user: char[]
+  mut ut_id: char[]
+  mut ut_line: char[]
+  mut ut_pid: pid_t
+  mut ut_type: i16
+  mut ut_tv: timeval
+}
+
+// <wchar.h>
+
+export obj mbstate_t {}
+export obj wctype_t {}
+export obj wint_t {}
+
+// <wctype.h>
+
+export obj wctrans_t {}
+
+// <wordexp.h>
+
+export obj wordexp_t {
+  mut we_wordc: usize
+  mut we_wordv: ref char[]
+  mut we_offs: usize
+}
+
+// <aio.h>
 export const AIO_ALLDONE: int
 export const AIO_CANCELED: int
 export const AIO_NOTCANCELED: int
@@ -1178,665 +1841,21 @@ export const INIT_PROCESS: int
 export const LOGIN_PROCESS: int
 export const DEAD_PROCESS: int
 
-// <aio.h>
-
-export obj aiocb {
-  mut aio_fildes: int
-  mut aio_offset: off_t
-  mut aio_buf: ref any
-  mut aio_nbytes: usize
-  mut aio_reqprio: int
-  mut aio_sigevent: sigevent
-  mut aio_lio_opcode: int
-}
-
-// <dirent.h>
-
-export obj DIR {
-}
-
-export obj dirent {
-  mut d_ino: ino_t
-  mut d_name: char[]
-}
-
-// <fcntl.h>
-
-export obj flock {
-  mut l_type: i16
-  mut l_whence: i16
-  mut l_start: off_t
-  mut l_len: off_t
-  mut l_pid: pid_t
-}
-
-// <fenv.h>
-
-export obj fexcept_t {}
-
-export obj fenv_t {
-}
-
-// <glob.h>
-
-export obj glob_t {
-  mut gl_pathc: usize
-  mut gl_pathv: ref char[]
-  mut gl_offs: usize
-}
-
-// <grp.h>
-
-export obj group {
-  mut gr_name: char[]
-  mut gr_gid: gid_t
-  mut gr_mem: ref char[]
-}
-
-// <iconv.h>
-
-export type iconv_t = ref any
-
-// <inttypes.h>
-
-export obj imaxdiv_t {
-  mut quot: intmax_t
-	mut rem: intmax_t
-}
-
-// <locale.h>
-
-export obj lconv {
-  mut currency_symbol: char[]
-  mut decimal_point: char[]
-  mut frac_digits: char
-  mut grouping: char[]
-  mut int_curr_symbol: char[]
-  mut int_frac_digits: char
-  mut int_n_cs_precedes: char
-  mut int_n_sep_by_space: char
-  mut int_n_sign_posn: char
-  mut int_p_cs_precedes: char
-  mut int_p_sep_by_space: char
-  mut int_p_sign_posn: char
-  mut mon_decimal_point: char[]
-  mut mon_grouping: char[]
-  mut mon_thousands_sep: char[]
-  mut negative_sign: char[]
-  mut n_cs_precedes: char
-  mut n_sep_by_space: char
-  mut n_sign_posn: char
-  mut positive_sign: char[]
-  mut p_cs_precedes: char
-  mut p_sep_by_space: char
-  mut p_sign_posn: char
-  mut thousands_sep: char[]
-}
-
-export obj locale_t {
-}
-
-// <math.h>
-
-export obj float_t {}
-export obj double_t {}
-
-// <mqueue.h>
-
-export obj mqd_t {
-}
-
-export obj mq_attr {
-  mut mq_flags: i64
-  mut mq_maxmsg: i64
-  mut mq_msgsize: i64
-  mut mq_curmsgs: i64
-}
-
-// <ndbm.h>
-
-export obj datum {
-  mut dptr: ref any
-  mut dsize: usize
-}
-
-export obj DBM {
-}
-
-// <net/if.h>
-
-export obj if_nameindex {
-  mut if_index: u32
-  mut if_name: char[]
-}
-
-// <netdb.h>
-
-export obj hostent {
-  mut h_name: char[]
-  mut h_aliases: ref char[]
-  mut h_addrtype: int
-  mut h_length: int
-  mut h_addr_list: ref char[]
-}
-
-export obj netent {
-  mut n_name: char[]
-  mut n_aliases: ref char[]
-  mut n_addrtype: int
-  mut n_net: u32
-}
-
-export obj protoent {
-  mut p_name: char[]
-  mut p_aliases: ref char[]
-  mut p_proto: int
-}
-
-export obj servent {
-  mut s_name: char[]
-  mut s_aliases: ref char[]
-  mut s_port: int
-  mut s_proto: char[]
-}
-
-export obj addrinfo {
-  mut ai_flags: int
-  mut ai_family: int
-  mut ai_socktype: int
-  mut ai_protocol: int
-  mut ai_addrlen: socklen_t
-  mut ai_addr: ref sockaddr
-  mut ai_canonname: char[]
-  mut ai_next: ref addrinfo
-}
-
-// <netinet/in.h>
-
-export obj in_port_t {}
-export obj in_addr_t {}
-
-export obj in_addr {
-  mut s_addr: in_addr_t
-}
-
-export obj sockaddr_in {
-  mut sin_family: sa_family_t
-  mut sin_port: in_port_t
-  mut sin_addr: in_addr
-}
-
-export obj in6_addr {
-  mut s6_addr: u8[]
-}
-
-export obj sockaddr_in6 {
-  mut sin6_family: sa_family_t
-  mut sin6_port: in_port_t
-  mut sin6_flowinfo: u32
-  mut sin6_addr: in6_addr
-  mut sin6_scope_id: u32
-}
-
-export obj ipv6_mreq {
-  mut ipv6mr_multiaddr: in6_addr
-  mut ipv6mr_interface: u32
-}
-
-// <nl_types.h>
-
-export obj nl_item {}
-
-export obj nl_catd {
-}
-
-// <poll.h>
-
-export obj nfds_t {}
-
-export obj pollfd {
-  mut fd: int
-  mut events: i16
-  mut revents: i16
-}
-
-// <pwd.h>
-
-export obj passwd {
-  mut pw_name: char[]
-  mut pw_uid: uid_t
-  mut pw_gid: gid_t
-  mut pw_dir: char[]
-  mut pw_shell: char[]
-}
-
-// <regex.h>
-
-export obj regoff_t {}
-
-export obj regex_t {
-  mut re_nsub: usize
-}
-
-export obj regmatch_t {
-  mut rm_so: regoff_t
-  mut rm_eo: regoff_t
-}
-
-// <sched.h>
-
-export obj sched_param {
-  mut sched_priority: int
-}
-
-// <search.h>
-
-export obj ENTRY {
-  mut key: ref char
-  mut data: ref any
-}
-
-export enum ACTION {
-  FIND,
-  ENTER,
-}
-
-export enum VISIT {
-  preorder,
-  postorder,
-  endorder,
-  leaf,
-}
-
-// <semaphore.h>
-
-export obj sem_t {}
-
-// <setjmp.h>
-
-export obj jmp_buf {
-}
-
-export obj sigjmp_buf {
-}
-
-// <signal.h>
-
-export type sigval = int | ref any
-export obj sig_atomic_t {}
-export obj sigset_t {}
-
-export obj sigevent {
-  mut sigev_notify: int
-  mut sigev_signo: int
-  mut sigev_value: sigval
-  mut sigev_notify_function: (sigval) -> void
-  mut sigev_notify_attributes: ref pthread_attr_t
-}
-
-export obj sigaction {
-  mut sa_handler: (int) -> void
-  mut sa_mask: sigset_t
-  mut sa_flags: int
-  mut sa_sigaction: (signum: int, mut info: ref siginfo_t, mut ctx: ref any) -> void
-}
-
-export obj mcontext_t {
-}
-
-export obj ucontext_t {
-  mut uc_link: ref ucontext_t
-  mut uc_sigmask: sigset_t
-  mut uc_stack: stack_t
-  mut uc_mcontext: ref mcontext_t
-}
-
-export obj stack_t {
-  mut ss_sp: ref any
-  mut ss_size: usize
-  mut ss_flags: int
-}
-
-export obj siginfo_t {
-  mut si_signo: int
-  mut si_code: int
-  mut si_errno: int
-  mut si_pid: pid_t
-  mut si_uid: uid_t
-  mut si_addr: ref any
-  mut si_status: int
-  mut si_band: i64
-  mut si_value: sigval
-}
-
-// <spawn.h>
-
-export type spawnattr_t = ref any
-export type spawn_file_actions_t = ref any
-
-// <stddef.h>
-
-export obj ptrdiff_t {}
-
-// <stdio.h>
-
-export obj fpos_t {}
-
-export obj FILE {
-}
-
-// <stdlib.h>
-
-export obj div_t {
-  mut quot: int
-  mut rem: int
-}
-
-export obj ldiv_t {
-  mut quot: i64
-  mut rem: i64
-}
-
-export obj lldiv_t {
-  mut quot: int
-  mut rem: int
-}
-
-// <sys/ipc.h>
-
-export obj ipc_perm {
-  mut uid: uid_t
-  mut gid: gid_t
-  mut cuid: uid_t
-  mut cgid: gid_t
-  mut mode: mode_t
-}
-
-// <sys/mman.h>
-
-export obj typed_mem_info {
-  mut tmi_length: usize
-}
-
-// <sys/msg.h>
-
-export obj msgqnum_t {}
-export obj msglen_t {}
-
-export obj msqid_ds {
-  mut msg_perm: ipc_perm
-  mut msg_qnum: msgqnum_t
-  mut msg_qbytes: msglen_t
-  mut msg_lspid: pid_t
-  mut msg_lrpid: pid_t
-  mut msg_stime: time_t
-  mut msg_rtime: time_t
-  mut msg_ctime: time_t
-}
-
-// <sys/resource.h>
-
-export obj rlim_t {}
-
-export obj rlimit {
-  mut rlim_cur: rlim_t
-  mut rlim_max: rlim_t
-}
-
-export obj rusage {
-  mut ru_utime: timeval
-  mut ru_stime: timeval
-}
-
-// <sys/select.h>
-
-export obj timeval {
-  mut tv_sec: time_t
-  mut tv_usec: suseconds_t
-}
-
-export obj fd_set {
-}
-
-// <sys/sem.h>
-
-export type semun = int | ref semid_ds | ref u16
-
-export obj semid_ds {
-  mut sem_perm: ipc_perm
-  mut sem_nsems: u16
-  mut sem_otime: time_t
-  mut sem_ctime: time_t
-}
-
-export obj sem {
-  mut semval: u16
-  mut sempid: pid_t
-  mut semncnt: u16
-  mut semzcnt: u16
-}
-
-export obj sembuf {
-  mut sem_num: u16
-  mut sem_op: i16
-  mut sem_flg: i16
-}
-
-// <sys/shm.h>
-
-export obj shmatt_t {}
-
-export obj shmid_ds {
-  mut shm_perm: ipc_perm
-  mut shm_segsz: usize
-  mut shm_lpid: pid_t
-  mut shm_cpid: pid_t
-  mut shm_nattch: shmatt_t
-  mut shm_atime: time_t
-  mut shm_dtime: time_t
-  mut shm_ctime: time_t
-}
-
-// <sys/socket.h>
-
-export obj socklen_t {}
-export obj sa_family_t {}
-
-export obj sockaddr {
-  mut sa_family: sa_family_t
-  mut sa_data: char[]
-}
-
-export obj sockaddr_storage {
-  mut ss_family: sa_family_t
-}
-
-export obj msghdr {
-  mut msg_name: ref any
-  mut msg_namelen: socklen_t
-  mut msg_iov: ref iovec
-  mut msg_iovlen: int
-  mut msg_control: ref any
-  mut msg_controllen: socklen_t
-  mut msg_flags: int
-}
-
-export obj cmsghdr {
-  mut cmsg_len: socklen_t
-  mut cmsg_level: int
-  mut cmsg_type: int
-}
-
-export obj linger {
-  mut l_onoff: int
-  mut l_linger: int
-}
-
-// <sys/stat.h>
-
-export obj stat {
-  mut st_dev: dev_t
-  mut st_ino: ino_t
-  mut st_mode: mode_t
-  mut st_nlink: nlink_t
-  mut st_uid: uid_t
-  mut st_gid: gid_t
-  mut st_rdev: dev_t
-  mut st_size: off_t
-  mut st_atim: timespec
-  mut st_mtim: timespec
-  mut st_ctim: timespec
-  mut st_blksize: blksize_t
-  mut st_blocks: blkcnt_t
-}
-
-// <sys/statvfs.h>
-
-export obj statvfs {
-  mut f_bsize: u64
-  mut f_frsize: u64
-  mut f_blocks: fsblkcnt_t
-  mut f_bfree: fsblkcnt_t
-  mut f_bavail: fsblkcnt_t
-  mut f_files: fsfilcnt_t
-  mut f_ffree: fsfilcnt_t
-  mut f_favail: fsfilcnt_t
-  mut f_fsid: u64
-  mut f_flag: u64
-  mut f_namemax: u64
-}
-
-// <sys/time.h>
-
-export obj timeval {
-  mut tv_sec: time_t
-  mut tv_usec: suseconds_t
-}
-
-export obj itimerval {
-  mut it_interval: timeval
-  mut it_value: timeval
-}
-
-// <sys/types.h>
-
-export obj blkcnt_t {}
-export obj blksize_t {}
-export obj clock_t {}
-export obj clockid_t {}
-export obj dev_t {}
-export obj fsblkcnt_t {}
-export obj fsfilcnt_t {}
-export obj gid_t {}
-export obj id_t {}
-export obj ino_t {}
-export obj key_t {}
-export obj mode_t {}
-export obj nlink_t {}
-export obj off_t {}
-export obj pid_t {}
-export obj pthread_attr_t {}
-export obj pthread_barrier_t {}
-export obj pthread_barrierattr_t {}
-export obj pthread_cond_t {}
-export obj pthread_condattr_t {}
-export obj pthread_key_t {}
-export obj pthread_mutex_t {}
-export obj pthread_mutexattr_t {}
-export obj pthread_once_t {}
-export obj pthread_rwlock_t {}
-export obj pthread_rwlockattr_t {}
-export obj pthread_spinlock_t {}
-export obj pthread_t {}
-export obj suseconds_t {}
-export obj time_t {}
-export obj timer_t {}
-export obj trace_attr_t {}
-export obj trace_event_id_t {}
-export obj trace_event_set_t {}
-export obj trace_id_t {}
-export obj uid_t {}
-
-// <sys/uio.h>
-
-export obj iovec {
-  mut iov_base: ref any
-  mut iov_len: usize
-}
-
-// <sys/un.h>
-
-export obj sockaddr_un {
-  mut sun_family: sa_family_t
-  mut sun_path: char[]
-}
-
-// <sys/utsname.h>
-
-export obj utsname {
-  mut sysname: char[]
-  mut nodename: char[]
-  mut release: char[]
-  mut version: char[]
-  mut machine: char[]
-}
-
-// <sys/wait.h>
-
-export enum idtype_t {
-  P_ALL,
-  P_PGID,
-  P_PID
-}
-
-// <termios.h>
-
-export obj cc_t {}
-export obj speed_t {}
-export obj tcflag_t {}
-
-export obj termios {
-  mut c_iflag: tcflag_t
-  mut c_oflag: tcflag_t
-  mut c_cflag: tcflag_t
-  mut c_lflag: tcflag_t
-  mut c_cc: cc_t[]
-}
-
-// <time.h>
-
-export obj tm {
-  mut tm_sec: int
-  mut tm_min: int
-  mut tm_hour: int
-  mut tm_mday: int
-  mut tm_mon: int
-  mut tm_year: int
-  mut tm_wday: int
-  mut tm_yday: int
-  mut tm_isdst: int
-}
-
-export obj timespec {
-  mut tv_sec: time_t
-  mut tv_nsec: i64
-}
-
-export obj itimerspec {
-  mut it_interval: timespec
-  mut it_value: timespec
-}
-
-// <utmpx.h>
-
-export obj utmpx {
-  mut ut_user: char[]
-  mut ut_id: char[]
-  mut ut_line: char[]
-  mut ut_pid: pid_t
-  mut ut_type: i16
-  mut ut_tv: timeval
-}
+// <wchar.h>
+export const WEOF: wint_t
+
+// <wordexp.h>
+export const WRDE_APPEND: int
+export const WRDE_DOOFFS: int
+export const WRDE_NOCMD: int
+export const WRDE_REUSE: int
+export const WRDE_SHOWERR: int
+export const WRDE_UNDEF: int
+export const WRDE_BADCHAR: int
+export const WRDE_BADVAL: int
+export const WRDE_CMDSUB: int
+export const WRDE_NOSPACE: int
+export const WRDE_SYNTAX: int
 
 // <errno.h>
 export mut errno: int
@@ -1879,7 +1898,7 @@ export fn ntohl (net: u32) u32
 export fn ntohs (net: u16) u16
 export fn inet_addr (cp: char[]) in_addr_t
 export fn inet_ntoa (in: in_addr) char[]
-export fn inet_ntop (af: int, src: ref any, mut dest: ref char, size: socklen_t) ref char
+export fn inet_ntop (af: int, src: ref any, mut dest: ref char, size: socklen_t) char[]
 export fn inet_pton (af: int, src: char[], mut dest: ref any) int
 
 // <assert.h>
@@ -2523,8 +2542,8 @@ export fn lldiv (numer: i64, denom: i64) lldiv_t
 export fn lrand48 () i64
 export fn malloc (size: usize) ref any
 export fn mblen (s: char[], n: usize) int
-export fn mbstowcs (mut pwcs: ref rune, s: char[], n: usize) usize
-export fn mbtowc (mut pwc: ref rune, s: char[], n: usize) int
+export fn mbstowcs (mut wcs: ref rune, s: char[], n: usize) usize
+export fn mbtowc (mut wc: ref rune, s: char[], n: usize) int
 export fn mkdtemp (mut template: ref char) char[]
 export fn mkstemp (mut template: ref char) int
 export fn mrand48 () i64
@@ -2578,11 +2597,11 @@ export fn strerror (int) char[]
 export fn strerror_l (errnum: int, locale: locale_t) char[]
 export fn strerror_r (errnum: int, mut buf: ref char, length: usize) int
 export fn strlen (s: char[]) usize
-export fn strncat (mut s1: ref char, s2: char[], n: usize) char[]
-export fn strncmp (s1: char[], s2: char[], n: usize) int
-export fn strncpy (mut s1: ref char, s2: char[], n: usize) char[]
-export fn strndup (s: char[], size: usize) char[]
-export fn strnlen (s: char[], n: usize) usize
+export fn strncat (mut s1: ref char, s2: char[], count: usize) char[]
+export fn strncmp (s1: char[], s2: char[], count: usize) int
+export fn strncpy (mut s1: ref char, s2: char[], count: usize) char[]
+export fn strndup (s: char[], count: usize) char[]
+export fn strnlen (s: char[], count: usize) usize
 export fn strpbrk (s1: char[], s2: char[]) char[]
 export fn strrchr (s: char[], c: int) char[]
 export fn strsignal (signum: int) char[]
@@ -2754,16 +2773,16 @@ export fn tcsendbreak (fd: int, duration: int) int
 export fn tcsetattr (fd: int, actions: int, termios: ref termios) int
 
 // <time.h>
-export fn asctime (time: ref tm) ref char
-export fn asctime_r (time: ref tm, mut buf: ref char) ref char
+export fn asctime (time: ref tm) char[]
+export fn asctime_r (time: ref tm, mut buf: ref char) char[]
 export fn clock () clock_t
 export fn clock_getcpuclockid (pid: pid_t, mut clock: ref clockid_t) int
 export fn clock_getres (clock: clockid_t, mut result: ref timespec) int
 export fn clock_gettime (clock: clockid_t, mut result: ref timespec) int
 export fn clock_nanosleep (clock: clockid_t, flags: int, req: ref timespec, mut rem: ref timespec) int
 export fn clock_settime (clock: clockid_t, result: ref timespec) int
-export fn ctime (clock: ref time_t) ref char
-export fn ctime_r (clock: ref time_t, mut buf: ref char) ref char
+export fn ctime (clock: ref time_t) char[]
+export fn ctime_r (clock: ref time_t, mut buf: ref char) char[]
 export fn difftime (t1: time_t, t2: time_t) float
 export fn getdate (string: char[]) ref tm
 export fn gmtime (timer: ref time_t) ref tm
@@ -2774,7 +2793,7 @@ export fn mktime (mut time: ref tm) time_t
 export fn nanosleep (req: ref timespec, mut rem: ref timespec) int
 export fn strftime (mut string: ref char, count: usize, format: char[], time: ref tm) usize
 export fn strftime_l (mut string: ref char, count: usize, format: char[], time: ref tm, locale: locale_t) usize
-export fn strptime (buf: char[], format: char[], mut time: ref tm) ref char
+export fn strptime (buf: char[], format: char[], mut time: ref tm) char[]
 export fn time (mut clock: ref time_t) time_t
 export fn timer_create (clock: clockid_t, mut sig: ref sigevent, mut timer: ref timer_t) int
 export fn timer_delete (timer: timer_t) int
@@ -2790,7 +2809,7 @@ export fn chdir (path: char[]) int
 export fn chown (path: char[], owner: uid_t, group: gid_t) int
 export fn close (fd: int) int
 export fn confstr (name: int, mut buf: ref char, length: usize) usize
-export fn crypt (key: char[], salt: char[]) ref char
+export fn crypt (key: char[], salt: char[]) char[]
 export fn dup (fd: int) int
 export fn dup2 (fd1: int, fd2: int) int
 export fn encrypt (mut block: char[], flag: int) void
@@ -2810,14 +2829,14 @@ export fn fork () pid_t
 export fn fpathconf (fd: int, name: int) i64
 export fn fsync (fd: int) int
 export fn ftruncate (fd: int, length: off_t) int
-export fn getcwd (mut buf: ref char, length: usize) ref char
+export fn getcwd (mut buf: ref char, length: usize) char[]
 export fn getegid () gid_t
 export fn geteuid () uid_t
 export fn getgid () gid_t
 export fn getgroups (length: int, mut groups: ref gid_t) int
 export fn gethostid () i64
 export fn gethostname (mut buf: ref char, length: usize) int
-export fn getlogin () ref char
+export fn getlogin () char[]
 export fn getlogin_r (mut buf: ref char, length: usize) int
 export fn getopt (argc: int, argv: ref char[], option: char[]) int
 export fn getpgid (pid: pid_t) pid_t
@@ -2860,7 +2879,7 @@ export fn sysconf (name: int) i64
 export fn tcgetpgrp (fd: int) pid_t
 export fn tcsetpgrp (fd: int, group: pid_t) int
 export fn truncate (path: char[], length: off_t) int
-export fn ttyname (fd: int) ref char
+export fn ttyname (fd: int) char[]
 export fn ttyname_r (fd: int, mut buf: ref char, length: usize) int
 export fn unlink (path: char[]) int
 export fn unlinkat (fd: int, path: char[], flag: int) int
@@ -2875,5 +2894,112 @@ export fn pututxline (line: ref utmpx) ref utmpx
 export fn setutxent () void
 
 // <wchar.h>
+export fn btowc (c: int) wint_t
+export fn fgetwc (mut stream: ref FILE) wint_t
+export fn fgetws (mut ws: ref rune, n: int, mut stream: ref FILE) rune[]
+export fn fputwc (wc: rune, mut stream: ref FILE) wint_t
+export fn fputws (ws: rune[], mut stream: ref FILE) int
+export fn fwide (mut stream: ref FILE, mode: int) int
+export fn fwprintf (mut stream: ref FILE, format: rune[], values: any...) int
+export fn fwscanf (mut stream: ref FILE, format: rune[], values: any...) int
+export fn getwc (mut stream: ref FILE) wint_t
+export fn getwchar () wint_t
+export fn mbrlen (buf: char[], length: usize, mut state: ref mbstate_t) usize
+export fn mbrtowc (mut ws: ref rune, buf: char[], length: usize, mut state: ref mbstate_t) usize
+export fn mbsinit (state: ref mbstate_t) int
+export fn mbsnrtowcs (mut dest: ref rune, src: ref char[], nmc: usize, length: usize, mut state: ref mbstate_t) usize
+export fn mbsrtowcs (mut dest: ref rune, src: ref char[], length: usize, mut state: ref mbstate_t) usize
+export fn open_wmemstream (mut buf: ref rune[], mut length: ref usize) ref FILE
+export fn putwc (wc: rune, mut stream: ref FILE) wint_t
+export fn putwchar (wc: rune) wint_t
+export fn swprintf (mut ws: ref rune, n: usize, format: rune[], values: any...) int
+export fn swscanf (ws: rune[], format: rune[], values: any...) int
+export fn ungetwc (wc: wint_t, mut stream: ref FILE) wint_t
+export fn wcpcpy (mut dest: ref rune, src: rune[]) rune[]
+export fn wcpncpy (mut dest: ref rune, src: rune[], count: usize) rune[]
+export fn wcrtomb (mut string: ref char, wc: rune, mut state: ref mbstate_t) usize
+export fn wcscasecmp (ws1: rune[], ws2: rune[]) int
+export fn wcscasecmp_l (ws1: rune[], ws2: rune[], locale: locale_t) int
+export fn wcscat (mut dest: ref rune, src: rune[]) rune[]
+export fn wcschr (ws: rune[], wc: rune) rune[]
+export fn wcscmp (ws1: rune[], ws2: rune[]) int
+export fn wcscoll (ws1: rune[], ws2: rune[]) int
+export fn wcscoll_l (ws1: rune[], ws2: rune[], locale: locale_t) int
+export fn wcscpy (mut dest: ref rune, src: rune[]) rune[]
+export fn wcscspn (ws1: rune[], ws2: rune[]) usize
+export fn wcsdup (ws: rune[]) rune[]
+export fn wcsftime (mut ws: ref rune, length: usize, format: rune[], time: ref tm) usize
+export fn wcslen (ws: rune[]) usize
+export fn wcsncasecmp (ws1: rune[], ws2: rune[], length: usize) int
+export fn wcsncasecmp_l (ws1: rune[], ws2: rune[], length: usize, locale: locale_t) int
+export fn wcsncat (mut dest: ref rune, src: rune[], length: usize) rune[]
+export fn wcsncmp (ws1: rune[], ws2: rune[], length: usize) int
+export fn wcsncpy (mut dest: ref rune, src: rune[], length: usize) rune[]
+export fn wcsnlen (ws: rune[], length: usize) usize
+export fn wcsnrtombs (mut dest: ref char, src: ref rune[], nwc: usize, length: usize, mut state: ref mbstate_t) usize
+export fn wcspbrk (ws1: rune[], ws2: rune[]) rune[]
+export fn wcsrchr (ws: rune[], wc: rune) rune[]
+export fn wcsrtombs (mut dest: ref char, src: ref rune[], nwc: usize, mut state: ref mbstate_t) usize
+export fn wcsspn (ws1: rune[], ws2: rune[]) usize
+export fn wcsstr (ws1: rune[], ws2: rune[]) rune[]
+export fn wcstod (ws: rune[], mut end: ref rune[]) float
+export fn wcstof (ws: rune[], mut end: ref rune[]) f32
+export fn wcstok (mut ws: ref rune, delimiter: rune[], mut ptr: ref rune[]) rune[]
+export fn wcstol (ws: rune[], mut end: ref rune[], base: int) i64
+export fn wcstoll (ws: rune[], mut end: ref rune[], base: int) i64
+export fn wcstoul (ws: rune[], mut end: ref rune[], base: int) u64
+export fn wcstoull (ws: rune[], mut end: ref rune[], base: int) u64
+export fn wcswidth (ws: rune[], n: usize) int
+export fn wcsxfrm (mut dest: ref rune, src: rune[], count: usize) usize
+export fn wcsxfrm_l (mut dest: ref rune, src: rune[], count: usize, locale: locale_t) usize
+export fn wctob (c: wint_t) int
+export fn wcwidth (wc: rune) int
+export fn wmemchr (ws: rune[], wc: rune, count: usize) rune[]
+export fn wmemcmp (ws1: rune[], ws2: rune[], count: usize) int
+export fn wmemcpy (mut dest: ref rune, src: rune[], count: usize) rune[]
+export fn wmemmove (mut dest: ref rune, src: rune[], count: usize) rune[]
+export fn wmemset (mut ws: ref rune, wc: rune, count: usize) rune[]
+export fn wprintf (format: rune[], values: any...) int
+export fn wscanf (format: rune[], values: any...) int
+
 // <wctype.h>
+export fn iswalnum (wc: wint_t) int
+export fn iswalnum_l (wc: wint_t, locale: locale_t) int
+export fn iswalpha (wc: wint_t) int
+export fn iswalpha_l (wc: wint_t, locale: locale_t) int
+export fn iswblank (wc: wint_t) int
+export fn iswblank_l (wc: wint_t, locale: locale_t) int
+export fn iswcntrl (wc: wint_t) int
+export fn iswcntrl_l (wc: wint_t, locale: locale_t) int
+export fn iswctype (wc: wint_t, charclass: wctype_t) int
+export fn iswctype_l (wc: wint_t, charclass: wctype_t, locale: locale_t) int
+export fn iswdigit (wc: wint_t) int
+export fn iswdigit_l (wc: wint_t, locale: locale_t) int
+export fn iswgraph (wc: wint_t) int
+export fn iswgraph_l (wc: wint_t, locale: locale_t) int
+export fn iswlower (wc: wint_t) int
+export fn iswlower_l (wc: wint_t, locale: locale_t) int
+export fn iswprint (wc: wint_t) int
+export fn iswprint_l (wc: wint_t, locale: locale_t) int
+export fn iswpunct (wc: wint_t) int
+export fn iswpunct_l (wc: wint_t, locale: locale_t) int
+export fn iswspace (wc: wint_t) int
+export fn iswspace_l (wc: wint_t, locale: locale_t) int
+export fn iswupper (wc: wint_t) int
+export fn iswupper_l (wc: wint_t, locale: locale_t) int
+export fn iswxdigit (wc: wint_t) int
+export fn iswxdigit_l (wc: wint_t, locale: locale_t) int
+export fn towctrans (wc: wint_t, desc: wctrans_t) wint_t
+export fn towctrans_l (wc: wint_t, desc: wctrans_t, locale: locale_t) wint_t
+export fn towlower (wc: wint_t) wint_t
+export fn towlower_l (wc: wint_t, locale: locale_t) wint_t
+export fn towupper (wc: wint_t) wint_t
+export fn towupper_l (wc: wint_t, locale: locale_t) wint_t
+export fn wctrans (charclass: char[]) wctrans_t
+export fn wctrans_l (charclass: char[], locale: locale_t) wctrans_t
+export fn wctype (property: char[]) wctype_t
+export fn wctype_l (property: char[], locale: locale_t) wctype_t
+
 // <wordexp.h>
+export fn wordexp (words: char[], mut wordexp: ref wordexp_t, flags: int) int
+export fn wordfree (mut wordexp: ref wordexp_t) void
