@@ -24,10 +24,13 @@ export obj TypeMap {
     self.createObject("i32")
     self.createObject("i64")
     self.createAlias("int", self.get("i32"))
+    self.createObject("isize")
+    self.createObject("rune")
     self.createObject("u8")
     self.createObject("u16")
     self.createObject("u32")
     self.createObject("u64")
+    self.createObject("usize")
     self.createObject("void")
   }
 

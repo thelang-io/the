@@ -74,7 +74,7 @@ export type iconv_t = ref any
 
 export obj imaxdiv_t {
   mut quot: intmax_t
-	mut rem: intmax_t
+  mut rem: intmax_t
 }
 
 // <locale.h>
@@ -135,7 +135,7 @@ export obj datum {
 
 // <net/if.h>
 
-export obj if_nameindex {
+export obj if_nameindex_t {
   mut if_index: u32
   mut if_name: char[]
 }
@@ -301,7 +301,7 @@ export obj sigevent {
   mut sigev_notify_attributes: ref pthread_attr_t
 }
 
-export obj sigaction {
+export obj sigaction_t {
   mut sa_handler: (int) -> void
   mut sa_mask: sigset_t
   mut sa_flags: int
@@ -341,6 +341,11 @@ export type spawn_file_actions_t = ref any
 // <stddef.h>
 
 export obj ptrdiff_t {}
+
+// <stdint.h>
+
+export obj intmax_t {}
+export obj uintmax_t {}
 
 // <stdio.h>
 
@@ -413,11 +418,6 @@ export obj rusage {
 // <sys/select.h>
 
 export obj fd_set {}
-
-export obj timeval {
-  mut tv_sec: time_t
-  mut tv_usec: suseconds_t
-}
 
 // <sys/sem.h>
 
@@ -495,7 +495,7 @@ export obj linger {
 
 // <sys/stat.h>
 
-export obj stat {
+export obj stat_t {
   mut st_dev: dev_t
   mut st_ino: ino_t
   mut st_mode: mode_t
@@ -513,7 +513,7 @@ export obj stat {
 
 // <sys/statvfs.h>
 
-export obj statvfs {
+export obj statvfs_t {
   mut f_bsize: u64
   mut f_frsize: u64
   mut f_blocks: fsblkcnt_t
@@ -537,6 +537,15 @@ export obj timeval {
 export obj itimerval {
   mut it_interval: timeval
   mut it_value: timeval
+}
+
+// <sys/time.h>
+
+export obj tms {
+  mut tms_utime: clock_t
+  mut tms_stime: clock_t
+  mut tms_cutime: clock_t
+  mut tms_cstime: clock_t
 }
 
 // <sys/types.h>
@@ -1495,8 +1504,6 @@ export const EXIT_FAILURE: int
 export const EXIT_SUCCESS: int
 export const RAND_MAX: int
 export const MB_CUR_MAX: int
-export const WNOHANG: int
-export const WUNTRACED: int
 
 // <sys/ipc.h>
 export const IPC_CREAT: int
@@ -2182,9 +2189,9 @@ export fn dbm_open (file: char[], flags: int, mode: mode_t) ref DBM
 export fn dbm_store (mut db: ref DBM, key: datum, content: datum, mode: int) int
 
 // <net/if.h>
-export fn if_freenameindex (mut ptr: ref if_nameindex) void
+export fn if_freenameindex (mut ptr: ref if_nameindex_t) void
 export fn if_indextoname (index: u32, mut name: ref char) char[]
-export fn if_nameindex () ref if_nameindex
+export fn if_nameindex () ref if_nameindex_t
 export fn if_nametoindex (name: char[]) u32
 
 // <netdb.h>
@@ -2399,7 +2406,7 @@ export fn psignal (signum: int, message: char[]) void
 export fn pthread_kill (thread: pthread_t, sig: int) int
 export fn pthread_sigmask (how: int, set: ref sigset_t, mut oldset: ref sigset_t) int
 export fn raise (sig: int) int
-export fn sigaction (sig: int, action: ref sigaction, mut oldaction: ref sigaction) int
+export fn sigaction (sig: int, action: ref sigaction_t, mut oldaction: ref sigaction_t) int
 export fn sigaddset (mut set: ref sigset_t, signum: int) int
 export fn sigaltstack (stack: ref stack_t, mut oldstack: ref stack_t) int
 export fn sigdelset (mut set: ref sigset_t, signum: int) int
@@ -2409,7 +2416,7 @@ export fn sighold (sig: int) int
 export fn sigignore (sig: int) int
 export fn siginterrupt (sig: int, flag: int) int
 export fn sigismember (set: ref sigset_t, signum: int) int
-export fn sigpause (int) int
+export fn sigpause (mask: int) int
 export fn sigpending (mut set: ref sigset_t) int
 export fn sigprocmask (how: int, set: ref sigset_t, mut oldset: ref sigset_t) int
 export fn sigqueue (pid: pid_t, signum: int, value: sigval) int
@@ -2507,12 +2514,6 @@ export fn tmpnam (mut s: ref char) char[]
 export fn ungetc (c: int, mut stream: ref FILE) int
 
 // <stdlib.h>
-export fn WEXITSTATUS (x: int) int
-export fn WIFEXITED (x: int) bool
-export fn WIFSIGNALED (x: int) bool
-export fn WIFSTOPPED (x: int) bool
-export fn WSTOPSIG (x: int) int
-export fn WTERMSIG (x: int) int
 export fn a64l (s: char[]) i64
 export fn abort () void
 export fn abs (i: int) int
@@ -2557,7 +2558,7 @@ export fn rand () int
 export fn random () i64
 export fn realloc (ptr: ref any, size: usize) ref any
 export fn realpath (path: char[], mut resolved_path: ref char) char[]
-export fn seed48 (seed16v: u16 [3]) ref u16
+export fn seed48 (seed16v: u16[]) ref u16
 export fn setenv (name: char[], value: char[], overwrite: int) int
 export fn setkey (key: char[]) void
 export fn setstate (mut state: ref char) char[]
@@ -2593,7 +2594,7 @@ export fn strcoll_l (s1: char[], s2: char[], locale: locale_t) int
 export fn strcpy (mut s1: ref char, s2: char[]) char[]
 export fn strcspn (s1: char[], s2: char[]) usize
 export fn strdup (s: char[]) char[]
-export fn strerror (int) char[]
+export fn strerror (errnum: int) char[]
 export fn strerror_l (errnum: int, locale: locale_t) char[]
 export fn strerror_r (errnum: int, mut buf: ref char, length: usize) int
 export fn strlen (s: char[]) usize
@@ -2632,7 +2633,7 @@ export fn munlock (addr: ref any, length: usize) int
 export fn munlockall () int
 export fn munmap (mut addr: ref any, length: usize) int
 export fn madvise (mut addr: ref any, length: usize, advice: int) int
-export fn mem_offset (addr: ref any, length: usize, mut offset: ref , mut config_length: ref usize, mut fd: ref int) int
+export fn mem_offset (addr: ref any, length: usize, mut offset: ref off_t, mut config_length: ref usize, mut fd: ref int) int
 export fn typed_mem_get_info (fd: int, mut info: ref typed_mem_info) int
 export fn typed_mem_open (name: char[], oflag: int, tflag: int) int
 export fn shm_open (name: char[], flag: int, mode: mode_t) int
@@ -2701,36 +2702,35 @@ export fn S_ISFIFO (m: mode_t) bool
 export fn S_ISREG (m: mode_t) bool
 export fn S_ISLNK (m: mode_t) bool
 export fn S_ISSOCK (m: mode_t) bool
-export fn S_TYPEISMQ (buf: ref stat) bool
-export fn S_TYPEISSEM (buf: ref stat) bool
-export fn S_TYPEISSHM (buf: ref stat) bool
-export fn S_TYPEISTMO (buf: ref stat) bool
+export fn S_TYPEISMQ (buf: ref stat_t) bool
+export fn S_TYPEISSEM (buf: ref stat_t) bool
+export fn S_TYPEISSHM (buf: ref stat_t) bool
+export fn S_TYPEISTMO (buf: ref stat_t) bool
 export fn chmod (path: char[], mode: mode_t) int
 export fn fchmod (fd: int, mode: mode_t) int
 export fn fchmodat (fd: int, path: char[], mode: mode_t, flag: int) int
-export fn fstat (fd: int, mut buf: ref stat) int
-export fn fstatat (fd: int, path: char[], mut buf: ref stat, flag: int) int
+export fn fstat (fd: int, mut buf: ref stat_t) int
+export fn fstatat (fd: int, path: char[], mut buf: ref stat_t, flag: int) int
 export fn futimens (fd: int, times: timespec[]) int
-export fn lstat (path: char[], mut buf: ref stat) int
+export fn lstat (path: char[], mut buf: ref stat_t) int
 export fn mkdir (path: char[], mode: mode_t) int
 export fn mkdirat (fd: int, path: char[], mode: mode_t) int
 export fn mkfifo (path: char[], mode: mode_t) int
 export fn mkfifoat (fd: int, path: char[], mode: mode_t) int
 export fn mknod (path: char[], mode: mode_t, dev: dev_t) int
 export fn mknodat (fd: int, path: char[], mode: mode_t, dev: dev_t) int
-export fn stat (path: char[], mut buf: ref stat) int
+export fn stat (path: char[], mut buf: ref stat_t) int
 export fn umask (mask: mode_t) mode_t
 export fn utimensat (fd: int, path: char[], times: timespec[], flag: int) int
 
 // <sys/statvfs.h>
-export fn fstatvfs (fd: int, mut buf: ref statvfs) int
-export fn statvfs (path: char[], mut buf: ref statvfs) int
+export fn fstatvfs (fd: int, mut buf: ref statvfs_t) int
+export fn statvfs (path: char[], mut buf: ref statvfs_t) int
 
 // <sys/time.h>
 export fn getitimer (which: int, mut value: ref itimerval) int
 export fn gettimeofday (mut tv: ref timeval, mut tz: ref any) int
 export fn setitimer (which: int, value: ref itimerval, mut old_value: ref itimerval) int
-export fn select (fd: int, mut readfds: ref fd_set, mut writefds: ref fd_set, mut errorfds: ref fd_set, mut timeout: ref timeval) int
 export fn utimes (path: char[], times: timeval[]) int
 
 // <sys/times.h>
@@ -2854,7 +2854,7 @@ export fn lseek (fd: int, offset: off_t, whence: int) off_t
 export fn nice (increment: int) int
 export fn pathconf (path: char[], name: int) i64
 export fn pause () int
-export fn pipe (mut: fd: int[]) int
+export fn pipe (mut fd: int[]) int
 export fn pread (fd: int, mut buf: ref any, length: usize, offset: off_t) isize
 export fn pwrite (fd: int, buf: ref any, length: usize, offset: off_t) isize
 export fn read (fd: int, mut buf: ref any, length: usize) isize

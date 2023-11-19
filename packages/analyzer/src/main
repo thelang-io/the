@@ -1423,10 +1423,20 @@ export obj Analyzer {
 
       self.vm.add(statement.name.name, varType, statement.mutable || self.state.loopInit)
 
-      if statement.constant && it.hasParent() {
-        self.raise(errors.E1038(), statement.name.start, statement.name.end)
+      if statement.constant && it.hasParent() && it.parent() {
+        parent := it.parent()
+
+        if !parent.isExportDeclaration() {
+          self.raise(errors.E1038(), statement.name.start, statement.name.end)
+        }
       } elif !statement.constant && !statement.mutable && !it.hasParent() {
         self.raise(errors.E1039(), statement.name.start, statement.name.end)
+      } elif !statement.constant && !statement.mutable {
+        parent := it.parent()
+
+        if parent.isExportDeclaration() {
+          self.raise(errors.E1039(), statement.name.start, statement.name.end)
+        }
       }
     }
   }
