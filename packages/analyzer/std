@@ -1283,7 +1283,7 @@ export const PTHREAD_CANCEL_ASYNCHRONOUS: int
 export const PTHREAD_CANCEL_ENABLE: int
 export const PTHREAD_CANCEL_DEFERRED: int
 export const PTHREAD_CANCEL_DISABLE: int
-export const PTHREAD_CANCELED: ref any
+// export const PTHREAD_CANCELED: ref any
 export const PTHREAD_CREATE_DETACHED: int
 export const PTHREAD_CREATE_JOINABLE: int
 export const PTHREAD_EXPLICIT_SCHED: int
@@ -1330,13 +1330,9 @@ export const SCHED_SPORADIC: int
 export const SCHED_OTHER: int
 
 // <semaphore.h>
-export const SEM_FAILED: ref sem_t
+// export const SEM_FAILED: ref sem_t
 
 // <signal.h>
-export const SIG_DFL: (int) -> void
-export const SIG_ERR: (int) -> void
-export const SIG_HOLD: (int) -> void
-export const SIG_IGN: (int) -> void
 export const SIGEV_NONE: int
 export const SIGEV_SIGNAL: int
 export const SIGEV_THREAD: int
@@ -1434,7 +1430,7 @@ export const SPAWN_SETSIGDEF: int
 export const SPAWN_SETSIGMASK: int
 
 // <stddef.h>
-export const NULL: ref any
+// export const NULL: ref any
 
 // <stdint.h>
 export const INT8_MIN: i8
@@ -1522,7 +1518,7 @@ export const PROT_WRITE: int
 export const MAP_FIXED: int
 export const MAP_PRIVATE: int
 export const MAP_SHARED: int
-export const MAP_FAILED: ref any
+// export const MAP_FAILED: ref any
 export const MS_ASYNC: int
 export const MS_INVALIDATE: int
 export const MS_SYNC: int
@@ -1872,15 +1868,15 @@ export const in6addr_any: in6_addr
 export const in6addr_loopback: in6_addr
 
 // <stdio.h>
-export const stderr: ref FILE
-export const stdin: ref FILE
-export const stdout: ref FILE
+// export const stderr: ref FILE
+// export const stdin: ref FILE
+// export const stdout: ref FILE
 
 // <time.h>
 export const daylight: int
 export const getdate_err: int
 export const timezone: i64
-export const tzname: ref char[]
+// export const tzname: ref char[]
 
 // <unistd.h>
 export const optarg: char[]
@@ -2399,6 +2395,10 @@ export fn setjmp (env: jmp_buf) int
 export fn sigsetjmp (env: sigjmp_buf, mask: int) int
 
 // <signal.h>
+export fn SIG_DFL (sig: int) void
+export fn SIG_ERR (sig: int) void
+export fn SIG_HOLD (sig: int) void
+export fn SIG_IGN (sig: int) void
 export fn kill (pid: pid_t, sig: int) int
 export fn killpg (pgrp: pid_t, sig: int) int
 export fn psiginfo (info: ref siginfo_t, message: char[]) void

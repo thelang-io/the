@@ -19,6 +19,11 @@ export obj Error {
   stack: str
 }
 
-export fn NewError (message: str) Error {
-  return Error{message: message}
-}
+export fn NewError (message: str) Error
+
+export fn print (
+  items: any...,
+  separator := " ",
+  terminator := os_EOL,
+  to := "stdout"
+) void
