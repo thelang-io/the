@@ -94,6 +94,8 @@ export obj Type {
       (b.name == "bool" && a.isNumber()) ||
       (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
       (b.name == "byte" && (a.name == "char" || a.isNumber())) ||
+      (a.name == "rune" && b.isNumber()) ||
+      (b.name == "rune" && a.isNumber()) ||
       (a.isFunction() && b.isFunction() && match(b, a)) ||
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
@@ -225,11 +227,11 @@ export obj Type {
   }
 
   fn isSignedInt (self: ref Self) bool {
-    return ["int", "i8", "i16", "i32", "i64"].contains(self.name)
+    return ["i8", "i16", "i32", "i64", "int", "isize"].contains(self.name)
   }
 
   fn isUnsignedInt (self: ref Self) bool {
-    return ["u8", "u16", "u32", "u64"].contains(self.name)
+    return ["u8", "u16", "u32", "u64", "usize"].contains(self.name)
   }
 
   fn toString (self: ref Self) str {
@@ -377,7 +379,7 @@ export fn largest (a: ref Type, b: ref Type) ref Type {
     ((a.name == "f64" || a.name == "float") && b.name == "u32") ||
     ((a.name == "f64" || a.name == "float") && b.name == "u16") ||
     ((a.name == "f64" || a.name == "float") && b.name == "u8") ||
-    ((a.name == "f64" || a.name == "float") && b.name == "i64") ||
+    ((a.name == "f64" || a.name == "float") && (b.name == "i64" || b.name == "isize")) ||
     ((a.name == "f64" || a.name == "float") && (b.name == "i32" || b.name == "int")) ||
     ((a.name == "f64" || a.name == "float") && b.name == "i16") ||
     ((a.name == "f64" || a.name == "float") && b.name == "i8") ||
@@ -389,17 +391,17 @@ export fn largest (a: ref Type, b: ref Type) ref Type {
     (a.name == "f32" && b.name == "i16") ||
     (a.name == "f32" && b.name == "i8") ||
 
-    (a.name == "i64" && b.name == "u32") ||
-    (a.name == "i64" && b.name == "u16") ||
-    (a.name == "i64" && b.name == "u8") ||
-    (a.name == "i64" && b.name == "i64") ||
-    (a.name == "i64" && (b.name == "i32" || b.name == "int")) ||
-    (a.name == "i64" && b.name == "i16") ||
-    (a.name == "i64" && b.name == "i8") ||
-    (a.name == "u64" && b.name == "u64") ||
-    (a.name == "u64" && b.name == "u32") ||
-    (a.name == "u64" && b.name == "u16") ||
-    (a.name == "u64" && b.name == "u8") ||
+    ((a.name == "i64" || a.name == "isize") && b.name == "u32") ||
+    ((a.name == "i64" || a.name == "isize") && b.name == "u16") ||
+    ((a.name == "i64" || a.name == "isize") && b.name == "u8") ||
+    ((a.name == "i64" || a.name == "isize") && (b.name == "i64" || b.name == "isize")) ||
+    ((a.name == "i64" || a.name == "isize") && (b.name == "i32" || b.name == "int")) ||
+    ((a.name == "i64" || a.name == "isize") && b.name == "i16") ||
+    ((a.name == "i64" || a.name == "isize") && b.name == "i8") ||
+    ((a.name == "u64" || a.name == "usize") && (b.name == "u64" || b.name == "usize")) ||
+    ((a.name == "u64" || a.name == "usize") && b.name == "u32") ||
+    ((a.name == "u64" || a.name == "usize") && b.name == "u16") ||
+    ((a.name == "u64" || a.name == "usize") && b.name == "u8") ||
 
     ((a.name == "i32" || a.name == "int") && b.name == "u16") ||
     ((a.name == "i32" || a.name == "int") && b.name == "u8") ||
@@ -425,13 +427,13 @@ export fn numberMatch (a: str, b: str) bool {
   return (a == "i8" && b == "i8") ||
     (a == "i16" && (b == "i16" || b == "u8" || numberMatch("i8", b))) ||
     ((a == "i32" || a == "int") && (b == "i32" || b == "int" || b == "u16" || numberMatch("i16", b))) ||
-    (a == "i64" && (b == "i64" || b == "u32" || numberMatch("i32", b))) ||
+    ((a == "i64" || a == "isize") && (b == "i64" || b == "isize" || b == "u32" || numberMatch("i32", b))) ||
     (a == "u8" && b == "u8") ||
     (a == "u16" && (b == "u16" || numberMatch("u8", b))) ||
     (a == "u32" && (b == "u32" || numberMatch("u16", b))) ||
-    (a == "u64" && (b == "u64" || numberMatch("u32", b))) ||
+    ((a == "u64" || b == "usize") && (b == "u64" || b == "usize" || numberMatch("u32", b))) ||
     (a == "f32" && (b == "f32" || numberMatch("i32", b))) ||
-    ((a == "f64" || a == "float") && (b == "f32" || b == "f64" || b == "float" || numberMatch("i64", b)))
+    ((a == "f64" || a == "float") && (b == "f32" || b == "f64" || b == "float" || numberMatch("f64", b)))
 }
 
 export fn match (mut a: ref Type, mut b: ref Type) bool {
@@ -446,6 +448,7 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
     (a.name == "byte" && (b.name == "byte" || b.isInt())) ||
     (b.name == "byte" && (a.name == "byte" || a.isInt())) ||
     (a.name == "char" && b.name == "char") ||
+    (a.name == "rune" && b.name == "rune") ||
     (a.name == "str" && b.name == "str") ||
     (a.name == "void" && b.name == "void") ||
     (a.isNumber() && b.isNumber() && numberMatch(a.name, b.name))

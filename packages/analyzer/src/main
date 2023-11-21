@@ -592,7 +592,7 @@ export obj Analyzer {
         arrayType := expressionType.asArray()
         t = self.tm.createReference(arrayType.elementType)
       } elif Type.match(expressionType, self.tm.get("str")) {
-        t = self.tm.createReference(self.tm.get("char"))
+        t = self.tm.createReference(self.tm.get("rune"))
       } else {
         self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
       }
@@ -943,8 +943,20 @@ export obj Analyzer {
       }
     } elif op.t == .OpGt || op.t == .OpGtEq || op.t == .OpLt || op.t == .OpLtEq {
       if (
-        !(t1.isNumber() || Type.match(t1, self.tm.get("byte")) || Type.match(t1, self.tm.get("char")) || Type.match(t1, self.tm.get("str"))) ||
-        !(t2.isNumber() || Type.match(t2, self.tm.get("byte")) || Type.match(t2, self.tm.get("char")) || Type.match(t2, self.tm.get("str"))) ||
+        !(
+          t1.isNumber() ||
+          Type.match(t1, self.tm.get("byte")) ||
+          Type.match(t1, self.tm.get("char")) ||
+          Type.match(t1, self.tm.get("rune")) ||
+          Type.match(t1, self.tm.get("str"))
+        ) ||
+        !(
+          t2.isNumber() ||
+          Type.match(t2, self.tm.get("byte")) ||
+          Type.match(t2, self.tm.get("char")) ||
+          Type.match(t2, self.tm.get("rune")) ||
+          Type.match(t2, self.tm.get("str"))
+        ) ||
         !Type.match(t1, t2)
       ) {
         return false
