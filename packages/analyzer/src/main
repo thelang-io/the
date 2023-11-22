@@ -156,14 +156,18 @@ export obj Analyzer {
       }
 
       self.vm.increase()
-      parameters := self.functionParametersLight(statement.parameters)
+      mut parameters := self.functionParametersLight(statement.parameters)
       self.vm.decrease()
 
       mut selfParameter: Type.TypeParameter?
 
-      if !parameters.empty && Type.match(parameters[0].t, selfType) {
+      if (
+        !parameters.empty &&
+        (Type.match(parameters[0].t, selfType) || Type.match(parameters[0].t, self.tm.createReference(selfType)))
+      ) {
         selfParameter = parameters[0]
         parameters.remove(0)
+        parameters = parameters.slice(1)
       }
 
       returnType := statement.returnType == nil ? self.tm.get("void") : self.t(statement.returnType)
@@ -209,7 +213,13 @@ export obj Analyzer {
     }
   }
 
-  fn e (mut self: ref Self, it: Parser.Expression, targetType: (ref Type.Type)? = nil, withMutable := false) ref Type.Type {
+  fn e (
+    mut self: ref Self,
+    it: Parser.Expression,
+    targetType: (ref Type.Type)? = nil,
+    withMutable := false,
+    withMutableNext := false
+  ) ref Type.Type {
     if it.isIdentifier() {
       expression := it.asIdentifier()
 
@@ -331,7 +341,7 @@ export obj Analyzer {
       return self.tm.createArray(elementType as ref Type.Type)
     } elif it.isAs() {
       expression := it.asAs()
-      expressionType := self.e(expression.expression, withMutable: withMutable)
+      expressionType := self.e(expression.expression, withMutable: withMutable || withMutableNext)
       t := self.t(expression.t)
 
       if !expressionType.canBe(t) {
@@ -416,7 +426,6 @@ export obj Analyzer {
 
       return leftType
     } elif it.isCall() {
-      // todo check if method is mutating immutable left-hand
       initialErrorsLen := self.errors.len
       expression := it.asCall()
       calleeType := Type.unwrap(self.e(expression.callee), withOptional: false)
@@ -437,7 +446,7 @@ export obj Analyzer {
 
         if t.withSelf && t.selfMutable {
           self.errors = self.errors.slice(0, initialErrorsLen)
-          self.e(expression.callee, withMutable: true)
+          self.e(expression.callee, withMutableNext: true)
         }
       } else {
         self.raise(errors.E1031(calleeType.toString()), expression.callee.start, expression.callee.end)
@@ -555,13 +564,13 @@ export obj Analyzer {
 
       guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
         self.tc.merge(typeCastResult.consequent)
-        result := Type.unwrap(self.e(expression.consequent, operandType, withMutable: withMutable), withOptional: false)
+        result := Type.unwrap(self.e(expression.consequent, operandType, withMutable: withMutable || withMutableNext), withOptional: false)
         self.tc = initialTC
 
         return result
       }, (operandType: (ref Type.Type)?) -> ref Type.Type {
         self.tc.merge(typeCastResult.alternate)
-        result := Type.unwrap(self.e(expression.alternate, operandType, withMutable: withMutable), withOptional: false)
+        result := Type.unwrap(self.e(expression.alternate, operandType, withMutable: withMutable || withMutableNext), withOptional: false)
         self.tc = initialTC
 
         return result
@@ -579,7 +588,7 @@ export obj Analyzer {
       return Type.match(consequentType, alternateType) ? consequentType : alternateType
     } elif it.isElementAccess() {
       expression := it.asElementAccess()
-      expressionType := Type.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
+      expressionType := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext), withOptional: false)
       argumentType := Type.unwrap(self.e(expression.argument), withOptional: false)
 
       if !Type.match(argumentType, self.tm.get("i32")) {
@@ -601,7 +610,7 @@ export obj Analyzer {
       return self.tc.has(code) ? self.tc.get(code) : t
     } elif it.isIs() {
       expression := it.asIs()
-      expressionType := self.e(expression.expression, withMutable: withMutable)
+      expressionType := self.e(expression.expression, withMutable: withMutable || withMutableNext)
       t := self.t(expression.t)
 
       if !expressionType.canBe(t) {
@@ -721,10 +730,10 @@ export obj Analyzer {
       return t
     } elif it.isParenthesized() {
       expression := it.asParenthesized()
-      return self.e(expression.expression, targetType, withMutable: withMutable)
+      return self.e(expression.expression, targetType, withMutable: withMutable || withMutableNext)
     } elif it.isPropertyAccess() {
       expression := it.asPropertyAccess()
-      t := Type.unwrap(self.e(expression.expression, withMutable: withMutable), withOptional: false)
+      t := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext), withOptional: false)
 
       if t.isEnum() {
         if !t.hasEnumerator(expression.name.name) {
@@ -746,7 +755,7 @@ export obj Analyzer {
       return self.tc.has(code) ? self.tc.get(code) : property.t
     } elif it.isReference() {
       expression := it.asReference()
-      return self.tm.createReference(self.e(expression.expression, withMutable: withMutable))
+      return self.tm.createReference(self.e(expression.expression, withMutable: withMutable || withMutableNext))
     } elif it.isUnary() {
       expression := it.asUnary()
 
@@ -1317,8 +1326,8 @@ export obj Analyzer {
       self.state.returnType = initialStateReturnType
       self.vm.decrease()
     } elif it.isObjectDeclarationProperty() {
-      // todo check that property not referencing self object causing circular object
       statement := it.asObjectDeclarationProperty()
+      selfType := self.state.selfType as ref Type.Type
 
       propertyType := statement.t == nil
         ? self.e(statement.initializer as Parser.Expression, withMutable: statement.mutable)
@@ -1331,6 +1340,8 @@ export obj Analyzer {
         } else {
           self.raise(errors.E1017(), statement.t.start, statement.t.end)
         }
+      } elif Type.match(propertyType, selfType) {
+        self.raise(errors.E1069(), statement.name.start, statement.name.end)
       }
 
       if statement.initializer != nil {
