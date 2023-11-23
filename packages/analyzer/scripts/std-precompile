@@ -1,0 +1,23 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import Analyzer from "../src/analyzer"
+
+main {
+  args := process_args
+  mut f := Parser.parse("api/std")
+  Parser.interconnect(ref f)
+  mut analyzer := Analyzer{}
+
+  analyzer.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+  analyzer.tm.init()
+  analyzer.vm.init(ref analyzer.tm)
+  analyzer.analyze(ref f.program.body)
+
+  loop i := 0; i < analyzer.vm.items.len; i++ {
+    print(analyzer.vm.items[i].name)
+  }
+}

@@ -21,8 +21,6 @@ export obj VarMap {
   }
 
   fn add (mut self: ref Self, name: str, t: ref Type.Type, mutable: bool) {
-    print("var:", name + ":", t.toString())
-
     self.items.push(Var{
       name: name,
       t: t,
@@ -32,7 +30,16 @@ export obj VarMap {
   }
 
   fn decrease (mut self: ref Self) {
-    // todo mark variables as out of scope
+    len := self.items.len
+
+    loop i := len - 1; i >= 0; i-- {
+      if self.items[i].scope < self.scope {
+        break
+      }
+
+      self.items.remove(i)
+    }
+
     self.scope--
   }
 
