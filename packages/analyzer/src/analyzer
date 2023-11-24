@@ -179,7 +179,7 @@ export obj Analyzer {
         withSelf: selfParameter != nil,
         selfMutable: selfParameter != nil ? selfParameter.mutable : false,
         selfName: selfParameter != nil ? selfParameter.name != nil ? selfParameter.name : "" : "",
-        selfType: selfType
+        selfType: selfParameter != nil ? selfParameter.t : selfType
       )
 
       selfType.properties.push(Type.TypeProperty{
@@ -444,7 +444,7 @@ export obj Analyzer {
         parameters = t.parameters
         returnType = t.returnType
 
-        if t.withSelf && t.selfMutable {
+        if t.withSelf && t.selfMutable && t.selfType.isReference() {
           self.errors = self.errors.slice(0, initialErrorsLen)
           self.e(expression.callee, withMutableNext: true)
         }

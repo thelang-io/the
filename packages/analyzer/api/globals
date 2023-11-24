@@ -24,6 +24,6 @@ export fn NewError (message: str) Error
 export fn print (
   items: any...,
   separator := " ",
-  terminator := os_EOL,
+  terminator := "\n",
   to := "stdout"
 ) void

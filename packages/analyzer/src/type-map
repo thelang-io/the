@@ -18,12 +18,12 @@ export obj TypeMap {
     self.createObject("char")
     self.createObject("f32")
     self.createObject("f64")
-    self.createAlias("float", self.get("f64"))
+    self.createObject("float")
     self.createObject("i8")
     self.createObject("i16")
     self.createObject("i32")
     self.createObject("i64")
-    self.createAlias("int", self.get("i32"))
+    self.createObject("int")
     self.createObject("isize")
     self.createObject("rune")
     self.createObject("u8")
@@ -32,9 +32,12 @@ export obj TypeMap {
     self.createObject("u64")
     self.createObject("usize")
     self.createObject("void")
-  }
 
-  // todo insert actual properties for each type
+    self.createObject("Error", [
+      Type.TypeProperty{name: "message", t: self.get("str"), mutable: false}
+      Type.TypeProperty{name: "stack", t: self.get("str"), mutable: false}
+    ])
+  }
 
   fn createAlias (mut self: ref Self, name: str, t: ref Type.Type) ref Type.Type {
     self.items.push(Type.Type{name: name, body: Type.AliasType{t: t}})
