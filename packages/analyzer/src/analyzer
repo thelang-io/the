@@ -4,6 +4,7 @@
  */
 
 import * as Parser from "the/parser"
+import * as API from "./api"
 import * as Type from "./type"
 import * as TypeMap from "./type-map"
 import * as Var from "./var"
@@ -1670,6 +1671,8 @@ export fn analyze (f: ref Parser.File) str[] {
   analyzer.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
   analyzer.tm.init()
   analyzer.vm.init(ref analyzer.tm)
+  API.TypeMap_globals(ref analyzer.tm)
+  API.VarMap_globals(ref analyzer.vm, ref analyzer.tm)
   analyzer.analyze(ref f.program.body)
 
   return analyzer.errors

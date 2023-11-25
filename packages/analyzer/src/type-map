@@ -32,11 +32,6 @@ export obj TypeMap {
     self.createObject("u64")
     self.createObject("usize")
     self.createObject("void")
-
-    self.createObject("Error", [
-      Type.TypeProperty{name: "message", t: self.get("str"), mutable: false}
-      Type.TypeProperty{name: "stack", t: self.get("str"), mutable: false}
-    ])
   }
 
   fn createAlias (mut self: ref Self, name: str, t: ref Type.Type) ref Type.Type {

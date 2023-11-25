@@ -12,15 +12,6 @@ export obj VarMap {
   mut scope: int
 
   fn init (mut self: ref Self, tm: ref TypeMap.TypeMap) {
-    self.add("NewError", tm.createFunction(false, [
-      Type.TypeParameter{name: "message", t: tm.get("str"), mutable: false, required: true, variadic: false}
-    ], tm.get("Error")), false)
-    self.add("print", tm.createFunction(false, [
-      Type.TypeParameter{name: "items", t: tm.createArray(tm.get("any")), mutable: false, required: false, variadic: true}
-      Type.TypeParameter{name: "separator", t: tm.get("str"), mutable: false, required: false, variadic: false}
-      Type.TypeParameter{name: "terminator", t: tm.get("str"), mutable: false, required: false, variadic: false}
-      Type.TypeParameter{name: "to", t: tm.get("str"), mutable: false, required: false, variadic: false}
-    ], tm.get("void")), false)
   }
 
   fn add (mut self: ref Self, name: str, t: ref Type.Type, mutable: bool) {
