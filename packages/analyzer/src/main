@@ -8,6 +8,12 @@ import * as Parser from "the/parser"
 
 main {
   args := process_args
+
+  if args.len == 1 {
+    print("First argument is not specified", to: "stderr")
+    process_exit(1)
+  }
+
   mut f := Parser.parse(args[1])
   Parser.interconnect(ref f)
   errors := analyze(ref f)

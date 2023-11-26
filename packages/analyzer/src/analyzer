@@ -354,10 +354,10 @@ export obj Analyzer {
       expression := it.asAssignment()
 
       guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc
+        initialTC := ref self.tc // todo remove after v1
         return self.e(expression.left, operandType, withMutable: true)
       }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc
+        initialTC := ref self.tc // todo remove after v1
         return self.e(expression.right, operandType)
       })
 
@@ -396,10 +396,10 @@ export obj Analyzer {
       expression := it.asBinary()
 
       guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc
+        initialTC := ref self.tc // todo remove after v1
         return Type.unwrap(self.e(expression.left, operandType), withOptional: false)
       }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc
+        initialTC := ref self.tc // todo remove after v1
         return Type.unwrap(self.e(expression.right, operandType), withOptional: false)
       })
 
@@ -1137,7 +1137,7 @@ export obj Analyzer {
         mut exportType: (ref Type.Type)?
 
         guardResult := self.guard(() -> void {
-          initialTC := ref self.tc
+          initialTC := ref self.tc // todo remove after v1
           exportType = Type.opt(self.t(parserType))
         })
 
