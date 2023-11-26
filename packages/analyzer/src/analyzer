@@ -168,7 +168,6 @@ export obj Analyzer {
       ) {
         selfParameter = parameters[0]
         parameters.remove(0)
-        parameters = parameters.slice(1)
       }
 
       returnType := statement.returnType == nil ? self.tm.get("void") : self.t(statement.returnType)
@@ -1275,6 +1274,8 @@ export obj Analyzer {
 
       self.tc = initialTC
     } elif it.isMainDeclaration() {
+      // todo check only one main block in the project
+
       statement := it.asMainDeclaration()
       initialReturnType := self.state.returnType
 
@@ -1341,8 +1342,6 @@ export obj Analyzer {
         } else {
           self.raise(errors.E1017(), statement.t.start, statement.t.end)
         }
-      } elif Type.match(propertyType, selfType) {
-        self.raise(errors.E1069(), statement.name.start, statement.name.end)
       }
 
       if statement.initializer != nil {

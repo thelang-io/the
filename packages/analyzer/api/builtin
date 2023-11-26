@@ -18,11 +18,373 @@ obj ArrayElement {}
 obj MapKey {}
 obj MapValue {}
 
-/* Allows storing any variable of any type. */
-export obj Any {
+/* Used to represent a fixed-length sequence of bytes. */
+export obj Buffer {
+  /* Whether array has elements. */
+  empty: bool
+  /* Number of buffer items. */
+  len: int
+
+  /**
+   * Accesses element by index and return its reference.
+   *
+   * @name [idx: int]
+   * @return ref byte
+   */
+
+  /**
+   * Concatenates two arrays into one and returns resulting array.
+   *
+   * @param other - Another arrays you want to concatenate.
+   */
+  fn concat (self: ref Self, other: Self) Self
+
+  /**
+   * Merges other array's elements into calling array.
+   *
+   * @param other - Another array you want to merge.
+   */
+  fn merge (mut self: ref Self, other: Self) ref Self
+
+  /* Removes last element and returns it. */
+  fn pop (mut self: ref Self) byte
+
+  /**
+   * Adds new elements.
+   *
+   * @param elements - New elements to add.
+   */
+  fn push (mut self: ref Self, elements: byte...) void
+
   /* Returns a string representation. */
   fn str (self: ref Self) str
 }
+
+/* Allows storing any variable of any type. */
+export obj any {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Logical data type that can have only the values `true` or `false`. */
+export obj bool {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a single byte with value of `0x00` - `0xFF`. */
+export obj byte {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing character as one byte. */
+export obj char {
+  /* Byte representation of character. */
+  byte: byte
+  /* Whether character is digit. */
+  isDigit: bool
+  /* Whether character is letter. */
+  isLetter: bool
+  /* Whether character is letter or digit. */
+  isLetterOrDigit: bool
+  /* Whether character is in lowercase. */
+  isLower: bool
+  /* Whether character is in uppercase. */
+  isUpper: bool
+  /* Whether character is whitespace. */
+  isWhitespace: bool
+  /* Lowercase representation of character. */
+  lower: char
+  /* Uppercase representation of character. */
+  upper: char
+
+  /**
+   * Repeats character specific number of times.
+   *
+   * @param times - Number of times to repeat.
+   */
+  fn repeat (self: ref Self, times: int) str
+
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allow storing 32-bit scientific floating point numbers. */
+export obj f32 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allow storing 64-bit scientific floating point numbers. */
+export obj f64 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allow storing 64-bit floating point numbers. */
+export obj float {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `-128` to `127`. */
+export obj i8 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `-32768` to `32767`. */
+export obj i16 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `-2147483648` to `2147483647`. */
+export obj i32 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `-9223372036854775808` to `9223372036854775807`. */
+export obj i64 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a number in range from `-2147483648` to `2147483647`. */
+export obj int {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a signed number that is 4 bytes wide on 32 bit CPU and 8 bytes wide on 64 bit CPU. */
+export obj isize {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing wide character as four byte. */
+export obj rune {
+  /* Whether wide character is digit. */
+  isDigit: bool
+  /* Whether wide character is letter. */
+  isLetter: bool
+  /* Whether wide character is letter or digit. */
+  isLetterOrDigit: bool
+  /* Whether wide character is in lowercase. */
+  isLower: bool
+  /* Whether wide character is in uppercase. */
+  isUpper: bool
+  /* Whether wide character is whitespace. */
+  isWhitespace: bool
+  /* Lowercase representation of wide character. */
+  lower: rune
+  /* Uppercase representation of wide character. */
+  upper: rune
+
+  /**
+   * Repeats wide character specific number of times.
+   *
+   * @param times - Number of times to repeat.
+   */
+  fn repeat (self: ref Self, times: int) str
+
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `0` to `255`. */
+export obj u8 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `0` to `65535`. */
+export obj u16 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `0` to `4294967295`. */
+export obj u32 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a scientific number in range from `0` to `18446744073709551615`. */
+export obj u64 {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a unsigned number that is 4 bytes wide on 32 bit CPU and 8 bytes wide on 64 bit CPU. */
+export obj usize {
+  /* Returns a string representation. */
+  fn str (self: ref Self) str
+}
+
+/* Allows storing a collection of multiple wide characters under a single variable. */
+export obj str {
+  /* Whether string has characters. */
+  empty: bool
+  /* Number of characters. */
+  len: int
+  /* Representation of string with characters lowercased. */
+  lower: Self
+  /* Representation of string with first character lowercased. */
+  lowerFirst: Self
+  /* Representation of string with characters uppercased. */
+  upper: Self
+  /* Representation of string with first character uppercased. */
+  upperFirst: Self
+
+  /**
+   * Accesses element by index and return its reference.
+   *
+   * @name [idx: int]
+   * @return ref rune
+   */
+
+  /**
+   * Checks whether calling string contains `search` substring.
+   *
+   * @param search - Substring to check if exists.
+   */
+  fn contains (self: ref Self, search: Self) bool
+
+  /**
+   * Searches for substring and returns its position, otherwise `-1` is returned.
+   *
+   * @param search - Substring to search for.
+   */
+  fn find (self: ref Self, search: Self) int
+
+  /**
+   * Splits string by lines. Delimited by any of: `\r`, `\n`, `\r\n`.
+   *
+   * @param keepLineBreaks - Whether resulting array should contain line endings. The default is false.
+   */
+  fn lines (self: ref Self, keepLineBreaks := false) Self[]
+
+  /**
+   * Returns a copy of calling string with `search` replaced with `replacement`.
+   *
+   * @param search - Substring to search for.
+   * @param replacement - Substring to replace with.
+   * @param count - Number of times `search` should be replaced. All occurrences are replaced when `count <= 0`.
+   */
+  fn replace (self: ref Self, search: Self, replacement: Self, count := 0) Self
+
+  /**
+   * Extracts string slice from `start` to `end` (`end` not included).
+   *
+   * @param start - Index at which to start extraction. The default is zero.
+   *   - If value is negative then string length is added to it.
+   *   - If value is less than string length then 0 value is used.
+   *   - If value is greater than string length then nothing is extracted.
+   * @param end - Index at which to end extraction. The default is string length.
+   *   - If value is negative then string length is added to it.
+   *   - If value is less than string length then 0 value is used.
+   *   - If value is greater than string length then string length is used.
+   *   - If value positioned before or equals `start` then nothing is extracted.
+   */
+  fn slice (self: ref Self, start := 0, end := self.len) Self
+
+  /**
+   * Splits string into array of string delimited with `delimiter`.
+   *
+   * @param delimiter - Delimiter to split with.
+   */
+  fn split (self: ref Self, delimiter := "") Self[]
+
+  /* Converts a string to `Buffer` object. */
+  fn toBuffer (self: ref Self) Buffer
+
+  /* Converts a string to `float` representation. */
+  fn toFloat (self: ref Self) float
+
+  /* Converts a string to `f32` representation. */
+  fn toF32 (self: ref Self) f32
+
+  /* Converts a string to `f64` representation. */
+  fn toF64 (self: ref Self) f64
+
+  /**
+   * Converts a string to `int` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toInt (self: ref Self, radix := 10) int
+
+  /**
+   * Converts a string to `i8` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toI8 (self: ref Self, radix := 10) i8
+
+  /**
+   * Converts a string to `i16` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toI16 (self: ref Self, radix := 10) i16
+
+  /**
+   * Converts a string to `i32` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toI32 (self: ref Self, radix := 10) i32
+
+  /**
+   * Converts a string to `i64` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toI64 (self: ref Self, radix := 10) i64
+
+  /**
+   * Converts a string to `u8` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toU8 (self: ref Self, radix := 10) u8
+
+  /**
+   * Converts a string to `u16` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toU16 (self: ref Self, radix := 10) u16
+
+  /**
+   * Converts a string to `u32` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toU32 (self: ref Self, radix := 10) u32
+
+  /**
+   * Converts a string to `u64` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toU64 (self: ref Self, radix := 10) u64
+
+  /* Returns a string with whitespaces removed from both ends. */
+  fn trim (self: ref Self) Self
+
+  /* Returns a string with whitespaces removed from the end. */
+  fn trimEnd (self: ref Self) Self
+
+  /* Returns a string with whitespaces removed from the beginning. */
+  fn trimStart (self: ref Self) Self
+}
+
+/* Used when there is no data. */
+export obj void {}
 
 /* Allows storing a collection of multiple elements under a single variable. */
 export obj Array {
@@ -50,14 +412,14 @@ export obj Array {
    *
    * @param other - Another arrays you want to concatenate.
    */
-  fn concat (self: Self, other: Self) Self
+  fn concat (self: ref Self, other: Self) Self
 
   /**
    * Checks whether certain element exists.
    *
    * @param search - Element to check if exists.
    */
-  fn contains (self: Self, search: ArrayElement) bool
+  fn contains (self: ref Self, search: ArrayElement) bool
 
   /**
    * Calls `predicate` on every element and constructs array copy out of elements that passed the test.
@@ -65,21 +427,21 @@ export obj Array {
    * @param predicate - Function to execute on each element of the array.
    *   Should return a truthy value to keep the element in the resulting array.
    */
-  fn filter (self: Self, predicate: (it: ArrayElement) -> bool) Self
+  fn filter (self: ref Self, predicate: (it: ArrayElement) -> bool) Self
 
   /**
    * Calls `iterator` on every element.
    *
    * @param iterator - Function to execute on each element of the array.
    */
-  fn forEach (self: Self, iterator: (it: ArrayElement, idx: int) -> void) void
+  fn forEach (self: ref Self, iterator: (it: ArrayElement, idx: int) -> void) void
 
   /**
    * Calls `str` method on every element and joins result with separator.
    *
    * @param separator - Elements separator. The default is comma string.
    */
-  fn join (self: Self, separator := ",") str
+  fn join (self: ref Self, separator := ",") str
 
   /**
    * Merges other array's elements into calling array.
@@ -106,7 +468,7 @@ export obj Array {
   fn remove (mut self: ref Self, index: int) ref Self
 
   /* Returns reversed array copy. */
-  fn reverse (self: Self) Self
+  fn reverse (self: ref Self) Self
 
   /**
    * Extracts array slice from `start` to `end` (`end` not included).
@@ -121,7 +483,7 @@ export obj Array {
    *   - If value is greater than array length then array length is used.
    *   - If value positioned before or equals `start` then nothing is extracted.
    */
-  fn slice (self: Self, start := 0, end := self.len) Self
+  fn slice (self: ref Self, start := 0, end := self.len) Self
 
   /**
    * Sorts the elements of the array in place.
@@ -129,50 +491,6 @@ export obj Array {
    * @param comparator - Function that defines the sort order.
    */
   fn sort (mut self: ref Self, comparator: (a: ArrayElement, b: ArrayElement) -> int) ref Self
-
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Logical data type that can have only the values `true` or `false`. */
-export obj Bool {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a single byte with value of `0x00` - `0xFF`. */
-export obj Byte {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing character as one byte. */
-export obj Char {
-  /* Byte representation of character. */
-  byte: byte
-  /* Whether character is digit. */
-  isDigit: bool
-  /* Whether character is letter. */
-  isLetter: bool
-  /* Whether character is letter or digit. */
-  isLetterOrDigit: bool
-  /* Whether character is in lowercase. */
-  isLower: bool
-  /* Whether character is in uppercase. */
-  isUpper: bool
-  /* Whether character is whitespace. */
-  isWhitespace: bool
-  /* Lowercase representation of character. */
-  lower: char
-  /* Uppercase representation of character. */
-  upper: char
-
-  /**
-   * Repeats character specific number of times.
-   *
-   * @param times - Number of times to repeat.
-   */
-  fn repeat (self: Self, times: int) str
 
   /* Returns a string representation. */
   fn str (self: ref Self) str
@@ -187,85 +505,10 @@ export obj Enum {
   fn str (self: ref Self) str
 }
 
-/* Allow storing 64-bit floating point numbers. */
-export obj Float {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allow storing 32-bit scientific floating point numbers. */
-export obj F32 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allow storing 64-bit scientific floating point numbers. */
-export obj F64 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
 /* Object representation of function variable. */
 export obj Function {
   /* Name of the function. */
   name: str
-
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a number in range from `-2147483648` to `2147483647`. */
-export obj Int {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `-128` to `127`. */
-export obj I8 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `-32768` to `32767`. */
-export obj I16 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `-2147483648` to `2147483647`. */
-export obj I32 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `-9223372036854775808` to `9223372036854775807`. */
-export obj I64 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `0` to `255`. */
-export obj U8 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `0` to `65535`. */
-export obj U16 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `0` to `4294967295`. */
-export obj U32 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
-/* Allows storing a scientific number in range from `0` to `18446744073709551615`. */
-export obj U64 {
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
 }
 
 /* Allows storing a collection of multiple key-value pairs and remembers the original insertion order of the keys. */
@@ -289,14 +532,14 @@ export obj Map {
    *
    * @param key - Key you want to get a value of.
    */
-  fn get (self: Self, key: MapKey) MapValue
+  fn get (self: ref Self, key: MapKey) MapValue
 
   /**
    * Checks whether certain key exists.
    *
    * @param key - Key you want to check if exists.
    */
-  fn has (self: Self, key: MapKey) bool
+  fn has (self: ref Self, key: MapKey) bool
 
   /**
    * Merges other map's data into calling map. When iterating, if key exists, then it will get updated with a new value.
@@ -334,6 +577,12 @@ export obj Map {
   fn str (self: ref Self) str
 }
 
+/* Object representation of object method. */
+export obj Method {
+  /* Name of the object method. */
+  name: str
+}
+
 /* Allows storing various keyed collections and more complex entities. */
 export obj Object {
   /* Returns a string representation. */
@@ -354,174 +603,10 @@ export obj Optional {
  *   The only difference between original variable and reference, is when you
  *   print reference it will print memory address of variable it refers to.
  */
-export obj Reference {
-}
-
-/* Allows storing a collection of multiple characters under a single variable. */
-export obj String {
-  /* Whether string has characters. */
-  empty: bool
-  /* Number of characters. */
-  len: int
-  /* Representation of string with characters lowercased. */
-  lower: Self
-  /* Representation of string with first character lowercased. */
-  lowerFirst: Self
-  /* Representation of string with characters uppercased. */
-  upper: Self
-  /* Representation of string with first character uppercased. */
-  upperFirst: Self
-
-  /**
-   * Accesses element by index and return its reference.
-   *
-   * @name [idx: int]
-   * @return ref char
-   */
-
-  /**
-   * Checks whether calling string contains `search` substring.
-   *
-   * @param search - Substring to check if exists.
-   */
-  fn contains (self: Self, search: Self) bool
-
-  /**
-   * Searches for substring and returns its position, otherwise `-1` is returned.
-   *
-   * @param search - Substring to search for.
-   */
-  fn find (self: Self, search: Self) int
-
-  /**
-   * Splits string by lines. Delimited by any of: `\r`, `\n`, `\r\n`.
-   *
-   * @param keepLineBreaks - Whether resulting array should contain line endings. The default is false.
-   */
-  fn lines (self: Self, keepLineBreaks := false) Self[]
-
-  /**
-   * Returns a copy of calling string with `search` replaced with `replacement`.
-   *
-   * @param search - Substring to search for.
-   * @param replacement - Substring to replace with.
-   * @param count - Number of times `search` should be replaced. All occurrences are replaced when `count <= 0`.
-   */
-  fn replace (self: Self, search: Self, replacement: Self, count := 0) Self
-
-  /**
-   * Extracts string slice from `start` to `end` (`end` not included).
-   *
-   * @param start - Index at which to start extraction. The default is zero.
-   *   - If value is negative then string length is added to it.
-   *   - If value is less than string length then 0 value is used.
-   *   - If value is greater than string length then nothing is extracted.
-   * @param end - Index at which to end extraction. The default is string length.
-   *   - If value is negative then string length is added to it.
-   *   - If value is less than string length then 0 value is used.
-   *   - If value is greater than string length then string length is used.
-   *   - If value positioned before or equals `start` then nothing is extracted.
-   */
-  fn slice (self: Self, start := 0, end := self.len) Self
-
-  /**
-   * Splits string into array of string delimited with `delimiter`.
-   *
-   * @param delimiter - Delimiter to split with.
-   */
-  fn split (self: Self, delimiter := "") Self[]
-
-  /* Converts a string to `buffer_Buffer` object. */
-  fn toBuffer (self: Self) buffer_Buffer
-
-  /* Converts a string to `float` representation. */
-  fn toFloat (self: Self) float
-
-  /* Converts a string to `f32` representation. */
-  fn toF32 (self: Self) f32
-
-  /* Converts a string to `f64` representation. */
-  fn toF64 (self: Self) f64
-
-  /**
-   * Converts a string to `int` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toInt (self: Self, radix := 10) int
-
-  /**
-   * Converts a string to `i8` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toI8 (self: Self, radix := 10) i8
-
-  /**
-   * Converts a string to `i16` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toI16 (self: Self, radix := 10) i16
-
-  /**
-   * Converts a string to `i32` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toI32 (self: Self, radix := 10) i32
-
-  /**
-   * Converts a string to `i64` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toI64 (self: Self, radix := 10) i64
-
-  /**
-   * Converts a string to `u8` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toU8 (self: Self, radix := 10) u8
-
-  /**
-   * Converts a string to `u16` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toU16 (self: Self, radix := 10) u16
-
-  /**
-   * Converts a string to `u32` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toU32 (self: Self, radix := 10) u32
-
-  /**
-   * Converts a string to `u64` representation.
-   *
-   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
-   */
-  fn toU64 (self: Self, radix := 10) u64
-
-  /* Returns a string with whitespaces removed from both ends. */
-  fn trim (self: Self) Self
-
-  /* Returns a string with whitespaces removed from the end. */
-  fn trimEnd (self: Self) Self
-
-  /* Returns a string with whitespaces removed from the beginning. */
-  fn trimStart (self: Self) Self
-}
+export obj Reference {}
 
 /* Allows storing a combination of several types under a single variable. */
 export obj Union {
   /* Returns a string representation. */
   fn str (self: ref Self) str
-}
-
-/* Used when there is no data. */
-export obj Void {
 }

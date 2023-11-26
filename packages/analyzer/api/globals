@@ -14,21 +14,6 @@
  * limitations under the License.
  */
 
-/* Used to represent a fixed-length sequence of bytes. */
-export obj Buffer {
-  /* Whether array has elements. */
-  empty: bool
-  /* Number of buffer items. */
-  len: int
-
-  /**
-   * Accesses element by index and return its reference.
-   *
-   * @name [idx: int]
-   * @return ref byte
-   */
-}
-
 /* Used as base for error handling. */
 export obj Error {
   /* Message of the error. */
