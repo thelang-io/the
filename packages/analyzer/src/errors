@@ -278,3 +278,7 @@ export fn E1067 (name: str) str {
 export fn E1068 () str {
   return "E1068 - Named export allows exporting only identifiers and property access"
 }
+
+export fn E1069 () str {
+  return "E1069 - await expression can only be used within async functions and main declaration"
+}

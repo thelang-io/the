@@ -375,9 +375,13 @@ export obj Analyzer {
         ? Type.unwrap(leftType, withOptional: false)
         : leftType
     } elif it.isAwait() {
-      // todo check is used within async method|function or main
       expression := it.asAwait()
       expressionType := Type.unwrap(self.e(expression.expression), withOptional: false)
+      parentNode := it.parentNode()
+
+      if !parentNode.hasAsyncParent() {
+        self.raise(errors.E1069(), it.start, it.end)
+      }
 
       if expressionType.isFunction() {
         t := expressionType.asFunction()
