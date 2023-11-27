@@ -115,6 +115,8 @@ export obj Expression {
   mut body: ExpressionBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut _parent: (ref Expression)?
+  mut _parentNode: (ref Statement)?
 
   fn asIdentifier (mut self: ref Self) ref Identifier { return ref (self.body as Identifier) }
   fn asBooleanLiteral (mut self: ref Self) ref BooleanLiteral { return ref (self.body as BooleanLiteral) }
@@ -166,6 +168,14 @@ export obj Expression {
   fn isReference (self: ref Self) bool { return self.body is ReferenceExpression }
   fn isUnary (self: ref Self) bool { return self.body is UnaryExpression }
 
+  fn hasParent (self: ref Self) bool {
+    return self._parent != nil
+  }
+
+  fn hasParentNode (self: ref Self) bool {
+    return self._parentNode != nil
+  }
+
   fn isAccess (self: ref Self) bool {
     if self.isParenthesized() {
       expression := self.asParenthesized()
@@ -173,6 +183,20 @@ export obj Expression {
     }
 
     return self.isIdentifier() || self.isElementAccess() || self.isPropertyAccess()
+  }
+
+  fn parent (self: ref Self) ref Expression {
+    if self._parent != nil {
+      return self._parent
+    }
+    throw ParserError{message: "Tried accessing nil parent"}
+  }
+
+  fn parentNode (self: ref Self) ref Statement {
+    if self._parentNode != nil {
+      return self._parentNode
+    }
+    throw ParserError{message: "Tried accessing nil parent node"}
   }
 }
 

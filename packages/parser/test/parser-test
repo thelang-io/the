@@ -64,3 +64,19 @@ export fn TEST_Parser_interconnect () {
   EXPECT_TRUE(f4MainBlock.body[1].hasPrev())
   EXPECT_TRUE(f4MainBlock.body[2].hasPrev())
 }
+
+export fn TEST_Parser_interconnectExpression () {
+  mut f := parse("main { [0, 1, 2]; }")
+  interconnect(ref f)
+  mainDeclaration := f.program.body[0].asMainDeclaration()
+  mainBody := mainDeclaration.body.asBlock()
+  expr := mainBody.body[0].asExpression()
+
+  EXPECT_FALSE(expr.expression.hasParent())
+  EXPECT_TRUE(expr.expression.hasParentNode())
+
+  exprBody := expr.expression.asArray()
+
+  EXPECT_TRUE(exprBody.elements[0].hasParent())
+  EXPECT_TRUE(exprBody.elements[0].hasParentNode())
+}

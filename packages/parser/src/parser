@@ -2304,24 +2304,54 @@ export fn interconnectStatement (mut statement: ref t.Statement, parent: (ref t.
       item._prev = prev
       prev = item
     }
+  } elif statement.isEnumDeclaration() {
+    mut body := statement.asEnumDeclaration()
+    loop i := 0; i < body.members.len; i++ {
+      mut member := body.members[i]
+      if member.initializer != nil {
+        interconnectExpression(ref member.initializer, statement, nil)
+      }
+    }
   } elif statement.isExportDeclaration() {
     mut body := statement.asExportDeclaration()
     interconnectStatement(ref body.statement, statement2)
+  } elif statement.isExportNamedDeclaration() {
+    mut body := statement.asExportNamedDeclaration()
+    interconnectExpression(ref body.expression, statement, nil)
+  } elif statement.isExpression() {
+    mut body := statement.asExpression()
+    interconnectExpression(ref body.expression, statement, nil)
   } elif statement.isFunctionDeclaration() {
     mut body := statement.asFunctionDeclaration()
     if body.body != nil {
       interconnectStatement(ref body.body, statement2)
     }
+    loop i := 0; i < body.parameters.len; i++ {
+      mut parameter := body.parameters[i]
+      if parameter.initializer != nil {
+        interconnectExpression(ref parameter.initializer, statement, nil)
+      }
+    }
   } elif statement.isIf() {
     mut body := statement.asIf()
+    interconnectExpression(ref body.condition, statement, nil)
     interconnectStatement(ref body.consequent, statement2)
     if body.alternate != nil {
       interconnectStatement(ref body.alternate, statement2)
     }
+  } elif statement.isImportDeclaration() {
+    mut body := statement.asImportDeclaration()
+    interconnectExpression(ref body.source, statement, nil)
   } elif statement.isLoop() {
     mut body := statement.asLoop()
     if body.initializer != nil {
       interconnectStatement(ref body.initializer, statement2)
+    }
+    if body.condition != nil {
+      interconnectExpression(ref body.condition, statement, nil)
+    }
+    if body.update != nil {
+      interconnectExpression(ref body.update, statement, nil)
     }
     interconnectStatement(ref body.body, statement2)
   } elif statement.isMainDeclaration() {
@@ -2342,6 +2372,19 @@ export fn interconnectStatement (mut statement: ref t.Statement, parent: (ref t.
     if body.body != nil {
       interconnectStatement(ref body.body, statement2)
     }
+  } elif statement.isObjectDeclarationProperty() {
+    mut body := statement.asObjectDeclarationProperty()
+    if body.initializer != nil {
+      interconnectExpression(ref body.initializer, statement, nil)
+    }
+  } elif statement.isReturn() {
+    mut body := statement.asReturn()
+    if body.expression != nil {
+      interconnectExpression(ref body.expression, statement, nil)
+    }
+  } elif statement.isThrow() {
+    mut body := statement.asThrow()
+    interconnectExpression(ref body.expression, statement, nil)
   } elif statement.isTry() {
     mut body := statement.asTry()
     interconnectStatement(ref body.body, statement2)
@@ -2351,6 +2394,92 @@ export fn interconnectStatement (mut statement: ref t.Statement, parent: (ref t.
       interconnectStatement(ref handler.parameter, statement2)
       interconnectStatement(ref handler.body, statement2)
     }
+  } elif statement.isVariableDeclaration() {
+    mut body := statement.asVariableDeclaration()
+    if body.initializer != nil {
+      interconnectExpression(ref body.initializer, statement, nil)
+    }
+  }
+}
+
+export fn interconnectExpression (mut expression: ref t.Expression, parentNode: ref t.Statement, parent: (ref t.Expression)?) {
+  expression2: (ref t.Expression)? = expression
+  expression._parent = parent
+  expression._parentNode = parentNode
+
+  if expression.isArray() {
+    mut body := expression.asArray()
+    loop i := 0; i < body.elements.len; i++ {
+      mut element := body.elements[i]
+      interconnectExpression(element, parentNode, expression2)
+    }
+  } elif expression.isAs() {
+    mut body := expression.asAs()
+    interconnectExpression(ref body.expression, parentNode, expression2)
+  } elif expression.isAssignment() {
+    mut body := expression.asAssignment()
+    interconnectExpression(ref body.left, parentNode, expression2)
+    interconnectExpression(ref body.right, parentNode, expression2)
+  } elif expression.isAwait() {
+    mut body := expression.asAwait()
+    interconnectExpression(ref body.expression, parentNode, expression2)
+  } elif expression.isBinary() {
+    mut body := expression.asBinary()
+    interconnectExpression(ref body.left, parentNode, expression2)
+    interconnectExpression(ref body.right, parentNode, expression2)
+  } elif expression.isCall() {
+    mut body := expression.asCall()
+    interconnectExpression(ref body.callee, parentNode, expression2)
+    loop i := 0; i < body.arguments.len; i++ {
+      mut argument := body.arguments[i]
+      interconnectExpression(ref argument.expression, parentNode, expression2)
+    }
+  } elif expression.isClosure() {
+    mut body := expression.asClosure()
+    interconnectStatement(ref body.body, expression._parentNode)
+    loop i := 0; i < body.parameters.len; i++ {
+      mut parameter := body.parameters[i]
+      if parameter.initializer != nil {
+        interconnectExpression(ref parameter.initializer, parentNode, expression2)
+      }
+    }
+  } elif expression.isConditional() {
+    mut body := expression.asConditional()
+    interconnectExpression(ref body.condition, parentNode, expression2)
+    interconnectExpression(ref body.consequent, parentNode, expression2)
+    interconnectExpression(ref body.alternate, parentNode, expression2)
+  } elif expression.isElementAccess() {
+    mut body := expression.asElementAccess()
+    interconnectExpression(ref body.expression, parentNode, expression2)
+    interconnectExpression(ref body.argument, parentNode, expression2)
+  } elif expression.isIs() {
+    mut body := expression.asIs()
+    interconnectExpression(ref body.expression, parentNode, expression2)
+  } elif expression.isMap() {
+    mut body := expression.asMap()
+    loop i := 0; i < body.elements.len; i++ {
+      mut element := body.elements[i]
+      interconnectExpression(ref element.key, parentNode, expression2)
+      interconnectExpression(ref element.value, parentNode, expression2)
+    }
+  } elif expression.isObject() {
+    mut body := expression.asObject()
+    loop i := 0; i < body.properties.len; i++ {
+      mut property := body.properties[i]
+      interconnectExpression(ref property.value, parentNode, expression2)
+    }
+  } elif expression.isParenthesized() {
+    mut body := expression.asParenthesized()
+    interconnectExpression(ref body.expression, parentNode, expression2)
+  } elif expression.isPropertyAccess() {
+    mut body := expression.asPropertyAccess()
+    interconnectExpression(ref body.expression, parentNode, expression2)
+  } elif expression.isReference() {
+    mut body := expression.asReference()
+    interconnectExpression(ref body.expression, parentNode, expression2)
+  } elif expression.isUnary() {
+    mut body := expression.asUnary()
+    interconnectExpression(ref body.operand, parentNode, expression2)
   }
 }
 
