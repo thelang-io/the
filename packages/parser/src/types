@@ -256,6 +256,32 @@ export obj Statement {
   fn isTypeAliasDeclaration (self: ref Self) bool { return self.body is TypeAliasDeclaration }
   fn isVariableDeclaration (self: ref Self) bool { return self.body is VariableDeclaration }
 
+  fn hasAsyncParent (self: ref Self) bool {
+    mut it := self
+
+    loop it.hasParent() {
+      p := it.parent()
+
+      if p.isExpression() {
+        expression := p.asExpression()
+        expressionBody := expression.expression.asClosure()
+        return expressionBody.asynchronous
+      } elif p.isFunctionDeclaration() {
+        body := p.asFunctionDeclaration()
+        return body.asynchronous
+      } elif p.isMainDeclaration() {
+        return true
+      } elif p.isObjectDeclarationMethod() {
+        body := p.asObjectDeclarationMethod()
+        return body.asynchronous
+      }
+
+      it = p
+    }
+
+    return false
+  }
+
   fn hasFunctionOrMainParent (self: ref Self) bool {
     mut it := self
 
@@ -263,6 +289,7 @@ export obj Statement {
       p := it.parent()
 
       if (
+        p.isExpression() ||
         p.isFunctionDeclaration() ||
         p.isMainDeclaration() ||
         p.isObjectDeclarationMethod()
@@ -285,6 +312,7 @@ export obj Statement {
       if p.isLoop() {
         return true
       } elif (
+        p.isExpression() ||
         p.isFunctionDeclaration() ||
         p.isMainDeclaration() ||
         p.isObjectDeclarationMethod()

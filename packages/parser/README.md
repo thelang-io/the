@@ -339,6 +339,19 @@ Checks whether statement's body contains corresponding type.
 statement.isBlock()
 ```
 
+### `Statement.hasAsyncParent () bool`
+Check whether statement is placed inside async parent.
+
+**Return value**
+
+Whether statement is placed inside async parent.
+
+**Examples**
+
+```the
+statement.hasAsyncParent()
+```
+
 ### `Statement.hasFunctionOrMainParent () bool`
 Check whether statement is placed inside function or main declaration.
 
