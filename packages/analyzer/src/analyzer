@@ -26,24 +26,35 @@ export obj TypeCastResult {
   alternate: (ref Type.Type)[str]
 }
 
+// todo check all self.t and see if it needs self.checkType, because some types are required to have initializer
+// todo test redefinition if variable in upper scope
+// todo test use of initial variable type after type cast
+
+export obj Analyzer {
+  mut errors: str[]
+  mut files: AnalyzerFile[]
+  mut state: AnalyzerState
+}
+
 export obj AnalyzerState {
+  mut mainFound: bool
+}
+
+export obj AnalyzerFileState {
+  mut initiated: bool
   mut loopInit: bool
   mut returnType: (ref Type.Type)?
   mut selfType: (ref Type.Type)?
 }
 
-export obj Analyzer {
-  mut errors: str[]
+export obj AnalyzerFile {
+  mut analyzer: ref Analyzer
   mut exports: AnalyzerExport[str]
   mut reader: Parser.Reader
-  mut state: AnalyzerState
+  mut state: AnalyzerFileState
   mut tc: (ref Type.Type)[str]
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
-
-  // todo check all self.t and see if it needs self.checkType, because some types are required to have initializer
-  // todo test redefinition if variable in upper scope
-  // todo test use of initial variable type after type cast
 
   fn analyze (mut self: ref Self, items: ref Parser.Statement[]) {
     len := items.len
@@ -96,7 +107,7 @@ export obj Analyzer {
       }
     } elif it.isImportDeclaration() {
       statement := it.asImportDeclaration()
-      // todo E1032 - Circular imports are not allowed
+
       // todo E1033 - Object is not exported
       // todo E1035 - Package not installed
       // todo Path not found
@@ -106,6 +117,127 @@ export obj Analyzer {
       if it.hasParent() {
         self.raise(errors.E1043(), it.start, it.end)
       }
+
+      sourceExpression := statement.source.asStringLiteral()
+      source := source.value
+      mut relativePath := ""
+
+      try {
+        if source.slice(0, 1) == "." {
+          relativePath = fs_realpathSync(path_dirname(self.reader.p) + path_SEP + source)
+        } elif source.slice(0, 1) == "/" {
+          relativePath = fs_realpathSync(source)
+        } else {
+          // todo package
+          // todo std package special handling
+
+          // auto initialCwd = std::filesystem::current_path();
+          // std::filesystem::current_path(this->cwd);
+          // auto possibleRelativePath = parse_package_yaml_main(sourceString);
+          // std::filesystem::current_path(initialCwd);
+
+          // if (possibleRelativePath == std::nullopt) {
+          //   throw Error(this->reader, stmtImportDecl.source.start, stmtImportDecl.source.end, E1035);
+          // }
+
+          // astCwd = (std::filesystem::path(this->cwd) / ".packages" / sourceString).string();
+          // relativePath = *possibleRelativePath;
+        }
+      } catch err: error_Error {
+        // todo handle error
+      }
+
+      mut existingImport: (ref AnalyzerFile)?
+
+      loop i := 0; i < self.analyzer.files; i++ {
+        if self.analyzer.files[i].p == relativePath {
+          existingImport = self.analyzer.files[i]
+          break
+        }
+      }
+
+      if existingImport == nil {
+        mut f := Parser.parse(source.value)
+        Parser.interconnect(ref f)
+
+        analyzer.files.push(AnalyzerFile{
+          analyzer: ref self.analyzer,
+          reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+        })
+
+        mut file := analyzer.files.last
+
+        file.tm.init()
+        file.vm.init(ref file.tm)
+        API.TypeMap_globals(ref file.tm)
+        API.VarMap_globals(ref file.vm, ref file.tm)
+        file.analyze(ref f.program.body)
+
+        file.initialized = true
+        existingImport = file
+      } elif !existingImport.initialized {
+        // todo E1032 - Circular imports are not allowed
+        // source.start source.end
+      }
+
+      definiteImport := existingImport as ref AnalyzerFile
+
+      // if (!stmtImportDecl.specifiers.empty()) {
+      //   for (const auto &specifier : stmtImportDecl.specifiers) {
+      //     auto specifierLocal = std::get<Token>(*std::get<ParserExprAccess>(*specifier.local.body).expr).val;
+
+      //     if (specifier.imported == std::nullopt) {
+      //       auto namespaceFields = std::vector<TypeField>{};
+
+      //       for (const auto &node : importNodesExports) {
+      //         auto exportName = AST::getExportName(node);
+      //         auto exportCodeName = AST::getExportCodeName(node);
+      //         auto exportType = AST::getExportType(node);
+      //         auto exportVar = AST::getExportVar(node);
+
+      //         namespaceFields.push_back(TypeField{
+      //           exportName,
+      //           exportType,
+      //           exportVar != nullptr && exportVar->mut,
+      //           false,
+      //           TypeCallInfo{exportCodeName}
+      //         });
+
+      //         if (!exportType->isEnum()) {
+      //           this->varMap.add(specifierLocal + "." + exportName, exportCodeName, exportType);
+      //         }
+      //       }
+
+      //       auto namespaceType = this->typeMap.createNamespace(specifierLocal, namespaceFields);
+      //       this->varMap.addNamespace(specifierLocal, namespaceType);
+      //     } else {
+      //       auto specifierImported = std::get<Token>(*std::get<ParserExprAccess>(*specifier.imported->body).expr).val;
+
+      //       auto specifierExport = std::find_if(importNodesExports.begin(), importNodesExports.end(), [&] (const auto &it) -> bool {
+      //         return AST::getExportName(it) == specifierImported;
+      //       });
+
+      //       if (specifierExport == importNodesExports.end()) {
+      //         throw Error(this->reader, specifier.imported->start, specifier.imported->end, E1033);
+      //       }
+
+      //       auto exportVar = AST::getExportVar(*specifierExport);
+      //       auto exportType = AST::getExportType(*specifierExport);
+
+      //       if (exportVar != nullptr) {
+      //         this->varMap.add(specifierLocal, exportVar->codeName, exportVar->type, exportVar->mut);
+      //       } else if (specifierImported != specifierLocal) {
+      //         this->typeMap.createAlias(specifierLocal, exportType);
+      //       } else {
+      //         this->typeMap.insert(exportType);
+      //       }
+
+      //       if (exportType->isEnum()) {
+      //         this->varMap.add(specifierLocal, exportType->codeName, exportType, false, false, true);
+      //       }
+      //     }
+      //   }
+      // }
     } elif it.isObjectDeclaration() {
       statement := it.asObjectDeclaration()
 
@@ -430,7 +562,7 @@ export obj Analyzer {
 
       return leftType
     } elif it.isCall() {
-      initialErrorsLen := self.errors.len
+      initialErrorsLen := self.analyzer.errors.len
       expression := it.asCall()
       calleeType := Type.unwrap(self.e(expression.callee), withOptional: false)
       mut asynchronous: bool
@@ -449,7 +581,7 @@ export obj Analyzer {
         returnType = t.returnType
 
         if t.withSelf && t.selfMutable && t.selfType.isReference() {
-          self.errors = self.errors.slice(0, initialErrorsLen)
+          self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
           self.e(expression.callee, withMutableNext: true)
         }
       } else {
@@ -814,11 +946,11 @@ export obj Analyzer {
   }
 
   fn eNice (mut self: ref Self, it: Parser.Expression) ref Type.Type {
-    initialErrorsLen := self.errors.len
+    initialErrorsLen := self.analyzer.errors.len
     result := self.e(it)
 
-    if self.errors.len != initialErrorsLen {
-      self.errors = self.errors.slice(0, initialErrorsLen)
+    if self.analyzer.errors.len != initialErrorsLen {
+      self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
     }
 
     return result
@@ -909,31 +1041,31 @@ export obj Analyzer {
   }
 
   fn guard (mut self: ref Self, cb: () -> void) bool {
-    initialErrorsLen := self.errors.len
+    initialErrorsLen := self.analyzer.errors.len
     cb()
-    failed := self.errors.len != initialErrorsLen
+    failed := self.analyzer.errors.len != initialErrorsLen
 
     if failed {
-      self.errors = self.errors.slice(0, initialErrorsLen)
+      self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
     }
 
     return failed
   }
 
   fn guessType (mut self: ref Self, cb1: ((ref Type.Type)?) -> ref Type.Type, cb2: ((ref Type.Type)?) -> ref Type.Type) GuessTypeResult {
-    initialErrorsLen := self.errors.len
+    initialErrorsLen := self.analyzer.errors.len
     mut targetType: (ref Type.Type)? = nil
     mut firstType := cb1(targetType)
-    firstTypeFailed := self.errors.len != initialErrorsLen
+    firstTypeFailed := self.analyzer.errors.len != initialErrorsLen
 
     if firstTypeFailed {
-      self.errors = self.errors.slice(0, initialErrorsLen)
+      self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
     } else {
       targetType = firstType
     }
 
     secondType := cb2(targetType)
-    secondTypeFailed := self.errors.len != initialErrorsLen
+    secondTypeFailed := self.analyzer.errors.len != initialErrorsLen
 
     if !secondTypeFailed {
       targetType = secondType
@@ -1018,7 +1150,7 @@ export obj Analyzer {
 
   fn raise (mut self: ref Self, message: str, start: int, end: int) {
     error := Parser.Reader_error(ref self.reader, "AnalyzeError", message, start, end)
-    self.errors.push(error)
+    self.analyzer.errors.push(error)
   }
 
   fn statement (mut self: ref Self, it: Parser.Statement) {
@@ -1278,8 +1410,6 @@ export obj Analyzer {
 
       self.tc = initialTC
     } elif it.isMainDeclaration() {
-      // todo check only one main block in the project
-
       statement := it.asMainDeclaration()
       initialReturnType := self.state.returnType
 
@@ -1287,9 +1417,14 @@ export obj Analyzer {
         self.raise(errors.E1042(), it.start, it.end)
       }
 
+      if self.analyzer.state.mainFound {
+        self.raise(errors.E1070(), it.start, it.end)
+      }
+
       self.state.returnType = Type.opt(self.tm.get("void"))
       self.statement(statement.body)
       self.state.returnType = initialReturnType
+      self.analyzer.state.mainFound = true
     } elif it.isObjectDeclaration() {
       statement := it.asObjectDeclaration()
       initialTmSelf := self.tm.getSelf()
@@ -1671,12 +1806,18 @@ export fn analyze (f: ref Parser.File) str[] {
 
   mut analyzer := Analyzer{}
 
-  analyzer.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
-  analyzer.tm.init()
-  analyzer.vm.init(ref analyzer.tm)
-  API.TypeMap_globals(ref analyzer.tm)
-  API.VarMap_globals(ref analyzer.vm, ref analyzer.tm)
-  analyzer.analyze(ref f.program.body)
+  analyzer.files.push(AnalyzerFile{
+    analyzer: ref analyzer,
+    reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+  })
+
+  mut file := analyzer.files.last
+
+  file.tm.init()
+  file.vm.init(ref file.tm)
+  API.TypeMap_globals(ref file.tm)
+  API.VarMap_globals(ref file.vm, ref file.tm)
+  file.analyze(ref f.program.body)
 
   return analyzer.errors
 }
