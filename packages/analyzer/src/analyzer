@@ -11,11 +11,6 @@ import * as Var from "./var"
 import * as VarMap from "./var-map"
 import * as errors from "./errors"
 
-export obj AnalyzerExport {
-  t: (ref Type.Type)?
-  var: Var?
-}
-
 export obj GuessTypeResult {
   first: ref Type.Type
   second: ref Type.Type
@@ -40,6 +35,11 @@ export obj AnalyzerState {
   mut mainFound: bool
 }
 
+export obj AnalyzerFileExport {
+  t: (ref Type.Type)?
+  var: Var?
+}
+
 export obj AnalyzerFileState {
   mut initiated: bool
   mut loopInit: bool
@@ -49,7 +49,7 @@ export obj AnalyzerFileState {
 
 export obj AnalyzerFile {
   mut analyzer: ref Analyzer
-  mut exports: AnalyzerExport[str]
+  mut exports: AnalyzerFileExport[str]
   mut reader: Parser.Reader
   mut state: AnalyzerFileState
   mut tc: (ref Type.Type)[str]
@@ -108,12 +108,6 @@ export obj AnalyzerFile {
     } elif it.isImportDeclaration() {
       statement := it.asImportDeclaration()
 
-      // todo E1033 - Object is not exported
-      // todo E1035 - Package not installed
-      // todo Path not found
-      // todo duplicate declaration of specifier
-      // todo specifier name = existing type or variable
-
       if it.hasParent() {
         self.raise(errors.E1043(), it.start, it.end)
       }
@@ -122,29 +116,33 @@ export obj AnalyzerFile {
       source := source.value
       mut relativePath := ""
 
-      try {
-        if source.slice(0, 1) == "." {
-          relativePath = fs_realpathSync(path_dirname(self.reader.p) + path_SEP + source)
-        } elif source.slice(0, 1) == "/" {
-          relativePath = fs_realpathSync(source)
-        } else {
-          // todo package
-          // todo std package special handling
-
-          // auto initialCwd = std::filesystem::current_path();
-          // std::filesystem::current_path(this->cwd);
-          // auto possibleRelativePath = parse_package_yaml_main(sourceString);
-          // std::filesystem::current_path(initialCwd);
-
-          // if (possibleRelativePath == std::nullopt) {
-          //   throw Error(this->reader, stmtImportDecl.source.start, stmtImportDecl.source.end, E1035);
-          // }
-
-          // astCwd = (std::filesystem::path(this->cwd) / ".packages" / sourceString).string();
-          // relativePath = *possibleRelativePath;
+      if [".", "/"].contains(source.slice(0, 1)) {
+        try {
+          if source.slice(0, 1) == "." {
+            relativePath = fs_realpathSync(path_dirname(self.reader.p) + path_SEP + source)
+          } elif source.slice(0, 1) == "/" {
+            relativePath = fs_realpathSync(source)
+          }
+        } catch err: error_Error {
+          self.raise(errors.E1071(source), statement.source.start, statement.source.end)
+          return
         }
-      } catch err: error_Error {
-        // todo handle error
+      } else {
+        // todo package
+        // todo E1035 - Package not installed
+        // todo std package special handling
+
+        // auto initialCwd = std::filesystem::current_path();
+        // std::filesystem::current_path(this->cwd);
+        // auto possibleRelativePath = parse_package_yaml_main(sourceString);
+        // std::filesystem::current_path(initialCwd);
+
+        // if (possibleRelativePath == std::nullopt) {
+        //   throw Error(this->reader, stmtImportDecl.source.start, stmtImportDecl.source.end, E1035);
+        // }
+
+        // astCwd = (std::filesystem::path(this->cwd) / ".packages" / sourceString).string();
+        // relativePath = *possibleRelativePath;
       }
 
       mut existingImport: (ref AnalyzerFile)?
@@ -180,13 +178,20 @@ export obj AnalyzerFile {
         // source.start source.end
       }
 
+      if statement.specifiers.empty {
+        return
+      }
+
       definiteImport := existingImport as ref AnalyzerFile
 
-      // if (!stmtImportDecl.specifiers.empty()) {
-      //   for (const auto &specifier : stmtImportDecl.specifiers) {
+      loop i := 0; i < statement.specifiers.len; i++ {
       //     auto specifierLocal = std::get<Token>(*std::get<ParserExprAccess>(*specifier.local.body).expr).val;
+        specifier := statement.specifiers[i] as Parser.ImportDeclarationSpecifier
+        // todo specifier name = existing type or variable
+        // todo duplicate declaration of specifier
 
-      //     if (specifier.imported == std::nullopt) {
+        if specifier is Parser.ImportNamespaceSpecifier {
+          namespaceSpecifier := specifier
       //       auto namespaceFields = std::vector<TypeField>{};
 
       //       for (const auto &node : importNodesExports) {
@@ -210,7 +215,12 @@ export obj AnalyzerFile {
 
       //       auto namespaceType = this->typeMap.createNamespace(specifierLocal, namespaceFields);
       //       this->varMap.addNamespace(specifierLocal, namespaceType);
-      //     } else {
+        } else {
+          namedSpecifier := specifier
+
+          // todo check exported entity is really export from `definiteImport`
+          // todo E1033 - Object is not exported
+
       //       auto specifierImported = std::get<Token>(*std::get<ParserExprAccess>(*specifier.imported->body).expr).val;
 
       //       auto specifierExport = std::find_if(importNodesExports.begin(), importNodesExports.end(), [&] (const auto &it) -> bool {
@@ -235,9 +245,8 @@ export obj AnalyzerFile {
       //       if (exportType->isEnum()) {
       //         this->varMap.add(specifierLocal, exportType->codeName, exportType, false, false, true);
       //       }
-      //     }
-      //   }
-      // }
+        }
+      }
     } elif it.isObjectDeclaration() {
       statement := it.asObjectDeclaration()
 
@@ -1207,7 +1216,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.tm.has(name) {
-          self.exports.set(name, AnalyzerExport{t: self.tm.get(name)})
+          self.exports.set(name, AnalyzerFileExport{t: self.tm.get(name)})
         }
       } elif statement.statement.isFunctionDeclaration() {
         innerStatement := statement.statement.asFunctionDeclaration()
@@ -1216,7 +1225,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.vm.has(name) {
-          self.exports.set(name, AnalyzerExport{var: self.vm.get(name)})
+          self.exports.set(name, AnalyzerFileExport{var: self.vm.get(name)})
         }
       } elif statement.statement.isObjectDeclaration() {
         innerStatement := statement.statement.asObjectDeclaration()
@@ -1225,7 +1234,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.tm.has(name) {
-          self.exports.set(name, AnalyzerExport{t: self.tm.get(name)})
+          self.exports.set(name, AnalyzerFileExport{t: self.tm.get(name)})
         }
       } elif statement.statement.isTypeAliasDeclaration() {
         innerStatement := statement.statement.asTypeAliasDeclaration()
@@ -1234,7 +1243,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.tm.has(name) {
-          self.exports.set(name, AnalyzerExport{t: self.tm.get(name)})
+          self.exports.set(name, AnalyzerFileExport{t: self.tm.get(name)})
         }
       } elif statement.statement.isVariableDeclaration() {
         innerStatement := statement.statement.asVariableDeclaration()
@@ -1243,7 +1252,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.vm.has(name) {
-          self.exports.set(name, AnalyzerExport{var: self.vm.get(name)})
+          self.exports.set(name, AnalyzerFileExport{var: self.vm.get(name)})
         }
       } else {
         self.raise(errors.E1066(), it.start, it.end)
@@ -1279,7 +1288,7 @@ export obj AnalyzerFile {
         if guardResult && self.exports.has(exportName) {
           self.raise(errors.E1067(exportName), statement.expression.start, statement.expression.end)
         } elif guardResult {
-          self.exports.set(exportName, AnalyzerExport{t: exportType as ref Type.Type})
+          self.exports.set(exportName, AnalyzerFileExport{t: exportType as ref Type.Type})
         } elif !statement.expression.isIdentifier() {
           self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
         } else {
@@ -1289,7 +1298,7 @@ export obj AnalyzerFile {
           if self.vm.has(id.name) && self.exports.has(id.name) {
             self.raise(errors.E1067(id.name), statement.expression.start, statement.expression.end)
           } elif self.vm.has(id.name) {
-            self.exports.set(id.name, AnalyzerExport{var: self.vm.get(id.name)})
+            self.exports.set(id.name, AnalyzerFileExport{var: self.vm.get(id.name)})
           }
         }
       }
