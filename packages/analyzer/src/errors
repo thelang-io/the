@@ -290,3 +290,7 @@ export fn E1070 () str {
 export fn E1071 (p: str) str {
   return "E1071 - Cannot resolve import path '" + p + "'"
 }
+
+export fn E1072 () str {
+  return "E1072 - Imported object is not exported"
+}

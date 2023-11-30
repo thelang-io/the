@@ -3,11 +3,11 @@
  * Licensed under the MIT License
  */
 
+import Var from "./var"
 import * as Parser from "the/parser"
 import * as API from "./api"
 import * as Type from "./type"
 import * as TypeMap from "./type-map"
-import * as Var from "./var"
 import * as VarMap from "./var-map"
 import * as errors from "./errors"
 
@@ -192,6 +192,18 @@ export obj AnalyzerFile {
 
         if specifier is Parser.ImportNamespaceSpecifier {
           namespaceSpecifier := specifier
+          exportsKeys := definiteImport.exports.keys
+          exportsValues := definiteImport.exports.values
+
+          loop j := 0; j < exportsKeys.len; j++ {
+            exportName := exportsKeys[j]
+            exportItem := exportsValues[j]
+
+            if exportItem.t == nil {
+            } else {
+            }
+          }
+
       //       auto namespaceFields = std::vector<TypeField>{};
 
       //       for (const auto &node : importNodesExports) {
@@ -218,33 +230,18 @@ export obj AnalyzerFile {
         } else {
           namedSpecifier := specifier
 
-          // todo check exported entity is really export from `definiteImport`
-          // todo E1033 - Object is not exported
+          if !definiteImport.exports.has(namedSpecifier.imported.name) {
+            self.raise(errors.E1072(), namedSpecifier.imported.start, namedSpecifier.imported.end)
+            continue
+          }
 
-      //       auto specifierImported = std::get<Token>(*std::get<ParserExprAccess>(*specifier.imported->body).expr).val;
+          exportItem := definiteImport.exports.get(namedSpecifier.imported.name)
 
-      //       auto specifierExport = std::find_if(importNodesExports.begin(), importNodesExports.end(), [&] (const auto &it) -> bool {
-      //         return AST::getExportName(it) == specifierImported;
-      //       });
-
-      //       if (specifierExport == importNodesExports.end()) {
-      //         throw Error(this->reader, specifier.imported->start, specifier.imported->end, E1033);
-      //       }
-
-      //       auto exportVar = AST::getExportVar(*specifierExport);
-      //       auto exportType = AST::getExportType(*specifierExport);
-
-      //       if (exportVar != nullptr) {
-      //         this->varMap.add(specifierLocal, exportVar->codeName, exportVar->type, exportVar->mut);
-      //       } else if (specifierImported != specifierLocal) {
-      //         this->typeMap.createAlias(specifierLocal, exportType);
-      //       } else {
-      //         this->typeMap.insert(exportType);
-      //       }
-
-      //       if (exportType->isEnum()) {
-      //         this->varMap.add(specifierLocal, exportType->codeName, exportType, false, false, true);
-      //       }
+          if exportItem.t == nil {
+            self.vm.insert(exportItem.var as Var)
+          } else {
+            self.tm.insert(exportItem.t)
+          }
         }
       }
     } elif it.isObjectDeclaration() {
