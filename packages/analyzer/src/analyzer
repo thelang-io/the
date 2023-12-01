@@ -3,10 +3,9 @@
  * Licensed under the MIT License
  */
 
-import Var from "./var"
 import * as Parser from "the/parser"
 import * as API from "./api"
-import * as Type from "./type"
+import * as Type, Var from "./type"
 import * as TypeMap from "./type-map"
 import * as VarMap from "./var-map"
 import * as errors from "./errors"
@@ -185,48 +184,11 @@ export obj AnalyzerFile {
       definiteImport := existingImport as ref AnalyzerFile
 
       loop i := 0; i < statement.specifiers.len; i++ {
-      //     auto specifierLocal = std::get<Token>(*std::get<ParserExprAccess>(*specifier.local.body).expr).val;
         specifier := statement.specifiers[i] as Parser.ImportDeclarationSpecifier
-        // todo specifier name = existing type or variable
-        // todo duplicate declaration of specifier
 
         if specifier is Parser.ImportNamespaceSpecifier {
           namespaceSpecifier := specifier
-          exportsKeys := definiteImport.exports.keys
-          exportsValues := definiteImport.exports.values
-
-          loop j := 0; j < exportsKeys.len; j++ {
-            exportName := exportsKeys[j]
-            exportItem := exportsValues[j]
-
-            if exportItem.t == nil {
-            } else {
-            }
-          }
-
-      //       auto namespaceFields = std::vector<TypeField>{};
-
-      //       for (const auto &node : importNodesExports) {
-      //         auto exportName = AST::getExportName(node);
-      //         auto exportCodeName = AST::getExportCodeName(node);
-      //         auto exportType = AST::getExportType(node);
-      //         auto exportVar = AST::getExportVar(node);
-
-      //         namespaceFields.push_back(TypeField{
-      //           exportName,
-      //           exportType,
-      //           exportVar != nullptr && exportVar->mut,
-      //           false,
-      //           TypeCallInfo{exportCodeName}
-      //         });
-
-      //         if (!exportType->isEnum()) {
-      //           this->varMap.add(specifierLocal + "." + exportName, exportCodeName, exportType);
-      //         }
-      //       }
-
-      //       auto namespaceType = this->typeMap.createNamespace(specifierLocal, namespaceFields);
-      //       this->varMap.addNamespace(specifierLocal, namespaceType);
+          self.tm.createNamespace(namespaceSpecifier.name.name, definiteImport.exports)
         } else {
           namedSpecifier := specifier
 
@@ -238,9 +200,24 @@ export obj AnalyzerFile {
           exportItem := definiteImport.exports.get(namedSpecifier.imported.name)
 
           if exportItem.t == nil {
-            self.vm.insert(exportItem.var as Var)
+            if self.vm.has(namedSpecifier.local.name) {
+              self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
+            }
+
+            exportVar := exportItem.var as Var
+            self.vm.add(namedSpecifier.local.name, exportVar.t, exportVar.mutable)
           } else {
-            self.tm.insert(exportItem.t)
+            exportType := exportItem.t
+
+            if self.tm.has(namedSpecifier.local.name) {
+              self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
+            }
+
+            if namedSpecifier.local.name != namedSpecifier.imported.name {
+              self.tm.createAlias(namedSpecifier.local.name, exportType)
+            } else {
+              self.tm.insert(exportType)
+            }
           }
         }
       }
@@ -882,9 +859,27 @@ export obj AnalyzerFile {
           self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
         }
         return t
+      } elif t.isNamespace() {
+        namespaceType := t.asNamespace()
+
+        if namespaceType.members.has(expression.name.name) {
+          member := namespaceType.members.get(expression.name.name)
+
+          if member.var != nil {
+            if withMutable && !member.var.mutable {
+              self.raise(errors.E1011(expression.name), it.start, it.end)
+            }
+
+            code := Parser.stringifyExpression(it)
+            return self.tc.has(code) ? self.tc.get(code) : var.t
+          }
+        }
+
+        self.raise(errors.E1073(expression.expression.toString(), expression.name.name), expression.name.start, expression.name.end)
+        return targetType == nil ? self.tm.get("any") : targetType
       } elif !t.has(expression.name.name) {
         self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
-        return self.tm.get("any")
+        return targetType == nil ? self.tm.get("any") : targetType
       }
 
       property := t.get(expression.name.name)
@@ -1682,13 +1677,20 @@ export obj AnalyzerFile {
       if !leftType.isNamespace() {
         self.raise(errors.E1022(leftType.toString()), t.name.start, t.name.end)
         return self.tm.get("any")
-      } elif !leftType.has(t.name.name) {
-        self.raise(errors.E1023(leftType.toString(), t.name.name), t.name.start, t.name.end)
-        return self.tm.get("any")
       }
 
-      property := leftType.get(t.name.name)
-      return property.t
+      leftNamespace := leftType.asNamespace()
+
+      if leftNamespace.members.has(t.name.name) {
+        member := leftNamespace.members.get(t.name.name)
+
+        if member.t != nil {
+          return member.t
+        }
+      }
+
+      self.raise(errors.E1023(leftType.toString(), t.name.name), t.name.start, t.name.end)
+      return self.tm.get("any")
     } elif it.isOptional() {
       t := it.asOptional()
       underlyingType := self.t(t.t)

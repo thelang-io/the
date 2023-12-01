@@ -96,7 +96,7 @@ export fn E1022 (name: str) str {
 }
 
 export fn E1023 (ns: str, member: str) str {
-  return "E1023 - Namespace '" + ns + "' has no exported member '" + member + "'"
+  return "E1023 - Namespace '" + ns + "' has no exported member type '" + member + "'"
 }
 
 export fn E1024 () str {
@@ -293,4 +293,8 @@ export fn E1071 (p: str) str {
 
 export fn E1072 () str {
   return "E1072 - Imported object is not exported"
+}
+
+export fn E1073 (ns: str, member: str) str {
+  return "E1073 - Namespace '" + ns + "' has no exported member variable '" + member + "'"
 }

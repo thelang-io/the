@@ -349,8 +349,8 @@ export obj TypeMap {
     return result
   }
 
-  fn createNamespace (mut self: ref Self, name: str, properties: Type.TypeProperty[] = []) ref Type.Type {
-    self.items.push(Type.Type{name: name, properties: properties, body: Type.NamespaceType{}})
+  fn createNamespace (mut self: ref Self, name: str, members: Type.NamespaceMember[str]) ref Type.Type {
+    self.items.push(Type.Type{name: name, body: Type.NamespaceType{members: members}})
     return self.items.last()
   }
 
@@ -410,6 +410,10 @@ export obj TypeMap {
 
   fn getSelf (mut self: ref Self) (ref Type.Type)? {
     return self._self
+  }
+
+  fn insert (mut self: ref Self, t: ref Type.Type) void {
+    self.items.push(t)
   }
 
   fn has (mut self: ref Self, name: str) bool {

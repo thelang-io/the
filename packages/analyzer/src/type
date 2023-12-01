@@ -22,6 +22,13 @@ export fn toStringChild (t: ref Type) str {
   return t.isFunction() || t.isMethod() || t.isReference() || t.isUnion() ? "(" + result + ")" : result
 }
 
+export obj Var {
+  name: str
+  t: ref Type
+  mutable: bool
+  scope: int
+}
+
 export obj Type {
   name: str
   properties: TypeProperty[]
@@ -354,7 +361,13 @@ export obj MethodType {
   mut selfType: ref Type
 }
 
+export obj NamespaceMember {
+  t: (ref Type)?
+  var: Var?
+}
+
 export obj NamespaceType {
+  members: NamespaceMember[str]
 }
 
 export obj ObjectType {

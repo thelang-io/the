@@ -3,8 +3,7 @@
  * Licensed under the MIT License
  */
 
-import Var from "./var"
-import * as Type from "./type"
+import * as Type, Var from "./type"
 import * as TypeMap from "./type-map"
 
 export obj VarMap {
