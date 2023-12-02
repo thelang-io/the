@@ -298,3 +298,7 @@ export fn E1072 () str {
 export fn E1073 (ns: str, member: str) str {
   return "E1073 - Namespace '" + ns + "' has no exported member variable '" + member + "'"
 }
+
+export fn E1074 (name: str) str {
+  return "E1074 - Package '" + name + "' is not installed or it's package.yml has no main entry"
+}

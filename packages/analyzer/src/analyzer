@@ -40,13 +40,14 @@ export obj AnalyzerFileExport {
 }
 
 export obj AnalyzerFileState {
-  mut initiated: bool
+  mut initialized: bool
   mut loopInit: bool
   mut returnType: (ref Type.Type)?
   mut selfType: (ref Type.Type)?
 }
 
 export obj AnalyzerFile {
+  mut cwd: str
   mut analyzer: ref Analyzer
   mut exports: AnalyzerFileExport[str]
   mut reader: Parser.Reader
@@ -112,13 +113,14 @@ export obj AnalyzerFile {
       }
 
       sourceExpression := statement.source.asStringLiteral()
-      source := source.value
+      source := sourceExpression.value
       mut relativePath := ""
+      mut astCwd := self.cwd
 
       if [".", "/"].contains(source.slice(0, 1)) {
         try {
           if source.slice(0, 1) == "." {
-            relativePath = fs_realpathSync(path_dirname(self.reader.p) + path_SEP + source)
+            relativePath = fs_realpathSync(path_dirname(self.reader.path) + path_SEP + source)
           } elif source.slice(0, 1) == "/" {
             relativePath = fs_realpathSync(source)
           }
@@ -126,43 +128,55 @@ export obj AnalyzerFile {
           self.raise(errors.E1071(source), statement.source.start, statement.source.end)
           return
         }
-      } else {
-        // todo package
-        // todo E1035 - Package not installed
+      } elif source == "std" {
         // todo std package special handling
+      } else {
+        pathDir := astCwd + path_SEP + ".packages" + path_SEP + source
+        mut possibleRelativePath: str?
 
-        // auto initialCwd = std::filesystem::current_path();
-        // std::filesystem::current_path(this->cwd);
-        // auto possibleRelativePath = parse_package_yaml_main(sourceString);
-        // std::filesystem::current_path(initialCwd);
+        try {
+          sourceFile := fs_readFileSync(fs_realpathSync(pathDir + path_SEP + "package.yml")).str()
+          sourceFileLines := sourceFile.lines()
 
-        // if (possibleRelativePath == std::nullopt) {
-        //   throw Error(this->reader, stmtImportDecl.source.start, stmtImportDecl.source.end, E1035);
-        // }
+          loop i := 0; i < sourceFileLines.len; i++ {
+            line := sourceFileLines[i]
+            if line.slice(0, 5) == "main:" {
+              possibleRelativePath = fs_realpathSync(pathDir + path_SEP + line.slice(5).trim())
+            }
+          }
+        } catch err: error_Error {
+        }
 
-        // astCwd = (std::filesystem::path(this->cwd) / ".packages" / sourceString).string();
-        // relativePath = *possibleRelativePath;
+        if possibleRelativePath == nil {
+          self.raise(errors.E1074(source), statement.source.start, statement.source.end)
+          return
+        }
+
+        astCwd = pathDir
+        relativePath = possibleRelativePath as str
       }
 
       mut existingImport: (ref AnalyzerFile)?
 
-      loop i := 0; i < self.analyzer.files; i++ {
-        if self.analyzer.files[i].p == relativePath {
-          existingImport = self.analyzer.files[i]
+      loop i := 0; i < self.analyzer.files.len; i++ {
+        file := self.analyzer.files[i]
+        if file.reader.path == relativePath {
+          existingImport = file
           break
         }
       }
 
       if existingImport == nil {
-        mut f := Parser.parse(source.value)
+        mut f := Parser.parse(relativePath)
         Parser.interconnect(ref f)
 
-        analyzer.files.push(AnalyzerFile{
-          analyzer: ref self.analyzer,
+        self.analyzer.files.push(AnalyzerFile{
+          cwd: astCwd,
+          analyzer: self.analyzer,
           reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
         })
 
-        mut file := analyzer.files.last
+        mut file := self.analyzer.files.last
 
         file.tm.init()
         file.vm.init(ref file.tm)
@@ -170,11 +184,13 @@ export obj AnalyzerFile {
         API.VarMap_globals(ref file.vm, ref file.tm)
         file.analyze(ref f.program.body)
 
-        file.initialized = true
+        file.state.initialized = true
         existingImport = file
-      } elif !existingImport.initialized {
-        // todo E1032 - Circular imports are not allowed
-        // source.start source.end
+      } else {
+        // if !existingImport.state.initialized {
+        //   // todo E1032 - Circular imports are not allowed
+        //   // source.start source.end
+        // }
       }
 
       if statement.specifiers.empty {
@@ -867,15 +883,15 @@ export obj AnalyzerFile {
 
           if member.var != nil {
             if withMutable && !member.var.mutable {
-              self.raise(errors.E1011(expression.name), it.start, it.end)
+              self.raise(errors.E1011(expression.name.name), it.start, it.end)
             }
 
             code := Parser.stringifyExpression(it)
-            return self.tc.has(code) ? self.tc.get(code) : var.t
+            return self.tc.has(code) ? self.tc.get(code) : member.var.t
           }
         }
 
-        self.raise(errors.E1073(expression.expression.toString(), expression.name.name), expression.name.start, expression.name.end)
+        self.raise(errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name), expression.name.start, expression.name.end)
         return targetType == nil ? self.tm.get("any") : targetType
       } elif !t.has(expression.name.name) {
         self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
@@ -1815,6 +1831,7 @@ export fn analyze (f: ref Parser.File) str[] {
   mut analyzer := Analyzer{}
 
   analyzer.files.push(AnalyzerFile{
+    cwd: process_cwd(),
     analyzer: ref analyzer,
     reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
   })
