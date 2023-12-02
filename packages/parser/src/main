@@ -50,6 +50,9 @@ import
   FunctionDeclaration,
   IfStatement,
   ImportDeclaration,
+  ImportDeclarationSpecifier,
+  ImportSpecifier,
+  ImportNamespaceSpecifier,
   LoopStatement,
   MainDeclaration,
   ObjectDeclaration,
@@ -126,6 +129,9 @@ export ExpressionStatement
 export FunctionDeclaration
 export IfStatement
 export ImportDeclaration
+export ImportDeclarationSpecifier
+export ImportSpecifier
+export ImportNamespaceSpecifier
 export LoopStatement
 export MainDeclaration
 export ObjectDeclaration
