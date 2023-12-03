@@ -34,11 +34,6 @@ export obj AnalyzerState {
   mut mainFound: bool
 }
 
-export obj AnalyzerFileExport {
-  t: (ref Type.Type)?
-  var: Var?
-}
-
 export obj AnalyzerFileState {
   mut initialized: bool
   mut loopInit: bool
@@ -49,7 +44,7 @@ export obj AnalyzerFileState {
 export obj AnalyzerFile {
   mut cwd: str
   mut analyzer: ref Analyzer
-  mut exports: AnalyzerFileExport[str]
+  mut exports: Type.NamespaceMember[str]
   mut reader: Parser.Reader
   mut state: AnalyzerFileState
   mut tc: (ref Type.Type)[str]
@@ -129,7 +124,8 @@ export obj AnalyzerFile {
           return
         }
       } elif source == "std" {
-        // todo std package special handling
+        astCwd = ""
+        relativePath = "std"
       } else {
         pathDir := astCwd + path_SEP + ".packages" + path_SEP + source
         mut possibleRelativePath: str?
@@ -167,22 +163,24 @@ export obj AnalyzerFile {
       }
 
       if existingImport == nil {
-        mut f := Parser.parse(relativePath)
-        Parser.interconnect(ref f)
-
-        self.analyzer.files.push(AnalyzerFile{
-          cwd: astCwd,
-          analyzer: self.analyzer,
-          reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
-        })
-
+        self.analyzer.files.push(AnalyzerFile{cwd: astCwd, analyzer: self.analyzer})
         mut file := self.analyzer.files.last
 
         file.tm.init()
         file.vm.init(ref file.tm)
         API.TypeMap_globals(ref file.tm)
         API.VarMap_globals(ref file.vm, ref file.tm)
-        file.analyze(ref f.program.body)
+
+        if source == "std" {
+          API.TypeMap_std(ref file.tm)
+          API.VarMap_std(ref file.vm, ref file.tm)
+          API.AnalyzerFile_stdExports(ref file.exports, ref file.tm, ref file.vm)
+        } else {
+          mut f := Parser.parse(relativePath)
+          Parser.interconnect(ref f)
+          file.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+          file.analyze(ref f.program.body)
+        }
 
         file.state.initialized = true
         existingImport = file
@@ -1224,7 +1222,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.tm.has(name) {
-          self.exports.set(name, AnalyzerFileExport{t: self.tm.get(name)})
+          self.exports.set(name, Type.NamespaceMember{t: self.tm.get(name)})
         }
       } elif statement.statement.isFunctionDeclaration() {
         innerStatement := statement.statement.asFunctionDeclaration()
@@ -1233,7 +1231,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.vm.has(name) {
-          self.exports.set(name, AnalyzerFileExport{var: self.vm.get(name)})
+          self.exports.set(name, Type.NamespaceMember{var: self.vm.get(name)})
         }
       } elif statement.statement.isObjectDeclaration() {
         innerStatement := statement.statement.asObjectDeclaration()
@@ -1242,7 +1240,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.tm.has(name) {
-          self.exports.set(name, AnalyzerFileExport{t: self.tm.get(name)})
+          self.exports.set(name, Type.NamespaceMember{t: self.tm.get(name)})
         }
       } elif statement.statement.isTypeAliasDeclaration() {
         innerStatement := statement.statement.asTypeAliasDeclaration()
@@ -1251,7 +1249,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.tm.has(name) {
-          self.exports.set(name, AnalyzerFileExport{t: self.tm.get(name)})
+          self.exports.set(name, Type.NamespaceMember{t: self.tm.get(name)})
         }
       } elif statement.statement.isVariableDeclaration() {
         innerStatement := statement.statement.asVariableDeclaration()
@@ -1260,7 +1258,7 @@ export obj AnalyzerFile {
         if self.exports.has(name) {
           self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
         } elif self.vm.has(name) {
-          self.exports.set(name, AnalyzerFileExport{var: self.vm.get(name)})
+          self.exports.set(name, Type.NamespaceMember{var: self.vm.get(name)})
         }
       } else {
         self.raise(errors.E1066(), it.start, it.end)
@@ -1296,7 +1294,7 @@ export obj AnalyzerFile {
         if guardResult && self.exports.has(exportName) {
           self.raise(errors.E1067(exportName), statement.expression.start, statement.expression.end)
         } elif guardResult {
-          self.exports.set(exportName, AnalyzerFileExport{t: exportType as ref Type.Type})
+          self.exports.set(exportName, Type.NamespaceMember{t: exportType as ref Type.Type})
         } elif !statement.expression.isIdentifier() {
           self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
         } else {
@@ -1306,7 +1304,7 @@ export obj AnalyzerFile {
           if self.vm.has(id.name) && self.exports.has(id.name) {
             self.raise(errors.E1067(id.name), statement.expression.start, statement.expression.end)
           } elif self.vm.has(id.name) {
-            self.exports.set(id.name, AnalyzerFileExport{var: self.vm.get(id.name)})
+            self.exports.set(id.name, Type.NamespaceMember{var: self.vm.get(id.name)})
           }
         }
       }
