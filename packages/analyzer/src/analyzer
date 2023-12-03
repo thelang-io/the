@@ -186,8 +186,8 @@ export obj AnalyzerFile {
         existingImport = file
       } else {
         // if !existingImport.state.initialized {
-        //   // todo E1032 - Circular imports are not allowed
-        //   // source.start source.end
+          // todo E1032 - Circular imports are not allowed
+          // source.start source.end
         // }
       }
 

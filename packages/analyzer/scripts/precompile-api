@@ -6,7 +6,7 @@
 import * as Parser from "the/parser"
 import Analyzer, AnalyzerFile from "../src/analyzer"
 import Type, TypeParameter, TypeProperty from "../src/type"
-import stringifyType from "./stringify-type"
+import stringifyType, stringifyTypeProperty from "./stringify-type"
 
 main {
   mut analyzer := Analyzer{}
@@ -48,7 +48,8 @@ main {
   initialTypeMapLen = file.tm.items.len
   file.analyze(ref f.program.body)
 
-  mut stdTM := ""
+  mut stdTMDeclaration := ""
+  mut stdTMDefinition := ""
   mut stdVM := ""
   mut stdExports := ""
 
@@ -57,7 +58,20 @@ main {
     if !item.isAlias() && !item.isEnum() && !item.isObject() { continue }
     nameEscaped := "\"" + item.name + "\""
 
-    stdTM += "  " + stringifyType(item, 2, build: true) + os_EOL
+    if item.isObject() && item.properties.empty {
+      stdTMDeclaration += "  tm.createObject(" + nameEscaped + ")" + os_EOL
+    } elif item.isObject() {
+      typeName := "type" + i.str()
+      stdTMDeclaration += "  mut " + typeName + " := tm.createObject(" + nameEscaped + ")" + os_EOL
+
+      loop j := 0; j < item.properties.len; j++ {
+        property := item.properties[j]
+        stdTMDefinition += "  " + typeName + ".properties.push(" + stringifyTypeProperty(property, 2, "tm") + ")" + os_EOL
+      }
+    } else {
+      stdTMDeclaration += "  " + stringifyType(item, 2, build: true) + os_EOL
+    }
+
     stdExports += "  exports.set(" + nameEscaped + ", Type.NamespaceMember{t: tm.get(" + nameEscaped + ")})" + os_EOL
   }
 
@@ -82,7 +96,8 @@ main {
   content += "}" + os_EOL
   content += os_EOL
   content += "export fn TypeMap_std (mut tm: ref TypeMap) {" + os_EOL
-  content += stdTM
+  content += stdTMDeclaration
+  content += stdTMDefinition
   content += "}" + os_EOL
   content += os_EOL
   content += "export fn VarMap_std (mut vm: ref VarMap, mut tm: ref TypeMap) {" + os_EOL

@@ -22,476 +22,551 @@ export fn VarMap_globals (mut vm: ref VarMap, mut tm: ref TypeMap) {
 }
 
 export fn TypeMap_std (mut tm: ref TypeMap) {
-  tm.createObject("aiocb", [
-    Type.TypeProperty{name: "aio_fildes", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "aio_offset", t: tm.get("off_t"), mutable: true}
-    Type.TypeProperty{name: "aio_buf", t: tm.createReference(tm.get("any")), mutable: true}
-    Type.TypeProperty{name: "aio_nbytes", t: tm.get("usize"), mutable: true}
-    Type.TypeProperty{name: "aio_reqprio", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "aio_sigevent", t: tm.get("sigevent"), mutable: true}
-    Type.TypeProperty{name: "aio_lio_opcode", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("DIR", [])
-  tm.createObject("dirent", [
-    Type.TypeProperty{name: "d_ino", t: tm.get("ino_t"), mutable: true}
-    Type.TypeProperty{name: "d_name", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
-  tm.createObject("flock", [
-    Type.TypeProperty{name: "l_type", t: tm.get("i16"), mutable: true}
-    Type.TypeProperty{name: "l_whence", t: tm.get("i16"), mutable: true}
-    Type.TypeProperty{name: "l_start", t: tm.get("off_t"), mutable: true}
-    Type.TypeProperty{name: "l_len", t: tm.get("off_t"), mutable: true}
-    Type.TypeProperty{name: "l_pid", t: tm.get("pid_t"), mutable: true}
-  ])
-  tm.createObject("fenv_t", [])
-  tm.createObject("fexcept_t", [])
-  tm.createObject("glob_t", [
-    Type.TypeProperty{name: "gl_pathc", t: tm.get("usize"), mutable: true}
-    Type.TypeProperty{name: "gl_pathv", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-    Type.TypeProperty{name: "gl_offs", t: tm.get("usize"), mutable: true}
-  ])
-  tm.createObject("group", [
-    Type.TypeProperty{name: "gr_name", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "gr_gid", t: tm.get("gid_t"), mutable: true}
-    Type.TypeProperty{name: "gr_mem", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-  ])
-  tm.createObject("imaxdiv_t", [
-    Type.TypeProperty{name: "quot", t: tm.get("intmax_t"), mutable: true}
-    Type.TypeProperty{name: "rem", t: tm.get("intmax_t"), mutable: true}
-  ])
-  tm.createObject("locale_t", [])
-  tm.createObject("lconv", [
-    Type.TypeProperty{name: "currency_symbol", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "decimal_point", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "frac_digits", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "grouping", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "int_curr_symbol", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "int_frac_digits", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "int_n_cs_precedes", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "int_n_sep_by_space", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "int_n_sign_posn", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "int_p_cs_precedes", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "int_p_sep_by_space", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "int_p_sign_posn", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "mon_decimal_point", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "mon_grouping", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "mon_thousands_sep", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "negative_sign", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "n_cs_precedes", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "n_sep_by_space", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "n_sign_posn", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "positive_sign", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "p_cs_precedes", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "p_sep_by_space", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "p_sign_posn", t: tm.get("char"), mutable: true}
-    Type.TypeProperty{name: "thousands_sep", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
-  tm.createObject("float_t", [])
-  tm.createObject("double_t", [])
-  tm.createObject("mqd_t", [])
-  tm.createObject("mq_attr", [
-    Type.TypeProperty{name: "mq_flags", t: tm.get("i64"), mutable: true}
-    Type.TypeProperty{name: "mq_maxmsg", t: tm.get("i64"), mutable: true}
-    Type.TypeProperty{name: "mq_msgsize", t: tm.get("i64"), mutable: true}
-    Type.TypeProperty{name: "mq_curmsgs", t: tm.get("i64"), mutable: true}
-  ])
-  tm.createObject("DBM", [])
-  tm.createObject("datum", [
-    Type.TypeProperty{name: "dptr", t: tm.createReference(tm.get("any")), mutable: true}
-    Type.TypeProperty{name: "dsize", t: tm.get("usize"), mutable: true}
-  ])
-  tm.createObject("if_nameindex_t", [
-    Type.TypeProperty{name: "if_index", t: tm.get("u32"), mutable: true}
-    Type.TypeProperty{name: "if_name", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
-  tm.createObject("hostent", [
-    Type.TypeProperty{name: "h_name", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "h_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-    Type.TypeProperty{name: "h_addrtype", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "h_length", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "h_addr_list", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-  ])
-  tm.createObject("netent", [
-    Type.TypeProperty{name: "n_name", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "n_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-    Type.TypeProperty{name: "n_addrtype", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "n_net", t: tm.get("u32"), mutable: true}
-  ])
-  tm.createObject("protoent", [
-    Type.TypeProperty{name: "p_name", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "p_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-    Type.TypeProperty{name: "p_proto", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("servent", [
-    Type.TypeProperty{name: "s_name", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "s_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-    Type.TypeProperty{name: "s_port", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "s_proto", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
-  tm.createObject("addrinfo", [
-    Type.TypeProperty{name: "ai_flags", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "ai_family", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "ai_socktype", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "ai_protocol", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "ai_addrlen", t: tm.get("socklen_t"), mutable: true}
-    Type.TypeProperty{name: "ai_addr", t: tm.createReference(tm.get("sockaddr")), mutable: true}
-    Type.TypeProperty{name: "ai_canonname", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "ai_next", t: tm.createReference(tm.get("addrinfo")), mutable: true}
-  ])
-  tm.createObject("in_port_t", [])
-  tm.createObject("in_addr_t", [])
-  tm.createObject("in_addr", [
-    Type.TypeProperty{name: "s_addr", t: tm.get("in_addr_t"), mutable: true}
-  ])
-  tm.createObject("sockaddr_in", [
-    Type.TypeProperty{name: "sin_family", t: tm.get("sa_family_t"), mutable: true}
-    Type.TypeProperty{name: "sin_port", t: tm.get("in_port_t"), mutable: true}
-    Type.TypeProperty{name: "sin_addr", t: tm.get("in_addr"), mutable: true}
-  ])
-  tm.createObject("in6_addr", [
-    Type.TypeProperty{name: "s6_addr", t: tm.createArray(tm.get("u8")), mutable: true}
-  ])
-  tm.createObject("sockaddr_in6", [
-    Type.TypeProperty{name: "sin6_family", t: tm.get("sa_family_t"), mutable: true}
-    Type.TypeProperty{name: "sin6_port", t: tm.get("in_port_t"), mutable: true}
-    Type.TypeProperty{name: "sin6_flowinfo", t: tm.get("u32"), mutable: true}
-    Type.TypeProperty{name: "sin6_addr", t: tm.get("in6_addr"), mutable: true}
-    Type.TypeProperty{name: "sin6_scope_id", t: tm.get("u32"), mutable: true}
-  ])
-  tm.createObject("ipv6_mreq", [
-    Type.TypeProperty{name: "ipv6mr_multiaddr", t: tm.get("in6_addr"), mutable: true}
-    Type.TypeProperty{name: "ipv6mr_interface", t: tm.get("u32"), mutable: true}
-  ])
-  tm.createObject("nl_catd", [])
-  tm.createObject("nl_item", [])
-  tm.createObject("nfds_t", [])
-  tm.createObject("pollfd", [
-    Type.TypeProperty{name: "fd", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "events", t: tm.get("i16"), mutable: true}
-    Type.TypeProperty{name: "revents", t: tm.get("i16"), mutable: true}
-  ])
-  tm.createObject("passwd", [
-    Type.TypeProperty{name: "pw_name", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "pw_uid", t: tm.get("uid_t"), mutable: true}
-    Type.TypeProperty{name: "pw_gid", t: tm.get("gid_t"), mutable: true}
-    Type.TypeProperty{name: "pw_dir", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "pw_shell", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
-  tm.createObject("regoff_t", [])
-  tm.createObject("regex_t", [
-    Type.TypeProperty{name: "re_nsub", t: tm.get("usize"), mutable: true}
-  ])
-  tm.createObject("regmatch_t", [
-    Type.TypeProperty{name: "rm_so", t: tm.get("regoff_t"), mutable: true}
-    Type.TypeProperty{name: "rm_eo", t: tm.get("regoff_t"), mutable: true}
-  ])
-  tm.createObject("sched_param", [
-    Type.TypeProperty{name: "sched_priority", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("ENTRY", [
-    Type.TypeProperty{name: "key", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "data", t: tm.createReference(tm.get("any")), mutable: true}
-  ])
+  mut type180 := tm.createObject("aiocb")
+  mut type183 := tm.createObject("DIR")
+  mut type186 := tm.createObject("dirent")
+  mut type189 := tm.createObject("flock")
+  mut type192 := tm.createObject("fenv_t")
+  mut type195 := tm.createObject("fexcept_t")
+  mut type198 := tm.createObject("glob_t")
+  mut type201 := tm.createObject("group")
+  mut type204 := tm.createObject("imaxdiv_t")
+  mut type207 := tm.createObject("locale_t")
+  mut type210 := tm.createObject("lconv")
+  mut type213 := tm.createObject("float_t")
+  mut type216 := tm.createObject("double_t")
+  mut type219 := tm.createObject("mqd_t")
+  mut type222 := tm.createObject("mq_attr")
+  mut type225 := tm.createObject("DBM")
+  mut type228 := tm.createObject("datum")
+  mut type231 := tm.createObject("if_nameindex_t")
+  mut type234 := tm.createObject("hostent")
+  mut type237 := tm.createObject("netent")
+  mut type240 := tm.createObject("protoent")
+  mut type243 := tm.createObject("servent")
+  mut type246 := tm.createObject("addrinfo")
+  mut type249 := tm.createObject("in_port_t")
+  mut type252 := tm.createObject("in_addr_t")
+  mut type255 := tm.createObject("in_addr")
+  mut type258 := tm.createObject("sockaddr_in")
+  mut type261 := tm.createObject("in6_addr")
+  mut type264 := tm.createObject("sockaddr_in6")
+  mut type267 := tm.createObject("ipv6_mreq")
+  mut type270 := tm.createObject("nl_catd")
+  mut type273 := tm.createObject("nl_item")
+  mut type276 := tm.createObject("nfds_t")
+  mut type279 := tm.createObject("pollfd")
+  mut type282 := tm.createObject("passwd")
+  mut type285 := tm.createObject("regoff_t")
+  mut type288 := tm.createObject("regex_t")
+  mut type291 := tm.createObject("regmatch_t")
+  mut type294 := tm.createObject("sched_param")
+  mut type297 := tm.createObject("ENTRY")
   tm.createEnum("ACTION", ["FIND", "ENTER"])
   tm.createEnum("VISIT", ["preorder", "postorder", "endorder", "leaf"])
-  tm.createObject("sem_t", [])
-  tm.createObject("jmp_buf", [])
-  tm.createObject("sigjmp_buf", [])
-  tm.createObject("mcontext_t", [])
-  tm.createObject("sig_atomic_t", [])
-  tm.createObject("sigset_t", [])
-  tm.createObject("sigevent", [
-    Type.TypeProperty{name: "sigev_notify", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "sigev_signo", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "sigev_value", t: tm.get("sigval"), mutable: true}
-    Type.TypeProperty{name: "sigev_notify_function", t: tm.createFunction(false, [
-      Type.TypeParameter{name: nil, t: tm.get("sigval"), mutable: false, required: true, variadic: false}
-    ], tm.get("void")), mutable: true}
-    Type.TypeProperty{name: "sigev_notify_attributes", t: tm.createReference(tm.get("pthread_attr_t")), mutable: true}
-  ])
-  tm.createObject("sigaction_t", [
-    Type.TypeProperty{name: "sa_handler", t: tm.createFunction(false, [
-      Type.TypeParameter{name: nil, t: tm.get("int"), mutable: false, required: true, variadic: false}
-    ], tm.get("void")), mutable: true}
-    Type.TypeProperty{name: "sa_mask", t: tm.get("sigset_t"), mutable: true}
-    Type.TypeProperty{name: "sa_flags", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "sa_sigaction", t: tm.createFunction(false, [
-      Type.TypeParameter{name: "signum", t: tm.get("int"), mutable: false, required: true, variadic: false}
-      Type.TypeParameter{name: "info", t: tm.createReference(tm.get("siginfo_t")), mutable: true, required: true, variadic: false}
-      Type.TypeParameter{name: "ctx", t: tm.createReference(tm.get("any")), mutable: true, required: true, variadic: false}
-    ], tm.get("void")), mutable: true}
-  ])
-  tm.createObject("ucontext_t", [
-    Type.TypeProperty{name: "uc_link", t: tm.createReference(tm.get("ucontext_t")), mutable: true}
-    Type.TypeProperty{name: "uc_sigmask", t: tm.get("sigset_t"), mutable: true}
-    Type.TypeProperty{name: "uc_stack", t: tm.get("stack_t"), mutable: true}
-    Type.TypeProperty{name: "uc_mcontext", t: tm.createReference(tm.get("mcontext_t")), mutable: true}
-  ])
-  tm.createObject("stack_t", [
-    Type.TypeProperty{name: "ss_sp", t: tm.createReference(tm.get("any")), mutable: true}
-    Type.TypeProperty{name: "ss_size", t: tm.get("usize"), mutable: true}
-    Type.TypeProperty{name: "ss_flags", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("siginfo_t", [
-    Type.TypeProperty{name: "si_signo", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "si_code", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "si_errno", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "si_pid", t: tm.get("pid_t"), mutable: true}
-    Type.TypeProperty{name: "si_uid", t: tm.get("uid_t"), mutable: true}
-    Type.TypeProperty{name: "si_addr", t: tm.createReference(tm.get("any")), mutable: true}
-    Type.TypeProperty{name: "si_status", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "si_band", t: tm.get("i64"), mutable: true}
-    Type.TypeProperty{name: "si_value", t: tm.get("sigval"), mutable: true}
-  ])
-  tm.createObject("ptrdiff_t", [])
-  tm.createObject("intmax_t", [])
-  tm.createObject("uintmax_t", [])
-  tm.createObject("FILE", [])
-  tm.createObject("fpos_t", [])
-  tm.createObject("div_t", [
-    Type.TypeProperty{name: "quot", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "rem", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("ldiv_t", [
-    Type.TypeProperty{name: "quot", t: tm.get("i64"), mutable: true}
-    Type.TypeProperty{name: "rem", t: tm.get("i64"), mutable: true}
-  ])
-  tm.createObject("lldiv_t", [
-    Type.TypeProperty{name: "quot", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "rem", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("ipc_perm", [
-    Type.TypeProperty{name: "uid", t: tm.get("uid_t"), mutable: true}
-    Type.TypeProperty{name: "gid", t: tm.get("gid_t"), mutable: true}
-    Type.TypeProperty{name: "cuid", t: tm.get("uid_t"), mutable: true}
-    Type.TypeProperty{name: "cgid", t: tm.get("gid_t"), mutable: true}
-    Type.TypeProperty{name: "mode", t: tm.get("mode_t"), mutable: true}
-  ])
-  tm.createObject("typed_mem_info", [
-    Type.TypeProperty{name: "tmi_length", t: tm.get("usize"), mutable: true}
-  ])
-  tm.createObject("msgqnum_t", [])
-  tm.createObject("msglen_t", [])
-  tm.createObject("msqid_ds", [
-    Type.TypeProperty{name: "msg_perm", t: tm.get("ipc_perm"), mutable: true}
-    Type.TypeProperty{name: "msg_qnum", t: tm.get("msgqnum_t"), mutable: true}
-    Type.TypeProperty{name: "msg_qbytes", t: tm.get("msglen_t"), mutable: true}
-    Type.TypeProperty{name: "msg_lspid", t: tm.get("pid_t"), mutable: true}
-    Type.TypeProperty{name: "msg_lrpid", t: tm.get("pid_t"), mutable: true}
-    Type.TypeProperty{name: "msg_stime", t: tm.get("time_t"), mutable: true}
-    Type.TypeProperty{name: "msg_rtime", t: tm.get("time_t"), mutable: true}
-    Type.TypeProperty{name: "msg_ctime", t: tm.get("time_t"), mutable: true}
-  ])
-  tm.createObject("rlim_t", [])
-  tm.createObject("rlimit", [
-    Type.TypeProperty{name: "rlim_cur", t: tm.get("rlim_t"), mutable: true}
-    Type.TypeProperty{name: "rlim_max", t: tm.get("rlim_t"), mutable: true}
-  ])
-  tm.createObject("rusage", [
-    Type.TypeProperty{name: "ru_utime", t: tm.get("timeval"), mutable: true}
-    Type.TypeProperty{name: "ru_stime", t: tm.get("timeval"), mutable: true}
-  ])
-  tm.createObject("fd_set", [])
-  tm.createObject("semid_ds", [
-    Type.TypeProperty{name: "sem_perm", t: tm.get("ipc_perm"), mutable: true}
-    Type.TypeProperty{name: "sem_nsems", t: tm.get("u16"), mutable: true}
-    Type.TypeProperty{name: "sem_otime", t: tm.get("time_t"), mutable: true}
-    Type.TypeProperty{name: "sem_ctime", t: tm.get("time_t"), mutable: true}
-  ])
-  tm.createObject("sem", [
-    Type.TypeProperty{name: "semval", t: tm.get("u16"), mutable: true}
-    Type.TypeProperty{name: "sempid", t: tm.get("pid_t"), mutable: true}
-    Type.TypeProperty{name: "semncnt", t: tm.get("u16"), mutable: true}
-    Type.TypeProperty{name: "semzcnt", t: tm.get("u16"), mutable: true}
-  ])
-  tm.createObject("sembuf", [
-    Type.TypeProperty{name: "sem_num", t: tm.get("u16"), mutable: true}
-    Type.TypeProperty{name: "sem_op", t: tm.get("i16"), mutable: true}
-    Type.TypeProperty{name: "sem_flg", t: tm.get("i16"), mutable: true}
-  ])
-  tm.createObject("shmatt_t", [])
-  tm.createObject("shmid_ds", [
-    Type.TypeProperty{name: "shm_perm", t: tm.get("ipc_perm"), mutable: true}
-    Type.TypeProperty{name: "shm_segsz", t: tm.get("usize"), mutable: true}
-    Type.TypeProperty{name: "shm_lpid", t: tm.get("pid_t"), mutable: true}
-    Type.TypeProperty{name: "shm_cpid", t: tm.get("pid_t"), mutable: true}
-    Type.TypeProperty{name: "shm_nattch", t: tm.get("shmatt_t"), mutable: true}
-    Type.TypeProperty{name: "shm_atime", t: tm.get("time_t"), mutable: true}
-    Type.TypeProperty{name: "shm_dtime", t: tm.get("time_t"), mutable: true}
-    Type.TypeProperty{name: "shm_ctime", t: tm.get("time_t"), mutable: true}
-  ])
-  tm.createObject("socklen_t", [])
-  tm.createObject("sa_family_t", [])
-  tm.createObject("sockaddr", [
-    Type.TypeProperty{name: "sa_family", t: tm.get("sa_family_t"), mutable: true}
-    Type.TypeProperty{name: "sa_data", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
-  tm.createObject("sockaddr_storage", [
-    Type.TypeProperty{name: "ss_family", t: tm.get("sa_family_t"), mutable: true}
-  ])
-  tm.createObject("msghdr", [
-    Type.TypeProperty{name: "msg_name", t: tm.createReference(tm.get("any")), mutable: true}
-    Type.TypeProperty{name: "msg_namelen", t: tm.get("socklen_t"), mutable: true}
-    Type.TypeProperty{name: "msg_iov", t: tm.createReference(tm.get("iovec")), mutable: true}
-    Type.TypeProperty{name: "msg_iovlen", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "msg_control", t: tm.createReference(tm.get("any")), mutable: true}
-    Type.TypeProperty{name: "msg_controllen", t: tm.get("socklen_t"), mutable: true}
-    Type.TypeProperty{name: "msg_flags", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("cmsghdr", [
-    Type.TypeProperty{name: "cmsg_len", t: tm.get("socklen_t"), mutable: true}
-    Type.TypeProperty{name: "cmsg_level", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "cmsg_type", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("linger", [
-    Type.TypeProperty{name: "l_onoff", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "l_linger", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("stat_t", [
-    Type.TypeProperty{name: "st_dev", t: tm.get("dev_t"), mutable: true}
-    Type.TypeProperty{name: "st_ino", t: tm.get("ino_t"), mutable: true}
-    Type.TypeProperty{name: "st_mode", t: tm.get("mode_t"), mutable: true}
-    Type.TypeProperty{name: "st_nlink", t: tm.get("nlink_t"), mutable: true}
-    Type.TypeProperty{name: "st_uid", t: tm.get("uid_t"), mutable: true}
-    Type.TypeProperty{name: "st_gid", t: tm.get("gid_t"), mutable: true}
-    Type.TypeProperty{name: "st_rdev", t: tm.get("dev_t"), mutable: true}
-    Type.TypeProperty{name: "st_size", t: tm.get("off_t"), mutable: true}
-    Type.TypeProperty{name: "st_atim", t: tm.get("timespec"), mutable: true}
-    Type.TypeProperty{name: "st_mtim", t: tm.get("timespec"), mutable: true}
-    Type.TypeProperty{name: "st_ctim", t: tm.get("timespec"), mutable: true}
-    Type.TypeProperty{name: "st_blksize", t: tm.get("blksize_t"), mutable: true}
-    Type.TypeProperty{name: "st_blocks", t: tm.get("blkcnt_t"), mutable: true}
-  ])
-  tm.createObject("statvfs_t", [
-    Type.TypeProperty{name: "f_bsize", t: tm.get("u64"), mutable: true}
-    Type.TypeProperty{name: "f_frsize", t: tm.get("u64"), mutable: true}
-    Type.TypeProperty{name: "f_blocks", t: tm.get("fsblkcnt_t"), mutable: true}
-    Type.TypeProperty{name: "f_bfree", t: tm.get("fsblkcnt_t"), mutable: true}
-    Type.TypeProperty{name: "f_bavail", t: tm.get("fsblkcnt_t"), mutable: true}
-    Type.TypeProperty{name: "f_files", t: tm.get("fsfilcnt_t"), mutable: true}
-    Type.TypeProperty{name: "f_ffree", t: tm.get("fsfilcnt_t"), mutable: true}
-    Type.TypeProperty{name: "f_favail", t: tm.get("fsfilcnt_t"), mutable: true}
-    Type.TypeProperty{name: "f_fsid", t: tm.get("u64"), mutable: true}
-    Type.TypeProperty{name: "f_flag", t: tm.get("u64"), mutable: true}
-    Type.TypeProperty{name: "f_namemax", t: tm.get("u64"), mutable: true}
-  ])
-  tm.createObject("timeval", [
-    Type.TypeProperty{name: "tv_sec", t: tm.get("time_t"), mutable: true}
-    Type.TypeProperty{name: "tv_usec", t: tm.get("suseconds_t"), mutable: true}
-  ])
-  tm.createObject("itimerval", [
-    Type.TypeProperty{name: "it_interval", t: tm.get("timeval"), mutable: true}
-    Type.TypeProperty{name: "it_value", t: tm.get("timeval"), mutable: true}
-  ])
-  tm.createObject("tms", [
-    Type.TypeProperty{name: "tms_utime", t: tm.get("clock_t"), mutable: true}
-    Type.TypeProperty{name: "tms_stime", t: tm.get("clock_t"), mutable: true}
-    Type.TypeProperty{name: "tms_cutime", t: tm.get("clock_t"), mutable: true}
-    Type.TypeProperty{name: "tms_cstime", t: tm.get("clock_t"), mutable: true}
-  ])
-  tm.createObject("blkcnt_t", [])
-  tm.createObject("blksize_t", [])
-  tm.createObject("clock_t", [])
-  tm.createObject("clockid_t", [])
-  tm.createObject("dev_t", [])
-  tm.createObject("fsblkcnt_t", [])
-  tm.createObject("fsfilcnt_t", [])
-  tm.createObject("gid_t", [])
-  tm.createObject("id_t", [])
-  tm.createObject("ino_t", [])
-  tm.createObject("key_t", [])
-  tm.createObject("mode_t", [])
-  tm.createObject("nlink_t", [])
-  tm.createObject("off_t", [])
-  tm.createObject("pid_t", [])
-  tm.createObject("pthread_attr_t", [])
-  tm.createObject("pthread_barrier_t", [])
-  tm.createObject("pthread_barrierattr_t", [])
-  tm.createObject("pthread_cond_t", [])
-  tm.createObject("pthread_condattr_t", [])
-  tm.createObject("pthread_key_t", [])
-  tm.createObject("pthread_mutex_t", [])
-  tm.createObject("pthread_mutexattr_t", [])
-  tm.createObject("pthread_once_t", [])
-  tm.createObject("pthread_rwlock_t", [])
-  tm.createObject("pthread_rwlockattr_t", [])
-  tm.createObject("pthread_spinlock_t", [])
-  tm.createObject("pthread_t", [])
-  tm.createObject("suseconds_t", [])
-  tm.createObject("time_t", [])
-  tm.createObject("timer_t", [])
-  tm.createObject("trace_attr_t", [])
-  tm.createObject("trace_event_id_t", [])
-  tm.createObject("trace_event_set_t", [])
-  tm.createObject("trace_id_t", [])
-  tm.createObject("uid_t", [])
-  tm.createObject("iovec", [
-    Type.TypeProperty{name: "iov_base", t: tm.createReference(tm.get("any")), mutable: true}
-    Type.TypeProperty{name: "iov_len", t: tm.get("usize"), mutable: true}
-  ])
-  tm.createObject("sockaddr_un", [
-    Type.TypeProperty{name: "sun_family", t: tm.get("sa_family_t"), mutable: true}
-    Type.TypeProperty{name: "sun_path", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
-  tm.createObject("utsname", [
-    Type.TypeProperty{name: "sysname", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "nodename", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "release", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "version", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "machine", t: tm.createArray(tm.get("char")), mutable: true}
-  ])
+  mut type306 := tm.createObject("sem_t")
+  mut type309 := tm.createObject("jmp_buf")
+  mut type312 := tm.createObject("sigjmp_buf")
+  mut type315 := tm.createObject("mcontext_t")
+  mut type318 := tm.createObject("sig_atomic_t")
+  mut type321 := tm.createObject("sigset_t")
+  mut type324 := tm.createObject("sigevent")
+  mut type327 := tm.createObject("sigaction_t")
+  mut type330 := tm.createObject("ucontext_t")
+  mut type333 := tm.createObject("stack_t")
+  mut type336 := tm.createObject("siginfo_t")
+  mut type339 := tm.createObject("ptrdiff_t")
+  mut type342 := tm.createObject("intmax_t")
+  mut type345 := tm.createObject("uintmax_t")
+  mut type348 := tm.createObject("FILE")
+  mut type351 := tm.createObject("fpos_t")
+  mut type354 := tm.createObject("div_t")
+  mut type357 := tm.createObject("ldiv_t")
+  mut type360 := tm.createObject("lldiv_t")
+  mut type363 := tm.createObject("ipc_perm")
+  mut type366 := tm.createObject("typed_mem_info")
+  mut type369 := tm.createObject("msgqnum_t")
+  mut type372 := tm.createObject("msglen_t")
+  mut type375 := tm.createObject("msqid_ds")
+  mut type378 := tm.createObject("rlim_t")
+  mut type381 := tm.createObject("rlimit")
+  mut type384 := tm.createObject("rusage")
+  mut type387 := tm.createObject("fd_set")
+  mut type390 := tm.createObject("semid_ds")
+  mut type393 := tm.createObject("sem")
+  mut type396 := tm.createObject("sembuf")
+  mut type399 := tm.createObject("shmatt_t")
+  mut type402 := tm.createObject("shmid_ds")
+  mut type405 := tm.createObject("socklen_t")
+  mut type408 := tm.createObject("sa_family_t")
+  mut type411 := tm.createObject("sockaddr")
+  mut type414 := tm.createObject("sockaddr_storage")
+  mut type417 := tm.createObject("msghdr")
+  mut type420 := tm.createObject("cmsghdr")
+  mut type423 := tm.createObject("linger")
+  mut type426 := tm.createObject("stat_t")
+  mut type429 := tm.createObject("statvfs_t")
+  mut type432 := tm.createObject("timeval")
+  mut type435 := tm.createObject("itimerval")
+  mut type438 := tm.createObject("tms")
+  mut type441 := tm.createObject("blkcnt_t")
+  mut type444 := tm.createObject("blksize_t")
+  mut type447 := tm.createObject("clock_t")
+  mut type450 := tm.createObject("clockid_t")
+  mut type453 := tm.createObject("dev_t")
+  mut type456 := tm.createObject("fsblkcnt_t")
+  mut type459 := tm.createObject("fsfilcnt_t")
+  mut type462 := tm.createObject("gid_t")
+  mut type465 := tm.createObject("id_t")
+  mut type468 := tm.createObject("ino_t")
+  mut type471 := tm.createObject("key_t")
+  mut type474 := tm.createObject("mode_t")
+  mut type477 := tm.createObject("nlink_t")
+  mut type480 := tm.createObject("off_t")
+  mut type483 := tm.createObject("pid_t")
+  mut type486 := tm.createObject("pthread_attr_t")
+  mut type489 := tm.createObject("pthread_barrier_t")
+  mut type492 := tm.createObject("pthread_barrierattr_t")
+  mut type495 := tm.createObject("pthread_cond_t")
+  mut type498 := tm.createObject("pthread_condattr_t")
+  mut type501 := tm.createObject("pthread_key_t")
+  mut type504 := tm.createObject("pthread_mutex_t")
+  mut type507 := tm.createObject("pthread_mutexattr_t")
+  mut type510 := tm.createObject("pthread_once_t")
+  mut type513 := tm.createObject("pthread_rwlock_t")
+  mut type516 := tm.createObject("pthread_rwlockattr_t")
+  mut type519 := tm.createObject("pthread_spinlock_t")
+  mut type522 := tm.createObject("pthread_t")
+  mut type525 := tm.createObject("suseconds_t")
+  mut type528 := tm.createObject("time_t")
+  mut type531 := tm.createObject("timer_t")
+  mut type534 := tm.createObject("trace_attr_t")
+  mut type537 := tm.createObject("trace_event_id_t")
+  mut type540 := tm.createObject("trace_event_set_t")
+  mut type543 := tm.createObject("trace_id_t")
+  mut type546 := tm.createObject("uid_t")
+  mut type549 := tm.createObject("iovec")
+  mut type552 := tm.createObject("sockaddr_un")
+  mut type555 := tm.createObject("utsname")
   tm.createEnum("idtype_t", ["P_ALL", "P_PGID", "P_PID"])
-  tm.createObject("cc_t", [])
-  tm.createObject("speed_t", [])
-  tm.createObject("tcflag_t", [])
-  tm.createObject("termios", [
-    Type.TypeProperty{name: "c_iflag", t: tm.get("tcflag_t"), mutable: true}
-    Type.TypeProperty{name: "c_oflag", t: tm.get("tcflag_t"), mutable: true}
-    Type.TypeProperty{name: "c_cflag", t: tm.get("tcflag_t"), mutable: true}
-    Type.TypeProperty{name: "c_lflag", t: tm.get("tcflag_t"), mutable: true}
-    Type.TypeProperty{name: "c_cc", t: tm.createArray(tm.get("cc_t")), mutable: true}
-  ])
-  tm.createObject("tm", [
-    Type.TypeProperty{name: "tm_sec", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_min", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_hour", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_mday", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_mon", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_year", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_wday", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_yday", t: tm.get("int"), mutable: true}
-    Type.TypeProperty{name: "tm_isdst", t: tm.get("int"), mutable: true}
-  ])
-  tm.createObject("timespec", [
-    Type.TypeProperty{name: "tv_sec", t: tm.get("time_t"), mutable: true}
-    Type.TypeProperty{name: "tv_nsec", t: tm.get("i64"), mutable: true}
-  ])
-  tm.createObject("itimerspec", [
-    Type.TypeProperty{name: "it_interval", t: tm.get("timespec"), mutable: true}
-    Type.TypeProperty{name: "it_value", t: tm.get("timespec"), mutable: true}
-  ])
-  tm.createObject("utmpx", [
-    Type.TypeProperty{name: "ut_user", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "ut_id", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "ut_line", t: tm.createArray(tm.get("char")), mutable: true}
-    Type.TypeProperty{name: "ut_pid", t: tm.get("pid_t"), mutable: true}
-    Type.TypeProperty{name: "ut_type", t: tm.get("i16"), mutable: true}
-    Type.TypeProperty{name: "ut_tv", t: tm.get("timeval"), mutable: true}
-  ])
-  tm.createObject("mbstate_t", [])
-  tm.createObject("wctype_t", [])
-  tm.createObject("wint_t", [])
-  tm.createObject("wctrans_t", [])
-  tm.createObject("wordexp_t", [
-    Type.TypeProperty{name: "we_wordc", t: tm.get("usize"), mutable: true}
-    Type.TypeProperty{name: "we_wordv", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true}
-    Type.TypeProperty{name: "we_offs", t: tm.get("usize"), mutable: true}
-  ])
+  mut type561 := tm.createObject("cc_t")
+  mut type564 := tm.createObject("speed_t")
+  mut type567 := tm.createObject("tcflag_t")
+  mut type570 := tm.createObject("termios")
+  mut type573 := tm.createObject("tm")
+  mut type576 := tm.createObject("timespec")
+  mut type579 := tm.createObject("itimerspec")
+  mut type582 := tm.createObject("utmpx")
+  mut type585 := tm.createObject("mbstate_t")
+  mut type588 := tm.createObject("wctype_t")
+  mut type591 := tm.createObject("wint_t")
+  mut type594 := tm.createObject("wctrans_t")
+  mut type597 := tm.createObject("wordexp_t")
   tm.createAlias("iconv_t", tm.createReference(tm.get("any")))
   tm.createAlias("sigval", tm.createUnion([tm.get("int"), tm.createReference(tm.get("any"))]))
   tm.createAlias("spawnattr_t", tm.createReference(tm.get("any")))
   tm.createAlias("spawn_file_actions_t", tm.createReference(tm.get("any")))
   tm.createAlias("semun", tm.createUnion([tm.get("int"), tm.createReference(tm.createUnion([tm.get("semid_ds"), tm.createReference(tm.get("u16"))]))]))
+  type180.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("aiocb"))), mutable: false})
+  type180.properties.push(Type.TypeProperty{name: "aio_fildes", t: tm.get("int"), mutable: true})
+  type180.properties.push(Type.TypeProperty{name: "aio_offset", t: tm.get("off_t"), mutable: true})
+  type180.properties.push(Type.TypeProperty{name: "aio_buf", t: tm.createReference(tm.get("any")), mutable: true})
+  type180.properties.push(Type.TypeProperty{name: "aio_nbytes", t: tm.get("usize"), mutable: true})
+  type180.properties.push(Type.TypeProperty{name: "aio_reqprio", t: tm.get("int"), mutable: true})
+  type180.properties.push(Type.TypeProperty{name: "aio_sigevent", t: tm.get("sigevent"), mutable: true})
+  type180.properties.push(Type.TypeProperty{name: "aio_lio_opcode", t: tm.get("int"), mutable: true})
+  type183.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("DIR"))), mutable: false})
+  type186.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("dirent"))), mutable: false})
+  type186.properties.push(Type.TypeProperty{name: "d_ino", t: tm.get("ino_t"), mutable: true})
+  type186.properties.push(Type.TypeProperty{name: "d_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type189.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("flock"))), mutable: false})
+  type189.properties.push(Type.TypeProperty{name: "l_type", t: tm.get("i16"), mutable: true})
+  type189.properties.push(Type.TypeProperty{name: "l_whence", t: tm.get("i16"), mutable: true})
+  type189.properties.push(Type.TypeProperty{name: "l_start", t: tm.get("off_t"), mutable: true})
+  type189.properties.push(Type.TypeProperty{name: "l_len", t: tm.get("off_t"), mutable: true})
+  type189.properties.push(Type.TypeProperty{name: "l_pid", t: tm.get("pid_t"), mutable: true})
+  type192.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("fenv_t"))), mutable: false})
+  type195.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("fexcept_t"))), mutable: false})
+  type198.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("glob_t"))), mutable: false})
+  type198.properties.push(Type.TypeProperty{name: "gl_pathc", t: tm.get("usize"), mutable: true})
+  type198.properties.push(Type.TypeProperty{name: "gl_pathv", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type198.properties.push(Type.TypeProperty{name: "gl_offs", t: tm.get("usize"), mutable: true})
+  type201.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("group"))), mutable: false})
+  type201.properties.push(Type.TypeProperty{name: "gr_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type201.properties.push(Type.TypeProperty{name: "gr_gid", t: tm.get("gid_t"), mutable: true})
+  type201.properties.push(Type.TypeProperty{name: "gr_mem", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type204.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("imaxdiv_t"))), mutable: false})
+  type204.properties.push(Type.TypeProperty{name: "quot", t: tm.get("intmax_t"), mutable: true})
+  type204.properties.push(Type.TypeProperty{name: "rem", t: tm.get("intmax_t"), mutable: true})
+  type207.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("locale_t"))), mutable: false})
+  type210.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("lconv"))), mutable: false})
+  type210.properties.push(Type.TypeProperty{name: "currency_symbol", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "decimal_point", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "frac_digits", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "grouping", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_curr_symbol", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_frac_digits", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_n_cs_precedes", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_n_sep_by_space", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_n_sign_posn", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_p_cs_precedes", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_p_sep_by_space", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "int_p_sign_posn", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "mon_decimal_point", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "mon_grouping", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "mon_thousands_sep", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "negative_sign", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "n_cs_precedes", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "n_sep_by_space", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "n_sign_posn", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "positive_sign", t: tm.createArray(tm.get("char")), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "p_cs_precedes", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "p_sep_by_space", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "p_sign_posn", t: tm.get("char"), mutable: true})
+  type210.properties.push(Type.TypeProperty{name: "thousands_sep", t: tm.createArray(tm.get("char")), mutable: true})
+  type213.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("float_t"))), mutable: false})
+  type216.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("double_t"))), mutable: false})
+  type219.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("mqd_t"))), mutable: false})
+  type222.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("mq_attr"))), mutable: false})
+  type222.properties.push(Type.TypeProperty{name: "mq_flags", t: tm.get("i64"), mutable: true})
+  type222.properties.push(Type.TypeProperty{name: "mq_maxmsg", t: tm.get("i64"), mutable: true})
+  type222.properties.push(Type.TypeProperty{name: "mq_msgsize", t: tm.get("i64"), mutable: true})
+  type222.properties.push(Type.TypeProperty{name: "mq_curmsgs", t: tm.get("i64"), mutable: true})
+  type225.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("DBM"))), mutable: false})
+  type228.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("datum"))), mutable: false})
+  type228.properties.push(Type.TypeProperty{name: "dptr", t: tm.createReference(tm.get("any")), mutable: true})
+  type228.properties.push(Type.TypeProperty{name: "dsize", t: tm.get("usize"), mutable: true})
+  type231.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("if_nameindex_t"))), mutable: false})
+  type231.properties.push(Type.TypeProperty{name: "if_index", t: tm.get("u32"), mutable: true})
+  type231.properties.push(Type.TypeProperty{name: "if_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type234.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("hostent"))), mutable: false})
+  type234.properties.push(Type.TypeProperty{name: "h_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type234.properties.push(Type.TypeProperty{name: "h_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type234.properties.push(Type.TypeProperty{name: "h_addrtype", t: tm.get("int"), mutable: true})
+  type234.properties.push(Type.TypeProperty{name: "h_length", t: tm.get("int"), mutable: true})
+  type234.properties.push(Type.TypeProperty{name: "h_addr_list", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type237.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("netent"))), mutable: false})
+  type237.properties.push(Type.TypeProperty{name: "n_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type237.properties.push(Type.TypeProperty{name: "n_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type237.properties.push(Type.TypeProperty{name: "n_addrtype", t: tm.get("int"), mutable: true})
+  type237.properties.push(Type.TypeProperty{name: "n_net", t: tm.get("u32"), mutable: true})
+  type240.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("protoent"))), mutable: false})
+  type240.properties.push(Type.TypeProperty{name: "p_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type240.properties.push(Type.TypeProperty{name: "p_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type240.properties.push(Type.TypeProperty{name: "p_proto", t: tm.get("int"), mutable: true})
+  type243.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("servent"))), mutable: false})
+  type243.properties.push(Type.TypeProperty{name: "s_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type243.properties.push(Type.TypeProperty{name: "s_aliases", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type243.properties.push(Type.TypeProperty{name: "s_port", t: tm.get("int"), mutable: true})
+  type243.properties.push(Type.TypeProperty{name: "s_proto", t: tm.createArray(tm.get("char")), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("addrinfo"))), mutable: false})
+  type246.properties.push(Type.TypeProperty{name: "ai_flags", t: tm.get("int"), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "ai_family", t: tm.get("int"), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "ai_socktype", t: tm.get("int"), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "ai_protocol", t: tm.get("int"), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "ai_addrlen", t: tm.get("socklen_t"), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "ai_addr", t: tm.createReference(tm.get("sockaddr")), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "ai_canonname", t: tm.createArray(tm.get("char")), mutable: true})
+  type246.properties.push(Type.TypeProperty{name: "ai_next", t: tm.createReference(tm.get("addrinfo")), mutable: true})
+  type249.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("in_port_t"))), mutable: false})
+  type252.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("in_addr_t"))), mutable: false})
+  type255.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("in_addr"))), mutable: false})
+  type255.properties.push(Type.TypeProperty{name: "s_addr", t: tm.get("in_addr_t"), mutable: true})
+  type258.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sockaddr_in"))), mutable: false})
+  type258.properties.push(Type.TypeProperty{name: "sin_family", t: tm.get("sa_family_t"), mutable: true})
+  type258.properties.push(Type.TypeProperty{name: "sin_port", t: tm.get("in_port_t"), mutable: true})
+  type258.properties.push(Type.TypeProperty{name: "sin_addr", t: tm.get("in_addr"), mutable: true})
+  type261.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("in6_addr"))), mutable: false})
+  type261.properties.push(Type.TypeProperty{name: "s6_addr", t: tm.createArray(tm.get("u8")), mutable: true})
+  type264.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sockaddr_in6"))), mutable: false})
+  type264.properties.push(Type.TypeProperty{name: "sin6_family", t: tm.get("sa_family_t"), mutable: true})
+  type264.properties.push(Type.TypeProperty{name: "sin6_port", t: tm.get("in_port_t"), mutable: true})
+  type264.properties.push(Type.TypeProperty{name: "sin6_flowinfo", t: tm.get("u32"), mutable: true})
+  type264.properties.push(Type.TypeProperty{name: "sin6_addr", t: tm.get("in6_addr"), mutable: true})
+  type264.properties.push(Type.TypeProperty{name: "sin6_scope_id", t: tm.get("u32"), mutable: true})
+  type267.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("ipv6_mreq"))), mutable: false})
+  type267.properties.push(Type.TypeProperty{name: "ipv6mr_multiaddr", t: tm.get("in6_addr"), mutable: true})
+  type267.properties.push(Type.TypeProperty{name: "ipv6mr_interface", t: tm.get("u32"), mutable: true})
+  type270.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("nl_catd"))), mutable: false})
+  type273.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("nl_item"))), mutable: false})
+  type276.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("nfds_t"))), mutable: false})
+  type279.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pollfd"))), mutable: false})
+  type279.properties.push(Type.TypeProperty{name: "fd", t: tm.get("int"), mutable: true})
+  type279.properties.push(Type.TypeProperty{name: "events", t: tm.get("i16"), mutable: true})
+  type279.properties.push(Type.TypeProperty{name: "revents", t: tm.get("i16"), mutable: true})
+  type282.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("passwd"))), mutable: false})
+  type282.properties.push(Type.TypeProperty{name: "pw_name", t: tm.createArray(tm.get("char")), mutable: true})
+  type282.properties.push(Type.TypeProperty{name: "pw_uid", t: tm.get("uid_t"), mutable: true})
+  type282.properties.push(Type.TypeProperty{name: "pw_gid", t: tm.get("gid_t"), mutable: true})
+  type282.properties.push(Type.TypeProperty{name: "pw_dir", t: tm.createArray(tm.get("char")), mutable: true})
+  type282.properties.push(Type.TypeProperty{name: "pw_shell", t: tm.createArray(tm.get("char")), mutable: true})
+  type285.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("regoff_t"))), mutable: false})
+  type288.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("regex_t"))), mutable: false})
+  type288.properties.push(Type.TypeProperty{name: "re_nsub", t: tm.get("usize"), mutable: true})
+  type291.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("regmatch_t"))), mutable: false})
+  type291.properties.push(Type.TypeProperty{name: "rm_so", t: tm.get("regoff_t"), mutable: true})
+  type291.properties.push(Type.TypeProperty{name: "rm_eo", t: tm.get("regoff_t"), mutable: true})
+  type294.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sched_param"))), mutable: false})
+  type294.properties.push(Type.TypeProperty{name: "sched_priority", t: tm.get("int"), mutable: true})
+  type297.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("ENTRY"))), mutable: false})
+  type297.properties.push(Type.TypeProperty{name: "key", t: tm.createArray(tm.get("char")), mutable: true})
+  type297.properties.push(Type.TypeProperty{name: "data", t: tm.createReference(tm.get("any")), mutable: true})
+  type306.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sem_t"))), mutable: false})
+  type309.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("jmp_buf"))), mutable: false})
+  type312.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sigjmp_buf"))), mutable: false})
+  type315.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("mcontext_t"))), mutable: false})
+  type318.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sig_atomic_t"))), mutable: false})
+  type321.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sigset_t"))), mutable: false})
+  type324.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sigevent"))), mutable: false})
+  type324.properties.push(Type.TypeProperty{name: "sigev_notify", t: tm.get("int"), mutable: true})
+  type324.properties.push(Type.TypeProperty{name: "sigev_signo", t: tm.get("int"), mutable: true})
+  type324.properties.push(Type.TypeProperty{name: "sigev_value", t: tm.get("sigval"), mutable: true})
+  type324.properties.push(Type.TypeProperty{name: "sigev_notify_function", t: tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: tm.get("sigval"), mutable: false, required: true, variadic: false}
+  ], tm.get("void")), mutable: true})
+  type324.properties.push(Type.TypeProperty{name: "sigev_notify_attributes", t: tm.createReference(tm.get("pthread_attr_t")), mutable: true})
+  type327.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sigaction_t"))), mutable: false})
+  type327.properties.push(Type.TypeProperty{name: "sa_handler", t: tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: tm.get("int"), mutable: false, required: true, variadic: false}
+  ], tm.get("void")), mutable: true})
+  type327.properties.push(Type.TypeProperty{name: "sa_mask", t: tm.get("sigset_t"), mutable: true})
+  type327.properties.push(Type.TypeProperty{name: "sa_flags", t: tm.get("int"), mutable: true})
+  type327.properties.push(Type.TypeProperty{name: "sa_sigaction", t: tm.createFunction(false, [
+    Type.TypeParameter{name: "signum", t: tm.get("int"), mutable: false, required: true, variadic: false}
+    Type.TypeParameter{name: "info", t: tm.createReference(tm.get("siginfo_t")), mutable: true, required: true, variadic: false}
+    Type.TypeParameter{name: "ctx", t: tm.createReference(tm.get("any")), mutable: true, required: true, variadic: false}
+  ], tm.get("void")), mutable: true})
+  type330.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("ucontext_t"))), mutable: false})
+  type330.properties.push(Type.TypeProperty{name: "uc_link", t: tm.createReference(tm.get("ucontext_t")), mutable: true})
+  type330.properties.push(Type.TypeProperty{name: "uc_sigmask", t: tm.get("sigset_t"), mutable: true})
+  type330.properties.push(Type.TypeProperty{name: "uc_stack", t: tm.get("stack_t"), mutable: true})
+  type330.properties.push(Type.TypeProperty{name: "uc_mcontext", t: tm.createReference(tm.get("mcontext_t")), mutable: true})
+  type333.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("stack_t"))), mutable: false})
+  type333.properties.push(Type.TypeProperty{name: "ss_sp", t: tm.createReference(tm.get("any")), mutable: true})
+  type333.properties.push(Type.TypeProperty{name: "ss_size", t: tm.get("usize"), mutable: true})
+  type333.properties.push(Type.TypeProperty{name: "ss_flags", t: tm.get("int"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("siginfo_t"))), mutable: false})
+  type336.properties.push(Type.TypeProperty{name: "si_signo", t: tm.get("int"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_code", t: tm.get("int"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_errno", t: tm.get("int"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_pid", t: tm.get("pid_t"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_uid", t: tm.get("uid_t"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_addr", t: tm.createReference(tm.get("any")), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_status", t: tm.get("int"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_band", t: tm.get("i64"), mutable: true})
+  type336.properties.push(Type.TypeProperty{name: "si_value", t: tm.get("sigval"), mutable: true})
+  type339.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("ptrdiff_t"))), mutable: false})
+  type342.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("intmax_t"))), mutable: false})
+  type345.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("uintmax_t"))), mutable: false})
+  type348.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("FILE"))), mutable: false})
+  type351.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("fpos_t"))), mutable: false})
+  type354.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("div_t"))), mutable: false})
+  type354.properties.push(Type.TypeProperty{name: "quot", t: tm.get("int"), mutable: true})
+  type354.properties.push(Type.TypeProperty{name: "rem", t: tm.get("int"), mutable: true})
+  type357.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("ldiv_t"))), mutable: false})
+  type357.properties.push(Type.TypeProperty{name: "quot", t: tm.get("i64"), mutable: true})
+  type357.properties.push(Type.TypeProperty{name: "rem", t: tm.get("i64"), mutable: true})
+  type360.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("lldiv_t"))), mutable: false})
+  type360.properties.push(Type.TypeProperty{name: "quot", t: tm.get("int"), mutable: true})
+  type360.properties.push(Type.TypeProperty{name: "rem", t: tm.get("int"), mutable: true})
+  type363.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("ipc_perm"))), mutable: false})
+  type363.properties.push(Type.TypeProperty{name: "uid", t: tm.get("uid_t"), mutable: true})
+  type363.properties.push(Type.TypeProperty{name: "gid", t: tm.get("gid_t"), mutable: true})
+  type363.properties.push(Type.TypeProperty{name: "cuid", t: tm.get("uid_t"), mutable: true})
+  type363.properties.push(Type.TypeProperty{name: "cgid", t: tm.get("gid_t"), mutable: true})
+  type363.properties.push(Type.TypeProperty{name: "mode", t: tm.get("mode_t"), mutable: true})
+  type366.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("typed_mem_info"))), mutable: false})
+  type366.properties.push(Type.TypeProperty{name: "tmi_length", t: tm.get("usize"), mutable: true})
+  type369.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("msgqnum_t"))), mutable: false})
+  type372.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("msglen_t"))), mutable: false})
+  type375.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("msqid_ds"))), mutable: false})
+  type375.properties.push(Type.TypeProperty{name: "msg_perm", t: tm.get("ipc_perm"), mutable: true})
+  type375.properties.push(Type.TypeProperty{name: "msg_qnum", t: tm.get("msgqnum_t"), mutable: true})
+  type375.properties.push(Type.TypeProperty{name: "msg_qbytes", t: tm.get("msglen_t"), mutable: true})
+  type375.properties.push(Type.TypeProperty{name: "msg_lspid", t: tm.get("pid_t"), mutable: true})
+  type375.properties.push(Type.TypeProperty{name: "msg_lrpid", t: tm.get("pid_t"), mutable: true})
+  type375.properties.push(Type.TypeProperty{name: "msg_stime", t: tm.get("time_t"), mutable: true})
+  type375.properties.push(Type.TypeProperty{name: "msg_rtime", t: tm.get("time_t"), mutable: true})
+  type375.properties.push(Type.TypeProperty{name: "msg_ctime", t: tm.get("time_t"), mutable: true})
+  type378.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("rlim_t"))), mutable: false})
+  type381.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("rlimit"))), mutable: false})
+  type381.properties.push(Type.TypeProperty{name: "rlim_cur", t: tm.get("rlim_t"), mutable: true})
+  type381.properties.push(Type.TypeProperty{name: "rlim_max", t: tm.get("rlim_t"), mutable: true})
+  type384.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("rusage"))), mutable: false})
+  type384.properties.push(Type.TypeProperty{name: "ru_utime", t: tm.get("timeval"), mutable: true})
+  type384.properties.push(Type.TypeProperty{name: "ru_stime", t: tm.get("timeval"), mutable: true})
+  type387.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("fd_set"))), mutable: false})
+  type390.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("semid_ds"))), mutable: false})
+  type390.properties.push(Type.TypeProperty{name: "sem_perm", t: tm.get("ipc_perm"), mutable: true})
+  type390.properties.push(Type.TypeProperty{name: "sem_nsems", t: tm.get("u16"), mutable: true})
+  type390.properties.push(Type.TypeProperty{name: "sem_otime", t: tm.get("time_t"), mutable: true})
+  type390.properties.push(Type.TypeProperty{name: "sem_ctime", t: tm.get("time_t"), mutable: true})
+  type393.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sem"))), mutable: false})
+  type393.properties.push(Type.TypeProperty{name: "semval", t: tm.get("u16"), mutable: true})
+  type393.properties.push(Type.TypeProperty{name: "sempid", t: tm.get("pid_t"), mutable: true})
+  type393.properties.push(Type.TypeProperty{name: "semncnt", t: tm.get("u16"), mutable: true})
+  type393.properties.push(Type.TypeProperty{name: "semzcnt", t: tm.get("u16"), mutable: true})
+  type396.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sembuf"))), mutable: false})
+  type396.properties.push(Type.TypeProperty{name: "sem_num", t: tm.get("u16"), mutable: true})
+  type396.properties.push(Type.TypeProperty{name: "sem_op", t: tm.get("i16"), mutable: true})
+  type396.properties.push(Type.TypeProperty{name: "sem_flg", t: tm.get("i16"), mutable: true})
+  type399.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("shmatt_t"))), mutable: false})
+  type402.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("shmid_ds"))), mutable: false})
+  type402.properties.push(Type.TypeProperty{name: "shm_perm", t: tm.get("ipc_perm"), mutable: true})
+  type402.properties.push(Type.TypeProperty{name: "shm_segsz", t: tm.get("usize"), mutable: true})
+  type402.properties.push(Type.TypeProperty{name: "shm_lpid", t: tm.get("pid_t"), mutable: true})
+  type402.properties.push(Type.TypeProperty{name: "shm_cpid", t: tm.get("pid_t"), mutable: true})
+  type402.properties.push(Type.TypeProperty{name: "shm_nattch", t: tm.get("shmatt_t"), mutable: true})
+  type402.properties.push(Type.TypeProperty{name: "shm_atime", t: tm.get("time_t"), mutable: true})
+  type402.properties.push(Type.TypeProperty{name: "shm_dtime", t: tm.get("time_t"), mutable: true})
+  type402.properties.push(Type.TypeProperty{name: "shm_ctime", t: tm.get("time_t"), mutable: true})
+  type405.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("socklen_t"))), mutable: false})
+  type408.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sa_family_t"))), mutable: false})
+  type411.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sockaddr"))), mutable: false})
+  type411.properties.push(Type.TypeProperty{name: "sa_family", t: tm.get("sa_family_t"), mutable: true})
+  type411.properties.push(Type.TypeProperty{name: "sa_data", t: tm.createArray(tm.get("char")), mutable: true})
+  type414.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sockaddr_storage"))), mutable: false})
+  type414.properties.push(Type.TypeProperty{name: "ss_family", t: tm.get("sa_family_t"), mutable: true})
+  type417.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("msghdr"))), mutable: false})
+  type417.properties.push(Type.TypeProperty{name: "msg_name", t: tm.createReference(tm.get("any")), mutable: true})
+  type417.properties.push(Type.TypeProperty{name: "msg_namelen", t: tm.get("socklen_t"), mutable: true})
+  type417.properties.push(Type.TypeProperty{name: "msg_iov", t: tm.createReference(tm.get("iovec")), mutable: true})
+  type417.properties.push(Type.TypeProperty{name: "msg_iovlen", t: tm.get("int"), mutable: true})
+  type417.properties.push(Type.TypeProperty{name: "msg_control", t: tm.createReference(tm.get("any")), mutable: true})
+  type417.properties.push(Type.TypeProperty{name: "msg_controllen", t: tm.get("socklen_t"), mutable: true})
+  type417.properties.push(Type.TypeProperty{name: "msg_flags", t: tm.get("int"), mutable: true})
+  type420.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("cmsghdr"))), mutable: false})
+  type420.properties.push(Type.TypeProperty{name: "cmsg_len", t: tm.get("socklen_t"), mutable: true})
+  type420.properties.push(Type.TypeProperty{name: "cmsg_level", t: tm.get("int"), mutable: true})
+  type420.properties.push(Type.TypeProperty{name: "cmsg_type", t: tm.get("int"), mutable: true})
+  type423.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("linger"))), mutable: false})
+  type423.properties.push(Type.TypeProperty{name: "l_onoff", t: tm.get("int"), mutable: true})
+  type423.properties.push(Type.TypeProperty{name: "l_linger", t: tm.get("int"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("stat_t"))), mutable: false})
+  type426.properties.push(Type.TypeProperty{name: "st_dev", t: tm.get("dev_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_ino", t: tm.get("ino_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_mode", t: tm.get("mode_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_nlink", t: tm.get("nlink_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_uid", t: tm.get("uid_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_gid", t: tm.get("gid_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_rdev", t: tm.get("dev_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_size", t: tm.get("off_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_atim", t: tm.get("timespec"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_mtim", t: tm.get("timespec"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_ctim", t: tm.get("timespec"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_blksize", t: tm.get("blksize_t"), mutable: true})
+  type426.properties.push(Type.TypeProperty{name: "st_blocks", t: tm.get("blkcnt_t"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("statvfs_t"))), mutable: false})
+  type429.properties.push(Type.TypeProperty{name: "f_bsize", t: tm.get("u64"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_frsize", t: tm.get("u64"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_blocks", t: tm.get("fsblkcnt_t"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_bfree", t: tm.get("fsblkcnt_t"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_bavail", t: tm.get("fsblkcnt_t"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_files", t: tm.get("fsfilcnt_t"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_ffree", t: tm.get("fsfilcnt_t"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_favail", t: tm.get("fsfilcnt_t"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_fsid", t: tm.get("u64"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_flag", t: tm.get("u64"), mutable: true})
+  type429.properties.push(Type.TypeProperty{name: "f_namemax", t: tm.get("u64"), mutable: true})
+  type432.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("timeval"))), mutable: false})
+  type432.properties.push(Type.TypeProperty{name: "tv_sec", t: tm.get("time_t"), mutable: true})
+  type432.properties.push(Type.TypeProperty{name: "tv_usec", t: tm.get("suseconds_t"), mutable: true})
+  type435.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("itimerval"))), mutable: false})
+  type435.properties.push(Type.TypeProperty{name: "it_interval", t: tm.get("timeval"), mutable: true})
+  type435.properties.push(Type.TypeProperty{name: "it_value", t: tm.get("timeval"), mutable: true})
+  type438.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("tms"))), mutable: false})
+  type438.properties.push(Type.TypeProperty{name: "tms_utime", t: tm.get("clock_t"), mutable: true})
+  type438.properties.push(Type.TypeProperty{name: "tms_stime", t: tm.get("clock_t"), mutable: true})
+  type438.properties.push(Type.TypeProperty{name: "tms_cutime", t: tm.get("clock_t"), mutable: true})
+  type438.properties.push(Type.TypeProperty{name: "tms_cstime", t: tm.get("clock_t"), mutable: true})
+  type441.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("blkcnt_t"))), mutable: false})
+  type444.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("blksize_t"))), mutable: false})
+  type447.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("clock_t"))), mutable: false})
+  type450.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("clockid_t"))), mutable: false})
+  type453.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("dev_t"))), mutable: false})
+  type456.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("fsblkcnt_t"))), mutable: false})
+  type459.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("fsfilcnt_t"))), mutable: false})
+  type462.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("gid_t"))), mutable: false})
+  type465.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("id_t"))), mutable: false})
+  type468.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("ino_t"))), mutable: false})
+  type471.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("key_t"))), mutable: false})
+  type474.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("mode_t"))), mutable: false})
+  type477.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("nlink_t"))), mutable: false})
+  type480.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("off_t"))), mutable: false})
+  type483.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pid_t"))), mutable: false})
+  type486.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_attr_t"))), mutable: false})
+  type489.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_barrier_t"))), mutable: false})
+  type492.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_barrierattr_t"))), mutable: false})
+  type495.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_cond_t"))), mutable: false})
+  type498.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_condattr_t"))), mutable: false})
+  type501.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_key_t"))), mutable: false})
+  type504.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_mutex_t"))), mutable: false})
+  type507.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_mutexattr_t"))), mutable: false})
+  type510.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_once_t"))), mutable: false})
+  type513.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_rwlock_t"))), mutable: false})
+  type516.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_rwlockattr_t"))), mutable: false})
+  type519.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_spinlock_t"))), mutable: false})
+  type522.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("pthread_t"))), mutable: false})
+  type525.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("suseconds_t"))), mutable: false})
+  type528.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("time_t"))), mutable: false})
+  type531.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("timer_t"))), mutable: false})
+  type534.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("trace_attr_t"))), mutable: false})
+  type537.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("trace_event_id_t"))), mutable: false})
+  type540.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("trace_event_set_t"))), mutable: false})
+  type543.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("trace_id_t"))), mutable: false})
+  type546.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("uid_t"))), mutable: false})
+  type549.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("iovec"))), mutable: false})
+  type549.properties.push(Type.TypeProperty{name: "iov_base", t: tm.createReference(tm.get("any")), mutable: true})
+  type549.properties.push(Type.TypeProperty{name: "iov_len", t: tm.get("usize"), mutable: true})
+  type552.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("sockaddr_un"))), mutable: false})
+  type552.properties.push(Type.TypeProperty{name: "sun_family", t: tm.get("sa_family_t"), mutable: true})
+  type552.properties.push(Type.TypeProperty{name: "sun_path", t: tm.createArray(tm.get("char")), mutable: true})
+  type555.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("utsname"))), mutable: false})
+  type555.properties.push(Type.TypeProperty{name: "sysname", t: tm.createArray(tm.get("char")), mutable: true})
+  type555.properties.push(Type.TypeProperty{name: "nodename", t: tm.createArray(tm.get("char")), mutable: true})
+  type555.properties.push(Type.TypeProperty{name: "release", t: tm.createArray(tm.get("char")), mutable: true})
+  type555.properties.push(Type.TypeProperty{name: "version", t: tm.createArray(tm.get("char")), mutable: true})
+  type555.properties.push(Type.TypeProperty{name: "machine", t: tm.createArray(tm.get("char")), mutable: true})
+  type561.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("cc_t"))), mutable: false})
+  type564.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("speed_t"))), mutable: false})
+  type567.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("tcflag_t"))), mutable: false})
+  type570.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("termios"))), mutable: false})
+  type570.properties.push(Type.TypeProperty{name: "c_iflag", t: tm.get("tcflag_t"), mutable: true})
+  type570.properties.push(Type.TypeProperty{name: "c_oflag", t: tm.get("tcflag_t"), mutable: true})
+  type570.properties.push(Type.TypeProperty{name: "c_cflag", t: tm.get("tcflag_t"), mutable: true})
+  type570.properties.push(Type.TypeProperty{name: "c_lflag", t: tm.get("tcflag_t"), mutable: true})
+  type570.properties.push(Type.TypeProperty{name: "c_cc", t: tm.createArray(tm.get("cc_t")), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("tm"))), mutable: false})
+  type573.properties.push(Type.TypeProperty{name: "tm_sec", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_min", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_hour", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_mday", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_mon", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_year", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_wday", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_yday", t: tm.get("int"), mutable: true})
+  type573.properties.push(Type.TypeProperty{name: "tm_isdst", t: tm.get("int"), mutable: true})
+  type576.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("timespec"))), mutable: false})
+  type576.properties.push(Type.TypeProperty{name: "tv_sec", t: tm.get("time_t"), mutable: true})
+  type576.properties.push(Type.TypeProperty{name: "tv_nsec", t: tm.get("i64"), mutable: true})
+  type579.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("itimerspec"))), mutable: false})
+  type579.properties.push(Type.TypeProperty{name: "it_interval", t: tm.get("timespec"), mutable: true})
+  type579.properties.push(Type.TypeProperty{name: "it_value", t: tm.get("timespec"), mutable: true})
+  type582.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("utmpx"))), mutable: false})
+  type582.properties.push(Type.TypeProperty{name: "ut_user", t: tm.createArray(tm.get("char")), mutable: true})
+  type582.properties.push(Type.TypeProperty{name: "ut_id", t: tm.createArray(tm.get("char")), mutable: true})
+  type582.properties.push(Type.TypeProperty{name: "ut_line", t: tm.createArray(tm.get("char")), mutable: true})
+  type582.properties.push(Type.TypeProperty{name: "ut_pid", t: tm.get("pid_t"), mutable: true})
+  type582.properties.push(Type.TypeProperty{name: "ut_type", t: tm.get("i16"), mutable: true})
+  type582.properties.push(Type.TypeProperty{name: "ut_tv", t: tm.get("timeval"), mutable: true})
+  type585.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("mbstate_t"))), mutable: false})
+  type588.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("wctype_t"))), mutable: false})
+  type591.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("wint_t"))), mutable: false})
+  type594.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("wctrans_t"))), mutable: false})
+  type597.properties.push(Type.TypeProperty{name: "str", t: tm.createMethod(false, [], tm.get("str"), true, false, "self", tm.createReference(tm.get("wordexp_t"))), mutable: false})
+  type597.properties.push(Type.TypeProperty{name: "we_wordc", t: tm.get("usize"), mutable: true})
+  type597.properties.push(Type.TypeProperty{name: "we_wordv", t: tm.createReference(tm.createArray(tm.get("char"))), mutable: true})
+  type597.properties.push(Type.TypeProperty{name: "we_offs", t: tm.get("usize"), mutable: true})
 }
 
 export fn VarMap_std (mut vm: ref VarMap, mut tm: ref TypeMap) {
