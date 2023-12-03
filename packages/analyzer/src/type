@@ -453,43 +453,14 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
   a = unwrap(a, withOptional: false, withReference: false)
   b = unwrap(b, withOptional: false, withReference: false)
 
-  if a.name == "void" || b.name == "void" {
-    return a.name == b.name
-  } elif (
-    a.name == "any" ||
-    (a.name == "bool" && b.name == "bool") ||
-    (a.name == "byte" && (b.name == "byte" || b.isInt())) ||
-    (b.name == "byte" && (a.name == "byte" || a.isInt())) ||
-    (a.name == "char" && b.name == "char") ||
-    (a.name == "rune" && b.name == "rune") ||
-    (a.name == "str" && b.name == "str") ||
-    (a.name == "void" && b.name == "void") ||
-    (a.isNumber() && b.isNumber() && numberMatch(a.name, b.name))
-  ) {
-    return true
-  } elif a.isReference() || b.isReference() {
-    if a.isReference() && b.isReference() {
-      t1 := a.asReference()
-      t2 := b.asReference()
-      return match(t1.t, t2.t)
-    } elif a.isReference() {
-      return false
-    } else {
-      t := b.asReference()
-      return match(a, t.t)
-    }
+  if a.isReference() && b.isReference() {
+    t1 := a.asReference()
+    t2 := b.asReference()
+    return match(t1.t, t2.t)
   } elif a.isArray() && b.isArray() {
     t1 := a.asArray()
     t2 := b.asArray()
     return match(t1.elementType, t2.elementType)
-  } elif a.isEnum() || b.isEnum() {
-    if a.isEnum() && b.isEnum() {
-      return a.name == b.name
-    } elif a.isEnum() {
-      return b.isInt()
-    } else {
-      return a.isInt()
-    }
   } elif a.isMap() && b.isMap() {
     t1 := a.asMap()
     t2 := b.asMap()
@@ -557,6 +528,140 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
     }
 
     return true
+  } elif a.isOptional() && b.isOptional() {
+    t1 := a.asOptional()
+    t2 := b.asOptional()
+    return match(t1.t, t2.t)
+  } elif a.isUnion() && b.isUnion() {
+    t1 := a.asUnion()
+    t2 := b.asUnion()
+    types1Len := t1.types.len
+    types2Len := t2.types.len
+
+    if types1Len != types2Len {
+      return false
+    }
+
+    loop i := 0; i < types1Len; i++ {
+      if !b.hasType(t1.types[i] as ref Type) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  return !a.name.empty && !b.name.empty && a.name == b.name
+}
+
+export fn similarTo (mut typeToCompare: ref Type, mut similarToType: ref Type) bool {
+  a := unwrap(similarToType, withOptional: false, withReference: false)
+  b := unwrap(typeToCompare, withOptional: false, withReference: false)
+
+  if a.name == "void" || b.name == "void" {
+    return a.name == b.name
+  } elif (
+    a.name == "any" ||
+    (a.name == "bool" && b.name == "bool") ||
+    (a.name == "byte" && (b.name == "byte" || b.isInt())) ||
+    (b.name == "byte" && (a.name == "byte" || a.isInt())) ||
+    (a.name == "char" && b.name == "char") ||
+    (a.name == "rune" && b.name == "rune") ||
+    (a.name == "str" && b.name == "str") ||
+    (a.name == "void" && b.name == "void") ||
+    (a.isNumber() && b.isNumber() && numberMatch(a.name, b.name))
+  ) {
+    return true
+  } elif a.isReference() || b.isReference() {
+    if a.isReference() && b.isReference() {
+      t1 := a.asReference()
+      t2 := b.asReference()
+      return similarTo(t2.t, t1.t)
+    } elif a.isReference() {
+      return false
+    } else {
+      t := b.asReference()
+      return similarTo(t.t, a)
+    }
+  } elif a.isArray() && b.isArray() {
+    t1 := a.asArray()
+    t2 := b.asArray()
+    return similarTo(t2.elementType, t1.elementType)
+  } elif a.isEnum() || b.isEnum() {
+    if a.isEnum() && b.isEnum() {
+      return a.name == b.name
+    } elif a.isEnum() {
+      return b.isInt()
+    } else {
+      return a.isInt()
+    }
+  } elif a.isMap() && b.isMap() {
+    t1 := a.asMap()
+    t2 := b.asMap()
+    return similarTo(t2.keyType, t1.keyType) && similarTo(t2.valueType, t1.valueType)
+  } elif a.isFunction() && b.isFunction() {
+    t1 := a.asFunction()
+    t2 := b.asFunction()
+    parameters1Len := t1.parameters.len
+    parameters2Len := t2.parameters.len
+
+    if (
+      t1.asynchronous != t2.asynchronous ||
+      parameters1Len != parameters2Len ||
+      !similarTo(t2.returnType, t1.returnType)
+    ) {
+      return false
+    }
+
+    loop i := 0; i < parameters1Len; i++ {
+      parameter1 := t1.parameters[i]
+      parameter2 := t2.parameters[i]
+
+      if (
+        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        !similarTo(parameter2.t, parameter1.t) ||
+        parameter1.mutable != parameter2.mutable ||
+        parameter1.variadic != parameter2.variadic ||
+        parameter1.required != parameter2.required
+      ) {
+        return false
+      }
+    }
+
+    return true
+  } elif a.isMethod() && b.isMethod() {
+    t1 := a.asMethod()
+    t2 := b.asMethod()
+    parameters1Len := t1.parameters.len
+    parameters2Len := t2.parameters.len
+
+    if (
+      t1.asynchronous != t2.asynchronous ||
+      parameters1Len != parameters2Len ||
+      !similarTo(t2.returnType, t1.returnType) ||
+      t1.withSelf != t2.withSelf ||
+      (t1.withSelf && t1.selfMutable != t2.selfMutable) ||
+      (t1.withSelf && !similarTo(t2.selfType, t1.selfType))
+    ) {
+      return false
+    }
+
+    loop i := 0; i < parameters1Len; i++ {
+      parameter1 := t1.parameters[i]
+      parameter2 := t2.parameters[i]
+
+      if (
+        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        !similarTo(parameter2.t, parameter1.t) ||
+        parameter1.mutable != parameter2.mutable ||
+        parameter1.variadic != parameter2.variadic ||
+        parameter1.required != parameter2.required
+      ) {
+        return false
+      }
+    }
+
+    return true
   } elif (a.isNamespace() && b.isNamespace()) || (a.isObject() && b.isObject()) {
     return a.name == b.name
   } elif a.isOptional() || b.isOptional() {
@@ -564,12 +669,12 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
       return false
     } elif !b.isOptional() {
       t := a.asOptional()
-      return match(t.t, b)
+      return similarTo(b, t.t)
     }
 
     t1 := a.asOptional()
     t2 := b.asOptional()
-    return match(t1.t, t2.t)
+    return similarTo(t2.t, t1.t)
   } elif a.isUnion() || b.isUnion() {
     if !a.isUnion() {
       return false

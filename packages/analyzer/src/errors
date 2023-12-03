@@ -302,3 +302,7 @@ export fn E1073 (ns: str, member: str) str {
 export fn E1074 (name: str) str {
   return "E1074 - Package '" + name + "' is not installed or it's package.yml has no main entry"
 }
+
+export fn E1075 (file: str) str {
+  return "E1075 - Importing '" + file + "' will cause circular import"
+}
