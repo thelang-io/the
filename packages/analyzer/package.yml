@@ -6,3 +6,4 @@ main: src/main
 
 packages:
   the/parser: 0.4.15
+  the/testing: 0.3.2

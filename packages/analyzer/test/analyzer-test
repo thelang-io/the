@@ -2,3 +2,48 @@
  * Copyright (c) Aaron Delasy
  * Licensed under the MIT License
  */
+
+import EXPECT_EQ, Tests from "the/testing"
+import * as Parser from "the/parser"
+import analyze from "../src/analyzer"
+
+export obj ParseTestFileResult {
+  in: str
+  err: str
+}
+
+export fn parseTestFile (path: str) ParseTestFileResult {
+  content := fs_readFileSync(path).str()
+  errLoc := content.find("===== err =====")
+  inContent := errLoc == -1 ? content : content.slice(0, errLoc)
+  errContent := errLoc == -1 ? "" : content.slice(errLoc + 15 + os_EOL.len)
+
+  return ParseTestFileResult{
+    in: inContent,
+    err: errContent,
+  }
+}
+
+export fn TEST_Analyzer_analyze () {
+  files := fs_scandirSync("./test/analyzer")
+
+  loop i := 0; i < files.len; i++ {
+    file := files[i] as str
+    if file.slice(-4) != ".txt" { continue }
+
+    result := parseTestFile("./test/analyzer/" + file)
+    mut f := Parser.parse(result.in)
+    Parser.interconnect(ref f)
+    errors := analyze(ref f)
+
+    if errors.len != 0 {
+      EXPECT_EQ(result.err, errors.join(os_EOL))
+    }
+  }
+}
+
+main {
+  mut tests := Tests{}
+  tests.register("Analyzer_analyze", TEST_Analyzer_analyze)
+  tests.run(process_args)
+}
