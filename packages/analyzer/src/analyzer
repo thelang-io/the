@@ -921,7 +921,7 @@ export obj AnalyzerFile {
 
         return operandType
       } elif expression.operator.t == .OpMinus {
-        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
 
         if !operandType.isSignedInt() && !operandType.isFloat() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -929,7 +929,7 @@ export obj AnalyzerFile {
 
         return operandType
       } elif expression.operator.t == .OpPlus {
-        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
 
         if !operandType.isNumber() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -937,7 +937,7 @@ export obj AnalyzerFile {
 
         return operandType
       } elif expression.operator.t == .OpTilde {
-        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
 
         if !operandType.isInt() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -945,7 +945,7 @@ export obj AnalyzerFile {
 
         return operandType
       } else {
-        return Type.unwrap(self.e(expression.operand), withOptional: false)
+        return Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
       }
     }
 
