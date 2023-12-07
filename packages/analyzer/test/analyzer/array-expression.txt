@@ -1,0 +1,7 @@
+const a: int[] = []
+const b: int[] = [1]
+const c: int[] = [1, 2, 3]
+const d := [1]
+const e := [1, 2, 3]
+const f: (int | str)[] = [1, "str", 0]
+const g := [1, "str", 0]
