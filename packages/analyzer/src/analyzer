@@ -1088,6 +1088,7 @@ export obj AnalyzerFile {
     }
   }
 
+  // todo test
   fn operands (mut self: ref Self, op: Parser.Token, t1: ref Type.Type, t2: ref Type.Type) bool {
     if op.t == .OpEqEq || op.t == .OpExclEq {
       if Type.match(t1, self.tm.get("void")) || Type.match(t2, self.tm.get("void")) || !Type.match(t1, t2) {
@@ -1109,7 +1110,7 @@ export obj AnalyzerFile {
           Type.match(t2, self.tm.get("rune")) ||
           Type.match(t2, self.tm.get("str"))
         ) ||
-        !Type.match(t1, t2)
+        (!Type.similarTo(t1, t2) && !Type.similarTo(t2, t1))
       ) {
         return false
       }
@@ -1117,7 +1118,7 @@ export obj AnalyzerFile {
       if (
         !(t1.isNumber() || Type.match(t1, self.tm.get("byte")) || Type.match(t1, self.tm.get("str"))) ||
         !(t2.isNumber() || Type.match(t2, self.tm.get("byte")) || Type.match(t2, self.tm.get("str"))) ||
-        !Type.match(t1, t2)
+        (!Type.similarTo(t1, t2) && !Type.similarTo(t2, t1))
       ) {
         return false
       }
