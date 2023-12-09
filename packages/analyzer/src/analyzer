@@ -86,7 +86,8 @@ export obj AnalyzerFile {
         members.push(statement.members[i].name.name)
       }
 
-      self.tm.createEnum(statement.name.name, members)
+      t := self.tm.createEnum(statement.name.name, members)
+      self.vm.add(statement.name.name, t, false)
     } elif it.isExportDeclaration() {
       statement := it.asExportDeclaration()
       self.declare(ref statement.statement)
@@ -670,13 +671,22 @@ export obj AnalyzerFile {
       return asynchronous ? calleeType : returnType
     } elif it.isClosure() {
       expression := it.asClosure()
+      initialStateReturnType := self.state.returnType
 
       self.vm.increase()
       parameters := self.functionParameters(expression.parameters)
+      returnType := self.t(expression.returnType)
+      self.state.returnType = returnType
+
+      if !Type.match(returnType, self.tm.get("void")) && !expression.body.isDeadEnd() {
+        self.raise(errors.E1061(), expression.returnType.start, expression.returnType.end)
+      }
+
       self.statement(expression.body)
+      self.state.returnType = initialStateReturnType
       self.vm.decrease()
 
-      return self.tm.createFunction(expression.asynchronous, parameters, self.t(expression.returnType))
+      return self.tm.createFunction(expression.asynchronous, parameters, returnType)
     } elif it.isConditional() {
       initialTC := self.tc
       expression := it.asConditional()
@@ -716,7 +726,7 @@ export obj AnalyzerFile {
       expressionType := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext), withOptional: false)
       argumentType := Type.unwrap(self.e(expression.argument), withOptional: false)
 
-      if !Type.match(argumentType, self.tm.get("i32")) {
+      if !Type.similarTo(argumentType, self.tm.get("i32")) {
         self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
       }
 
@@ -732,6 +742,7 @@ export obj AnalyzerFile {
       }
 
       code := Parser.stringifyExpression(it)
+      // todo test all type casts
       return self.tc.has(code) ? self.tc.get(code) : t
     } elif it.isIs() {
       expression := it.asIs()
