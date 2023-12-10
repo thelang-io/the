@@ -1,0 +1,8 @@
+main {
+  a: str[str] = {}
+  b: str[str] = { "key": "value" }
+  c := { "key": "value" }
+  d := { "key1": "value", "key2": "value", }
+  e := { "key1": "value", "key2": 1 }
+  f := { "key1": a, "key2": b }
+}

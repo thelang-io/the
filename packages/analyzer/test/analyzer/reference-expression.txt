@@ -1,0 +1,5 @@
+main {
+  a := 10
+  aRef := ref a
+  aRefRef := ref aRef
+}

@@ -1,0 +1,53 @@
+fn testA () {}
+fn testB () int { return 1 }
+fn testC (a: int) {}
+fn testD (a: int, b: str) {}
+fn testE (a: int, b: str, c: int..., d := 10) {}
+fn testF (a: int, b: str, c: i8 = 4, d := 5) {}
+
+obj Test {
+  fn A () {}
+  fn B () int { return 1 }
+  fn C (a: int) {}
+  fn D (a: int, b: str) {}
+  fn E (a: int, b: str, c: int..., d := 10) {}
+  fn F (a: int, b: str, c: i8 = 4, d := 5) {}
+}
+
+main {
+  testA()
+  testB()
+  testC(1)
+  testC(a: 1)
+  testD(2, "test2")
+  testD(a: 2, b: "test2")
+  testE(3, "test3")
+  testE(3, "test3", 0)
+  testE(3, "test3", 0, 1)
+  testE(3, "test3", 0, 1, 2)
+  testF(4, "test4")
+  testF(4, "test4", 4)
+  testF(4, "test4", 4, 4)
+  testF(a: 4, b: "test4")
+  testF(a: 4, b: "test4", c: 4)
+  testF(a: 4, b: "test4", c: 4, d: 4)
+
+  test := Test{}
+
+  test.A()
+  test.B()
+  test.C(1)
+  test.C(a: 1)
+  test.D(2, "test2")
+  test.D(a: 2, b: "test2")
+  test.E(3, "test3")
+  test.E(3, "test3", 0)
+  test.E(3, "test3", 0, 1)
+  test.E(3, "test3", 0, 1, 2)
+  test.F(4, "test4")
+  test.F(4, "test4", 4)
+  test.F(4, "test4", 4, 4)
+  test.F(a: 4, b: "test4")
+  test.F(a: 4, b: "test4", c: 4)
+  test.F(a: 4, b: "test4", c: 4, d: 4)
+}

@@ -1,0 +1,4 @@
+main {
+  mut arr: int[]
+  arr[0] = 1
+}
