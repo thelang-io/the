@@ -446,7 +446,7 @@ export fn numberMatch (a: str, b: str) bool {
     (a == "u32" && (b == "u32" || numberMatch("u16", b))) ||
     ((a == "u64" || b == "usize") && (b == "u64" || b == "usize" || numberMatch("u32", b))) ||
     (a == "f32" && (b == "f32" || numberMatch("i32", b))) ||
-    ((a == "f64" || a == "float") && (b == "f32" || b == "f64" || b == "float" || numberMatch("f64", b)))
+    ((a == "f64" || a == "float") && (b == "f32" || b == "f64" || b == "float" || numberMatch("i64", b)))
 }
 
 export fn match (mut a: ref Type, mut b: ref Type) bool {

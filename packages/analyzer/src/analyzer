@@ -974,6 +974,7 @@ export obj AnalyzerFile {
     return result
   }
 
+  // todo test
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
     mut parameterNames: str[]
     mut result: Type.TypeParameter[]
@@ -1028,6 +1029,7 @@ export obj AnalyzerFile {
     return result
   }
 
+  // todo test
   fn functionParametersLight (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
     mut parameterNames: str[]
     mut result: Type.TypeParameter[]
@@ -1099,13 +1101,12 @@ export obj AnalyzerFile {
     }
   }
 
-  // todo test
   fn operands (mut self: ref Self, op: Parser.Token, t1: ref Type.Type, t2: ref Type.Type) bool {
-    if op.t == .OpEqEq || op.t == .OpExclEq {
-      if Type.match(t1, self.tm.get("void")) || Type.match(t2, self.tm.get("void")) || !Type.match(t1, t2) {
-        return false
-      }
-    } elif op.t == .OpGt || op.t == .OpGtEq || op.t == .OpLt || op.t == .OpLtEq {
+    if Type.match(t1, self.tm.get("void")) || Type.match(t2, self.tm.get("void")) {
+      return false
+    }
+
+    if op.t == .OpGt || op.t == .OpGtEq || op.t == .OpLt || op.t == .OpLtEq {
       if (
         !(
           t1.isNumber() ||
@@ -1172,6 +1173,7 @@ export obj AnalyzerFile {
     self.analyzer.errors.push(error)
   }
 
+  // todo test
   fn statement (mut self: ref Self, it: Parser.Statement) {
     if it.isBlock() {
       statement := it.asBlock()
@@ -1623,6 +1625,7 @@ export obj AnalyzerFile {
     }
   }
 
+  // todo test
   fn t (mut self: ref Self, it: Parser.Type) ref Type.Type {
     if it.isArray() {
       t := it.asArray()
@@ -1753,6 +1756,7 @@ export obj AnalyzerFile {
     throw error_NewError("Tried analyzing unknown type")
   }
 
+  // todo test
   fn typeCast (mut self: ref Self, it: Parser.Expression) TypeCastResult {
     initialTC := self.tc
     mut consequent: (ref Type.Type)[str]
