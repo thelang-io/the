@@ -484,7 +484,7 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
       parameter2 := t2.parameters[i]
 
       if (
-        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        parameter1.name != parameter2.name ||
         !match(parameter1.t, parameter2.t) ||
         parameter1.mutable != parameter2.mutable ||
         parameter1.variadic != parameter2.variadic ||
@@ -517,7 +517,7 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
       parameter2 := t2.parameters[i]
 
       if (
-        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        parameter1.name != parameter2.name ||
         !match(parameter1.t, parameter2.t) ||
         parameter1.mutable != parameter2.mutable ||
         parameter1.variadic != parameter2.variadic ||
@@ -551,7 +551,7 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
     return true
   }
 
-  return !a.name.empty && !b.name.empty && a.name == b.name
+  return !a.name.empty && a.name == b.name
 }
 
 export fn similarTo (mut typeToCompare: ref Type, mut similarToType: ref Type) bool {
@@ -618,7 +618,7 @@ export fn similarTo (mut typeToCompare: ref Type, mut similarToType: ref Type) b
       parameter2 := t2.parameters[i]
 
       if (
-        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        (parameter1.name != nil && parameter1.name != parameter2.name) ||
         !similarTo(parameter2.t, parameter1.t) ||
         parameter1.mutable != parameter2.mutable ||
         parameter1.variadic != parameter2.variadic ||
@@ -629,29 +629,48 @@ export fn similarTo (mut typeToCompare: ref Type, mut similarToType: ref Type) b
     }
 
     return true
-  } elif a.isMethod() && b.isMethod() {
-    t1 := a.asMethod()
+  } elif a.isFunction() && b.isMethod() {
+    t1 := a.asFunction()
     t2 := b.asMethod()
     parameters1Len := t1.parameters.len
     parameters2Len := t2.parameters.len
+    mut i := 0
+    mut j := 0
 
     if (
       t1.asynchronous != t2.asynchronous ||
       parameters1Len != parameters2Len ||
-      !similarTo(t2.returnType, t1.returnType) ||
-      t1.withSelf != t2.withSelf ||
-      (t1.withSelf && t1.selfMutable != t2.selfMutable) ||
-      (t1.withSelf && !similarTo(t2.selfType, t1.selfType))
+      !similarTo(t2.returnType, t1.returnType)
     ) {
-      return false
-    }
+      if (
+        !t2.withSelf ||
+        t1.asynchronous != t2.asynchronous ||
+        parameters1Len != parameters2Len + 1 ||
+        !similarTo(t2.returnType, t1.returnType)
+      ) {
+        return false
+      }
 
-    loop i := 0; i < parameters1Len; i++ {
-      parameter1 := t1.parameters[i]
-      parameter2 := t2.parameters[i]
+      parameter1 := t1.parameters[i++]
+      definiteParameter1Name := parameter1.name != nil ? parameter1.name : ""
 
       if (
-        (parameter1.name != nil && parameter2.name != nil && parameter1.name != parameter2.name) ||
+        (!definiteParameter1Name.empty && definiteParameter1Name != t2.selfName) ||
+        !similarTo(t2.selfType, parameter1.t) ||
+        parameter1.mutable != t2.selfMutable ||
+        parameter1.variadic ||
+        !parameter1.required
+      ) {
+        return false
+      }
+    }
+
+    loop i < parameters1Len {
+      parameter1 := t1.parameters[i++]
+      parameter2 := t2.parameters[j++]
+
+      if (
+        (parameter1.name != nil && parameter1.name != parameter2.name) ||
         !similarTo(parameter2.t, parameter1.t) ||
         parameter1.mutable != parameter2.mutable ||
         parameter1.variadic != parameter2.variadic ||
