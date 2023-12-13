@@ -1,0 +1,5 @@
+main {
+  a: int[str]
+  b: int[str][str]
+  c: (int?)[str]
+}

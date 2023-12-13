@@ -1625,7 +1625,6 @@ export obj AnalyzerFile {
     }
   }
 
-  // todo test
   fn t (mut self: ref Self, it: Parser.Type) ref Type.Type {
     if it.isArray() {
       t := it.asArray()

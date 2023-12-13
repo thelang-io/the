@@ -1,0 +1,32 @@
+obj Animal {
+  mut name: str
+  mut age: int
+}
+
+enum Color { Red, Green, Blue }
+
+main {
+  v01: any
+  v02: bool
+  v03: byte
+  v04: char
+  v05: f32
+  v06: f64
+  v07: float
+  v08: i8
+  v09: i16
+  v10: i32
+  v11: i64
+  v12: int
+  v13: isize
+  v14: rune
+  v15: u8
+  v16: u16
+  v17: u32
+  v18: u64
+  v19: usize
+  v20: str
+
+  v21: Animal
+  v22: Color
+}

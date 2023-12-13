@@ -230,7 +230,7 @@ export obj Type {
       return false
     }
 
-    return self.isFunction() || self.isNamespace() || self.isReference() || self.isUnion()
+    return self.isFunction() || self.isNamespace() || self.isReference()
   }
 
   fn isSignedInt (self: ref Self) bool {

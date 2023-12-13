@@ -35,9 +35,14 @@ export fn TEST_Analyzer_analyze () {
     mut f := Parser.parse(result.in)
     Parser.interconnect(ref f)
     errors := analyze(ref f)
+    mut errorsWithPath: str[]
 
-    if errors.len != 0 {
-      EXPECT_EQ(result.err, errors.join(os_EOL))
+    loop i := 0; i < errors.len; i++ {
+      errorsWithPath.push(errors[i].replace("anonymous:", file + ":"))
+    }
+
+    if errorsWithPath.len != 0 {
+      EXPECT_EQ(result.err, errorsWithPath.join(os_EOL))
     }
   }
 }
