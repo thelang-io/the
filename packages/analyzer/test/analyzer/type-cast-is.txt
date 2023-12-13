@@ -1,0 +1,25 @@
+type Animal = Cat | Dog
+
+obj Cat {
+  mut name: str
+}
+
+obj Dog {
+  mut name: str
+}
+
+main {
+  mut a: int?
+
+  if a is int {
+    b: int = a
+  }
+
+  animal: Animal
+
+  if animal is Cat {
+    cat: Cat = animal
+  } else {
+    dog: Dog = animal
+  }
+}

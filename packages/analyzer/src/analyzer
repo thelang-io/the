@@ -518,14 +518,31 @@ export obj AnalyzerFile {
         return self.tm.get("any")
       }
     } elif it.isBinary() {
+      initialTC := self.tc
       expression := it.asBinary()
+      mut leftTypeCastResult: TypeCastResult?
 
       guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
         initialTC := ref self.tc // todo remove after v1
+
+        if leftTypeCastResult == nil && expression.operator.t == .OpAmpAmp {
+          leftTypeCastResult = self.typeCast(expression.left)
+        }
+
         return Type.unwrap(self.e(expression.left, operandType), withOptional: false)
       }, (operandType: (ref Type.Type)?) -> ref Type.Type {
         initialTC := ref self.tc // todo remove after v1
-        return Type.unwrap(self.e(expression.right, operandType), withOptional: false)
+
+        if leftTypeCastResult == nil {
+          return Type.unwrap(self.e(expression.right, operandType), withOptional: false)
+        }
+
+        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.consequent)
+        result := Type.unwrap(self.e(expression.right, operandType), withOptional: false)
+        self.tc = initialTC
+
+        return result
       })
 
       leftType := guessTypeResult.first
@@ -1369,14 +1386,19 @@ export obj AnalyzerFile {
 
       self.tc.merge(typeCastResult.consequent)
       self.statement(statement.consequent)
+      afterConsequentTC := self.tc
       self.tc = initialTC
       self.tc.merge(typeCastResult.alternate)
 
       if statement.alternate != nil {
         self.statement(statement.alternate)
-      }
 
-      if !statement.consequent.isDeadEnd() {
+        if statement.alternate.isDeadEnd() && !statement.consequent.isDeadEnd() {
+          self.tc = afterConsequentTC
+        } elif statement.alternate.isDeadEnd() || !statement.consequent.isDeadEnd() {
+          self.tc = initialTC
+        }
+      } elif !statement.consequent.isDeadEnd() {
         self.tc = initialTC
       }
     } elif it.isLoop() {
@@ -1755,13 +1777,27 @@ export obj AnalyzerFile {
     throw error_NewError("Tried analyzing unknown type")
   }
 
-  // todo test
   fn typeCast (mut self: ref Self, it: Parser.Expression) TypeCastResult {
     initialTC := self.tc
     mut consequent: (ref Type.Type)[str]
     mut alternate: (ref Type.Type)[str]
 
-    if it.isBinary() {
+    // todo implement in expression analyzing
+    if it.isAssignment() {
+      expression := it.asAssignment()
+
+      if expression.operator.t == .OpEq {
+        if expression.left.isAccess() {
+          leftType := Type.unwrap(self.eNice(expression.left), withOptional: false)
+
+          if Type.match(leftType, self.tm.get("any")) || leftType.isOptional() || leftType.isUnion() {
+            rightType := Type.unwrap(self.eNice(expression.right), withOptional: false)
+            code := Parser.stringifyExpression(expression.left)
+            consequent.set(code, rightType)
+          }
+        }
+      }
+    } elif it.isBinary() {
       expression := it.asBinary()
 
       if expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
@@ -1772,15 +1808,49 @@ export obj AnalyzerFile {
         }
 
         rightTypeCastResult := self.typeCast(expression.right)
+        self.tc = initialTC
 
         if expression.operator.t == .OpAmpAmp {
           consequent.merge(leftTypeCastResult.consequent)
           consequent.merge(rightTypeCastResult.consequent)
-          alternate.merge(leftTypeCastResult.alternate)
-          alternate.merge(rightTypeCastResult.alternate)
         } else {
-          consequent.merge(rightTypeCastResult.consequent)
-          alternate.merge(rightTypeCastResult.alternate)
+          rightTypeCastConsequentKeys := rightTypeCastResult.consequent.keys
+
+          loop i := 0; i < rightTypeCastConsequentKeys.len; i++ {
+            name := rightTypeCastConsequentKeys[i]
+
+            if !leftTypeCastResult.consequent.has(name) {
+              continue
+            }
+
+            t1 := leftTypeCastResult.consequent.get(name)
+            t2 := rightTypeCastResult.consequent.get(name)
+
+            if !Type.match(t1, t2) {
+              consequent.set(name, self.tm.createUnion([t1, t2]))
+            } else {
+              consequent.set(name, t2)
+            }
+          }
+        }
+
+        rightTypeCastAlternateKeys := rightTypeCastResult.alternate.keys
+
+        loop i := 0; i < rightTypeCastAlternateKeys.len; i++ {
+          name := rightTypeCastAlternateKeys[i]
+
+          if !leftTypeCastResult.alternate.has(name) {
+            continue
+          }
+
+          t1 := leftTypeCastResult.alternate.get(name)
+          t2 := rightTypeCastResult.alternate.get(name)
+
+          if !Type.match(t1, t2) {
+            continue
+          }
+
+          alternate.set(name, t2)
         }
       } elif expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq {
         if (
@@ -1790,7 +1860,7 @@ export obj AnalyzerFile {
           left := expression.left.isAccess() ? expression.left : expression.right
           leftType := Type.unwrap(self.eNice(left), withOptional: false)
 
-          if left.isAccess() && leftType.isOptional() {
+          if leftType.isOptional() {
             code := Parser.stringifyExpression(left)
             t := leftType.asOptional()
 
@@ -1806,7 +1876,7 @@ export obj AnalyzerFile {
       expression := it.asIs()
 
       if expression.expression.isAccess() {
-        expressionType := self.eNice(expression.expression)
+        expressionType := Type.unwrap(self.eNice(expression.expression), withOptional: false)
 
         if Type.match(expressionType, self.tm.get("any")) || expressionType.isOptional() || expressionType.isUnion() {
           t := self.t(expression.t)

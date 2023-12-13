@@ -1,0 +1,5 @@
+main {
+  mut a: int?
+  a = 2
+  a = nil
+}
