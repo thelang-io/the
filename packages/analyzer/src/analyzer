@@ -340,7 +340,8 @@ export obj AnalyzerFile {
     it: Parser.Expression,
     targetType: (ref Type.Type)? = nil,
     withMutable := false,
-    withMutableNext := false
+    withMutableNext := false,
+    withoutTypeCast := false
   ) ref Type.Type {
     if it.isIdentifier() {
       expression := it.asIdentifier()
@@ -354,6 +355,14 @@ export obj AnalyzerFile {
 
       if withMutable && !var.mutable {
         self.raise(errors.E1011(expression.name), it.start, it.end)
+      }
+
+      if targetType != nil {
+        if Type.match(targetType, var.t) {
+          return var.t
+        }
+      } elif withoutTypeCast {
+        return var.t
       }
 
       code := Parser.stringifyExpression(it)
@@ -476,14 +485,14 @@ export obj AnalyzerFile {
 
       guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
         initialTC := ref self.tc // todo remove after v1
-        return self.e(expression.left, operandType, withMutable: true)
+        return self.e(expression.left, operandType, withMutable: true, withoutTypeCast: true)
       }, (operandType: (ref Type.Type)?) -> ref Type.Type {
         initialTC := ref self.tc // todo remove after v1
         return self.e(expression.right, operandType)
       })
 
-      leftType := guessTypeResult.first
-      rightType := guessTypeResult.second
+      leftType := Type.unwrap(guessTypeResult.first, withOptional: false, withReference: false)
+      rightType := Type.unwrap(guessTypeResult.second, withOptional: false, withReference: false)
 
       if !self.operands(expression.operator, leftType, rightType) {
         self.raise(errors.E1027(expression.operator.val, leftType.toString()), expression.operator.start, expression.operator.end)
@@ -491,6 +500,13 @@ export obj AnalyzerFile {
 
       if !expression.left.isAccess() {
         self.raise(errors.E1010(), expression.left.start, expression.left.end)
+      } elif (
+        Type.match(leftType, self.tm.get("any")) ||
+        (leftType.isOptional() && !rightType.isOptional()) ||
+        (leftType.isUnion() && leftType.hasType(rightType))
+      ) {
+        code := Parser.stringifyExpression(expression.left)
+        self.tc.set(code, rightType)
       }
 
       return leftType.isReference() && !rightType.isReference()
@@ -758,6 +774,14 @@ export obj AnalyzerFile {
         self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
       }
 
+      if targetType != nil {
+        if Type.match(targetType, t) {
+          return t
+        }
+      } elif withoutTypeCast {
+        return t
+      }
+
       code := Parser.stringifyExpression(it)
       // todo test all type casts
       return self.tc.has(code) ? self.tc.get(code) : t
@@ -904,6 +928,14 @@ export obj AnalyzerFile {
               self.raise(errors.E1011(expression.name.name), it.start, it.end)
             }
 
+            if targetType != nil {
+              if Type.match(targetType, member.var.t) {
+                return member.var.t
+              }
+            } elif withoutTypeCast {
+              return member.var.t
+            }
+
             code := Parser.stringifyExpression(it)
             return self.tc.has(code) ? self.tc.get(code) : member.var.t
           }
@@ -920,6 +952,14 @@ export obj AnalyzerFile {
 
       if withMutable && !property.mutable {
         self.raise(errors.E1012(expression.name.name), it.start, it.end)
+      }
+
+      if targetType != nil {
+        if Type.match(targetType, property.t) {
+          return property.t
+        }
+      } elif withoutTypeCast {
+        return property.t
       }
 
       code := Parser.stringifyExpression(it)

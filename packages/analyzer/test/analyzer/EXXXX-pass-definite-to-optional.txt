@@ -1,0 +1,11 @@
+fn test (a: int) {}
+main {
+  a: int?
+  test(a)
+}
+===== err =====
+E1011-mutable-ref-on-non-mutable.txt:3:19: AnalyzeError: E1011 - Cannot assign to immutable variable 'a'
+2 |   a := 10
+3 |   mut aRef := ref a
+  |                   ^
+4 | }

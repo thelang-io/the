@@ -1,5 +1,14 @@
+// todo shouldn't be possible to pass "a" as "b" here when a=2 is commented
+fn testA (a: int?) {}
+fn testB (b: int) {}
+
 main {
   mut a: int?
   a = 2
+  testA(a)
+  a = 2
+  testA(a)
+  testB(a)
   a = nil
+  testA(a)
 }
