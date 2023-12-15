@@ -682,7 +682,9 @@ export obj AnalyzerFile {
 
         if !Type.similarTo(t, parameterType) {
           self.raise(errors.E1035(t.toString(), parameterType.toString()), argument.expression.start, argument.expression.end)
-        } elif !isVariadic {
+        }
+
+        if !isVariadic {
           if definiteParameter.name != nil {
             passedParameters.push(definiteParameter.name)
           }
@@ -1086,7 +1088,6 @@ export obj AnalyzerFile {
     return result
   }
 
-  // todo test
   fn functionParametersLight (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
     mut parameterNames: str[]
     mut result: Type.TypeParameter[]
@@ -1822,7 +1823,6 @@ export obj AnalyzerFile {
     mut consequent: (ref Type.Type)[str]
     mut alternate: (ref Type.Type)[str]
 
-    // todo implement in expression analyzing
     if it.isAssignment() {
       expression := it.asAssignment()
 

@@ -41,7 +41,7 @@ export fn TEST_Analyzer_analyze () {
       errorsWithPath.push(errors[i].replace("anonymous:", file + ":"))
     }
 
-    if errorsWithPath.len != 0 {
+    if !result.err.empty || errorsWithPath.len != 0 {
       EXPECT_EQ(result.err, errorsWithPath.join(os_EOL))
     }
   }

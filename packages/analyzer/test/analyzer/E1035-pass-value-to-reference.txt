@@ -1,0 +1,10 @@
+fn test (a: ref int) {}
+main {
+  test(10)
+}
+===== err =====
+E1035-pass-value-to-reference.txt:3:8: AnalyzeError: E1035 - Argument of type `int` is not assignable to parameter of type `ref int`
+2 | main {
+3 |   test(10)
+  |        ~~
+4 | }
