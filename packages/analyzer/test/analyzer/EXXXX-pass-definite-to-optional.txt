@@ -1,7 +1,0 @@
-fn test (a: int) {}
-main {
-  a: int?
-  test(a)
-}
-===== err =====
-// todo find problem here

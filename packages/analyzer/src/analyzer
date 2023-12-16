@@ -373,8 +373,8 @@ export obj AnalyzerFile {
       return self.tm.get("char")
     } elif it.isFloatingPointLiteral() {
       expression := it.asFloatingPointLiteral()
-      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType)
-      t := Type.unwrap(definiteTargetType.isFloat() ? definiteTargetType : self.tm.get("float"))
+      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
+      t := Type.unwrap(definiteTargetType.isFloat() ? definiteTargetType : self.tm.get("float"), withOptional: true)
 
       try {
         if Type.match(t, self.tm.get("f32")) {
@@ -389,8 +389,8 @@ export obj AnalyzerFile {
       return t
     } elif it.isIntegerLiteral() {
       expression := it.asIntegerLiteral()
-      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType)
-      t := Type.unwrap(definiteTargetType.isInt() ? definiteTargetType : self.tm.get("int"))
+      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
+      t := Type.unwrap(definiteTargetType.isInt() ? definiteTargetType : self.tm.get("int"), withOptional: true)
 
       try {
         if Type.match(t, self.tm.get("i8")) {
@@ -421,7 +421,7 @@ export obj AnalyzerFile {
         return self.tm.createOptional(self.tm.get("any"))
       }
 
-      t := Type.unwrap(targetType as ref Type.Type, withOptional: false)
+      t := Type.unwrap(targetType as ref Type.Type)
 
       if t.isOptional() {
         return t
@@ -436,7 +436,7 @@ export obj AnalyzerFile {
       mut elementType: (ref Type.Type)?
 
       if targetType != nil {
-        t := Type.unwrap(targetType)
+        t := Type.unwrap(targetType, withOptional: true)
 
         if t.isArray() {
           t := t.asArray()
@@ -491,8 +491,8 @@ export obj AnalyzerFile {
         return self.e(expression.right, operandType)
       })
 
-      leftType := Type.unwrap(guessTypeResult.first, withOptional: false, withReference: false)
-      rightType := Type.unwrap(guessTypeResult.second, withOptional: false, withReference: false)
+      leftType := Type.unwrap(guessTypeResult.first, withReference: false)
+      rightType := Type.unwrap(guessTypeResult.second, withReference: false)
 
       if !self.operands(expression.operator, leftType, rightType) {
         self.raise(errors.E1027(expression.operator.val, leftType.toString()), expression.operator.start, expression.operator.end)
@@ -509,12 +509,10 @@ export obj AnalyzerFile {
         self.tc.set(code, rightType)
       }
 
-      return leftType.isReference() && !rightType.isReference()
-        ? Type.unwrap(leftType, withOptional: false)
-        : leftType
+      return leftType.isReference() && !rightType.isReference() ? Type.unwrap(leftType) : leftType
     } elif it.isAwait() {
       expression := it.asAwait()
-      expressionType := Type.unwrap(self.e(expression.expression), withOptional: false)
+      expressionType := Type.unwrap(self.e(expression.expression))
       parentNode := it.parentNode()
 
       if !parentNode.hasAsyncParent() {
@@ -545,17 +543,17 @@ export obj AnalyzerFile {
           leftTypeCastResult = self.typeCast(expression.left)
         }
 
-        return Type.unwrap(self.e(expression.left, operandType), withOptional: false)
+        return Type.unwrap(self.e(expression.left, operandType))
       }, (operandType: (ref Type.Type)?) -> ref Type.Type {
         initialTC := ref self.tc // todo remove after v1
 
         if leftTypeCastResult == nil {
-          return Type.unwrap(self.e(expression.right, operandType), withOptional: false)
+          return Type.unwrap(self.e(expression.right, operandType))
         }
 
         definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
         self.tc.merge(definiteLeftTypeCastResult.consequent)
-        result := Type.unwrap(self.e(expression.right, operandType), withOptional: false)
+        result := Type.unwrap(self.e(expression.right, operandType))
         self.tc = initialTC
 
         return result
@@ -587,7 +585,7 @@ export obj AnalyzerFile {
     } elif it.isCall() {
       initialErrorsLen := self.analyzer.errors.len
       expression := it.asCall()
-      calleeType := Type.unwrap(self.e(expression.callee), withOptional: false)
+      calleeType := Type.unwrap(self.e(expression.callee))
       mut asynchronous: bool
       mut parameters: Type.TypeParameter[]
       mut returnType := self.tm.get("void")
@@ -726,7 +724,7 @@ export obj AnalyzerFile {
       initialTC := self.tc
       expression := it.asConditional()
       typeCastResult := self.typeCast(expression.condition)
-      conditionType := Type.unwrap(self.e(expression.condition), withOptional: false)
+      conditionType := Type.unwrap(self.e(expression.condition))
 
       if !Type.match(conditionType, self.tm.get("bool")) {
         self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
@@ -734,13 +732,13 @@ export obj AnalyzerFile {
 
       guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
         self.tc.merge(typeCastResult.consequent)
-        result := Type.unwrap(self.e(expression.consequent, operandType, withMutable: withMutable || withMutableNext), withOptional: false)
+        result := Type.unwrap(self.e(expression.consequent, operandType, withMutable: withMutable || withMutableNext))
         self.tc = initialTC
 
         return result
       }, (operandType: (ref Type.Type)?) -> ref Type.Type {
         self.tc.merge(typeCastResult.alternate)
-        result := Type.unwrap(self.e(expression.alternate, operandType, withMutable: withMutable || withMutableNext), withOptional: false)
+        result := Type.unwrap(self.e(expression.alternate, operandType, withMutable: withMutable || withMutableNext))
         self.tc = initialTC
 
         return result
@@ -758,8 +756,8 @@ export obj AnalyzerFile {
       return Type.similarTo(alternateType, consequentType) ? consequentType : alternateType
     } elif it.isElementAccess() {
       expression := it.asElementAccess()
-      expressionType := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext), withOptional: false)
-      argumentType := Type.unwrap(self.e(expression.argument), withOptional: false)
+      expressionType := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext))
+      argumentType := Type.unwrap(self.e(expression.argument))
 
       if !Type.similarTo(argumentType, self.tm.get("i32")) {
         self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
@@ -802,7 +800,7 @@ export obj AnalyzerFile {
       mut t: (ref Type.Type)?
 
       if targetType != nil {
-        maybeMapType := Type.unwrap(targetType)
+        maybeMapType := Type.unwrap(targetType, withOptional: true)
 
         if maybeMapType.isMap() {
           t = maybeMapType
@@ -857,7 +855,7 @@ export obj AnalyzerFile {
       mut t: (ref Type.Type)?
 
       if targetType != nil {
-        maybeEnumType := Type.unwrap(targetType, withOptional: false)
+        maybeEnumType := Type.unwrap(targetType)
 
         if maybeEnumType.isEnum() {
           t = maybeEnumType
@@ -912,7 +910,7 @@ export obj AnalyzerFile {
       return self.e(expression.expression, targetType, withMutable: withMutable || withMutableNext)
     } elif it.isPropertyAccess() {
       expression := it.asPropertyAccess()
-      t := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext), withOptional: false)
+      t := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext))
 
       if t.isEnum() {
         if !t.hasEnumerator(expression.name.name) {
@@ -973,7 +971,7 @@ export obj AnalyzerFile {
       expression := it.asUnary()
 
       if expression.operator.t == .OpExcl {
-        operandType := Type.unwrap(self.e(expression.operand), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand))
 
         if !Type.match(operandType, self.tm.get("bool")) && Type.match(operandType, self.tm.get("byte")) && !operandType.isNumber() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -981,7 +979,7 @@ export obj AnalyzerFile {
 
         return self.tm.get("bool")
       } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
-        operandType := Type.unwrap(self.e(expression.operand, withMutable: true), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand, withMutable: true))
 
         if !expression.operand.isAccess() {
           self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
@@ -991,7 +989,7 @@ export obj AnalyzerFile {
 
         return operandType
       } elif expression.operator.t == .OpMinus {
-        operandType := Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand, targetType))
 
         if !operandType.isSignedInt() && !operandType.isFloat() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -999,7 +997,7 @@ export obj AnalyzerFile {
 
         return operandType
       } elif expression.operator.t == .OpPlus {
-        operandType := Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand, targetType))
 
         if !operandType.isNumber() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -1007,7 +1005,7 @@ export obj AnalyzerFile {
 
         return operandType
       } elif expression.operator.t == .OpTilde {
-        operandType := Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
+        operandType := Type.unwrap(self.e(expression.operand, targetType))
 
         if !operandType.isInt() {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -1015,7 +1013,7 @@ export obj AnalyzerFile {
 
         return operandType
       } else {
-        return Type.unwrap(self.e(expression.operand, targetType), withOptional: false)
+        return Type.unwrap(self.e(expression.operand, targetType))
       }
     }
 
@@ -1419,7 +1417,7 @@ export obj AnalyzerFile {
       }
 
       typeCastResult := self.typeCast(statement.condition)
-      conditionType := Type.unwrap(self.e(statement.condition, Type.opt(self.tm.get("bool"))), withOptional: false)
+      conditionType := Type.unwrap(self.e(statement.condition, Type.opt(self.tm.get("bool"))))
 
       if !Type.match(conditionType, self.tm.get("bool")) {
         self.raise(errors.E1018(conditionType.toString()), statement.condition.start, statement.condition.end)
@@ -1474,10 +1472,7 @@ export obj AnalyzerFile {
       if statement.condition != nil {
         typeCastResult := self.typeCast(statement.condition)
 
-        conditionType := Type.unwrap(
-          self.e(statement.condition, Type.opt(self.tm.get("bool"))),
-          withOptional: false
-        )
+        conditionType := Type.unwrap(self.e(statement.condition, Type.opt(self.tm.get("bool"))))
 
         if !Type.match(self.tm.get("bool"), conditionType) {
           self.raise(errors.E1060(conditionType.toString()), statement.condition.start, statement.condition.end)
@@ -1828,10 +1823,10 @@ export obj AnalyzerFile {
 
       if expression.operator.t == .OpEq {
         if expression.left.isAccess() {
-          leftType := Type.unwrap(self.eNice(expression.left), withOptional: false)
+          leftType := Type.unwrap(self.eNice(expression.left))
 
           if Type.match(leftType, self.tm.get("any")) || leftType.isOptional() || leftType.isUnion() {
-            rightType := Type.unwrap(self.eNice(expression.right), withOptional: false)
+            rightType := Type.unwrap(self.eNice(expression.right))
             code := Parser.stringifyExpression(expression.left)
             consequent.set(code, rightType)
           }
@@ -1898,7 +1893,7 @@ export obj AnalyzerFile {
           (expression.right.isAccess() && expression.left.isNilLiteral())
         ) {
           left := expression.left.isAccess() ? expression.left : expression.right
-          leftType := Type.unwrap(self.eNice(left), withOptional: false)
+          leftType := Type.unwrap(self.eNice(left))
 
           if leftType.isOptional() {
             code := Parser.stringifyExpression(left)
@@ -1916,7 +1911,7 @@ export obj AnalyzerFile {
       expression := it.asIs()
 
       if expression.expression.isAccess() {
-        expressionType := Type.unwrap(self.eNice(expression.expression), withOptional: false)
+        expressionType := Type.unwrap(self.eNice(expression.expression))
 
         if Type.match(expressionType, self.tm.get("any")) || expressionType.isOptional() || expressionType.isUnion() {
           t := self.t(expression.t)

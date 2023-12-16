@@ -727,7 +727,7 @@ export fn opt (t: ref Type) (ref Type)? {
   return a
 }
 
-export fn unwrap (t: ref Type, withOptional := true, withReference := true) ref Type {
+export fn unwrap (t: ref Type, withOptional := false, withReference := true) ref Type {
   if t.isAlias() {
     unwrappedType := t.asAlias()
     return unwrappedType.t
