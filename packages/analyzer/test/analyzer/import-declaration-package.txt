@@ -1,0 +1,5 @@
+import parse from "the/parser"
+
+main {
+  parse("1 + 1")
+}

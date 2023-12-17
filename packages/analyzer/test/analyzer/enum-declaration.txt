@@ -1,0 +1,11 @@
+enum Color {
+  Red,
+  Green,
+  Blue
+}
+
+enum Constants {
+  First = 1,
+  Second = 2,
+  Tenth = 10,
+}

@@ -1,0 +1,10 @@
+export obj TestObj {
+  a: int
+}
+
+export obj TestObjWithMethods {
+  a: int
+
+  fn test1 (self: ref Self) {}
+  fn test2 () {}
+}

@@ -1,0 +1,22 @@
+main {
+  a := 1
+
+  if a == 2 {} elif a == 1 {}
+  if (a == 2) print("a is equal 2") elif (a == 1) print("a is equal 1")
+  if a == 2 {} elif a == 1 {} elif a == 3 {}
+  if (a == 2) print("a is equal 2") elif (a == 1) print("a is equal 1") elif (a == 3) print("a is equal 3")
+
+  if a == 2 {
+    print("a is equal 2")
+  } elif a == 1 {
+    print("a is equal 1")
+  }
+
+  if a == 2 {
+    print("a is equal 2")
+  } elif a == 1 {
+    print("a is equal 1")
+  } elif a == 3 {
+    print("a is equal 3")
+  }
+}

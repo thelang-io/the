@@ -1,0 +1,2 @@
+export const TestConstVar := 1
+export mut TestMutVar := 2

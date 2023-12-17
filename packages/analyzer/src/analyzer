@@ -71,6 +71,10 @@ export obj AnalyzerFile {
     }
   }
 
+  // todo test forward declaration and hoisting
+  // todo test semicolon
+  // todo test empty statement
+
   fn declare (mut self: ref Self, it: ref Parser.Statement) {
     if it.isEnumDeclaration() {
       statement := it.asEnumDeclaration()
@@ -1031,7 +1035,6 @@ export obj AnalyzerFile {
     return result
   }
 
-  // todo test
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
     mut parameterNames: str[]
     mut result: Type.TypeParameter[]
@@ -1229,7 +1232,6 @@ export obj AnalyzerFile {
     self.analyzer.errors.push(error)
   }
 
-  // todo test
   fn statement (mut self: ref Self, it: Parser.Statement) {
     if it.isBlock() {
       statement := it.asBlock()
@@ -1944,7 +1946,7 @@ export fn analyze (f: ref Parser.File) str[] {
   analyzer.files.push(AnalyzerFile{
     cwd: process_cwd(),
     analyzer: ref analyzer,
-    reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+    reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path),
   })
 
   mut file := analyzer.files.last

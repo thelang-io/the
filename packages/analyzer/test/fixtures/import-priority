@@ -1,0 +1,5 @@
+import PriorityEnum from "./export-priority"
+
+export fn PriorityFunction (e: PriorityEnum) {
+  print(e.rawValue)
+}

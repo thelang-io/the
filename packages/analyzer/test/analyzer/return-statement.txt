@@ -1,0 +1,11 @@
+fn testReturnInt () int {
+  return 2
+}
+
+fn testReturnVoid () {
+  return
+}
+
+main {
+  return
+}
