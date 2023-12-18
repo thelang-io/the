@@ -22,7 +22,7 @@ export obj TypeCastResult {
 
 export obj Analyzer {
   mut errors: str[]
-  mut files: AnalyzerFile[]
+  mut files: AnalyzerFileArray
   mut state: AnalyzerState
 }
 
@@ -35,6 +35,24 @@ export obj AnalyzerFileState {
   mut loopInit: bool
   mut returnType: (ref Type.Type)?
   mut selfType: (ref Type.Type)?
+}
+
+export obj AnalyzerFileArray {
+  mut items: any[]
+  mut len: int
+
+  fn at (mut self: ref Self, index: int) ref AnalyzerFile {
+    return ref ((self.items[index] as any) as AnalyzerFile)
+  }
+
+  fn last (mut self: ref Self) ref AnalyzerFile {
+    return ref ((self.items.last as any) as AnalyzerFile)
+  }
+
+  fn push (mut self: ref Self, item: AnalyzerFile) {
+    self.items.push(item)
+    self.len++
+  }
 }
 
 export obj AnalyzerFile {
@@ -156,7 +174,7 @@ export obj AnalyzerFile {
       mut existingImport: (ref AnalyzerFile)?
 
       loop i := 0; i < self.analyzer.files.len; i++ {
-        file := self.analyzer.files[i]
+        file := self.analyzer.files.at(i)
         if file.reader.path == relativePath {
           existingImport = file
           break
@@ -165,7 +183,7 @@ export obj AnalyzerFile {
 
       if existingImport == nil {
         self.analyzer.files.push(AnalyzerFile{cwd: astCwd, analyzer: self.analyzer})
-        mut file := self.analyzer.files.last
+        mut file := self.analyzer.files.last()
 
         file.tm.init()
         file.vm.init(ref file.tm)
@@ -1949,7 +1967,7 @@ export fn analyze (f: ref Parser.File) str[] {
     reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path),
   })
 
-  mut file := analyzer.files.last
+  mut file := analyzer.files.last()
 
   file.tm.init()
   file.vm.init(ref file.tm)
