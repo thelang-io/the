@@ -5,6 +5,8 @@ main {
   optAnyNilInit: any? = nil
   optAnyValInit: any? = 1
   optAnyValCopy: any? = testAny
+  optAnyNilInit == optAnyValCopy
+  optAnyNilInit != optAnyValCopy
 }
 ======= code =======
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -22,6 +24,7 @@ main {
 #endif
 
 #include <setjmp.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -71,7 +74,10 @@ struct any any_copy (const struct any);
 void any_free (struct any);
 void error_alloc (err_state_t *, size_t);
 struct any *__THE_1_opt_any_alloc (struct any);
+struct any *__THE_1_opt_any_copy (const struct any *);
+bool __THE_1_opt_any_eq (struct any *, struct any *);
 void __THE_1_opt_any_free (struct any *);
+bool __THE_1_opt_any_ne (struct any *, struct any *);
 struct any __THE_1_any_int_alloc (int32_t);
 struct any __THE_1_any_int_copy (const struct any);
 void __THE_1_any_int_free (struct any);
@@ -105,10 +111,28 @@ struct any *__THE_1_opt_any_alloc (struct any n) {
   *r = n;
   return r;
 }
+struct any *__THE_1_opt_any_copy (const struct any *n) {
+  if (n == NULL) return NULL;
+  struct any *r = alloc(sizeof(struct any));
+  *r = any_copy(*n);
+  return r;
+}
+bool __THE_1_opt_any_eq (struct any *n1, struct any *n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : n1 == n2;
+  __THE_1_opt_any_free((struct any *) n1);
+  __THE_1_opt_any_free((struct any *) n2);
+  return r;
+}
 void __THE_1_opt_any_free (struct any *n) {
   if (n == NULL) return;
   any_free((struct any) *n);
   free(n);
+}
+bool __THE_1_opt_any_ne (struct any *n1, struct any *n2) {
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : n1 != n2;
+  __THE_1_opt_any_free((struct any *) n1);
+  __THE_1_opt_any_free((struct any *) n2);
+  return r;
 }
 struct any __THE_1_any_int_alloc (int32_t d) {
   size_t l = sizeof(struct __THE_1_any_int);
@@ -133,6 +157,8 @@ int main () {
   const struct any *__THE_0_optAnyNilInit_0 = NULL;
   const struct any *__THE_0_optAnyValInit_0 = __THE_1_opt_any_alloc(__THE_1_any_int_alloc(1));
   const struct any *__THE_0_optAnyValCopy_0 = __THE_1_opt_any_alloc(any_copy(__THE_0_testAny_0));
+  __THE_1_opt_any_eq(__THE_1_opt_any_copy(__THE_0_optAnyNilInit_0), __THE_1_opt_any_copy(__THE_0_optAnyValCopy_0));
+  __THE_1_opt_any_ne(__THE_1_opt_any_copy(__THE_0_optAnyNilInit_0), __THE_1_opt_any_copy(__THE_0_optAnyValCopy_0));
   __THE_1_opt_any_free((struct any *) __THE_0_optAnyValCopy_0);
   __THE_1_opt_any_free((struct any *) __THE_0_optAnyValInit_0);
   __THE_1_opt_any_free((struct any *) __THE_0_optAnyNilInit_0);

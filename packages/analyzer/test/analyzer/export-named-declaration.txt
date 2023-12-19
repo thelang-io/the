@@ -15,7 +15,6 @@ export Alias
 export ADMIN
 export USER
 export NS1
-export NS1.Animal
 export NS2
 export NS2.NS
 export NS2.NS.Animal

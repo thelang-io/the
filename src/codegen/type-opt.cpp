@@ -80,8 +80,15 @@ std::string Codegen::_typeNameOpt (Type *type) {
 
     decl += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
     def += "_{bool} " + typeName + "_eq (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
-    def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 == _{NULL} && n2 == _{NULL} ";
-    def += ": " + this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2)->str() + ";" EOL;
+    def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 == _{NULL} && n2 == _{NULL} : ";
+
+    if (underlyingTypeInfo.type->isAny()) {
+      def += this->_genEqFn(underlyingTypeInfo.type, CodegenASTExprAccess::create("n1"), CodegenASTExprAccess::create("n2"))->str();
+    } else {
+      def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2)->str();
+    }
+
+    def += ";" EOL;
     def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
     def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
     def += "  return r;" EOL;
@@ -98,7 +105,14 @@ std::string Codegen::_typeNameOpt (Type *type) {
     decl += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + ", " + underlyingTypeInfo.typeRefCode + ");";
     def += "_{bool} " + typeName + "_ne (" + underlyingTypeInfo.typeRefCode + "n1, " + underlyingTypeInfo.typeRefCode + "n2) {" EOL;
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 != _{NULL} || n2 != _{NULL} : ";
-    def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2, true)->str() + ";" EOL;
+
+    if (underlyingTypeInfo.type->isAny()) {
+      def += this->_genEqFn(underlyingTypeInfo.type, CodegenASTExprAccess::create("n1"), CodegenASTExprAccess::create("n2"), true)->str();
+    } else {
+      def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2, true)->str();
+    }
+
+    def += ";" EOL;
     def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n1"))->str() + ";" EOL;
     def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n2"))->str() + ";" EOL;
     def += "  return r;" EOL;
