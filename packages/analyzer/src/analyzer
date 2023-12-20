@@ -228,14 +228,16 @@ export obj AnalyzerFile {
 
           exportItem := definiteImport.exports.get(namedSpecifier.imported.name)
 
-          if exportItem.t == nil {
+          if exportItem.var != nil {
             if self.vm.has(namedSpecifier.local.name) {
               self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
             }
 
-            exportVar := exportItem.var as Var
+            exportVar := exportItem.var
             self.vm.add(namedSpecifier.local.name, exportVar.t, exportVar.mutable)
-          } else {
+          }
+
+          if exportItem.t != nil {
             exportType := exportItem.t
 
             if self.tm.has(namedSpecifier.local.name) {
@@ -1137,16 +1139,13 @@ export obj AnalyzerFile {
     return result
   }
 
-  fn guard (mut self: ref Self, cb: () -> void) bool {
+  fn guard (mut self: ref Self, cb: () -> void) {
     initialErrorsLen := self.analyzer.errors.len
     cb()
-    failed := self.analyzer.errors.len != initialErrorsLen
 
-    if failed {
+    if self.analyzer.errors.len != initialErrorsLen {
       self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
     }
-
-    return failed
   }
 
   fn guessType (mut self: ref Self, cb1: ((ref Type.Type)?) -> ref Type.Type, cb2: ((ref Type.Type)?) -> ref Type.Type) GuessTypeResult {
@@ -1370,15 +1369,15 @@ export obj AnalyzerFile {
 
       mut exportType: (ref Type.Type)?
 
-      guardResult := self.guard(() -> void {
+      self.guard(() -> void {
         initialTC := ref self.tc // todo remove after v1
         exportType = Type.opt(self.t(parserType))
       })
 
-      if guardResult && self.exports.has(exportName) {
+      if exportType != nil && self.exports.has(exportName) {
         self.raise(errors.E1067(exportName), statement.expression.start, statement.expression.end)
-      } elif guardResult {
-        self.exports.set(exportName, Type.NamespaceMember{t: exportType as ref Type.Type})
+      } elif exportType != nil {
+        self.exports.set(exportName, Type.NamespaceMember{t: exportType})
       } elif !statement.expression.isIdentifier() {
         self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
       } else {
