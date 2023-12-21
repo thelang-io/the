@@ -1005,6 +1005,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access-map",
   "expr-access-obj",
   "expr-access-opt",
+  "expr-access-opt-ref",
   "expr-access-ref",
   "expr-access-str",
   "expr-access-union"
