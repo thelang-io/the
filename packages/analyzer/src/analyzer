@@ -218,37 +218,38 @@ export obj AnalyzerFile {
         if specifier is Parser.ImportNamespaceSpecifier {
           namespaceSpecifier := specifier
           self.tm.createNamespace(namespaceSpecifier.name.name, definiteImport.exports)
-        } else {
-          namedSpecifier := specifier
+          continue
+        }
 
-          if !definiteImport.exports.has(namedSpecifier.imported.name) {
-            self.raise(errors.E1072(), namedSpecifier.imported.start, namedSpecifier.imported.end)
-            continue
+        namedSpecifier := specifier as Parser.ImportSpecifier
+
+        if !definiteImport.exports.has(namedSpecifier.imported.name) {
+          self.raise(errors.E1072(), namedSpecifier.imported.start, namedSpecifier.imported.end)
+          continue
+        }
+
+        exportItem := definiteImport.exports.get(namedSpecifier.imported.name)
+
+        if exportItem.var != nil {
+          if self.vm.has(namedSpecifier.local.name) {
+            self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
           }
 
-          exportItem := definiteImport.exports.get(namedSpecifier.imported.name)
+          exportVar := exportItem.var
+          self.vm.add(namedSpecifier.local.name, exportVar.t, exportVar.mutable)
+        }
 
-          if exportItem.var != nil {
-            if self.vm.has(namedSpecifier.local.name) {
-              self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
-            }
+        if exportItem.t != nil {
+          exportType := exportItem.t
 
-            exportVar := exportItem.var
-            self.vm.add(namedSpecifier.local.name, exportVar.t, exportVar.mutable)
+          if self.tm.has(namedSpecifier.local.name) {
+            self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
           }
 
-          if exportItem.t != nil {
-            exportType := exportItem.t
-
-            if self.tm.has(namedSpecifier.local.name) {
-              self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
-            }
-
-            if namedSpecifier.local.name != namedSpecifier.imported.name {
-              self.tm.createAlias(namedSpecifier.local.name, exportType)
-            } else {
-              self.tm.insert(exportType)
-            }
+          if namedSpecifier.local.name != namedSpecifier.imported.name {
+            self.tm.createAlias(namedSpecifier.local.name, exportType)
+          } else {
+            self.tm.insert(exportType)
           }
         }
       }
