@@ -1,5 +1,5 @@
-import parse from "the/parser"
+import parse from "the/json"
 
 main {
-  parse("1 + 1")
+  parse("true")
 }
