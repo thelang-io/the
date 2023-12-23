@@ -1,0 +1,36 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TypeMap from "./type-map"
+import VarMap from "./var-map"
+import * as Type from "./type"
+
+export fn get (mut exports: ref Type.NamespaceMember[], name: str) ref Type.NamespaceMember {
+  len := exports.len
+
+  loop i := 0; i < len; i++ {
+    mut item := exports[i]
+
+    if item.name == name {
+      return item
+    }
+  }
+
+  throw error_NewError("Export you are looking for doesn't exists")
+}
+
+export fn has (exports: ref Type.NamespaceMember[], name: str) bool {
+  len := exports.len
+
+  loop i := 0; i < len; i++ {
+    item := exports[i]
+
+    if item.name == name {
+      return true
+    }
+  }
+
+  return false
+}

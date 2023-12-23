@@ -252,7 +252,8 @@ export fn E1061 () str {
 }
 
 export fn E1062 () str {
-  return "E1062 - Throw expression required to be of type object with first property 'message' of type `str` and second property 'stack' of type `str`"
+  return "E1062 - Throw expression required to be of type object with first property 'message' of type `str` and " +
+    "second property 'stack' of type `str`"
 }
 
 export fn E1063 () str {
@@ -264,7 +265,8 @@ export fn E1064 () str {
 }
 
 export fn E1065 () str {
-  return "E1065 - Try statement handler parameter required to be of type object with first property 'message' of type `str` and second property 'stack' of type `str`"
+  return "E1065 - Try statement handler parameter required to be of type object with first property 'message' of " +
+    "type `str` and second property 'stack' of type `str`"
 }
 
 export fn E1066 () str {

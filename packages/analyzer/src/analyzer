@@ -3,6 +3,7 @@
  * Licensed under the MIT License
  */
 
+import * as AnalyzerExport from "./analyzer-export"
 import * as Parser from "the/parser"
 import * as API from "./api"
 import * as Type, Var from "./type"
@@ -58,7 +59,7 @@ export obj AnalyzerFileArray {
 export obj AnalyzerFile {
   mut cwd: str
   mut analyzer: ref Analyzer
-  mut exports: Type.NamespaceMember[str]
+  mut exports: Type.NamespaceMember[]
   mut reader: Parser.Reader
   mut state: AnalyzerFileState
   mut tc: (ref Type.Type)[str]
@@ -223,34 +224,25 @@ export obj AnalyzerFile {
 
         namedSpecifier := specifier as Parser.ImportSpecifier
 
-        if !definiteImport.exports.has(namedSpecifier.imported.name) {
+        if !AnalyzerExport.has(ref definiteImport.exports, namedSpecifier.imported.name) {
           self.raise(errors.E1072(), namedSpecifier.imported.start, namedSpecifier.imported.end)
           continue
         }
 
-        exportItem := definiteImport.exports.get(namedSpecifier.imported.name)
+        mut exportItem := AnalyzerExport.get(ref definiteImport.exports, namedSpecifier.imported.name)
 
-        if exportItem.var != nil {
-          if self.vm.has(namedSpecifier.local.name) {
-            self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
-          }
-
-          exportVar := exportItem.var
-          self.vm.add(namedSpecifier.local.name, exportVar.t, exportVar.mutable)
+        if exportItem.var != nil && self.vm.has(namedSpecifier.local.name) {
+          self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
+        } elif exportItem.var != nil {
+          self.vm.add(namedSpecifier.local.name, exportItem.var.t, exportItem.var.mutable)
         }
 
-        if exportItem.t != nil {
-          exportType := exportItem.t
-
-          if self.tm.has(namedSpecifier.local.name) {
-            self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
-          }
-
-          if namedSpecifier.local.name != namedSpecifier.imported.name {
-            self.tm.createAlias(namedSpecifier.local.name, exportType)
-          } else {
-            self.tm.insert(exportType)
-          }
+        if exportItem.t != nil && self.tm.has(namedSpecifier.local.name) {
+          self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
+        } elif exportItem.t != nil && namedSpecifier.local.name != namedSpecifier.imported.name {
+          self.tm.createAlias(namedSpecifier.local.name, exportItem.t)
+        } elif exportItem.t != nil {
+          self.tm.insert(exportItem.t)
         }
       }
     } elif it.isObjectDeclaration() {
@@ -941,12 +933,13 @@ export obj AnalyzerFile {
         if !t.hasEnumerator(expression.name.name) {
           self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
         }
+        // todo here account for property also
         return t
       } elif t.isNamespace() {
         namespaceType := t.asNamespace()
 
-        if namespaceType.members.has(expression.name.name) {
-          member := namespaceType.members.get(expression.name.name)
+        if AnalyzerExport.has(ref namespaceType.members, expression.name.name) {
+          member := AnalyzerExport.get(ref namespaceType.members, expression.name.name)
 
           if member.var != nil {
             if withMutable && !member.var.mutable {
@@ -998,7 +991,11 @@ export obj AnalyzerFile {
       if expression.operator.t == .OpExcl {
         operandType := Type.unwrap(self.e(expression.operand))
 
-        if !Type.match(operandType, self.tm.get("bool")) && Type.match(operandType, self.tm.get("byte")) && !operandType.isNumber() {
+        if (
+          !Type.match(operandType, self.tm.get("bool")) &&
+          Type.match(operandType, self.tm.get("byte")) &&
+          !operandType.isNumber()
+        ) {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
         }
 
@@ -1140,16 +1137,23 @@ export obj AnalyzerFile {
     return result
   }
 
-  fn guard (mut self: ref Self, cb: () -> void) {
+  fn guard (mut self: ref Self, cb: () -> void) bool {
     initialErrorsLen := self.analyzer.errors.len
     cb()
+    failed := self.analyzer.errors.len != initialErrorsLen
 
-    if self.analyzer.errors.len != initialErrorsLen {
+    if failed {
       self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
     }
+
+    return failed
   }
 
-  fn guessType (mut self: ref Self, cb1: ((ref Type.Type)?) -> ref Type.Type, cb2: ((ref Type.Type)?) -> ref Type.Type) GuessTypeResult {
+  fn guessType (
+    mut self: ref Self,
+    cb1: ((ref Type.Type)?) -> ref Type.Type,
+    cb2: ((ref Type.Type)?) -> ref Type.Type
+  ) GuessTypeResult {
     initialErrorsLen := self.analyzer.errors.len
     mut targetType: (ref Type.Type)? = nil
     mut firstType := cb1(targetType)
@@ -1296,55 +1300,49 @@ export obj AnalyzerFile {
       }
 
       self.statement(statement.statement)
+      mut exportIdentifier := Parser.Identifier{}
 
       if statement.statement.isEnumDeclaration() {
         innerStatement := statement.statement.asEnumDeclaration()
-        name := innerStatement.name.name
-
-        if self.exports.has(name) {
-          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
-        } elif self.tm.has(name) {
-          self.exports.set(name, Type.NamespaceMember{t: self.tm.get(name)})
-        }
+        exportIdentifier = innerStatement.name
       } elif statement.statement.isFunctionDeclaration() {
         innerStatement := statement.statement.asFunctionDeclaration()
-        name := innerStatement.name.name
-
-        if self.exports.has(name) {
-          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
-        } elif self.vm.has(name) {
-          self.exports.set(name, Type.NamespaceMember{var: self.vm.get(name)})
-        }
+        exportIdentifier = innerStatement.name
       } elif statement.statement.isObjectDeclaration() {
         innerStatement := statement.statement.asObjectDeclaration()
-        name := innerStatement.name.name
-
-        if self.exports.has(name) {
-          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
-        } elif self.tm.has(name) {
-          self.exports.set(name, Type.NamespaceMember{t: self.tm.get(name)})
-        }
+        exportIdentifier = innerStatement.name
       } elif statement.statement.isTypeAliasDeclaration() {
         innerStatement := statement.statement.asTypeAliasDeclaration()
-        name := innerStatement.name.name
-
-        if self.exports.has(name) {
-          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
-        } elif self.tm.has(name) {
-          self.exports.set(name, Type.NamespaceMember{t: self.tm.get(name)})
-        }
+        exportIdentifier = innerStatement.name
       } elif statement.statement.isVariableDeclaration() {
         innerStatement := statement.statement.asVariableDeclaration()
-        name := innerStatement.name.name
-
-        if self.exports.has(name) {
-          self.raise(errors.E1067(name), innerStatement.name.start, innerStatement.name.end)
-        } elif self.vm.has(name) {
-          self.exports.set(name, Type.NamespaceMember{var: self.vm.get(name)})
-        }
+        exportIdentifier = innerStatement.name
       } else {
         self.raise(errors.E1066(), it.start, it.end)
+        return
       }
+
+      if AnalyzerExport.has(ref self.exports, exportIdentifier.name) {
+        self.raise(errors.E1067(exportIdentifier.name), exportIdentifier.start, exportIdentifier.end)
+        return
+      }
+
+      if !self.tm.has(exportIdentifier.name) && !self.vm.has(exportIdentifier.name) {
+        return
+      }
+
+      mut exportType: (ref Type.Type)?
+      mut exportVar: Var?
+
+      if self.tm.has(exportIdentifier.name) {
+        exportType = self.tm.get(exportIdentifier.name)
+      }
+
+      if self.vm.has(exportIdentifier.name) {
+        exportVar = self.vm.get(exportIdentifier.name)
+      }
+
+      self.exports.push(Type.NamespaceMember{name: exportIdentifier.name, t: exportType, var: exportVar})
     } elif it.isExportNamedDeclaration() {
       statement := it.asExportNamedDeclaration()
 
@@ -1368,29 +1366,35 @@ export obj AnalyzerFile {
         exportName = expression.name.name
       }
 
-      mut exportType: (ref Type.Type)?
+      if AnalyzerExport.has(ref self.exports, exportName) {
+        self.raise(errors.E1067(exportName), statement.expression.start, statement.expression.end)
+        return
+      }
 
-      self.guard(() -> void {
+      mut exportType: (ref Type.Type)?
+      mut exportVar: Var?
+
+      guardFailed := self.guard(() -> void {
         initialTC := ref self.tc // todo remove after v1
         exportType = Type.opt(self.t(parserType))
       })
 
-      if exportType != nil && self.exports.has(exportName) {
-        self.raise(errors.E1067(exportName), statement.expression.start, statement.expression.end)
-      } elif exportType != nil {
-        self.exports.set(exportName, Type.NamespaceMember{t: exportType})
-      } elif !statement.expression.isIdentifier() {
+      if guardFailed && !statement.expression.isIdentifier() {
         self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
-      } else {
+      } elif guardFailed {
         id := statement.expression.asIdentifier()
         self.e(statement.expression)
 
-        if self.vm.has(id.name) && self.exports.has(id.name) {
-          self.raise(errors.E1067(id.name), statement.expression.start, statement.expression.end)
-        } elif self.vm.has(id.name) {
-          self.exports.set(id.name, Type.NamespaceMember{var: self.vm.get(id.name)})
+        if self.vm.has(id.name) {
+          exportVar = self.vm.get(id.name)
         }
       }
+
+      if exportType == nil && exportVar == nil {
+        return
+      }
+
+      self.exports.push(Type.NamespaceMember{name: exportName, t: exportType, var: exportVar})
     } elif it.isExpression() {
       statement := it.asExpression()
       self.e(statement.expression)
@@ -1780,8 +1784,8 @@ export obj AnalyzerFile {
 
       leftNamespace := leftType.asNamespace()
 
-      if leftNamespace.members.has(t.name.name) {
-        member := leftNamespace.members.get(t.name.name)
+      if AnalyzerExport.has(ref leftNamespace.members, t.name.name) {
+        member := AnalyzerExport.get(ref leftNamespace.members, t.name.name)
 
         if member.t != nil {
           return member.t

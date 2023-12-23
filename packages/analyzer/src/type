@@ -325,6 +325,12 @@ export obj TypeParameter {
   variadic: bool
 }
 
+export obj NamespaceMember {
+  name: str
+  t: (ref Type)?
+  var: Var?
+}
+
 export obj AliasType {
   mut t: ref Type
 }
@@ -361,13 +367,8 @@ export obj MethodType {
   mut selfType: ref Type
 }
 
-export obj NamespaceMember {
-  t: (ref Type)?
-  var: Var?
-}
-
 export obj NamespaceType {
-  members: NamespaceMember[str]
+  members: NamespaceMember[]
 }
 
 export obj ObjectType {
