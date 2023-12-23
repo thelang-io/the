@@ -12,7 +12,7 @@ main {
   mut analyzer := Analyzer{}
 
   analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer})
-  mut file := analyzer.files.last
+  mut file := analyzer.files.last()
 
   mut f := Parser.parse("./api/globals")
   Parser.interconnect(ref f)
@@ -38,7 +38,7 @@ main {
   }
 
   analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer})
-  file = analyzer.files.last
+  file = analyzer.files.last()
 
   f = Parser.parse("./api/standard")
   Parser.interconnect(ref f)
@@ -72,7 +72,7 @@ main {
       stdTMDeclaration += "  " + stringifyType(item, 2, build: true) + os_EOL
     }
 
-    stdExports += "  exports.set(" + nameEscaped + ", Type.NamespaceMember{t: tm.get(" + nameEscaped + ")})" + os_EOL
+    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped + ", t: tm.get(" + nameEscaped + ")})" + os_EOL
   }
 
   loop i := 0; i < file.vm.items.len; i++ {
@@ -80,7 +80,7 @@ main {
     nameEscaped := "\"" + item.name + "\""
 
     stdVM += "  vm.add(\"" + item.name + "\", " + stringifyType(item.t, 2) + ", " + item.mutable.str() + ")" + os_EOL
-    stdExports += "  exports.set(" + nameEscaped + ", Type.NamespaceMember{var: vm.get(" + nameEscaped + ")})" + os_EOL
+    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped + ", var: vm.get(" + nameEscaped + ")})" + os_EOL
   }
 
   mut content := "import * as Type from \"./type\"" + os_EOL
@@ -104,7 +104,7 @@ main {
   content += stdVM
   content += "}" + os_EOL
   content += os_EOL
-  content += "export fn AnalyzerFile_stdExports (mut exports: ref Type.NamespaceMember[str], mut tm: ref TypeMap, mut vm: ref VarMap) {" + os_EOL
+  content += "export fn AnalyzerFile_stdExports (mut exports: ref Type.NamespaceMember[], mut tm: ref TypeMap, mut vm: ref VarMap) {" + os_EOL
   content += stdExports
   content += "}" + os_EOL
 
