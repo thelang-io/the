@@ -1,0 +1,7 @@
+import * as NS from "./test/fixtures/export-var"
+
+main {
+  NS.TestConstVar = 2
+}
+===== err =====
+todo

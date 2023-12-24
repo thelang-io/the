@@ -18,7 +18,7 @@ export fn get (mut exports: ref Type.NamespaceMember[], name: str) ref Type.Name
     }
   }
 
-  throw error_NewError("Export you are looking for doesn't exists")
+  throw error_NewError("Export you are looking for doesn't exist")
 }
 
 export fn has (exports: ref Type.NamespaceMember[], name: str) bool {

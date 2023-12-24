@@ -1,0 +1,9 @@
+main {
+  a := .Red
+}
+===== err =====
+E1020.txt:2:8: AnalyzeError: E1020 - Unable to deduce type of enumeration member
+1 | main {
+2 |   a := .Red
+  |        ~~~~
+3 | }

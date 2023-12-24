@@ -1,0 +1,11 @@
+fn test (a: int, b: int = 20) {}
+
+main {
+  test(a: 10, 30)
+}
+===== err =====
+E1034.txt:4:15: AnalyzeError: E1034 - Named arguments cannot be followed by regular arguments
+3 | main {
+4 |   test(a: 10, 30)
+  |               ~~
+5 | }

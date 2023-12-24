@@ -1,0 +1,9 @@
+main {
+  import Animal from "./test/fixtures/object-animal"
+}
+===== err =====
+E1043-import.txt:2:3: AnalyzeError: E1043 - Import declaration can only be used at the top level
+1 | main {
+2 |   import Animal from "./test/fixtures/object-animal"
+  |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3 | }

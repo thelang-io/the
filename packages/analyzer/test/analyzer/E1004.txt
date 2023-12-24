@@ -1,0 +1,5 @@
+const a := nil
+===== err =====
+E1004.txt:1:12: AnalyzeError: E1004 - Unable to deduce type of `nil`
+1 | const a := nil
+  |            ~~~

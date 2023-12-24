@@ -93,12 +93,14 @@ export obj AnalyzerFile {
   // todo test forward declaration and hoisting
   // todo test semicolon
   // todo test empty statement
+  // todo test scope variables (redefinition)
+  // todo test passing reference to assignment/binary/etc
 
   fn declare (mut self: ref Self, it: ref Parser.Statement) {
     if it.isEnumDeclaration() {
       statement := it.asEnumDeclaration()
 
-      if self.tm.has(statement.name.name) {
+      if self.entityExists(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
@@ -114,12 +116,6 @@ export obj AnalyzerFile {
     } elif it.isExportDeclaration() {
       statement := it.asExportDeclaration()
       self.declare(ref statement.statement)
-    } elif it.isFunctionDeclaration() {
-      statement := it.asFunctionDeclaration()
-
-      if self.vm.has(statement.name.name) {
-        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
-      }
     } elif it.isImportDeclaration() {
       statement := it.asImportDeclaration()
 
@@ -227,19 +223,18 @@ export obj AnalyzerFile {
         if !AnalyzerExport.has(ref definiteImport.exports, namedSpecifier.imported.name) {
           self.raise(errors.E1072(), namedSpecifier.imported.start, namedSpecifier.imported.end)
           continue
+        } elif self.entityExists(namedSpecifier.local.name) {
+          self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
+          continue
         }
 
         mut exportItem := AnalyzerExport.get(ref definiteImport.exports, namedSpecifier.imported.name)
 
-        if exportItem.var != nil && self.vm.has(namedSpecifier.local.name) {
-          self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
-        } elif exportItem.var != nil {
+        if exportItem.var != nil {
           self.vm.add(namedSpecifier.local.name, exportItem.var.t, exportItem.var.mutable)
         }
 
-        if exportItem.t != nil && self.tm.has(namedSpecifier.local.name) {
-          self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
-        } elif exportItem.t != nil && namedSpecifier.local.name != namedSpecifier.imported.name {
+        if exportItem.t != nil && namedSpecifier.local.name != namedSpecifier.imported.name {
           self.tm.createAlias(namedSpecifier.local.name, exportItem.t)
         } elif exportItem.t != nil {
           self.tm.insert(exportItem.t)
@@ -248,7 +243,7 @@ export obj AnalyzerFile {
     } elif it.isObjectDeclaration() {
       statement := it.asObjectDeclaration()
 
-      if self.tm.has(statement.name.name) {
+      if self.entityExists(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
@@ -262,6 +257,10 @@ export obj AnalyzerFile {
       self.define(ref statement.statement)
     } elif it.isFunctionDeclaration() {
       statement := it.asFunctionDeclaration()
+
+      if self.entityExists(statement.name.name) {
+        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      }
 
       self.vm.increase()
       parameters := self.functionParametersLight(statement.parameters)
@@ -292,7 +291,7 @@ export obj AnalyzerFile {
       selfType := self.state.selfType as ref Type.Type
 
       if selfType.has(statement.name.name) {
-        self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
+        self.raise(errors.E1076(statement.name.name), statement.name.start, statement.name.end)
       }
 
       self.vm.increase()
@@ -344,7 +343,7 @@ export obj AnalyzerFile {
     } elif it.isTypeAliasDeclaration() {
       statement := it.asTypeAliasDeclaration()
 
-      if self.tm.has(statement.name.name) {
+      if self.entityExists(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
@@ -445,7 +444,7 @@ export obj AnalyzerFile {
       }
 
       self.raise(errors.E1006(t.toString()), it.start, it.end)
-      return self.tm.createOptional(self.tm.get("any"))
+      return targetType as ref Type.Type
     } elif it.isStringLiteral() {
       return self.tm.get("str")
     } elif it.isArray() {
@@ -852,7 +851,7 @@ export obj AnalyzerFile {
         if keyType == nil {
           keyType = elementKeyType
         } elif !Type.similarTo(elementKeyType, keyType) && keyTypeForced {
-          self.raise(errors.E1005(keyType.toString(), elementKeyType.toString()), element.key.start, element.key.end)
+          self.raise(errors.E1005(elementKeyType.toString(), keyType.toString()), element.key.start, element.key.end)
         } elif !Type.similarTo(elementKeyType, keyType) {
           keyType = self.tm.unionAdd(keyType, elementKeyType)
         }
@@ -860,7 +859,7 @@ export obj AnalyzerFile {
         if valueType == nil {
           valueType = elementValueType
         } elif !Type.similarTo(elementValueType, valueType) && valueTypeForced {
-          self.raise(errors.E1005(valueType.toString(), elementValueType.toString()), element.value.start, element.value.end)
+          self.raise(errors.E1005(elementValueType.toString(), valueType.toString()), element.value.start, element.value.end)
         } elif !Type.similarTo(elementValueType, valueType) {
           valueType = self.tm.unionAdd(valueType, elementValueType)
         }
@@ -992,7 +991,7 @@ export obj AnalyzerFile {
 
         if (
           !Type.match(operandType, self.tm.get("bool")) &&
-          Type.match(operandType, self.tm.get("byte")) &&
+          !Type.match(operandType, self.tm.get("byte")) &&
           !operandType.isNumber()
         ) {
           self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
@@ -1050,6 +1049,10 @@ export obj AnalyzerFile {
     }
 
     return result
+  }
+
+  fn entityExists (self: ref Self, name: str) bool {
+    return self.tm.has(name) || self.vm.has(name)
   }
 
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
@@ -1326,7 +1329,7 @@ export obj AnalyzerFile {
         return
       }
 
-      if !self.tm.has(exportIdentifier.name) && !self.vm.has(exportIdentifier.name) {
+      if !self.entityExists(exportIdentifier.name) {
         return
       }
 
@@ -1602,7 +1605,7 @@ export obj AnalyzerFile {
 
       if self.state.returnType != nil {
         if !Type.similarTo(returnType, self.state.returnType) {
-          self.raise(errors.E1005(self.state.returnType.toString(), returnType.toString()), it.start, it.end)
+          self.raise(errors.E1005(returnType.toString(), self.state.returnType.toString()), it.start, it.end)
         }
       }
     } elif it.isThrow() {
@@ -1657,7 +1660,7 @@ export obj AnalyzerFile {
     } elif it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
 
-      if self.vm.has(statement.name.name) {
+      if self.entityExists(statement.name.name) {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 

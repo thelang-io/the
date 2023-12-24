@@ -1,0 +1,7 @@
+import TestFn from "./test/fixtures/export-fn"
+import TestFn from "./test/fixtures/export-fn"
+===== err =====
+E1000-import-specifier-variable.txt:2:8: AnalyzeError: E1000 - Redefinition of 'TestFn'
+1 | import TestFn from "./test/fixtures/export-fn"
+2 | import TestFn from "./test/fixtures/export-fn"
+  |        ~~~~~~

@@ -1,0 +1,11 @@
+fn test (a: int) {}
+
+main {
+  test(10, 20)
+}
+===== err =====
+E1032-extra.txt:4:12: AnalyzeError: E1032 - Extraneous argument passed
+3 | main {
+4 |   test(10, 20)
+  |            ~~
+5 | }

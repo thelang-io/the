@@ -1,0 +1,5 @@
+import SomeObject from "./test/fixtures/object-animal"
+===== err =====
+E1072.txt:1:8: AnalyzeError: E1072 - Imported object is not exported
+1 | import SomeObject from "./test/fixtures/object-animal"
+  |        ~~~~~~~~~~

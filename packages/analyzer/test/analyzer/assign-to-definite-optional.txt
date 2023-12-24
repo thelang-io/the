@@ -1,4 +1,3 @@
-// todo shouldn't be possible to pass "a" as "b" here when a=2 is commented
 fn testA (a: int?) {}
 fn testB (b: int) {}
 

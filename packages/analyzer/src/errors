@@ -80,7 +80,7 @@ export fn E1018 (t: str) str {
 }
 
 export fn E1019 (consequentType: str, alternateType: str) str {
-  return "E1019 - Incompatible consequent `" + consequentType + "` type and alternate `" + alternateType + "` type"
+  return "E1019 - Incompatible consequent `" + consequentType + "` and alternate `" + alternateType + "` types"
 }
 
 export fn E1020 () str {
@@ -132,7 +132,7 @@ export fn E1031 (t: str) str {
 }
 
 export fn E1032 (name: str? = nil) str {
-  return "E1032 - Extraneous argument " + (name == nil ? "" : " '" + name + "' ") + "passed"
+  return "E1032 - Extraneous argument" + (name == nil ? " " : " '" + name + "' ") + "passed"
 }
 
 export fn E1033 (name: str) str {
@@ -282,7 +282,7 @@ export fn E1068 () str {
 }
 
 export fn E1069 () str {
-  return "E1069 - await expression can only be used within async functions and main declaration"
+  return "E1069 - Await expression can only be used within async functions and main declaration"
 }
 
 export fn E1070 () str {
@@ -307,4 +307,8 @@ export fn E1074 (name: str) str {
 
 export fn E1075 (file: str) str {
   return "E1075 - Importing '" + file + "' will cause circular import"
+}
+
+export fn E1076 (method: str) str {
+  return "E1076 - Duplicate declaration of method '" + method + "'"
 }

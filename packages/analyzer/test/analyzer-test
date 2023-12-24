@@ -38,7 +38,11 @@ export fn TEST_Analyzer_analyze () {
     mut errorsWithPath: str[]
 
     loop i := 0; i < errors.len; i++ {
-      errorsWithPath.push(errors[i].replace("anonymous:", file + ":"))
+      errorText := errors[i]
+        .replace("anonymous:", file + ":")
+        .replace(process_cwd(), ".")
+
+      errorsWithPath.push(errorText)
     }
 
     if !result.err.empty || errorsWithPath.len != 0 {
