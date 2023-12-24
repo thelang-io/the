@@ -63,8 +63,6 @@ export obj TypeMap {
     mut strType := self.items.last()
     self.items.push(Type.Type{name: "void", body: Type.ObjectType{}})
     mut voidType := self.items.last()
-    self.items.push(Type.Type{name: "Method", body: Type.ObjectType{}})
-    mut methodType := self.items.last()
 
     bufferType.properties.push(Type.TypeProperty{name: "empty", t: self.get("bool"), mutable: false, builtin: true})
     bufferType.properties.push(Type.TypeProperty{name: "len", t: self.get("int"), mutable: false, builtin: true})
@@ -132,6 +130,7 @@ export obj TypeMap {
     ], self.get("bool"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
     strType.properties.push(Type.TypeProperty{name: "find", t: self.createMethod(false, [
       Type.TypeParameter{name: "search", t: self.get("str"), mutable: false, required: true, variadic: false}
+      Type.TypeParameter{name: "position", t: self.get("int"), mutable: false, required: false, variadic: false}
     ], self.get("int"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
     strType.properties.push(Type.TypeProperty{name: "lines", t: self.createMethod(false, [
       Type.TypeParameter{name: "keepLineBreaks", t: self.get("bool"), mutable: false, required: false, variadic: false}
@@ -182,7 +181,6 @@ export obj TypeMap {
     strType.properties.push(Type.TypeProperty{name: "trim", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
     strType.properties.push(Type.TypeProperty{name: "trimEnd", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
     strType.properties.push(Type.TypeProperty{name: "trimStart", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
-    methodType.properties.push(Type.TypeProperty{name: "name", t: self.get("str"), mutable: false, builtin: true})
   }
 
   fn createAlias (mut self: ref Self, name: str, t: ref Type.Type) ref Type.Type {

@@ -257,8 +257,9 @@ export obj str {
    * Searches for substring and returns its position, otherwise `-1` is returned.
    *
    * @param search - Substring to search for.
+   * @param position - Where to start the search.
    */
-  fn find (self: ref Self, search: Self) int
+  fn find (self: ref Self, search: Self, position := 0) int
 
   /**
    * Splits string by lines. Delimited by any of: `\r`, `\n`, `\r\n`.

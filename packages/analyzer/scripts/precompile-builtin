@@ -8,7 +8,7 @@ import Analyzer, AnalyzerFile from "../src/analyzer"
 import Type, TypeParameter, TypeProperty from "../src/type"
 import stringifyType from "./stringify-type"
 
-const CONSTRUCTORS := ["Array", "Enum", "Function", "Map", "Object", "Optional", "Reference", "Union"]
+const CONSTRUCTORS := ["Array", "Enum", "Function", "Map", "Method", "Object", "Optional", "Reference", "Union"]
 const IGNORED := ["ArrayElement", "MapKey", "MapValue"]
 
 fn lcfirst (s: str) str {
