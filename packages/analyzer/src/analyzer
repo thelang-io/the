@@ -929,11 +929,27 @@ export obj AnalyzerFile {
       expression := it.asPropertyAccess()
       t := Type.unwrap(self.e(expression.expression, withMutable: withMutable || withMutableNext))
 
-      if t.isEnum() {
+      if t.has(expression.name.name) {
+        property := t.get(expression.name.name)
+
+        if withMutable && !property.mutable {
+          self.raise(errors.E1012(expression.name.name), it.start, it.end)
+        }
+
+        if targetType != nil {
+          if Type.match(targetType, property.t) {
+            return property.t
+          }
+        } elif withoutTypeCast {
+          return property.t
+        }
+
+        code := Parser.stringifyExpression(it)
+        return self.tc.has(code) ? self.tc.get(code) : property.t
+      } elif t.isEnum() {
         if !t.hasEnumerator(expression.name.name) {
           self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
         }
-        // todo here account for property also
         return t
       } elif t.isNamespace() {
         namespaceType := t.asNamespace()
@@ -961,27 +977,10 @@ export obj AnalyzerFile {
 
         self.raise(errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name), expression.name.start, expression.name.end)
         return targetType == nil ? self.tm.get("any") : targetType
-      } elif !t.has(expression.name.name) {
-        self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
-        return targetType == nil ? self.tm.get("any") : targetType
       }
 
-      property := t.get(expression.name.name)
-
-      if withMutable && !property.mutable {
-        self.raise(errors.E1012(expression.name.name), it.start, it.end)
-      }
-
-      if targetType != nil {
-        if Type.match(targetType, property.t) {
-          return property.t
-        }
-      } elif withoutTypeCast {
-        return property.t
-      }
-
-      code := Parser.stringifyExpression(it)
-      return self.tc.has(code) ? self.tc.get(code) : property.t
+      self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
+      return targetType == nil ? self.tm.get("any") : targetType
     } elif it.isReference() {
       expression := it.asReference()
       return self.tm.createReference(self.e(expression.expression, withMutable: withMutable || withMutableNext))
