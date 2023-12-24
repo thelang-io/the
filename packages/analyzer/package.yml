@@ -8,3 +8,7 @@ packages:
   the/json: 0.3.0
   the/parser: 0.4.15
   the/testing: 0.3.2
+
+scripts:
+  update-parser-tests: the run scripts/precompile-api
+  update-tokenizer-tests: the run scripts/precompile-builtin

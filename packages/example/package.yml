@@ -1,0 +1,5 @@
+name: the/example
+version: 1.0.0
+description: Example package used by Analyzer tests
+license: MIT
+main: src/main
