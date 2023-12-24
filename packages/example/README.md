@@ -15,7 +15,7 @@ import example from "the/example"
 
 ## API
 
-### `example (text: str) void`
+### `example (text: str) str`
 Returns text passed as parameter.
 
 **Parameters**

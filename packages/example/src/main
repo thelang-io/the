@@ -3,6 +3,6 @@
  * Licensed under the MIT License
  */
 
-export fn example (text: str) {
+export fn example (text: str) str {
   return text
 }
