@@ -511,7 +511,11 @@ export obj AnalyzerFile {
       rightType := Type.unwrap(guessTypeResult.second, withReference: false)
 
       if !self.operands(expression.operator, leftType, rightType) {
-        self.raise(errors.E1027(expression.operator.val, leftType.toString()), expression.operator.start, expression.operator.end)
+        self.raise(
+          errors.E1027(expression.operator.val, leftType.toString()),
+          expression.operator.start,
+          expression.operator.end
+        )
       }
 
       if !expression.left.isAccess() {
@@ -579,7 +583,11 @@ export obj AnalyzerFile {
       rightType := guessTypeResult.second
 
       if !self.operands(expression.operator, leftType, rightType) {
-        self.raise(errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()), expression.operator.start, expression.operator.end)
+        self.raise(
+          errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()),
+          expression.operator.start,
+          expression.operator.end
+        )
       }
 
       if (
@@ -695,7 +703,11 @@ export obj AnalyzerFile {
         t := Type.unwrap(self.e(argument.expression, Type.opt(parameterType)), withReference: false)
 
         if !Type.similarTo(t, parameterType) {
-          self.raise(errors.E1035(t.toString(), parameterType.toString()), argument.expression.start, argument.expression.end)
+          self.raise(
+            errors.E1035(t.toString(), parameterType.toString()),
+            argument.expression.start,
+            argument.expression.end
+          )
         }
 
         if !isVariadic {
@@ -766,7 +778,11 @@ export obj AnalyzerFile {
       if consequentType.isNumber() && alternateType.isNumber() {
         return Type.largest(consequentType, alternateType)
       } elif !Type.similarTo(consequentType, alternateType) && !Type.similarTo(alternateType, consequentType) {
-        self.raise(errors.E1019(consequentType.toString(), alternateType.toString()), expression.consequent.start, expression.alternate.end)
+        self.raise(
+          errors.E1019(consequentType.toString(), alternateType.toString()),
+          expression.consequent.start,
+          expression.alternate.end
+        )
       }
 
       return Type.similarTo(alternateType, consequentType) ? consequentType : alternateType
@@ -807,7 +823,11 @@ export obj AnalyzerFile {
       t := self.t(expression.t)
 
       if !expressionType.canBe(t) {
-        self.raise(errors.E1009(expressionType.toString(), t.toString()), expression.expression.start, expression.expression.end)
+        self.raise(errors.E1009(
+          expressionType.toString(), t.toString()),
+          expression.expression.start,
+          expression.expression.end
+        )
       }
 
       return self.tm.get("bool")
@@ -859,7 +879,11 @@ export obj AnalyzerFile {
         if valueType == nil {
           valueType = elementValueType
         } elif !Type.similarTo(elementValueType, valueType) && valueTypeForced {
-          self.raise(errors.E1005(elementValueType.toString(), valueType.toString()), element.value.start, element.value.end)
+          self.raise(
+            errors.E1005(elementValueType.toString(), valueType.toString()),
+            element.value.start,
+            element.value.end
+          )
         } elif !Type.similarTo(elementValueType, valueType) {
           valueType = self.tm.unionAdd(valueType, elementValueType)
         }
@@ -974,7 +998,11 @@ export obj AnalyzerFile {
           }
         }
 
-        self.raise(errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name), expression.name.start, expression.name.end)
+        self.raise(
+          errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name),
+          expression.name.start,
+          expression.name.end
+        )
         return targetType == nil ? self.tm.get("any") : targetType
       }
 
@@ -994,7 +1022,11 @@ export obj AnalyzerFile {
           !Type.match(operandType, self.tm.get("byte")) &&
           !operandType.isNumber()
         ) {
-          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+          self.raise(
+            errors.E1025(expression.operator.val, operandType.toString()),
+            expression.operator.start,
+            expression.operator.end
+          )
         }
 
         return self.tm.get("bool")
@@ -1004,7 +1036,11 @@ export obj AnalyzerFile {
         if !expression.operand.isAccess() {
           self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
         } elif !operandType.isNumber() {
-          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+          self.raise(
+            errors.E1025(expression.operator.val, operandType.toString()),
+            expression.operator.start,
+            expression.operator.end
+          )
         }
 
         return operandType
@@ -1012,7 +1048,11 @@ export obj AnalyzerFile {
         operandType := Type.unwrap(self.e(expression.operand, targetType))
 
         if !operandType.isSignedInt() && !operandType.isFloat() {
-          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+          self.raise(
+            errors.E1025(expression.operator.val, operandType.toString()),
+            expression.operator.start,
+            expression.operator.end
+          )
         }
 
         return operandType
@@ -1020,7 +1060,11 @@ export obj AnalyzerFile {
         operandType := Type.unwrap(self.e(expression.operand, targetType))
 
         if !operandType.isNumber() {
-          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+          self.raise(
+            errors.E1025(expression.operator.val, operandType.toString()),
+            expression.operator.start,
+            expression.operator.end
+          )
         }
 
         return operandType
@@ -1028,7 +1072,11 @@ export obj AnalyzerFile {
         operandType := Type.unwrap(self.e(expression.operand, targetType))
 
         if !operandType.isInt() {
-          self.raise(errors.E1025(expression.operator.val, operandType.toString()), expression.operator.start, expression.operator.end)
+          self.raise(
+            errors.E1025(expression.operator.val, operandType.toString()),
+            expression.operator.start,
+            expression.operator.end
+          )
         }
 
         return operandType
@@ -1090,7 +1138,11 @@ export obj AnalyzerFile {
         initializerType := self.e(parameter.initializer, Type.opt(t))
 
         if !Type.similarTo(initializerType, t) {
-          self.raise(errors.E1005(initializerType.toString(), t.toString()), parameter.initializer.start, parameter.initializer.end)
+          self.raise(
+            errors.E1005(initializerType.toString(), t.toString()),
+            parameter.initializer.start,
+            parameter.initializer.end
+          )
         }
       }
 
@@ -1681,7 +1733,11 @@ export obj AnalyzerFile {
         initializerType := self.e(statement.initializer, Type.opt(varType), withMutable: statement.mutable)
 
         if !Type.similarTo(initializerType, varType) {
-          self.raise(errors.E1005(initializerType.toString(), varType.toString()), statement.initializer.start, statement.initializer.end)
+          self.raise(
+            errors.E1005(initializerType.toString(), varType.toString()),
+            statement.initializer.start,
+            statement.initializer.end
+          )
         }
       }
 

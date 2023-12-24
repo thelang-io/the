@@ -66,13 +66,15 @@ main {
 
       loop j := 0; j < item.properties.len; j++ {
         property := item.properties[j]
-        stdTMDefinition += "  " + typeName + ".properties.push(" + stringifyTypeProperty(property, 2, "tm") + ")" + os_EOL
+        stdTMDefinition += "  " + typeName + ".properties.push(" +
+          stringifyTypeProperty(property, 2, "tm") + ")" + os_EOL
       }
     } else {
       stdTMDeclaration += "  " + stringifyType(item, 2, build: true) + os_EOL
     }
 
-    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped + ", t: tm.get(" + nameEscaped + ")})" + os_EOL
+    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped +
+      ", t: tm.get(" + nameEscaped + ")})" + os_EOL
   }
 
   loop i := 0; i < file.vm.items.len; i++ {
@@ -80,7 +82,8 @@ main {
     nameEscaped := "\"" + item.name + "\""
 
     stdVM += "  vm.add(\"" + item.name + "\", " + stringifyType(item.t, 2) + ", " + item.mutable.str() + ")" + os_EOL
-    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped + ", var: vm.get(" + nameEscaped + ")})" + os_EOL
+    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped +
+      ", var: vm.get(" + nameEscaped + ")})" + os_EOL
   }
 
   mut content := "import * as Type from \"./type\"" + os_EOL
@@ -104,7 +107,8 @@ main {
   content += stdVM
   content += "}" + os_EOL
   content += os_EOL
-  content += "export fn AnalyzerFile_stdExports (mut exports: ref Type.NamespaceMember[], mut tm: ref TypeMap, mut vm: ref VarMap) {" + os_EOL
+  content += "export fn AnalyzerFile_stdExports (mut exports: ref Type.NamespaceMember[], " +
+    "mut tm: ref TypeMap, mut vm: ref VarMap) {" + os_EOL
   content += stdExports
   content += "}" + os_EOL
 
