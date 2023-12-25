@@ -4,4 +4,8 @@ main {
   NS.TestConstVar = 2
 }
 ===== err =====
-todo
+E1011-property-access-expression-namespace.txt:4:3: AnalyzeError: E1011 - Cannot assign to immutable variable 'TestConstVar'
+3 | main {
+4 |   NS.TestConstVar = 2
+  |   ~~~~~~~~~~~~~~~
+5 | }

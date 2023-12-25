@@ -66,6 +66,12 @@ export obj AnalyzerFile {
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
 
+  // todo test forward declaration and hoisting
+  // todo test semicolon
+  // todo test empty statement
+  // todo test scope variables (redefinition)
+  // todo test passing reference to assignment/binary/etc
+
   fn analyze (mut self: ref Self, items: ref Parser.Statement[]) {
     len := items.len
 
@@ -89,12 +95,6 @@ export obj AnalyzerFile {
       }
     }
   }
-
-  // todo test forward declaration and hoisting
-  // todo test semicolon
-  // todo test empty statement
-  // todo test scope variables (redefinition)
-  // todo test passing reference to assignment/binary/etc
 
   fn declare (mut self: ref Self, it: ref Parser.Statement) {
     if it.isEnumDeclaration() {
@@ -214,7 +214,8 @@ export obj AnalyzerFile {
 
         if specifier is Parser.ImportNamespaceSpecifier {
           namespaceSpecifier := specifier
-          self.tm.createNamespace(namespaceSpecifier.name.name, definiteImport.exports)
+          t := self.tm.createNamespace(namespaceSpecifier.name.name, definiteImport.exports)
+          self.vm.add(namespaceSpecifier.name.name, t, true)
           continue
         }
 

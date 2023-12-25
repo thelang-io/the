@@ -1,7 +1,11 @@
 import * as NS from "./test/fixtures/export-var"
 
 main {
-  a := NS.TestConstVar
+  a := NS.TestConstVar2
 }
 ===== err =====
-todo
+E1073.txt:4:11: AnalyzeError: E1073 - Namespace 'NS' has no exported member variable 'TestConstVar2'
+3 | main {
+4 |   a := NS.TestConstVar2
+  |           ~~~~~~~~~~~~~
+5 | }
