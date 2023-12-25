@@ -1,0 +1,5 @@
+const a: str[void]
+===== err =====
+E1063-map-type-key.txt:1:14: AnalyzeError: E1063 - Type `void` can only be used as a standalone type
+1 | const a: str[void]
+  |              ~~~~

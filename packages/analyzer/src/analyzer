@@ -334,7 +334,16 @@ export obj AnalyzerFile {
         self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
       }
 
-      t := statement.t == nil ? self.e(statement.initializer as Parser.Expression) : self.t(statement.t)
+      mut t := self.tm.get("any")
+
+      if statement.t != nil {
+        statementType := statement.t
+
+        self.guard(() -> void {
+          initialTC := ref self.tc // todo remove after v1
+          t = self.t(statementType)
+        })
+      }
 
       selfType.properties.push(Type.TypeProperty{
         name: statement.name.name,
@@ -1788,6 +1797,8 @@ export obj AnalyzerFile {
         if parameter.name != nil {
           if parameterNames.contains(parameter.name.name) {
             self.raise(errors.E1054(parameter.name.name), parameter.name.start, parameter.name.end)
+          } else {
+            parameterNames.push(parameter.name.name)
           }
         }
 
@@ -1827,7 +1838,9 @@ export obj AnalyzerFile {
 
       if Type.match(keyType, self.tm.get("void")) {
         self.raise(errors.E1063(), t.keyType.start, t.keyType.end)
-      } elif Type.match(valueType, self.tm.get("void")) {
+      }
+
+      if Type.match(valueType, self.tm.get("void")) {
         self.raise(errors.E1063(), t.valueType.start, t.valueType.end)
       }
 
@@ -1837,7 +1850,7 @@ export obj AnalyzerFile {
       leftType := self.t(t.t)
 
       if !leftType.isNamespace() {
-        self.raise(errors.E1022(leftType.toString()), t.name.start, t.name.end)
+        self.raise(errors.E1022(leftType.toString()), t.t.start, t.t.end)
         return self.tm.get("any")
       }
 

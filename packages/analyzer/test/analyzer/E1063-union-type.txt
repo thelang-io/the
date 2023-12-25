@@ -1,0 +1,5 @@
+const a: void | str
+===== err =====
+E1063-union-type.txt:1:10: AnalyzeError: E1063 - Type `void` can only be used as a standalone type
+1 | const a: void | str
+  |          ~~~~

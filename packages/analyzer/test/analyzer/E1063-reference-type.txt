@@ -1,0 +1,9 @@
+const a: ref void
+===== err =====
+E1063-reference-type.txt:1:14: AnalyzeError: E1063 - Type `void` can only be used as a standalone type
+1 | const a: ref void
+  |              ~~~~
+
+E1063-reference-type.txt:1:7: AnalyzeError: E1040 - Variable 'a' of type `ref void` is missing initializer
+1 | const a: ref void
+  |       ^
