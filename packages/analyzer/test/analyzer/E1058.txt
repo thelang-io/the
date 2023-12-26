@@ -1,0 +1,6 @@
+main {
+  loop throw NewError("");; {
+  }
+}
+===== err =====
+todo

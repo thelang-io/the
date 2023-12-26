@@ -1,0 +1,6 @@
+main {
+  pay := (amount: int, amount: str) -> void {
+  }
+}
+===== err =====
+todo

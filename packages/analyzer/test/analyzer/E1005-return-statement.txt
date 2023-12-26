@@ -1,0 +1,5 @@
+fn test () int {
+  return 1.23
+}
+===== err =====
+todo

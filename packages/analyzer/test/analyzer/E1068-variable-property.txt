@@ -1,0 +1,7 @@
+import Animal from "./test/fixtures/object-animal"
+
+mut test := Animal{}
+
+export test.name
+===== err =====
+todo

@@ -1,0 +1,6 @@
+obj Test {
+  fn a (self: ref Self) int {
+  }
+}
+===== err =====
+todo

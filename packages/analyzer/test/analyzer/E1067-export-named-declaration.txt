@@ -1,0 +1,5 @@
+fn Test () {}
+export Test
+export Test
+===== err =====
+todo

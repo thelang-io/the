@@ -1,0 +1,4 @@
+fn test (a: void) {
+}
+===== err =====
+todo

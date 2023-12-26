@@ -1,0 +1,8 @@
+mut a := "test"
+if a == "string" {
+  a = "2"
+} else {
+  a = "3"
+}
+===== err =====
+todo

@@ -1,0 +1,4 @@
+export fn Test () {}
+export obj Test { mut a: int }
+===== err =====
+todo

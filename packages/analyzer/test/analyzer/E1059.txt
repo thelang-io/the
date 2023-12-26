@@ -1,0 +1,6 @@
+main {
+  loop mut i := 0; i < 10; i++ {
+  }
+}
+===== err =====
+todo

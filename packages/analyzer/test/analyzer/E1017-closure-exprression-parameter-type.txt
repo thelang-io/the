@@ -1,0 +1,6 @@
+main {
+  test := (a: void) -> void {
+  }
+}
+===== err =====
+todo

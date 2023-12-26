@@ -1,0 +1,5 @@
+fn test () {
+  continue
+}
+===== err =====
+todo

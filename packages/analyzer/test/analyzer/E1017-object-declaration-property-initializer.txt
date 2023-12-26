@@ -1,0 +1,7 @@
+fn test () {}
+
+obj Invoice {
+  pay := test()
+}
+===== err =====
+todo

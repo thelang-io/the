@@ -1,0 +1,7 @@
+fn test () {}
+
+main {
+  export test
+}
+===== err =====
+todo

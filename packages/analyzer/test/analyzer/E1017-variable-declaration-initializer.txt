@@ -1,0 +1,7 @@
+fn test () {}
+
+main {
+  pay := test()
+}
+===== err =====
+todo

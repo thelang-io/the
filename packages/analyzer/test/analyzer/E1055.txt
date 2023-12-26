@@ -1,0 +1,7 @@
+main {
+  try {
+  } catch mut err: Error {
+  }
+}
+===== err =====
+todo

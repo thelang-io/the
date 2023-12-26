@@ -1,0 +1,9 @@
+fn voidTest () {
+}
+
+main {
+  test := (a := voidTest()) -> void {
+  }
+}
+===== err =====
+todo

@@ -1,0 +1,4 @@
+fn test (a: int... = []) {
+}
+===== err =====
+todo

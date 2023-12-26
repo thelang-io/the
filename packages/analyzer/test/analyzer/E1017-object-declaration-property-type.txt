@@ -1,0 +1,5 @@
+obj Invoice {
+  pay: void
+}
+===== err =====
+todo

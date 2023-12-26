@@ -1757,7 +1757,7 @@ export obj AnalyzerFile {
 
       self.vm.add(statement.name.name, varType, statement.mutable || self.state.loopInit)
 
-      if statement.constant && it.hasParent() && it.parent() {
+      if statement.constant && it.hasParent() {
         parent := it.parent()
 
         if !parent.isExportDeclaration() {

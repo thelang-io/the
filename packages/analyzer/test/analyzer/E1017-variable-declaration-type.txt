@@ -1,0 +1,5 @@
+main {
+  pay: void
+}
+===== err =====
+todo

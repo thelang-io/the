@@ -1,0 +1,8 @@
+enum Color {
+  Red,
+  Green,
+  Blue,
+  Red,
+}
+===== err =====
+todo

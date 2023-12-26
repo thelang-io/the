@@ -278,7 +278,7 @@ export fn E1067 (name: str) str {
 }
 
 export fn E1068 () str {
-  return "E1068 - Named export allows exporting only identifiers and property access"
+  return "E1068 - Named export allows exporting only identifiers and properties"
 }
 
 export fn E1069 () str {

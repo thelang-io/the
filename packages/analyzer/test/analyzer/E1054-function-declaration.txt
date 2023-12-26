@@ -1,0 +1,4 @@
+fn pay (amount: int, amount: str) void {
+}
+===== err =====
+todo
