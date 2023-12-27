@@ -1,0 +1,7 @@
+main {
+  mut v: int?
+
+  if v != nil {
+    a: int = v
+  }
+}

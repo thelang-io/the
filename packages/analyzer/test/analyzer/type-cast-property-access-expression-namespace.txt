@@ -1,0 +1,7 @@
+import * as NS from "./test/fixtures/export-var"
+
+main {
+  if NS.TestOptionalVar != nil {
+    a: int = NS.TestOptionalVar
+  }
+}
