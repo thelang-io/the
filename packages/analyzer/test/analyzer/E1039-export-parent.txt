@@ -1,3 +1,5 @@
 export a := 10
 ===== err =====
-todo
+E1039-export-parent.txt:1:8: AnalyzeError: E1039 - Variables declared at the top level are required to be constants
+1 | export a := 10
+  |        ^

@@ -1,7 +1,10 @@
 fn voidTest () {
 }
-
 fn test (a := voidTest()) {
 }
 ===== err =====
-todo
+E1017-function-declaration-parameter-initializer.txt:3:15: AnalyzeError: E1017 - Type `void` can only be used as function return type
+2 | }
+3 | fn test (a := voidTest()) {
+  |               ~~~~~~~~~~
+4 | }

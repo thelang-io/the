@@ -825,7 +825,6 @@ export obj AnalyzerFile {
       }
 
       code := Parser.stringifyExpression(it)
-      // todo test all type casts
       return self.tc.has(code) ? self.tc.get(code) : t
     } elif it.isIs() {
       expression := it.asIs()
@@ -1343,6 +1342,8 @@ export obj AnalyzerFile {
 
         if members.contains(member.name.name) {
           self.raise(errors.E1052(member.name.name), member.name.start, member.name.end)
+        } else {
+          members.push(member.name.name)
         }
 
         if member.initializer == nil {
@@ -1548,8 +1549,6 @@ export obj AnalyzerFile {
           if initializerStatement.mutable {
             self.raise(errors.E1059(), initializerStatement.name.start, initializerStatement.name.end)
           }
-        } elif !initializer.isExpression() {
-          self.raise(errors.E1058(), initializer.start, initializer.end)
         }
 
         self.state.loopInit = true
@@ -1667,7 +1666,11 @@ export obj AnalyzerFile {
 
       if self.state.returnType != nil {
         if !Type.similarTo(returnType, self.state.returnType) {
-          self.raise(errors.E1005(returnType.toString(), self.state.returnType.toString()), it.start, it.end)
+          if statement.expression == nil {
+            self.raise(errors.E1005(returnType.toString(), self.state.returnType.toString()), it.start, it.end)
+          } else {
+            self.raise(errors.E1005(returnType.toString(), self.state.returnType.toString()), statement.expression.start, statement.expression.end)
+          }
         }
       }
     } elif it.isThrow() {
@@ -1697,21 +1700,17 @@ export obj AnalyzerFile {
         handler := statement.handlers[i]
         self.vm.increase()
 
-        if !handler.parameter.isVariableDeclaration() {
-          self.raise(errors.E1064(), handler.parameter.start, handler.parameter.end)
-        } else {
-          parameterStatement := handler.parameter.asVariableDeclaration()
+        parameterStatement := handler.parameter.asVariableDeclaration()
 
-          if parameterStatement.mutable {
-            self.raise(errors.E1055(), parameterStatement.name.start, parameterStatement.name.end)
-          }
+        if parameterStatement.mutable {
+          self.raise(errors.E1055(), parameterStatement.name.start, parameterStatement.name.end)
+        }
 
-          self.statement(handler.parameter)
-          var := self.vm.get(parameterStatement.name.name)
+        self.statement(handler.parameter)
+        var := self.vm.get(parameterStatement.name.name)
 
-          if !var.t.isErrorLike() {
-            self.raise(errors.E1065(), parameterStatement.name.start, parameterStatement.name.end)
-          }
+        if !var.t.isErrorLike() {
+          self.raise(errors.E1065(), parameterStatement.name.start, parameterStatement.name.end)
         }
 
         self.statement(handler.body)

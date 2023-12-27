@@ -2,4 +2,8 @@ main {
   a: ref int
 }
 ===== err =====
-todo
+E1040.txt:2:3: AnalyzeError: E1040 - Variable 'a' of type `ref int` is missing initializer
+1 | main {
+2 |   a: ref int
+  |   ^
+3 | }

@@ -2,4 +2,8 @@ obj Invoice {
   pay: void
 }
 ===== err =====
-todo
+E1017-object-declaration-property-type.txt:2:8: AnalyzeError: E1017 - Type `void` can only be used as function return type
+1 | obj Invoice {
+2 |   pay: void
+  |        ~~~~
+3 | }

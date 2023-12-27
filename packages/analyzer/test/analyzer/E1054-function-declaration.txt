@@ -1,4 +1,7 @@
 fn pay (amount: int, amount: str) void {
 }
 ===== err =====
-todo
+E1054-function-declaration.txt:1:22: AnalyzeError: E1054 - Duplicate declaration of parameter 'amount'
+1 | fn pay (amount: int, amount: str) void {
+  |                      ~~~~~~
+2 | }

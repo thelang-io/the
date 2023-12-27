@@ -3,4 +3,8 @@ main {
   }
 }
 ===== err =====
-todo
+E1028–closure-expression.txt:2:24: AnalyzeError: E1028 - Variadic parameters cannot have initializers
+1 | main {
+2 |   test := (a: int... = []) -> void {
+  |                        ~~
+3 |   }

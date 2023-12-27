@@ -4,4 +4,8 @@ main {
   }
 }
 ===== err =====
-todo
+E1065.txt:3:11: AnalyzeError: E1065 - Try statement handler parameter required to be of type object with first property 'message' of type `str` and second property 'stack' of type `str`
+2 |   try {
+3 |   } catch err: str {
+  |           ~~~
+4 |   }

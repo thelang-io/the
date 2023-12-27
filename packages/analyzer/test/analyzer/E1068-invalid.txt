@@ -1,3 +1,5 @@
 export 1
 ===== err =====
-todo
+E1068-invalid.txt:1:8: AnalyzeError: E1068 - Named export allows exporting only identifiers and properties
+1 | export 1
+  |        ^

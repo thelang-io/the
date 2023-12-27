@@ -1,3 +1,5 @@
 export throw NewError("")
 ===== err =====
-todo
+E1066.txt:1:1: AnalyzeError: E1066 - Exporting only allowed on declarations
+1 | export throw NewError("")
+  | ~~~~~~~~~~~~~~~~~~~~~~~~~

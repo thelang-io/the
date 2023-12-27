@@ -2,4 +2,8 @@ main {
   pay: void
 }
 ===== err =====
-todo
+E1017-variable-declaration-type.txt:2:8: AnalyzeError: E1017 - Type `void` can only be used as function return type
+1 | main {
+2 |   pay: void
+  |        ~~~~
+3 | }

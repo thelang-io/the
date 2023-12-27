@@ -5,4 +5,8 @@ enum Color {
   Red,
 }
 ===== err =====
-todo
+E1052.txt:5:3: AnalyzeError: E1052 - Duplicate declaration of enumerator 'Red'
+4 |   Blue,
+5 |   Red,
+  |   ~~~
+6 | }

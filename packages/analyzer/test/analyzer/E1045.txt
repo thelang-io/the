@@ -3,4 +3,8 @@ if a == 10 {
   a += 1
 }
 ===== err =====
-todo
+E1045.txt:2:1: AnalyzeError: E1045 - If statement cannot be used at the top level
+1 | mut a := 10
+2 | if a == 10 {
+  | ~~~~~~~~~~~~
+3 |   a += 1

@@ -3,4 +3,8 @@ main {
   }
 }
 ===== err =====
-todo
+E1059.txt:2:12: AnalyzeError: E1059 - Loop initializer is mutable by default
+1 | main {
+2 |   loop mut i := 0; i < 10; i++ {
+  |            ^
+3 |   }

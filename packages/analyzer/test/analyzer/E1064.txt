@@ -1,7 +1,0 @@
-main {
-  try {
-  } catch err {
-  }
-}
-===== err =====
-todo

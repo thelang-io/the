@@ -1,3 +1,5 @@
 throw NewError("")
 ===== err =====
-todo
+E1047.txt:1:1: AnalyzeError: E1047 - Throw statement cannot be used at the top level
+1 | throw NewError("")
+  | ~~~~~~~~~~~~~~~~~~

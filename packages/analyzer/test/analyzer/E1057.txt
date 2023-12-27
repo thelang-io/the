@@ -1,5 +1,5 @@
-obj Test {
-  return
-}
+return
 ===== err =====
-todo
+E1057.txt:1:1: AnalyzeError: E1057 - Return statement can only be used within an enclosing function or main declaration
+1 | return
+  | ~~~~~~

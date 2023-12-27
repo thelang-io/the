@@ -235,9 +235,9 @@ export fn E1057 () str {
   return "E1057 - Return statement can only be used within an enclosing function or main declaration"
 }
 
-export fn E1058 () str {
-  return "E1058 - Only expression statement or variable declaration are allowed as loop initializer"
-}
+// export fn E1058 () str {
+//   return "E1058 - Only expression statement or variable declaration are allowed as loop initializer"
+// }
 
 export fn E1059 () str {
   return "E1059 - Loop initializer is mutable by default"
@@ -260,9 +260,9 @@ export fn E1063 () str {
   return "E1063 - Type `void` can only be used as a standalone type"
 }
 
-export fn E1064 () str {
-  return "E1064 - Only variable declaration is allowed as try statement handler parameter"
-}
+// export fn E1064 () str {
+//   return "E1064 - Only variable declaration is allowed as try statement handler parameter"
+// }
 
 export fn E1065 () str {
   return "E1065 - Try statement handler parameter required to be of type object with first property 'message' of " +

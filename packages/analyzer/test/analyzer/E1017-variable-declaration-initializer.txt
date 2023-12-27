@@ -4,4 +4,8 @@ main {
   pay := test()
 }
 ===== err =====
-todo
+E1017-variable-declaration-initializer.txt:4:10: AnalyzeError: E1017 - Type `void` can only be used as function return type
+3 | main {
+4 |   pay := test()
+  |          ~~~~~~
+5 | }

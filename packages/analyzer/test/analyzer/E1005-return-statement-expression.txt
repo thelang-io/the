@@ -1,0 +1,9 @@
+fn test () int {
+  return 1.23
+}
+===== err =====
+E1005-return-statement-expression.txt:2:10: AnalyzeError: E1005 - Type `float` is not assignable to type `int`
+1 | fn test () int {
+2 |   return 1.23
+  |          ~~~~
+3 | }

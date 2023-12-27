@@ -1,3 +1,5 @@
 a := 10
 ===== err =====
-todo
+E1039-no-parent.txt:1:1: AnalyzeError: E1039 - Variables declared at the top level are required to be constants
+1 | a := 10
+  | ^

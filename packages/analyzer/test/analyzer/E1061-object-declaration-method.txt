@@ -3,4 +3,8 @@ obj Test {
   }
 }
 ===== err =====
-todo
+E1061-object-declaration-method.txt:2:25: AnalyzeError: E1061 - Function declaration whose return type is not `void` should return a value
+1 | obj Test {
+2 |   fn a (self: ref Self) int {
+  |                         ~~~
+3 |   }

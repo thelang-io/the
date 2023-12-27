@@ -2,4 +2,8 @@ fn test () {
   continue
 }
 ===== err =====
-todo
+E1050-continue-statement.txt:2:3: AnalyzeError: E1050 - Continue statement can only be used within an enclosing loop statement
+1 | fn test () {
+2 |   continue
+  |   ~~~~~~~~
+3 | }
