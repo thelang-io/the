@@ -1,0 +1,9 @@
+fn test () int {
+  mut v: int?
+
+  if v == nil {
+    return 2
+  }
+
+  return v
+}

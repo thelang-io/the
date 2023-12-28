@@ -14,6 +14,7 @@ export enum TypeMapMode {
 export obj TypeMap {
   mut items: TypeArray
   mut mode: TypeMapMode
+  mut scope: int
   mut _self: (ref Type.Type)?
 
   fn init (mut self: ref Self) {
@@ -184,7 +185,7 @@ export obj TypeMap {
   }
 
   fn createAlias (mut self: ref Self, name: str, t: ref Type.Type) ref Type.Type {
-    self.items.push(Type.Type{name: name, body: Type.AliasType{t: t}})
+    self.items.push(Type.Type{name: name, body: Type.AliasType{t: t}, scope: self.scope})
     return self.items.last()
   }
 
@@ -247,7 +248,7 @@ export obj TypeMap {
   }
 
   fn createEnum (mut self: ref Self, name: str, members: str[]) ref Type.Type {
-    self.items.push(Type.Type{name: name, body: Type.EnumType{members: members}})
+    self.items.push(Type.Type{name: name, body: Type.EnumType{members: members}, scope: self.scope})
     result := self.items.last()
     if self.mode == .Raw { return result }
     resultRef := self.createReference(result)
@@ -348,12 +349,12 @@ export obj TypeMap {
   }
 
   fn createNamespace (mut self: ref Self, name: str, members: Type.NamespaceMember[]) ref Type.Type {
-    self.items.push(Type.Type{name: name, body: Type.NamespaceType{members: members}})
+    self.items.push(Type.Type{name: name, body: Type.NamespaceType{members: members}, scope: self.scope})
     return self.items.last()
   }
 
   fn createObject (mut self: ref Self, name: str, properties: Type.TypeProperty[] = []) ref Type.Type {
-    self.items.push(Type.Type{name: name, properties: properties, body: Type.ObjectType{}})
+    self.items.push(Type.Type{name: name, properties: properties, body: Type.ObjectType{}, scope: self.scope})
     result := self.items.last()
     if self.mode == .Raw { return result }
     resultRef := self.createReference(result)
@@ -390,6 +391,20 @@ export obj TypeMap {
     return result
   }
 
+  fn decrease (mut self: ref Self) {
+    len := self.items.len
+
+    loop i := len - 1; i >= 0; i-- {
+      item := self.items.at(i)
+
+      if item.scope == self.scope {
+        self.items.remove(i)
+      }
+    }
+
+    self.scope--
+  }
+
   fn get (mut self: ref Self, name: str) ref Type.Type {
     if name == "Self" && self._self != nil {
       return self._self
@@ -410,11 +425,15 @@ export obj TypeMap {
     return self._self
   }
 
+  fn increase (mut self: ref Self) {
+    self.scope++
+  }
+
   fn insert (mut self: ref Self, t: ref Type.Type) void {
     self.items.push(t)
   }
 
-  fn has (mut self: ref Self, name: str) bool {
+  fn has (mut self: ref Self, name: str, global := true) bool {
     if name == "Self" && self._self != nil {
       return true
     }
@@ -422,7 +441,7 @@ export obj TypeMap {
     loop i := self.items.len - 1; i >= 0; i-- {
       item := self.items.at(i)
 
-      if item.name == name {
+      if item.name == name && (global || (!global && item.scope == self.scope)) {
         return true
       }
     }

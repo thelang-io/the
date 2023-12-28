@@ -1,0 +1,24 @@
+import Animal from "./test/fixtures/object-animal";
+enum TestEnum { TestEnumerator };
+fn testFunction () {};
+obj TestObject {
+  mut testProp: int;
+  fn testMethod () {};
+};
+export fn testExport () { return; };
+export TestObject;
+type TestAlias = str;
+main {
+  ;
+  mut i := 0;
+  loop {
+    i += 1;
+    if i == 2 {
+      break;
+    } elif i < 2 {
+      continue;
+    }
+  };
+  throw NewError("");
+  try {} catch err: Error {};
+};

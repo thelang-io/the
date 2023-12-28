@@ -10,9 +10,6 @@ export obj VarMap {
   mut items: Var[]
   mut scope: int
 
-  fn init (mut self: ref Self, tm: ref TypeMap.TypeMap) {
-  }
-
   fn add (mut self: ref Self, name: str, t: ref Type.Type, mutable: bool) {
     self.items.push(Var{
       name: name,
@@ -26,11 +23,9 @@ export obj VarMap {
     len := self.items.len
 
     loop i := len - 1; i >= 0; i-- {
-      if self.items[i].scope < self.scope {
-        break
+      if self.items[i].scope == self.scope {
+        self.items.remove(i)
       }
-
-      self.items.remove(i)
     }
 
     self.scope--
@@ -48,11 +43,11 @@ export obj VarMap {
     throw error_NewError("Variable with this name doesn't exists")
   }
 
-  fn has (mut self: ref Self, name: str) bool {
+  fn has (mut self: ref Self, name: str, global := true) bool {
     loop i := self.items.len - 1; i >= 0; i-- {
       item := self.items[i]
 
-      if item.name == name {
+      if item.name == name && (global || (!global && item.scope == self.scope)) {
         return true
       }
     }

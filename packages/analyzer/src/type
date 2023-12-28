@@ -33,6 +33,7 @@ export obj Type {
   name: str
   properties: TypeProperty[]
   body: TypeBody
+  scope: int
 
   fn asAlias (mut self: ref Self) ref AliasType { return ref (self.body as AliasType) }
   fn asArray (mut self: ref Self) ref ArrayType { return ref (self.body as ArrayType) }
@@ -731,13 +732,13 @@ export fn opt (t: ref Type) (ref Type)? {
 export fn unwrap (t: ref Type, withOptional := false, withReference := true) ref Type {
   if t.isAlias() {
     unwrappedType := t.asAlias()
-    return unwrappedType.t
+    return unwrap(unwrappedType.t, withOptional: withOptional, withReference: withReference)
   } elif withOptional && t.isOptional() {
     unwrappedType := t.asOptional()
-    return unwrappedType.t
+    return unwrap(unwrappedType.t, withOptional: withOptional, withReference: withReference)
   } elif withReference && t.isReference() {
-    unwrappedType := t.asOptional()
-    return unwrappedType.t
+    unwrappedType := t.asReference()
+    return unwrap(unwrappedType.t, withOptional: withOptional, withReference: withReference)
   }
 
   return t

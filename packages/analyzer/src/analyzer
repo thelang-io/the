@@ -3,6 +3,9 @@
  * Licensed under the MIT License
  */
 
+// todo unit tests
+// todo documentation
+
 import * as AnalyzerExport from "./analyzer-export"
 import * as Parser from "the/parser"
 import * as API from "./api"
@@ -65,12 +68,6 @@ export obj AnalyzerFile {
   mut tc: (ref Type.Type)[str]
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
-
-  // todo test forward declaration and hoisting
-  // todo test semicolon
-  // todo test empty statement
-  // todo test scope variables (redefinition)
-  // todo test passing reference to assignment/binary/etc
 
   fn analyze (mut self: ref Self, items: ref Parser.Statement[]) {
     len := items.len
@@ -183,7 +180,6 @@ export obj AnalyzerFile {
         mut file := self.analyzer.files.last()
 
         file.tm.init()
-        file.vm.init(ref file.tm)
         API.TypeMap_globals(ref file.tm)
         API.VarMap_globals(ref file.vm, ref file.tm)
 
@@ -263,9 +259,11 @@ export obj AnalyzerFile {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
+      self.tm.increase()
       self.vm.increase()
       parameters := self.functionParametersLight(statement.parameters)
       self.vm.decrease()
+      self.tm.decrease()
       returnType := statement.returnType == nil ? self.tm.get("void") : self.t(statement.returnType)
       t := self.tm.createFunction(statement.asynchronous, parameters, returnType)
 
@@ -295,9 +293,11 @@ export obj AnalyzerFile {
         self.raise(errors.E1076(statement.name.name), statement.name.start, statement.name.end)
       }
 
+      self.tm.increase()
       self.vm.increase()
       mut parameters := self.functionParametersLight(statement.parameters)
       self.vm.decrease()
+      self.tm.decrease()
 
       mut selfParameter: Type.TypeParameter?
 
@@ -744,6 +744,7 @@ export obj AnalyzerFile {
       expression := it.asClosure()
       initialStateReturnType := self.state.returnType
 
+      self.tm.increase()
       self.vm.increase()
       parameters := self.functionParameters(expression.parameters)
       returnType := self.t(expression.returnType)
@@ -756,6 +757,7 @@ export obj AnalyzerFile {
       self.statement(expression.body)
       self.state.returnType = initialStateReturnType
       self.vm.decrease()
+      self.tm.decrease()
 
       return self.tm.createFunction(expression.asynchronous, parameters, returnType)
     } elif it.isConditional() {
@@ -1109,7 +1111,7 @@ export obj AnalyzerFile {
   }
 
   fn entityExists (self: ref Self, name: str) bool {
-    return self.tm.has(name) || self.vm.has(name)
+    return self.tm.has(name, global: false) || self.vm.has(name, global: false)
   }
 
   fn functionParameters (mut self: ref Self, parameters: Parser.FunctionParameter[]) Type.TypeParameter[] {
@@ -1245,7 +1247,10 @@ export obj AnalyzerFile {
     }
   }
 
-  fn operands (mut self: ref Self, op: Parser.Token, t1: ref Type.Type, t2: ref Type.Type) bool {
+  fn operands (mut self: ref Self, op: Parser.Token, type1: ref Type.Type, type2: ref Type.Type) bool {
+    t1 := Type.unwrap(type1)
+    t2 := Type.unwrap(type2)
+
     if Type.match(t1, self.tm.get("void")) || Type.match(t2, self.tm.get("void")) {
       return false
     }
@@ -1321,9 +1326,11 @@ export obj AnalyzerFile {
     if it.isBlock() {
       statement := it.asBlock()
 
+      self.tm.increase()
       self.vm.increase()
       self.analyze(ref statement.body)
       self.vm.decrease()
+      self.tm.decrease()
     } elif it.isBreak() {
       if !it.hasLoopParent() {
         self.raise(errors.E1050("Break"), it.start, it.end)
@@ -1478,6 +1485,7 @@ export obj AnalyzerFile {
 
       t := var.t.asFunction()
 
+      self.tm.increase()
       self.vm.increase()
       self.functionParameters(statement.parameters)
       self.state.returnType = Type.opt(t.returnType)
@@ -1497,6 +1505,7 @@ export obj AnalyzerFile {
 
       self.state.returnType = initialStateReturnType
       self.vm.decrease()
+      self.tm.decrease()
     } elif it.isIf() {
       initialTC := self.tc
       statement := it.asIf()
@@ -1538,6 +1547,7 @@ export obj AnalyzerFile {
         self.raise(errors.E1046(), it.start, it.end)
       }
 
+      self.tm.increase()
       self.vm.increase()
 
       if statement.initializer != nil {
@@ -1574,6 +1584,7 @@ export obj AnalyzerFile {
 
       self.statement(statement.body)
       self.vm.decrease()
+      self.tm.decrease()
 
       self.tc = initialTC
     } elif it.isMainDeclaration() {
@@ -1615,6 +1626,7 @@ export obj AnalyzerFile {
 
       t := property.t.asMethod()
 
+      self.tm.increase()
       self.vm.increase()
       self.functionParameters(statement.parameters)
       self.state.returnType = Type.opt(t.returnType)
@@ -1633,6 +1645,7 @@ export obj AnalyzerFile {
 
       self.state.returnType = initialStateReturnType
       self.vm.decrease()
+      self.tm.decrease()
     } elif it.isObjectDeclarationProperty() {
       statement := it.asObjectDeclarationProperty()
       selfType := self.state.selfType as ref Type.Type
@@ -1692,12 +1705,16 @@ export obj AnalyzerFile {
         self.raise(errors.E1048(), it.start, it.end)
       }
 
+      self.tm.increase()
       self.vm.increase()
       self.statement(statement.body)
+      self.vm.decrease()
+      self.tm.decrease()
       handlersLen := statement.handlers.len
 
       loop i := 0; i < handlersLen; i++ {
         handler := statement.handlers[i]
+        self.tm.increase()
         self.vm.increase()
 
         parameterStatement := handler.parameter.asVariableDeclaration()
@@ -1715,9 +1732,8 @@ export obj AnalyzerFile {
 
         self.statement(handler.body)
         self.vm.decrease()
+        self.tm.decrease()
       }
-
-      self.vm.decrease()
     } elif it.isVariableDeclaration() {
       statement := it.asVariableDeclaration()
 
@@ -2045,7 +2061,6 @@ export fn analyze (f: ref Parser.File) str[] {
   mut file := analyzer.files.last()
 
   file.tm.init()
-  file.vm.init(ref file.tm)
   API.TypeMap_globals(ref file.tm)
   API.VarMap_globals(ref file.vm, ref file.tm)
   file.analyze(ref f.program.body)

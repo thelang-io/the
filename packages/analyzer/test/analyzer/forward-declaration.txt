@@ -1,0 +1,27 @@
+obj Animal {
+  mut name: str
+  mut age: int
+  mut cost: float
+
+  fn buy (self: ref Self) {
+    pay(self.cost)
+  }
+}
+
+fn buy (animal: ref Animal) {
+  pay(animal.cost)
+}
+
+fn pay (cost: float) {
+}
+
+main {
+  animals := [
+    Animal{name: "Brady", age: 11, cost: 710},
+    Animal{name: "Gage", age: 16, cost: 990},
+    Animal{name: "Max", age: 19, cost: 590},
+  ]
+
+  animals[0].buy()
+  buy(animals[0])
+}

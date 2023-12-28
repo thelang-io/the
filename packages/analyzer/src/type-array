@@ -22,4 +22,9 @@ export obj TypeArray {
     self.items.push(item)
     self.len++
   }
+
+  fn remove (mut self: ref Self, index: int) {
+    self.items.remove(index)
+    self.len--
+  }
 }
