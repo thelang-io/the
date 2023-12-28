@@ -3,7 +3,6 @@
  * Licensed under the MIT License
  */
 
-import EXPECT_EQ, Tests from "the/testing"
 import * as Parser from "the/parser"
 import analyze from "../src/analyzer"
 
@@ -49,10 +48,4 @@ export fn TEST_Analyzer_analyze () {
       EXPECT_EQ(result.err, errorsWithPath.join(os_EOL))
     }
   }
-}
-
-main {
-  mut tests := Tests{}
-  tests.register("Analyzer_analyze", TEST_Analyzer_analyze)
-  tests.run(process_args)
 }
