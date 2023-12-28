@@ -41,11 +41,11 @@ Program
       ReferenceType(start=45 end=57)
         MapType(start=49 end=57)
           keyType
-            IdentifierType(start=49 end=52)
-              Identifier(start=49 end=52) int
-          valueType
             IdentifierType(start=53 end=56)
               Identifier(start=53 end=56) str
+          valueType
+            IdentifierType(start=49 end=52)
+              Identifier(start=49 end=52) int
   VariableDeclaration(start=58, end=76)
     name
       Identifier(start=58 end=59) a

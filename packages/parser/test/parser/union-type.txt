@@ -64,18 +64,18 @@ Program
       UnionType(start=79 end=98)
         MapType(start=79 end=87)
           keyType
-            IdentifierType(start=79 end=82)
-              Identifier(start=79 end=82) int
-          valueType
             IdentifierType(start=83 end=86)
               Identifier(start=83 end=86) str
+          valueType
+            IdentifierType(start=79 end=82)
+              Identifier(start=79 end=82) int
         MapType(start=90 end=98)
           keyType
-            IdentifierType(start=90 end=93)
-              Identifier(start=90 end=93) str
-          valueType
             IdentifierType(start=94 end=97)
               Identifier(start=94 end=97) int
+          valueType
+            IdentifierType(start=90 end=93)
+              Identifier(start=90 end=93) str
   VariableDeclaration(start=99, end=135)
     name
       Identifier(start=99 end=100) a
@@ -83,25 +83,25 @@ Program
       UnionType(start=102 end=135)
         MapType(start=102 end=110)
           keyType
-            IdentifierType(start=102 end=105)
-              Identifier(start=102 end=105) int
-          valueType
             IdentifierType(start=106 end=109)
               Identifier(start=106 end=109) str
+          valueType
+            IdentifierType(start=102 end=105)
+              Identifier(start=102 end=105) int
         MapType(start=113 end=121)
           keyType
-            IdentifierType(start=113 end=116)
-              Identifier(start=113 end=116) str
-          valueType
             IdentifierType(start=117 end=120)
               Identifier(start=117 end=120) int
+          valueType
+            IdentifierType(start=113 end=116)
+              Identifier(start=113 end=116) str
         MapType(start=124 end=135)
           keyType
-            IdentifierType(start=124 end=128)
-              Identifier(start=124 end=128) char
-          valueType
             IdentifierType(start=129 end=134)
               Identifier(start=129 end=134) float
+          valueType
+            IdentifierType(start=124 end=128)
+              Identifier(start=124 end=128) char
   VariableDeclaration(start=136, end=164)
     name
       Identifier(start=136 end=137) a

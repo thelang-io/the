@@ -109,11 +109,11 @@ Program
         returnType
           MapType(start=158 end=166)
             keyType
-              IdentifierType(start=158 end=161)
-                Identifier(start=158 end=161) int
-            valueType
               IdentifierType(start=162 end=165)
                 Identifier(start=162 end=165) str
+            valueType
+              IdentifierType(start=158 end=161)
+                Identifier(start=158 end=161) int
   VariableDeclaration(start=167, end=187)
     name
       Identifier(start=167 end=168) a

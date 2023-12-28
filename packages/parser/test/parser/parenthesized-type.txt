@@ -40,11 +40,11 @@ Program
       ParenthesizedType(start=39 end=49)
         MapType(start=40 end=48)
           keyType
-            IdentifierType(start=40 end=43)
-              Identifier(start=40 end=43) int
-          valueType
             IdentifierType(start=44 end=47)
               Identifier(start=44 end=47) str
+          valueType
+            IdentifierType(start=40 end=43)
+              Identifier(start=40 end=43) int
   VariableDeclaration(start=50, end=66)
     name
       Identifier(start=50 end=51) a

@@ -1648,11 +1648,11 @@ export obj Parser {
       )
     }
 
-    mut valueType := self.nextType()
+    mut keyType := self.nextType()
 
-    if valueType == nil {
+    if keyType == nil {
       self._raise(errors.E0136())
-      valueType = Type.dummy()
+      keyType = Type.dummy()
     }
 
     if !self.tokenizer.lookahead(.OpRBrack) {
@@ -1660,7 +1660,7 @@ export obj Parser {
     }
 
     return Type.create(
-      t.MapType{keyType: typeToWrap, valueType: valueType as t.Type},
+      t.MapType{keyType: keyType as t.Type, valueType: typeToWrap},
       typeToWrap.start,
       self.tokenizer.readerEndPos()
     )

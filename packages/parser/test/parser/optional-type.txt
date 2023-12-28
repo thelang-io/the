@@ -28,11 +28,11 @@ Program
       OptionalType(start=21 end=30)
         MapType(start=21 end=29)
           keyType
-            IdentifierType(start=21 end=24)
-              Identifier(start=21 end=24) int
-          valueType
             IdentifierType(start=25 end=28)
               Identifier(start=25 end=28) str
+          valueType
+            IdentifierType(start=21 end=24)
+              Identifier(start=21 end=24) int
   VariableDeclaration(start=31, end=46)
     name
       Identifier(start=31 end=32) a

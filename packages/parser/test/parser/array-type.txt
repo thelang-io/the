@@ -28,11 +28,11 @@ Program
       ArrayType(start=23 end=33)
         MapType(start=23 end=31)
           keyType
-            IdentifierType(start=23 end=26)
-              Identifier(start=23 end=26) int
-          valueType
             IdentifierType(start=27 end=30)
               Identifier(start=27 end=30) str
+          valueType
+            IdentifierType(start=23 end=26)
+              Identifier(start=23 end=26) int
   VariableDeclaration(start=34, end=50)
     name
       Identifier(start=34 end=35) a
