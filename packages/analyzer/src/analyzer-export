@@ -3,8 +3,6 @@
  * Licensed under the MIT License
  */
 
-import TypeMap from "./type-map"
-import VarMap from "./var-map"
 import * as Type from "./type"
 
 export fn get (mut exports: ref Type.NamespaceMember[], name: str) ref Type.NamespaceMember {
