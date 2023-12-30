@@ -17,7 +17,7 @@ export type TypeBody =
   ReferenceType |
   UnionType
 
-export fn toStringChild (t: ref Type) str {
+fn toStringChild (t: ref Type) str {
   result := t.toString()
   return t.isFunction() || t.isMethod() || t.isReference() || t.isUnion() ? "(" + result + ")" : result
 }
@@ -60,16 +60,18 @@ export obj Type {
   fn isUnion (self: ref Self) bool { return self.body is UnionType }
 
   fn canBe (self: ref Self, t: ref Type) bool {
-    a := unwrap(self, withReference: false, withOptional: false)
-    b := unwrap(t, withReference: false, withOptional: false)
+    a := unwrap(self, withReference: false)
+    b := unwrap(t, withReference: false)
 
-    if a.isEnum() {
-      return b.name == "i32"
+    if a.name == "any" || b.name == "any" {
+      return true
+    } elif a.isEnum() {
+      return b.name == "i32" || b.name == "int"
     } elif a.isOptional() {
       t1 := a.asOptional()
       return match(t1.t, b)
     } elif a.isReference() {
-      if b.name == "i32" {
+      if b.name == "i32" || b.name == "int" {
         return true
       }
 
@@ -80,36 +82,31 @@ export obj Type {
     }
 
     if b.isEnum() {
-      return a.name == "i32"
+      return a.name == "i32" || a.name == "int"
     } elif b.isOptional() {
       t1 := b.asOptional()
       return match(t1.t, a)
     } elif b.isReference() {
-      if a.name == "i32" {
-        return true
-      }
-
-      t1 := b.asReference()
-      return match(t1.t, a)
+      return a.name == "i32" || a.name == "int"
     } elif b.isUnion() {
       return b.hasType(a)
     }
 
     return
-      a.name == "any" ||
-      b.name == "any" ||
       (a.name == "bool" && b.isNumber()) ||
       (b.name == "bool" && a.isNumber()) ||
       (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
       (b.name == "byte" && (a.name == "char" || a.isNumber())) ||
+      (a.name == "char" && b.isNumber()) ||
+      (b.name == "char" && a.isNumber()) ||
       (a.name == "rune" && b.isNumber()) ||
       (b.name == "rune" && a.isNumber()) ||
-      (a.isFunction() && b.isFunction() && match(b, a)) ||
+      (a.isFunction() && b.isFunction() && similarTo(a, b)) ||
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
   fn get (self: ref Self, nameOrIndex: int | str) TypeProperty {
-    t := unwrap(self, withOptional: false)
+    t := unwrap(self)
     propertiesLen := t.properties.len
     mut j := 0
 
@@ -132,14 +129,14 @@ export obj Type {
     }
 
     if nameOrIndex is str {
-      throw error_NewError("Tried to get non-existing property `" + nameOrIndex + "`")
+      throw error_NewError("Tried to get non-existing property '" + nameOrIndex + "'")
     } else {
-      throw error_NewError("Tried to get non-existing property at position `" + nameOrIndex.str() + "`")
+      throw error_NewError("Tried to get non-existing property at position " + nameOrIndex.str())
     }
   }
 
   fn has (self: ref Self, nameOrIndex: int | str) bool {
-    t := unwrap(self, withOptional: false)
+    t := unwrap(self)
     propertiesLen := t.properties.len
     mut j := 0
 
@@ -182,23 +179,21 @@ export obj Type {
   }
 
   fn isErrorLike (self: ref Self) bool {
-    if self.isObject() && self.has(0) && self.has(1) {
-      property1 := self.get(0)
-      property1Type := unwrap(property1.t, withOptional: false, withReference: false)
-      property2 := self.get(1)
-      property2Type := unwrap(property2.t, withOptional: false, withReference: false)
-
-      if (
-        property1.name == "message" &&
-        property1Type.name == "str" &&
-        property2.name == "stack" &&
-        property2Type.name == "str"
-      ) {
-        return true
-      }
+    if !self.isObject() || !self.has(0) || !self.has(1) {
+      return false
     }
 
-    return false
+    property1 := self.get(0)
+    property1Type := unwrap(property1.t, withReference: false)
+    property2 := self.get(1)
+    property2Type := unwrap(property2.t, withReference: false)
+
+    return (
+      property1.name == "message" &&
+      property2.name == "stack" &&
+      property1Type.name == "str" &&
+      property2Type.name == "str"
+    )
   }
 
   fn isFloat (self: ref Self) bool {
@@ -452,8 +447,8 @@ export fn numberMatch (a: str, b: str) bool {
 }
 
 export fn match (mut a: ref Type, mut b: ref Type) bool {
-  a = unwrap(a, withOptional: false, withReference: false)
-  b = unwrap(b, withOptional: false, withReference: false)
+  a = unwrap(a, withReference: false)
+  b = unwrap(b, withReference: false)
 
   if a.isReference() && b.isReference() {
     t1 := a.asReference()
@@ -557,8 +552,8 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
 }
 
 export fn similarTo (mut typeToCompare: ref Type, mut similarToType: ref Type) bool {
-  a := unwrap(similarToType, withOptional: false, withReference: false)
-  b := unwrap(typeToCompare, withOptional: false, withReference: false)
+  a := unwrap(similarToType, withReference: false)
+  b := unwrap(typeToCompare, withReference: false)
 
   if a.name == "void" || b.name == "void" {
     return a.name == b.name
