@@ -255,13 +255,18 @@ export obj Type {
         parameters += i == 0 ? "" : ", "
         parameters += parameter.mutable ? "mut " : ""
         parameters += parameter.name == nil ? "" : parameter.name + ": "
-        parameters += parameter.t.toString()
+        if parameter.variadic {
+          parameterType := parameter.t.asArray()
+          parameters += parameterType.elementType.toString()
+        } else {
+          parameters += parameter.t.toString()
+        }
         parameters += parameter.variadic ? "..." : ""
       }
       return (t.asynchronous ? "async " : "") + "(" + parameters + ") -> " + t.returnType.toString()
     } elif self.isMap() {
       t := self.asMap()
-      return toStringChild(t.keyType) + "[" + t.valueType.toString() + "]"
+      return t.valueType.toString() + "[" + toStringChild(t.keyType) + "]"
     } elif self.isMethod() {
       t := self.asMethod()
       mut parameters := ""
@@ -277,7 +282,12 @@ export obj Type {
         parameters += i == 0 && !t.withSelf ? "" : ", "
         parameters += parameter.mutable ? "mut " : ""
         parameters += parameter.name == nil ? "" : parameter.name + ": "
-        parameters += parameter.t.toString()
+        if parameter.variadic {
+          parameterType := parameter.t.asArray()
+          parameters += parameterType.elementType.toString()
+        } else {
+          parameters += parameter.t.toString()
+        }
         parameters += parameter.variadic ? "..." : ""
       }
       return (t.asynchronous ? "async " : "") + "(" + parameters + ") -> " + t.returnType.toString()
