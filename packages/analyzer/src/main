@@ -3,29 +3,57 @@
  * Licensed under the MIT License
  */
 
-import analyze from "./analyzer"
-import * as Parser from "the/parser"
+import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
+import
+  Type,
+  TypeBody,
+  TypeProperty,
+  TypeParameter,
+  NamespaceMember,
+  AliasType,
+  ArrayType,
+  EnumType,
+  FunctionType,
+  MapType,
+  MethodType,
+  NamespaceType,
+  ObjectType,
+  OptionalType,
+  ReferenceType,
+  UnionType,
+  Var,
+  largest,
+  match,
+  similarTo,
+  unwrap
+from "./type"
+import TypeMap, TypeMapMode from "./type-map"
+import VarMap from "./var-map"
+import * as AnalyzerExport from "./analyzer-export"
 
-main {
-  args := process_args
-
-  if args.len == 1 {
-    print("First argument is not specified", to: "stderr")
-    process_exit(1)
-  }
-
-  mut f := Parser.parse(args[1])
-  Parser.interconnect(ref f)
-  errors := analyze(ref f)
-
-  if errors.len != 0 {
-    print()
-
-    loop i := 0; i < errors.len; i++ {
-      if i != 0 { print(to: "stderr") }
-      print(errors[i] as str, terminator: "", to: "stderr")
-    }
-
-    process_exit(1)
-  }
-}
+export Analyzer
+export AnalyzerExport
+export AnalyzerFile
+export AnalyzerFileState
+export AnalyzerState
+export Type
+export TypeBody
+export TypeProperty
+export TypeParameter
+export TypeMap
+export TypeMapMode
+export NamespaceMember
+export AliasType
+export ArrayType
+export EnumType
+export FunctionType
+export MapType
+export MethodType
+export NamespaceType
+export ObjectType
+export OptionalType
+export ReferenceType
+export UnionType
+export Var
+export VarMap
+export analyze
