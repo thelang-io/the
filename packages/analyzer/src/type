@@ -456,9 +456,9 @@ export fn numberMatch (a: str, b: str) bool {
     ((a == "f64" || a == "float") && (b == "f32" || b == "f64" || b == "float" || numberMatch("i64", b)))
 }
 
-export fn match (mut a: ref Type, mut b: ref Type) bool {
-  a = unwrap(a, withReference: false)
-  b = unwrap(b, withReference: false)
+export fn match (type1: ref Type, type2: ref Type) bool {
+  a := unwrap(type1, withReference: false)
+  b := unwrap(type2, withReference: false)
 
   if a.isReference() && b.isReference() {
     t1 := a.asReference()
@@ -561,7 +561,7 @@ export fn match (mut a: ref Type, mut b: ref Type) bool {
   return !a.name.empty && a.name == b.name
 }
 
-export fn similarTo (mut typeToCompare: ref Type, mut similarToType: ref Type) bool {
+export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
   a := unwrap(similarToType, withReference: false)
   b := unwrap(typeToCompare, withReference: false)
 

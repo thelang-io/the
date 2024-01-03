@@ -429,7 +429,7 @@ export obj TypeMap {
     self.scope++
   }
 
-  fn insert (mut self: ref Self, t: ref Type.Type) void {
+  fn insert (mut self: ref Self, t: ref Type.Type) {
     self.items.push(t)
   }
 
@@ -449,7 +449,7 @@ export obj TypeMap {
     return false
   }
 
-  fn setSelf (mut self: ref Self, value: (ref Type.Type)?) void {
+  fn setSelf (mut self: ref Self, value: (ref Type.Type)?) {
     self._self = value
   }
 
