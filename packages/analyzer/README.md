@@ -10,7 +10,7 @@ the install the/analyzer
 ## Example usage
 
 ```the
-import analyzer from "the/analyze"
+import analyzer from "the/analyzer"
 ```
 
 ## API
