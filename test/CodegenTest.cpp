@@ -764,6 +764,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
   "builtin-opt-eq",
   "builtin-opt-eq-ref",
   "builtin-opt-eq-root",
+  "builtin-opt-ref",
   "builtin-opt-str",
   "builtin-opt-str-ref",
   "builtin-opt-str-root"
@@ -1004,6 +1005,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access-map",
   "expr-access-obj",
   "expr-access-opt",
+  "expr-access-opt-ref",
   "expr-access-ref",
   "expr-access-str",
   "expr-access-union"
@@ -1178,6 +1180,7 @@ INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenPassTest, testing::Values(
   "expr-ref-alias",
   "expr-ref-any",
   "expr-ref-array",
+  "expr-ref-as",
   "expr-ref-enum",
   "expr-ref-fn",
   "expr-ref-fn-async",

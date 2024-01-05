@@ -1,0 +1,6 @@
+fn factorial (num: int) int {
+  return num < 2 ? 1 : factorial(num - 1) * num
+}
+main {
+  print("Factorial of 10:", factorial(10))
+}

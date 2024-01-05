@@ -1,0 +1,7 @@
+type Alias = str
+type Alias = str
+===== err =====
+E1000-type-alias.txt:2:6: AnalyzeError: E1000 - Redefinition of 'Alias'
+1 | type Alias = str
+2 | type Alias = str
+  |      ~~~~~

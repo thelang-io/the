@@ -13,6 +13,7 @@ import
   ParenthesizedType,
   ReferenceType,
   UnionType,
+  FunctionParameter,
   Identifier,
   BooleanLiteral,
   CharacterLiteral,
@@ -49,6 +50,9 @@ import
   FunctionDeclaration,
   IfStatement,
   ImportDeclaration,
+  ImportDeclarationSpecifier,
+  ImportSpecifier,
+  ImportNamespaceSpecifier,
   LoopStatement,
   MainDeclaration,
   ObjectDeclaration,
@@ -61,6 +65,7 @@ import
   VariableDeclaration,
   Expression,
   Statement,
+  Token,
   Type,
   File,
   Program
@@ -73,7 +78,10 @@ import
   Type_toText
 from "./text"
 import Program_traverse from "./program"
-import parse, report from "./parser"
+import Reader, error as Reader_error, init as Reader_init from "./reader"
+import toType as expressionToType, typeToExpression, validObjExprId from "./expression"
+import interconnect, parse, report from "./parser"
+import expression as stringifyExpression, statement as stringifyStatement, typeT as stringifyType from "./string"
 
 export ArrayType
 export FunctionType
@@ -84,6 +92,7 @@ export OptionalType
 export ParenthesizedType
 export ReferenceType
 export UnionType
+export FunctionParameter
 export Identifier
 export BooleanLiteral
 export CharacterLiteral
@@ -120,6 +129,9 @@ export ExpressionStatement
 export FunctionDeclaration
 export IfStatement
 export ImportDeclaration
+export ImportDeclarationSpecifier
+export ImportSpecifier
+export ImportNamespaceSpecifier
 export LoopStatement
 export MainDeclaration
 export ObjectDeclaration
@@ -132,6 +144,7 @@ export TypeAliasDeclaration
 export VariableDeclaration
 export Expression
 export Statement
+export Token
 export Type
 export File
 export Program
@@ -141,5 +154,15 @@ export Identifier_toText
 export Statement_toText
 export Type_toText
 export Program_traverse
+export Reader
+export Reader_error
+export Reader_init
+export expressionToType
+export typeToExpression
+export validObjExprId
+export interconnect
 export parse
 export report
+export stringifyExpression
+export stringifyStatement
+export stringifyType

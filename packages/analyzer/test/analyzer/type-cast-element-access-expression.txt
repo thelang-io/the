@@ -1,0 +1,7 @@
+main {
+  mut v: int?[]
+
+  if v[0] != nil {
+    a: int = v[0]
+  }
+}

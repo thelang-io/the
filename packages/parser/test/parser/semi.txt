@@ -40,7 +40,7 @@ Program
       EnumDeclarationMember
         Identifier(start=34 end=37) Two
   ExportDeclaration(start=41, end=62)
-    FunctionDeclaration(start=47, end=61)
+    FunctionDeclaration(start=48, end=61)
       name
         Identifier(start=51 end=55) test
       body
@@ -57,7 +57,7 @@ Program
         OpPlus(start=84 end=85) +
       right
         IntegerLiteral(start=86, end=87 type=Decimal) 2
-  FunctionDeclaration(start=88, end=103)
+  FunctionDeclaration(start=89, end=103)
     name
       Identifier(start=92 end=96) test
     body
@@ -135,12 +135,12 @@ Program
     name
       Identifier(start=294 end=298) Test
     body
-      ObjectDeclarationMethod(start=300, end=317)
+      ObjectDeclarationMethod(start=303, end=317)
         name
           Identifier(start=306 end=310) test
         body
           BlockStatement(start=314, end=316)
-      ObjectDeclarationMethod(start=317, end=340 async)
+      ObjectDeclarationMethod(start=320, end=340 async)
         name
           Identifier(start=329 end=333) test
         body

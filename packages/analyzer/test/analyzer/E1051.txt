@@ -1,0 +1,10 @@
+obj Color {
+  mut red: int
+  red: int
+}
+===== err =====
+E1051.txt:3:3: AnalyzeError: E1051 - Duplicate declaration of property 'red'
+2 |   mut red: int
+3 |   red: int
+  |   ~~~
+4 | }

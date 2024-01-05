@@ -1,0 +1,13 @@
+fn voidTest () {
+}
+
+main {
+  test := (a := voidTest()) -> void {
+  }
+}
+===== err =====
+E1017-closure-expression-parameter-initializer.txt:5:17: AnalyzeError: E1017 - Type `void` can only be used as function return type
+4 | main {
+5 |   test := (a := voidTest()) -> void {
+  |                 ~~~~~~~~~~
+6 |   }

@@ -1190,9 +1190,9 @@ Program
     name
       Identifier(start=1019 end=1020) p
     initializer
-      BinaryExpression(start=1023, end=1054)
+      BinaryExpression(start=1024, end=1054)
         left
-          ClosureExpression(start=1023, end=1037)
+          ClosureExpression(start=1024, end=1037)
             returnType
               IdentifierType(start=1030 end=1034)
                 Identifier(start=1030 end=1034) void
@@ -1201,7 +1201,7 @@ Program
         op
           OpEqEq(start=1038 end=1040) ==
         right
-          ClosureExpression(start=1040, end=1054)
+          ClosureExpression(start=1041, end=1054)
             returnType
               IdentifierType(start=1047 end=1051)
                 Identifier(start=1047 end=1051) void

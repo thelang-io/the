@@ -1,0 +1,13 @@
+fn voidFn () {}
+
+main {
+  v := 10
+
+  a: (int[])
+  b: (int[str])
+  c: (() -> void) = voidFn
+  d: (int)
+  e: (int | str)
+  f: (int?)
+  g: (ref int) = ref v
+}

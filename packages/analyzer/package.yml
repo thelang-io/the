@@ -1,0 +1,14 @@
+name: the/analyzer
+version: 0.1.0
+description: The programming language analyzer
+license: MIT
+main: src/main
+
+packages:
+  the/example: 1.0.1
+  the/parser: 0.4.16
+  the/testing: 0.3.2
+
+scripts:
+  update-parser-tests: the run scripts/precompile-api
+  update-tokenizer-tests: the run scripts/precompile-builtin

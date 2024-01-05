@@ -1,0 +1,5 @@
+const a := 1 is str
+===== err =====
+E1009-is-expression.txt:1:12: AnalyzeError: E1009 - Type casting is not possible from `int` to `str`
+1 | const a := 1 is str
+  |            ^

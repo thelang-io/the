@@ -1,0 +1,117 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TypeMap from "../src/type-map"
+import VarMap from "../src/var-map"
+import * as Type from "../src/type"
+
+export fn TEST_VarMap_add () {
+  mut vm := VarMap{}
+  mut tm := TypeMap{}
+  tm.init()
+
+  vm.add("test1", tm.get("int"), false)
+  vm.add("test2", tm.get("str"), true)
+
+  var1 := vm.get("test1")
+  var2 := vm.get("test2")
+
+  EXPECT_EQ(var1.name, "test1")
+  EXPECT_TRUE(Type.match(var1.t, tm.get("int")))
+  EXPECT_FALSE(var1.mutable)
+  EXPECT_EQ(var1.scope, 0)
+
+  EXPECT_EQ(var2.name, "test2")
+  EXPECT_TRUE(Type.match(var2.t, tm.get("str")))
+  EXPECT_TRUE(var2.mutable)
+  EXPECT_EQ(var2.scope, 0)
+
+  vm.increase()
+  vm.add("test1", tm.get("str"), true)
+
+  var10 := vm.get("test1")
+
+  EXPECT_EQ(var10.name, "test1")
+  EXPECT_TRUE(Type.match(var10.t, tm.get("str")))
+  EXPECT_TRUE(var10.mutable)
+  EXPECT_EQ(var10.scope, 1)
+}
+
+export fn TEST_VarMap_get () {
+  mut vm := VarMap{}
+  mut tm := TypeMap{}
+  tm.init()
+
+  vm.add("test1", tm.get("int"), false)
+  var1 := vm.get("test1")
+  EXPECT_EQ(var1.name, "test1")
+  EXPECT_EQ(var1.scope, 0)
+
+  vm.increase()
+
+  vm.add("test1", tm.get("int"), false)
+  var2 := vm.get("test1")
+  EXPECT_EQ(var2.name, "test1")
+  EXPECT_EQ(var2.scope, 1)
+
+  vm.increase()
+
+  vm.add("test1", tm.get("int"), false)
+  var3 := vm.get("test1")
+  EXPECT_EQ(var3.name, "test1")
+  EXPECT_EQ(var3.scope, 2)
+}
+
+export fn TEST_VarMap_getThrows () {
+  mut vm := VarMap{}
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    vmRef := ref vm // todo remove after v1
+    vm.get("test1")
+  }, "Variable with this name doesn't exists")
+}
+
+export fn TEST_VarMap_has () {
+  mut vm := VarMap{}
+  mut tm := TypeMap{}
+  tm.init()
+
+  vm.add("test1", tm.get("int"), false)
+  vm.add("test2", tm.get("str"), false)
+  EXPECT_TRUE(vm.has("test1", global: false))
+  EXPECT_TRUE(vm.has("test2", global: false))
+  EXPECT_TRUE(vm.has("test1"))
+  EXPECT_TRUE(vm.has("test2"))
+  vm.increase()
+  vm.add("test1", tm.get("int"), false)
+  EXPECT_TRUE(vm.has("test1", global: false))
+  EXPECT_FALSE(vm.has("test2", global: false))
+  EXPECT_TRUE(vm.has("test1"))
+  EXPECT_TRUE(vm.has("test2"))
+}
+
+export fn TEST_VarMap_increaseDecrease () {
+  mut vm := VarMap{}
+  mut tm := TypeMap{}
+  tm.init()
+
+  vm.add("test", tm.get("int"), false)
+  var1 := vm.get("test")
+  EXPECT_EQ(var1.scope, 0)
+  vm.increase()
+  vm.add("test", tm.get("int"), false)
+  var2 := vm.get("test")
+  EXPECT_EQ(var2.scope, 1)
+  vm.increase()
+  vm.add("test", tm.get("int"), false)
+  var3 := vm.get("test")
+  EXPECT_EQ(var3.scope, 2)
+  vm.decrease()
+  var4 := vm.get("test")
+  EXPECT_EQ(var4.scope, 1)
+  vm.decrease()
+  var5 := vm.get("test")
+  EXPECT_EQ(var5.scope, 0)
+}

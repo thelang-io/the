@@ -1,0 +1,5 @@
+const a: Test
+===== err =====
+E1001.txt:1:10: AnalyzeError: E1001 - Use of undeclared type `Test`
+1 | const a: Test
+  |          ~~~~

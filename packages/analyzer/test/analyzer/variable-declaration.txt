@@ -1,0 +1,16 @@
+const A1 := 10
+const B1: i8
+const C1: i8 = 10
+mut A2 := 10
+mut B2: i8
+mut C2: i8 = 10
+
+main {
+  a1 := 30
+  b1: i8
+  c1: i8 = 40
+
+  mut a2 := 30
+  mut b2: i8
+  mut c2: i8 = 40
+}

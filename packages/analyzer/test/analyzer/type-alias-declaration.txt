@@ -1,0 +1,8 @@
+type Test1 = int
+type Test2 = int | str
+type Test3 = int | str | char
+type Test4 = int | str | char | bool
+type Test5 = Test1
+type Test6 = Test1 | Test2
+type Test7 = Test1 | Test2 | Test3
+type Test8 = Test1 | Test2 | Test3 | Test4

@@ -1,0 +1,9 @@
+fn test1 () {}
+fn test2 () void {}
+fn test3 () int { return 1 }
+fn test4 () void { return }
+fn test5 (a: int) {}
+fn test6 (a: int, b: str) {}
+fn test7 (a: int, b: str, c: int...) {}
+fn test8 (a := 10, b: int = 20) {}
+fn test9 (a: int, b: str, c: int..., d := 5) {}

@@ -385,7 +385,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprCall (
     }
   }
 
-  if (!root && nodeExpr.type->isRef() && !targetType->isRef()) {
+  if (!root && nodeExpr.type->isRef() && !targetType->isOpt() && !targetType->isRef()) {
     expr = this->_genCopyFn(targetType, CodegenASTExprUnary::create("*", expr));
   }
 

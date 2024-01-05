@@ -1,0 +1,15 @@
+main {
+  v1 := () -> void {}
+  v2 := (a: int) -> void {}
+  v3 := (a: int, b: str) -> void {}
+  v4 := (a: int, b: str, c: int..., d := 10) -> void {}
+  v5 := (a: int, b: str, c: int = 5, d := 10) -> void {}
+  v6 := () -> int { return 1 }
+
+  v7 := () -> int {
+    if 1 == 2 {
+      return 2
+    }
+    return 1
+  }
+}

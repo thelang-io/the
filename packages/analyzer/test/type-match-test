@@ -1,0 +1,1035 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TypeMap from "../src/type-map"
+import * as Type from "../src/type"
+
+export fn TEST_Type_largest () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("float")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("f32")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("u32")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("u16")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("u8")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("i64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("i32")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("int")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("i16")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("i8")), tm.get("f64")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("f64")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("f32")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("u32")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("u16")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("u8")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("i64")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("i32")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("int")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("i16")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("i8")), tm.get("float")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("f32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("u16")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("u8")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("i32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("int")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("i16")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("i8")), tm.get("f32")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("u32")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("u16")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("u8")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("i32")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("int")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("i16")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("i8")), tm.get("i64")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("u16")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("u8")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("i32")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("int")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("i16")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("i8")), tm.get("i32")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("u16")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("u8")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("i32")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("int")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("i16")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("i8")), tm.get("int")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("u8")), tm.get("i16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("i16")), tm.get("i16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("i8")), tm.get("i16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("i8")), tm.get("i8")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u64"), tm.get("u64")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u64"), tm.get("u32")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u64"), tm.get("u16")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u64"), tm.get("u8")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("u32")), tm.get("u32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("u16")), tm.get("u32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("u8")), tm.get("u32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("u16")), tm.get("u16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("u8")), tm.get("u16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("u8")), tm.get("u8")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("f64")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("f64")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("f64")), tm.get("f64")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f64"), tm.get("float")), tm.get("f64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("float"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("float")), tm.get("float")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("float")), tm.get("float")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("f32"), tm.get("f32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("f32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("f32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("f32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("f32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("f32")), tm.get("f32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("f32")), tm.get("f32")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i64"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("i64")), tm.get("i64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("i64")), tm.get("i64")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("i32")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("i32")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("i32")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("i32")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("i32")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("i32")), tm.get("i32")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("int")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("int")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i32"), tm.get("int")), tm.get("i32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("int"), tm.get("int")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("int")), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("int")), tm.get("int")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("i16")), tm.get("i16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i16"), tm.get("i16")), tm.get("i16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("i16")), tm.get("i16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("i8"), tm.get("i8")), tm.get("i8")))
+
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u64"), tm.get("u64")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("u64")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("u64")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("u64")), tm.get("u64")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u32"), tm.get("u32")), tm.get("u32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("u32")), tm.get("u32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("u32")), tm.get("u32")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u16"), tm.get("u16")), tm.get("u16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("u16")), tm.get("u16")))
+  EXPECT_TRUE(Type.match(Type.largest(tm.get("u8"), tm.get("u8")), tm.get("u8")))
+}
+
+export fn TEST_Type_numberMatch () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  EXPECT_TRUE(Type.numberMatch("f32", "i8"))
+  EXPECT_TRUE(Type.numberMatch("f32", "i16"))
+  EXPECT_TRUE(Type.numberMatch("f32", "i32"))
+  EXPECT_TRUE(Type.numberMatch("f32", "int"))
+  EXPECT_FALSE(Type.numberMatch("f32", "i64"))
+  EXPECT_TRUE(Type.numberMatch("f32", "u8"))
+  EXPECT_TRUE(Type.numberMatch("f32", "u16"))
+  EXPECT_FALSE(Type.numberMatch("f32", "u32"))
+  EXPECT_FALSE(Type.numberMatch("f32", "u64"))
+  EXPECT_TRUE(Type.numberMatch("f32", "f32"))
+  EXPECT_FALSE(Type.numberMatch("f32", "f64"))
+  EXPECT_FALSE(Type.numberMatch("f32", "float"))
+  EXPECT_TRUE(Type.numberMatch("f64", "i8"))
+  EXPECT_TRUE(Type.numberMatch("f64", "i16"))
+  EXPECT_TRUE(Type.numberMatch("f64", "i32"))
+  EXPECT_TRUE(Type.numberMatch("f64", "int"))
+  EXPECT_TRUE(Type.numberMatch("f64", "i64"))
+  EXPECT_TRUE(Type.numberMatch("f64", "u8"))
+  EXPECT_TRUE(Type.numberMatch("f64", "u16"))
+  EXPECT_TRUE(Type.numberMatch("f64", "u32"))
+  EXPECT_FALSE(Type.numberMatch("f64", "u64"))
+  EXPECT_TRUE(Type.numberMatch("f64", "f32"))
+  EXPECT_TRUE(Type.numberMatch("f64", "f64"))
+  EXPECT_TRUE(Type.numberMatch("f64", "float"))
+  EXPECT_TRUE(Type.numberMatch("float", "i8"))
+  EXPECT_TRUE(Type.numberMatch("float", "i16"))
+  EXPECT_TRUE(Type.numberMatch("float", "i32"))
+  EXPECT_TRUE(Type.numberMatch("float", "int"))
+  EXPECT_TRUE(Type.numberMatch("float", "i64"))
+  EXPECT_TRUE(Type.numberMatch("float", "u8"))
+  EXPECT_TRUE(Type.numberMatch("float", "u16"))
+  EXPECT_TRUE(Type.numberMatch("float", "u32"))
+  EXPECT_FALSE(Type.numberMatch("float", "u64"))
+  EXPECT_TRUE(Type.numberMatch("float", "f32"))
+  EXPECT_TRUE(Type.numberMatch("float", "f64"))
+  EXPECT_TRUE(Type.numberMatch("float", "float"))
+
+  EXPECT_TRUE(Type.numberMatch("i8", "i8"))
+  EXPECT_FALSE(Type.numberMatch("i8", "i16"))
+  EXPECT_FALSE(Type.numberMatch("i8", "i32"))
+  EXPECT_FALSE(Type.numberMatch("i8", "int"))
+  EXPECT_FALSE(Type.numberMatch("i8", "i64"))
+  EXPECT_FALSE(Type.numberMatch("i8", "u8"))
+  EXPECT_FALSE(Type.numberMatch("i8", "u16"))
+  EXPECT_FALSE(Type.numberMatch("i8", "u32"))
+  EXPECT_FALSE(Type.numberMatch("i8", "u64"))
+  EXPECT_FALSE(Type.numberMatch("i8", "f32"))
+  EXPECT_FALSE(Type.numberMatch("i8", "f64"))
+  EXPECT_FALSE(Type.numberMatch("i8", "float"))
+
+  EXPECT_TRUE(Type.numberMatch("i16", "i8"))
+  EXPECT_TRUE(Type.numberMatch("i16", "i16"))
+  EXPECT_FALSE(Type.numberMatch("i16", "i32"))
+  EXPECT_FALSE(Type.numberMatch("i16", "int"))
+  EXPECT_FALSE(Type.numberMatch("i16", "i64"))
+  EXPECT_TRUE(Type.numberMatch("i16", "u8"))
+  EXPECT_FALSE(Type.numberMatch("i16", "u16"))
+  EXPECT_FALSE(Type.numberMatch("i16", "u32"))
+  EXPECT_FALSE(Type.numberMatch("i16", "u64"))
+  EXPECT_FALSE(Type.numberMatch("i16", "f32"))
+  EXPECT_FALSE(Type.numberMatch("i16", "f64"))
+  EXPECT_FALSE(Type.numberMatch("i16", "float"))
+
+  EXPECT_TRUE(Type.numberMatch("i32", "i8"))
+  EXPECT_TRUE(Type.numberMatch("i32", "i16"))
+  EXPECT_TRUE(Type.numberMatch("i32", "i32"))
+  EXPECT_TRUE(Type.numberMatch("i32", "int"))
+  EXPECT_FALSE(Type.numberMatch("i32", "i64"))
+  EXPECT_TRUE(Type.numberMatch("i32", "u8"))
+  EXPECT_TRUE(Type.numberMatch("i32", "u16"))
+  EXPECT_FALSE(Type.numberMatch("i32", "u32"))
+  EXPECT_FALSE(Type.numberMatch("i32", "u64"))
+  EXPECT_FALSE(Type.numberMatch("i32", "f32"))
+  EXPECT_FALSE(Type.numberMatch("i32", "f64"))
+  EXPECT_FALSE(Type.numberMatch("i32", "float"))
+
+  EXPECT_TRUE(Type.numberMatch("int", "i8"))
+  EXPECT_TRUE(Type.numberMatch("int", "i16"))
+  EXPECT_TRUE(Type.numberMatch("int", "i32"))
+  EXPECT_TRUE(Type.numberMatch("int", "int"))
+  EXPECT_FALSE(Type.numberMatch("int", "i64"))
+  EXPECT_TRUE(Type.numberMatch("int", "u8"))
+  EXPECT_TRUE(Type.numberMatch("int", "u16"))
+  EXPECT_FALSE(Type.numberMatch("int", "u32"))
+  EXPECT_FALSE(Type.numberMatch("int", "u64"))
+  EXPECT_FALSE(Type.numberMatch("int", "f32"))
+  EXPECT_FALSE(Type.numberMatch("int", "f64"))
+  EXPECT_FALSE(Type.numberMatch("int", "float"))
+
+  EXPECT_TRUE(Type.numberMatch("i64", "i8"))
+  EXPECT_TRUE(Type.numberMatch("i64", "i16"))
+  EXPECT_TRUE(Type.numberMatch("i64", "i32"))
+  EXPECT_TRUE(Type.numberMatch("i64", "int"))
+  EXPECT_TRUE(Type.numberMatch("i64", "i64"))
+  EXPECT_TRUE(Type.numberMatch("i64", "u8"))
+  EXPECT_TRUE(Type.numberMatch("i64", "u16"))
+  EXPECT_TRUE(Type.numberMatch("i64", "u32"))
+  EXPECT_FALSE(Type.numberMatch("i64", "u64"))
+  EXPECT_FALSE(Type.numberMatch("i64", "f32"))
+  EXPECT_FALSE(Type.numberMatch("i64", "f64"))
+  EXPECT_FALSE(Type.numberMatch("i64", "float"))
+
+  EXPECT_FALSE(Type.numberMatch("u8", "i8"))
+  EXPECT_FALSE(Type.numberMatch("u8", "i16"))
+  EXPECT_FALSE(Type.numberMatch("u8", "i32"))
+  EXPECT_FALSE(Type.numberMatch("u8", "int"))
+  EXPECT_FALSE(Type.numberMatch("u8", "i64"))
+  EXPECT_TRUE(Type.numberMatch("u8", "u8"))
+  EXPECT_FALSE(Type.numberMatch("u8", "u16"))
+  EXPECT_FALSE(Type.numberMatch("u8", "u32"))
+  EXPECT_FALSE(Type.numberMatch("u8", "u64"))
+  EXPECT_FALSE(Type.numberMatch("u8", "f32"))
+  EXPECT_FALSE(Type.numberMatch("u8", "f64"))
+  EXPECT_FALSE(Type.numberMatch("u8", "float"))
+
+  EXPECT_FALSE(Type.numberMatch("u16", "i8"))
+  EXPECT_FALSE(Type.numberMatch("u16", "i16"))
+  EXPECT_FALSE(Type.numberMatch("u16", "i32"))
+  EXPECT_FALSE(Type.numberMatch("u16", "int"))
+  EXPECT_FALSE(Type.numberMatch("u16", "i64"))
+  EXPECT_TRUE(Type.numberMatch("u16", "u8"))
+  EXPECT_TRUE(Type.numberMatch("u16", "u16"))
+  EXPECT_FALSE(Type.numberMatch("u16", "u32"))
+  EXPECT_FALSE(Type.numberMatch("u16", "u64"))
+  EXPECT_FALSE(Type.numberMatch("u16", "f32"))
+  EXPECT_FALSE(Type.numberMatch("u16", "f64"))
+  EXPECT_FALSE(Type.numberMatch("u16", "float"))
+
+  EXPECT_FALSE(Type.numberMatch("u32", "i8"))
+  EXPECT_FALSE(Type.numberMatch("u32", "i16"))
+  EXPECT_FALSE(Type.numberMatch("u32", "i32"))
+  EXPECT_FALSE(Type.numberMatch("u32", "int"))
+  EXPECT_FALSE(Type.numberMatch("u32", "i64"))
+  EXPECT_TRUE(Type.numberMatch("u32", "u8"))
+  EXPECT_TRUE(Type.numberMatch("u32", "u16"))
+  EXPECT_TRUE(Type.numberMatch("u32", "u32"))
+  EXPECT_FALSE(Type.numberMatch("u32", "u64"))
+  EXPECT_FALSE(Type.numberMatch("u32", "f32"))
+  EXPECT_FALSE(Type.numberMatch("u32", "f64"))
+  EXPECT_FALSE(Type.numberMatch("u32", "float"))
+
+  EXPECT_FALSE(Type.numberMatch("u64", "i8"))
+  EXPECT_FALSE(Type.numberMatch("u64", "i16"))
+  EXPECT_FALSE(Type.numberMatch("u64", "i32"))
+  EXPECT_FALSE(Type.numberMatch("u64", "int"))
+  EXPECT_FALSE(Type.numberMatch("u64", "i64"))
+  EXPECT_TRUE(Type.numberMatch("u64", "u8"))
+  EXPECT_TRUE(Type.numberMatch("u64", "u16"))
+  EXPECT_TRUE(Type.numberMatch("u64", "u32"))
+  EXPECT_TRUE(Type.numberMatch("u64", "u64"))
+  EXPECT_FALSE(Type.numberMatch("u64", "f32"))
+  EXPECT_FALSE(Type.numberMatch("u64", "f64"))
+  EXPECT_FALSE(Type.numberMatch("u64", "float"))
+}
+
+export fn TEST_Type_match () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  alias := tm.createAlias("Alias", tm.get("int"))
+  enumeration := tm.createEnum("TestEnum", ["Red", "Brown"])
+
+  function := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  map := tm.createMap(tm.get("str"), tm.get("str"))
+
+  ns := tm.createNamespace("NS", [
+    Type.NamespaceMember{name: "Test", t: tm.get("int")},
+  ])
+
+  object := tm.createObject("Test", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "m", t: tm.createMethod(false, [], tm.get("void"), false, false, "", tm.get("any"))},
+  ])
+
+  optional := tm.createOptional(tm.get("int"))
+  reference := tm.createReference(tm.get("int"))
+  unionType := tm.createUnion([tm.get("int"), tm.get("str")])
+
+  EXPECT_TRUE(Type.match(alias, alias))
+  EXPECT_TRUE(Type.match(tm.get("any"), tm.get("any")))
+  EXPECT_TRUE(Type.match(tm.createArray(tm.get("int")), tm.createArray(tm.get("int"))))
+  EXPECT_TRUE(Type.match(enumeration, enumeration))
+  EXPECT_TRUE(Type.match(function, function))
+  EXPECT_TRUE(Type.match(map, map))
+  EXPECT_TRUE(Type.match(ns, ns))
+  EXPECT_TRUE(Type.match(object, object))
+  EXPECT_TRUE(Type.match(optional, optional))
+  EXPECT_TRUE(Type.match(reference, reference))
+  EXPECT_TRUE(Type.match(unionType, unionType))
+
+  EXPECT_TRUE(Type.match(tm.get("any"), tm.get("any")))
+  EXPECT_TRUE(Type.match(tm.get("bool"), tm.get("bool")))
+  EXPECT_TRUE(Type.match(tm.get("byte"), tm.get("byte")))
+  EXPECT_TRUE(Type.match(tm.get("char"), tm.get("char")))
+  EXPECT_TRUE(Type.match(tm.get("float"), tm.get("float")))
+  EXPECT_TRUE(Type.match(tm.get("f32"), tm.get("f32")))
+  EXPECT_TRUE(Type.match(tm.get("f64"), tm.get("f64")))
+  EXPECT_TRUE(Type.match(tm.get("int"), tm.get("int")))
+  EXPECT_TRUE(Type.match(tm.get("i8"), tm.get("i8")))
+  EXPECT_TRUE(Type.match(tm.get("i16"), tm.get("i16")))
+  EXPECT_TRUE(Type.match(tm.get("i32"), tm.get("i32")))
+  EXPECT_TRUE(Type.match(tm.get("i64"), tm.get("i64")))
+  EXPECT_TRUE(Type.match(tm.get("str"), tm.get("str")))
+  EXPECT_TRUE(Type.match(tm.get("u8"), tm.get("u8")))
+  EXPECT_TRUE(Type.match(tm.get("u16"), tm.get("u16")))
+  EXPECT_TRUE(Type.match(tm.get("u32"), tm.get("u32")))
+  EXPECT_TRUE(Type.match(tm.get("u64"), tm.get("u64")))
+  EXPECT_TRUE(Type.match(tm.get("void"), tm.get("void")))
+}
+
+export fn TEST_Type_matchAlias () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  alias := tm.createAlias("Alias", tm.get("int"))
+  type1 := tm.createAlias("Alias2", tm.get("i8"))
+  type2 := tm.createAlias("Alias3", tm.get("str"))
+
+  EXPECT_FALSE(Type.match(alias, type1))
+  EXPECT_FALSE(Type.match(type1, alias))
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_FALSE(Type.match(type1, type2))
+  EXPECT_FALSE(Type.match(type2, type1))
+  EXPECT_TRUE(Type.match(type1, tm.get("i8")))
+  EXPECT_TRUE(Type.match(tm.get("i8"), type1))
+}
+
+export fn TEST_Type_matchArray () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createArray(tm.get("int"))
+  type2 := tm.createArray(tm.get("str"))
+
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_FALSE(Type.match(type1, type2))
+  EXPECT_FALSE(Type.match(type2, type1))
+  EXPECT_FALSE(Type.match(type1, tm.get("int")))
+  EXPECT_FALSE(Type.match(tm.get("int"), type1))
+}
+
+export fn TEST_Type_matchEnum () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createEnum("Test2", ["Brown"])
+  type2 := tm.createEnum("Test2", ["Brown", "Red"])
+  type3 := tm.createEnum("Test3", ["Brown", "Red"])
+
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_TRUE(Type.match(type1, type2))
+  EXPECT_TRUE(Type.match(type2, type1))
+  EXPECT_FALSE(Type.match(type1, type3))
+  EXPECT_FALSE(Type.match(type3, type1))
+  EXPECT_FALSE(Type.match(type1, tm.get("int")))
+  EXPECT_FALSE(Type.match(tm.get("int"), type1))
+}
+
+export fn TEST_Type_matchFunction () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  ref1 := tm.createReference(tm.get("int"))
+  ref2 := tm.createReference(tm.get("str"))
+
+  type1 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type2 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type3 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), required: true},
+  ], tm.get("int"))
+
+  type4 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("str"), variadic: true},
+  ], tm.get("int"))
+
+  type5 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("str"))
+
+  type6 := tm.createFunction(false, [], tm.get("int"))
+
+  type7 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+  ], tm.get("int"))
+
+  type8 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: tm.get("int"), required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type9 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: ref1, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type10 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: ref1, mutable: true, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type11 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: ref2, mutable: true, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type12 := tm.createFunction(true, [
+    Type.TypeParameter{name: "a", t: ref2, mutable: true, required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type13 := tm.createFunction(true, [
+    Type.TypeParameter{name: nil, t: ref2, mutable: true, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type14 := tm.createFunction(true, [
+    Type.TypeParameter{name: nil, t: ref2, mutable: true, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  EXPECT_FALSE(Type.match(type1, tm.get("any")))
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_TRUE(Type.match(type1, type2))
+  EXPECT_FALSE(Type.match(type1, type3))
+  EXPECT_FALSE(Type.match(type1, type4))
+  EXPECT_FALSE(Type.match(type1, type5))
+  EXPECT_FALSE(Type.match(type1, type6))
+  EXPECT_FALSE(Type.match(type1, type7))
+  EXPECT_FALSE(Type.match(type1, type8))
+  EXPECT_FALSE(Type.match(type8, type1))
+  EXPECT_FALSE(Type.match(type1, type9))
+  EXPECT_FALSE(Type.match(type9, type1))
+  EXPECT_FALSE(Type.match(type1, type10))
+  EXPECT_FALSE(Type.match(type10, type1))
+  EXPECT_FALSE(Type.match(type1, type11))
+  EXPECT_FALSE(Type.match(type11, type1))
+  EXPECT_FALSE(Type.match(type10, type11))
+  EXPECT_FALSE(Type.match(type11, type10))
+  EXPECT_FALSE(Type.match(type11, type12))
+  EXPECT_FALSE(Type.match(type12, type11))
+  EXPECT_FALSE(Type.match(type12, type13))
+  EXPECT_FALSE(Type.match(type12, type14))
+  EXPECT_FALSE(Type.match(type13, type12))
+  EXPECT_TRUE(Type.match(type13, type14))
+  EXPECT_TRUE(Type.match(type14, type13))
+  EXPECT_FALSE(Type.match(type14, type12))
+}
+
+export fn TEST_Type_matchMap () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createMap(tm.get("int"), tm.get("int"))
+  type2 := tm.createMap(tm.get("str"), tm.get("str"))
+
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_FALSE(Type.match(type1, type2))
+  EXPECT_FALSE(Type.match(type2, type1))
+  EXPECT_FALSE(Type.match(type1, tm.get("int")))
+  EXPECT_FALSE(Type.match(tm.get("int"), type1))
+}
+
+export fn TEST_Type_matchObject () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createObject("Test1", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "b", t: tm.get("int")}
+  ])
+
+  type2 := tm.createObject("Test2")
+
+  type3 := tm.createObject("Test3", [
+    Type.TypeProperty{name: "a", t: tm.get("int")}
+  ])
+
+  type4 := tm.createObject("Test4", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "b", t: tm.get("int")}
+  ])
+
+  type5 := tm.createObject("Test5", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "b", t: tm.get("str")}
+  ])
+
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_FALSE(Type.match(type1, type2))
+  EXPECT_FALSE(Type.match(type1, type3))
+  EXPECT_FALSE(Type.match(type1, type4))
+  EXPECT_FALSE(Type.match(type1, type5))
+  EXPECT_FALSE(Type.match(type1, tm.get("int")))
+}
+
+export fn TEST_Type_matchObjectMethod () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  object := tm.createObject("Test", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+  ])
+
+  type1 := tm.createMethod(false, [], tm.get("void"), false, false, "", object)
+  type2 := tm.createMethod(false, [], tm.get("void"), false, false, "", object)
+  type3 := tm.createMethod(false, [], tm.get("void"), true, false, "a", object)
+  type4 := tm.createMethod(false, [], tm.get("void"), true, true, "a", object)
+  type5 := tm.createMethod(false, [], tm.get("void"), true, true, "a", tm.createReference(object))
+
+  EXPECT_TRUE(Type.match(type2, type2))
+  EXPECT_TRUE(Type.match(type1, type2))
+  EXPECT_TRUE(Type.match(type3, type3))
+  EXPECT_FALSE(Type.match(type2, type3))
+  EXPECT_FALSE(Type.match(type3, type2))
+  EXPECT_TRUE(Type.match(type4, type4))
+  EXPECT_FALSE(Type.match(type3, type4))
+  EXPECT_FALSE(Type.match(type4, type3))
+  EXPECT_TRUE(Type.match(type5, type5))
+  EXPECT_FALSE(Type.match(type3, type5))
+  EXPECT_FALSE(Type.match(type4, type5))
+  EXPECT_FALSE(Type.match(type5, type3))
+  EXPECT_FALSE(Type.match(type5, type4))
+}
+
+export fn TEST_Type_matchOptional () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createOptional(tm.get("int"))
+  type2 := tm.createOptional(tm.get("str"))
+
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_FALSE(Type.match(type1, type2))
+  EXPECT_FALSE(Type.match(type2, type1))
+  EXPECT_FALSE(Type.match(type1, tm.get("int")))
+  EXPECT_FALSE(Type.match(tm.get("int"), type1))
+}
+
+export fn TEST_Type_matchReference () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createReference(tm.get("int"))
+  type2 := tm.createReference(tm.get("int"))
+
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_TRUE(Type.match(type1, type2))
+  EXPECT_TRUE(Type.match(type2, type1))
+  EXPECT_FALSE(Type.match(type1, tm.get("int")))
+  EXPECT_FALSE(Type.match(tm.get("int"), type1))
+  EXPECT_FALSE(Type.match(type1, tm.get("str")))
+  EXPECT_FALSE(Type.match(tm.get("str"), type1))
+}
+
+export fn TEST_Type_matchUnion () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createUnion([tm.get("int"), tm.get("float")])
+  type2 := tm.createUnion([tm.get("char"), tm.get("str")])
+  type3 := tm.createUnion([tm.get("u8"), tm.get("u16"), tm.get("u32"), tm.get("u64")])
+
+  EXPECT_TRUE(Type.match(type1, type1))
+  EXPECT_FALSE(Type.match(type1, type2))
+  EXPECT_FALSE(Type.match(type1, type3))
+  EXPECT_FALSE(Type.match(type2, type1))
+  EXPECT_FALSE(Type.match(type3, type1))
+  EXPECT_FALSE(Type.match(type1, tm.get("int")))
+  EXPECT_FALSE(Type.match(tm.get("int"), type1))
+}
+
+export fn TEST_Type_similarTo () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  alias := tm.createAlias("Alias", tm.get("int"))
+  enumeration := tm.createEnum("TestEnum", ["Red", "Brown"])
+
+  function := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  map := tm.createMap(tm.get("str"), tm.get("str"))
+
+  ns := tm.createNamespace("NS", [
+    Type.NamespaceMember{name: "Test", t: tm.get("int")},
+  ])
+
+  object := tm.createObject("Test", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "m", t: tm.createMethod(false, [], tm.get("void"), false, false, "", tm.get("int"))},
+  ])
+
+  optional := tm.createOptional(tm.get("int"))
+  reference := tm.createReference(tm.get("int"))
+  unionType := tm.createUnion([tm.get("int"), tm.get("str")])
+
+  EXPECT_TRUE(Type.similarTo(alias, alias))
+  EXPECT_TRUE(Type.similarTo(tm.get("any"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.createArray(tm.get("int")), tm.createArray(tm.get("int"))))
+  EXPECT_TRUE(Type.similarTo(enumeration, enumeration))
+  EXPECT_TRUE(Type.similarTo(function, function))
+  EXPECT_TRUE(Type.similarTo(map, map))
+  EXPECT_TRUE(Type.similarTo(ns, ns))
+  EXPECT_TRUE(Type.similarTo(object, object))
+  EXPECT_TRUE(Type.similarTo(optional, optional))
+  EXPECT_TRUE(Type.similarTo(reference, reference))
+  EXPECT_TRUE(Type.similarTo(unionType, unionType))
+  EXPECT_TRUE(Type.similarTo(tm.get("bool"), tm.get("bool")))
+  EXPECT_TRUE(Type.similarTo(tm.get("byte"), tm.get("byte")))
+  EXPECT_TRUE(Type.similarTo(tm.get("int"), tm.get("byte")))
+  EXPECT_TRUE(Type.similarTo(tm.get("byte"), tm.get("int")))
+  EXPECT_TRUE(Type.similarTo(tm.get("char"), tm.get("char")))
+  EXPECT_TRUE(Type.similarTo(tm.get("str"), tm.get("str")))
+  EXPECT_TRUE(Type.similarTo(tm.get("void"), tm.get("void")))
+}
+
+export fn TEST_Type_similarToAlias () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  alias := tm.createAlias("Alias", tm.get("int"))
+  type1 := tm.createAlias("Alias2", tm.get("i8"))
+  type2 := tm.createAlias("Alias3", tm.get("str"))
+
+  EXPECT_FALSE(Type.similarTo(alias, type1))
+  EXPECT_TRUE(Type.similarTo(type1, alias))
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type2))
+  EXPECT_FALSE(Type.similarTo(type2, type1))
+  EXPECT_TRUE(Type.similarTo(type1, tm.get("i8")))
+  EXPECT_TRUE(Type.similarTo(tm.get("i8"), type1))
+}
+
+export fn TEST_Type_similarToAny () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  function := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  ns := tm.createNamespace("NS", [
+    Type.NamespaceMember{name: "Test", t: tm.get("int")},
+  ])
+
+  object := tm.createObject("Test", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "m", t: tm.createMethod(false, [], tm.get("void"), false, false, "", tm.get("int"))},
+  ])
+
+  optional := tm.createOptional(tm.get("int"))
+  reference := tm.createReference(tm.get("int"))
+  unionType := tm.createUnion([tm.get("int"), tm.get("str")])
+
+  EXPECT_TRUE(Type.similarTo(tm.createAlias("Alias", tm.get("int")), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.createArray(tm.get("int")), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.createEnum("TestEnum", ["Red", "Brown"]), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(function, tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.createMap(tm.get("str"), tm.get("str")), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(ns, tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(object, tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(optional, tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(reference, tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(unionType, tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("any"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("bool"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("byte"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("char"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("float"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("f32"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("f64"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("int"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("i8"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("i16"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("i32"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("i64"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("str"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("u8"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("u16"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("u32"), tm.get("any")))
+  EXPECT_TRUE(Type.similarTo(tm.get("u64"), tm.get("any")))
+  EXPECT_FALSE(Type.similarTo(tm.get("void"), tm.get("any")))
+}
+
+export fn TEST_Type_similarToArray () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createArray(tm.get("int"))
+  type2 := tm.createArray(tm.get("str"))
+
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_FALSE(Type.similarTo(type2, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type2))
+  EXPECT_FALSE(Type.similarTo(tm.get("int"), type1))
+  EXPECT_FALSE(Type.similarTo(type1, tm.get("int")))
+}
+
+export fn TEST_Type_similarToEnum () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createEnum("Test2", ["Brown"])
+  type2 := tm.createEnum("Test2", ["Brown", "Red"])
+  type3 := tm.createEnum("Test3", ["Brown", "Red"])
+
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_TRUE(Type.similarTo(type2, type1))
+  EXPECT_TRUE(Type.similarTo(type1, type2))
+  EXPECT_FALSE(Type.similarTo(type3, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type3))
+  EXPECT_TRUE(Type.similarTo(tm.get("int"), type1))
+  EXPECT_TRUE(Type.similarTo(type1, tm.get("int")))
+}
+
+export fn TEST_Type_similarToFunction () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  ref1 := tm.createReference(tm.get("int"))
+  ref2 := tm.createReference(tm.get("str"))
+
+  type1 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type2 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type3 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), required: true},
+  ], tm.get("int"))
+
+  type4 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("str"), variadic: true},
+  ], tm.get("int"))
+
+  type5 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("str"))
+
+  type6 := tm.createFunction(false, [], tm.get("int"))
+
+  type7 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), required: true},
+  ], tm.get("int"))
+
+  type8 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: tm.get("int"), required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type9 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: ref1, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type10 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: ref1, mutable: true, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type11 := tm.createFunction(false, [
+    Type.TypeParameter{name: nil, t: ref2, mutable: true, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type12 := tm.createFunction(true, [
+    Type.TypeParameter{name: "a", t: ref2, mutable: true, required: true},
+    Type.TypeParameter{name: "b", t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  type13 := tm.createFunction(true, [
+    Type.TypeParameter{name: nil, t: ref2, mutable: true, required: true},
+    Type.TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+  ], tm.get("int"))
+
+  EXPECT_FALSE(Type.similarTo(tm.get("any"), type1))
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_TRUE(Type.similarTo(type2, type1))
+  EXPECT_FALSE(Type.similarTo(type3, type1))
+  EXPECT_FALSE(Type.similarTo(type4, type1))
+  EXPECT_FALSE(Type.similarTo(type5, type1))
+  EXPECT_FALSE(Type.similarTo(type6, type1))
+  EXPECT_FALSE(Type.similarTo(type7, type1))
+  EXPECT_FALSE(Type.similarTo(type8, type1))
+  EXPECT_TRUE(Type.similarTo(type1, type8))
+  EXPECT_FALSE(Type.similarTo(type9, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type9))
+  EXPECT_FALSE(Type.similarTo(type10, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type10))
+  EXPECT_FALSE(Type.similarTo(type11, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type11))
+  EXPECT_FALSE(Type.similarTo(type11, type10))
+  EXPECT_FALSE(Type.similarTo(type10, type11))
+  EXPECT_FALSE(Type.similarTo(type12, type11))
+  EXPECT_FALSE(Type.similarTo(type11, type12))
+  EXPECT_FALSE(Type.similarTo(type13, type12))
+  EXPECT_TRUE(Type.similarTo(type12, type13))
+}
+
+export fn TEST_Type_similarToMap () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createMap(tm.get("int"), tm.get("int"))
+  type2 := tm.createMap(tm.get("str"), tm.get("str"))
+
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_FALSE(Type.similarTo(type2, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type2))
+  EXPECT_FALSE(Type.similarTo(tm.get("int"), type1))
+  EXPECT_FALSE(Type.similarTo(type1, tm.get("int")))
+}
+
+export fn TEST_Type_similarToObject () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createObject("Test1", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "b", t: tm.get("int")}
+  ])
+
+  type2 := tm.createObject("Test2")
+
+  type3 := tm.createObject("Test3", [
+    Type.TypeProperty{name: "a", t: tm.get("int")}
+  ])
+
+  type4 := tm.createObject("Test4", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "b", t: tm.get("int")}
+  ])
+
+  type5 := tm.createObject("Test5", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+    Type.TypeProperty{name: "b", t: tm.get("str")}
+  ])
+
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_FALSE(Type.similarTo(type2, type1))
+  EXPECT_FALSE(Type.similarTo(type3, type1))
+  EXPECT_FALSE(Type.similarTo(type4, type1))
+  EXPECT_FALSE(Type.similarTo(type5, type1))
+  EXPECT_FALSE(Type.similarTo(tm.get("int"), type1))
+}
+
+export fn TEST_Type_similarToObjectMethod () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  object := tm.createObject("Test", [
+    Type.TypeProperty{name: "a", t: tm.get("int")},
+  ])
+
+  type1 := tm.createMethod(false, [], tm.get("void"), false, false, "", tm.get("int"))
+  type2 := tm.createMethod(false, [], tm.get("void"), false, false, "", tm.get("int"))
+  type3 := tm.createMethod(false, [], tm.get("void"), true, false, "a", object)
+  type4 := tm.createMethod(false, [], tm.get("void"), true, true, "a", object)
+  type5 := tm.createMethod(false, [], tm.get("void"), true, true, "b", tm.createReference(object))
+
+  EXPECT_TRUE(Type.similarTo(type2, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_TRUE(Type.similarTo(type2, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_TRUE(Type.similarTo(type3, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_FALSE(Type.similarTo(type3, tm.createFunction(false, [], tm.get("int"))))
+  EXPECT_FALSE(Type.similarTo(type2, tm.createFunction(false, [], tm.get("int"))))
+  EXPECT_TRUE(Type.similarTo(type4, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_TRUE(Type.similarTo(type4, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_TRUE(Type.similarTo(type3, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_TRUE(Type.similarTo(type5, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_TRUE(Type.similarTo(type5, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_TRUE(Type.similarTo(type5, tm.createFunction(false, [], tm.get("void"))))
+  EXPECT_FALSE(Type.similarTo(type3, tm.createFunction(false, [], tm.get("int"))))
+  EXPECT_TRUE(Type.similarTo(type4, tm.createFunction(false, [], tm.get("void"))))
+}
+
+export fn TEST_Type_similarToOptional () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createOptional(tm.get("int"))
+  type2 := tm.createOptional(tm.get("str"))
+
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_FALSE(Type.similarTo(type2, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type2))
+  EXPECT_TRUE(Type.similarTo(tm.get("int"), type1))
+  EXPECT_FALSE(Type.similarTo(type1, tm.get("int")))
+}
+
+export fn TEST_Type_similarToReference () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createReference(tm.get("int"))
+  type2 := tm.createReference(tm.get("int"))
+
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_TRUE(Type.similarTo(type2, type1))
+  EXPECT_TRUE(Type.similarTo(type1, type2))
+  EXPECT_FALSE(Type.similarTo(tm.get("int"), type1))
+  EXPECT_TRUE(Type.similarTo(type1, tm.get("int")))
+  EXPECT_FALSE(Type.similarTo(tm.get("str"), type1))
+  EXPECT_FALSE(Type.similarTo(type1, tm.get("str")))
+}
+
+export fn TEST_Type_similarToUnion () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  type1 := tm.createUnion([tm.get("int"), tm.get("float")])
+  type2 := tm.createUnion([tm.get("char"), tm.get("str")])
+  type3 := tm.createUnion([tm.get("u8"), tm.get("u16"), tm.get("u32"), tm.get("u64")])
+
+  EXPECT_TRUE(Type.similarTo(type1, type1))
+  EXPECT_FALSE(Type.similarTo(type2, type1))
+  EXPECT_FALSE(Type.similarTo(type3, type1))
+  EXPECT_FALSE(Type.similarTo(type1, type2))
+  EXPECT_FALSE(Type.similarTo(type1, type3))
+  EXPECT_TRUE(Type.similarTo(tm.get("int"), type1))
+  EXPECT_FALSE(Type.similarTo(type1, tm.get("int")))
+}
+
+export fn TEST_Type_unwrap () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createAlias("Alias", tm.get("int"))
+  t2 := tm.createAlias("Alias", t1)
+  t3 := tm.createReference(tm.get("int"))
+  t4 := tm.createReference(t3)
+  t5 := tm.createOptional(tm.get("int"))
+  t6 := tm.createOptional(t5)
+  t7 := tm.createOptional(tm.createReference(tm.get("int")))
+  t8 := tm.createReference(tm.createOptional(t7))
+
+  EXPECT_TRUE(Type.match(Type.unwrap(t1), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.unwrap(t2), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.unwrap(t3), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.unwrap(t3, withReference: false), t3))
+  EXPECT_TRUE(Type.match(Type.unwrap(t4), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.unwrap(t4, withReference: false), t4))
+  EXPECT_TRUE(Type.match(Type.unwrap(t5), t5))
+  EXPECT_TRUE(Type.match(Type.unwrap(t5, withOptional: true), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.unwrap(t6), t6))
+  EXPECT_TRUE(Type.match(Type.unwrap(t6, withOptional: true), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.unwrap(t7, withOptional: false, withReference: false), t7))
+  EXPECT_TRUE(Type.match(Type.unwrap(t7, withOptional: true, withReference: true), tm.get("int")))
+  EXPECT_TRUE(Type.match(Type.unwrap(t8, withOptional: false, withReference: false), t8))
+  EXPECT_TRUE(Type.match(Type.unwrap(t8, withOptional: true, withReference: true), tm.get("int")))
+}

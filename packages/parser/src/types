@@ -88,15 +88,15 @@ export obj Type {
   mut leadingComments: Token[]
   mut trailingComments: Token[]
 
-  fn asArray (mut self: ref Self) ArrayType { return self.body as ArrayType }
-  fn asFunction (mut self: ref Self) FunctionType { return self.body as FunctionType }
-  fn asIdentifier (mut self: ref Self) IdentifierType { return self.body as IdentifierType }
-  fn asMap (mut self: ref Self) MapType { return self.body as MapType }
-  fn asMember (mut self: ref Self) MemberType { return self.body as MemberType }
-  fn asOptional (mut self: ref Self) OptionalType { return self.body as OptionalType }
-  fn asParenthesized (mut self: ref Self) ParenthesizedType { return self.body as ParenthesizedType }
-  fn asReference (mut self: ref Self) ReferenceType { return self.body as ReferenceType }
-  fn asUnion (mut self: ref Self) UnionType { return self.body as UnionType }
+  fn asArray (mut self: ref Self) ref ArrayType { return ref (self.body as ArrayType) }
+  fn asFunction (mut self: ref Self) ref FunctionType { return ref (self.body as FunctionType) }
+  fn asIdentifier (mut self: ref Self) ref IdentifierType { return ref (self.body as IdentifierType) }
+  fn asMap (mut self: ref Self) ref MapType { return ref (self.body as MapType) }
+  fn asMember (mut self: ref Self) ref MemberType { return ref (self.body as MemberType) }
+  fn asOptional (mut self: ref Self) ref OptionalType { return ref (self.body as OptionalType) }
+  fn asParenthesized (mut self: ref Self) ref ParenthesizedType { return ref (self.body as ParenthesizedType) }
+  fn asReference (mut self: ref Self) ref ReferenceType { return ref (self.body as ReferenceType) }
+  fn asUnion (mut self: ref Self) ref UnionType { return ref (self.body as UnionType) }
 
   fn isArray (self: ref Self) bool { return self.body is ArrayType }
   fn isFunction (self: ref Self) bool { return self.body is FunctionType }
@@ -115,31 +115,33 @@ export obj Expression {
   mut body: ExpressionBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut _parent: (ref Expression)?
+  mut _parentNode: (ref Statement)?
 
-  fn asIdentifier (mut self: ref Self) Identifier { return self.body as Identifier }
-  fn asBooleanLiteral (mut self: ref Self) BooleanLiteral { return self.body as BooleanLiteral }
-  fn asCharacterLiteral (mut self: ref Self) CharacterLiteral { return self.body as CharacterLiteral }
-  fn asFloatingPointLiteral (mut self: ref Self) FloatingPointLiteral { return self.body as FloatingPointLiteral }
-  fn asIntegerLiteral (mut self: ref Self) IntegerLiteral { return self.body as IntegerLiteral }
-  fn asNilLiteral (mut self: ref Self) NilLiteral { return self.body as NilLiteral }
-  fn asStringLiteral (mut self: ref Self) StringLiteral { return self.body as StringLiteral }
-  fn asArray (mut self: ref Self) ArrayExpression { return self.body as ArrayExpression }
-  fn asAs (mut self: ref Self) AsExpression { return self.body as AsExpression }
-  fn asAssignment (mut self: ref Self) AssignmentExpression { return self.body as AssignmentExpression }
-  fn asAwait (mut self: ref Self) AwaitExpression { return self.body as AwaitExpression }
-  fn asBinary (mut self: ref Self) BinaryExpression { return self.body as BinaryExpression }
-  fn asCall (mut self: ref Self) CallExpression { return self.body as CallExpression }
-  fn asClosure (mut self: ref Self) ClosureExpression { return self.body as ClosureExpression }
-  fn asConditional (mut self: ref Self) ConditionalExpression { return self.body as ConditionalExpression }
-  fn asElementAccess (mut self: ref Self) ElementAccessExpression { return self.body as ElementAccessExpression }
-  fn asIs (mut self: ref Self) IsExpression { return self.body as IsExpression }
-  fn asMap (mut self: ref Self) MapExpression { return self.body as MapExpression }
-  fn asMemberAccess (mut self: ref Self) MemberAccessExpression { return self.body as MemberAccessExpression }
-  fn asObject (mut self: ref Self) ObjectExpression { return self.body as ObjectExpression }
-  fn asParenthesized (mut self: ref Self) ParenthesizedExpression { return self.body as ParenthesizedExpression }
-  fn asPropertyAccess (mut self: ref Self) PropertyAccessExpression { return self.body as PropertyAccessExpression }
-  fn asReference (mut self: ref Self) ReferenceExpression { return self.body as ReferenceExpression }
-  fn asUnary (mut self: ref Self) UnaryExpression { return self.body as UnaryExpression }
+  fn asIdentifier (mut self: ref Self) ref Identifier { return ref (self.body as Identifier) }
+  fn asBooleanLiteral (mut self: ref Self) ref BooleanLiteral { return ref (self.body as BooleanLiteral) }
+  fn asCharacterLiteral (mut self: ref Self) ref CharacterLiteral { return ref (self.body as CharacterLiteral) }
+  fn asFloatingPointLiteral (mut self: ref Self) ref FloatingPointLiteral { return ref (self.body as FloatingPointLiteral) }
+  fn asIntegerLiteral (mut self: ref Self) ref IntegerLiteral { return ref (self.body as IntegerLiteral) }
+  fn asNilLiteral (mut self: ref Self) ref NilLiteral { return ref (self.body as NilLiteral) }
+  fn asStringLiteral (mut self: ref Self) ref StringLiteral { return ref (self.body as StringLiteral) }
+  fn asArray (mut self: ref Self) ref ArrayExpression { return ref (self.body as ArrayExpression) }
+  fn asAs (mut self: ref Self) ref AsExpression { return ref (self.body as AsExpression) }
+  fn asAssignment (mut self: ref Self) ref AssignmentExpression { return ref (self.body as AssignmentExpression) }
+  fn asAwait (mut self: ref Self) ref AwaitExpression { return ref (self.body as AwaitExpression) }
+  fn asBinary (mut self: ref Self) ref BinaryExpression { return ref (self.body as BinaryExpression) }
+  fn asCall (mut self: ref Self) ref CallExpression { return ref (self.body as CallExpression) }
+  fn asClosure (mut self: ref Self) ref ClosureExpression { return ref (self.body as ClosureExpression) }
+  fn asConditional (mut self: ref Self) ref ConditionalExpression { return ref (self.body as ConditionalExpression) }
+  fn asElementAccess (mut self: ref Self) ref ElementAccessExpression { return ref (self.body as ElementAccessExpression) }
+  fn asIs (mut self: ref Self) ref IsExpression { return ref (self.body as IsExpression) }
+  fn asMap (mut self: ref Self) ref MapExpression { return ref (self.body as MapExpression) }
+  fn asMemberAccess (mut self: ref Self) ref MemberAccessExpression { return ref (self.body as MemberAccessExpression) }
+  fn asObject (mut self: ref Self) ref ObjectExpression { return ref (self.body as ObjectExpression) }
+  fn asParenthesized (mut self: ref Self) ref ParenthesizedExpression { return ref (self.body as ParenthesizedExpression) }
+  fn asPropertyAccess (mut self: ref Self) ref PropertyAccessExpression { return ref (self.body as PropertyAccessExpression) }
+  fn asReference (mut self: ref Self) ref ReferenceExpression { return ref (self.body as ReferenceExpression) }
+  fn asUnary (mut self: ref Self) ref UnaryExpression { return ref (self.body as UnaryExpression) }
 
   fn isIdentifier (self: ref Self) bool { return self.body is Identifier }
   fn isBooleanLiteral (self: ref Self) bool { return self.body is BooleanLiteral }
@@ -165,6 +167,37 @@ export obj Expression {
   fn isPropertyAccess (self: ref Self) bool { return self.body is PropertyAccessExpression }
   fn isReference (self: ref Self) bool { return self.body is ReferenceExpression }
   fn isUnary (self: ref Self) bool { return self.body is UnaryExpression }
+
+  fn hasParent (self: ref Self) bool {
+    return self._parent != nil
+  }
+
+  fn hasParentNode (self: ref Self) bool {
+    return self._parentNode != nil
+  }
+
+  fn isAccess (self: ref Self) bool {
+    if self.isParenthesized() {
+      expression := self.asParenthesized()
+      return expression.expression.isAccess()
+    }
+
+    return self.isIdentifier() || self.isElementAccess() || self.isPropertyAccess()
+  }
+
+  fn parent (self: ref Self) ref Expression {
+    if self._parent != nil {
+      return self._parent
+    }
+    throw ParserError{message: "Tried accessing nil parent"}
+  }
+
+  fn parentNode (self: ref Self) ref Statement {
+    if self._parentNode != nil {
+      return self._parentNode
+    }
+    throw ParserError{message: "Tried accessing nil parent node"}
+  }
 }
 
 export obj Statement {
@@ -173,29 +206,32 @@ export obj Statement {
   mut body: StatementBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut _next: (ref Statement)?
+  mut _parent: (ref Statement)?
+  mut _prev: (ref Statement)?
 
-  fn asBlock (mut self: ref Self) BlockStatement { return self.body as BlockStatement }
-  fn asBreak (mut self: ref Self) BreakStatement { return self.body as BreakStatement }
-  fn asContinue (mut self: ref Self) ContinueStatement { return self.body as ContinueStatement }
-  fn asEmpty (mut self: ref Self) EmptyStatement { return self.body as EmptyStatement }
-  fn asEnumDeclaration (mut self: ref Self) EnumDeclaration { return self.body as EnumDeclaration }
-  fn asEof (mut self: ref Self) EofStatement { return self.body as EofStatement }
-  fn asExportDeclaration (mut self: ref Self) ExportDeclaration { return self.body as ExportDeclaration }
-  fn asExportNamedDeclaration (mut self: ref Self) ExportNamedDeclaration { return self.body as ExportNamedDeclaration }
-  fn asExpression (mut self: ref Self) ExpressionStatement { return self.body as ExpressionStatement }
-  fn asFunctionDeclaration (mut self: ref Self) FunctionDeclaration { return self.body as FunctionDeclaration }
-  fn asIf (mut self: ref Self) IfStatement { return self.body as IfStatement }
-  fn asImportDeclaration (mut self: ref Self) ImportDeclaration { return self.body as ImportDeclaration }
-  fn asLoop (mut self: ref Self) LoopStatement { return self.body as LoopStatement }
-  fn asMainDeclaration (mut self: ref Self) MainDeclaration { return self.body as MainDeclaration }
-  fn asObjectDeclaration (mut self: ref Self) ObjectDeclaration { return self.body as ObjectDeclaration }
-  fn asObjectDeclarationMethod (mut self: ref Self) ObjectDeclarationMethod { return self.body as ObjectDeclarationMethod }
-  fn asObjectDeclarationProperty (mut self: ref Self) ObjectDeclarationProperty { return self.body as ObjectDeclarationProperty }
-  fn asReturn (mut self: ref Self) ReturnStatement { return self.body as ReturnStatement }
-  fn asThrow (mut self: ref Self) ThrowStatement { return self.body as ThrowStatement }
-  fn asTry (mut self: ref Self) TryStatement { return self.body as TryStatement }
-  fn asTypeAliasDeclaration (mut self: ref Self) TypeAliasDeclaration { return self.body as TypeAliasDeclaration }
-  fn asVariableDeclaration (mut self: ref Self) VariableDeclaration { return self.body as VariableDeclaration }
+  fn asBlock (mut self: ref Self) ref BlockStatement { return ref (self.body as BlockStatement) }
+  fn asBreak (mut self: ref Self) ref BreakStatement { return ref (self.body as BreakStatement) }
+  fn asContinue (mut self: ref Self) ref ContinueStatement { return ref (self.body as ContinueStatement) }
+  fn asEmpty (mut self: ref Self) ref EmptyStatement { return ref (self.body as EmptyStatement) }
+  fn asEnumDeclaration (mut self: ref Self) ref EnumDeclaration { return ref (self.body as EnumDeclaration) }
+  fn asEof (mut self: ref Self) ref EofStatement { return ref (self.body as EofStatement) }
+  fn asExportDeclaration (mut self: ref Self) ref ExportDeclaration { return ref (self.body as ExportDeclaration) }
+  fn asExportNamedDeclaration (mut self: ref Self) ref ExportNamedDeclaration { return ref (self.body as ExportNamedDeclaration) }
+  fn asExpression (mut self: ref Self) ref ExpressionStatement { return ref (self.body as ExpressionStatement) }
+  fn asFunctionDeclaration (mut self: ref Self) ref FunctionDeclaration { return ref (self.body as FunctionDeclaration) }
+  fn asIf (mut self: ref Self) ref IfStatement { return ref (self.body as IfStatement) }
+  fn asImportDeclaration (mut self: ref Self) ref ImportDeclaration { return ref (self.body as ImportDeclaration) }
+  fn asLoop (mut self: ref Self) ref LoopStatement { return ref (self.body as LoopStatement) }
+  fn asMainDeclaration (mut self: ref Self) ref MainDeclaration { return ref (self.body as MainDeclaration) }
+  fn asObjectDeclaration (mut self: ref Self) ref ObjectDeclaration { return ref (self.body as ObjectDeclaration) }
+  fn asObjectDeclarationMethod (mut self: ref Self) ref ObjectDeclarationMethod { return ref (self.body as ObjectDeclarationMethod) }
+  fn asObjectDeclarationProperty (mut self: ref Self) ref ObjectDeclarationProperty { return ref (self.body as ObjectDeclarationProperty) }
+  fn asReturn (mut self: ref Self) ref ReturnStatement { return ref (self.body as ReturnStatement) }
+  fn asThrow (mut self: ref Self) ref ThrowStatement { return ref (self.body as ThrowStatement) }
+  fn asTry (mut self: ref Self) ref TryStatement { return ref (self.body as TryStatement) }
+  fn asTypeAliasDeclaration (mut self: ref Self) ref TypeAliasDeclaration { return ref (self.body as TypeAliasDeclaration) }
+  fn asVariableDeclaration (mut self: ref Self) ref VariableDeclaration { return ref (self.body as VariableDeclaration) }
 
   fn isBlock (self: ref Self) bool { return self.body is BlockStatement }
   fn isBreak (self: ref Self) bool { return self.body is BreakStatement }
@@ -219,6 +255,169 @@ export obj Statement {
   fn isTry (self: ref Self) bool { return self.body is TryStatement }
   fn isTypeAliasDeclaration (self: ref Self) bool { return self.body is TypeAliasDeclaration }
   fn isVariableDeclaration (self: ref Self) bool { return self.body is VariableDeclaration }
+
+  fn hasAsyncParent (self: ref Self) bool {
+    mut it := self
+
+    loop it.hasParent() {
+      p := it.parent()
+
+      if p.isExpression() {
+        expression := p.asExpression()
+        expressionBody := expression.expression.asClosure()
+        return expressionBody.asynchronous
+      } elif p.isFunctionDeclaration() {
+        body := p.asFunctionDeclaration()
+        return body.asynchronous
+      } elif p.isMainDeclaration() {
+        return true
+      } elif p.isObjectDeclarationMethod() {
+        body := p.asObjectDeclarationMethod()
+        return body.asynchronous
+      }
+
+      it = p
+    }
+
+    return false
+  }
+
+  fn hasFunctionOrMainParent (self: ref Self) bool {
+    mut it := self
+
+    loop it.hasParent() {
+      p := it.parent()
+
+      if (
+        p.isExpression() ||
+        p.isFunctionDeclaration() ||
+        p.isMainDeclaration() ||
+        p.isObjectDeclarationMethod()
+      ) {
+        return true
+      }
+
+      it = p
+    }
+
+    return false
+  }
+
+  fn hasLoopParent (self: ref Self) bool {
+    mut it := self
+
+    loop it.hasParent() {
+      p := it.parent()
+
+      if p.isLoop() {
+        return true
+      } elif (
+        p.isExpression() ||
+        p.isFunctionDeclaration() ||
+        p.isMainDeclaration() ||
+        p.isObjectDeclarationMethod()
+      ) {
+        return false
+      }
+
+      it = p
+    }
+
+    return false
+  }
+
+  fn hasNext (self: ref Self) bool {
+    return self._next != nil
+  }
+
+  fn hasParent (self: ref Self) bool {
+    return self._parent != nil
+  }
+
+  fn hasPrev (self: ref Self) bool {
+    return self._prev != nil
+  }
+
+  fn isDeadEnd (self: ref Self, allowLoopStatements := true) bool {
+    if self.isBlock() {
+      statement := self.asBlock()
+      bodyLen := statement.body.len
+
+      loop i := 0; i < bodyLen; i++ {
+        if statement.body[i].isDeadEnd(allowLoopStatements: allowLoopStatements) {
+          return true
+        }
+      }
+
+      return false
+    } elif self.isIf() {
+      statement := self.asIf()
+
+      if !statement.consequent.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+        return false
+      } elif statement.alternate != nil {
+        if !statement.alternate.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+          return false
+        }
+      }
+
+      return true
+    } elif self.isLoop() {
+      statement := self.asLoop()
+      return statement.body.isDeadEnd(allowLoopStatements: false)
+    } elif self.isTry() {
+      statement := self.asTry()
+
+      if !statement.body.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+        return false
+      }
+
+      handlersLen := statement.handlers.len
+
+      loop i := 0; i < handlersLen; i++ {
+        if !statement.handlers[i].body.isDeadEnd(allowLoopStatements: allowLoopStatements) {
+          return false
+        }
+      }
+
+      return true
+    }
+
+    isLoopStatement := allowLoopStatements && (self.isBreak() || self.isContinue())
+    return isLoopStatement || self.isReturn() || self.isThrow()
+  }
+
+  fn isDeclaration (self: ref Self) bool {
+    return
+      self.isEnumDeclaration() ||
+      self.isExportDeclaration() ||
+      self.isExportNamedDeclaration() ||
+      self.isFunctionDeclaration() ||
+      self.isImportDeclaration() ||
+      self.isObjectDeclaration() ||
+      self.isTypeAliasDeclaration()
+  }
+
+  fn next (self: ref Self) ref Statement {
+    if self._next != nil {
+      return self._next
+    }
+    throw ParserError{message: "Tried accessing nil next"}
+  }
+
+  fn parent (self: ref Self) ref Statement {
+    if self._parent != nil {
+      return self._parent
+    }
+    throw ParserError{message: "Tried accessing nil parent"}
+  }
+
+  fn prev (self: ref Self) ref Statement {
+    if self._prev != nil {
+      return self._prev
+    }
+    throw ParserError{message: "Tried accessing nil prev"}
+  }
 }
 
 export obj Identifier {
@@ -558,7 +757,8 @@ export obj VariableDeclaration {
 }
 
 export obj File {
-  mut path: str
+  path: str
+  content: str
   mut errors: str[]
   mut hasErrors: bool
   mut program: Program

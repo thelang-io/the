@@ -1,0 +1,9 @@
+main {
+  a := "string" ? 2 : 3
+}
+===== err =====
+E1018-conditional-expression.txt:2:8: AnalyzeError: E1018 - Unexpected `str` type in conditional. The condition should always be of `bool` type
+1 | main {
+2 |   a := "string" ? 2 : 3
+  |        ~~~~~~~~
+3 | }

@@ -1,0 +1,9 @@
+fn test () {
+  break
+}
+===== err =====
+E1050-break-statement.txt:2:3: AnalyzeError: E1050 - Break statement can only be used within an enclosing loop statement
+1 | fn test () {
+2 |   break
+  |   ~~~~~
+3 | }

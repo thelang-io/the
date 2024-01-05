@@ -1,0 +1,5 @@
+1 + 1
+===== err =====
+E1049.txt:1:1: AnalyzeError: E1049 - Expression statement cannot be used at the top level
+1 | 1 + 1
+  | ~~~~~

@@ -1,0 +1,16 @@
+import * as NS from "./test/fixtures/object-animal"
+
+enum Color { Red, Green, Blue }
+
+obj Task {
+  name: str
+  timeout: int
+}
+
+main {
+  task := Task{}
+  name := task.name
+  timeout := task.timeout
+  red: int = Color.Red
+  animal := NS.Animal{}
+}

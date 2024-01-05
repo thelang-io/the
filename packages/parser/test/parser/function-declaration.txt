@@ -18,13 +18,13 @@ Program
     returnType
       IdentifierType(start=11 end=15)
         Identifier(start=11 end=15) void
-  FunctionDeclaration(start=15, end=37 async)
+  FunctionDeclaration(start=16, end=37 async)
     name
       Identifier(start=25 end=29) test
     returnType
       IdentifierType(start=33 end=37)
         Identifier(start=33 end=37) void
-  FunctionDeclaration(start=37, end=58)
+  FunctionDeclaration(start=38, end=58)
     name
       Identifier(start=41 end=45) test
     parameters
@@ -37,7 +37,7 @@ Program
     returnType
       IdentifierType(start=55 end=58)
         Identifier(start=55 end=58) int
-  FunctionDeclaration(start=58, end=106)
+  FunctionDeclaration(start=59, end=106)
     name
       Identifier(start=62 end=66) test
     parameters
@@ -63,17 +63,17 @@ Program
     returnType
       IdentifierType(start=103 end=106)
         Identifier(start=103 end=106) int
-  FunctionDeclaration(start=106, end=121)
+  FunctionDeclaration(start=108, end=121)
     name
       Identifier(start=111 end=115) test
     body
       BlockStatement(start=119, end=121)
-  FunctionDeclaration(start=121, end=141 async)
+  FunctionDeclaration(start=122, end=141 async)
     name
       Identifier(start=131 end=135) test
     body
       BlockStatement(start=139, end=141)
-  FunctionDeclaration(start=141, end=165)
+  FunctionDeclaration(start=142, end=165)
     name
       Identifier(start=145 end=149) test
     parameters
@@ -88,7 +88,7 @@ Program
         Identifier(start=159 end=162) int
     body
       BlockStatement(start=163, end=165)
-  FunctionDeclaration(start=165, end=244)
+  FunctionDeclaration(start=166, end=244)
     name
       Identifier(start=169 end=173) test
     parameters

@@ -1,0 +1,483 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TypeArray from "./type-array"
+import * as Type from "./type"
+
+export enum TypeMapMode {
+  Raw,
+  Regular,
+}
+
+export obj TypeMap {
+  mut items: TypeArray
+  mut mode: TypeMapMode
+  mut scope: int
+  mut _self: (ref Type.Type)?
+
+  fn init (mut self: ref Self) {
+    self.mode = .Regular
+
+    self.items.push(Type.Type{name: "Buffer", body: Type.ObjectType{}})
+    mut bufferType := self.items.last()
+    self.items.push(Type.Type{name: "any", body: Type.ObjectType{}})
+    mut anyType := self.items.last()
+    self.items.push(Type.Type{name: "bool", body: Type.ObjectType{}})
+    mut boolType := self.items.last()
+    self.items.push(Type.Type{name: "byte", body: Type.ObjectType{}})
+    mut byteType := self.items.last()
+    self.items.push(Type.Type{name: "char", body: Type.ObjectType{}})
+    mut charType := self.items.last()
+    self.items.push(Type.Type{name: "f32", body: Type.ObjectType{}})
+    mut f32Type := self.items.last()
+    self.items.push(Type.Type{name: "f64", body: Type.ObjectType{}})
+    mut f64Type := self.items.last()
+    self.items.push(Type.Type{name: "float", body: Type.ObjectType{}})
+    mut floatType := self.items.last()
+    self.items.push(Type.Type{name: "i8", body: Type.ObjectType{}})
+    mut i8Type := self.items.last()
+    self.items.push(Type.Type{name: "i16", body: Type.ObjectType{}})
+    mut i16Type := self.items.last()
+    self.items.push(Type.Type{name: "i32", body: Type.ObjectType{}})
+    mut i32Type := self.items.last()
+    self.items.push(Type.Type{name: "i64", body: Type.ObjectType{}})
+    mut i64Type := self.items.last()
+    self.items.push(Type.Type{name: "int", body: Type.ObjectType{}})
+    mut intType := self.items.last()
+    self.items.push(Type.Type{name: "isize", body: Type.ObjectType{}})
+    mut isizeType := self.items.last()
+    self.items.push(Type.Type{name: "rune", body: Type.ObjectType{}})
+    mut runeType := self.items.last()
+    self.items.push(Type.Type{name: "u8", body: Type.ObjectType{}})
+    mut u8Type := self.items.last()
+    self.items.push(Type.Type{name: "u16", body: Type.ObjectType{}})
+    mut u16Type := self.items.last()
+    self.items.push(Type.Type{name: "u32", body: Type.ObjectType{}})
+    mut u32Type := self.items.last()
+    self.items.push(Type.Type{name: "u64", body: Type.ObjectType{}})
+    mut u64Type := self.items.last()
+    self.items.push(Type.Type{name: "usize", body: Type.ObjectType{}})
+    mut usizeType := self.items.last()
+    self.items.push(Type.Type{name: "str", body: Type.ObjectType{}})
+    mut strType := self.items.last()
+    self.items.push(Type.Type{name: "void", body: Type.ObjectType{}})
+    mut voidType := self.items.last()
+
+    bufferType.properties.push(Type.TypeProperty{name: "empty", t: self.get("bool"), mutable: false, builtin: true})
+    bufferType.properties.push(Type.TypeProperty{name: "len", t: self.get("int"), mutable: false, builtin: true})
+    bufferType.properties.push(Type.TypeProperty{name: "concat", t: self.createMethod(false, [
+      Type.TypeParameter{name: "other", t: self.get("Buffer"), mutable: false, required: true, variadic: false}
+    ], self.get("Buffer"), true, false, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
+    bufferType.properties.push(Type.TypeProperty{name: "merge", t: self.createMethod(false, [
+      Type.TypeParameter{name: "other", t: self.get("Buffer"), mutable: false, required: true, variadic: false}
+    ], self.createReference(self.get("Buffer")), true, true, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
+    bufferType.properties.push(Type.TypeProperty{name: "pop", t: self.createMethod(false, [], self.get("byte"), true, true, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
+    bufferType.properties.push(Type.TypeProperty{name: "push", t: self.createMethod(false, [
+      Type.TypeParameter{name: "elements", t: self.createArray(self.get("byte")), mutable: false, required: false, variadic: true}
+    ], self.get("void"), true, true, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
+    bufferType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
+    anyType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("any"))), mutable: false, builtin: true})
+    boolType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("bool"))), mutable: false, builtin: true})
+    byteType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("byte"))), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "byte", t: self.get("byte"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "isDigit", t: self.get("bool"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "isLetter", t: self.get("bool"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "isLetterOrDigit", t: self.get("bool"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "isLower", t: self.get("bool"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "isUpper", t: self.get("bool"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "isWhitespace", t: self.get("bool"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "lower", t: self.get("char"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "upper", t: self.get("char"), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "repeat", t: self.createMethod(false, [
+      Type.TypeParameter{name: "times", t: self.get("int"), mutable: false, required: true, variadic: false}
+    ], self.get("str"), true, false, "self", self.createReference(self.get("char"))), mutable: false, builtin: true})
+    charType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("char"))), mutable: false, builtin: true})
+    f32Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("f32"))), mutable: false, builtin: true})
+    f64Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("f64"))), mutable: false, builtin: true})
+    floatType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("float"))), mutable: false, builtin: true})
+    i8Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("i8"))), mutable: false, builtin: true})
+    i16Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("i16"))), mutable: false, builtin: true})
+    i32Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("i32"))), mutable: false, builtin: true})
+    i64Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("i64"))), mutable: false, builtin: true})
+    intType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("int"))), mutable: false, builtin: true})
+    isizeType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("isize"))), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "isDigit", t: self.get("bool"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "isLetter", t: self.get("bool"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "isLetterOrDigit", t: self.get("bool"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "isLower", t: self.get("bool"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "isUpper", t: self.get("bool"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "isWhitespace", t: self.get("bool"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "lower", t: self.get("rune"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "upper", t: self.get("rune"), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "repeat", t: self.createMethod(false, [
+      Type.TypeParameter{name: "times", t: self.get("int"), mutable: false, required: true, variadic: false}
+    ], self.get("str"), true, false, "self", self.createReference(self.get("rune"))), mutable: false, builtin: true})
+    runeType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("rune"))), mutable: false, builtin: true})
+    u8Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("u8"))), mutable: false, builtin: true})
+    u16Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("u16"))), mutable: false, builtin: true})
+    u32Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("u32"))), mutable: false, builtin: true})
+    u64Type.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("u64"))), mutable: false, builtin: true})
+    usizeType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("usize"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "empty", t: self.get("bool"), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "len", t: self.get("int"), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "lower", t: self.get("str"), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "lowerFirst", t: self.get("str"), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "upper", t: self.get("str"), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "upperFirst", t: self.get("str"), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "contains", t: self.createMethod(false, [
+      Type.TypeParameter{name: "search", t: self.get("str"), mutable: false, required: true, variadic: false}
+    ], self.get("bool"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "find", t: self.createMethod(false, [
+      Type.TypeParameter{name: "search", t: self.get("str"), mutable: false, required: true, variadic: false}
+      Type.TypeParameter{name: "position", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("int"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "lines", t: self.createMethod(false, [
+      Type.TypeParameter{name: "keepLineBreaks", t: self.get("bool"), mutable: false, required: false, variadic: false}
+    ], self.createArray(self.get("str")), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "replace", t: self.createMethod(false, [
+      Type.TypeParameter{name: "search", t: self.get("str"), mutable: false, required: true, variadic: false}
+      Type.TypeParameter{name: "replacement", t: self.get("str"), mutable: false, required: true, variadic: false}
+      Type.TypeParameter{name: "count", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "slice", t: self.createMethod(false, [
+      Type.TypeParameter{name: "start", t: self.get("int"), mutable: false, required: false, variadic: false}
+      Type.TypeParameter{name: "end", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "split", t: self.createMethod(false, [
+      Type.TypeParameter{name: "delimiter", t: self.get("str"), mutable: false, required: false, variadic: false}
+    ], self.createArray(self.get("str")), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toBuffer", t: self.createMethod(false, [], self.get("Buffer"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toFloat", t: self.createMethod(false, [], self.get("float"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toF32", t: self.createMethod(false, [], self.get("f32"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toF64", t: self.createMethod(false, [], self.get("f64"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toInt", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("int"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toI8", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("i8"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toI16", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("i16"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toI32", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("i32"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toI64", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("i64"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toU8", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("u8"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toU16", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("u16"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toU32", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("u32"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "toU64", t: self.createMethod(false, [
+      Type.TypeParameter{name: "radix", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], self.get("u64"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "trim", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "trimEnd", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+    strType.properties.push(Type.TypeProperty{name: "trimStart", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
+  }
+
+  fn createAlias (mut self: ref Self, name: str, t: ref Type.Type) ref Type.Type {
+    self.items.push(Type.Type{name: name, body: Type.AliasType{t: t}, scope: self.scope})
+    return self.items.last()
+  }
+
+  fn createArray (mut self: ref Self, elementType: ref Type.Type) ref Type.Type {
+    self.items.push(Type.Type{body: Type.ArrayType{elementType: elementType}})
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+    resultRef := self.createReference(result)
+    elementTypeRef := self.createReference(elementType)
+
+    result.properties.push(Type.TypeProperty{name: "empty", t: self.get("bool"), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "first", t: elementTypeRef, mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "last", t: elementTypeRef, mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "len", t: self.get("int"), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "clear", t: self.createMethod(false, [], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "concat", t: self.createMethod(false, [
+      Type.TypeParameter{name: "other", t: result, mutable: false, required: true, variadic: false}
+    ], result, true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "contains", t: self.createMethod(false, [
+      Type.TypeParameter{name: "search", t: elementType, mutable: false, required: true, variadic: false}
+    ], self.get("bool"), true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "filter", t: self.createMethod(false, [
+      Type.TypeParameter{name: "predicate", t: self.createFunction(false, [
+        Type.TypeParameter{name: "it", t: elementType, mutable: false, required: true, variadic: false}
+      ], self.get("bool")), mutable: false, required: true, variadic: false}
+    ], result, true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "forEach", t: self.createMethod(false, [
+      Type.TypeParameter{name: "iterator", t: self.createFunction(false, [
+        Type.TypeParameter{name: "it", t: elementType, mutable: false, required: true, variadic: false}
+        Type.TypeParameter{name: "idx", t: self.get("int"), mutable: false, required: true, variadic: false}
+      ], self.get("void")), mutable: false, required: true, variadic: false}
+    ], self.get("void"), true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "join", t: self.createMethod(false, [
+      Type.TypeParameter{name: "separator", t: self.get("str"), mutable: false, required: false, variadic: false}
+    ], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "merge", t: self.createMethod(false, [
+      Type.TypeParameter{name: "other", t: result, mutable: false, required: true, variadic: false}
+    ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "pop", t: self.createMethod(false, [], elementType, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "push", t: self.createMethod(false, [
+      Type.TypeParameter{name: "elements", t: result, mutable: false, required: false, variadic: true}
+    ], self.get("void"), true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "remove", t: self.createMethod(false, [
+      Type.TypeParameter{name: "index", t: self.get("int"), mutable: false, required: true, variadic: false}
+    ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "reverse", t: self.createMethod(false, [], result, true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "slice", t: self.createMethod(false, [
+      Type.TypeParameter{name: "start", t: self.get("int"), mutable: false, required: false, variadic: false}
+      Type.TypeParameter{name: "end", t: self.get("int"), mutable: false, required: false, variadic: false}
+    ], result, true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "sort", t: self.createMethod(false, [
+      Type.TypeParameter{name: "comparator", t: self.createFunction(false, [
+        Type.TypeParameter{name: "a", t: elementType, mutable: false, required: true, variadic: false}
+        Type.TypeParameter{name: "b", t: elementType, mutable: false, required: true, variadic: false}
+      ], self.get("int")), mutable: false, required: true, variadic: false}
+    ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn createEnum (mut self: ref Self, name: str, members: str[]) ref Type.Type {
+    self.items.push(Type.Type{name: name, body: Type.EnumType{members: members}, scope: self.scope})
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+    resultRef := self.createReference(result)
+
+    result.properties.push(Type.TypeProperty{name: "rawValue", t: self.get("str"), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn createFunction (
+    mut self: ref Self,
+    asynchronous: bool,
+    parameters: Type.TypeParameter[],
+    returnType: ref Type.Type
+  ) ref Type.Type {
+    self.items.push(Type.Type{
+      body: Type.FunctionType{
+        asynchronous: asynchronous,
+        parameters: parameters,
+        returnType: returnType
+      }
+    })
+
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+
+    result.properties.push(Type.TypeProperty{name: "name", t: self.get("str"), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn createMap (mut self: ref Self, keyType: ref Type.Type, valueType: ref Type.Type) ref Type.Type {
+    self.items.push(Type.Type{body: Type.MapType{keyType: keyType, valueType: valueType}})
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+    resultRef := self.createReference(result)
+
+    result.properties.push(Type.TypeProperty{name: "empty", t: self.get("bool"), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "cap", t: self.get("int"), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "keys", t: self.createArray(keyType), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "len", t: self.get("int"), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "values", t: self.createArray(valueType), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "clear", t: self.createMethod(false, [], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "get", t: self.createMethod(false, [
+      Type.TypeParameter{name: "key", t: keyType, mutable: false, required: true, variadic: false}
+    ], valueType, true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "has", t: self.createMethod(false, [
+      Type.TypeParameter{name: "key", t: keyType, mutable: false, required: true, variadic: false}
+    ], self.get("bool"), true, false, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "merge", t: self.createMethod(false, [
+      Type.TypeParameter{name: "other", t: result, mutable: false, required: true, variadic: false}
+    ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "remove", t: self.createMethod(false, [
+      Type.TypeParameter{name: "key", t: keyType, mutable: false, required: true, variadic: false}
+    ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "reserve", t: self.createMethod(false, [
+      Type.TypeParameter{name: "size", t: self.get("int"), mutable: false, required: true, variadic: false}
+    ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "set", t: self.createMethod(false, [
+      Type.TypeParameter{name: "key", t: keyType, mutable: false, required: true, variadic: false}
+      Type.TypeParameter{name: "value", t: valueType, mutable: false, required: true, variadic: false}
+    ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "shrink", t: self.createMethod(false, [], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
+    result.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn createMethod (
+    mut self: ref Self,
+    asynchronous: bool,
+    parameters: Type.TypeParameter[],
+    returnType: ref Type.Type,
+    withSelf: bool,
+    selfMutable: bool,
+    selfName: str,
+    selfType: ref Type.Type
+  ) ref Type.Type {
+    self.items.push(Type.Type{
+      body: Type.MethodType{
+        asynchronous: asynchronous,
+        parameters: parameters,
+        returnType: returnType,
+        withSelf: withSelf,
+        selfMutable: selfMutable,
+        selfName: selfName,
+        selfType: selfType
+      }
+    })
+
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+
+    result.properties.push(Type.TypeProperty{name: "name", t: self.get("str"), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn createNamespace (mut self: ref Self, name: str, members: Type.NamespaceMember[]) ref Type.Type {
+    self.items.push(Type.Type{name: name, body: Type.NamespaceType{members: members}, scope: self.scope})
+    return self.items.last()
+  }
+
+  fn createObject (mut self: ref Self, name: str, properties: Type.TypeProperty[] = []) ref Type.Type {
+    self.items.push(Type.Type{name: name, properties: properties, body: Type.ObjectType{}, scope: self.scope})
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+    resultRef := self.createReference(result)
+
+    result.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn createOptional (mut self: ref Self, t: ref Type.Type) ref Type.Type {
+    self.items.push(Type.Type{body: Type.OptionalType{t: t}})
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+    resultRef := self.createReference(result)
+
+    result.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn createReference (mut self: ref Self, t: ref Type.Type) ref Type.Type {
+    self.items.push(Type.Type{body: Type.ReferenceType{t: t}})
+    return self.items.last()
+  }
+
+  fn createUnion (mut self: ref Self, types: (ref Type.Type)[]) ref Type.Type {
+    self.items.push(Type.Type{body: Type.UnionType{types: types}})
+    result := self.items.last()
+    if self.mode == .Raw { return result }
+    resultRef := self.createReference(result)
+
+    result.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
+
+    return result
+  }
+
+  fn decrease (mut self: ref Self) {
+    len := self.items.len
+
+    loop i := len - 1; i >= 0; i-- {
+      item := self.items.at(i)
+
+      if item.scope == self.scope {
+        self.items.remove(i)
+      }
+    }
+
+    self.scope--
+  }
+
+  fn get (mut self: ref Self, name: str) ref Type.Type {
+    if name == "Self" && self._self != nil {
+      return self._self
+    }
+
+    loop i := self.items.len - 1; i >= 0; i-- {
+      item := self.items.at(i)
+
+      if item.name == name {
+        return item
+      }
+    }
+
+    throw error_NewError("Type `" + name + "` doesn't exists")
+  }
+
+  fn getSelf (mut self: ref Self) (ref Type.Type)? {
+    return self._self
+  }
+
+  fn increase (mut self: ref Self) {
+    self.scope++
+  }
+
+  fn insert (mut self: ref Self, t: ref Type.Type) {
+    self.items.push(t)
+  }
+
+  fn has (mut self: ref Self, name: str, global := true) bool {
+    if name == "Self" && self._self != nil {
+      return true
+    }
+
+    loop i := self.items.len - 1; i >= 0; i-- {
+      item := self.items.at(i)
+
+      if item.name == name && (global || (!global && item.scope == self.scope)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn setSelf (mut self: ref Self, value: (ref Type.Type)?) {
+    self._self = value
+  }
+
+  fn unionAdd (mut self: ref Self, a: ref Type.Type, b: ref Type.Type) ref Type.Type {
+    if !a.isUnion() {
+      return self.createUnion([a, b])
+    }
+
+    t := a.asUnion()
+    types := t.types
+    types.push(b)
+    return self.createUnion(types)
+  }
+
+  fn unionSub (mut self: ref Self, a: ref Type.Type, b: ref Type.Type) ref Type.Type {
+    t := a.asUnion()
+    mut types := t.types
+
+    loop i := types.len - 1; i >= 0; i-- {
+      if Type.match(types[i] as ref Type.Type, b) {
+        types.remove(i)
+      }
+    }
+
+    if types.len == 1 {
+      return types[0] as ref Type.Type
+    }
+
+    return self.createUnion(types)
+  }
+}

@@ -1,0 +1,20 @@
+obj Person {
+  mut name: str
+}
+
+obj Dog {
+  mut name: str
+  mut age: int
+  mut owner: ref Person
+
+  fn bark (self: ref Self) {
+    print("Bark!. my name is " + self.name)
+  }
+}
+
+main {
+  person := Person{name: "George"}
+  pet1 := Dog{owner: ref person}
+  pet2 := Dog{owner: ref person, name: "Ricky", age: 10}
+  pet2.bark()
+}

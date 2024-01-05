@@ -1,0 +1,9 @@
+main {
+  throw 999
+}
+===== err =====
+E1062.txt:2:9: AnalyzeError: E1062 - Throw expression required to be of type object with first property 'message' of type `str` and second property 'stack' of type `str`
+1 | main {
+2 |   throw 999
+  |         ~~~
+3 | }

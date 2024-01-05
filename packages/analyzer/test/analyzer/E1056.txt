@@ -1,0 +1,13 @@
+fn test () int {
+  return 1
+}
+
+obj Invoice {
+  pay := test()
+}
+===== err =====
+E1056.txt:6:10: AnalyzeError: E1056 - Object properties cannot have an initializer
+5 | obj Invoice {
+6 |   pay := test()
+  |          ~~~~~~
+7 | }

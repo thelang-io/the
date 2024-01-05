@@ -1,0 +1,8 @@
+main {
+  v := 10
+  vv: int?
+
+  a: ref int = ref v
+  b: ref ref int = ref a
+  c: ref (int?) = ref vv
+}

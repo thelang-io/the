@@ -1,0 +1,11 @@
+import * as NS from "./test/fixtures/object-animal"
+
+main {
+  a: NS.Animal2
+}
+===== err =====
+E1023.txt:4:9: AnalyzeError: E1023 - Namespace 'NS' has no exported member type 'Animal2'
+3 | main {
+4 |   a: NS.Animal2
+  |         ~~~~~~~
+5 | }

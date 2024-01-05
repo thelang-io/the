@@ -1,0 +1,11 @@
+fn test (a: int) {}
+
+main {
+  test()
+}
+===== err =====
+E1036.txt:4:3: AnalyzeError: E1036 - Missing argument for required parameter 'a'
+3 | main {
+4 |   test()
+  |   ~~~~~~
+5 | }

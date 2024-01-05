@@ -1,0 +1,5 @@
+import Object from "the/non-existing"
+===== err =====
+E1074.txt:1:20: AnalyzeError: E1074 - Package 'the/non-existing' is not installed or it's package.yml has no main entry
+1 | import Object from "the/non-existing"
+  |                    ~~~~~~~~~~~~~~~~~~

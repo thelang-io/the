@@ -3,8 +3,17 @@
  * Licensed under the MIT License
  */
 
+import interconnect, parse from "../src/parser"
+import * as Expression from "../src/expression"
 import * as Statement from "../src/statement"
+import * as Type from "../src/type"
 import * as t from "../src/types"
+
+fn testDeadEnd (code: str, allowLoopStatements := true) bool {
+  f := parse("main {" + code + "}")
+  mainDeclaration := f.program.body[0].asMainDeclaration()
+  return mainDeclaration.body.isDeadEnd(allowLoopStatements: allowLoopStatements)
+}
 
 export fn TEST_Statement_creates () {
   statement := Statement.create(t.EmptyStatement{}, 0, 0)
@@ -38,4 +47,211 @@ export fn TEST_Statement_createsWithComments () {
 export fn TEST_Statement_dummy () {
   statement := Statement.dummy()
   EXPECT_TRUE(statement.body is t.DummyStatement)
+}
+
+export fn TEST_Statement_hasAsyncParent () {
+  mut f1 := parse("main { return }")
+  interconnect(ref f1)
+  mainDeclaration1 := f1.program.body[0].asMainDeclaration()
+  mainDeclarationBody1 := mainDeclaration1.body.asBlock()
+  EXPECT_TRUE(mainDeclarationBody1.body[0].hasAsyncParent())
+
+  mut f2 := parse("fn test () { return }")
+  interconnect(ref f2)
+  functionDeclaration2 := f2.program.body[0].asFunctionDeclaration()
+  if functionDeclaration2.body != nil {
+    functionDeclarationBody2 := functionDeclaration2.body.asBlock()
+    EXPECT_FALSE(functionDeclarationBody2.body[0].hasAsyncParent())
+  }
+
+  mut f3 := parse("obj Test { fn test () { return } }")
+  interconnect(ref f3)
+  objectDeclaration3 := f3.program.body[0].asObjectDeclaration()
+  methodDeclaration3 := objectDeclaration3.body[0].asObjectDeclarationMethod()
+  if methodDeclaration3.body != nil {
+    methodDeclarationBody3 := methodDeclaration3.body.asBlock()
+    EXPECT_FALSE(methodDeclarationBody3.body[0].hasAsyncParent())
+  }
+
+  mut f4 := parse("main { () -> void { return } }")
+  interconnect(ref f4)
+  mainDeclaration4 := f4.program.body[0].asMainDeclaration()
+  mainDeclarationBody4 := mainDeclaration4.body.asBlock()
+  mainExpression4 := mainDeclarationBody4.body[0].asExpression()
+  mainExpressionBody4 := mainExpression4.expression.asClosure()
+  mainClosure4 := mainExpressionBody4.body.asBlock()
+  EXPECT_FALSE(mainClosure4.body[0].hasAsyncParent())
+
+  mut f5 := parse("async fn test () { return }")
+  interconnect(ref f5)
+  functionDeclaration5 := f5.program.body[0].asFunctionDeclaration()
+  if functionDeclaration5.body != nil {
+    functionDeclarationBody5 := functionDeclaration5.body.asBlock()
+    EXPECT_TRUE(functionDeclarationBody5.body[0].hasAsyncParent())
+  }
+
+  mut f6 := parse("obj Test { async fn test () { return } }")
+  interconnect(ref f6)
+  objectDeclaration6 := f6.program.body[0].asObjectDeclaration()
+  methodDeclaration6 := objectDeclaration6.body[0].asObjectDeclarationMethod()
+  if methodDeclaration6.body != nil {
+    methodDeclarationBody6 := methodDeclaration6.body.asBlock()
+    EXPECT_TRUE(methodDeclarationBody6.body[0].hasAsyncParent())
+  }
+
+  mut f7 := parse("main { async () -> void { return } }")
+  interconnect(ref f7)
+  mainDeclaration7 := f7.program.body[0].asMainDeclaration()
+  mainDeclarationBody7 := mainDeclaration7.body.asBlock()
+  mainExpression7 := mainDeclarationBody7.body[0].asExpression()
+  mainExpressionBody7 := mainExpression7.expression.asClosure()
+  mainClosure7 := mainExpressionBody7.body.asBlock()
+  EXPECT_TRUE(mainClosure7.body[0].hasAsyncParent())
+}
+
+export fn TEST_Statement_hasFunctionOrMainParent () {
+  mut f1 := parse("return")
+  interconnect(ref f1)
+  EXPECT_FALSE(f1.program.body[0].hasFunctionOrMainParent())
+
+  mut f2 := parse("main { return }")
+  interconnect(ref f2)
+  mainDeclaration2 := f2.program.body[0].asMainDeclaration()
+  mainDeclarationBody2 := mainDeclaration2.body.asBlock()
+  EXPECT_TRUE(mainDeclarationBody2.body[0].hasFunctionOrMainParent())
+
+  mut f3 := parse("fn test () { return }")
+  interconnect(ref f3)
+  functionDeclaration3 := f3.program.body[0].asFunctionDeclaration()
+  if functionDeclaration3.body != nil {
+    functionDeclarationBody3 := functionDeclaration3.body.asBlock()
+    EXPECT_TRUE(functionDeclarationBody3.body[0].hasFunctionOrMainParent())
+  }
+
+  mut f4 := parse("obj Test { fn test () { return } }")
+  interconnect(ref f4)
+  objectDeclaration4 := f4.program.body[0].asObjectDeclaration()
+  methodDeclaration4 := objectDeclaration4.body[0].asObjectDeclarationMethod()
+  if methodDeclaration4.body != nil {
+    methodDeclarationBody4 := methodDeclaration4.body.asBlock()
+    EXPECT_TRUE(methodDeclarationBody4.body[0].hasFunctionOrMainParent())
+  }
+
+  mut f5 := parse("main { () -> void { return } }")
+  interconnect(ref f5)
+  mainDeclaration5 := f5.program.body[0].asMainDeclaration()
+  mainDeclarationBody5 := mainDeclaration5.body.asBlock()
+  mainExpression5 := mainDeclarationBody5.body[0].asExpression()
+  mainExpressionBody5 := mainExpression5.expression.asClosure()
+  mainClosure5 := mainExpressionBody5.body.asBlock()
+  EXPECT_TRUE(mainClosure5.body[0].hasFunctionOrMainParent())
+}
+
+export fn TEST_Statement_hasLoopParent () {
+  mut f1 := parse("break")
+  interconnect(ref f1)
+  EXPECT_FALSE(f1.program.body[0].hasLoopParent())
+
+  mut f2 := parse("loop { break }")
+  interconnect(ref f2)
+  loopStatement2 := f2.program.body[0].asLoop()
+  loopBodyStatement2 := loopStatement2.body.asBlock()
+  EXPECT_TRUE(loopBodyStatement2.body[0].hasLoopParent())
+
+  mut f3 := parse("loop { fn test () { break } }")
+  interconnect(ref f3)
+  loopStatement3 := f3.program.body[0].asLoop()
+  loopBodyStatement3 := loopStatement3.body.asBlock()
+  functionDeclaration3 := loopBodyStatement3.body[0].asFunctionDeclaration()
+  if functionDeclaration3.body != nil {
+    functionDeclarationBody3 := functionDeclaration3.body.asBlock()
+    EXPECT_FALSE(functionDeclarationBody3.body[0].hasLoopParent())
+  }
+
+  mut f4 := parse("loop { obj Test { fn test () { break } } }")
+  interconnect(ref f4)
+  loopStatement4 := f4.program.body[0].asLoop()
+  loopBodyStatement4 := loopStatement4.body.asBlock()
+  objectDeclaration4 := loopBodyStatement4.body[0].asObjectDeclaration()
+  methodDeclaration4 := objectDeclaration4.body[0].asObjectDeclarationMethod()
+  if methodDeclaration4.body != nil {
+    methodDeclarationBody4 := methodDeclaration4.body.asBlock()
+    EXPECT_FALSE(methodDeclarationBody4.body[0].hasLoopParent())
+  }
+
+  mut f5 := parse("loop { main { break } }")
+  interconnect(ref f5)
+  loopStatement5 := f5.program.body[0].asLoop()
+  loopBodyStatement5 := loopStatement5.body.asBlock()
+  mainDeclaration5 := loopBodyStatement5.body[0].asMainDeclaration()
+  mainDeclarationBody5 := mainDeclaration5.body.asBlock()
+  EXPECT_FALSE(mainDeclarationBody5.body[0].hasLoopParent())
+
+  mut f6 := parse("main { () -> void { break } }")
+  interconnect(ref f6)
+  mainDeclaration6 := f6.program.body[0].asMainDeclaration()
+  mainDeclarationBody6 := mainDeclaration6.body.asBlock()
+  mainExpression6 := mainDeclarationBody6.body[0].asExpression()
+  mainExpressionBody6 := mainExpression6.expression.asClosure()
+  mainClosure6 := mainExpressionBody6.body.asBlock()
+  EXPECT_FALSE(mainClosure6.body[0].hasLoopParent())
+}
+
+export fn TEST_Statement_isDeadEnd () {
+  EXPECT_FALSE(testDeadEnd(""))
+  EXPECT_TRUE(testDeadEnd("return"))
+  EXPECT_TRUE(testDeadEnd("throw NewError()"))
+  EXPECT_TRUE(testDeadEnd("break"))
+  EXPECT_FALSE(testDeadEnd("break", allowLoopStatements: false))
+  EXPECT_TRUE(testDeadEnd("continue"))
+  EXPECT_FALSE(testDeadEnd("continue", allowLoopStatements: false))
+  EXPECT_FALSE(testDeadEnd("var1 := 1"))
+  EXPECT_FALSE(testDeadEnd("var1 := 1 var2 := 2"))
+  EXPECT_TRUE(testDeadEnd("var := 1 return"))
+  EXPECT_TRUE(testDeadEnd("var1 := 1 return; var2 := 2"))
+  EXPECT_TRUE(testDeadEnd("return; var2 := 2"))
+  EXPECT_TRUE(testDeadEnd("if (a == nil) return"))
+  EXPECT_TRUE(testDeadEnd("if a == nil { return }"))
+  EXPECT_FALSE(testDeadEnd("if a == nil { print() }"))
+  EXPECT_TRUE(testDeadEnd("if a == nil { return } elif a == 2 { return }"))
+  EXPECT_FALSE(testDeadEnd("if a == nil { return } elif a == 2 { print() }"))
+  EXPECT_TRUE(testDeadEnd("if a == nil { return } elif a == 2 { return } else { return }"))
+  EXPECT_FALSE(testDeadEnd("if a == nil { return } elif a == 2 { return } else { print() }"))
+  EXPECT_FALSE(testDeadEnd("loop { a := 1 }"))
+  EXPECT_TRUE(testDeadEnd("loop { return }"))
+  EXPECT_TRUE(testDeadEnd("loop { throw NewError() }"))
+  EXPECT_FALSE(testDeadEnd("loop { break }"))
+  EXPECT_FALSE(testDeadEnd("loop { continue }"))
+  EXPECT_TRUE(testDeadEnd("loop { if a == nil { return } }"))
+  EXPECT_TRUE(testDeadEnd("loop { if a == nil { throw NewError() } }"))
+  EXPECT_FALSE(testDeadEnd("loop { if a == nil { break } }"))
+  EXPECT_FALSE(testDeadEnd("loop { if a == nil { continue } }"))
+  EXPECT_TRUE(testDeadEnd("try { return }"))
+  EXPECT_TRUE(testDeadEnd("try { return } catch err: Error { return }"))
+  EXPECT_FALSE(testDeadEnd("try { print() } catch err: Error { return }"))
+  EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { print() }"))
+  EXPECT_TRUE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { return }"))
+  EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { print() }"))
+}
+
+export fn TEST_Statement_isDeclaration () {
+  statement1 := Statement.create(t.EnumDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement2 := Statement.create(t.ExportDeclaration{statement: Statement.dummy()}, 0, 0)
+  statement3 := Statement.create(t.ExportNamedDeclaration{expression: Expression.dummy()}, 0, 0)
+  statement4 := Statement.create(t.FunctionDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement5 := Statement.create(t.ImportDeclaration{source: Expression.dummy()}, 0, 0)
+  statement6 := Statement.create(t.MainDeclaration{body: Statement.dummy()}, 0, 0)
+  statement7 := Statement.create(t.ObjectDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement8 := Statement.create(t.TypeAliasDeclaration{name: Expression.dummyIdentifier(), t: Type.dummy()}, 0, 0)
+  statement9 := Statement.create(t.VariableDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+
+  EXPECT_TRUE(statement1.isDeclaration())
+  EXPECT_TRUE(statement2.isDeclaration())
+  EXPECT_TRUE(statement3.isDeclaration())
+  EXPECT_TRUE(statement4.isDeclaration())
+  EXPECT_TRUE(statement5.isDeclaration())
+  EXPECT_FALSE(statement6.isDeclaration())
+  EXPECT_TRUE(statement7.isDeclaration())
+  EXPECT_TRUE(statement8.isDeclaration())
+  EXPECT_FALSE(statement9.isDeclaration())
 }

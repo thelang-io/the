@@ -1,0 +1,5 @@
+const a: str[int] = { "key": "value" }
+===== err =====
+E1005-map-expression-key.txt:1:23: AnalyzeError: E1005 - Type `str` is not assignable to type `int`
+1 | const a: str[int] = { "key": "value" }
+  |                       ~~~~~

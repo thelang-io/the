@@ -1,0 +1,9 @@
+main {
+  await 10
+}
+===== err =====
+E1013-non-function.txt:2:9: AnalyzeError: E1013 - Awaited type expected to be asynchronous function
+1 | main {
+2 |   await 10
+  |         ~~
+3 | }

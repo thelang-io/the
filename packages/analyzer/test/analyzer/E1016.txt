@@ -1,0 +1,5 @@
+const a := {}
+===== err =====
+E1016.txt:1:12: AnalyzeError: E1016 - Unable to deduce map type
+1 | const a := {}
+  |            ~~

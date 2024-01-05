@@ -1,0 +1,5 @@
+import TestObject2 from "./test/fixtures/export-circular"
+===== err =====
+./test/fixtures/import-circular:1:25: AnalyzeError: E1075 - Importing './export-circular' will cause circular import
+1 | import TestObject2 from "./export-circular"
+  |                         ~~~~~~~~~~~~~~~~~~~

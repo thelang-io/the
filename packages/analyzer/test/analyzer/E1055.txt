@@ -1,0 +1,11 @@
+main {
+  try {
+  } catch mut err: Error {
+  }
+}
+===== err =====
+E1055.txt:3:15: AnalyzeError: E1055 - Try statement handler cannot be declared as mutable
+2 |   try {
+3 |   } catch mut err: Error {
+  |               ~~~
+4 |   }

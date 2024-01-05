@@ -1,0 +1,5 @@
+const a: int[] = ["test"]
+===== err =====
+E1008.txt:1:19: AnalyzeError: E1008 - Incompatible array literal element of type `str`, expected `int`
+1 | const a: int[] = ["test"]
+  |                   ~~~~~~

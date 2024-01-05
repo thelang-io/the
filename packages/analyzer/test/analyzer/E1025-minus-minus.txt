@@ -1,0 +1,10 @@
+main {
+  mut b := 'a'
+  a := b--
+}
+===== err =====
+E1025-minus-minus.txt:3:9: AnalyzeError: E1025 - Cannot apply unary operator '--' to type `char`
+2 |   mut b := 'a'
+3 |   a := b--
+  |         ~~
+4 | }

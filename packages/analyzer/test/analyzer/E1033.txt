@@ -1,0 +1,11 @@
+fn test (a: int...) {}
+
+main {
+  test(a: [])
+}
+===== err =====
+E1033.txt:4:8: AnalyzeError: E1033 - Variadic parameter 'a' cannot be passed by name
+3 | main {
+4 |   test(a: [])
+  |        ^
+5 | }

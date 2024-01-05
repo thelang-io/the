@@ -40,7 +40,7 @@ Program
         body
           BlockStatement(start=54, end=63)
             BreakStatement(start=56, end=61)
-      FunctionDeclaration(start=63, end=79)
+      FunctionDeclaration(start=66, end=79)
         name
           Identifier(start=69 end=73) test
         body

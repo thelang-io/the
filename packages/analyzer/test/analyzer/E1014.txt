@@ -1,0 +1,10 @@
+main {
+  mut a: int[]
+  a["test"] = 2
+}
+===== err =====
+E1014.txt:3:5: AnalyzeError: E1014 - Index type expected to be `int`, got `str`
+2 |   mut a: int[]
+3 |   a["test"] = 2
+  |     ~~~~~~
+4 | }

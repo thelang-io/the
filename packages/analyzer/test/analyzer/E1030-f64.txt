@@ -1,0 +1,5 @@
+const a: f64 = 1e400
+===== err =====
+E1030-f64.txt:1:16: AnalyzeError: E1030 - Floating-point literal is out of range for type `f64`
+1 | const a: f64 = 1e400
+  |                ~~~~~

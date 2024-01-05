@@ -1,0 +1,4 @@
+export obj Animal {
+  mut name: str
+  mut age: int
+}

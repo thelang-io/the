@@ -1,0 +1,7 @@
+fn test (a: int... = []) {
+}
+===== err =====
+E1028–function-declaration.txt:1:22: AnalyzeError: E1028 - Variadic parameters cannot have initializers
+1 | fn test (a: int... = []) {
+  |                      ~~
+2 | }

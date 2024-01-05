@@ -1,0 +1,10 @@
+fn test () {
+  mut a: int?
+
+  if a == nil {
+    return
+  }
+
+  b: str?
+  a = b
+}

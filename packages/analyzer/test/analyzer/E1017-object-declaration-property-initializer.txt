@@ -1,0 +1,17 @@
+fn test () {}
+
+obj Invoice {
+  pay := test()
+}
+===== err =====
+E1017-object-declaration-property-initializer.txt:4:10: AnalyzeError: E1017 - Type `void` can only be used as function return type
+3 | obj Invoice {
+4 |   pay := test()
+  |          ~~~~~~
+5 | }
+
+E1017-object-declaration-property-initializer.txt:4:10: AnalyzeError: E1056 - Object properties cannot have an initializer
+3 | obj Invoice {
+4 |   pay := test()
+  |          ~~~~~~
+5 | }

@@ -1,0 +1,10 @@
+fn test () {
+  main {
+  }
+}
+===== err =====
+E1042.txt:2:3: AnalyzeError: E1042 - Main declaration can only be used at the top level
+1 | fn test () {
+2 |   main {
+  |   ~~~~~~
+3 |   }

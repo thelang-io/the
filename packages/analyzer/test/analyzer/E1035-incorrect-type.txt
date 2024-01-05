@@ -1,0 +1,11 @@
+fn test (a: int) {}
+
+main {
+  test("test")
+}
+===== err =====
+E1035-incorrect-type.txt:4:8: AnalyzeError: E1035 - Argument of type `str` is not assignable to parameter of type `int`
+3 | main {
+4 |   test("test")
+  |        ~~~~~~
+5 | }

@@ -1,0 +1,17 @@
+import TestEnum from "./test/fixtures/export-enum"
+import TestFn from "./test/fixtures/export-fn"
+import TestObj from "./test/fixtures/export-obj"
+import TestAlias from "./test/fixtures/export-type"
+import TestConstVar, TestMutVar from "./test/fixtures/export-var"
+
+import TestEnum as TestEnumLocal from "./test/fixtures/export-enum"
+import TestFn as TestFnLocal from "./test/fixtures/export-fn"
+import TestObj as TestObjLocal from "./test/fixtures/export-obj"
+import TestAlias as TestAliasLocal from "./test/fixtures/export-type"
+import
+  TestConstVar as TestConstVarLocal,
+  TestMutVar as TestMutVarLocal
+from "./test/fixtures/export-var"
+
+import * as TestNamespace from "./test/fixtures/export-expr"
+import "./test/fixtures/export-expr"

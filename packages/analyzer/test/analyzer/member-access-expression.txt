@@ -1,0 +1,6 @@
+enum Color { Red, Green, Blue, }
+
+main {
+  b := Color.Red
+  c: Color = .Red
+}

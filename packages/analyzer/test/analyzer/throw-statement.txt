@@ -1,0 +1,12 @@
+obj MyError {
+  mut message: str
+  mut stack: str
+}
+
+fn parse () {
+  throw MyError{message: "Don't do this"}
+}
+
+main {
+  throw NewError("Don't execute me")
+}

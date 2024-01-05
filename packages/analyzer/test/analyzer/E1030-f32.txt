@@ -1,0 +1,5 @@
+const a: f32 = 1e200
+===== err =====
+E1030-f32.txt:1:16: AnalyzeError: E1030 - Floating-point literal is out of range for type `f32`
+1 | const a: f32 = 1e200
+  |                ~~~~~

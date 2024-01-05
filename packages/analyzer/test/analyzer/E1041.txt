@@ -1,0 +1,13 @@
+obj Animal {
+  mut uuid: ref int
+}
+
+main {
+  a := Animal{}
+}
+===== err =====
+E1041.txt:6:8: AnalyzeError: E1041 - Property 'uuid' of type `ref int` is missing initializer
+5 | main {
+6 |   a := Animal{}
+  |        ~~~~~~
+7 | }
