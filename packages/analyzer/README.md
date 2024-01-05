@@ -110,7 +110,7 @@ tm := TypeMap{}
 t := unwrap(tm.get("int"))
 ```
 
-### `AnalyzerExport.get (mut exports: ref Type.NamespaceMember[], name: str) ref Type.NamespaceMember`
+### `AnalyzerExport.get (mut exports: ref NamespaceMember[], name: str) ref NamespaceMember`
 Goes through exports and finds export with matching name.
 
 **Parameters**
@@ -132,7 +132,7 @@ Found export with matching name.
 exportItem := AnalyzerExport.get(ref exports, "name")
 ```
 
-### `AnalyzerExport.has (exports: ref Type.NamespaceMember[], name: str) bool`
+### `AnalyzerExport.has (exports: ref NamespaceMember[], name: str) bool`
 Checks whether export with matching name exists in passed exports.
 
 **Parameters**
@@ -395,4 +395,492 @@ String representation of the type.
 
 ```the
 result := type.toString()
+```
+
+### `TypeMap.init () void`
+Initializes type map with globals.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.init()
+```
+
+### `TypeMap.createAlias (name: str, t: ref Type) ref Type`
+Creates alias type and puts it inside type map.
+
+**Parameters**
+
+- `name` - name of the alias type
+- `t` - underlying type of the alias type
+
+**Return value**
+
+Created alias type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.createAlias("Alias", tm.get("int"))
+```
+
+### `TypeMap.createArray (elementType: ref Type) ref Type`
+Creates array type and puts it inside type map.
+
+**Parameters**
+
+- `elementType` - underlying type of the array type
+
+**Return value**
+
+Created array type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.createArray(tm.get("int"))
+```
+
+### `TypeMap.createEnum (name: str, members: str[]) ref Type`
+Creates enum type and puts it inside type map.
+
+**Parameters**
+
+- `name` - name of the enum type
+- `members` - members list of the enum type
+
+**Return value**
+
+Created enum type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.createEnum("Color", ["Red", "Green", "Blue"])
+```
+
+### `TypeMap.createFunction (asynchronous: bool, parameters: TypeParameter[], returnType: ref Type) ref Type`
+Creates function type and puts it inside type map.
+
+**Parameters**
+
+- `asynchronous` - whether function type should be asynchronous
+- `parameters` - parameters list of the function type
+- `returnType` - return type of the function type
+
+**Return value**
+
+Created function type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+
+tm.createFunction(false, [
+  TypeParameter{name: "a", t: tm.get("int"), mutable: true, required: true},
+  TypeParameter{name: nil, t: tm.get("int"), variadic: true},
+], tm.get("void"))
+```
+
+### `TypeMap.createMap (keyType: ref Type, valueType: ref Type) ref Type`
+Creates map type and puts it inside type map.
+
+**Parameters**
+
+- `keyType` - key type of the map type
+- `valueType` - value type of the map type
+
+**Return value**
+
+Created map type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.createMap(tm.get("str"), tm.get("str"))
+```
+
+### `TypeMap.createMethod (asynchronous: bool, parameters: TypeParameter[], returnType: ref Type, withSelf: bool, selfMutable: bool, selfName: str, selfType: ref Type) ref Type`
+Creates method type and puts it inside type map.
+
+**Parameters**
+
+- `asynchronous` - whether method type should be asynchronous
+- `parameters` - parameters list of the method type
+- `returnType` - return type of the method type
+- `withSelf` - whether method type has self as first parameter
+- `selfMutable` - whether method type has mutable self as first parameter
+- `selfName` - self parameter name of the method type
+- `selfType` - self parameter type of the method type
+
+**Return value**
+
+Created method type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+mut selfType := tm.createObject("Animal")
+
+tm.createMethod(false, [], tm.get("void"), false, false, "", selfType)
+tm.createMethod(false, [], tm.get("void"), true, true, "self", tm.createReference(selfType))
+```
+
+### `TypeMap.createNamespace (name: str, members: NamespaceMember[]) ref Type`
+Creates namespace type and puts it inside type map.
+
+**Parameters**
+
+- `name` - name of the namespace type
+- `members` - members list of the namespace type
+
+**Return value**
+
+Created namespace type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+
+tm.createNamespace("Namespace", [
+  NamespaceMember{name: "Animal", t: tm.get("Animal")},
+])
+```
+
+### `TypeMap.createObject (name: str, properties: TypeProperty[] = []) ref Type`
+Creates object type and puts it inside type map.
+
+**Parameters**
+
+- `name` - name of the object type
+- `properties` - optional. properties list of the object type
+
+**Return value**
+
+Created object type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+
+tm.createObject("Animal", [
+  TypeProperty{name: "age", t: tm.get("int"), mutable: true},
+  TypeProperty{name: "name", t: tm.get("str")},
+])
+```
+
+### `TypeMap.createOptional (t: ref Type) ref Type`
+Creates optional type and puts it inside type map.
+
+**Parameters**
+
+- `t` - underlying type of the optional type
+
+**Return value**
+
+Created optional type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.createOptional(tm.get("int"))
+```
+
+### `TypeMap.createReference (t: ref Type) ref Type`
+Creates reference type and puts it inside type map.
+
+**Parameters**
+
+- `t` - underlying type of the reference type
+
+**Return value**
+
+Created reference type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.createReference(tm.get("int"))
+```
+
+### `TypeMap.createUnion (types: (ref Type)[]) ref Type`
+Creates union type and puts it inside type map.
+
+**Parameters**
+
+- `types` - sub types of the union type
+
+**Return value**
+
+Created union type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.createUnion([tm.get("i8"), tm.get("i16")])
+tm.createUnion([tm.get("i8"), tm.get("i16"), tm.get("i32")])
+```
+
+### `TypeMap.decrease () void`
+Deletes all types from current scope and decreases inner scope.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+typeMap.decrease()
+```
+
+### `TypeMap.increase () void`
+Increases inner scope.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+typeMap.increase()
+```
+
+### `TypeMap.insert (t: ref Type) void`
+Inserts specified type into type map.
+
+**Parameters**
+
+- `t` - type to insert
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+mut tm1 := TypeMap{}
+mut tm2 := TypeMap{}
+
+t := tm1.createObject("Animal")
+tm2.insert(t)
+```
+
+### `TypeMap.get (name: str) ref Type`
+Searches for type and returns reference to it.
+
+**Parameters**
+
+- `name` - name of the type to search for
+
+**Return value**
+
+Reference to found type.
+
+**Exceptions**
+
+- `Error` - throw if type with this name doesn't exists.
+
+**Examples**
+
+```the
+typeMap.get("int")
+```
+
+### `TypeMap.has (name: str, global := true) bool`
+Checks whether type with specified name exists.
+
+**Parameters**
+
+- `name` - name of the type to search for
+- `global` - optional. Whether to search in current scope or globally through all items
+
+**Return value**
+
+Whether type with specified name exists.
+
+**Examples**
+
+```the
+typeMap.has("int")
+```
+
+### `TypeMap.getSelf () (ref Type)?`
+Returns self type that was before set with `TypeMap.setSelf`.
+
+**Return value**
+
+Self type that was before set with `TypeMap.setSelf`.
+
+**Examples**
+
+```the
+typeMap.getSelf()
+```
+
+### `TypeMap.setSelf (value: (ref Type)?) void`
+Sets self type to specified type.
+
+**Parameters**
+
+- `value` - type to set as self type
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+mut selfType := tm.createObject("Animal")
+
+tm.setSelf(selfType)
+```
+
+### `TypeMap.unionAdd (a: ref Type, b: ref Type) ref Type`
+Adds `b` type as a sub type of `a` union type and returns a type created as a result of concatenation.
+
+**Parameters**
+
+- `a` - union type to concatenate into
+- `b` - sub type to concatenate
+
+**Return value**
+
+Type created as a result of concatenating `a` and `b` types.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+mut a := tm.createUnion([tm.get("i8"), tm.get("i16")])
+
+c := tm.unionAdd(a, tm.get("i32"))
+```
+
+### `TypeMap.unionSub (a: ref Type, b: ref Type) ref Type`
+Subtracts `b` sub type from `a` union type and returns a type created as a result of subtraction.
+If subtraction leaves union type with only one type, the underlying type is returned instead of union type.
+
+**Parameters**
+
+- `a` - union type to subtract from
+- `b` - sub type to subtract
+
+**Return value**
+
+Type created as a result of subtracting `b` type from `a` type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+mut a := tm.createUnion([tm.get("i8"), tm.get("i16"), tm.get("i32")])
+
+c := tm.unionSub(a, tm.get("i32"))
+d := tm.unionSub(c, tm.get("i16"))
+```
+
+### `VarMap.add (name: str, t: ref Type, mutable: bool) void`
+Creates variable and inserts it into underlying items of var map.
+
+**Parameters**
+
+- `name` - name of the variable
+- `t` - type of the variable
+- `mutable` - whether variable should be mutable
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+varMap.add("age", tm.get("int"), mutable: false)
+```
+
+### `VarMap.decrease () void`
+Deletes all variables from current scope and decreases inner scope.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+varMap.decrease()
+```
+
+### `VarMap.increase () void`
+Increases inner scope.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+varMap.increase()
+```
+
+### `VarMap.get (name: str) Var`
+Searches for variable by name and returns it.
+
+**Parameters**
+
+- `name` - name of the variable to search for
+
+**Return value**
+
+Found variable.
+
+**Exceptions**
+
+- `Error` - throw if variable with this name doesn't exists
+
+**Examples**
+
+```the
+varMap.get("int")
+```
+
+### `VarMap.has (name: str, global := true) bool`
+Checks whether variable with specified name exists.
+
+**Parameters**
+
+- `name` - name of the variable to search for
+- `global` - optional. Whether to search in current scope or globally through all items
+
+**Return value**
+
+Whether variable with specified name exists.
+
+**Examples**
+
+```the
+varMap.has("int")
 ```
