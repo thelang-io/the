@@ -15,13 +15,62 @@ export obj Tests {
   }
 
   fn run (mut self: ref Self, args: str[]) ref Self {
+    mut filters: str[]
+
+    loop i := 0; i < args.len; i++ {
+      arg := args[i]
+
+      if arg.slice(0, 9) == "--filter=" {
+        filters = arg.slice(9).split(",")
+      }
+    }
+
+    mut filtersAreInclusive := false
+
+    loop i := filters.len - 1; i >= 0; i-- {
+      mut filter := filters[i]
+      filter = filter.trim()
+
+      if filter.empty {
+        filters.remove(i)
+      } elif filter[0] != '!' {
+        filtersAreInclusive = true
+      }
+    }
+
+    mut allTests: (ref Test)[]
+
+    loop i := 0; i < self._tests.len; i++ {
+      mut test := self._tests[i]
+      mut shouldInclude := false
+
+      loop j := 0; j < filters.len; j++ {
+        exclude := filters[j][0] == '!'
+        filterValue := exclude ? filters[j].slice(1) : filters[j]
+
+        if filtersAreInclusive {
+          if !exclude && test.name == filterValue {
+            shouldInclude = true
+            break
+          }
+        } elif !(exclude && test.name == filterValue) {
+          shouldInclude = true
+          break
+        }
+      }
+
+      if shouldInclude || filters.len == 0 {
+        allTests.push(test)
+      }
+    }
+
     mut totalTime := 0
     mut failedTests: str[]
 
-    print("[==========] Running", self._tests.len, self._word(self._tests.len), to: "stderr")
+    print("[==========] Running", allTests.len, self._word(allTests.len), to: "stderr")
 
-    loop i := 0; i < self._tests.len; i++ {
-      test := self._tests[i]
+    loop i := 0; i < allTests.len; i++ {
+      test := allTests[i]
 
       print("[ RUN      ]", test.name, to: "stderr")
       timeStart := date_now()
@@ -40,12 +89,12 @@ export obj Tests {
 
     print(
       "[==========]",
-      self._tests.len,
-      self._word(self._tests.len) + " ran (" + totalTime.str() + " ms total)",
+      allTests.len,
+      self._word(allTests.len) + " ran (" + totalTime.str() + " ms total)",
       to: "stderr"
     )
 
-    passedTestsNum := self._tests.len - failedTests.len
+    passedTestsNum := allTests.len - failedTests.len
     print("[  PASSED  ]", passedTestsNum, self._word(passedTestsNum), to: "stderr")
 
     if !failedTests.empty {
