@@ -1,0 +1,5 @@
+name: the/codegen
+version: 0.0.1
+description: The programming language codegen
+license: MIT
+main: src/main

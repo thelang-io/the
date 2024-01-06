@@ -3,9 +3,6 @@
  * Licensed under the MIT License
  */
 
-// todo documentation
-// todo run tests on real projects
-
 import * as AnalyzerExport from "./analyzer-export"
 import * as Parser from "the/parser"
 import * as API from "./api"
