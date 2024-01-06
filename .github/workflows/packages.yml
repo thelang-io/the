@@ -26,4 +26,5 @@ jobs:
       - uses: thelang-io/setup-the@v1
       - run: the -v
       - run: (cd packages/algorithm && the test test)
+      - run: (cd packages/analyzer && the test test)
       - run: (cd packages/parser && the test test)
