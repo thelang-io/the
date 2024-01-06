@@ -418,7 +418,7 @@ export obj TypeMap {
       }
     }
 
-    throw error_NewError("Type `" + name + "` doesn't exists")
+    throw error_NewError("Type with name '" + name + "' doesn't exists")
   }
 
   fn getSelf (mut self: ref Self) (ref Type.Type)? {
