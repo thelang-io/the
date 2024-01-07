@@ -1,5 +1,5 @@
 # the/codegen
-The programming language codegen
+The programming language code generator
 
 ## Installation
 

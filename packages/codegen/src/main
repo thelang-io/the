@@ -2,3 +2,38 @@
  * Copyright (c) Aaron Delasy
  * Licensed under the MIT License
  */
+
+import * as Analyzer from "the/analyzer"
+import * as Parser from "the/parser"
+
+export obj CodegenOutput {
+  mut data: str
+
+  fn toBuffer (self: ref Self) buffer_Buffer {
+    return self.data.toBuffer()
+  }
+}
+
+export fn codegen (f: ref Parser.File) CodegenOutput {
+  mut output := CodegenOutput{}
+  return output
+}
+
+export fn compile (inputPath: str, executablePath: str) {
+  mut f := Parser.parse(inputPath)
+  Parser.interconnect(ref f)
+  errors := Analyzer.analyze(ref f)
+
+  if !errors.empty {
+    print(errors)
+    process_exit(1)
+  }
+
+  output := codegen(ref f)
+  fs_writeFileSync(executablePath, output.toBuffer())
+  fs_chmodSync(executablePath, 0o777)
+}
+
+main {
+  compile("./build/test-file", "./build/a.out")
+}
