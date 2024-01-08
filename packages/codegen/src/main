@@ -6,17 +6,47 @@
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
 
-export obj CodegenOutput {
+export obj Codegen {
   mut data: str
 
-  fn toBuffer (self: ref Self) buffer_Buffer {
-    return self.data.toBuffer()
+  fn init (mut self: ref Self, f: ref Parser.File) {
+    if f.program.body.empty || !f.program.body[0].isMainDeclaration() {
+      return
+    }
+
+    mainDeclaration := f.program.body[0].asMainDeclaration()
+
+    if !mainDeclaration.body.isBlock() {
+      return
+    }
+
+    mainDeclarationBlock := mainDeclaration.body.asBlock()
+
+    if mainDeclarationBlock.body.empty || !mainDeclarationBlock.body[0].isExpression() {
+      return
+    }
+
+    expression := mainDeclarationBlock.body[0].asExpression()
+    self.data += self.codegenExpression(ref expression.expression)
+  }
+
+  fn codegenExpression (mut self: ref Self, expression: ref Parser.Expression) str {
+    if expression.isIdentifier() {
+      e := expression.asIdentifier()
+      return e.name
+    } elif expression.isCall() {
+      e := expression.asCall()
+      return self.codegenExpression(ref e.callee) + "()"
+    }
+
+    return ""
   }
 }
 
-export fn codegen (f: ref Parser.File) CodegenOutput {
-  mut output := CodegenOutput{}
-  return output
+export fn codegen (f: ref Parser.File) buffer_Buffer {
+  mut generator := Codegen{}
+  generator.init(f)
+  return generator.data.toBuffer()
 }
 
 export fn compile (inputPath: str, executablePath: str) {
@@ -30,8 +60,7 @@ export fn compile (inputPath: str, executablePath: str) {
   }
 
   output := codegen(ref f)
-  fs_writeFileSync(executablePath, output.toBuffer())
-  fs_chmodSync(executablePath, 0o777)
+  fs_writeFileSync(executablePath, output)
 }
 
 main {
