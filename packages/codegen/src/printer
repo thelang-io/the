@@ -1,0 +1,53 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export obj Printer {
+  mut data: str
+  mut endsWithWord: bool
+  mut indent: int
+  mut indentSize: int
+  mut line: str
+
+  fn init (mut self: ref Self) {
+    self.indentSize = 2
+  }
+
+  fn dedent (mut self: ref Self) {
+    self.indent--
+  }
+
+  fn indent (mut self: ref Self) {
+    self.indent++
+  }
+
+  fn newline (mut self: ref Self) {
+    self.endsWithWord = false
+    self.data += ' '.repeat(self.indentSize * self.indent) + self.line + os_EOL
+  }
+
+  fn number (mut self: ref Self, number: str) {
+    self.endsWithWord = false
+    self.line += number
+  }
+
+  fn space (mut self: ref Self) {
+    self.endsWithWord = false
+    self.line += " "
+  }
+
+  fn token (mut self: ref Self, token: str) {
+    self.endsWithWord = false
+    self.line += token
+  }
+
+  fn word (mut self: ref Self, word: str) {
+    if self.endsWithWord {
+      this._space()
+    }
+
+    self.endsWithWord = true
+    self.line += word
+  }
+}
