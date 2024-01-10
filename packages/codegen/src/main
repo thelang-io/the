@@ -14,7 +14,9 @@ export obj Codegen {
     self.printer.init()
   }
 
-  fn onIdentifier (mut self: ref Self, it: ref Parser.Identifier, ctx: Analyzer.IdentifierContext) {
+  fn onIdentifier (mut self: ref Self, expression: ref Parser.Expression, ctx: Analyzer.IdentifierContext) {
+    it := expression.asIdentifier()
+
     if !ctx.currentType.isReference() && ctx.originalType.isReference() {
       self.printer.token("*")
     }
@@ -25,9 +27,12 @@ export obj Codegen {
 }
 
 export fn codegen (inputPathOrCode: str, executablePath: str) str {
+  print("Parsing file")
   mut f := Parser.parse(inputPathOrCode)
+  print("Interconnecting")
   Parser.interconnect(ref f)
   mut generator := Codegen{}
+  print("Initializing generator")
   generator.init()
 
   errors := Analyzer.analyze(ref f, Analyzer.Hooks{
@@ -39,10 +44,12 @@ export fn codegen (inputPathOrCode: str, executablePath: str) str {
     process_exit(1)
   }
 
-  return generator.data
+  print("Done")
+  return generator.printer.data
 }
 
 export fn compile (inputPathOrCode: str, executablePath: str) {
+  print("Generating code for '" + inputPathOrCode + "'")
   output := codegen(inputPathOrCode, executablePath)
   codePath := executablePath + ".c"
 

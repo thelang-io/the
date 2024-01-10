@@ -4,6 +4,7 @@
  */
 
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
+import Hooks, IdentifierContext from "./hooks"
 import
   Type,
   TypeBody,
@@ -36,6 +37,8 @@ export AnalyzerExport
 export AnalyzerFile
 export AnalyzerFileState
 export AnalyzerState
+export Hooks
+export IdentifierContext
 export Type
 export TypeBody
 export TypeProperty

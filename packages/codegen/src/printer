@@ -6,7 +6,7 @@
 export obj Printer {
   mut data: str
   mut endsWithWord: bool
-  mut indent: int
+  mut currentIndent: int
   mut indentSize: int
   mut line: str
 
@@ -15,16 +15,17 @@ export obj Printer {
   }
 
   fn dedent (mut self: ref Self) {
-    self.indent--
+    self.currentIndent--
   }
 
   fn indent (mut self: ref Self) {
-    self.indent++
+    self.currentIndent++
   }
 
   fn newline (mut self: ref Self) {
     self.endsWithWord = false
-    self.data += ' '.repeat(self.indentSize * self.indent) + self.line + os_EOL
+    self.data += ' '.repeat(self.indentSize * self.currentIndent) + self.line + os_EOL
+    self.line = ""
   }
 
   fn number (mut self: ref Self, number: str) {
@@ -44,7 +45,7 @@ export obj Printer {
 
   fn word (mut self: ref Self, word: str) {
     if self.endsWithWord {
-      this._space()
+      self.space()
     }
 
     self.endsWithWord = true
