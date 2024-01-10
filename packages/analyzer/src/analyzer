@@ -6,6 +6,7 @@
 import * as AnalyzerExport from "./analyzer-export"
 import * as Parser from "the/parser"
 import * as API from "./api"
+import * as Hooks from "./hooks"
 import * as Type, Var from "./type"
 import * as TypeMap from "./type-map"
 import * as VarMap from "./var-map"
@@ -24,6 +25,7 @@ export obj TypeCastResult {
 export obj Analyzer {
   mut errors: str[]
   mut files: AnalyzerFileArray
+  mut hooks: Hooks.Hooks
   mut state: AnalyzerState
 }
 
@@ -389,7 +391,16 @@ export obj AnalyzerFile {
       }
 
       code := Parser.stringifyExpression(it)
-      return self.tc.has(code) ? self.tc.get(code) : var.t
+      currentType := self.tc.has(code) ? self.tc.get(code) : var.t
+
+      if self.analyzer.hooks.onIdentifier != nil {
+        self.analyzer.hooks.onIdentifier(it, Hooks.IdentifierContext{
+          currentType: currentType,
+          originalType: var.t
+        })
+      }
+
+      return currentType
     } elif it.isBooleanLiteral() {
       return self.tm.get("bool")
     } elif it.isCharacterLiteral() {
@@ -2042,12 +2053,12 @@ export obj AnalyzerFile {
   }
 }
 
-export fn analyze (f: ref Parser.File) str[] {
+export fn analyze (f: ref Parser.File, hooks := Hooks.Hooks{}) str[] { // todo update docs
   if f.hasErrors {
     return f.errors
   }
 
-  mut analyzer := Analyzer{}
+  mut analyzer := Analyzer{hooks: hooks}
 
   analyzer.files.push(AnalyzerFile{
     cwd: process_cwd(),

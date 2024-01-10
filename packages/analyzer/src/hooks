@@ -1,0 +1,16 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import * as Type from "./type"
+
+export obj IdentifierContext {
+  currentType: ref Type.Type
+  originalType: ref Type.Type
+}
+
+export obj Hooks {
+  onIdentifier: ((it: ref Parser.Expression, ctx: IdentifierContext) -> void)?
+}
