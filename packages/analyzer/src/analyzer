@@ -393,8 +393,9 @@ export obj AnalyzerFile {
       code := Parser.stringifyExpression(it)
       currentType := self.tc.has(code) ? self.tc.get(code) : var.t
 
+      // todo test hooks
       if self.analyzer.hooks.onIdentifier != nil {
-        self.analyzer.hooks.onIdentifier(it, Hooks.IdentifierContext{
+        self.analyzer.hooks.onIdentifier(ref it, Hooks.IdentifierContext{
           currentType: currentType,
           originalType: var.t
         })

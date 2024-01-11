@@ -36,7 +36,10 @@ export fn codegen (inputPathOrCode: str, executablePath: str) str {
   generator.init()
 
   errors := Analyzer.analyze(ref f, Analyzer.Hooks{
-    onIdentifier: generator.onIdentifier
+    onIdentifier: (it: ref Parser.Expression, ctx: Analyzer.IdentifierContext) -> void {
+      generatorRef := ref generator
+      generator.onIdentifier(it, ctx)
+    }
   })
 
   if !errors.empty {
