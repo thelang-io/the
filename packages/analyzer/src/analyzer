@@ -397,15 +397,34 @@ export obj AnalyzerFile {
       if self.analyzer.hooks.onIdentifier != nil {
         self.analyzer.hooks.onIdentifier(ref it, Hooks.IdentifierContext{
           currentType: currentType,
-          originalType: var.t
+          originalType: var.t,
+          targetType: targetType
         })
       }
 
       return currentType
     } elif it.isBooleanLiteral() {
-      return self.tm.get("bool")
+      t := self.tm.get("bool")
+
+      if self.analyzer.hooks.onBooleanLiteral != nil {
+        self.analyzer.hooks.onBooleanLiteral(ref it, Hooks.LiteralContext{
+          t: t,
+          targetType: targetType
+        })
+      }
+
+      return t
     } elif it.isCharacterLiteral() {
-      return self.tm.get("char")
+      t := self.tm.get("char")
+
+      if self.analyzer.hooks.onCharacterLiteral != nil {
+        self.analyzer.hooks.onCharacterLiteral(ref it, Hooks.LiteralContext{
+          t: t,
+          targetType: targetType
+        })
+      }
+
+      return t
     } elif it.isFloatingPointLiteral() {
       expression := it.asFloatingPointLiteral()
       definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
@@ -419,6 +438,13 @@ export obj AnalyzerFile {
         }
       } catch err: error_Error {
         self.raise(errors.E1030(t.toString()), it.start, it.end)
+      }
+
+      if self.analyzer.hooks.onFloatingPointLiteral != nil {
+        self.analyzer.hooks.onFloatingPointLiteral(ref it, Hooks.LiteralContext{
+          t: t,
+          targetType: targetType
+        })
       }
 
       return t
@@ -449,23 +475,46 @@ export obj AnalyzerFile {
         self.raise(errors.E1029(t.toString()), it.start, it.end)
       }
 
+      if self.analyzer.hooks.onIntegerLiteral != nil {
+        self.analyzer.hooks.onIntegerLiteral(ref it, Hooks.LiteralContext{
+          t: t,
+          targetType: targetType
+        })
+      }
+
       return t
     } elif it.isNilLiteral() {
+      mut t := self.tm.get("any")
+
       if targetType == nil {
         self.raise(errors.E1004(), it.start, it.end)
-        return self.tm.createOptional(self.tm.get("any"))
+      } else {
+        t = Type.unwrap(targetType)
+
+        if !t.isOptional() {
+          self.raise(errors.E1006(t.toString()), it.start, it.end)
+        }
       }
 
-      t := Type.unwrap(targetType as ref Type.Type)
-
-      if t.isOptional() {
-        return t
+      if self.analyzer.hooks.onNilLiteral != nil {
+        self.analyzer.hooks.onNilLiteral(ref it, Hooks.LiteralContext{
+          t: t,
+          targetType: targetType
+        })
       }
 
-      self.raise(errors.E1006(t.toString()), it.start, it.end)
-      return targetType as ref Type.Type
+      return t
     } elif it.isStringLiteral() {
-      return self.tm.get("str")
+      t := self.tm.get("str")
+
+      if self.analyzer.hooks.onStringLiteral != nil {
+        self.analyzer.hooks.onStringLiteral(ref it, Hooks.LiteralContext{
+          t: t,
+          targetType: targetType
+        })
+      }
+
+      return t
     } elif it.isArray() {
       expression := it.asArray()
       mut elementType: (ref Type.Type)?

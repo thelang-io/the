@@ -9,8 +9,20 @@ import * as Type from "./type"
 export obj IdentifierContext {
   currentType: ref Type.Type
   originalType: ref Type.Type
+  targetType: (ref Type.Type)?
+}
+
+export obj LiteralContext {
+  t: ref Type.Type
+  targetType: (ref Type.Type)?
 }
 
 export obj Hooks {
   onIdentifier: ((it: ref Parser.Expression, ctx: IdentifierContext) -> void)?
+  onBooleanLiteral: ((it: ref Parser.Expression, ctx: LiteralContext) -> void)?
+  onCharacterLiteral: ((it: ref Parser.Expression, ctx: LiteralContext) -> void)?
+  onFloatingPointLiteral: ((it: ref Parser.Expression, ctx: LiteralContext) -> void)?
+  onIntegerLiteral: ((it: ref Parser.Expression, ctx: LiteralContext) -> void)?
+  onNilLiteral: ((it: ref Parser.Expression, ctx: LiteralContext) -> void)?
+  onStringLiteral: ((it: ref Parser.Expression, ctx: LiteralContext) -> void)?
 }
