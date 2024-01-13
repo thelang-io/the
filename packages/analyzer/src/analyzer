@@ -6,7 +6,6 @@
 import * as AnalyzerExport from "./analyzer-export"
 import * as Parser from "the/parser"
 import * as API from "./api"
-import * as Hooks from "./hooks"
 import * as Type, Var from "./type"
 import * as TypeMap from "./type-map"
 import * as VarMap from "./var-map"
@@ -25,7 +24,6 @@ export obj TypeCastResult {
 export obj Analyzer {
   mut errors: str[]
   mut files: AnalyzerFileArray
-  mut hooks: Hooks.Hooks
   mut state: AnalyzerState
 }
 
@@ -62,11 +60,22 @@ export obj AnalyzerFile {
   mut cwd: str
   mut analyzer: ref Analyzer
   mut exports: Type.NamespaceMember[]
+  mut f: Parser.File
   mut reader: Parser.Reader
   mut state: AnalyzerFileState
   mut tc: (ref Type.Type)[str]
   mut tm: TypeMap.TypeMap
   mut vm: VarMap.VarMap
+
+  fn init (mut self: ref Self) {
+    if self.f.hasErrors {
+      self.analyzer.errors.merge(self.f.errors)
+    }
+
+    self.tm.init()
+    API.TypeMap_globals(ref self.tm)
+    API.VarMap_globals(ref self.vm, ref self.tm)
+  }
 
   fn analyze (mut self: ref Self, items: ref Parser.Statement[]) {
     len := items.len
@@ -175,26 +184,38 @@ export obj AnalyzerFile {
       }
 
       if existingImport == nil {
-        self.analyzer.files.push(AnalyzerFile{cwd: astCwd, analyzer: self.analyzer})
-        mut file := self.analyzer.files.last()
-
-        file.tm.init()
-        API.TypeMap_globals(ref file.tm)
-        API.VarMap_globals(ref file.vm, ref file.tm)
-
         if source == "std" {
+          self.analyzer.files.push(AnalyzerFile{
+            cwd: astCwd,
+            analyzer: self.analyzer,
+            f: Parser.parse("")
+          })
+
+          mut file := self.analyzer.files.last()
+          file.init()
+
           API.TypeMap_std(ref file.tm)
           API.VarMap_std(ref file.vm, ref file.tm)
           API.AnalyzerFile_stdExports(ref file.exports, ref file.tm, ref file.vm)
-        } else {
-          mut f := Parser.parse(relativePath)
-          Parser.interconnect(ref f)
-          file.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
-          file.analyze(ref f.program.body)
-        }
 
-        file.state.initialized = true
-        existingImport = file
+          file.state.initialized = true
+          existingImport = file
+        } else {
+          self.analyzer.files.push(AnalyzerFile{
+            cwd: astCwd,
+            analyzer: self.analyzer,
+            f: Parser.parse(relativePath)
+          })
+
+          mut file := self.analyzer.files.last()
+          Parser.interconnect(ref file.f)
+          file.reader = Parser.Reader_init(file.f.path == "anonymous" ? file.f.content : file.f.path)
+          file.init()
+          file.analyze(ref file.f.program.body)
+
+          file.state.initialized = true
+          existingImport = file
+        }
       } elif !existingImport.state.initialized {
         self.raise(errors.E1075(source), statement.source.start, statement.source.end)
         return
@@ -391,40 +412,11 @@ export obj AnalyzerFile {
       }
 
       code := Parser.stringifyExpression(it)
-      currentType := self.tc.has(code) ? self.tc.get(code) : var.t
-
-      // todo test hooks
-      if self.analyzer.hooks.onIdentifier != nil {
-        self.analyzer.hooks.onIdentifier(ref it, Hooks.IdentifierContext{
-          currentType: currentType,
-          originalType: var.t,
-          targetType: targetType
-        })
-      }
-
-      return currentType
+      return self.tc.has(code) ? self.tc.get(code) : var.t
     } elif it.isBooleanLiteral() {
-      t := self.tm.get("bool")
-
-      if self.analyzer.hooks.onBooleanLiteral != nil {
-        self.analyzer.hooks.onBooleanLiteral(ref it, Hooks.LiteralContext{
-          t: t,
-          targetType: targetType
-        })
-      }
-
-      return t
+      return self.tm.get("bool")
     } elif it.isCharacterLiteral() {
-      t := self.tm.get("char")
-
-      if self.analyzer.hooks.onCharacterLiteral != nil {
-        self.analyzer.hooks.onCharacterLiteral(ref it, Hooks.LiteralContext{
-          t: t,
-          targetType: targetType
-        })
-      }
-
-      return t
+      return self.tm.get("char")
     } elif it.isFloatingPointLiteral() {
       expression := it.asFloatingPointLiteral()
       definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
@@ -438,13 +430,6 @@ export obj AnalyzerFile {
         }
       } catch err: error_Error {
         self.raise(errors.E1030(t.toString()), it.start, it.end)
-      }
-
-      if self.analyzer.hooks.onFloatingPointLiteral != nil {
-        self.analyzer.hooks.onFloatingPointLiteral(ref it, Hooks.LiteralContext{
-          t: t,
-          targetType: targetType
-        })
       }
 
       return t
@@ -475,13 +460,6 @@ export obj AnalyzerFile {
         self.raise(errors.E1029(t.toString()), it.start, it.end)
       }
 
-      if self.analyzer.hooks.onIntegerLiteral != nil {
-        self.analyzer.hooks.onIntegerLiteral(ref it, Hooks.LiteralContext{
-          t: t,
-          targetType: targetType
-        })
-      }
-
       return t
     } elif it.isNilLiteral() {
       mut t := self.tm.get("any")
@@ -496,25 +474,9 @@ export obj AnalyzerFile {
         }
       }
 
-      if self.analyzer.hooks.onNilLiteral != nil {
-        self.analyzer.hooks.onNilLiteral(ref it, Hooks.LiteralContext{
-          t: t,
-          targetType: targetType
-        })
-      }
-
       return t
     } elif it.isStringLiteral() {
-      t := self.tm.get("str")
-
-      if self.analyzer.hooks.onStringLiteral != nil {
-        self.analyzer.hooks.onStringLiteral(ref it, Hooks.LiteralContext{
-          t: t,
-          targetType: targetType
-        })
-      }
-
-      return t
+      return self.tm.get("str")
     } elif it.isArray() {
       expression := it.asArray()
       mut elementType: (ref Type.Type)?
@@ -2103,25 +2065,13 @@ export obj AnalyzerFile {
   }
 }
 
-export fn analyze (f: ref Parser.File, hooks := Hooks.Hooks{}) str[] { // todo update docs
-  if f.hasErrors {
-    return f.errors
-  }
-
-  mut analyzer := Analyzer{hooks: hooks}
-
-  analyzer.files.push(AnalyzerFile{
-    cwd: process_cwd(),
-    analyzer: ref analyzer,
-    reader: Parser.Reader_init(f.path == "anonymous" ? f.content : f.path),
-  })
-
+export fn analyze (f: ref Parser.File) str[] {
+  mut analyzer := Analyzer{}
+  analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer, f: f})
   mut file := analyzer.files.last()
-
-  file.tm.init()
-  API.TypeMap_globals(ref file.tm)
-  API.VarMap_globals(ref file.vm, ref file.tm)
-  file.analyze(ref f.program.body)
+  file.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+  file.init()
+  file.analyze(ref file.f.program.body)
 
   return analyzer.errors
 }
