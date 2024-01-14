@@ -5,56 +5,20 @@
 
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
-import Printer from "./printer"
 
 export obj Codegen {
-  mut printer: Printer
+  mut analyzer: ref Analyzer.Analyzer
 
-  fn init (mut self: ref Self) {
-    self.printer.init()
-  }
-
-  fn onIdentifier (mut self: ref Self, expression: ref Parser.Expression, ctx: Analyzer.IdentifierContext) {
-    it := expression.asIdentifier()
-
-    if !ctx.currentType.isReference() && ctx.originalType.isReference() {
-      self.printer.token("*")
-    }
-
-    self.printer.word(it.name)
-    self.printer.newline()
+  fn generate (mut self: ref Self) {
   }
 }
 
-export fn codegen (inputPathOrCode: str, executablePath: str) str {
-  print("Parsing file")
-  mut f := Parser.parse(inputPathOrCode)
-  print("Interconnecting")
-  Parser.interconnect(ref f)
-  mut generator := Codegen{}
-  print("Initializing generator")
-  generator.init()
+export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str) {
+  mut generator := Codegen{analyzer: analyzer}
+  generator.generate()
 
-  errors := Analyzer.analyze(ref f, Analyzer.Hooks{
-    onIdentifier: (it: ref Parser.Expression, ctx: Analyzer.IdentifierContext) -> void {
-      generatorRef := ref generator
-      generator.onIdentifier(it, ctx)
-    }
-  })
-
-  if !errors.empty {
-    print(errors)
-    process_exit(1)
-  }
-
-  print("Done")
-  return generator.printer.data
-}
-
-export fn compile (inputPathOrCode: str, executablePath: str) {
-  print("Generating code for '" + inputPathOrCode + "'")
-  output := codegen(inputPathOrCode, executablePath)
   codePath := executablePath + ".c"
+  output := "#include <stdio.h>\nint main () { printf(\"Hello, World\\n\"); }"
 
   fs_writeFileSync(codePath, output.toBuffer())
   process_runSync("clang '" + codePath + "' -O0 -w -o '" + executablePath + "'")
@@ -62,5 +26,25 @@ export fn compile (inputPathOrCode: str, executablePath: str) {
 }
 
 main {
-  compile("./build/test-file", "./build/a.out")
+  inputPathOrCode := "./build/test-file"
+  mut analyzer := Analyzer.Analyzer{}
+
+  analyzer.files.push(Analyzer.AnalyzerFile{
+    cwd: process_cwd(),
+    analyzer: ref analyzer,
+    f: Parser.parse(inputPathOrCode),
+  })
+
+  mut file := analyzer.files.last()
+  Parser.interconnect(ref file.f)
+  file.reader = Parser.Reader_init(file.f.path == "anonymous" ? file.f.content : file.f.path)
+  file.init()
+  file.analyze(ref file.f.program.body)
+
+  if !analyzer.errors.empty {
+    throw error_NewError("Failure when analyzing file")
+  }
+
+  compile(ref analyzer, "./build/a.out")
+  print("Generated code for '" + inputPathOrCode + "'")
 }
