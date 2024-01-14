@@ -5,11 +5,75 @@
 
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
+import * as AST from "./ast"
 
 export obj Codegen {
   mut analyzer: ref Analyzer.Analyzer
+  mut statements: AST.CStatement[]
+  mut flags: str[]
+  mut mainStatements: AST.CStatement[]
 
   fn generate (mut self: ref Self) {
+    mut file := self.analyzer.files.last()
+    self.statements = self._generateBlock(ref file.f.program.body)
+    self._assemble()
+  }
+
+  fn getFlags () str {
+    return "-O0 -w"
+  }
+
+  fn stringify (self: ref Self) str {
+    mut result := ""
+    l := self.statements.len
+
+    loop i := 0; i < l; i++ {
+      result += self.statements[i].stringify()
+    }
+
+    return result
+  }
+
+  fn _assemble (mut self: ref Self) {
+    self.statements.push(
+      AST.createFunctionDeclaration(
+        "main",
+        AST.createType("int"),
+        AST.createCompoundStatement(self.mainStatements)
+      )
+    )
+  }
+
+  fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
+    mut result: AST.CStatement[]
+    l := items.len
+
+    loop i := 0; i < l; i++ {
+      result.push(self._generateStatement(items[i]))
+    }
+
+    return result
+  }
+
+  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
+    return AST.createLiteral("NULL")
+  }
+
+  fn _generateStatement (mut self: ref Self, item: ref Parser.Statement) AST.CStatement {
+    if item.isBlock() {
+      statement := item.asBlock()
+      return AST.createCompoundStatement(self._generateBlock(ref statement.body))
+    } elif item.isExpression() {
+      statement := item.asExpression()
+      return AST.createExpressionStatement(self._generateExpression(ref statement.expression))
+    } elif item.isMainDeclaration() {
+      statement := item.asMainDeclaration()
+      statementBody := statement.body.asBlock()
+      self.mainStatements = self._generateBlock(ref statementBody.body)
+      return AST.createEmptyStatement()
+    }
+
+    return AST.createExpressionStatement(AST.createLiteral("NULL2"))
   }
 }
 
@@ -18,10 +82,9 @@ export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str) {
   generator.generate()
 
   codePath := executablePath + ".c"
-  output := "#include <stdio.h>\nint main () { printf(\"Hello, World\\n\"); }"
 
-  fs_writeFileSync(codePath, output.toBuffer())
-  process_runSync("clang '" + codePath + "' -O0 -w -o '" + executablePath + "'")
+  fs_writeFileSync(codePath, generator.stringify().toBuffer())
+  process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
   fs_rmSync(codePath)
 }
 

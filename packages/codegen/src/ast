@@ -1,0 +1,219 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export type CExpressionBody =
+  CCastExpression |
+  CLiteral
+
+export type CStatementBody =
+  CCompoundStatement |
+  CEmptyStatement |
+  CExpressionStatement |
+  CFunctionDeclaration
+
+export obj CType {
+  mut value: str
+
+  fn stringify (self: ref Self, declaration := false, definition := false) str {
+    if declaration {
+      lastChar := self.value.slice(-1)
+      return self.value + (lastChar == " " || lastChar == "*" ? "" : " ")
+    } elif definition {
+      lastChar := self.value.slice(-1)
+      l := self.value.len
+      return self.value.slice(0, l + (lastChar == " " ? 0 : 1))
+    } else {
+      throw error_NewError("Unable to stringify specified type")
+    }
+  }
+}
+
+export obj CExpression {
+  mut body: CExpressionBody
+  mut parent: (ref CExpression)?
+  mut parentStatement: (ref CStatement)?
+  mut parenthesized: bool
+
+  fn asCastExpression (mut self: ref Self) ref CCastExpression { return ref (self.body as CCastExpression) }
+  fn asLiteral (mut self: ref Self) ref CLiteral { return ref (self.body as CLiteral) }
+  fn isCastExpression (self: ref Self) bool { return self.body is CCastExpression }
+  fn isLiteral (self: ref Self) bool { return self.body is CLiteral }
+
+  fn statement (self: ref Self) CStatement {
+    return createExpressionStatement(self)
+  }
+
+  fn stringify (self: ref Self) str {
+    mut result := ""
+
+    if self.isLiteral() {
+      expression := self.asLiteral()
+      result = expression.stringify()
+    } else {
+      throw error_NewError("Unable to stringify specified expression")
+    }
+
+    return self.parenthesized ? "(" + result + ")" : result
+  }
+
+  fn wrap (mut self: CExpression) CExpression {
+    return createExpression(self.body, parenthesized: true)
+  }
+}
+
+export obj CStatement {
+  mut body: CStatementBody
+  mut parent: (ref CStatement)?
+  mut nextSibling: (ref CStatement)?
+  mut prevSibling: (ref CStatement)?
+
+  fn asCompoundStatement (mut self: ref Self) ref CCompoundStatement { return ref (self.body as CCompoundStatement) }
+  fn asEmptyStatement (mut self: ref Self) ref CEmptyStatement { return ref (self.body as CEmptyStatement) }
+  fn asExpressionStatement (mut self: ref Self) ref CExpressionStatement { return ref (self.body as CExpressionStatement) }
+  fn asFunctionDeclaration (mut self: ref Self) ref CFunctionDeclaration { return ref (self.body as CFunctionDeclaration) }
+  fn isCompoundStatement (self: ref Self) bool { return self.body is CCompoundStatement }
+  fn isEmptyStatement (self: ref Self) bool { return self.body is CEmptyStatement }
+  fn isExpressionStatement (self: ref Self) bool { return self.body is CExpressionStatement }
+  fn isFunctionDeclaration (self: ref Self) bool { return self.body is CFunctionDeclaration }
+
+  fn stringify (self: ref Self, indent := 0, root := true) str {
+    if self.isCompoundStatement() {
+      statement := self.asCompoundStatement()
+      return statement.stringify(indent, root)
+    } elif self.isEmptyStatement() {
+      statement := self.asEmptyStatement()
+      return statement.stringify()
+    } elif self.isExpressionStatement() {
+      statement := self.asExpressionStatement()
+      return statement.stringify(indent, root)
+    } elif self.isFunctionDeclaration() {
+      statement := self.asFunctionDeclaration()
+      return statement.stringify()
+    }
+
+    throw error_NewError("Unable to stringify specified statement")
+  }
+
+  // fn endsWith<T> () bool
+  // fn exit () ref Statement
+  // fn getBody () ref Statement
+  // fn hasBody () bool
+  // fn increaseAsyncCounter (ref int) ref Statement
+  // fn merge (other: ref (ref Statement)[]) void
+  // fn prepend (mut statement: Statement) ref Statement
+  // fn setIfAlt (mut statement: ref Statement) void
+}
+
+export obj CCastExpression {
+  mut t: CType
+  mut arg: CExpression
+
+  fn stringify (self: ref Self) str {
+    return "(" + self.t.stringify(definition: true) + ") " + self.arg.stringify()
+  }
+}
+
+export obj CConditionalExpression {
+  mut condition: CExpression
+  mut consequent: CExpression
+  mut alternate: CExpression
+
+  fn stringify (self: ref Self) str {
+    return "TODO"
+  }
+}
+
+export obj CLiteral {
+  mut intValue: int
+  mut stringValue: str
+
+  fn stringify (self: ref Self) str {
+    return self.stringValue.empty && self.intValue != 0
+      ? self.intValue.str()
+      : self.stringValue
+  }
+}
+
+export obj CCompoundStatement {
+  mut body: CStatement[]
+
+  fn stringify (self: ref Self, indent := 0, root := true) str {
+    mut content := ""
+    l := self.body.len
+    loop i := 0; i < l; i++ {
+      content = self.body[i].stringify(indent + 2)
+    }
+    content = "{" + os_EOL + content + ' '.repeat(indent) + "}"
+    if !root {
+      return content
+    }
+    return ' '.repeat(indent) + content + os_EOL
+  }
+}
+
+export obj CEmptyStatement {
+  fn stringify () str {
+    return ""
+  }
+}
+
+export obj CExpressionStatement {
+  mut expression: CExpression
+
+  fn stringify (self: ref Self, indent := 0, root := true) str {
+    result := self.expression.stringify()
+    if !root { return result }
+    return ' '.repeat(indent) + result + ";" + os_EOL
+  }
+}
+
+export obj CFunctionDeclaration {
+  mut name: str
+  mut returnType: CType
+  mut body: CStatement
+
+  fn stringify (self: ref Self) str {
+    return self.returnType.stringify(declaration: true) + self.name + " () " +
+      self.body.stringify(root: false) + os_EOL
+  }
+}
+
+export fn createLiteral (value: str | int) CExpression {
+  intValue := (value is int) ? value : 0
+  stringValue := (value is str) ? value : ""
+  return createExpression(CLiteral{intValue: intValue, stringValue: stringValue})
+}
+
+export fn createCompoundStatement (body: CStatement[]) CStatement {
+  return createStatement(CCompoundStatement{body: body})
+}
+
+export fn createEmptyStatement () CStatement {
+  return createStatement(CEmptyStatement{})
+}
+
+export fn createExpressionStatement (expression: CExpression) CStatement {
+  return createStatement(CExpressionStatement{expression: expression})
+}
+
+export fn createFunctionDeclaration (name: str, returnType: CType, body: CStatement) CStatement {
+  return createStatement(CFunctionDeclaration{
+    name: name,
+    returnType: returnType,
+    body: body
+  })
+}
+
+export fn createExpression (body: CExpressionBody, parenthesized := false) CExpression {
+  return CExpression{body: body, parenthesized: parenthesized}
+}
+
+export fn createStatement (body: CStatementBody) CStatement {
+  return CStatement{body: body}
+}
+
+export fn createType (value: str) CType {
+  return CType{value: value}
+}
