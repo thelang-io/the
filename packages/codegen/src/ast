@@ -4,14 +4,32 @@
  */
 
 export type CExpressionBody =
+  CLiteral |
+  CAssignmentExpression |
+  CBinaryExpression |
+  CCallExpression |
   CCastExpression |
-  CLiteral
+  CConditionalExpression |
+  CInitializerListExpression |
+  CUnaryExpression
 
 export type CStatementBody =
+  CBreakStatement |
+  CCaseStatement |
   CCompoundStatement |
+  CContinueStatement |
   CEmptyStatement |
   CExpressionStatement |
-  CFunctionDeclaration
+  CFunctionDeclaration |
+  CForStatement |
+  CGotoStatement |
+  CIfStatement |
+  CLabelStatement |
+  CReturnStatement |
+  CStructureDeclaration |
+  CSwitchStatement |
+  CVariableDeclaration |
+  CWhileStatement
 
 export obj CType {
   mut value: str
@@ -106,9 +124,57 @@ export obj CStatement {
   // fn setIfAlt (mut statement: ref Statement) void
 }
 
+export obj CIdentifier {
+  mut name: str
+
+  fn stringify (self: ref Self) str {
+    return self.name
+  }
+}
+
+export obj CLiteral {
+  mut intValue: int
+  mut stringValue: str
+
+  fn stringify (self: ref Self) str {
+    return self.stringValue.empty && self.intValue != 0
+      ? self.intValue.str()
+      : self.stringValue
+  }
+}
+
+export obj CAssignmentExpression {
+  mut left: CExpression
+  mut operator: str
+  mut right: CExpression
+
+  fn stringify (self: ref Self) str {
+    return "TODO"
+  }
+}
+
+export obj CBinaryExpression {
+  mut left: CExpression
+  mut operator: str
+  mut right: CExpression
+
+  fn stringify (self: ref Self) str {
+    return "TODO"
+  }
+}
+
+export obj CCallExpression {
+  mut callee: CExpression
+  mut arguments: (CExpression | CType)[]
+
+  fn stringify (self: ref Self) str {
+    return "TODO"
+  }
+}
+
 export obj CCastExpression {
   mut t: CType
-  mut arg: CExpression
+  mut argument: CExpression
 
   fn stringify (self: ref Self) str {
     return "(" + self.t.stringify(definition: true) + ") " + self.arg.stringify()
@@ -125,14 +191,56 @@ export obj CConditionalExpression {
   }
 }
 
-export obj CLiteral {
-  mut intValue: int
-  mut stringValue: str
+export obj CElementAccessExpression {
+  mut expression: CExpression
+  mut element: CExpression
 
   fn stringify (self: ref Self) str {
-    return self.stringValue.empty && self.intValue != 0
-      ? self.intValue.str()
-      : self.stringValue
+    return "TODO"
+  }
+}
+
+export obj CInitializerListExpression {
+  mut items: CExpression[]
+
+  fn stringify (self: ref Self) str {
+    return "TODO"
+  }
+}
+
+export obj CPropertyAccessExpression {
+  mut expression: CExpression
+  mut property: str
+  mut pointed: bool
+
+  fn stringify (self: ref Self) str {
+    return "TODO"
+  }
+}
+
+export obj CUnaryExpression {
+  mut argument: CExpression
+  mut operator: str
+  mut prefix: bool
+
+  fn stringify (self: ref Self) str {
+    return "TODO"
+  }
+}
+
+export obj CBreakStatement {
+  fn stringify (self: ref Self, indent := 0, root := true) str {
+    if !root { return "break" }
+    return ' '.repeat(indent) + "break;" + os_EOL
+  }
+}
+
+export obj CCaseStatement {
+  mut test: CExpression
+  mut body: CStatement
+
+  fn stringify (self: ref Self, indent := 0, root := true) str {
+    return "todo"
   }
 }
 
@@ -153,6 +261,13 @@ export obj CCompoundStatement {
   }
 }
 
+export obj CContinueStatement {
+  fn stringify (self: ref Self, indent := 0, root := true) str {
+    if !root { return "continue" }
+    return ' '.repeat(indent) + "continue;" + os_EOL
+  }
+}
+
 export obj CEmptyStatement {
   fn stringify () str {
     return ""
@@ -169,15 +284,123 @@ export obj CExpressionStatement {
   }
 }
 
+export obj CForStatement {
+  mut initializer: CStatement
+  mut condition: CExpression
+  mut update: CExpression
+  mut body: CStatement
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
 export obj CFunctionDeclaration {
   mut name: str
   mut returnType: CType
   mut body: CStatement
 
+  fn definition (self: ref Self) str {
+    return self.returnType.stringify(declaration: true) + self.name + " ();" + os_EOL
+  }
+
   fn stringify (self: ref Self) str {
     return self.returnType.stringify(declaration: true) + self.name + " () " +
       self.body.stringify(root: false) + os_EOL
   }
+}
+
+export obj CGotoStatement {
+  mut label: str
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
+export obj CIfStatement {
+  mut condition: CExpression
+  mut consequent: CStatement
+  mut alternate: CStatement
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
+export obj CLabelStatement {
+  mut name: str
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
+export obj CReturnStatement {
+  mut argument: CExpression
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
+export obj CStructureDeclaration {
+  mut name: str
+  mut members: CStructureDeclarationMember[]
+
+  fn definition (self: ref Self) str {
+    return "struct " + self.name + ";" + os_EOL
+  }
+
+  fn stringify (self: ref Self) str {
+    mut content := ""
+    l := self.members.len
+    loop i := 0; i < l; i++ {
+      content += self.members[i].stringify(2)
+    }
+    return "struct " + self.name + " {" + os_EOL + content + "}" + os_EOL
+  }
+}
+
+export obj CStructureDeclarationMember {
+  mut t: CType
+  mut name: str
+
+  fn stringify (self: ref Self, indent := 0) str {
+    return ' '.repeat(indent) + self.t.stringify(declaration: true) + self.name + ";" + os_EOL
+  }
+}
+
+export obj CSwitchStatement {
+  mut discriminant: CExpression
+  mut body: CStatement[]
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
+export obj CVariableDeclaration {
+  mut t: CType
+  mut name: str
+  mut initializer: CExpression?
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
+export obj CWhileStatement {
+  mut condition: CExpression
+  mut body: CStatement
+
+  fn stringify (self: ref Self) str {
+    return "todo"
+  }
+}
+
+export fn createIdentifier (name: str) CExpression {
+  // todo
 }
 
 export fn createLiteral (value: str | int) CExpression {
@@ -186,8 +409,60 @@ export fn createLiteral (value: str | int) CExpression {
   return createExpression(CLiteral{intValue: intValue, stringValue: stringValue})
 }
 
+export fn createAssignmentExpression (left: CExpression, operator: str, right: CExpression) CExpression {
+  // todo
+}
+
+export fn createBinaryExpression (left: CExpression, operator: str, right: CExpression) CExpression {
+  // todo
+}
+
+export fn createCallExpression (callee: CExpression, arguments: (CExpression | CType)[]) CExpression {
+  // todo
+}
+
+export fn createCastExpression (t: CType, argument: CExpression) CExpression {
+  // todo
+}
+
+export fn createConditionalExpression (
+  condition: CExpression,
+  consequent: CExpression,
+  alternate: CExpression
+) CExpression {
+  // todo
+}
+
+export fn createElementAccessExpression (expression: CExpression, element: CExpression) CExpression {
+  // todo
+}
+
+export fn createInitializerListExpression (items: CExpression[]) CExpression {
+  // todo
+}
+
+export fn createPropertyAccessExpression (expression: CExpression, property: str, pointed: bool) CExpression {
+  // todo
+}
+
+export fn createUnaryExpression (argument: CExpression, operator: str, prefix: bool) CExpression {
+  // todo
+}
+
+export fn createBreakStatement () CStatement {
+  // todo
+}
+
+export fn createCaseStatement (test: CExpression, body: CStatement) CStatement {
+  // todo
+}
+
 export fn createCompoundStatement (body: CStatement[]) CStatement {
   return createStatement(CCompoundStatement{body: body})
+}
+
+export fn createContinueStatement () CStatement {
+  // todo
 }
 
 export fn createEmptyStatement () CStatement {
@@ -198,12 +473,57 @@ export fn createExpressionStatement (expression: CExpression) CStatement {
   return createStatement(CExpressionStatement{expression: expression})
 }
 
+export fn createForStatement (
+  initializer: CStatement,
+  condition: CExpression,
+  update: CExpression,
+  body: CStatement
+) CStatement {
+  // todo
+}
+
 export fn createFunctionDeclaration (name: str, returnType: CType, body: CStatement) CStatement {
   return createStatement(CFunctionDeclaration{
     name: name,
     returnType: returnType,
     body: body
   })
+}
+
+export fn createGotoStatement (label: str) CStatement {
+  // todo
+}
+
+export fn createIfStatement (condition: CExpression, consequent: CStatement, alternate: CStatement) CStatement {
+  // todo
+}
+
+export fn createLabelStatement (name: str) CStatement {
+  // todo
+}
+
+export fn createReturnStatement () CStatement {
+  // todo
+}
+
+export fn createReturnStatement (argument: CExpression? = nil) CStatement {
+  // todo
+}
+
+export fn createStructureDeclaration (name: str, members: CStructureDeclarationMember[]) CStatement {
+  // todo
+}
+
+export fn createSwitchStatement (discriminant: CExpression, body: CStatement[]) CStatement {
+  // todo
+}
+
+export fn createVariableDeclaration (t: CType, name: str, initializer: CExpression? = nil) CStatement {
+  // todo
+}
+
+export fn createWhileStatement (condition: CExpression, body: CStatement) CStatement {
+  // todo
 }
 
 export fn createExpression (body: CExpressionBody, parenthesized := false) CExpression {
