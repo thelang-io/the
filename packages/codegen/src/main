@@ -37,8 +37,9 @@ export obj Codegen {
   fn _assemble (mut self: ref Self) {
     self.statements.push(
       AST.createFunctionDeclaration(
-        "main",
         AST.createType("int"),
+        "main",
+        [],
         AST.createCompoundStatement(self.mainStatements)
       )
     )
