@@ -589,7 +589,7 @@ export fn createBinaryExpression (left: CExpression, operator: str, right: CExpr
   return createExpression(CBinaryExpression{left: left, operator: operator, right: right})
 }
 
-export fn createCallExpression (callee: CExpression, arguments: (CExpression | CType)[]) CExpression {
+export fn createCallExpression (callee: CExpression, arguments: (CExpression | CType)[] = []) CExpression {
   return createExpression(CCallExpression{callee: callee, arguments: arguments})
 }
 
@@ -613,7 +613,7 @@ export fn createInitializerListExpression (items: CExpression[]) CExpression {
   return createExpression(CInitializerListExpression{items: items})
 }
 
-export fn createPropertyAccessExpression (expression: CExpression, property: str, pointed: bool) CExpression {
+export fn createPropertyAccessExpression (expression: CExpression, property: str, pointed := false) CExpression {
   return createExpression(CPropertyAccessExpression{expression: expression, property: property, pointed: pointed})
 }
 

@@ -1,0 +1,114 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as AST from "../src/ast"
+
+export fn TEST_AST_identifier () {
+  expression1 := AST.createIdentifier("test")
+  EXPECT_EQ(expression1.stringify(), "test")
+}
+
+export fn TEST_AST_literal () {
+  expression1 := AST.createLiteral("1")
+  EXPECT_EQ(expression1.stringify(), "1")
+  expression2 := AST.createLiteral("12.34")
+  EXPECT_EQ(expression2.stringify(), "12.34")
+  expression3 := AST.createLiteral("'a'")
+  EXPECT_EQ(expression3.stringify(), "'a'")
+  expression4 := AST.createLiteral("\"test\"")
+  EXPECT_EQ(expression4.stringify(), "\"test\"")
+}
+
+export fn TEST_AST_assignmentExpression () {
+  expression1 := AST.createAssignmentExpression(
+    AST.createIdentifier("a"),
+    "=",
+    AST.createLiteral("1")
+  )
+  EXPECT_EQ(expression1.stringify(), "a = 1")
+}
+
+export fn TEST_AST_binaryExpression () {
+  expression1 := AST.createBinaryExpression(
+    AST.createIdentifier("a"),
+    "+",
+    AST.createLiteral("1")
+  )
+  EXPECT_EQ(expression1.stringify(), "a + 1")
+}
+
+export fn TEST_AST_callExpression () {
+  expression1 := AST.createCallExpression(AST.createIdentifier("test"))
+  EXPECT_EQ(expression1.stringify(), "test()")
+  expression2 := AST.createCallExpression(AST.createIdentifier("test"), [
+    AST.createLiteral("1")
+  ])
+  EXPECT_EQ(expression2.stringify(), "test(1)")
+  expression3 := AST.createCallExpression(AST.createIdentifier("test"), [
+    AST.createLiteral("1"),
+    AST.createLiteral("2")
+  ])
+  EXPECT_EQ(expression3.stringify(), "test(1, 2)")
+  expression4 := AST.createCallExpression(AST.createIdentifier("test"), [
+    AST.createLiteral("1"),
+    AST.createLiteral("2"),
+    AST.createLiteral("3")
+  ])
+  EXPECT_EQ(expression4.stringify(), "test(1, 2, 3)")
+}
+
+export fn TEST_AST_castExpression () {
+  expression1 := AST.createCastExpression(AST.createType("int"), AST.createIdentifier("test"))
+  EXPECT_EQ(expression1.stringify(), "(int) test")
+}
+
+export fn TEST_AST_conditionalExpression () {
+  expression1 := AST.createConditionalExpression(
+    AST.createIdentifier("test"),
+    AST.createLiteral("1"),
+    AST.createLiteral("2")
+  )
+  EXPECT_EQ(expression1.stringify(), "test ? 1 : 2")
+}
+
+export fn TEST_AST_elementAccessExpression () {
+  expression1 := AST.createElementAccessExpression(
+    AST.createIdentifier("test"),
+    AST.createLiteral("1")
+  )
+  EXPECT_EQ(expression1.stringify(), "test[1]")
+}
+
+export fn TEST_AST_initializerListExpression () {
+  expression1 := AST.createInitializerListExpression([
+    AST.createLiteral("1")
+  ])
+  EXPECT_EQ(expression1.stringify(), "{1}")
+  expression2 := AST.createInitializerListExpression([
+    AST.createLiteral("1"),
+    AST.createLiteral("2")
+  ])
+  EXPECT_EQ(expression2.stringify(), "{1, 2}")
+  expression3 := AST.createInitializerListExpression([
+    AST.createLiteral("1"),
+    AST.createLiteral("2"),
+    AST.createLiteral("3")
+  ])
+  EXPECT_EQ(expression3.stringify(), "{1, 2, 3}")
+}
+
+export fn TEST_AST_propertyAccessExpression () {
+  expression1 := AST.createPropertyAccessExpression(AST.createIdentifier("test"), "test")
+  EXPECT_EQ(expression1.stringify(), "test.test")
+  expression2 := AST.createPropertyAccessExpression(AST.createIdentifier("test"), "test", pointed: true)
+  EXPECT_EQ(expression2.stringify(), "test->test")
+}
+
+export fn TEST_AST_unaryExpression () {
+  expression1 := AST.createUnaryExpression(AST.createIdentifier("test"), "++")
+  EXPECT_EQ(expression1.stringify(), "test++")
+  expression2 := AST.createUnaryExpression(AST.createIdentifier("test"), "~", prefix: true)
+  EXPECT_EQ(expression2.stringify(), "~test")
+}
