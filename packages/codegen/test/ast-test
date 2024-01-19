@@ -5,6 +5,80 @@
 
 import * as AST from "../src/ast"
 
+export fn TEST_AST_type () {
+  type1 := AST.createType("int")
+  type2 := AST.createType("int *")
+  type3 := AST.createType("int[]")
+
+  EXPECT_EQ(type1.stringify(declaration: true), "int ")
+  EXPECT_EQ(type1.stringify(definition: true), "int")
+  EXPECT_EQ(type2.stringify(declaration: true), "int *")
+  EXPECT_EQ(type2.stringify(definition: true), "int *")
+  EXPECT_EQ(type3.stringify(declaration: true), "int[] ")
+  EXPECT_EQ(type3.stringify(definition: true), "int[]")
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    type4 := AST.createType("int")
+    type4.stringify()
+  }, "Unable to stringify specified type")
+}
+
+export fn TEST_AST_expressionStatementMethod () {
+  expression1 := AST.createIdentifier("test")
+  statement1 := expression1.statement()
+
+  EXPECT_EQ(statement1.stringify(), "test;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  test;" + os_EOL)
+}
+
+export fn TEST_AST_expressionWrapMethod () {
+  expression1 := AST.createIdentifier("test")
+  expression2 := expression1.wrap()
+
+  EXPECT_EQ(expression2.stringify(), "(test)")
+}
+
+export fn TEST_AST_statementDefinition () {
+  statement1 := AST.createFunctionDeclaration(AST.createType("int"), "test", [], AST.createCompoundStatement([]))
+
+  statement2 := AST.createFunctionDeclaration(AST.createType("int *"), "test", [
+    AST.createFunctionParameter(AST.createType("int"), "a")
+  ], AST.createCompoundStatement([
+    AST.createReturnStatement()
+  ]))
+
+  statement3 := AST.createFunctionDeclaration(AST.createType("int *"), "test", [
+    AST.createFunctionParameter(AST.createType("int"), "a"),
+    AST.createFunctionParameter(AST.createType("int *"), "b"),
+  ], AST.createCompoundStatement([
+    AST.createBreakStatement(),
+    AST.createReturnStatement()
+  ]))
+
+  statement4 := AST.createStructureDeclaration("Object", AST.createCompoundStatement([]))
+
+  statement5 := AST.createStructureDeclaration("Object", AST.createCompoundStatement([
+    AST.createStructureMemberDeclaration(AST.createType("int"), "a")
+  ]))
+
+  statement6 := AST.createStructureDeclaration("Object", AST.createCompoundStatement([
+    AST.createStructureMemberDeclaration(AST.createType("int"), "a"),
+    AST.createStructureMemberDeclaration(AST.createType("int *"), "b")
+  ]))
+
+  EXPECT_EQ(statement1.definition(), "int test ();" + os_EOL)
+  EXPECT_EQ(statement2.definition(), "int *test (int);" + os_EOL)
+  EXPECT_EQ(statement3.definition(), "int *test (int, int *);" + os_EOL)
+  EXPECT_EQ(statement4.definition(), "struct Object;" + os_EOL)
+  EXPECT_EQ(statement5.definition(), "struct Object;" + os_EOL)
+  EXPECT_EQ(statement6.definition(), "struct Object;" + os_EOL)
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    statement7 := AST.createBreakStatement()
+    statement7.definition()
+  }, "Unable to generate definition for specified statement")
+}
+
 export fn TEST_AST_identifier () {
   expression1 := AST.createIdentifier("test")
   EXPECT_EQ(expression1.stringify(), "test")
@@ -19,6 +93,8 @@ export fn TEST_AST_literal () {
   EXPECT_EQ(expression3.stringify(), "'a'")
   expression4 := AST.createLiteral("\"test\"")
   EXPECT_EQ(expression4.stringify(), "\"test\"")
+  expression5 := AST.createLiteral(1)
+  EXPECT_EQ(expression5.stringify(), "1")
 }
 
 export fn TEST_AST_assignmentExpression () {
@@ -149,30 +225,30 @@ export fn TEST_AST_rootStatement () {
 }
 
 export fn TEST_AST_breakStatement () {
-  expression1 := AST.createBreakStatement()
-  EXPECT_EQ(expression1.stringify(), "break;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  break;" + os_EOL)
+  statement1 := AST.createBreakStatement()
+  EXPECT_EQ(statement1.stringify(), "break;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  break;" + os_EOL)
 }
 
 export fn TEST_AST_caseStatement () {
-  expression1 := AST.createCaseStatement(AST.createLiteral("1"), AST.createReturnStatement())
+  statement1 := AST.createCaseStatement(AST.createLiteral("1"), AST.createReturnStatement())
 
-  expression2 := AST.createCaseStatement(nil, AST.createCompoundStatement([
+  statement2 := AST.createCaseStatement(nil, AST.createCompoundStatement([
     AST.createReturnStatement()
   ]))
 
-  EXPECT_EQ(expression1.stringify(), "case 1: return;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(1), " case 1: return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "case 1: return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(1), " case 1: return;" + os_EOL)
 
   EXPECT_EQ(
-    expression2.stringify(),
+    statement2.stringify(),
     "default: {" + os_EOL +
     "  return;" + os_EOL +
     "}" + os_EOL
   )
 
   EXPECT_EQ(
-    expression2.stringify(2),
+    statement2.stringify(2),
     "  default: {" + os_EOL +
     "    return;" + os_EOL +
     "  }" + os_EOL
@@ -180,36 +256,36 @@ export fn TEST_AST_caseStatement () {
 }
 
 export fn TEST_AST_compoundStatement () {
-  expression1 := AST.createCompoundStatement([])
+  statement1 := AST.createCompoundStatement([])
 
-  expression2 := AST.createCompoundStatement([
+  statement2 := AST.createCompoundStatement([
     AST.createReturnStatement()
   ])
 
-  expression3 := AST.createCompoundStatement([
+  statement3 := AST.createCompoundStatement([
     AST.createContinueStatement(),
     AST.createReturnStatement()
   ])
 
-  EXPECT_EQ(expression1.stringify(), "{}" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  {}" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "{}" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  {}" + os_EOL)
 
   EXPECT_EQ(
-    expression2.stringify(),
+    statement2.stringify(),
     "{" + os_EOL +
     "  return;" + os_EOL +
     "}" + os_EOL
   )
 
   EXPECT_EQ(
-    expression2.stringify(2),
+    statement2.stringify(2),
     "  {" + os_EOL +
     "    return;" + os_EOL +
     "  }" + os_EOL
   )
 
   EXPECT_EQ(
-    expression3.stringify(),
+    statement3.stringify(),
     "{" + os_EOL +
     "  continue;" + os_EOL +
     "  return;" + os_EOL +
@@ -217,7 +293,7 @@ export fn TEST_AST_compoundStatement () {
   )
 
   EXPECT_EQ(
-    expression3.stringify(2),
+    statement3.stringify(2),
     "  {" + os_EOL +
     "    continue;" + os_EOL +
     "    return;" + os_EOL +
@@ -226,38 +302,38 @@ export fn TEST_AST_compoundStatement () {
 }
 
 export fn TEST_AST_continueStatement () {
-  expression1 := AST.createContinueStatement()
-  EXPECT_EQ(expression1.stringify(), "continue;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  continue;" + os_EOL)
+  statement1 := AST.createContinueStatement()
+  EXPECT_EQ(statement1.stringify(), "continue;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  continue;" + os_EOL)
 }
 
 export fn TEST_AST_emptyStatement () {
-  expression1 := AST.createEmptyStatement()
-  EXPECT_EQ(expression1.stringify(), "")
-  EXPECT_EQ(expression1.stringify(2), "")
+  statement1 := AST.createEmptyStatement()
+  EXPECT_EQ(statement1.stringify(), "")
+  EXPECT_EQ(statement1.stringify(2), "")
 }
 
 export fn TEST_AST_expressionStatement () {
-  expression1 := AST.createExpressionStatement(AST.createIdentifier("test"))
-  EXPECT_EQ(expression1.stringify(), "test;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  test;" + os_EOL)
+  statement1 := AST.createExpressionStatement(AST.createIdentifier("test"))
+  EXPECT_EQ(statement1.stringify(), "test;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  test;" + os_EOL)
 }
 
 export fn TEST_AST_forStatement () {
-  expression1 := AST.createForStatement(nil, nil, nil, AST.createReturnStatement())
+  statement1 := AST.createForStatement(nil, nil, nil, AST.createReturnStatement())
 
-  expression2 := AST.createForStatement(nil, nil, nil, AST.createCompoundStatement([
+  statement2 := AST.createForStatement(nil, nil, nil, AST.createCompoundStatement([
     AST.createReturnStatement()
   ]))
 
-  expression3 := AST.createForStatement(
+  statement3 := AST.createForStatement(
     AST.createVariableDeclaration(AST.createType("int"), "a"),
     nil,
     nil,
     AST.createReturnStatement()
   )
 
-  expression4 := AST.createForStatement(
+  statement4 := AST.createForStatement(
     AST.createExpressionStatement(
       AST.createAssignmentExpression(AST.createLiteral("a"), "=", AST.createLiteral("1"))
     ),
@@ -266,87 +342,123 @@ export fn TEST_AST_forStatement () {
     AST.createReturnStatement()
   )
 
-  expression5 := AST.createForStatement(
+  statement5 := AST.createForStatement(
     nil,
     AST.createBinaryExpression(AST.createLiteral("a"), "<", AST.createLiteral("10")),
     nil,
     AST.createReturnStatement()
   )
 
-  expression6 := AST.createForStatement(
+  statement6 := AST.createForStatement(
     nil,
     nil,
     AST.createUnaryExpression(AST.createLiteral("a"), "++"),
     AST.createReturnStatement()
   )
 
-  expression7 := AST.createForStatement(
+  statement7 := AST.createForStatement(
     AST.createVariableDeclaration(AST.createType("int"), "a"),
     AST.createBinaryExpression(AST.createLiteral("a"), "<", AST.createLiteral("10")),
     AST.createUnaryExpression(AST.createLiteral("a"), "++"),
     AST.createReturnStatement()
   )
 
-  EXPECT_EQ(expression1.stringify(), "for (;;) return;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  for (;;) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "for (;;) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  for (;;) return;" + os_EOL)
 
   EXPECT_EQ(
-    expression2.stringify(),
+    statement2.stringify(),
     "for (;;) {" + os_EOL +
     "  return;" + os_EOL +
     "}" + os_EOL
   )
 
   EXPECT_EQ(
-    expression2.stringify(2),
+    statement2.stringify(2),
     "  for (;;) {" + os_EOL +
     "    return;" + os_EOL +
     "  }" + os_EOL
   )
 
-  EXPECT_EQ(expression3.stringify(), "for (int a;;) return;" + os_EOL)
-  EXPECT_EQ(expression3.stringify(2), "  for (int a;;) return;" + os_EOL)
+  EXPECT_EQ(statement3.stringify(), "for (int a;;) return;" + os_EOL)
+  EXPECT_EQ(statement3.stringify(2), "  for (int a;;) return;" + os_EOL)
 
-  EXPECT_EQ(expression4.stringify(), "for (a = 1;;) return;" + os_EOL)
-  EXPECT_EQ(expression4.stringify(2), "  for (a = 1;;) return;" + os_EOL)
+  EXPECT_EQ(statement4.stringify(), "for (a = 1;;) return;" + os_EOL)
+  EXPECT_EQ(statement4.stringify(2), "  for (a = 1;;) return;" + os_EOL)
 
-  EXPECT_EQ(expression5.stringify(), "for (; a < 10;) return;" + os_EOL)
-  EXPECT_EQ(expression5.stringify(2), "  for (; a < 10;) return;" + os_EOL)
+  EXPECT_EQ(statement5.stringify(), "for (; a < 10;) return;" + os_EOL)
+  EXPECT_EQ(statement5.stringify(2), "  for (; a < 10;) return;" + os_EOL)
 
-  EXPECT_EQ(expression6.stringify(), "for (;; a++) return;" + os_EOL)
-  EXPECT_EQ(expression6.stringify(2), "  for (;; a++) return;" + os_EOL)
+  EXPECT_EQ(statement6.stringify(), "for (;; a++) return;" + os_EOL)
+  EXPECT_EQ(statement6.stringify(2), "  for (;; a++) return;" + os_EOL)
 
-  EXPECT_EQ(expression7.stringify(), "for (int a; a < 10; a++) return;" + os_EOL)
-  EXPECT_EQ(expression7.stringify(2), "  for (int a; a < 10; a++) return;" + os_EOL)
+  EXPECT_EQ(statement7.stringify(), "for (int a; a < 10; a++) return;" + os_EOL)
+  EXPECT_EQ(statement7.stringify(2), "  for (int a; a < 10; a++) return;" + os_EOL)
+}
+
+export fn TEST_AST_functionDeclaration () {
+  statement1 := AST.createFunctionDeclaration(AST.createType("int"), "test", [], AST.createCompoundStatement([]))
+
+  statement2 := AST.createFunctionDeclaration(AST.createType("int *"), "test", [
+    AST.createFunctionParameter(AST.createType("int"), "a")
+  ], AST.createCompoundStatement([
+    AST.createReturnStatement()
+  ]))
+
+  statement3 := AST.createFunctionDeclaration(AST.createType("int *"), "test", [
+    AST.createFunctionParameter(AST.createType("int"), "a"),
+    AST.createFunctionParameter(AST.createType("int *"), "b"),
+  ], AST.createCompoundStatement([
+    AST.createBreakStatement(),
+    AST.createReturnStatement()
+  ]))
+
+  EXPECT_EQ(statement1.stringify(), "int test () {}" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "int test () {}" + os_EOL)
+
+  EXPECT_EQ(
+    statement2.stringify(),
+    "int *test (int a) {" + os_EOL +
+    "  return;" + os_EOL +
+    "}" + os_EOL
+  )
+
+  EXPECT_EQ(
+    statement3.stringify(),
+    "int *test (int a, int *b) {" + os_EOL +
+    "  break;" + os_EOL +
+    "  return;" + os_EOL +
+    "}" + os_EOL
+  )
 }
 
 export fn TEST_AST_gotoStatement () {
-  expression1 := AST.createGotoStatement("L0")
+  statement1 := AST.createGotoStatement("L0")
 
-  EXPECT_EQ(expression1.stringify(), "goto L0;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  goto L0;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "goto L0;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  goto L0;" + os_EOL)
 }
 
 export fn TEST_AST_ifStatement () {
-  expression1 := AST.createIfStatement(
+  statement1 := AST.createIfStatement(
     AST.createIdentifier("test"),
     AST.createReturnStatement()
   )
 
-  expression2 := AST.createIfStatement(
+  statement2 := AST.createIfStatement(
     AST.createIdentifier("test"),
     AST.createCompoundStatement([
       AST.createReturnStatement()
     ])
   )
 
-  expression3 := AST.createIfStatement(
+  statement3 := AST.createIfStatement(
     AST.createIdentifier("test"),
     AST.createReturnStatement(AST.createIdentifier("test1")),
     AST.createReturnStatement(AST.createIdentifier("test2"))
   )
 
-  expression4 := AST.createIfStatement(
+  statement4 := AST.createIfStatement(
     AST.createIdentifier("test"),
     AST.createCompoundStatement([
       AST.createReturnStatement(AST.createIdentifier("test1"))
@@ -356,7 +468,7 @@ export fn TEST_AST_ifStatement () {
     ])
   )
 
-  expression5 := AST.createIfStatement(
+  statement5 := AST.createIfStatement(
     AST.createIdentifier("test"),
     AST.createReturnStatement(AST.createIdentifier("test1")),
     AST.createIfStatement(
@@ -366,7 +478,7 @@ export fn TEST_AST_ifStatement () {
     )
   )
 
-  expression6 := AST.createIfStatement(
+  statement6 := AST.createIfStatement(
     AST.createIdentifier("test"),
     AST.createCompoundStatement([
       AST.createReturnStatement(AST.createIdentifier("test1"))
@@ -382,37 +494,37 @@ export fn TEST_AST_ifStatement () {
     )
   )
 
-  EXPECT_EQ(expression1.stringify(), "if (test) return;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  if (test) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "if (test) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  if (test) return;" + os_EOL)
 
   EXPECT_EQ(
-    expression2.stringify(),
+    statement2.stringify(),
     "if (test) {" + os_EOL +
     "  return;" + os_EOL +
     "}" + os_EOL
   )
 
   EXPECT_EQ(
-    expression2.stringify(2),
+    statement2.stringify(2),
     "  if (test) {" + os_EOL +
     "    return;" + os_EOL +
     "  }" + os_EOL
   )
 
   EXPECT_EQ(
-    expression3.stringify(),
+    statement3.stringify(),
     "if (test) return test1;" + os_EOL +
     "else return test2;" + os_EOL
   )
 
   EXPECT_EQ(
-    expression3.stringify(2),
+    statement3.stringify(2),
     "  if (test) return test1;" + os_EOL +
     "  else return test2;" + os_EOL
   )
 
   EXPECT_EQ(
-    expression4.stringify(),
+    statement4.stringify(),
     "if (test) {" + os_EOL +
     "  return test1;" + os_EOL +
     "}" + os_EOL +
@@ -422,7 +534,7 @@ export fn TEST_AST_ifStatement () {
   )
 
   EXPECT_EQ(
-    expression4.stringify(2),
+    statement4.stringify(2),
     "  if (test) {" + os_EOL +
     "    return test1;" + os_EOL +
     "  }" + os_EOL +
@@ -432,21 +544,21 @@ export fn TEST_AST_ifStatement () {
   )
 
   EXPECT_EQ(
-    expression5.stringify(),
+    statement5.stringify(),
     "if (test) return test1;" + os_EOL +
     "else if (test2) return test2;" + os_EOL +
     "else return test3;" + os_EOL
   )
 
   EXPECT_EQ(
-    expression5.stringify(2),
+    statement5.stringify(2),
     "  if (test) return test1;" + os_EOL +
     "  else if (test2) return test2;" + os_EOL +
     "  else return test3;" + os_EOL
   )
 
   EXPECT_EQ(
-    expression6.stringify(),
+    statement6.stringify(),
     "if (test) {" + os_EOL +
     "  return test1;" + os_EOL +
     "}" + os_EOL +
@@ -459,7 +571,7 @@ export fn TEST_AST_ifStatement () {
   )
 
   EXPECT_EQ(
-    expression6.stringify(2),
+    statement6.stringify(2),
     "  if (test) {" + os_EOL +
     "    return test1;" + os_EOL +
     "  }" + os_EOL +
@@ -473,41 +585,72 @@ export fn TEST_AST_ifStatement () {
 }
 
 export fn TEST_AST_labelStatement () {
-  expression1 := AST.createLabelStatement("L0")
+  statement1 := AST.createLabelStatement("L0")
 
-  EXPECT_EQ(expression1.stringify(), "L0:" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "L0:" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "L0:" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "L0:" + os_EOL)
 }
 
 export fn TEST_AST_returnStatement () {
-  expression1 := AST.createReturnStatement()
-  expression2 := AST.createReturnStatement(AST.createIdentifier("test"))
+  statement1 := AST.createReturnStatement()
+  statement2 := AST.createReturnStatement(AST.createIdentifier("test"))
 
-  EXPECT_EQ(expression1.stringify(), "return;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  return;" + os_EOL)
-  EXPECT_EQ(expression2.stringify(), "return test;" + os_EOL)
-  EXPECT_EQ(expression2.stringify(2), "  return test;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  return;" + os_EOL)
+  EXPECT_EQ(statement2.stringify(), "return test;" + os_EOL)
+  EXPECT_EQ(statement2.stringify(2), "  return test;" + os_EOL)
+}
+
+export fn TEST_AST_structureDeclaration () {
+  statement1 := AST.createStructureDeclaration("Object", AST.createCompoundStatement([]))
+
+  statement2 := AST.createStructureDeclaration("Object", AST.createCompoundStatement([
+    AST.createStructureMemberDeclaration(AST.createType("int"), "a")
+  ]))
+
+  statement3 := AST.createStructureDeclaration("Object", AST.createCompoundStatement([
+    AST.createStructureMemberDeclaration(AST.createType("int"), "a"),
+    AST.createStructureMemberDeclaration(AST.createType("int *"), "b")
+  ]))
+
+  EXPECT_EQ(statement1.stringify(), "struct Object {};" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "struct Object {};" + os_EOL)
+
+  EXPECT_EQ(
+    statement2.stringify(),
+    "struct Object {" + os_EOL +
+    "  int a;" + os_EOL +
+    "};" + os_EOL
+  )
+
+  EXPECT_EQ(
+    statement3.stringify(),
+    "struct Object {" + os_EOL +
+    "  int a;" + os_EOL +
+    "  int *b;" + os_EOL +
+    "};" + os_EOL
+  )
 }
 
 export fn TEST_AST_switchStatement () {
-  expression1 := AST.createSwitchStatement(AST.createLiteral("1"), AST.createReturnStatement())
+  statement1 := AST.createSwitchStatement(AST.createLiteral("1"), AST.createReturnStatement())
 
-  expression2 := AST.createSwitchStatement(AST.createLiteral("1"), AST.createCompoundStatement([
+  statement2 := AST.createSwitchStatement(AST.createLiteral("1"), AST.createCompoundStatement([
     AST.createCaseStatement(nil, AST.createReturnStatement())
   ]))
 
-  EXPECT_EQ(expression1.stringify(), "switch (1) return;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  switch (1) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "switch (1) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  switch (1) return;" + os_EOL)
 
   EXPECT_EQ(
-    expression2.stringify(),
+    statement2.stringify(),
     "switch (1) {" + os_EOL +
     "  default: return;" + os_EOL +
     "}" + os_EOL
   )
 
   EXPECT_EQ(
-    expression2.stringify(2),
+    statement2.stringify(2),
     "  switch (1) {" + os_EOL +
     "    default: return;" + os_EOL +
     "  }" + os_EOL
@@ -515,34 +658,34 @@ export fn TEST_AST_switchStatement () {
 }
 
 export fn TEST_AST_variableDeclaration () {
-  expression1 := AST.createVariableDeclaration(AST.createType("int"), "test")
-  expression2 := AST.createVariableDeclaration(AST.createType("int"), "test", AST.createLiteral("1"))
+  statement1 := AST.createVariableDeclaration(AST.createType("int"), "test")
+  statement2 := AST.createVariableDeclaration(AST.createType("int"), "test", AST.createLiteral("1"))
 
-  EXPECT_EQ(expression1.stringify(), "int test;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  int test;" + os_EOL)
-  EXPECT_EQ(expression2.stringify(), "int test = 1;" + os_EOL)
-  EXPECT_EQ(expression2.stringify(2), "  int test = 1;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "int test;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  int test;" + os_EOL)
+  EXPECT_EQ(statement2.stringify(), "int test = 1;" + os_EOL)
+  EXPECT_EQ(statement2.stringify(2), "  int test = 1;" + os_EOL)
 }
 
 export fn TEST_AST_whileStatement () {
-  expression1 := AST.createWhileStatement(AST.createLiteral("1"), AST.createReturnStatement())
+  statement1 := AST.createWhileStatement(AST.createLiteral("1"), AST.createReturnStatement())
 
-  expression2 := AST.createWhileStatement(AST.createLiteral("1"), AST.createCompoundStatement([
+  statement2 := AST.createWhileStatement(AST.createLiteral("1"), AST.createCompoundStatement([
     AST.createReturnStatement()
   ]))
 
-  EXPECT_EQ(expression1.stringify(), "while (1) return;" + os_EOL)
-  EXPECT_EQ(expression1.stringify(2), "  while (1) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(), "while (1) return;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  while (1) return;" + os_EOL)
 
   EXPECT_EQ(
-    expression2.stringify(),
+    statement2.stringify(),
     "while (1) {" + os_EOL +
     "  return;" + os_EOL +
     "}" + os_EOL
   )
 
   EXPECT_EQ(
-    expression2.stringify(2),
+    statement2.stringify(2),
     "  while (1) {" + os_EOL +
     "    return;" + os_EOL +
     "  }" + os_EOL

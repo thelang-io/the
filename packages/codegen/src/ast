@@ -174,6 +174,18 @@ export obj CStatement {
   fn isVariableDeclaration (self: ref Self) bool { return self.body is CVariableDeclaration }
   fn isWhileStatement (self: ref Self) bool { return self.body is CWhileStatement }
 
+  fn definition (self: ref Self) str {
+    if self.isFunctionDeclaration() {
+      statement := self.asFunctionDeclaration()
+      return statement.definition()
+    } elif self.isStructureDeclaration() {
+      statement := self.asStructureDeclaration()
+      return statement.definition()
+    } else {
+      throw error_NewError("Unable to generate definition for specified statement")
+    }
+  }
+
   fn stringify (self: ref Self, indent := 0, root := true) str {
     mut result := ""
 
@@ -255,6 +267,15 @@ export obj CStatement {
   // fn setIfAlt (mut statement: ref Statement) void
 }
 
+export obj CFunctionParameter {
+  mut t: CType
+  mut name: str
+
+  fn stringify (self: ref Self) str {
+    return self.t.stringify(declaration: true) + self.name
+  }
+}
+
 export obj CIdentifier {
   mut name: str
 
@@ -271,15 +292,6 @@ export obj CLiteral {
     return self.stringValue.empty && self.intValue != 0
       ? self.intValue.str()
       : self.stringValue
-  }
-}
-
-export obj CFunctionParameter {
-  mut t: CType
-  mut name: str
-
-  fn stringify (self: ref Self) str {
-    return self.t.stringify(declaration: true) + self.name
   }
 }
 
@@ -530,7 +542,7 @@ export obj CStructureDeclaration {
   }
 
   fn stringify (self: ref Self) str {
-    return "struct " + self.name + " " + self.body.stringify(2, root: false) + ";" + os_EOL
+    return "struct " + self.name + " " + self.body.stringify(root: false) + ";" + os_EOL
   }
 }
 
@@ -539,7 +551,7 @@ export obj CStructureMemberDeclaration {
   mut name: str
 
   fn stringify (self: ref Self, indent: int) str {
-    return ' '.repeat(indent) + self.t.stringify(declaration: true) + self.name + ";" + os_EOL
+    return self.t.stringify(declaration: true) + self.name + ";"
   }
 }
 
@@ -573,6 +585,10 @@ export obj CWhileStatement {
   fn stringify (self: ref Self, indent: int) str {
     return "while (" + self.condition.stringify() + ") " + self.body.stringify(indent, root: false)
   }
+}
+
+export fn createFunctionParameter (t: CType, name: str) CFunctionParameter {
+  return CFunctionParameter{t: t, name: name}
 }
 
 export fn createIdentifier (name: str) CExpression {
