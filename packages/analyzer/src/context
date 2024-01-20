@@ -1,0 +1,12 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import Type from "./type"
+
+export obj IdentifierContext {
+  mut currentType: ref Type
+  mut originalType: ref Type
+  mut targetType: (ref Type)?
+}
