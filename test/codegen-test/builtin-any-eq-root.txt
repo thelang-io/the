@@ -1,0 +1,131 @@
+======= stdin =======
+obj Animal {
+  context: any
+}
+
+main {
+  t := Animal{};
+  t == t;
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct any {
+  int t;
+  void *d;
+  size_t l;
+  struct any (*_copy) (const struct any);
+  void (*_free) (struct any);
+};
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
+
+struct __THE_1_test_Animal_0;
+
+struct __THE_1_test_Animal_0 {
+  const struct any __THE_0_context;
+};
+
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
+void *alloc (size_t);
+struct any any_copy (const struct any);
+void any_free (struct any);
+void error_alloc (err_state_t *, size_t);
+struct __THE_1_test_Animal_0 *__THE_1_test_Animal_0_alloc (struct any);
+struct __THE_1_test_Animal_0 *__THE_1_test_Animal_0_copy (const struct __THE_1_test_Animal_0 *);
+bool __THE_1_test_Animal_0_eq (struct __THE_1_test_Animal_0 *, struct __THE_1_test_Animal_0 *);
+void __THE_1_test_Animal_0_free (struct __THE_1_test_Animal_0 *);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+struct any any_copy (const struct any n) {
+  return n.d == NULL ? n : n._copy(n);
+}
+void any_free (struct any n) {
+  if (n.d != NULL) n._free(n);
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+struct __THE_1_test_Animal_0 *__THE_1_test_Animal_0_alloc (struct any __THE_0_context) {
+  struct __THE_1_test_Animal_0 *r = alloc(sizeof(struct __THE_1_test_Animal_0));
+  struct __THE_1_test_Animal_0 s = {__THE_0_context};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Animal_0));
+  return r;
+}
+struct __THE_1_test_Animal_0 *__THE_1_test_Animal_0_copy (const struct __THE_1_test_Animal_0 *n) {
+  struct __THE_1_test_Animal_0 *r = alloc(sizeof(struct __THE_1_test_Animal_0));
+  struct __THE_1_test_Animal_0 s = {any_copy(n->__THE_0_context)};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Animal_0));
+  return r;
+}
+bool __THE_1_test_Animal_0_eq (struct __THE_1_test_Animal_0 *n1, struct __THE_1_test_Animal_0 *n2) {
+  bool r = n1->__THE_0_context.d == n2->__THE_0_context.d;
+  __THE_1_test_Animal_0_free((struct __THE_1_test_Animal_0 *) n1);
+  __THE_1_test_Animal_0_free((struct __THE_1_test_Animal_0 *) n2);
+  return r;
+}
+void __THE_1_test_Animal_0_free (struct __THE_1_test_Animal_0 *n) {
+  any_free((struct any) n->__THE_0_context);
+  free(n);
+}
+
+int main () {
+  const struct __THE_1_test_Animal_0 *__THE_0_t_0 = __THE_1_test_Animal_0_alloc((struct any) {0, NULL, 0, NULL, NULL});
+  __THE_1_test_Animal_0_eq(__THE_1_test_Animal_0_copy(__THE_0_t_0), __THE_1_test_Animal_0_copy(__THE_0_t_0));
+  __THE_1_test_Animal_0_free((struct __THE_1_test_Animal_0 *) __THE_0_t_0);
+}
+======= flags =======
+======= stdout =======
