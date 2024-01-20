@@ -87,6 +87,7 @@ export obj Type {
   mut body: TypeBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut context: any
 
   fn asArray (mut self: ref Self) ref ArrayType { return ref (self.body as ArrayType) }
   fn asFunction (mut self: ref Self) ref FunctionType { return ref (self.body as FunctionType) }
@@ -115,6 +116,7 @@ export obj Expression {
   mut body: ExpressionBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut context: any
   mut _parent: (ref Expression)?
   mut _parentNode: (ref Statement)?
 
@@ -206,6 +208,7 @@ export obj Statement {
   mut body: StatementBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut context: any
   mut _next: (ref Statement)?
   mut _parent: (ref Statement)?
   mut _prev: (ref Statement)?
