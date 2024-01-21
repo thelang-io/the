@@ -428,14 +428,14 @@ export obj Array {
    * @param predicate - Function to execute on each element of the array.
    *   Should return a truthy value to keep the element in the resulting array.
    */
-  fn filter (self: ref Self, predicate: (it: ArrayElement) -> bool) Self
+  fn filter (self: ref Self, predicate: (it: ref ArrayElement) -> bool) Self
 
   /**
    * Calls `iterator` on every element.
    *
    * @param iterator - Function to execute on each element of the array.
    */
-  fn forEach (self: ref Self, iterator: (it: ArrayElement, idx: int) -> void) void
+  fn forEach (self: ref Self, iterator: (it: ref ArrayElement, idx: int) -> void) void
 
   /**
    * Calls `str` method on every element and joins result with separator.
@@ -491,7 +491,7 @@ export obj Array {
    *
    * @param comparator - Function that defines the sort order.
    */
-  fn sort (mut self: ref Self, comparator: (a: ArrayElement, b: ArrayElement) -> int) ref Self
+  fn sort (mut self: ref Self, comparator: (a: ref ArrayElement, b: ref ArrayElement) -> int) ref Self
 
   /* Returns a string representation. */
   fn str (self: ref Self) str
@@ -533,7 +533,7 @@ export obj Map {
    *
    * @param key - Key you want to get a value of.
    */
-  fn get (self: ref Self, key: MapKey) MapValue
+  fn get (self: ref Self, key: MapKey) ref MapValue
 
   /**
    * Checks whether certain key exists.
@@ -576,12 +576,6 @@ export obj Map {
 
   /* Returns a string representation. */
   fn str (self: ref Self) str
-}
-
-/* Object representation of object method. */
-export obj Method {
-  /* Name of the object method. */
-  name: str
 }
 
 /* Allows storing various keyed collections and more complex entities. */

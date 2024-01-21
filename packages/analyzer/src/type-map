@@ -209,12 +209,12 @@ export obj TypeMap {
     ], self.get("bool"), true, false, "self", resultRef), mutable: false, builtin: true})
     result.properties.push(Type.TypeProperty{name: "filter", t: self.createMethod(false, [
       Type.TypeParameter{name: "predicate", t: self.createFunction(false, [
-        Type.TypeParameter{name: "it", t: elementType, mutable: false, required: true, variadic: false}
+        Type.TypeParameter{name: "it", t: elementTypeRef, mutable: false, required: true, variadic: false}
       ], self.get("bool")), mutable: false, required: true, variadic: false}
     ], result, true, false, "self", resultRef), mutable: false, builtin: true})
     result.properties.push(Type.TypeProperty{name: "forEach", t: self.createMethod(false, [
       Type.TypeParameter{name: "iterator", t: self.createFunction(false, [
-        Type.TypeParameter{name: "it", t: elementType, mutable: false, required: true, variadic: false}
+        Type.TypeParameter{name: "it", t: elementTypeRef, mutable: false, required: true, variadic: false}
         Type.TypeParameter{name: "idx", t: self.get("int"), mutable: false, required: true, variadic: false}
       ], self.get("void")), mutable: false, required: true, variadic: false}
     ], self.get("void"), true, false, "self", resultRef), mutable: false, builtin: true})
@@ -238,8 +238,8 @@ export obj TypeMap {
     ], result, true, false, "self", resultRef), mutable: false, builtin: true})
     result.properties.push(Type.TypeProperty{name: "sort", t: self.createMethod(false, [
       Type.TypeParameter{name: "comparator", t: self.createFunction(false, [
-        Type.TypeParameter{name: "a", t: elementType, mutable: false, required: true, variadic: false}
-        Type.TypeParameter{name: "b", t: elementType, mutable: false, required: true, variadic: false}
+        Type.TypeParameter{name: "a", t: elementTypeRef, mutable: false, required: true, variadic: false}
+        Type.TypeParameter{name: "b", t: elementTypeRef, mutable: false, required: true, variadic: false}
       ], self.get("int")), mutable: false, required: true, variadic: false}
     ], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
     result.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", resultRef), mutable: false, builtin: true})
@@ -295,7 +295,7 @@ export obj TypeMap {
     result.properties.push(Type.TypeProperty{name: "clear", t: self.createMethod(false, [], resultRef, true, true, "self", resultRef), mutable: false, builtin: true})
     result.properties.push(Type.TypeProperty{name: "get", t: self.createMethod(false, [
       Type.TypeParameter{name: "key", t: keyType, mutable: false, required: true, variadic: false}
-    ], valueType, true, false, "self", resultRef), mutable: false, builtin: true})
+    ], self.createReference(valueType), true, false, "self", resultRef), mutable: false, builtin: true})
     result.properties.push(Type.TypeProperty{name: "has", t: self.createMethod(false, [
       Type.TypeParameter{name: "key", t: keyType, mutable: false, required: true, variadic: false}
     ], self.get("bool"), true, false, "self", resultRef), mutable: false, builtin: true})
