@@ -14,7 +14,16 @@ export fn codeName (name: str) str {
 }
 
 export fn typeName (name: str) str {
-  return "__THE_1_" + name
+  return "__THE_0_" + name
+}
+
+export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
+  if parameter.mutable && parameter.required { return "FP5" }
+  elif parameter.mutable && parameter.variadic { return "FP6" }
+  elif parameter.mutable { return "FP2" }
+  elif parameter.required { return "FP3" }
+  elif parameter.variadic { return "FP4" }
+  else { return "FP1" }
 }
 
 export obj APIEntity {
@@ -38,9 +47,9 @@ export obj Codegen {
         AST.createFunctionParameter(AST.createType("void *"), "params")
       ], AST.createCompoundStatement([
         AST.createVariableDeclaration(
-          AST.createType("struct " + self._typeName(tm.createFunction(false, [
+          AST.createType(self._typeName(tm.createFunction(false, [
             Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
-          ], tm.get("void"))) + "p" + " *"),
+          ], tm.get("void"))) + "p_t"),
           "p",
           AST.createIdentifier("params")
         )
@@ -49,7 +58,6 @@ export obj Codegen {
   }
 
   fn _ (mut self: ref Self, name: str) str {
-    print("has name: ", name)
     if self.api.has(name) {
       mut item := self.api.get(name)
       if !item.active {
@@ -129,6 +137,9 @@ export obj Codegen {
     } elif item.isCall() {
       expression := item.asCall()
       return AST.createCallExpression(self._generateExpression(ref expression.callee))
+    } elif item.isReference() {
+      expression := item.asReference()
+      return AST.createUnaryExpression(self._generateExpression(ref expression.expression), "&", prefix: true)
     }
 
     return AST.createLiteral("NULL")
@@ -146,20 +157,129 @@ export obj Codegen {
       statementBody := statement.body.asBlock()
       self.mainStatements = self._generateBlock(ref statementBody.body)
       return AST.createEmptyStatement()
+    } elif item.isVariableDeclaration() {
+      statement := item.asVariableDeclaration()
+      context := item.context as Analyzer.VariableDeclarationContext
+      t := AST.createType(self._type(context.varType))
+
+      mut initializer: AST.CExpression?
+
+      if statement.initializer != nil {
+        initializer = self._generateExpression(ref statement.initializer)
+      }
+
+      return AST.createVariableDeclaration(t, codeName(statement.name.name), initializer)
     }
 
     return AST.createExpressionStatement(AST.createLiteral("NULL2"))
   }
 
-  fn _typeName (mut self: ref Self, it: ref Analyzer.Type) str {
-    if it.isFunction() {
-      t := it.asFunction()
-      return "fn_sFP___FR" + self._typeName(t.returnType) + "FE"
-    } elif it.isObject() {
-      return it.name
+  fn _type (mut self: ref Self, it: ref Analyzer.Type) str {
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._type(t.t)
+    } elif (
+      it.isEnum() ||
+      it.isFunction() ||
+      it.isMap() ||
+      it.isObject() ||
+      it.isOptional() ||
+      it.isReference() ||
+      it.isUnion()
+    ) {
+      return self._(self._typeName(it) + "_t") + " "
+    } elif it.name == "any" {
+      return self._("any_t") + " "
+    } elif it.name == "bool" {
+      return self._("bool_t") + " "
+    } elif it.name == "byte" {
+      return self._("uint8_t") + " "
+    } elif it.name == "char" {
+      return "char "
+    } elif it.name == "f32" {
+      return "float "
+    } elif it.name == "f64" || it.name == "float" {
+      return "double "
+    } elif it.name == "i8" {
+      return self._("int8_t") + " "
+    } elif it.name == "i16" {
+      return self._("int16_t") + " "
+    } elif it.name == "i32" {
+      return self._("int32_t") + " "
+    } elif it.name == "i64" {
+      return self._("int64_t") + " "
+    } elif it.name == "str" {
+      return self._("str_t") + " "
+    } elif it.name == "u8" {
+      return self._("uint8_t") + " "
+    } elif it.name == "u16" {
+      return self._("uint16_t") + " "
+    } elif it.name == "u32" {
+      return self._("uint32_t") + " "
+    } elif it.name == "u64" {
+      return self._("uint64_t") + " "
+    } elif it.name == "void" {
+      return "void "
     }
 
-    return "nothing"
+    throw error_NewError("Failed to generate type for '" + it.name + "'")
+  }
+
+  fn _typeName (mut self: ref Self, it: ref Analyzer.Type) str {
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._typeName(t.t)
+    } elif it.isArray() {
+      t := it.asArray()
+      return "arr_" + self._typeName(t.elementType)
+    } elif it.isEnum() || it.isObject() {
+      return it.name
+    } elif it.isFunction() {
+      t := it.asFunction()
+      mut name := "fn_" + (t.asynchronous ? "a" : "s")
+
+      loop i := 0; i < t.parameters.len; i++ {
+        parameter := t.parameters[i]
+        name += typeParameterId(parameter) + self._typeName(parameter.t)
+      }
+
+      return name + "FR" + self._typeName(t.returnType) + "FE"
+    } elif it.isMap() {
+      t := it.asMap()
+      return "map_" + self._typeName(t.keyType) + "MS" + self._typeName(t.valueType) + "ME"
+    } elif it.isMethod() {
+      t := it.asMethod()
+      mut name := "fn_" + (t.asynchronous ? "a" : "s")
+
+      if t.withSelf {
+        name += "FS" + self._typeName(t.selfType)
+      }
+
+      loop i := 0; i < t.parameters.len; i++ {
+        parameter := t.parameters[i]
+        name += typeParameterId(parameter) + self._typeName(parameter.t)
+      }
+
+      return name + "FR" + self._typeName(t.returnType) + "FE"
+    } elif it.isOptional() {
+      t := it.asOptional()
+      return "opt_" + self._typeName(t.t)
+    } elif it.isReference() {
+      t := it.asReference()
+      return "ref_" + self._typeName(t.t)
+    } elif it.isUnion() {
+      t := it.asUnion()
+      mut name := ""
+
+      loop i := 0; i < t.types.len; i++ {
+        name += i == 0 ? "" : "US"
+        name += self._typeName(t.types[i])
+      }
+
+      return "union_" + name + "UE"
+    }
+
+    throw error_NewError("Failed to generate type name for '" + it.name + "'")
   }
 }
 
