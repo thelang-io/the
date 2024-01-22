@@ -4,7 +4,7 @@
  */
 
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
-import IdentifierContext from "./context"
+import IdentifierContext, VariableDeclarationContext from "./context"
 import
   Type,
   TypeBody,
@@ -58,6 +58,7 @@ export ReferenceType
 export UnionType
 export Var
 export VarMap
+export VariableDeclarationContext
 export analyze
 export largest
 export match

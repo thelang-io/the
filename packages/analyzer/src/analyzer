@@ -1813,6 +1813,8 @@ export obj AnalyzerFile {
           self.raise(errors.E1039(), statement.name.start, statement.name.end)
         }
       }
+
+      it.context = Context.VariableDeclarationContext{varType: varType}
     }
   }
 

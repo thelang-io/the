@@ -10,3 +10,7 @@ export obj IdentifierContext {
   mut originalType: ref Type
   mut targetType: (ref Type)?
 }
+
+export obj VariableDeclarationContext {
+  mut varType: ref Type
+}
