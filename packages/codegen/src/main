@@ -272,8 +272,9 @@ export obj Codegen {
       mut name := ""
 
       loop i := 0; i < t.types.len; i++ {
+        subType := t.types[i] as ref Analyzer.Type
         name += i == 0 ? "" : "US"
-        name += self._typeName(t.types[i])
+        name += self._typeName(subType)
       }
 
       return "union_" + name + "UE"
