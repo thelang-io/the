@@ -785,7 +785,7 @@ export obj AnalyzerFile {
         self.raise(errors.E1061(), expression.returnType.start, expression.returnType.end)
       }
 
-      self.statement(expression.body)
+      self.statement(ref expression.body)
       self.state.returnType = initialStateReturnType
       self.vm.decrease()
       self.tm.decrease()
@@ -1398,7 +1398,7 @@ export obj AnalyzerFile {
         self.raise(errors.E1044(), it.start, it.end)
       }
 
-      self.statement(statement.statement)
+      self.statement(ref statement.statement)
       mut exportIdentifier := Parser.Identifier{}
 
       if statement.statement.isEnumDeclaration() {
@@ -1527,7 +1527,7 @@ export obj AnalyzerFile {
           self.raise(errors.E1061(), returnType.start, returnType.end)
         }
 
-        self.statement(statement.body)
+        self.statement(ref statement.body)
       }
 
       self.state.returnType = initialStateReturnType
@@ -1549,13 +1549,13 @@ export obj AnalyzerFile {
       }
 
       self.tc.merge(typeCastResult.consequent)
-      self.statement(statement.consequent)
+      self.statement(ref statement.consequent)
       afterConsequentTC := self.tc
       self.tc = initialTC
       self.tc.merge(typeCastResult.alternate)
 
       if statement.alternate != nil {
-        self.statement(statement.alternate)
+        self.statement(ref statement.alternate)
 
         if statement.alternate.isDeadEnd() && !statement.consequent.isDeadEnd() {
           self.tc = afterConsequentTC
@@ -1589,7 +1589,7 @@ export obj AnalyzerFile {
         }
 
         self.state.loopInit = true
-        self.statement(initializer)
+        self.statement(ref statement.initializer)
         self.state.loopInit = initialLoopInit
       }
 
@@ -1608,7 +1608,7 @@ export obj AnalyzerFile {
         self.e(ref statement.update)
       }
 
-      self.statement(statement.body)
+      self.statement(ref statement.body)
       self.vm.decrease()
       self.tm.decrease()
 
@@ -1626,7 +1626,7 @@ export obj AnalyzerFile {
       }
 
       self.state.returnType = Type.opt(self.tm.get("void"))
-      self.statement(statement.body)
+      self.statement(ref statement.body)
       self.state.returnType = initialReturnType
       self.analyzer.state.mainFound = true
     } elif it.isObjectDeclaration() {
@@ -1666,7 +1666,7 @@ export obj AnalyzerFile {
           self.raise(errors.E1061(), statement.returnType.start, statement.returnType.end)
         }
 
-        self.statement(statement.body)
+        self.statement(ref statement.body)
       }
 
       self.state.returnType = initialStateReturnType
@@ -1733,13 +1733,13 @@ export obj AnalyzerFile {
 
       self.tm.increase()
       self.vm.increase()
-      self.statement(statement.body)
+      self.statement(ref statement.body)
       self.vm.decrease()
       self.tm.decrease()
       handlersLen := statement.handlers.len
 
       loop i := 0; i < handlersLen; i++ {
-        handler := statement.handlers[i]
+        mut handler := statement.handlers[i]
         self.tm.increase()
         self.vm.increase()
 
@@ -1749,14 +1749,14 @@ export obj AnalyzerFile {
           self.raise(errors.E1055(), parameterStatement.name.start, parameterStatement.name.end)
         }
 
-        self.statement(handler.parameter)
+        self.statement(ref handler.parameter)
         var := self.vm.get(parameterStatement.name.name)
 
         if !var.t.isErrorLike() {
           self.raise(errors.E1065(), parameterStatement.name.start, parameterStatement.name.end)
         }
 
-        self.statement(handler.body)
+        self.statement(ref handler.body)
         self.vm.decrease()
         self.tm.decrease()
       }

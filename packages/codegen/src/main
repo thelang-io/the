@@ -159,6 +159,10 @@ export obj Codegen {
       return AST.createEmptyStatement()
     } elif item.isVariableDeclaration() {
       statement := item.asVariableDeclaration()
+      if !(item.context is Analyzer.VariableDeclarationContext) {
+        // todo investigate why
+        throw error_NewError("Context doesn't exists")
+      }
       context := item.context as Analyzer.VariableDeclarationContext
       t := AST.createType(self._type(context.varType))
 
