@@ -1349,7 +1349,7 @@ export obj AnalyzerFile {
     self.analyzer.errors.push(error)
   }
 
-  fn statement (mut self: ref Self, mut it: Parser.Statement) {
+  fn statement (mut self: ref Self, mut it: ref Parser.Statement) {
     if it.isBlock() {
       mut statement := it.asBlock()
 
