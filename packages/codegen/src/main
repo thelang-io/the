@@ -11,10 +11,6 @@ export fn codeName (name: str) str {
   return "__THE_1_" + name
 }
 
-export fn typeName (name: str) str {
-  return "__THE_0_" + name
-}
-
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   if parameter.mutable && parameter.required { return "FP5" }
   elif parameter.mutable && parameter.variadic { return "FP6" }
@@ -220,7 +216,7 @@ export obj Codegen {
     } elif it.name == "bool" {
       return self._("bool_t") + " "
     } elif it.name == "byte" {
-      return self._("uint8_t") + " "
+      return "unsigned char "
     } elif it.name == "char" {
       return "char "
     } elif it.name == "f32" {
@@ -235,6 +231,8 @@ export obj Codegen {
       return self._("int32_t") + " "
     } elif it.name == "i64" {
       return self._("int64_t") + " "
+    } elif it.name == "isize" {
+      return self._("ssize_t") + " "
     } elif it.name == "str" {
       return self._("str_t") + " "
     } elif it.name == "u8" {
@@ -245,6 +243,8 @@ export obj Codegen {
       return self._("uint32_t") + " "
     } elif it.name == "u64" {
       return self._("uint64_t") + " "
+    } elif it.name == "usize" {
+      return self._("size_t") + " "
     } elif it.name == "void" {
       return "void "
     } elif (

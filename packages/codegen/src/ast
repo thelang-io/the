@@ -21,16 +21,19 @@ export type CStatementBody =
   CCaseStatement |
   CCompoundStatement |
   CContinueStatement |
+  CDefineDirective |
   CEmptyStatement |
   CExpressionStatement |
   CFunctionDeclaration |
   CForStatement |
   CGotoStatement |
   CIfStatement |
+  CIncludeDirective |
   CLabelStatement |
   CReturnStatement |
   CStructureDeclaration |
   CStructureMemberDeclaration |
+  CTypedefDeclaration |
   CSwitchStatement |
   CVariableDeclaration |
   CWhileStatement
@@ -143,31 +146,37 @@ export obj CStatement {
   fn asCaseStatement (mut self: ref Self) ref CCaseStatement { return ref (self.body as CCaseStatement) }
   fn asCompoundStatement (mut self: ref Self) ref CCompoundStatement { return ref (self.body as CCompoundStatement) }
   fn asContinueStatement (mut self: ref Self) ref CContinueStatement { return ref (self.body as CContinueStatement) }
+  fn asDefineDirective (mut self: ref Self) ref CDefineDirective { return ref (self.body as CDefineDirective) }
   fn asEmptyStatement (mut self: ref Self) ref CEmptyStatement { return ref (self.body as CEmptyStatement) }
   fn asExpressionStatement (mut self: ref Self) ref CExpressionStatement { return ref (self.body as CExpressionStatement) }
   fn asFunctionDeclaration (mut self: ref Self) ref CFunctionDeclaration { return ref (self.body as CFunctionDeclaration) }
   fn asForStatement (mut self: ref Self) ref CForStatement { return ref (self.body as CForStatement) }
   fn asGotoStatement (mut self: ref Self) ref CGotoStatement { return ref (self.body as CGotoStatement) }
   fn asIfStatement (mut self: ref Self) ref CIfStatement { return ref (self.body as CIfStatement) }
+  fn asIncludeDirective (mut self: ref Self) ref CIncludeDirective { return ref (self.body as CIncludeDirective) }
   fn asLabelStatement (mut self: ref Self) ref CLabelStatement { return ref (self.body as CLabelStatement) }
   fn asReturnStatement (mut self: ref Self) ref CReturnStatement { return ref (self.body as CReturnStatement) }
   fn asStructureDeclaration (mut self: ref Self) ref CStructureDeclaration { return ref (self.body as CStructureDeclaration) }
   fn asStructureMemberDeclaration (mut self: ref Self) ref CStructureMemberDeclaration { return ref (self.body as CStructureMemberDeclaration) }
   fn asSwitchStatement (mut self: ref Self) ref CSwitchStatement { return ref (self.body as CSwitchStatement) }
+  fn asTypedefDeclaration (mut self: ref Self) ref CTypedefDeclaration { return ref (self.body as CTypedefDeclaration) }
   fn asVariableDeclaration (mut self: ref Self) ref CVariableDeclaration { return ref (self.body as CVariableDeclaration) }
   fn asWhileStatement (mut self: ref Self) ref CWhileStatement { return ref (self.body as CWhileStatement) }
   fn isBreakStatement (self: ref Self) bool { return self.body is CBreakStatement }
   fn isCaseStatement (self: ref Self) bool { return self.body is CCaseStatement }
   fn isCompoundStatement (self: ref Self) bool { return self.body is CCompoundStatement }
   fn isContinueStatement (self: ref Self) bool { return self.body is CContinueStatement }
+  fn isDefineDirective (self: ref Self) bool { return self.body is CDefineDirective }
   fn isEmptyStatement (self: ref Self) bool { return self.body is CEmptyStatement }
   fn isExpressionStatement (self: ref Self) bool { return self.body is CExpressionStatement }
   fn isFunctionDeclaration (self: ref Self) bool { return self.body is CFunctionDeclaration }
   fn isForStatement (self: ref Self) bool { return self.body is CForStatement }
   fn isGotoStatement (self: ref Self) bool { return self.body is CGotoStatement }
   fn isIfStatement (self: ref Self) bool { return self.body is CIfStatement }
+  fn isIncludeDirective (self: ref Self) bool { return self.body is CIncludeDirective }
   fn isLabelStatement (self: ref Self) bool { return self.body is CLabelStatement }
   fn isReturnStatement (self: ref Self) bool { return self.body is CReturnStatement }
+  fn isTypedefDeclaration (self: ref Self) bool { return self.body is CTypedefDeclaration }
   fn isStructureDeclaration (self: ref Self) bool { return self.body is CStructureDeclaration }
   fn isStructureMemberDeclaration (self: ref Self) bool { return self.body is CStructureMemberDeclaration }
   fn isSwitchStatement (self: ref Self) bool { return self.body is CSwitchStatement }
@@ -191,7 +200,7 @@ export obj CStatement {
 
     if self.isBreakStatement() {
       statement := self.asBreakStatement()
-      result = statement.stringify(indent)
+      result = statement.stringify()
     } elif self.isCaseStatement() {
       statement := self.asCaseStatement()
       result = statement.stringify(indent)
@@ -200,13 +209,16 @@ export obj CStatement {
       result = statement.stringify(indent)
     } elif self.isContinueStatement() {
       statement := self.asContinueStatement()
-      result = statement.stringify(indent)
+      result = statement.stringify()
+    } elif self.isDefineDirective() {
+      statement := self.asDefineDirective()
+      result = statement.stringify()
     } elif self.isEmptyStatement() {
       statement := self.asEmptyStatement()
       result = statement.stringify()
     } elif self.isExpressionStatement() {
       statement := self.asExpressionStatement()
-      result = statement.stringify(indent)
+      result = statement.stringify()
     } elif self.isFunctionDeclaration() {
       statement := self.asFunctionDeclaration()
       result = statement.stringify()
@@ -215,28 +227,34 @@ export obj CStatement {
       result = statement.stringify(indent)
     } elif self.isGotoStatement() {
       statement := self.asGotoStatement()
-      result = statement.stringify(indent)
+      result = statement.stringify()
     } elif self.isIfStatement() {
       statement := self.asIfStatement()
       result = statement.stringify(indent)
+    } elif self.isIncludeDirective() {
+      statement := self.asIncludeDirective()
+      result = statement.stringify()
     } elif self.isLabelStatement() {
       statement := self.asLabelStatement()
       result = statement.stringify()
     } elif self.isReturnStatement() {
       statement := self.asReturnStatement()
-      result = statement.stringify(indent)
+      result = statement.stringify()
     } elif self.isStructureDeclaration() {
       statement := self.asStructureDeclaration()
       result = statement.stringify()
     } elif self.isStructureMemberDeclaration() {
       statement := self.asStructureMemberDeclaration()
-      result = statement.stringify(indent)
+      result = statement.stringify()
     } elif self.isSwitchStatement() {
       statement := self.asSwitchStatement()
       result = statement.stringify(indent)
+    } elif self.isTypedefDeclaration() {
+      statement := self.asTypedefDeclaration()
+      result = statement.stringify()
     } elif self.isVariableDeclaration() {
       statement := self.asVariableDeclaration()
-      result = statement.stringify(indent)
+      result = statement.stringify()
     } elif self.isWhileStatement() {
       statement := self.asWhileStatement()
       result = statement.stringify(indent)
@@ -244,27 +262,12 @@ export obj CStatement {
       throw error_NewError("Unable to stringify specified statement")
     }
 
-    if (
-      !root ||
-      self.isEmptyStatement() ||
-      self.isFunctionDeclaration() ||
-      self.isLabelStatement() ||
-      self.isStructureDeclaration()
-    ) {
+    if !root || self.isEmptyStatement() || self.isLabelStatement() {
       return result
     }
 
     return ' '.repeat(indent) + result + os_EOL
   }
-
-  // fn endsWith<T> () bool
-  // fn exit () ref Statement
-  // fn getBody () ref Statement
-  // fn hasBody () bool
-  // fn increaseAsyncCounter (ref int) ref Statement
-  // fn merge (other: ref (ref Statement)[]) void
-  // fn prepend (mut statement: Statement) ref Statement
-  // fn setIfAlt (mut statement: ref Statement) void
 }
 
 export obj CFunctionParameter {
@@ -402,7 +405,7 @@ export obj CUnaryExpression {
 }
 
 export obj CBreakStatement {
-  fn stringify (self: ref Self, indent: int) str {
+  fn stringify (self: ref Self) str {
     return "break;"
   }
 }
@@ -434,8 +437,20 @@ export obj CCompoundStatement {
 }
 
 export obj CContinueStatement {
-  fn stringify (self: ref Self, indent: int) str {
+  fn stringify (self: ref Self) str {
     return "continue;"
+  }
+}
+
+export obj CDefineDirective {
+  mut name: str
+  mut isFunction: bool
+  mut params: str[]
+  mut value: str
+
+  fn stringify (self: ref Self) str {
+    return "#define " + self.name + (self.isFunction ? "(" + self.params.join(", ") + ")" : "") +
+      (self.value.empty ? "" : " " + self.value)
   }
 }
 
@@ -448,7 +463,7 @@ export obj CEmptyStatement {
 export obj CExpressionStatement {
   mut expression: CExpression
 
-  fn stringify (self: ref Self, indent: int) str {
+  fn stringify (self: ref Self) str {
     return self.expression.stringify() + ";"
   }
 }
@@ -491,14 +506,14 @@ export obj CFunctionDeclaration {
       parameters += self.parameters[i].stringify()
     }
     return self.returnType.stringify(declaration: true) + self.name + " (" + parameters + ") " +
-      self.body.stringify(root: false) + os_EOL
+      self.body.stringify(root: false)
   }
 }
 
 export obj CGotoStatement {
   mut label: str
 
-  fn stringify (self: ref Self, indent: int) str {
+  fn stringify (self: ref Self) str {
     return "goto " + self.label + ";"
   }
 }
@@ -517,6 +532,14 @@ export obj CIfStatement {
   }
 }
 
+export obj CIncludeDirective {
+  mut path: str
+
+  fn stringify (self: ref Self) str {
+    return "#include <" + self.path + ">"
+  }
+}
+
 export obj CLabelStatement {
   mut name: str
 
@@ -528,7 +551,7 @@ export obj CLabelStatement {
 export obj CReturnStatement {
   mut argument: CExpression?
 
-  fn stringify (self: ref Self, indent: int) str {
+  fn stringify (self: ref Self) str {
     return "return" + (self.argument == nil ? "" : " " + self.argument.stringify()) + ";"
   }
 }
@@ -542,7 +565,7 @@ export obj CStructureDeclaration {
   }
 
   fn stringify (self: ref Self) str {
-    return "struct " + self.name + " " + self.body.stringify(root: false) + ";" + os_EOL
+    return "struct " + self.name + " " + self.body.stringify(root: false) + ";"
   }
 }
 
@@ -550,7 +573,7 @@ export obj CStructureMemberDeclaration {
   mut t: CType
   mut name: str
 
-  fn stringify (self: ref Self, indent: int) str {
+  fn stringify (self: ref Self) str {
     return self.t.stringify(declaration: true) + self.name + ";"
   }
 }
@@ -564,12 +587,21 @@ export obj CSwitchStatement {
   }
 }
 
+export obj CTypedefDeclaration {
+  mut t: CType
+  mut name: str
+
+  fn stringify (self: ref Self) str {
+    return "typedef " + self.t.stringify(declaration: true) + self.name + ";"
+  }
+}
+
 export obj CVariableDeclaration {
   mut t: CType
   mut name: str
   mut initializer: CExpression?
 
-  fn stringify (self: ref Self, indent: int) str {
+  fn stringify (self: ref Self) str {
     mut result := self.t.stringify(declaration: true) + self.name
     if self.initializer != nil {
       result += " = " + self.initializer.stringify()
@@ -657,6 +689,12 @@ export fn createContinueStatement () CStatement {
   return createStatement(CContinueStatement{})
 }
 
+export fn createDefineDirective (name: str, params: str[]? = nil, value := "") CStatement {
+  return params == nil
+    ? createStatement(CDefineDirective{name: name, value: value})
+    : createStatement(CDefineDirective{name: name, isFunction: true, params: params, value: value})
+}
+
 export fn createEmptyStatement () CStatement {
   return createStatement(CEmptyStatement{})
 }
@@ -696,6 +734,10 @@ export fn createIfStatement (condition: CExpression, consequent: CStatement, alt
   return createStatement(CIfStatement{condition: condition, consequent: consequent, alternate: alternate})
 }
 
+export fn createIncludeDirective (path: str) CStatement {
+  return createStatement(CIncludeDirective{path: path})
+}
+
 export fn createLabelStatement (name: str) CStatement {
   return createStatement(CLabelStatement{name: name})
 }
@@ -714,6 +756,10 @@ export fn createStructureMemberDeclaration (t: CType, name: str) CStatement {
 
 export fn createSwitchStatement (discriminant: CExpression, body: CStatement) CStatement {
   return createStatement(CSwitchStatement{discriminant: discriminant, body: body})
+}
+
+export fn createTypedefDeclaration (t: CType, name: str) CStatement {
+  return createStatement(CTypedefDeclaration{t: t, name: name})
 }
 
 export fn createVariableDeclaration (t: CType, name: str, initializer: CExpression? = nil) CStatement {

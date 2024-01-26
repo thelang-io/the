@@ -206,22 +206,22 @@ export fn TEST_AST_rootStatement () {
   EXPECT_EQ(expression2.stringify(), "")
   EXPECT_EQ(expression2.stringify(2), "")
   EXPECT_EQ(expression3.stringify(), "int test () {}" + os_EOL)
-  EXPECT_EQ(expression3.stringify(2), "int test () {}" + os_EOL)
+  EXPECT_EQ(expression3.stringify(2), "  int test () {}" + os_EOL)
   EXPECT_EQ(expression4.stringify(), "L0:" + os_EOL)
   EXPECT_EQ(expression4.stringify(2), "L0:" + os_EOL)
   EXPECT_EQ(expression5.stringify(), "struct Object {};" + os_EOL)
-  EXPECT_EQ(expression5.stringify(2), "struct Object {};" + os_EOL)
+  EXPECT_EQ(expression5.stringify(2), "  struct Object {};" + os_EOL)
 
   EXPECT_EQ(expression1.stringify(root: false), "break;")
   EXPECT_EQ(expression1.stringify(2, root: false), "break;")
   EXPECT_EQ(expression2.stringify(root: false), "")
   EXPECT_EQ(expression2.stringify(2, root: false), "")
-  EXPECT_EQ(expression3.stringify(root: false), "int test () {}" + os_EOL)
-  EXPECT_EQ(expression3.stringify(2, root: false), "int test () {}" + os_EOL)
+  EXPECT_EQ(expression3.stringify(root: false), "int test () {}")
+  EXPECT_EQ(expression3.stringify(2, root: false), "int test () {}")
   EXPECT_EQ(expression4.stringify(root: false), "L0:" + os_EOL)
   EXPECT_EQ(expression4.stringify(2, root: false), "L0:" + os_EOL)
-  EXPECT_EQ(expression5.stringify(root: false), "struct Object {};" + os_EOL)
-  EXPECT_EQ(expression5.stringify(2, root: false), "struct Object {};" + os_EOL)
+  EXPECT_EQ(expression5.stringify(root: false), "struct Object {};")
+  EXPECT_EQ(expression5.stringify(2, root: false), "struct Object {};")
 }
 
 export fn TEST_AST_breakStatement () {
@@ -305,6 +305,30 @@ export fn TEST_AST_continueStatement () {
   statement1 := AST.createContinueStatement()
   EXPECT_EQ(statement1.stringify(), "continue;" + os_EOL)
   EXPECT_EQ(statement1.stringify(2), "  continue;" + os_EOL)
+}
+
+export fn TEST_AST_defineDirective () {
+  params1: str[]? = []
+  params2: str[]? = ["a"]
+  params3: str[]? = ["a", "b"]
+  params4: str[]? = ["a", "b", "c"]
+
+  statement1 := AST.createDefineDirective("name1")
+  statement2 := AST.createDefineDirective("name2", nil, "value2")
+  statement3 := AST.createDefineDirective("name", params1)
+  statement4 := AST.createDefineDirective("name", params1, "value")
+  statement5 := AST.createDefineDirective("name", params2)
+  statement6 := AST.createDefineDirective("name", params3)
+  statement7 := AST.createDefineDirective("name", params4)
+
+  EXPECT_EQ(statement1.stringify(), "#define name1" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  #define name1" + os_EOL)
+  EXPECT_EQ(statement2.stringify(), "#define name2 value2" + os_EOL)
+  EXPECT_EQ(statement3.stringify(), "#define name()" + os_EOL)
+  EXPECT_EQ(statement4.stringify(), "#define name() value" + os_EOL)
+  EXPECT_EQ(statement5.stringify(), "#define name(a)" + os_EOL)
+  EXPECT_EQ(statement6.stringify(), "#define name(a, b)" + os_EOL)
+  EXPECT_EQ(statement7.stringify(), "#define name(a, b, c)" + os_EOL)
 }
 
 export fn TEST_AST_emptyStatement () {
@@ -414,7 +438,7 @@ export fn TEST_AST_functionDeclaration () {
   ]))
 
   EXPECT_EQ(statement1.stringify(), "int test () {}" + os_EOL)
-  EXPECT_EQ(statement1.stringify(2), "int test () {}" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  int test () {}" + os_EOL)
 
   EXPECT_EQ(
     statement2.stringify(),
@@ -584,6 +608,13 @@ export fn TEST_AST_ifStatement () {
   )
 }
 
+export fn TEST_AST_includeDirective () {
+  statement1 := AST.createIncludeDirective("stdio.h")
+
+  EXPECT_EQ(statement1.stringify(), "#include <stdio.h>" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  #include <stdio.h>" + os_EOL)
+}
+
 export fn TEST_AST_labelStatement () {
   statement1 := AST.createLabelStatement("L0")
 
@@ -614,7 +645,7 @@ export fn TEST_AST_structureDeclaration () {
   ]))
 
   EXPECT_EQ(statement1.stringify(), "struct Object {};" + os_EOL)
-  EXPECT_EQ(statement1.stringify(2), "struct Object {};" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  struct Object {};" + os_EOL)
 
   EXPECT_EQ(
     statement2.stringify(),
@@ -655,6 +686,16 @@ export fn TEST_AST_switchStatement () {
     "    default: return;" + os_EOL +
     "  }" + os_EOL
   )
+}
+
+export fn TEST_AST_typedefDeclaration () {
+  statement1 := AST.createTypedefDeclaration(AST.createType("int"), "name1")
+  statement2 := AST.createTypedefDeclaration(AST.createType("int *"), "name2")
+
+  EXPECT_EQ(statement1.stringify(), "typedef int name1;" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  typedef int name1;" + os_EOL)
+  EXPECT_EQ(statement2.stringify(), "typedef int *name2;" + os_EOL)
+  EXPECT_EQ(statement2.stringify(2), "  typedef int *name2;" + os_EOL)
 }
 
 export fn TEST_AST_variableDeclaration () {
