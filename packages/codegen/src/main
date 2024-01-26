@@ -7,8 +7,6 @@ import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
 import * as AST from "./ast"
 
-const BUILTIN_ENTITIES := ["print"]
-
 export fn codeName (name: str) str {
   return "__THE_1_" + name
 }
@@ -26,49 +24,49 @@ export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   else { return "FP1" }
 }
 
-export obj APIEntity {
+export obj APIBuiltin {
+  mut libStdio: bool
+}
+
+export obj CodegenEntity {
   mut active: bool
-  mut statement: AST.CStatement
+  mut name: str
+  mut codeName: str
+  mut build: () -> AST.CStatement
 }
 
 export obj Codegen {
   mut analyzer: ref Analyzer.Analyzer
-  mut api: APIEntity[str]
-  mut statements: AST.CStatement[]
+  mut builtin: APIBuiltin
+  mut entities: CodegenEntity[]
   mut flags: str[]
   mut mainStatements: AST.CStatement[]
+  mut statements: AST.CStatement[]
 
   fn init (mut self: ref Self) {
     mut file := self.analyzer.files.last()
     mut tm := file.tm
 
-    self.api.set("print", APIEntity{
-      statement: AST.createFunctionDeclaration(AST.createType("void"), codeName("print"), [
-        AST.createFunctionParameter(AST.createType("void *"), "params")
-      ], AST.createCompoundStatement([
-        AST.createVariableDeclaration(
-          AST.createType(self._typeName(tm.createFunction(false, [
-            Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
-          ], tm.get("void"))) + "p_t"),
-          "p",
-          AST.createIdentifier("params")
-        )
-      ]))
-    })
-  }
+    self.entities.push(CodegenEntity{
+      name: "print",
+      codeName: codeName("print"),
+      build: () -> AST.CStatement {
+        mut refSelf := ref self
+        mut refTm := ref tm
 
-  fn _ (mut self: ref Self, name: str) str {
-    if self.api.has(name) {
-      mut item := self.api.get(name)
-      if !item.active {
-        item.active = true
-        self.api.set(name, item)
+        return AST.createFunctionDeclaration(AST.createType("void"), codeName("print"), [
+          AST.createFunctionParameter(AST.createType("void *"), "params")
+        ], AST.createCompoundStatement([
+          AST.createVariableDeclaration(
+            AST.createType(self._typeName(tm.createFunction(false, [
+              Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
+            ], tm.get("void"))) + "p_t"),
+            "p",
+            AST.createIdentifier("params")
+          )
+        ]))
       }
-
-      return codeName(name)
-    }
-
-    return ""
+    })
   }
 
   fn generate (mut self: ref Self) {
@@ -92,18 +90,32 @@ export obj Codegen {
     return result
   }
 
+  fn _ (mut self: ref Self, name: str) str {
+    if self._hasEntity(name) {
+      mut item := self._getEntity(name)
+      if !item.active {
+        item.active = true
+      }
+
+      return item.codeName
+    } elif name == "printf" {
+      self.builtin.libStdio = true
+    }
+
+    return name
+  }
+
   fn _assemble (mut self: ref Self) {
-    apiKeys := self.api.keys
+    l := self.entities.len
 
-    loop i := 0; i < apiKeys.len; i++ {
-      apiKey := apiKeys[i]
-      apiValue :=self.api.get(apiKey)
+    loop i := 0; i < l; i++ {
+      entity := self.entities[i]
 
-      if !apiValue.active {
+      if !entity.active {
         continue
       }
 
-      self.statements.push(apiValue.statement)
+      self.statements.push(entity.build())
     }
 
     self.statements.push(
@@ -128,12 +140,12 @@ export obj Codegen {
   }
 
   fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
-    if item.isIdentifier() {
+    if item.isIntegerLiteral() {
+      expression := item.asIntegerLiteral()
+      return AST.createLiteral(expression.value)
+    } elif item.isIdentifier() {
       expression := item.asIdentifier()
-
-      return AST.createIdentifier(
-        BUILTIN_ENTITIES.contains(expression.name) ? self._(expression.name) : codeName(expression.name)
-      )
+      return AST.createIdentifier(self._(expression.name))
     } elif item.isCall() {
       expression := item.asCall()
       return AST.createCallExpression(self._generateExpression(ref expression.callee))
@@ -159,10 +171,7 @@ export obj Codegen {
       return AST.createEmptyStatement()
     } elif item.isVariableDeclaration() {
       statement := item.asVariableDeclaration()
-      if !(item.context is Analyzer.VariableDeclarationContext) {
-        // todo investigate why
-        throw error_NewError("Context doesn't exists")
-      }
+      self._validateContext(item.context is Analyzer.VariableDeclarationContext)
       context := item.context as Analyzer.VariableDeclarationContext
       t := AST.createType(self._type(context.varType))
 
@@ -175,23 +184,37 @@ export obj Codegen {
       return AST.createVariableDeclaration(t, codeName(statement.name.name), initializer)
     }
 
-    return AST.createExpressionStatement(AST.createLiteral("NULL2"))
+    return AST.createExpressionStatement(AST.createIdentifier("undefined_statement"))
+  }
+
+  fn _getEntity (self: ref Self, name: str) ref CodegenEntity {
+    loop i := self.entities.len - 1; i >= 0; i-- {
+      entity := self.entities[i]
+
+      if entity.name == name {
+        return entity
+      }
+    }
+
+    throw error_NewError("Entity with name '" + name + "' doesn't exists")
+  }
+
+  fn _hasEntity (self: ref Self, name: str) bool {
+    loop i := self.entities.len - 1; i >= 0; i-- {
+      entity := self.entities[i]
+
+      if entity.name == name {
+        return true
+      }
+    }
+
+    return false
   }
 
   fn _type (mut self: ref Self, it: ref Analyzer.Type) str {
     if it.isAlias() {
       t := it.asAlias()
       return self._type(t.t)
-    } elif (
-      it.isEnum() ||
-      it.isFunction() ||
-      it.isMap() ||
-      it.isObject() ||
-      it.isOptional() ||
-      it.isReference() ||
-      it.isUnion()
-    ) {
-      return self._(self._typeName(it) + "_t") + " "
     } elif it.name == "any" {
       return self._("any_t") + " "
     } elif it.name == "bool" {
@@ -208,7 +231,7 @@ export obj Codegen {
       return self._("int8_t") + " "
     } elif it.name == "i16" {
       return self._("int16_t") + " "
-    } elif it.name == "i32" {
+    } elif it.name == "i32" || it.name == "int" {
       return self._("int32_t") + " "
     } elif it.name == "i64" {
       return self._("int64_t") + " "
@@ -224,6 +247,16 @@ export obj Codegen {
       return self._("uint64_t") + " "
     } elif it.name == "void" {
       return "void "
+    } elif (
+      it.isEnum() ||
+      it.isFunction() ||
+      it.isMap() ||
+      it.isObject() ||
+      it.isOptional() ||
+      it.isReference() ||
+      it.isUnion()
+    ) {
+      return self._(self._typeName(it) + "_t") + " "
     }
 
     throw error_NewError("Failed to generate type for '" + it.name + "'")
@@ -286,6 +319,12 @@ export obj Codegen {
 
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
   }
+
+  fn _validateContext (valid: bool) {
+    if !valid {
+      throw error_NewError("Context is not set")
+    }
+  }
 }
 
 export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str) {
@@ -297,7 +336,7 @@ export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str) {
 
   fs_writeFileSync(codePath, generator.stringify().toBuffer())
   process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
-  fs_rmSync(codePath)
+  // fs_rmSync(codePath)
 }
 
 main {
