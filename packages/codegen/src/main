@@ -5,6 +5,7 @@
 
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
+import Garbage from "./garbage"
 import * as AST from "./ast"
 
 export fn codeName (name: str) str {
@@ -36,6 +37,7 @@ export obj Codegen {
   mut builtin: APIBuiltin
   mut entities: CodegenEntity[]
   mut flags: str[]
+  mut garbage: Garbage
   mut mainStatements: AST.CStatement[]
   mut statements: AST.CStatement[]
 
@@ -247,6 +249,23 @@ export obj Codegen {
       return self._("size_t") + " "
     } elif it.name == "void" {
       return "void "
+    } elif it.isReference() {
+      index1 := self.garbage.pushString(self._typeName(it) + "_t")
+      name := self.garbage.atString(index1)
+
+      if !self._hasEntity(name) {
+        self.entities.push(CodegenEntity{
+          name: name,
+          codeName: codeName(name),
+          build: () -> AST.CStatement {
+            refSelf := ref self
+            name2 := self.garbage.atString(index1)
+            return AST.createTypedefDeclaration(AST.createType("int2 *"), name2)
+          }
+        })
+      }
+
+      return self._(name) + " "
     } elif (
       it.isEnum() ||
       it.isFunction() ||
