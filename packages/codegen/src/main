@@ -5,12 +5,8 @@
 
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
-import Garbage from "./garbage"
+import BlockData from "./block-data"
 import * as AST from "./ast"
-
-export fn codeName (name: str) str {
-  return "__THE_1_" + name
-}
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   if parameter.mutable && parameter.required { return "FP5" }
@@ -22,54 +18,107 @@ export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
 }
 
 export obj APIBuiltin {
-  mut libStdio: bool
+  mut stddef: bool
+  mut stdint: bool
+  mut stdio: bool
+  mut stdlib: bool
 }
 
 export obj CodegenEntity {
   mut active: bool
   mut name: str
   mut codeName: str
-  mut build: () -> AST.CStatement
+  mut context: any
+  mut generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement
+}
+
+export fn typeShouldBeFreed (t: ref Analyzer.Type) bool {
+  return t.isOptional()
+}
+
+export fn entity_alloc (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
+  return AST.createFunctionDeclaration(AST.createType("void *"), entity.codeName, [
+    AST.createFunctionParameter(AST.createType(self._("size_t")), "n1")
+  ], AST.createCompoundStatement([
+    AST.createVariableDeclaration(
+      AST.createType("void *"),
+      "r",
+      AST.createCallExpression(AST.createIdentifier(self._("malloc")), [AST.createIdentifier("n1")])
+    )
+  ]))
+
+  // R"(void *alloc (_{size_t} n1) {)" EOL
+  // R"(  void *r = _{malloc}(n1);)" EOL
+  // R"(  if (r == _{NULL}) _{error_alloc}(&_{err_state}, n1);)" EOL
+  // R"(  return r;)" EOL
+  // R"(})" EOL,
+}
+
+export fn entity_error_alloc (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
+  return AST.createEmptyStatement()
+
+  // R"~(void error_alloc (_{err_state_t} *fn_err_state, _{size_t} n1) {)~" EOL
+  // R"~(  char d[4096];)~" EOL
+  // R"~(  _{size_t} l = 0;)~" EOL
+  // R"~(  for (_{err_stack_t} *it = fn_err_state->stack_last; it != _{NULL}; it = it->prev) {)~" EOL
+  // R"~(    const char *fmt = _{THE_EOL} "  at %s (%s)";)~" EOL
+  // R"~(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);)~" EOL
+  // R"~(    if (l + z >= 4096) break;)~" EOL
+  // R"~(    _{sprintf}(&d[l], fmt, it->name, it->file);)~" EOL
+  // R"~(    l += z;)~" EOL
+  // R"~(  })~" EOL
+  // R"~(  _{fprintf}(_{stderr}, "Allocation Error: failed to allocate %zu bytes%s" _{THE_EOL}, n1, d);)~" EOL
+  // R"~(  _{exit}(_{EXIT_FAILURE});)~" EOL
+  // R"~(})~" EOL,
+}
+
+export fn entity_print (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
+  return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
+    AST.createFunctionParameter(AST.createType("void *"), "params")
+  ], AST.createCompoundStatement([
+    AST.createVariableDeclaration(
+      AST.createType(self._typeName(tm.createFunction(false, [
+        Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
+      ], tm.get("void"))) + "p_t"),
+      "p",
+      AST.createIdentifier("params")
+    )
+  ]))
 }
 
 export obj Codegen {
   mut analyzer: ref Analyzer.Analyzer
   mut builtin: APIBuiltin
+  mut blockData: BlockData
   mut entities: CodegenEntity[]
   mut flags: str[]
-  mut garbage: Garbage
   mut mainStatements: AST.CStatement[]
+  mut globalStatements: AST.CStatement[]
   mut statements: AST.CStatement[]
 
   fn init (mut self: ref Self) {
-    mut file := self.analyzer.files.last()
-    mut tm := file.tm
+    self.entities.push(CodegenEntity{
+      name: "alloc",
+      codeName: "alloc",
+      generate: entity_alloc
+    })
+
+    self.entities.push(CodegenEntity{
+      name: "error_alloc",
+      codeName: "error_alloc",
+      generate: entity_error_alloc
+    })
 
     self.entities.push(CodegenEntity{
       name: "print",
-      codeName: codeName("print"),
-      build: () -> AST.CStatement {
-        mut refSelf := ref self
-        mut refTm := ref tm
-
-        return AST.createFunctionDeclaration(AST.createType("void"), codeName("print"), [
-          AST.createFunctionParameter(AST.createType("void *"), "params")
-        ], AST.createCompoundStatement([
-          AST.createVariableDeclaration(
-            AST.createType(self._typeName(tm.createFunction(false, [
-              Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
-            ], tm.get("void"))) + "p_t"),
-            "p",
-            AST.createIdentifier("params")
-          )
-        ]))
-      }
+      codeName: "print",
+      generate: entity_print
     })
   }
 
   fn generate (mut self: ref Self) {
     mut file := self.analyzer.files.last()
-    self.statements = self._generateBlock(ref file.f.program.body)
+    self.globalStatements = self._generateBlock(ref file.f.program.body)
     self._assemble()
   }
 
@@ -96,25 +145,55 @@ export obj Codegen {
       }
 
       return item.codeName
+    } elif name == "NULL" || name == "size_t" {
+      self.builtin.stddef = true
     } elif name == "printf" {
-      self.builtin.libStdio = true
+      self.builtin.stdio = true
+    } elif (
+      name == "int8_t" ||
+      name == "int16_t" ||
+      name == "int32_t" ||
+      name == "int64_t" ||
+      name == "uint8_t" ||
+      name == "uint16_t" ||
+      name == "uint32_t" ||
+      name == "uint64_t"
+    ) {
+      self.builtin.stdint = true
+    } elif (
+      name == "free" ||
+      name == "malloc" ||
+      name == "realloc"
+    ) {
+      self.builtin.stdlib = true
+    } else {
+      throw error_NewError("Tried activating unknown entity '" + name + "'")
     }
 
     return name
   }
 
   fn _assemble (mut self: ref Self) {
-    l := self.entities.len
+    mut statements: AST.CStatement[]
+    mut file := self.analyzer.files.last()
 
-    loop i := 0; i < l; i++ {
+    // todo problem here is that "alloc" is activated and later is not picked up, because already being looped through
+    loop i := 0; i < self.entities.len; i++ {
       entity := self.entities[i]
 
       if !entity.active {
         continue
       }
 
-      self.statements.push(entity.build())
+      statements.push(entity.generate(self, ref file.tm, entity))
     }
+
+    if self.builtin.stddef { self.statements.push(AST.createIncludeDirective("stddef.h")) }
+    if self.builtin.stdio { self.statements.push(AST.createIncludeDirective("stdio.h")) }
+    if self.builtin.stdint { self.statements.push(AST.createIncludeDirective("stdint.h")) }
+    if self.builtin.stdlib { self.statements.push(AST.createIncludeDirective("stdlib.h")) }
+
+    self.statements.merge(statements)
 
     self.statements.push(
       AST.createFunctionDeclaration(
@@ -143,7 +222,11 @@ export obj Codegen {
       return AST.createLiteral(expression.value)
     } elif item.isIdentifier() {
       expression := item.asIdentifier()
-      return AST.createIdentifier(self._(expression.name))
+      if self._hasEntity(expression.name) {
+        return AST.createIdentifier(self._(expression.name))
+      } else {
+        return AST.createIdentifier(expression.name)
+      }
     } elif item.isCall() {
       expression := item.asCall()
       return AST.createCallExpression(self._generateExpression(ref expression.callee))
@@ -152,7 +235,7 @@ export obj Codegen {
       return AST.createUnaryExpression(self._generateExpression(ref expression.expression), "&", prefix: true)
     }
 
-    return AST.createLiteral("NULL")
+    throw error_NewError("Tried code generation for unknown expression")
   }
 
   fn _generateStatement (mut self: ref Self, item: ref Parser.Statement) AST.CStatement {
@@ -165,24 +248,57 @@ export obj Codegen {
     } elif item.isMainDeclaration() {
       statement := item.asMainDeclaration()
       statementBody := statement.body.asBlock()
+
       self.mainStatements = self._generateBlock(ref statementBody.body)
+      self.mainStatements.merge(self.blockData.getCleanup())
+
       return AST.createEmptyStatement()
     } elif item.isVariableDeclaration() {
       statement := item.asVariableDeclaration()
       self._validateContext(item.context is Analyzer.VariableDeclarationContext)
       context := item.context as Analyzer.VariableDeclarationContext
+      typeName := self._typeName(context.varType)
       t := AST.createType(self._type(context.varType))
 
-      mut initializer: AST.CExpression?
-
-      if statement.initializer != nil {
-        initializer = self._generateExpression(ref statement.initializer)
+      if typeShouldBeFreed(context.varType) {
+        self.blockData.addCleanup(
+          AST.createExpressionStatement(
+            AST.createCallExpression(
+              AST.createIdentifier(self._(typeName + "_free")),
+              [AST.createIdentifier(statement.name.name)]
+            )
+          )
+        )
       }
 
-      return AST.createVariableDeclaration(t, codeName(statement.name.name), initializer)
+      if context.varType.isOptional() {
+        mut initializer: AST.CExpression?
+
+        if statement.initializer != nil {
+          if !statement.initializer.isNilLiteral() {
+            initializer = self._generateExpression(ref statement.initializer)
+          }
+        }
+
+        return AST.createVariableDeclaration(
+          t,
+          statement.name.name,
+          initializer == nil
+            ? AST.createIdentifier(self._("NULL"))
+            : AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), [initializer])
+        )
+      } else {
+        mut initializer: AST.CExpression?
+
+        if statement.initializer != nil {
+          initializer = self._generateExpression(ref statement.initializer)
+        }
+
+        return AST.createVariableDeclaration(t, statement.name.name, initializer)
+      }
     }
 
-    return AST.createExpressionStatement(AST.createIdentifier("undefined_statement"))
+    throw error_NewError("Tried code generation for unknown statement")
   }
 
   fn _getEntity (self: ref Self, name: str) ref CodegenEntity {
@@ -249,22 +365,15 @@ export obj Codegen {
       return self._("size_t") + " "
     } elif it.name == "void" {
       return "void "
+    } elif it.isOptional() {
+      typeName := self._typeName(it)
+      name := typeName + "_t"
+      if !self._hasEntity(name) { self._typeOptional(it, typeName, name) }
+      return self._(name) + " "
     } elif it.isReference() {
-      index1 := self.garbage.pushString(self._typeName(it) + "_t")
-      name := self.garbage.atString(index1)
-
-      if !self._hasEntity(name) {
-        self.entities.push(CodegenEntity{
-          name: name,
-          codeName: codeName(name),
-          build: () -> AST.CStatement {
-            refSelf := ref self
-            name2 := self.garbage.atString(index1)
-            return AST.createTypedefDeclaration(AST.createType("int2 *"), name2)
-          }
-        })
-      }
-
+      typeName := self._typeName(it)
+      name := typeName + "_t"
+      if !self._hasEntity(name) { self._typeReference(it, typeName, name) }
       return self._(name) + " "
     } elif (
       it.isEnum() ||
@@ -272,7 +381,6 @@ export obj Codegen {
       it.isMap() ||
       it.isObject() ||
       it.isOptional() ||
-      it.isReference() ||
       it.isUnion()
     ) {
       return self._(self._typeName(it) + "_t") + " "
@@ -337,6 +445,90 @@ export obj Codegen {
     }
 
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
+  }
+
+  fn _typeOptional (mut self: ref Self, it: ref Analyzer.Type, typeName: str, name: str) {
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: it,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asOptional()
+        return AST.createTypedefDeclaration(AST.createType(self._type(t.t) + "*"), entity.codeName)
+      }
+    })
+
+    self.entities.push(CodegenEntity{
+      name: typeName + "_alloc",
+      codeName: typeName + "_alloc",
+      context: it,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asOptional()
+        typeName := self._typeName(it)
+        name := typeName + "_t"
+        underlyingCType := AST.createType(self._type(t.t))
+
+        return AST.createFunctionDeclaration(AST.createType(name), entity.codeName, [
+          AST.createFunctionParameter(underlyingCType, "n")
+        ], AST.createCompoundStatement([
+          AST.createVariableDeclaration(
+            AST.createType(name),
+            "r",
+            AST.createCallExpression(AST.createIdentifier(self._("alloc")), [
+              AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
+            ])
+          ),
+          AST.createExpressionStatement(
+            AST.createAssignmentExpression(
+              AST.createUnaryExpression(AST.createIdentifier("r"), "*", prefix: true),
+              "=",
+              AST.createIdentifier("n")
+            )
+          ),
+          AST.createReturnStatement(AST.createIdentifier("r"))
+        ]))
+      }
+    })
+
+    self.entities.push(CodegenEntity{
+      name: typeName + "_free",
+      codeName: typeName + "_free",
+      context: it,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        typeName := self._typeName(it)
+        name := typeName + "_t"
+
+        return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
+          AST.createFunctionParameter(AST.createType(name), "n")
+        ], AST.createCompoundStatement([
+          AST.createIfStatement(
+            AST.createBinaryExpression(AST.createIdentifier("n"), "==", AST.createIdentifier(self._("NULL"))),
+            AST.createReturnStatement()
+          ),
+          // todo
+          // if (underlyingTypeInfo.type->shouldBeFreed()) {
+          //   def += "  " + this->_genFreeFn(underlyingTypeInfo.type, CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n")))->str() + ";" EOL;
+          // }
+          AST.createExpressionStatement(AST.createCallExpression(AST.createIdentifier(self._("free")), [AST.createIdentifier("n")]))
+        ]))
+      }
+    })
+  }
+
+  fn _typeReference (mut self: ref Self, it: ref Analyzer.Type, typeName: str, name: str) {
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: it,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asReference()
+        return AST.createTypedefDeclaration(AST.createType(self._type(t.t) + "*"), entity.codeName)
+      }
+    })
   }
 
   fn _validateContext (valid: bool) {

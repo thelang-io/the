@@ -46,9 +46,7 @@ export obj CType {
       lastChar := self.value.slice(-1)
       return self.value + (lastChar == " " || lastChar == "*" ? "" : " ")
     } elif definition {
-      lastChar := self.value.slice(-1)
-      l := self.value.len
-      return self.value.slice(0, l + (lastChar == " " ? 0 : 1))
+      return self.value.trimEnd()
     } else {
       throw error_NewError("Unable to stringify specified type")
     }

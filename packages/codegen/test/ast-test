@@ -133,6 +133,22 @@ export fn TEST_AST_callExpression () {
     AST.createLiteral("3")
   ])
   EXPECT_EQ(expression4.stringify(), "test(1, 2, 3)")
+
+  expression5 := AST.createCallExpression(AST.createIdentifier("sizeof"), [
+    AST.createType("int")
+  ])
+  EXPECT_EQ(expression5.stringify(), "sizeof(int)")
+  expression6 := AST.createCallExpression(AST.createIdentifier("sizeof"), [
+    AST.createType("int *"),
+    AST.createType("int ")
+  ])
+  EXPECT_EQ(expression6.stringify(), "sizeof(int *, int)")
+  expression7 := AST.createCallExpression(AST.createIdentifier("sizeof"), [
+    AST.createLiteral("int"),
+    AST.createLiteral("int"),
+    AST.createLiteral("int")
+  ])
+  EXPECT_EQ(expression7.stringify(), "sizeof(int, int, int)")
 }
 
 export fn TEST_AST_castExpression () {
