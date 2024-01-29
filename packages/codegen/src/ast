@@ -391,13 +391,13 @@ export obj CPropertyAccessExpression {
 export obj CUnaryExpression {
   mut argument: CExpression
   mut operator: str
-  mut prefix: bool
+  mut postfix: bool
 
   fn stringify (self: ref Self) str {
-    if self.prefix {
-      return self.operator + self.argument.stringify()
-    } else {
+    if self.postfix {
       return self.argument.stringify() + self.operator
+    } else {
+      return self.operator + self.argument.stringify()
     }
   }
 }
@@ -667,8 +667,8 @@ export fn createPropertyAccessExpression (expression: CExpression, property: str
   return createExpression(CPropertyAccessExpression{expression: expression, property: property, pointed: pointed})
 }
 
-export fn createUnaryExpression (argument: CExpression, operator: str, prefix := false) CExpression {
-  return createExpression(CUnaryExpression{argument: argument, operator: operator, prefix: prefix})
+export fn createUnaryExpression (operator: str, argument: CExpression, postfix := false) CExpression {
+  return createExpression(CUnaryExpression{argument: argument, operator: operator, postfix: postfix})
 }
 
 export fn createBreakStatement () CStatement {

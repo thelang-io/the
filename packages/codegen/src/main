@@ -44,42 +44,73 @@ export fn entity_alloc (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, ent
       AST.createType("void *"),
       "r",
       AST.createCallExpression(AST.createIdentifier(self._("malloc")), [AST.createIdentifier("n1")])
-    )
+    ),
+    AST.createIfStatement(
+      AST.createBinaryExpression(AST.createIdentifier("r"), "==", AST.createIdentifier(self._("NULL"))),
+      AST.createExpressionStatement(
+        AST.createCallExpression(AST.createIdentifier(self._("error_alloc")), [
+          AST.createUnaryExpression("&", AST.createIdentifier(self._("err_state"))),
+          AST.createIdentifier("n1")
+        ])
+      )
+    ),
+    AST.createReturnStatement(AST.createIdentifier("r"))
   ]))
-
-  // R"(void *alloc (_{size_t} n1) {)" EOL
-  // R"(  void *r = _{malloc}(n1);)" EOL
-  // R"(  if (r == _{NULL}) _{error_alloc}(&_{err_state}, n1);)" EOL
-  // R"(  return r;)" EOL
-  // R"(})" EOL,
 }
 
 export fn entity_error_alloc (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
-  return AST.createEmptyStatement()
-
-  // R"~(void error_alloc (_{err_state_t} *fn_err_state, _{size_t} n1) {)~" EOL
-  // R"~(  char d[4096];)~" EOL
-  // R"~(  _{size_t} l = 0;)~" EOL
-  // R"~(  for (_{err_stack_t} *it = fn_err_state->stack_last; it != _{NULL}; it = it->prev) {)~" EOL
-  // R"~(    const char *fmt = _{THE_EOL} "  at %s (%s)";)~" EOL
-  // R"~(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);)~" EOL
-  // R"~(    if (l + z >= 4096) break;)~" EOL
-  // R"~(    _{sprintf}(&d[l], fmt, it->name, it->file);)~" EOL
-  // R"~(    l += z;)~" EOL
-  // R"~(  })~" EOL
-  // R"~(  _{fprintf}(_{stderr}, "Allocation Error: failed to allocate %zu bytes%s" _{THE_EOL}, n1, d);)~" EOL
-  // R"~(  _{exit}(_{EXIT_FAILURE});)~" EOL
-  // R"~(})~" EOL,
+  return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
+    AST.createFunctionParameter(AST.createType(self._("err_state_t")), "fn_err_state"),
+    AST.createFunctionParameter(AST.createType(self._("size_t")), "n1")
+  ], AST.createCompoundStatement([
+    AST.createVariableDeclaration(AST.createType("char"), "d[4096]")
+    AST.createVariableDeclaration(AST.createType(self._("size_t")), "l", AST.createLiteral("0")),
+    AST.createForStatement(
+      AST.createVariableDeclaration(
+        AST.createType(self._("err_stack_t") + " *"),
+        "it",
+        AST.createPropertyAccessExpression(AST.createIdentifier("fn_err_state"), "stack_last", pointed: true)
+      ),
+      AST.createBinaryExpression(AST.createIdentifier("it"), "!=", AST.createIdentifier(self._("NULL"))),
+      AST.createAssignmentExpression(
+        AST.createIdentifier("it"),
+        "=",
+        AST.createPropertyAccessExpression(AST.createIdentifier("it"), "prev", pointed: true)
+      ),
+      AST.createCompoundStatement([
+        // R"~(    const char *fmt = _{THE_EOL} "  at %s (%s)";)~" EOL
+        // R"~(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);)~" EOL
+        // R"~(    if (l + z >= 4096) break;)~" EOL
+        // R"~(    _{sprintf}(&d[l], fmt, it->name, it->file);)~" EOL
+        // R"~(    l += z;)~" EOL
+      ])
+    ),
+    AST.createExpressionStatement(
+      AST.createCallExpression(AST.createIdentifier(self._("fprintf")), [
+        AST.createIdentifier(self._("stderr")),
+        AST.createLiteral("\"Allocation Error: failed to allocate %zu bytes%s\" " + self._("THE_EOL")),
+        AST.createIdentifier("n1"),
+        AST.createIdentifier("d")
+      ])
+    ),
+    AST.createExpressionStatement(
+      AST.createCallExpression(AST.createIdentifier(self._("exit")), [
+        AST.createIdentifier(self._("EXIT_FAILURE"))
+      ])
+    )
+  ]))
 }
 
 export fn entity_print (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
+  paramsType := tm.createFunction(false, [
+    Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
+  ], tm.get("void"))
+
   return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
     AST.createFunctionParameter(AST.createType("void *"), "params")
   ], AST.createCompoundStatement([
     AST.createVariableDeclaration(
-      AST.createType(self._typeName(tm.createFunction(false, [
-        Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
-      ], tm.get("void"))) + "p_t"),
+      AST.createType(self._typeName(paramsType) + "p_t"),
       "p",
       AST.createIdentifier("params")
     )
@@ -145,9 +176,23 @@ export obj Codegen {
       }
 
       return item.codeName
-    } elif name == "NULL" || name == "size_t" {
+    } elif (
+      name == "EXIT_FAILURE" ||
+      name == "EXIT_SUCCESS" ||
+      name == "NULL" ||
+      name == "exit" ||
+      name == "size_t"
+    ) {
       self.builtin.stddef = true
-    } elif name == "printf" {
+    } elif (
+      name == "fprintf" ||
+      name == "printf" ||
+      name == "snprintf" ||
+      name == "sprintf" ||
+      name == "stderr" ||
+      name == "stdin" ||
+      name == "stdout"
+    ) {
       self.builtin.stdio = true
     } elif (
       name == "int8_t" ||
@@ -166,6 +211,13 @@ export obj Codegen {
       name == "realloc"
     ) {
       self.builtin.stdlib = true
+    } elif (
+      name == "THE_EOL" ||
+      name == "err_stack_t" ||
+      name == "err_state_t" ||
+      name == "err_state"
+    ) {
+      // todo
     } else {
       throw error_NewError("Tried activating unknown entity '" + name + "'")
     }
@@ -176,16 +228,28 @@ export obj Codegen {
   fn _assemble (mut self: ref Self) {
     mut statements: AST.CStatement[]
     mut file := self.analyzer.files.last()
+    mut prevActive := 0
 
-    // todo problem here is that "alloc" is activated and later is not picked up, because already being looped through
-    loop i := 0; i < self.entities.len; i++ {
-      entity := self.entities[i]
+    loop {
+      statements = []
+      mut currentActive := 0
 
-      if !entity.active {
-        continue
+      loop i := 0; i < self.entities.len; i++ {
+        entity := self.entities[i]
+
+        if !entity.active {
+          continue
+        }
+
+        statements.push(entity.generate(self, ref file.tm, entity))
+        currentActive++
       }
 
-      statements.push(entity.generate(self, ref file.tm, entity))
+      if prevActive == currentActive {
+        break
+      }
+
+      prevActive = currentActive
     }
 
     if self.builtin.stddef { self.statements.push(AST.createIncludeDirective("stddef.h")) }
@@ -232,7 +296,7 @@ export obj Codegen {
       return AST.createCallExpression(self._generateExpression(ref expression.callee))
     } elif item.isReference() {
       expression := item.asReference()
-      return AST.createUnaryExpression(self._generateExpression(ref expression.expression), "&", prefix: true)
+      return AST.createUnaryExpression("&", self._generateExpression(ref expression.expression))
     }
 
     throw error_NewError("Tried code generation for unknown expression")
@@ -470,11 +534,11 @@ export obj Codegen {
         name := typeName + "_t"
         underlyingCType := AST.createType(self._type(t.t))
 
-        return AST.createFunctionDeclaration(AST.createType(name), entity.codeName, [
+        return AST.createFunctionDeclaration(AST.createType(self._(name)), entity.codeName, [
           AST.createFunctionParameter(underlyingCType, "n")
         ], AST.createCompoundStatement([
           AST.createVariableDeclaration(
-            AST.createType(name),
+            AST.createType(self._(name)),
             "r",
             AST.createCallExpression(AST.createIdentifier(self._("alloc")), [
               AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
@@ -482,7 +546,7 @@ export obj Codegen {
           ),
           AST.createExpressionStatement(
             AST.createAssignmentExpression(
-              AST.createUnaryExpression(AST.createIdentifier("r"), "*", prefix: true),
+              AST.createUnaryExpression("*", AST.createIdentifier("r")),
               "=",
               AST.createIdentifier("n")
             )
@@ -502,7 +566,7 @@ export obj Codegen {
         name := typeName + "_t"
 
         return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
-          AST.createFunctionParameter(AST.createType(name), "n")
+          AST.createFunctionParameter(AST.createType(self._(name)), "n")
         ], AST.createCompoundStatement([
           AST.createIfStatement(
             AST.createBinaryExpression(AST.createIdentifier("n"), "==", AST.createIdentifier(self._("NULL"))),
