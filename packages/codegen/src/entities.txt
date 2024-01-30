@@ -1,0 +1,1110 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+// todo use rune_t instead of char
+// todo add isize/usize types
+
+_{any_t} any_copy (const _{any_t} self) {
+  return self.d == _{NULL} ? self : n._copy(self);
+}
+
+void any_free (_{any_t} self) {
+  if (self.d != _{NULL}) self._free(self);
+}
+
+_{any_t} any_realloc (_{any_t} self, const _{any_t} n) {
+  _{any_free}(self);
+  return _{any_copy}(n);
+}
+
+_{str_t} any_str (const _{any_t} self) {
+  return _{str_alloc}("any");
+}
+
+_{str_t} bool_str (_{bool} self) {
+  return _{str_alloc}(self ? "true" : "false");
+}
+
+_{str_t} byte_str (unsigned char self) {
+  char buf[8];
+  _{sprintf}(buf, "%u", self);
+  return _{str_alloc}(buf);
+}
+
+unsigned char char_byte (char self) {
+  return (unsigned char) self;
+}
+
+_{bool} char_isDigit (char self) {
+  return _{isdigit}(self);
+}
+
+_{bool} char_isLetter (char self) {
+  return _{isalpha}(self);
+}
+
+_{bool} char_isLetterOrDigit (char self) {
+  return _{isalnum}(self);
+}
+
+_{bool} char_isLower (char self) {
+  return _{islower}(self);
+}
+
+_{bool} char_isUpper (char self) {
+  return _{isupper}(self);
+}
+
+_{bool} char_isWhitespace (char self) {
+  return _{isspace}(self);
+}
+
+char char_lower (char self) {
+  return _{tolower}(self);
+}
+
+_{str_t} char_repeat (char self, _{int32_t} times) {
+  if (times <= 0) return _{str_alloc}("");
+  _{size_t} l = (_{size_t}) times;
+  char *d = _{safe_malloc}(l);
+  _{size_t} i = 0;
+  while (i < l) d[i++] = self;
+  return (_{str_t}) {d, l};
+}
+
+_{str_t} char_str (char self) {
+  char buf[2] = {self, '\0'};
+  return _{str_alloc}(buf);
+}
+
+char char_upper (char self) {
+  return _{toupper}(self);
+}
+
+_{str_t} enum_str (int self) {
+  char buf[24];
+  _{sprintf}(buf, "%d", self);
+  return _{str_alloc}(buf);
+}
+
+void error_alloc (const _{err_state_t} *fn_err_state, _{size_t} length) {
+  char d[4096];
+  _{size_t} l = 0;
+  for (_{err_stack_t} *it = fn_err_state->stack_last; it != _{NULL}; it = it->prev) {
+    _{size_t} z;
+    char *fmt;
+    if (it->col == 0 && it->line == 0) {
+      fmt = _{THE_EOL} "  at %s (%s)";
+      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      fmt = _{THE_EOL} "  at %s (%s:%d)";
+      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file, it->line);
+    } else {
+      fmt = _{THE_EOL} "  at %s (%s:%d:%d)";
+      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file, it->line, it->col);
+    }
+    if (l + z >= 4096) break;
+    if (it->col == 0 && it->line == 0) {
+      _{sprintf}(&d[l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      _{sprintf}(&d[l], fmt, it->name, it->file, it->line);
+    } else {
+      _{sprintf}(&d[l], fmt, it->name, it->file, it->line, it->col);
+    }
+    l += z;
+  }
+  _{fprintf}(_{stderr}, "Allocation Error: failed to allocate %zu bytes%s" _{THE_EOL}, length, d);
+  _{exit}(_{EXIT_FAILURE});
+}
+
+void error_assign (_{err_state_t} *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  _{error_stack_pos}(fn_err_state, line, col);
+  _{error_stack_str}(fn_err_state);
+}
+
+void error_buf_decrease (_{err_state_t} *fn_err_state) {
+  _{err_buf_t} *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  _{free}(buf);
+}
+
+_{err_buf_t} *error_buf_increase (_{err_state_t} *fn_err_state) {
+  _{err_buf_t} *buf = _{safe_malloc}(sizeof(_{err_buf_t}));
+  buf->next = _{NULL};
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == _{NULL}) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != _{NULL}) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
+
+void error_stack_pop (_{err_state_t} *fn_err_state) {
+  _{err_stack_t} *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  _{free}(stack);
+}
+
+void error_stack_pos (_{err_state_t} *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
+}
+
+void error_stack_push (_{err_state_t} *fn_err_state, const char *file, const char *name, int line, int col) {
+  _{error_stack_pos}(fn_err_state, line, col);
+  _{err_stack_t} *stack = _{safe_malloc}(sizeof(_{err_stack_t}));
+  stack->file = file;
+  stack->name = name;
+  stack->next = _{NULL};
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == _{NULL}) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != _{NULL}) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
+}
+
+void error_stack_str (_{err_state_t} *fn_err_state) {
+  _{str_t} *stack = (_{str_t} *) &((_{__THE_0_Error_t} *) fn_err_state->ctx)->__THE_1_stack;
+  _{str_t} message = ((_{__THE_0_Error_t} *) fn_err_state->ctx)->__THE_1_message;
+  stack->l = message.l;
+  stack->d = _{safe_realloc}(stack->d, stack->l);
+  _{memcpy}(stack->d, message.d, stack->l);
+  for (_{err_stack_t} *it = fn_err_state->stack_last; it != _{NULL}; it = it->prev) {
+    _{size_t} z;
+    char *fmt;
+    if (it->col == 0 && it->line == 0) {
+      fmt = _{THE_EOL} "  at %s (%s)";
+      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      fmt = _{THE_EOL} "  at %s (%s:%d)";
+      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file, it->line);
+    } else {
+      fmt = _{THE_EOL} "  at %s (%s:%d:%d)";
+      z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->d = _{safe_realloc}(stack->d, stack->l + z + 1);
+    if (it->col == 0 && it->line == 0) {
+      _{sprintf}(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      _{sprintf}(&stack->d[stack->l], fmt, it->name, it->file, it->line);
+    } else {
+      _{sprintf}(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->l += z;
+  }
+}
+
+void error_unset (_{err_state_t} *fn_err_state) {
+  fn_err_state->id = -1;
+  fn_err_state->_free = _{NULL};
+}
+
+_{str_t} f32_str (float self) {
+  char buf[512];
+  _{sprintf}(buf, "%f", self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} f64_str (double self) {
+  char buf[512];
+  _{sprintf}(buf, "%f", self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} float_str (double self) {
+  char buf[512];
+  _{sprintf}(buf, "%f", self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} i8_str (_{int8_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRId8}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} i16_str (_{int16_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRId16}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} i32_str (_{int32_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRId32}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} i64_str (_{int64_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRId64}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} int_str (_{int32_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRId32}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} u8_str (uint8_t self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRIu8}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} u16_str (_{uint16_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRIu16}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} u32_str (_{uint32_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRIu32}, self);
+  return _{str_alloc}(buf);
+}
+
+_{str_t} u64_str (_{uint64_t} self) {
+  char buf[24];
+  _{sprintf}(buf, "%" _{PRIu64}, self);
+  return _{str_alloc}(buf);
+}
+
+void *safe_malloc (_{size_t} size) {
+  void *r = _{malloc}(size);
+  if (r == _{NULL}) _{error_alloc}(&_{err_state}, size);
+  return r;
+}
+
+void *safe_realloc (void *self, _{size_t} size) {
+  void *r = _{realloc}(self, size);
+  if (r == _{NULL}) _{error_alloc}(&_{err_state}, size);
+  return r;
+}
+
+void safe_swap (void *a, void *b, _{size_t} size) {
+  void *tmp = _{safe_malloc}(size);
+  _{memcpy}(tmp, a, size);
+  _{memcpy}(a, b, size);
+  _{memcpy}(b, tmp, size);
+  _{free}(tmp);
+}
+
+_{str_t} str_alloc (const char *str) {
+  _{size_t} l = _{strlen}(str);
+  char *d = _{safe_malloc}(l);
+  _{memcpy}(d, str, l);
+  return (_{str_t}) {d, l};
+}
+
+char *str_at (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, _{int32_t} index) {
+  if ((index >= 0 && index >= self.l) || (index < 0 && index < -((_{int32_t}) self.l))) {
+    const char *fmt = "index %" _{PRId32} " out of string bounds";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, index);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, index);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  return index < 0 ? &self.d[self.l + index] : &self.d[index];
+}
+
+_{str_t} str_calloc (const char *self, _{size_t} size) {
+  char *d = _{safe_malloc}(size);
+  _{memcpy}(d, self, size);
+  return (_{str_t}) {d, size};
+}
+
+_{str_t} str_concat (const _{str_t} self, const _{str_t} other) {
+  _{size_t} l = self.l + other.l;
+  char *d = _{safe_malloc}(l);
+  _{memcpy}(d, self.d, self.l);
+  _{memcpy}(&d[self.l], other.d, other.l);
+  return (_{str_t}) {d, l};
+}
+
+_{bool} str_contains (const _{str_t} self, const _{str_t} search) {
+  _{bool} r = self.l == 0;
+  if (!r && self.l == self.l) {
+    r = _{memcmp}(self.d, self.d, self.l) == 0;
+  } else if (!r && self.l > self.l) {
+    for (_{size_t} i = 0; i < self.l - self.l; i++) {
+      if (_{memcmp}(&self.d[i], self.d, self.l) == 0) {
+        r = _{true};
+        break;
+      }
+    }
+  }
+  return r;
+}
+
+_{str_t} str_copy (const _{str_t} self) {
+  char *d = _{safe_malloc}(self.l);
+  _{memcpy}(d, self.d, self.l);
+  return (_{str_t}) {d, self.l};
+}
+
+char *str_cstr (const _{str_t} self) {
+  char *d = _{safe_malloc}(self.l + 1);
+  _{memcpy}(d, self.d, self.l);
+  d[self.l] = '\0';
+  return d;
+}
+
+_{bool} str_empty (const _{str_t} self) {
+  return self.l == 0;
+}
+
+_{bool} str_eq (const _{str_t} self, const _{str_t} rhs) {
+  return self.l == rhs.l && _{memcmp}(self.d, rhs.d, self.l) == 0;
+}
+
+_{str_t} str_escape (const _{str_t} self) {
+  char *d = _{safe_malloc}(self.l);
+  _{size_t} l = 0;
+  for (_{size_t} i = 0; i < self.l; i++) {
+    char c = self.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > self.l) d = _{safe_realloc}(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > self.l) d = _{safe_realloc}(d, l + 1);
+    d[l++] = c;
+  }
+  return (_{str_t}) {d, l};
+}
+
+_{int32_t} str_find (const _{str_t} self, const _{str_t} search) {
+  _{int32_t} r = -1;
+  for (_{size_t} i = 0; i < self.l; i++) {
+    if (_{memcmp}(&self.d[i], search.d, search.l) == 0) {
+      r = (_{int32_t}) i;
+      break;
+    }
+  }
+  return r;
+}
+
+void str_free (_{str_t} self) {
+  _{free}(self.d);
+}
+
+_{bool} str_ge (const _{str_t} self, const _{str_t} rhs) {
+  return _{memcmp}(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) >= 0;
+}
+
+_{bool} str_gt (const _{str_t} self, const _{str_t} rhs) {
+  return _{memcmp}(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) > 0;
+}
+
+_{bool} str_le (const _{str_t} self, const _{str_t} rhs) {
+  return _{memcmp}(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) <= 0;
+}
+
+_{size_t} str_len (const _{str_t} self) {
+  return self.l;
+}
+
+_{bool} str_lt (const _{str_t} self, const _{str_t} rhs) {
+  return _{memcmp}(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) < 0;
+}
+
+_{bool} str_ne (const _{str_t} self, const _{str_t} rhs) {
+  return self.l != rhs.l || _{memcmp}(self.d, rhs.d, self.l) != 0;
+}
+
+_{str_t} str_realloc (_{str_t} self, const _{str_t} rhs) {
+  _{str_free}(self);
+  return _{str_copy}(rhs);
+}
+
+// todo
+_{arr_str_t} str_lines (const _{str_t} self, unsigned char o1, _{bool} keepLineBreaks) {
+  _{bool} k = o1 == 0 ? _{false} : n1;
+  _{str_t} *r = _{NULL};
+  _{size_t} l = 0;
+  if (s.l != 0) {
+    char *d = _{safe_malloc}(s.l);
+    _{size_t} i = 0;
+    for (_{size_t} j = 0; j < s.l; j++) {
+      char c = s.d[j];
+      if (c == '\r' || c == '\n') {
+        if (k) d[i++] = c;
+        if (c == '\r' && j + 1 < s.l && s.d[j + 1] == '\n') {
+          j++;
+          if (k) d[i++] = s.d[j];
+        }
+        char *a = _{safe_malloc}(i);
+        _{memcpy}(a, d, i);
+        r = _{safe_realloc}(r, ++l * sizeof(_{str_t}));
+        r[l - 1] = (_{str_t}) {a, i};
+        i = 0;
+      } else {
+        d[i++] = c;
+      }
+    }
+    if (i != 0) {
+      char *a = _{safe_malloc}(i);
+      _{memcpy}(a, d, i);
+      r = _{safe_realloc}(r, ++l * sizeof(_{str_t}));
+      r[l - 1] = (_{str_t}) {a, i};
+    }
+    _{free}(d);
+  }
+  _{free}(s.d);
+  return (_{arr_str_t}) {r, l};
+}
+
+_{str_t} str_lower (const _{str_t} self) {
+  {str_t} r = _{str_copy}(self);
+  if (self.l == 0) return r;
+  for (_{size_t} i = 0; i < r.l; i++) r.d[i] = (char) _{tolower}(r.d[i]);
+  return r;
+}
+
+_{str_t} str_lowerFirst (const _{str_t} self) {
+  {str_t} r = _{str_copy}(self);
+  if (self.l == 0) return r;
+  r.d[0] = (char) _{tolower}(r.d[0]);
+  return r;
+}
+
+_{bool} str_not (const _{str_t} selfs) {
+  return self.l == 0;
+}
+
+// todo
+_{str_t} str_replace (const _{str_t} self, const _{str_t} search, const _{str_t} replacement, unsigned char o3, _{int32_t} count) {
+  _{size_t} l = 0;
+  char *d = _{NULL};
+  _{int32_t} k = 0;
+  if (n1.l == 0 && n2.l > 0) {
+    l = self.l + (n3 > 0 && n3 <= self.l ? n3 : self.l + 1) * n2.l;
+    d = _{safe_malloc}(l);
+    _{memcpy}(d, n2.d, n2.l);
+    _{size_t} j = n2.l;
+    for (_{size_t} i = 0; i < self.l; i++) {
+      d[j++] = self.d[i];
+      if (n3 <= 0 || ++k < n3) {
+        _{memcpy}(&d[j], n2.d, n2.l);
+        j += n2.l;
+      }
+    }
+  } else if (self.l == n1.l && n1.l > 0) {
+    if (_{memcmp}(self.d, n1.d, n1.l) != 0) {
+      l = self.l;
+      d = _{safe_malloc}(l);
+      _{memcpy}(d, self.d, l);
+    } else if (n2.l > 0) {
+      l = n2.l;
+      d = _{safe_malloc}(l);
+      _{memcpy}(d, n2.d, l);
+    }
+  } else if (self.l > n1.l && n1.l > 0 && n2.l == 0) {
+    d = _{safe_malloc}(self.l);
+    for (_{size_t} i = 0; i < self.l; i++) {
+      if (i <= self.l - n1.l && _{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+        i += n1.l - 1;
+      } else {
+        d[l++] = self.d[i];
+      }
+    }
+    if (l == 0) {
+      _{free}(d);
+      d = _{NULL};
+    } else if (l != self.l) {
+      d = _{safe_realloc}(d, l);
+    }
+  } else if (self.l > n1.l && n1.l > 0 && n2.l > 0) {
+    l = self.l;
+    d = _{safe_malloc}(l);
+    _{size_t} j = 0;
+    for (_{size_t} i = 0; i < self.l; i++) {
+      if (i <= self.l - n1.l && _{memcmp}(&self.d[i], n1.d, n1.l) == 0 && (n3 <= 0 || k++ < n3)) {
+        if (n1.l < n2.l) {
+          l += n2.l - n1.l;
+          if (l > self.l) {
+            d = _{safe_realloc}(d, l);
+          }
+        } else if (n1.l > n2.l) {
+          l -= n1.l - n2.l;
+        }
+        _{memcpy}(&d[j], n2.d, n2.l);
+        j += n2.l;
+        i += n1.l - 1;
+      } else {
+        d[j++] = self.d[i];
+      }
+    }
+    d = _{safe_realloc}(d, l);
+  } else if (self.l > 0) {
+    l = self.l;
+    d = _{safe_malloc}(l);
+    _{memcpy}(d, self.d, l);
+  }
+  _{free}(n2.d);
+  _{free}(n1.d);
+  _{free}(self.d);
+  return (_{str_t}) {d, l};
+}
+
+_{str_t} str_slice (const _{str_t} self, unsigned char o1, _{int32_t} start, unsigned char o2, _{int32_t} end) {
+  _{int32_t} i = o1 == 0 ? 0 : (_{int32_t}) (n1 < 0 ? (n1 < -((_{int32_t}) self.l) ? 0 : n1 + self.l) : (n1 > self.l ? self.l : n1));
+  _{int32_t} j = o2 == 0 ? (_{int32_t}) self.l : (_{int32_t}) (n2 < 0 ? (n2 < -((_{int32_t}) self.l) ? 0 : n2 + self.l) : (n2 > self.l ? self.l : n2));
+  if (i >= j || i >= self.l) {
+    return _{str_alloc}("");
+  }
+  _{size_t} l = j - i;
+  char *d = _{safe_malloc}(l);
+  _{size_t} k = 0;
+  while (i < j) d[k++] = self.d[i++];
+  return (_{str_t}) {d, l};
+}
+
+// todo
+_{arr_str_t} str_split (const _{str_t} self, unsigned char o1, const _{str_t} delimiter) {
+  _{str_t} *r = _{NULL};
+  _{size_t} l = 0;
+  if (self.l > 0 && n1.l == 0) {
+    l = self.l;
+    r = _{safe_malloc}(l * sizeof(_{str_t}));
+    for (_{size_t} i = 0; i < l; i++) {
+      r[i] = _{str_calloc}(&self.d[i], 1);
+    }
+  } else if (self.l < n1.l) {
+    r = _{safe_realloc}(r, ++l * sizeof(_{str_t}));
+    r[0] = _{str_calloc}(self.d, self.l);
+  } else if (n1.l > 0) {
+    _{size_t} i = 0;
+    for (_{size_t} j = 0; j <= self.l - n1.l; j++) {
+      if (_{memcmp}(&self.d[j], n1.d, n1.l) == 0) {
+        r = _{safe_realloc}(r, ++l * sizeof(_{str_t}));
+        r[l - 1] = _{str_calloc}(&self.d[i], j - i);
+        j += n1.l;
+        i = j;
+      }
+    }
+    r = _{safe_realloc}(r, ++l * sizeof(_{str_t}));
+    r[l - 1] = _{str_calloc}(&self.d[i], self.l - i);
+  }
+  _{free}(n1.d);
+  _{free}(self.d);
+  return (_{arr_str_t}) {r, l};
+}
+
+// todo
+double str_toFloat (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self) {
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  double r = _{strtod}(c, &e);
+  if (_{errno} == _{ERANGE} || r < -_{DBL_MAX} || _{DBL_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return r;
+}
+
+// todo
+float str_toF32 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self) {
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  float r = _{strtof}(c, &e);
+  if (_{errno} == _{ERANGE} || r < -_{FLT_MAX} || _{FLT_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return r;
+}
+
+// todo
+double str_toF64 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self) {
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  double r = _{strtod}(c, &e);
+  if (_{errno} == _{ERANGE} || r < -_{DBL_MAX} || _{DBL_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return r;
+}
+
+// todo
+_{int32_t} str_toInt (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{int32_t}) r;
+}
+
+// todo
+_{int8_t} str_toI8 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || r < _{INT8_MIN} || _{INT8_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{int8_t}) r;
+}
+
+// todo
+_{int16_t} str_toI16 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || r < _{INT16_MIN} || _{INT16_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{int16_t}) r;
+}
+
+// todo
+_{int32_t} str_toI32 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  long r = _{strtol}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || r < _{INT32_MIN} || _{INT32_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{int32_t}) r;
+}
+
+// todo
+_{int64_t} str_toI64 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  long long r = _{strtoll}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || r < _{INT64_MIN} || _{INT64_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0) {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{int64_t}) r;
+}
+
+// todo
+_{uint8_t} str_toU8 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || _{UINT8_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{uint8_t}) r;
+}
+
+// todo
+_{uint16_t} str_toU16 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || _{UINT16_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{uint16_t}) r;
+}
+
+// todo
+_{uint32_t} str_toU32 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  unsigned long r = _{strtoul}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || _{UINT32_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{uint32_t}) r;
+}
+
+// todo
+_{uint64_t} str_toU64 (_{err_state_t} *fn_err_state, int line, int col, const _{str_t} self, unsigned char o1, _{int32_t} radix) {
+  if (o1 == 1 && (n1 < 2 || n1 > 36) && n1 != 0) {
+    const char *fmt = "radix %" _{PRId32} " is invalid, must be >= 2 and <= 36, or 0";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, n1);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, n1);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  char *c = _{str_cstr}(self);
+  char *e = _{NULL};
+  _{errno} = 0;
+  unsigned long long r = _{strtoull}(c, &e, o1 == 0 ? 10 : n1);
+  if (_{errno} == _{ERANGE} || _{UINT64_MAX} < r) {
+    const char *fmt = "value `%s` out of range";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  } else if (_{errno} != 0 || e == c || *e != 0 || self.d[0] == '-') {
+    const char *fmt = "value `%s` has invalid syntax";
+    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, c);
+    char *d = _{safe_malloc}(z + 1);
+    _{sprintf}(d, fmt, c);
+    _{free}(c);
+    _{free}(self.d);
+    _{error_assign}(fn_err_state, _{TYPE_error_Error}, (void *) _{error_Error_alloc}((_{str_t}) {d, z}, (_{str_t}) {_{NULL}, 0}), (void (*) (void *)) &_{error_Error_free}, line, col);
+    _{longjmp}(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  _{free}(c);
+  _{free}(self.d);
+  return (_{uint64_t}) r;
+}
+
+// todo
+_{str_t} str_trim (const _{str_t} self) {
+  if (self.l == 0) return self;
+  _{size_t} i = 0;
+  _{size_t} j = self.l;
+  while (i < self.l && _{isspace}(self.d[i])) i++;
+  while (j >= 0 && _{isspace}(self.d[j - 1])) {
+    j--;
+    if (j == 0) break;
+  }
+  if (i >= j) {
+    return _{str_alloc}("");
+  }
+  _{size_t} l = j - i;
+  char *r = _{safe_malloc}(l);
+  for (_{size_t} k = 0; k < l;) r[k++] = self.d[i++];
+  return (_{str_t}) {r, l};
+}
+
+// todo
+_{str_t} str_trimEnd (const _{str_t} self) {
+  if (self.l == 0) return self;
+  while (_{isspace}(self.d[self.l - 1])) {
+    self.l--;
+    if (self.l == 0) break;
+  }
+  if (self.l == 0) {
+    _{free}(self.d);
+    self.d = _{NULL};
+  } else {
+    self.d = _{safe_realloc}(self.d, self.l);
+  }
+  return self;
+}
+
+// todo
+_{str_t} str_trimStart (const _{str_t} self) {
+  if (self.l == 0) return self;
+  _{size_t} i = 0;
+  while (i < self.l && _{isspace}(self.d[i])) i++;
+  if (i >= self.l) {
+    _{free}(self.d);
+    self = (_{str_t}) {_{NULL}, 0};
+  } else {
+    _{memmove}(self.d, &self.d[i], self.l - i);
+    self.l -= i;
+    self.d = _{safe_realloc}(self.d, self.l);
+  }
+  return self;
+}
+
+_{str_t} str_upper (const _{str_t} self) {
+  {str_t} r = _{str_copy}(self);
+  if (self.l == 0) return r;
+  for (_{size_t} i = 0; i < r.l; i++) r.d[i] = (char) _{toupper}(r.d[i]);
+  return r;
+}
+
+_{str_t} str_upperFirst (const _{str_t} self) {
+  {str_t} r = _{str_copy}(self);
+  if (self.l == 0) return r;
+  r.d[0] = (char) _{toupper}(r.d[0]);
+  return r;
+}
