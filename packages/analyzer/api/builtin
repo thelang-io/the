@@ -18,48 +18,6 @@ obj ArrayElement {}
 obj MapKey {}
 obj MapValue {}
 
-/* Used to represent a fixed-length sequence of bytes. */
-export obj Buffer {
-  /* Whether array has elements. */
-  empty: bool
-  /* Number of buffer items. */
-  len: int
-
-  /**
-   * Accesses element by index and return its reference.
-   *
-   * @name [idx: int]
-   * @return ref byte
-   */
-
-  /**
-   * Concatenates two arrays into one and returns resulting array.
-   *
-   * @param other - Another arrays you want to concatenate.
-   */
-  fn concat (self: ref Self, other: Self) Self
-
-  /**
-   * Merges other array's elements into calling array.
-   *
-   * @param other - Another array you want to merge.
-   */
-  fn merge (mut self: ref Self, other: Self) ref Self
-
-  /* Removes last element and returns it. */
-  fn pop (mut self: ref Self) byte
-
-  /**
-   * Adds new elements.
-   *
-   * @param elements - New elements to add.
-   */
-  fn push (mut self: ref Self, elements: byte...) void
-
-  /* Returns a string representation. */
-  fn str (self: ref Self) str
-}
-
 /* Allows storing any variable of any type. */
 export obj any {
   /* Returns a string representation. */
@@ -299,9 +257,6 @@ export obj str {
    */
   fn split (self: ref Self, delimiter := "") Self[]
 
-  /* Converts a string to `Buffer` object. */
-  fn toBuffer (self: ref Self) Buffer
-
   /* Converts a string to `float` representation. */
   fn toFloat (self: ref Self) float
 
@@ -317,6 +272,13 @@ export obj str {
    * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
    */
   fn toInt (self: ref Self, radix := 10) int
+
+  /**
+   * Converts a string to `isize` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toIsize (self: ref Self, radix := 10) isize
 
   /**
    * Converts a string to `i8` representation.
@@ -373,6 +335,13 @@ export obj str {
    * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
    */
   fn toU64 (self: ref Self, radix := 10) u64
+
+  /**
+   * Converts a string to `usize` representation.
+   *
+   * @param radix - Number between `2` and `36` that represents radix of the string. Use `0` to auto-guess radix.
+   */
+  fn toUsize (self: ref Self, radix := 10) usize
 
   /* Returns a string with whitespaces removed from both ends. */
   fn trim (self: ref Self) Self
