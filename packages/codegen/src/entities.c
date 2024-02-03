@@ -6,6 +6,7 @@
 // todo implement rune methods
 // todo check all malloc of string has wchar_t
 // todo wcscmp and other methods are utilized correctly
+// todo replace str_alloc("") with just empty string
 
 #include <errno.h>
 #include <float.h>
@@ -18,6 +19,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <wchar.h>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
@@ -69,8 +71,8 @@ typedef struct err_buf {
 } err_buf_t;
 
 typedef struct err_stack {
-  const char *file;
-  const char *name;
+  const wchar_t *file;
+  const wchar_t *name;
   int line;
   int col;
   struct err_stack *next;
@@ -88,18 +90,26 @@ typedef struct {
 } err_state_t;
 
 typedef struct {
-  const str_t message;
-  const str_t stack;
+  str_t message;
+  str_t stack;
 } Error_t;
 
 err_state_t err_state;
 
 any_t any_copy (const any_t self) {
-  return self.d == NULL ? self : self._copy(self);
+  return self.d == NULL ? (any_t) {0, NULL} : self._copy(self);
+}
+
+bool any_eq (const any_t self, const any_t rhs) {
+  return self.d == NULL ? false : self._eq(self, rhs);
 }
 
 void any_free (any_t self) {
   if (self.d != NULL) self._free(self);
+}
+
+bool any_ne (const any_t self, const any_t rhs) {
+  return self.d == NULL ? true : self._ne(self, rhs);
 }
 
 any_t any_realloc (any_t self, const any_t n) {
@@ -108,7 +118,7 @@ any_t any_realloc (any_t self, const any_t n) {
 }
 
 str_t any_str (const any_t self) {
-  return str_alloc("any");
+  return self.d == NULL ? str_alloc("any") : self._str(self);
 }
 
 str_t bool_str (bool self) {
@@ -176,41 +186,49 @@ str_t enum_str (int self) {
   return str_alloc(buf);
 }
 
-// todo wchar_t support
 void error_alloc (const err_state_t *fn_err_state, size_t length) {
-  char d[4096];
+  wchar_t d[4096];
   size_t l = 0;
   for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    wchar_t *fmt;
     size_t z;
-    char *fmt;
     if (it->col == 0 && it->line == 0) {
-      fmt = __THE_EOL "  at %s (%s)";
-      z = snprintf(NULL, 0, fmt, it->name, it->file);
+      fmt = __THE_EOL L"  at %s (%s)";
+      z = swprintf(NULL, 0, fmt, it->name, it->file);
     } else if (it->col == 0) {
-      fmt = __THE_EOL "  at %s (%s:%d)";
-      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
+      fmt = __THE_EOL L"  at %s (%s:%d)";
+      z = swprintf(NULL, 0, fmt, it->name, it->file, it->line);
     } else {
-      fmt = __THE_EOL "  at %s (%s:%d:%d)";
-      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
+      fmt = __THE_EOL L"  at %s (%s:%d:%d)";
+      z = swprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
     }
     if (l + z >= 4096) break;
     if (it->col == 0 && it->line == 0) {
-      sprintf(&d[l], fmt, it->name, it->file);
+      swprintf(&d[l], z, fmt, it->name, it->file);
     } else if (it->col == 0) {
-      sprintf(&d[l], fmt, it->name, it->file, it->line);
+      swprintf(&d[l], z, fmt, it->name, it->file, it->line);
     } else {
-      sprintf(&d[l], fmt, it->name, it->file, it->line, it->col);
+      swprintf(&d[l], z, fmt, it->name, it->file, it->line, it->col);
     }
     l += z;
   }
-  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" __THE_EOL, length, d);
+  fwprintf(stderr, L"Allocation Error: failed to allocate %zu bytes%s" __THE_EOL, length, d);
+  free(d);
   exit(EXIT_FAILURE);
 }
 
-void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+void error_assign (err_state_t *fn_err_state, int line, int col, int id, void *ctx, void (*f) (void *)) {
   fn_err_state->id = id;
   fn_err_state->ctx = ctx;
   fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
+}
+
+void error_assign_builtin (err_state_t *fn_err_state, int line, int col, str_t message) {
+  fn_err_state->id = TYPE_Error;
+  fn_err_state->ctx = (void *) Error_alloc(message, str_alloc(""));
+  fn_err_state->_free = (void (*) (void *)) Error_free;
   error_stack_pos(fn_err_state, line, col);
   error_stack_str(fn_err_state);
 }
@@ -254,35 +272,31 @@ void error_stack_push (err_state_t *fn_err_state, const wchar_t *file, const wch
   fn_err_state->stack_last = stack;
 }
 
-// todo wchar_t support
 void error_stack_str (err_state_t *fn_err_state) {
-  str_t *stack = (str_t *) &((Error_t *) fn_err_state->ctx)->stack;
-  str_t message = ((Error_t *) fn_err_state->ctx)->message;
-  stack->l = message.l;
-  stack->d = safe_realloc(stack->d, stack->l);
-  memcpy(stack->d, message.d, stack->l);
+  Error_t *err = fn_err_state->ctx;
+  err->stack = str_realloc(err->stack, err->message);
   for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    wchar_t *fmt;
     size_t z;
-    char *fmt;
     if (it->col == 0 && it->line == 0) {
-      fmt = __THE_EOL "  at %s (%s)";
-      z = snprintf(NULL, 0, fmt, it->name, it->file);
+      fmt = __THE_EOL L"  at %s (%s)";
+      z = swprintf(NULL, 0, fmt, it->name, it->file);
     } else if (it->col == 0) {
-      fmt = __THE_EOL "  at %s (%s:%d)";
-      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
+      fmt = __THE_EOL L"  at %s (%s:%d)";
+      z = swprintf(NULL, 0, fmt, it->name, it->file, it->line);
     } else {
-      fmt = __THE_EOL "  at %s (%s:%d:%d)";
-      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
+      fmt = __THE_EOL L"  at %s (%s:%d:%d)";
+      z = swprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
     }
-    stack->d = safe_realloc(stack->d, stack->l + z + 1);
+    err->stack.d = safe_realloc(err->stack.d, (err->stack.l + z + 1) * sizeof(wchar_t));
     if (it->col == 0 && it->line == 0) {
-      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+      swprintf(&err->stack.d[err->stack.l], z, fmt, it->name, it->file);
     } else if (it->col == 0) {
-      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
+      swprintf(&err->stack.d[err->stack.l], z, fmt, it->name, it->file, it->line);
     } else {
-      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
+      swprintf(&err->stack.d[err->stack.l], z, fmt, it->name, it->file, it->line, it->col);
     }
-    stack->l += z;
+    err->stack.l += z;
   }
 }
 
@@ -403,11 +417,10 @@ str_t str_alloc (const char *self) {
   return (str_t) {d, l};
 }
 
-// todo wchar_t support
-str_t str_calloc (const char *self, size_t size) {
+str_t str_calloc (const wchar_t *self, size_t size) {
   if (size == 0) return (str_t) {NULL, 0};
-  char *d = safe_malloc(size);
-  memcpy(d, self, size);
+  wchar_t *d = safe_malloc(size * sizeof(wchar_t));
+  wmemcpy(d, self, size);
   return (str_t) {d, size};
 }
 
@@ -415,7 +428,7 @@ str_t str_valloc (const wchar_t *fmt, ...) {
   va_list args;
   va_start(args, fmt);
   size_t l = vswprintf(NULL, 0, fmt, args);
-  wchar_t *d = safe_malloc(l + 1);
+  wchar_t *d = safe_malloc((l + 1) * sizeof(wchar_t));
   vswprintf(d, l, fmt, args);
   va_end(args);
   return (str_t) {d, l};
@@ -432,18 +445,18 @@ wchar_t *str_at (err_state_t *fn_err_state, int line, int col, const str_t self,
 str_t str_concat (const str_t self, const str_t other) {
   size_t l = self.l + other.l;
   wchar_t *d = safe_malloc(l * sizeof(wchar_t));
-  memcpy(d, self.d, self.l);
-  memcpy(&d[self.l], other.d, other.l);
+  wmemcpy(d, self.d, self.l);
+  wmemcpy(&d[self.l], other.d, other.l);
   return (str_t) {d, l};
 }
 
 bool str_contains (const str_t self, const str_t search) {
   bool r = self.l == 0;
-  if (!r && self.l == self.l) {
-    r = memcmp(self.d, self.d, self.l) == 0;
-  } else if (!r && self.l > self.l) {
-    for (size_t i = 0; i < self.l - self.l; i++) {
-      if (memcmp(&self.d[i], self.d, self.l) == 0) {
+  if (!r && self.l == search.l) {
+    r = wmemcmp(self.d, search.d, self.l) == 0;
+  } else if (!r && self.l > search.l) {
+    for (size_t i = 0; i < self.l - search.l; i++) {
+      if (wmemcmp(&self.d[i], search.d, search.l) == 0) {
         r = true;
         break;
       }
@@ -470,7 +483,7 @@ bool str_empty (const str_t self) {
 }
 
 bool str_eq (const str_t self, const str_t rhs) {
-  return self.l == rhs.l && memcmp(self.d, rhs.d, self.l) == 0;
+  return self.l == rhs.l && wmemcmp(self.d, rhs.d, self.l) == 0;
 }
 
 str_t str_escape (const str_t self) {
@@ -479,7 +492,7 @@ str_t str_escape (const str_t self) {
   for (size_t i = 0; i < self.l; i++) {
     wchar_t c = self.d[i];
     if (c == L'\f' || c == L'\n' || c == L'\r' || c == L'\t' || c == L'\v' || c == L'"') {
-      if (l + 2 > self.l) d = safe_realloc(d, l + 2);
+      if (l + 2 > self.l) d = safe_realloc(d, (l + 2) * sizeof(wchar_t));
       d[l++] = L'\\';
       if (c == L'\f') d[l++] = L'f';
       else if (c == L'\n') d[l++] = L'n';
@@ -498,7 +511,7 @@ str_t str_escape (const str_t self) {
 int32_t str_find (const str_t self, const str_t search) {
   int32_t r = -1;
   for (size_t i = 0; i < self.l; i++) {
-    if (memcmp(&self.d[i], search.d, search.l) == 0) {
+    if (wmemcmp(&self.d[i], search.d, search.l) == 0) {
       r = (int32_t) i;
       break;
     }
@@ -511,15 +524,15 @@ void str_free (str_t self) {
 }
 
 bool str_ge (const str_t self, const str_t rhs) {
-  return memcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) >= 0;
+  return wmemcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) >= 0;
 }
 
 bool str_gt (const str_t self, const str_t rhs) {
-  return memcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) > 0;
+  return wmemcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) > 0;
 }
 
 bool str_le (const str_t self, const str_t rhs) {
-  return memcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) <= 0;
+  return wmemcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) <= 0;
 }
 
 size_t str_len (const str_t self) {
@@ -527,11 +540,11 @@ size_t str_len (const str_t self) {
 }
 
 bool str_lt (const str_t self, const str_t rhs) {
-  return memcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) < 0;
+  return wmemcmp(self.d, rhs.d, self.l > rhs.l ? self.l : rhs.l) < 0;
 }
 
 bool str_ne (const str_t self, const str_t rhs) {
-  return self.l != rhs.l || memcmp(self.d, rhs.d, self.l) != 0;
+  return self.l != rhs.l || wmemcmp(self.d, rhs.d, self.l) != 0;
 }
 
 str_t str_realloc (str_t self, const str_t rhs) {
@@ -555,7 +568,7 @@ arr_str_t str_lines (const str_t self, unsigned char o1, bool keepLineBreaks) {
         if (k) d[i++] = self.d[j];
       }
       wchar_t *a = safe_malloc(i * sizeof(wchar_t));
-      memcpy(a, d, i);
+      wmemcpy(a, d, i);
       r = safe_realloc(r, ++l * sizeof(str_t));
       r[l - 1] = (str_t) {a, i};
       i = 0;
@@ -565,7 +578,7 @@ arr_str_t str_lines (const str_t self, unsigned char o1, bool keepLineBreaks) {
   }
   if (i != 0) {
     wchar_t *a = safe_malloc(i * sizeof(wchar_t));
-    memcpy(a, d, i);
+    wmemcpy(a, d, i);
     r = safe_realloc(r, ++l * sizeof(str_t));
     r[l - 1] = (str_t) {a, i};
   }
@@ -591,37 +604,36 @@ bool str_not (const str_t self) {
   return self.l == 0;
 }
 
-// todo wchar_t support
 str_t str_replace (const str_t self, const str_t search, const str_t replacement, unsigned char o3, int32_t count) {
   size_t l = 0;
   wchar_t *d = NULL;
   int32_t k = 0;
   if (search.l == 0 && replacement.l > 0) {
     l = self.l + (count > 0 && count <= self.l ? count : self.l + 1) * replacement.l;
-    d = safe_malloc(l);
-    memcpy(d, replacement.d, replacement.l);
+    d = safe_malloc(l * sizeof(wchar_t));
+    wmemcpy(d, replacement.d, replacement.l);
     size_t j = replacement.l;
     for (size_t i = 0; i < self.l; i++) {
       d[j++] = self.d[i];
       if (count <= 0 || ++k < count) {
-        memcpy(&d[j], replacement.d, replacement.l);
+        wmemcpy(&d[j], replacement.d, replacement.l);
         j += replacement.l;
       }
     }
   } else if (self.l == search.l && search.l > 0) {
-    if (memcmp(self.d, search.d, search.l) != 0) {
+    if (wmemcmp(self.d, search.d, search.l) != 0) {
       l = self.l;
-      d = safe_malloc(l);
-      memcpy(d, self.d, l);
+      d = safe_malloc(l * sizeof(wchar_t));
+      wmemcpy(d, self.d, l);
     } else if (replacement.l > 0) {
       l = replacement.l;
-      d = safe_malloc(l);
-      memcpy(d, replacement.d, l);
+      d = safe_malloc(l * sizeof(wchar_t));
+      wmemcpy(d, replacement.d, l);
     }
   } else if (self.l > search.l && search.l > 0 && replacement.l == 0) {
-    d = safe_malloc(self.l);
+    d = safe_malloc(self.l * sizeof(wchar_t));
     for (size_t i = 0; i < self.l; i++) {
-      if (i <= self.l - search.l && memcmp(&self.d[i], search.d, search.l) == 0 && (count <= 0 || k++ < count)) {
+      if (i <= self.l - search.l && wmemcmp(&self.d[i], search.d, search.l) == 0 && (count <= 0 || k++ < count)) {
         i += search.l - 1;
       } else {
         d[l++] = self.d[i];
@@ -631,34 +643,34 @@ str_t str_replace (const str_t self, const str_t search, const str_t replacement
       free(d);
       d = NULL;
     } else if (l != self.l) {
-      d = safe_realloc(d, l);
+      d = safe_realloc(d, l * sizeof(wchar_t));
     }
   } else if (self.l > search.l && search.l > 0 && replacement.l > 0) {
     l = self.l;
-    d = safe_malloc(l);
+    d = safe_malloc(l * sizeof(wchar_t));
     size_t j = 0;
     for (size_t i = 0; i < self.l; i++) {
-      if (i <= self.l - search.l && memcmp(&self.d[i], search.d, search.l) == 0 && (count <= 0 || k++ < count)) {
+      if (i <= self.l - search.l && wmemcmp(&self.d[i], search.d, search.l) == 0 && (count <= 0 || k++ < count)) {
         if (search.l < replacement.l) {
           l += replacement.l - search.l;
           if (l > self.l) {
-            d = safe_realloc(d, l);
+            d = safe_realloc(d, l * sizeof(wchar_t));
           }
         } else if (search.l > replacement.l) {
           l -= search.l - replacement.l;
         }
-        memcpy(&d[j], replacement.d, replacement.l);
+        wmemcpy(&d[j], replacement.d, replacement.l);
         j += replacement.l;
         i += search.l - 1;
       } else {
         d[j++] = self.d[i];
       }
     }
-    d = safe_realloc(d, l);
+    d = safe_realloc(d, l * sizeof(wchar_t));
   } else if (self.l > 0) {
     l = self.l;
-    d = safe_malloc(l);
-    memcpy(d, self.d, l);
+    d = safe_malloc(l * sizeof(wchar_t));
+    wmemcpy(d, self.d, l);
   }
   return (str_t) {d, l};
 }
@@ -686,7 +698,7 @@ arr_str_t str_split (const str_t self, unsigned char o1, const str_t delimiter) 
   } else if (delimiter.l > 0) {
     size_t i = 0;
     for (size_t j = 0; j <= self.l - delimiter.l; j++) {
-      if (memcmp(&self.d[j], delimiter.d, delimiter.l) == 0) {
+      if (wmemcmp(&self.d[j], delimiter.d, delimiter.l) == 0) {
         r = safe_realloc(r, ++l * sizeof(str_t));
         r[l - 1] = str_calloc(&self.d[i], j - i);
         j += delimiter.l;
@@ -752,7 +764,7 @@ ssize_t str_toIsize (err_state_t *fn_err_state, int line, int col, const str_t s
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  ssize_t r = strtoll(c, &e, o1 == 0 ? 10 : radix);
+  long long r = wcstoll(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || r < ((-SSIZE_MAX) - 1) || SSIZE_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0) {
@@ -771,7 +783,7 @@ int8_t str_toI8 (err_state_t *fn_err_state, int line, int col, const str_t self,
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  long r = strtol(c, &e, o1 == 0 ? 10 : radix);
+  long r = wcstol(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || r < INT8_MIN || INT8_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0) {
@@ -790,7 +802,7 @@ int16_t str_toI16 (err_state_t *fn_err_state, int line, int col, const str_t sel
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  long r = strtol(c, &e, o1 == 0 ? 10 : radix);
+  long r = wcstol(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || r < INT16_MIN || INT16_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0) {
@@ -809,7 +821,7 @@ int32_t str_toI32 (err_state_t *fn_err_state, int line, int col, const str_t sel
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  long r = strtol(c, &e, o1 == 0 ? 10 : radix);
+  long r = wcstol(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || r < INT32_MIN || INT32_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0) {
@@ -828,7 +840,7 @@ int64_t str_toI64 (err_state_t *fn_err_state, int line, int col, const str_t sel
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  long long r = strtoll(c, &e, o1 == 0 ? 10 : radix);
+  long long r = wcstoll(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || r < INT64_MIN || INT64_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0) {
@@ -847,7 +859,7 @@ size_t str_toUsize (err_state_t *fn_err_state, int line, int col, const str_t se
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  size_t r = strtoull(c, &e, o1 == 0 ? 10 : radix);
+  unsigned long long r = wcstoull(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || SIZE_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0 || self.d[0] == L'-') {
@@ -866,7 +878,7 @@ uint8_t str_toU8 (err_state_t *fn_err_state, int line, int col, const str_t self
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  unsigned long r = strtoul(c, &e, o1 == 0 ? 10 : radix);
+  unsigned long r = wcstoul(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || UINT8_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0 || self.d[0] == L'-') {
@@ -885,7 +897,7 @@ uint16_t str_toU16 (err_state_t *fn_err_state, int line, int col, const str_t se
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  unsigned long r = strtoul(c, &e, o1 == 0 ? 10 : radix);
+  unsigned long r = wcstoul(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || UINT16_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0 || self.d[0] == L'-') {
@@ -904,7 +916,7 @@ uint32_t str_toU32 (err_state_t *fn_err_state, int line, int col, const str_t se
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  unsigned long r = strtoul(c, &e, o1 == 0 ? 10 : radix);
+  unsigned long r = wcstoul(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || UINT32_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0 || self.d[0] == L'-') {
@@ -923,7 +935,7 @@ uint64_t str_toU64 (err_state_t *fn_err_state, int line, int col, const str_t se
   wchar_t *c = str_cstr(self);
   wchar_t *e = NULL;
   errno = 0;
-  unsigned long long r = strtoull(c, &e, o1 == 0 ? 10 : radix);
+  unsigned long long r = wcstoull(c, &e, o1 == 0 ? 10 : radix);
   if (errno == ERANGE || UINT64_MAX < r) {
     error_assign_builtin(fn_err_state, line, col, str_valloc(L"value `%ls` out of range", c));
   } else if (errno != 0 || e == c || *e != 0 || self.d[0] == L'-') {
