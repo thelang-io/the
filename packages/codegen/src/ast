@@ -16,6 +16,8 @@ export type CExpressionBody =
   CPropertyAccessExpression |
   CUnaryExpression
 
+// TODO(delasy): Add conditional directive
+
 export type CStatementBody =
   CBreakStatement |
   CCaseStatement |
