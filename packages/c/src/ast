@@ -22,6 +22,7 @@ export type CStatementBody =
   CBreakStatement |
   CCaseStatement |
   CCompoundStatement |
+  CConditionalDirective |
   CContinueStatement |
   CDefineDirective |
   CEmptyStatement |
@@ -145,6 +146,7 @@ export obj CStatement {
   fn asBreakStatement (mut self: ref Self) ref CBreakStatement { return ref (self.body as CBreakStatement) }
   fn asCaseStatement (mut self: ref Self) ref CCaseStatement { return ref (self.body as CCaseStatement) }
   fn asCompoundStatement (mut self: ref Self) ref CCompoundStatement { return ref (self.body as CCompoundStatement) }
+  fn asConditionalDirective (mut self: ref Self) ref CConditionalDirective { return ref (self.body as CConditionalDirective) }
   fn asContinueStatement (mut self: ref Self) ref CContinueStatement { return ref (self.body as CContinueStatement) }
   fn asDefineDirective (mut self: ref Self) ref CDefineDirective { return ref (self.body as CDefineDirective) }
   fn asEmptyStatement (mut self: ref Self) ref CEmptyStatement { return ref (self.body as CEmptyStatement) }
@@ -165,6 +167,7 @@ export obj CStatement {
   fn isBreakStatement (self: ref Self) bool { return self.body is CBreakStatement }
   fn isCaseStatement (self: ref Self) bool { return self.body is CCaseStatement }
   fn isCompoundStatement (self: ref Self) bool { return self.body is CCompoundStatement }
+  fn isConditionalDirective (self: ref Self) bool { return self.body is CConditionalDirective }
   fn isContinueStatement (self: ref Self) bool { return self.body is CContinueStatement }
   fn isDefineDirective (self: ref Self) bool { return self.body is CDefineDirective }
   fn isEmptyStatement (self: ref Self) bool { return self.body is CEmptyStatement }
@@ -207,6 +210,9 @@ export obj CStatement {
     } elif self.isCompoundStatement() {
       statement := self.asCompoundStatement()
       result = statement.stringify(indent)
+    } elif self.isConditionalDirective() {
+      statement := self.asConditionalDirective()
+      result = statement.stringify()
     } elif self.isContinueStatement() {
       statement := self.asContinueStatement()
       result = statement.stringify()
@@ -433,6 +439,38 @@ export obj CCompoundStatement {
       content += self.body[i].stringify(indent + 2)
     }
     return "{" + os_EOL + content + ' '.repeat(indent) + "}"
+  }
+}
+
+export obj CConditionalDirective {
+  mut condition: str
+  mut consequent: CStatement[]
+  mut alternate: CStatement?
+
+  fn stringify (self: ref Self, indent: int) str {
+    mut result := "#if " + self.condition + os_EOL
+
+    loop i := 0; i < l; i++ {
+      result += self.consequent[i].stringify(indent + 2)
+    }
+
+    if self.alternate != nil {
+      alternate := self.alternate
+
+      if alternate.isCompoundStatement() {
+        compoundStatement := alternate.asCompoundStatement()
+        result += os_EOL + ' '.repeat(indent) + "#else" + os_EOL
+
+        loop i := 0; i < l; i++ {
+          result += compoundStatement.body[i].stringify(indent + 2)
+        }
+      } else {
+        alternateResult := self.alternate.stringify(indent, root: false)
+        result += os_EOL + ' '.repeat(indent) + "#elif " + alternateResult.slice(6) + os_EOL
+      }
+    }
+
+    return result + "#endif"
   }
 }
 
@@ -683,6 +721,10 @@ export fn createCaseStatement (test: CExpression?, body: CStatement) CStatement 
 
 export fn createCompoundStatement (body: CStatement[]) CStatement {
   return createStatement(CCompoundStatement{body: body})
+}
+
+export fn createConditionalDirective (condition: str, consequent: CStatement[], alternate: CStatement? = nil) CStatement {
+  return createStatement(CConditionalDirective{condition: condition, consequent: consequent, alternate: alternate})
 }
 
 export fn createContinueStatement () CStatement {

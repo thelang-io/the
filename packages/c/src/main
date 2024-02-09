@@ -24,6 +24,7 @@ import
   CBreakStatement,
   CCaseStatement,
   CCompoundStatement,
+  CConditionalDirective,
   CContinueStatement,
   CDefineDirective,
   CEmptyStatement,
@@ -56,6 +57,7 @@ import
   createBreakStatement,
   createCaseStatement,
   createCompoundStatement,
+  createConditionalDirective,
   createContinueStatement,
   createDefineDirective,
   createEmptyStatement,
@@ -98,6 +100,7 @@ export CUnaryExpression
 export CBreakStatement
 export CCaseStatement
 export CCompoundStatement
+export CConditionalDirective
 export CContinueStatement
 export CDefineDirective
 export CEmptyStatement
@@ -130,6 +133,7 @@ export createUnaryExpression
 export createBreakStatement
 export createCaseStatement
 export createCompoundStatement
+export createConditionalDirective
 export createContinueStatement
 export createDefineDirective
 export createEmptyStatement
