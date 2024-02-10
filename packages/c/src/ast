@@ -16,8 +16,6 @@ export type CExpressionBody =
   CPropertyAccessExpression |
   CUnaryExpression
 
-// TODO(delasy): Add conditional directive
-
 export type CStatementBody =
   CBreakStatement |
   CCaseStatement |
@@ -212,7 +210,7 @@ export obj CStatement {
       result = statement.stringify(indent)
     } elif self.isConditionalDirective() {
       statement := self.asConditionalDirective()
-      result = statement.stringify(indent)
+      result = statement.stringify(indent, root)
     } elif self.isContinueStatement() {
       statement := self.asContinueStatement()
       result = statement.stringify()
@@ -447,8 +445,8 @@ export obj CConditionalDirective {
   mut consequent: CStatement[]
   mut alternate: CStatement?
 
-  fn stringify (self: ref Self, indent: int) str {
-    mut result := "#if " + self.condition + os_EOL
+  fn stringify (self: ref Self, indent: int, root: bool) str {
+    mut result := (root ? "#if " : "") + self.condition + os_EOL
 
     loop i := 0; i < self.consequent.len; i++ {
       result += self.consequent[i].stringify(indent + 2)
@@ -459,18 +457,17 @@ export obj CConditionalDirective {
 
       if alternate.isCompoundStatement() {
         compoundStatement := alternate.asCompoundStatement()
-        result += os_EOL + ' '.repeat(indent) + "#else" + os_EOL
+        result += ' '.repeat(indent) + "#else" + os_EOL
 
         loop i := 0; i < compoundStatement.body.len; i++ {
           result += compoundStatement.body[i].stringify(indent + 2)
         }
       } else {
-        alternateResult := self.alternate.stringify(indent, root: false)
-        result += os_EOL + ' '.repeat(indent) + "#elif " + alternateResult.slice(6) + os_EOL
+        result += ' '.repeat(indent) + "#elif " + self.alternate.stringify(indent, root: false)
       }
     }
 
-    return result + "#endif"
+    return result + (root ? ' '.repeat(indent) + "#endif" : "")
   }
 }
 

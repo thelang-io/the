@@ -317,6 +317,92 @@ export fn TEST_AST_compoundStatement () {
   )
 }
 
+export fn TEST_AST_conditionalDirective () {
+  statement1 := AST.createConditionalDirective("defined(test)", [
+    AST.createReturnStatement()
+  ])
+
+  statement2 := AST.createConditionalDirective("defined(test)", [
+    AST.createContinueStatement(),
+    AST.createReturnStatement(),
+  ])
+
+  statement3 := AST.createConditionalDirective("defined(test)", [
+    AST.createContinueStatement(),
+    AST.createReturnStatement(),
+  ], AST.createCompoundStatement([
+    AST.createBreakStatement(),
+    AST.createReturnStatement(),
+  ]))
+
+  statement4 := AST.createConditionalDirective("defined(test1)", [
+    AST.createReturnStatement(AST.createIdentifier("test1")),
+  ], AST.createConditionalDirective("defined(test2)", [
+    AST.createReturnStatement(AST.createIdentifier("test2")),
+  ]))
+
+  statement5 := AST.createConditionalDirective("defined(test1)", [
+    AST.createReturnStatement(AST.createIdentifier("test1")),
+  ], AST.createConditionalDirective("defined(test2)", [
+    AST.createReturnStatement(AST.createIdentifier("test2")),
+  ], AST.createCompoundStatement([
+    AST.createReturnStatement(AST.createIdentifier("test3")),
+  ])))
+
+  EXPECT_EQ(
+    statement1.stringify(),
+    "#if defined(test)" + os_EOL +
+    "  return;" + os_EOL +
+    "#endif" + os_EOL
+  )
+
+  EXPECT_EQ(
+    statement1.stringify(2),
+    "  #if defined(test)" + os_EOL +
+    "    return;" + os_EOL +
+    "  #endif" + os_EOL
+  )
+
+  EXPECT_EQ(
+    statement2.stringify(),
+    "#if defined(test)" + os_EOL +
+    "  continue;" + os_EOL +
+    "  return;" + os_EOL +
+    "#endif" + os_EOL
+  )
+
+  EXPECT_EQ(
+    statement3.stringify(),
+    "#if defined(test)" + os_EOL +
+    "  continue;" + os_EOL +
+    "  return;" + os_EOL +
+    "#else" + os_EOL +
+    "  break;" + os_EOL +
+    "  return;" + os_EOL +
+    "#endif" + os_EOL
+  )
+
+  EXPECT_EQ(
+    statement4.stringify(),
+    "#if defined(test1)" + os_EOL +
+    "  return test1;" + os_EOL +
+    "#elif defined(test2)" + os_EOL +
+    "  return test2;" + os_EOL +
+    "#endif" + os_EOL
+  )
+
+  EXPECT_EQ(
+    statement5.stringify(),
+    "#if defined(test1)" + os_EOL +
+    "  return test1;" + os_EOL +
+    "#elif defined(test2)" + os_EOL +
+    "  return test2;" + os_EOL +
+    "#else" + os_EOL +
+    "  return test3;" + os_EOL +
+    "#endif" + os_EOL
+  )
+}
+
 export fn TEST_AST_continueStatement () {
   statement1 := AST.createContinueStatement()
   EXPECT_EQ(statement1.stringify(), "continue;" + os_EOL)
