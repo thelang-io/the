@@ -212,7 +212,7 @@ export obj CStatement {
       result = statement.stringify(indent)
     } elif self.isConditionalDirective() {
       statement := self.asConditionalDirective()
-      result = statement.stringify()
+      result = statement.stringify(indent)
     } elif self.isContinueStatement() {
       statement := self.asContinueStatement()
       result = statement.stringify()
@@ -450,7 +450,7 @@ export obj CConditionalDirective {
   fn stringify (self: ref Self, indent: int) str {
     mut result := "#if " + self.condition + os_EOL
 
-    loop i := 0; i < l; i++ {
+    loop i := 0; i < self.consequent.len; i++ {
       result += self.consequent[i].stringify(indent + 2)
     }
 
@@ -461,7 +461,7 @@ export obj CConditionalDirective {
         compoundStatement := alternate.asCompoundStatement()
         result += os_EOL + ' '.repeat(indent) + "#else" + os_EOL
 
-        loop i := 0; i < l; i++ {
+        loop i := 0; i < compoundStatement.body.len; i++ {
           result += compoundStatement.body[i].stringify(indent + 2)
         }
       } else {

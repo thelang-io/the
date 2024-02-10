@@ -199,9 +199,9 @@ export fn TEST_AST_propertyAccessExpression () {
 }
 
 export fn TEST_AST_unaryExpression () {
-  expression1 := AST.createUnaryExpression(AST.createIdentifier("test"), "~")
+  expression1 := AST.createUnaryExpression("~", AST.createIdentifier("test"))
   EXPECT_EQ(expression1.stringify(), "~test")
-  expression2 := AST.createUnaryExpression(AST.createIdentifier("test"), "++", postfix: true)
+  expression2 := AST.createUnaryExpression("++", AST.createIdentifier("test"), postfix: true)
   EXPECT_EQ(expression2.stringify(), "test++")
 }
 
@@ -392,14 +392,14 @@ export fn TEST_AST_forStatement () {
   statement6 := AST.createForStatement(
     nil,
     nil,
-    AST.createUnaryExpression(AST.createLiteral("a"), "++"),
+    AST.createUnaryExpression("++", AST.createLiteral("a"), postfix: true),
     AST.createReturnStatement()
   )
 
   statement7 := AST.createForStatement(
     AST.createVariableDeclaration(AST.createType("int"), "a"),
     AST.createBinaryExpression(AST.createLiteral("a"), "<", AST.createLiteral("10")),
-    AST.createUnaryExpression(AST.createLiteral("a"), "++"),
+    AST.createUnaryExpression("++", AST.createLiteral("a"), postfix: true),
     AST.createReturnStatement()
   )
 
