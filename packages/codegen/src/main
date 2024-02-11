@@ -4,9 +4,9 @@
  */
 
 import * as Analyzer from "the/analyzer"
+import * as AST from "the/c"
 import * as Parser from "the/parser"
 import BlockData from "./block-data"
-import * as AST from "./ast"
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   if parameter.mutable && parameter.required { return "FP5" }
