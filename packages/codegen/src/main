@@ -22,6 +22,9 @@ export obj APIBuiltin {
   mut stdint: bool
   mut stdio: bool
   mut stdlib: bool
+  mut theMacro: bool
+  mut theSafe: bool
+  mut theString: bool
 }
 
 export obj CodegenEntity {
@@ -32,89 +35,31 @@ export obj CodegenEntity {
   mut generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement
 }
 
-export fn typeShouldBeFreed (t: ref Analyzer.Type) bool {
-  return t.isOptional()
-}
+export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
+  if self.isAlias() {
+    t := self.asAlias()
+    return typeShouldBeFreed(t.t)
+  } elif self.isUnion() {
+    t := self.asUnion()
 
-export fn entity_alloc (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
-  return AST.createFunctionDeclaration(AST.createType("void *"), entity.codeName, [
-    AST.createFunctionParameter(AST.createType(self._("size_t")), "n1")
-  ], AST.createCompoundStatement([
-    AST.createVariableDeclaration(
-      AST.createType("void *"),
-      "r",
-      AST.createCallExpression(AST.createIdentifier(self._("malloc")), [AST.createIdentifier("n1")])
-    ),
-    AST.createIfStatement(
-      AST.createBinaryExpression(AST.createIdentifier("r"), "==", AST.createIdentifier(self._("NULL"))),
-      AST.createExpressionStatement(
-        AST.createCallExpression(AST.createIdentifier(self._("error_alloc")), [
-          AST.createUnaryExpression("&", AST.createIdentifier(self._("err_state"))),
-          AST.createIdentifier("n1")
-        ])
-      )
-    ),
-    AST.createReturnStatement(AST.createIdentifier("r"))
-  ]))
-}
+    loop i := 0; i < t.types.len; i++ {
+      subType := t.types[i]
 
-export fn entity_error_alloc (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
-  return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
-    AST.createFunctionParameter(AST.createType(self._("err_state_t")), "fn_err_state"),
-    AST.createFunctionParameter(AST.createType(self._("size_t")), "n1")
-  ], AST.createCompoundStatement([
-    AST.createVariableDeclaration(AST.createType("char"), "d[4096]")
-    AST.createVariableDeclaration(AST.createType(self._("size_t")), "l", AST.createLiteral("0")),
-    AST.createForStatement(
-      AST.createVariableDeclaration(
-        AST.createType(self._("err_stack_t") + " *"),
-        "it",
-        AST.createPropertyAccessExpression(AST.createIdentifier("fn_err_state"), "stack_last", pointed: true)
-      ),
-      AST.createBinaryExpression(AST.createIdentifier("it"), "!=", AST.createIdentifier(self._("NULL"))),
-      AST.createAssignmentExpression(
-        AST.createIdentifier("it"),
-        "=",
-        AST.createPropertyAccessExpression(AST.createIdentifier("it"), "prev", pointed: true)
-      ),
-      AST.createCompoundStatement([
-        // R"~(    const char *fmt = _{THE_EOL} "  at %s (%s)";)~" EOL
-        // R"~(    _{size_t} z = _{snprintf}(_{NULL}, 0, fmt, it->name, it->file);)~" EOL
-        // R"~(    if (l + z >= 4096) break;)~" EOL
-        // R"~(    _{sprintf}(&d[l], fmt, it->name, it->file);)~" EOL
-        // R"~(    l += z;)~" EOL
-      ])
-    ),
-    AST.createExpressionStatement(
-      AST.createCallExpression(AST.createIdentifier(self._("fprintf")), [
-        AST.createIdentifier(self._("stderr")),
-        AST.createLiteral("\"Allocation Error: failed to allocate %zu bytes%s\" " + self._("THE_EOL")),
-        AST.createIdentifier("n1"),
-        AST.createIdentifier("d")
-      ])
-    ),
-    AST.createExpressionStatement(
-      AST.createCallExpression(AST.createIdentifier(self._("exit")), [
-        AST.createIdentifier(self._("EXIT_FAILURE"))
-      ])
-    )
-  ]))
-}
+      if typeShouldBeFreed(subType) {
+        return true
+      }
+    }
 
-export fn entity_print (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) AST.CStatement {
-  paramsType := tm.createFunction(false, [
-    Analyzer.TypeParameter{t: tm.createArray(tm.get("any")), variadic: true}
-  ], tm.get("void"))
+    return false
+  }
 
-  return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
-    AST.createFunctionParameter(AST.createType("void *"), "params")
-  ], AST.createCompoundStatement([
-    AST.createVariableDeclaration(
-      AST.createType(self._typeName(paramsType) + "p_t"),
-      "p",
-      AST.createIdentifier("params")
-    )
-  ]))
+  return
+    self.name == "any" ||
+    self.name == "str" ||
+    self.isArray() ||
+    self.isFunction() ||
+    self.isMap() ||
+    self.isOptional()
 }
 
 export obj Codegen {
@@ -128,23 +73,6 @@ export obj Codegen {
   mut statements: AST.CStatement[]
 
   fn init (mut self: ref Self) {
-    self.entities.push(CodegenEntity{
-      name: "alloc",
-      codeName: "alloc",
-      generate: entity_alloc
-    })
-
-    self.entities.push(CodegenEntity{
-      name: "error_alloc",
-      codeName: "error_alloc",
-      generate: entity_error_alloc
-    })
-
-    self.entities.push(CodegenEntity{
-      name: "print",
-      codeName: "print",
-      generate: entity_print
-    })
   }
 
   fn generate (mut self: ref Self) {
@@ -153,8 +81,14 @@ export obj Codegen {
     self._assemble()
   }
 
-  fn getFlags () str {
-    return "-O0 -w"
+  fn getFlags (self: ref Self) str {
+    mut extraFlags: str[]
+
+    if self.builtin.theMacro || self.builtin.theSafe || self.builtin.theString {
+      extraFlags.push("-lthe")
+    }
+
+    return ["-O0", "-w"].concat(extraFlags).join(" ")
   }
 
   fn stringify (self: ref Self) str {
@@ -171,6 +105,7 @@ export obj Codegen {
   fn _ (mut self: ref Self, name: str) str {
     if self._hasEntity(name) {
       mut item := self._getEntity(name)
+
       if !item.active {
         item.active = true
       }
@@ -205,19 +140,20 @@ export obj Codegen {
       name == "uint64_t"
     ) {
       self.builtin.stdint = true
+    } elif name == "THE_EOL" {
+      self.builtin.theMacro = true
+    } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc"].contains(name) {
+      self.builtin.theSafe = true
     } elif (
-      name == "free" ||
-      name == "malloc" ||
-      name == "realloc"
-    ) {
-      self.builtin.stdlib = true
-    } elif (
-      name == "THE_EOL" ||
       name == "err_stack_t" ||
       name == "err_state_t" ||
       name == "err_state"
     ) {
       // todo
+    } elif ["the_str_t", "the_str_alloc", "the_str_free"].contains(name) {
+      self.builtin.theString = true
+    } elif ["str_free"].contains(name) {
+      return self._("the_str_free")
     } else {
       throw error_NewError("Tried activating unknown entity '" + name + "'")
     }
@@ -252,6 +188,9 @@ export obj Codegen {
       prevActive = currentActive
     }
 
+    if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
+    if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
+    if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
     if self.builtin.stddef { self.statements.push(AST.createIncludeDirective("stddef.h")) }
     if self.builtin.stdio { self.statements.push(AST.createIncludeDirective("stdio.h")) }
     if self.builtin.stdint { self.statements.push(AST.createIncludeDirective("stdint.h")) }
@@ -284,6 +223,18 @@ export obj Codegen {
     if item.isIntegerLiteral() {
       expression := item.asIntegerLiteral()
       return AST.createLiteral(expression.value)
+    } elif item.isStringLiteral() {
+      expression := item.asStringLiteral()
+      rawValue := "L\"" + expression.value + "\""
+
+      if !item.hasParent() {
+        return AST.createCallExpression(
+          AST.createIdentifier(self._("the_str_alloc")),
+          [AST.createLiteral(rawValue)]
+        )
+      }
+
+      return AST.createLiteral(rawValue)
     } elif item.isIdentifier() {
       expression := item.asIdentifier()
       if self._hasEntity(expression.name) {
@@ -416,7 +367,8 @@ export obj Codegen {
     } elif it.name == "isize" {
       return self._("ssize_t") + " "
     } elif it.name == "str" {
-      return self._("str_t") + " "
+      self.builtin.theString = true
+      return self._("the_str_t") + " "
     } elif it.name == "u8" {
       return self._("uint8_t") + " "
     } elif it.name == "u16" {
@@ -540,7 +492,7 @@ export obj Codegen {
           AST.createVariableDeclaration(
             AST.createType(self._(name)),
             "r",
-            AST.createCallExpression(AST.createIdentifier(self._("alloc")), [
+            AST.createCallExpression(AST.createIdentifier(self._("the_safe_alloc")), [
               AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
             ])
           ),
@@ -576,7 +528,7 @@ export obj Codegen {
           // if (underlyingTypeInfo.type->shouldBeFreed()) {
           //   def += "  " + this->_genFreeFn(underlyingTypeInfo.type, CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n")))->str() + ";" EOL;
           // }
-          AST.createExpressionStatement(AST.createCallExpression(AST.createIdentifier(self._("free")), [AST.createIdentifier("n")]))
+          AST.createExpressionStatement(AST.createCallExpression(AST.createIdentifier(self._("the_safe_free")), [AST.createIdentifier("n")]))
         ]))
       }
     })

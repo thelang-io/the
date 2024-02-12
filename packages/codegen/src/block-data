@@ -3,7 +3,7 @@
  * Licensed under the MIT License
  */
 
-import * as AST from "./ast"
+import * as AST from "the/c"
 
 export obj BlockData {
   mut cleanup: AST.CStatement[]
