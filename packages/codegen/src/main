@@ -22,6 +22,7 @@ export obj APIBuiltin {
   mut stdint: bool
   mut stdio: bool
   mut stdlib: bool
+  mut theAny: bool
   mut theMacro: bool
   mut theSafe: bool
   mut theString: bool
@@ -84,7 +85,12 @@ export obj Codegen {
   fn getFlags (self: ref Self) str {
     mut extraFlags: str[]
 
-    if self.builtin.theMacro || self.builtin.theSafe || self.builtin.theString {
+    if (
+      self.builtin.theAny ||
+      self.builtin.theMacro ||
+      self.builtin.theSafe ||
+      self.builtin.theString
+    ) {
       extraFlags.push("-lthe")
     }
 
@@ -140,6 +146,8 @@ export obj Codegen {
       name == "uint64_t"
     ) {
       self.builtin.stdint = true
+    } elif name == "the_any_t" {
+      self.builtin.theAny = true
     } elif name == "THE_EOL" {
       self.builtin.theMacro = true
     } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc"].contains(name) {
@@ -188,6 +196,7 @@ export obj Codegen {
       prevActive = currentActive
     }
 
+    if self.builtin.theAny { self.statements.push(AST.createIncludeDirective("the/any.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
@@ -345,7 +354,7 @@ export obj Codegen {
       t := it.asAlias()
       return self._type(t.t)
     } elif it.name == "any" {
-      return self._("any_t") + " "
+      return self._("the_any_t") + " "
     } elif it.name == "bool" {
       return self._("bool_t") + " "
     } elif it.name == "byte" {
