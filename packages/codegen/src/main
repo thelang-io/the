@@ -23,6 +23,7 @@ export obj APIBuiltin {
   mut stdio: bool
   mut stdlib: bool
   mut theAny: bool
+  mut theByte: bool
   mut theMacro: bool
   mut theSafe: bool
   mut theString: bool
@@ -87,6 +88,7 @@ export obj Codegen {
 
     if (
       self.builtin.theAny ||
+      self.builtin.theByte ||
       self.builtin.theMacro ||
       self.builtin.theSafe ||
       self.builtin.theString
@@ -148,6 +150,8 @@ export obj Codegen {
       self.builtin.stdint = true
     } elif name == "the_any_t" {
       self.builtin.theAny = true
+    } elif name == "the_byte_str" {
+      self.builtin.theByte = true
     } elif name == "THE_EOL" {
       self.builtin.theMacro = true
     } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc"].contains(name) {
@@ -197,6 +201,7 @@ export obj Codegen {
     }
 
     if self.builtin.theAny { self.statements.push(AST.createIncludeDirective("the/any.h")) }
+    if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
