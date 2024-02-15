@@ -23,6 +23,7 @@ export obj APIBuiltin {
   mut stdio: bool
   mut stdlib: bool
   mut theAny: bool
+  mut theBool: bool
   mut theByte: bool
   mut theMacro: bool
   mut theSafe: bool
@@ -88,6 +89,7 @@ export obj Codegen {
 
     if (
       self.builtin.theAny ||
+      self.builtin.theBool ||
       self.builtin.theByte ||
       self.builtin.theMacro ||
       self.builtin.theSafe ||
@@ -150,6 +152,8 @@ export obj Codegen {
       self.builtin.stdint = true
     } elif name == "the_any_t" {
       self.builtin.theAny = true
+    } elif name == "the_bool_str" {
+      self.builtin.theBool = true
     } elif name == "the_byte_str" {
       self.builtin.theByte = true
     } elif name == "THE_EOL" {
@@ -201,6 +205,7 @@ export obj Codegen {
     }
 
     if self.builtin.theAny { self.statements.push(AST.createIncludeDirective("the/any.h")) }
+    if self.builtin.theBool { self.statements.push(AST.createIncludeDirective("the/bool.h")) }
     if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
