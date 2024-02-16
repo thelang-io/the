@@ -25,6 +25,7 @@ export obj APIBuiltin {
   mut theAny: bool
   mut theBool: bool
   mut theByte: bool
+  mut theError: bool
   mut theMacro: bool
   mut theSafe: bool
   mut theString: bool
@@ -91,6 +92,7 @@ export obj Codegen {
       self.builtin.theAny ||
       self.builtin.theBool ||
       self.builtin.theByte ||
+      self.builtin.theError ||
       self.builtin.theMacro ||
       self.builtin.theSafe ||
       self.builtin.theString
@@ -165,7 +167,7 @@ export obj Codegen {
       name == "err_state_t" ||
       name == "err_state"
     ) {
-      // todo
+      self.builtin.theError = true
     } elif ["the_str_t", "the_str_alloc", "the_str_free"].contains(name) {
       self.builtin.theString = true
     } elif ["str_free"].contains(name) {
@@ -207,6 +209,7 @@ export obj Codegen {
     if self.builtin.theAny { self.statements.push(AST.createIncludeDirective("the/any.h")) }
     if self.builtin.theBool { self.statements.push(AST.createIncludeDirective("the/bool.h")) }
     if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
+    if self.builtin.theError { self.statements.push(AST.createIncludeDirective("the/error.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
