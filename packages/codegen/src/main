@@ -152,7 +152,7 @@ export obj Codegen {
       self.builtin.stdint = true
     } elif name == "the_any_t" {
       self.builtin.theAny = true
-    } elif name == "the_bool_str" {
+    } elif name == "bool" || name == "the_bool_str" {
       self.builtin.theBool = true
     } elif name == "the_byte_str" {
       self.builtin.theByte = true
@@ -239,7 +239,11 @@ export obj Codegen {
   }
 
   fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
-    if item.isIntegerLiteral() {
+    if item.isBooleanLiteral() {
+      expression := item.asBooleanLiteral()
+      self.builtin.theBool = true
+      return AST.createLiteral(expression.value)
+    } elif item.isIntegerLiteral() {
       expression := item.asIntegerLiteral()
       return AST.createLiteral(expression.value)
     } elif item.isStringLiteral() {
@@ -366,7 +370,7 @@ export obj Codegen {
     } elif it.name == "any" {
       return self._("the_any_t") + " "
     } elif it.name == "bool" {
-      return self._("bool_t") + " "
+      return self._("bool") + " "
     } elif it.name == "byte" {
       return "unsigned char "
     } elif it.name == "char" {
