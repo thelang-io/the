@@ -242,13 +242,28 @@ export obj Codegen {
   }
 
   fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
-    if item.isBooleanLiteral() {
+    if item.isIdentifier() {
+      expression := item.asIdentifier()
+      if self._hasEntity(expression.name) {
+        return AST.createIdentifier(self._(expression.name))
+      } else {
+        return AST.createIdentifier(expression.name)
+      }
+    } elif item.isBooleanLiteral() {
       expression := item.asBooleanLiteral()
-      self.builtin.theBool = true
+      return AST.createLiteral(self._(expression.value))
+    } elif item.isCharacterLiteral() {
+      expression := item.asCharacterLiteral()
+      return AST.createLiteral("L'" + expression.value + "'")
+    } elif item.isFloatingPointLiteral() {
+      expression := item.asFloatingPointLiteral()
       return AST.createLiteral(expression.value)
     } elif item.isIntegerLiteral() {
       expression := item.asIntegerLiteral()
       return AST.createLiteral(expression.value)
+    } elif item.isNilLiteral() {
+      expression := item.asNilLiteral()
+      return AST.createLiteral(self._("NULL"))
     } elif item.isStringLiteral() {
       expression := item.asStringLiteral()
       rawValue := "L\"" + expression.value + "\""
@@ -261,13 +276,6 @@ export obj Codegen {
       }
 
       return AST.createLiteral(rawValue)
-    } elif item.isIdentifier() {
-      expression := item.asIdentifier()
-      if self._hasEntity(expression.name) {
-        return AST.createIdentifier(self._(expression.name))
-      } else {
-        return AST.createIdentifier(expression.name)
-      }
     } elif item.isCall() {
       expression := item.asCall()
       return AST.createCallExpression(self._generateExpression(ref expression.callee))
