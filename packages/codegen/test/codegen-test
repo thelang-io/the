@@ -1,0 +1,66 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Analyzer from "the/analyzer"
+import * as Parser from "the/parser"
+import Codegen from "../src/codegen"
+import retrieveFileSections from "./utils"
+
+export fn TEST_Codegen () {
+  files := fs_scandirSync("./test/codegen")
+  emptyErrors: str[]
+
+  if !fs_existsSync("./build") {
+    fs_mkdirSync("./build")
+  }
+
+  loop i := 0; i < files.len; i++ {
+    name := files[i].slice(0, -4)
+    fileSections := retrieveFileSections("./test/codegen/" + name + ".txt")
+    executablePath := "./build/" + name + ".out"
+    codePath := "./build/" + name + ".c"
+
+    mut analyzer := Analyzer.Analyzer{}
+
+    analyzer.files.push(Analyzer.AnalyzerFile{
+      cwd: process_cwd(),
+      analyzer: ref analyzer,
+      f: Parser.parse(fileSections.input),
+    })
+
+    mut file := analyzer.files.last()
+    Parser.interconnect(ref file.f)
+    file.reader = Parser.Reader_init(file.f.content)
+    file.init()
+    file.analyze(ref file.f.program.body)
+    EXPECT_EQ(analyzer.errors, emptyErrors)
+
+    // todo error here
+    mut generator := Codegen{analyzer: analyzer}
+    // generator.init()
+    // generator.generate()
+
+    // generatedCode := generator.stringify()
+    // EXPECT_EQ(fileSections.code, generatedCode)
+
+    // fs_writeFileSync(codePath, generatedCode.toBuffer())
+
+    // try {
+    //   process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
+    // } catch err: error_Error {
+    //   EXPECT_EQ(err.message, "")
+    // }
+
+    // try {
+    //   actualOutput := process_runSync(executablePath)
+    //   EXPECT_EQ(actualOutput.str(), fileSections.output)
+    // } catch err: error_Error {
+    //   EXPECT_EQ(err.message, fileSections.output)
+    // }
+
+    // fs_rmSync(codePath)
+    // fs_rmSync(executablePath)
+  }
+}
