@@ -266,14 +266,17 @@ export obj Codegen {
       return AST.createLiteral(self._("NULL"))
     } elif item.isStringLiteral() {
       expression := item.asStringLiteral()
-      rawValue := "L\"" + expression.value + "\""
+      sanitizedValue := expression.value
+        .replace(os_EOL, "\" " + self._("THE_EOL") + " \"")
+        .replace("\n", "\" " + self._("THE_EOL") + " \"")
+      rawValue := "L\"" + sanitizedValue + "\""
 
-      if !item.hasParent() {
-        return AST.createCallExpression(
-          AST.createIdentifier(self._("the_str_alloc")),
-          [AST.createLiteral(rawValue)]
-        )
-      }
+      // if !item.hasParent() {
+      //   return AST.createCallExpression(
+      //     AST.createIdentifier(self._("the_str_alloc")),
+      //     [AST.createLiteral(rawValue)]
+      //   )
+      // }
 
       return AST.createLiteral(rawValue)
     } elif item.isCall() {

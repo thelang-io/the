@@ -10,7 +10,6 @@ import retrieveFileSections from "./utils"
 
 export fn TEST_Codegen () {
   files := fs_scandirSync("./test/codegen")
-  emptyErrors: str[]
 
   if !fs_existsSync("./build") {
     fs_mkdirSync("./build")
@@ -35,32 +34,52 @@ export fn TEST_Codegen () {
     file.reader = Parser.Reader_init(file.f.content)
     file.init()
     file.analyze(ref file.f.program.body)
-    EXPECT_EQ(analyzer.errors, emptyErrors)
 
-    // todo error here
-    mut generator := Codegen{analyzer: analyzer}
-    // generator.init()
-    // generator.generate()
+    if !analyzer.errors.empty {
+      emptyErrors: str[]
+      EXPECT_EQ(analyzer.errors, emptyErrors)
+      continue
+    }
 
-    // generatedCode := generator.stringify()
-    // EXPECT_EQ(fileSections.code, generatedCode)
+    mut generator := Codegen{analyzer: ref analyzer}
+    generator.init()
+    generator.generate()
 
-    // fs_writeFileSync(codePath, generatedCode.toBuffer())
+    generatedCode := generator.stringify()
 
-    // try {
-    //   process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
-    // } catch err: error_Error {
-    //   EXPECT_EQ(err.message, "")
-    // }
+    if fileSections.code != generatedCode {
+      EXPECT_EQ(fileSections.code, generatedCode)
+      continue
+    }
 
-    // try {
-    //   actualOutput := process_runSync(executablePath)
-    //   EXPECT_EQ(actualOutput.str(), fileSections.output)
-    // } catch err: error_Error {
-    //   EXPECT_EQ(err.message, fileSections.output)
-    // }
+    fs_writeFileSync(codePath, generatedCode.toBuffer())
+    mut errorMessage := ""
 
-    // fs_rmSync(codePath)
-    // fs_rmSync(executablePath)
+    try {
+      process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
+    } catch err: error_Error {
+      errorMessage = err.message
+    }
+
+    fs_rmSync(codePath)
+
+    if !errorMessage.empty {
+      EXPECT_EQ(errorMessage, "")
+      continue
+    }
+
+    mut actualOutput := ""
+
+    try {
+      actualOutput = process_runSync(executablePath).str()
+    } catch err: error_Error {
+      actualOutput = err.message
+    }
+
+    fs_rmSync(executablePath)
+
+    if actualOutput != fileSections.output {
+      EXPECT_EQ(actualOutput, fileSections.output)
+    }
   }
 }
