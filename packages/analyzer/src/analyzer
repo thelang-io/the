@@ -427,7 +427,7 @@ export obj AnalyzerFile {
     } elif it.isBooleanLiteral() {
       return self.tm.get("bool")
     } elif it.isCharacterLiteral() {
-      return self.tm.get("char")
+      return self.tm.get("rune")
     } elif it.isFloatingPointLiteral() {
       mut expression := it.asFloatingPointLiteral()
       definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
