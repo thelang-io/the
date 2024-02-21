@@ -8,6 +8,8 @@ import * as Parser from "the/parser"
 import Codegen from "../src/codegen"
 import retrieveFileSections from "./utils"
 
+import Tests, EXPECT_EQ from "the/testing"
+
 export fn TEST_Codegen () {
   files := fs_scandirSync("./test/codegen")
 
@@ -82,4 +84,10 @@ export fn TEST_Codegen () {
       EXPECT_EQ(actualOutput, fileSections.output)
     }
   }
+}
+
+main {
+  mut tests := Tests{}
+  tests.register("Codegen", TEST_Codegen)
+  tests.run(process_args)
 }

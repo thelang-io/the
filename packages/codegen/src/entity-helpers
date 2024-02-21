@@ -1,0 +1,14 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Analyzer from "the/analyzer"
+import * as AST from "the/c"
+import * as Parser from "the/parser"
+
+export obj EntityHelpers {
+  _: (str) -> str
+  t: (ref Analyzer.Type) -> str
+  typeName: (ref Analyzer.Type) -> str
+}

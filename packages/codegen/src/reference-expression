@@ -1,0 +1,17 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as AST from "the/c"
+import * as Parser from "the/parser"
+import ExpressionHelpers from "./expression-helpers"
+
+export fn generateReferenceExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isReference() {
+    expression := item.asReference()
+    return AST.createUnaryExpression("&", helpers.e(ref expression.expression))
+  }
+
+  return nil
+}
