@@ -56,7 +56,7 @@ export fn TEST_Codegen () {
     mut errorMessage := ""
 
     try {
-      process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
+      process_runSync("clang '" + codePath + "' -o '" + executablePath + "'" + generator.getFlags())
     } catch err: error_Error {
       errorMessage = err.message
     }

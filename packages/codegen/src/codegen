@@ -100,7 +100,8 @@ export obj Codegen {
       extraFlags.push("-lthe")
     }
 
-    return ["-O0", "-w"].concat(extraFlags).join(" ")
+    result := ["-O0", "-w"].concat(extraFlags).join(" ")
+    return result.empty ? "" : (" " + result)
   }
 
   fn stringify (self: ref Self) str {
