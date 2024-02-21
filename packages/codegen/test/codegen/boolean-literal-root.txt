@@ -1,8 +1,11 @@
 main {
-  1;
+  true;
+  false;
 }
 ===== code =====
+#include <stdbool.h>
 int main () {
-  1;
+  true;
+  false;
 }
 ===== output =====

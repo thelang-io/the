@@ -18,10 +18,6 @@ export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
 }
 
 export obj APIBuiltin {
-  mut stddef: bool
-  mut stdint: bool
-  mut stdio: bool
-  mut stdlib: bool
   mut theAny: bool
   mut theBool: bool
   mut theByte: bool
@@ -29,6 +25,12 @@ export obj APIBuiltin {
   mut theMacro: bool
   mut theSafe: bool
   mut theString: bool
+  mut stdbool: bool
+  mut stddef: bool
+  mut stdint: bool
+  mut stdio: bool
+  mut stdlib: bool
+  mut wchar: bool
 }
 
 export obj CodegenEntity {
@@ -124,6 +126,8 @@ export obj Codegen {
       }
 
       return item.codeName
+    } elif name == "bool" || name == "true" || name == "false" {
+      self.builtin.stdbool = true
     } elif (
       name == "EXIT_FAILURE" ||
       name == "EXIT_SUCCESS" ||
@@ -153,9 +157,11 @@ export obj Codegen {
       name == "uint64_t"
     ) {
       self.builtin.stdint = true
+    } elif name == "wchar_t" {
+      self.builtin.wchar = true
     } elif name == "the_any_t" {
       self.builtin.theAny = true
-    } elif name == "bool" || name == "the_bool_str" {
+    } elif name == "the_bool_str" {
       self.builtin.theBool = true
     } elif name == "the_byte_str" {
       self.builtin.theByte = true
@@ -214,10 +220,13 @@ export obj Codegen {
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
+
+    if self.builtin.stdbool { self.statements.push(AST.createIncludeDirective("stdbool.h")) }
     if self.builtin.stddef { self.statements.push(AST.createIncludeDirective("stddef.h")) }
     if self.builtin.stdio { self.statements.push(AST.createIncludeDirective("stdio.h")) }
     if self.builtin.stdint { self.statements.push(AST.createIncludeDirective("stdint.h")) }
     if self.builtin.stdlib { self.statements.push(AST.createIncludeDirective("stdlib.h")) }
+    if self.builtin.wchar { self.statements.push(AST.createIncludeDirective("wchar.h")) }
 
     self.statements.merge(statements)
 
@@ -261,7 +270,8 @@ export obj Codegen {
       return AST.createLiteral(expression.value)
     } elif item.isIntegerLiteral() {
       expression := item.asIntegerLiteral()
-      return AST.createLiteral(expression.value)
+      rawValue := expression.value.replace("O", "").replace("o", "")
+      return AST.createLiteral(rawValue)
     } elif item.isNilLiteral() {
       expression := item.asNilLiteral()
       return AST.createLiteral(self._("NULL"))
@@ -404,8 +414,9 @@ export obj Codegen {
       return self._("int64_t") + " "
     } elif it.name == "isize" {
       return self._("ssize_t") + " "
+    } elif it.name == "rune" {
+      return self._("wchar_t") + " "
     } elif it.name == "str" {
-      self.builtin.theString = true
       return self._("the_str_t") + " "
     } elif it.name == "u8" {
       return self._("uint8_t") + " "

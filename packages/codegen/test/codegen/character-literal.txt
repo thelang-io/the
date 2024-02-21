@@ -1,10 +1,11 @@
 main {
-  'a';
-  '\n';
+  a := 'a'
+  b := '\n'
 }
 ===== code =====
+#include <wchar.h>
 int main () {
-  L'a';
-  L'\n';
+  wchar_t a = L'a';
+  wchar_t b = L'\n';
 }
 ===== output =====
