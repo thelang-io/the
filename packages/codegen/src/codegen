@@ -6,14 +6,6 @@
 import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
-import BlockData from "./block-data"
-import CodegenEntity from "./codegen-entity"
-import EntityHelpers from "./entity-helpers"
-import ExpressionHelpers from "./expression-helpers"
-import generateCallExpression from "./call-expression"
-import generateIdentifier from "./identifier"
-import generateLiteral from "./literal"
-import generateReferenceExpression from "./reference-expression"
 
 export obj CodegenAPIBuiltin {
   mut theAny: bool
@@ -29,6 +21,114 @@ export obj CodegenAPIBuiltin {
   mut stdio: bool
   mut stdlib: bool
   mut wchar: bool
+}
+
+export obj BlockData {
+  mut cleanup: AST.CStatement[]
+
+  fn addCleanup (mut self: ref Self, item: AST.CStatement) {
+    self.cleanup.push(item)
+  }
+
+  fn getCleanup (mut self: ref Self) AST.CStatement[] {
+    mut cleanup := self.cleanup.reverse()
+    self.cleanup = []
+    return cleanup
+  }
+}
+
+export obj CodegenEntity {
+  mut active: bool
+  mut name: str
+  mut codeName: str
+  mut context: any
+  mut generate: (helpers: EntityHelpers, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement
+}
+
+export fn generateCallExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isCall() {
+    expression := item.asCall()
+    return AST.createCallExpression(helpers.e(ref expression.callee))
+  }
+
+  return nil
+}
+
+export obj EntityHelpers {
+  _: (str) -> str
+  t: (ref Analyzer.Type) -> str
+  typeName: (ref Analyzer.Type) -> str
+}
+
+export obj ExpressionHelpers {
+  _: (str) -> str
+  e: (ref Parser.Expression) -> AST.CExpression
+  get: (str) -> ref CodegenEntity
+  has: (str) -> bool
+}
+
+export fn generateIdentifier (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isIdentifier() {
+    expression := item.asIdentifier()
+
+    if helpers.has(expression.name) {
+      return AST.createIdentifier(helpers._(expression.name))
+    } else {
+      return AST.createIdentifier(expression.name)
+    }
+  }
+
+  return nil
+}
+
+export fn generateLiteral (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isBooleanLiteral() {
+    expression := item.asBooleanLiteral()
+    return AST.createLiteral(helpers._(expression.value))
+  } elif item.isCharacterLiteral() {
+    expression := item.asCharacterLiteral()
+    return AST.createLiteral("L'" + expression.value + "'")
+  } elif item.isFloatingPointLiteral() {
+    expression := item.asFloatingPointLiteral()
+    return AST.createLiteral(expression.value)
+  } elif item.isIntegerLiteral() {
+    expression := item.asIntegerLiteral()
+    rawValue := expression.value.replace("O", "").replace("o", "")
+    return AST.createLiteral(rawValue)
+  } elif item.isNilLiteral() {
+    expression := item.asNilLiteral()
+    return AST.createLiteral(helpers._("NULL"))
+  } elif item.isStringLiteral() {
+    expression := item.asStringLiteral()
+    sanitizedValue := expression.value
+      .replace(os_EOL, "\" " + helpers._("THE_EOL") + " \"")
+      .replace("\n", "\" " + helpers._("THE_EOL") + " \"")
+    rawValue := "L\"" + sanitizedValue + "\""
+
+    if !item.hasParent() && item.hasParentNode() {
+      node := item.parentNode()
+
+      if node.isVariableDeclaration() {
+        return AST.createCallExpression(
+          AST.createIdentifier(helpers._("the_str_alloc")),
+          [AST.createLiteral(rawValue)]
+        )
+      }
+    }
+
+    return AST.createLiteral(rawValue)
+  }
+
+  return nil
+}
+
+export fn generateReferenceExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isReference() {
+    expression := item.asReference()
+    return AST.createUnaryExpression("&", helpers.e(ref expression.expression))
+  }
+
+  return nil
 }
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
@@ -572,8 +672,8 @@ export obj Codegen {
             AST.createReturnStatement()
           ),
           // todo
-          // if (underlyingTypeInfo.type->shouldBeFreed()) {
-          //   def += "  " + this->_genFreeFn(underlyingTypeInfo.type, CodegenASTExprUnary::create("*", CodegenASTExprAccess::create("n")))->str() + ";" EOL;
+          // if shouldBeFreed(underlyingTypeInfo.type) {
+          //   self.functionFree(underlyingTypeInfo.type, AST.createUnaryExpression("*", CodegenASTExprAccess::create("n")))
           // }
           AST.createExpressionStatement(AST.createCallExpression(AST.createIdentifier(helpers._("the_safe_free")), [AST.createIdentifier("n")]))
         ]))
