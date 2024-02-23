@@ -239,7 +239,17 @@ export obj Codegen {
       extraFlags.push("-lthe")
     }
 
-    result := ["-O0", "-w"].concat(extraFlags).join(" ")
+    result := [
+      "-O0",
+      "-Wall",
+      "-Werror",
+      "-Wextra",
+      "-pedantic-errors",
+      "-Wno-gnu-binary-literal",
+      "-Wno-strict-prototypes",
+      "-Wno-unused-value",
+      "-Wno-unused-variable",
+    ].concat(extraFlags).join(" ")
     return result.empty ? "" : (" " + result)
   }
 
