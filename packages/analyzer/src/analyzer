@@ -1056,9 +1056,17 @@ export obj AnalyzerFile {
     } elif it.isUnary() {
       mut expression := it.asUnary()
 
-      if expression.operator.t == .OpExcl {
-        operandType := Type.unwrap(self.e(ref expression.operand))
+      operandType := Type.unwrap(
+        expression.operator.t == .OpExcl
+          ? self.e(ref expression.operand)
+          : expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
+            ? self.e(ref expression.operand, withMutable: true)
+            : self.e(ref expression.operand, targetType)
+      )
 
+      it.context = Context.UnaryExpressionContext{operandType: operandType}
+
+      if expression.operator.t == .OpExcl {
         if (
           !Type.match(operandType, self.tm.get("bool")) &&
           !Type.match(operandType, self.tm.get("byte")) &&
@@ -1073,8 +1081,6 @@ export obj AnalyzerFile {
 
         return self.tm.get("bool")
       } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
-        operandType := Type.unwrap(self.e(ref expression.operand, withMutable: true))
-
         if !expression.operand.isAccess() {
           self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
         } elif !operandType.isNumber() {
@@ -1084,11 +1090,7 @@ export obj AnalyzerFile {
             expression.operator.end
           )
         }
-
-        return operandType
       } elif expression.operator.t == .OpMinus {
-        operandType := Type.unwrap(self.e(ref expression.operand, targetType))
-
         if !operandType.isSignedInt() && !operandType.isFloat() {
           self.raise(
             errors.E1025(expression.operator.val, operandType.toString()),
@@ -1096,11 +1098,7 @@ export obj AnalyzerFile {
             expression.operator.end
           )
         }
-
-        return operandType
       } elif expression.operator.t == .OpPlus {
-        operandType := Type.unwrap(self.e(ref expression.operand, targetType))
-
         if !operandType.isNumber() {
           self.raise(
             errors.E1025(expression.operator.val, operandType.toString()),
@@ -1108,11 +1106,7 @@ export obj AnalyzerFile {
             expression.operator.end
           )
         }
-
-        return operandType
       } elif expression.operator.t == .OpTilde {
-        operandType := Type.unwrap(self.e(ref expression.operand, targetType))
-
         if !operandType.isInt() {
           self.raise(
             errors.E1025(expression.operator.val, operandType.toString()),
@@ -1120,11 +1114,9 @@ export obj AnalyzerFile {
             expression.operator.end
           )
         }
-
-        return operandType
-      } else {
-        return Type.unwrap(self.e(ref expression.operand, targetType))
       }
+
+      return operandType
     }
 
     throw error_NewError("Tried analyzing unknown expression")

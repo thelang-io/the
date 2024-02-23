@@ -4,7 +4,7 @@
  */
 
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
-import IdentifierContext, VariableDeclarationContext from "./context"
+import IdentifierContext, UnaryExpressionContext, VariableDeclarationContext from "./context"
 import
   Type,
   TypeBody,
@@ -55,6 +55,7 @@ export NamespaceType
 export ObjectType
 export OptionalType
 export ReferenceType
+export UnaryExpressionContext
 export UnionType
 export Var
 export VarMap

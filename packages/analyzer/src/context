@@ -11,6 +11,10 @@ export obj IdentifierContext {
   mut targetType: (ref Type)?
 }
 
+export obj UnaryExpressionContext {
+  mut operandType: ref Type
+}
+
 export obj VariableDeclarationContext {
   mut varType: ref Type
 }
