@@ -45,15 +45,6 @@ export obj CodegenEntity {
   mut generate: (helpers: EntityHelpers, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement
 }
 
-export fn generateCallExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
-  if item.isCall() {
-    expression := item.asCall()
-    return AST.createCallExpression(helpers.e(ref expression.callee))
-  }
-
-  return nil
-}
-
 export obj EntityHelpers {
   _: (str) -> str
   t: (ref Analyzer.Type) -> str
@@ -94,6 +85,12 @@ export fn generateLiteral (helpers: ExpressionHelpers, item: ref Parser.Expressi
   } elif item.isIntegerLiteral() {
     expression := item.asIntegerLiteral()
     rawValue := expression.value.replace("O", "").replace("o", "")
+
+    if !rawValue.contains("b") && !rawValue.contains("B") && !rawValue.contains("x") && !rawValue.contains("X") {
+      numValue := rawValue.toU64()
+      return AST.createLiteral(rawValue + (numValue > 9223372036854775807 ? "U" : ""))
+    }
+
     return AST.createLiteral(rawValue)
   } elif item.isNilLiteral() {
     expression := item.asNilLiteral()
@@ -122,10 +119,45 @@ export fn generateLiteral (helpers: ExpressionHelpers, item: ref Parser.Expressi
   return nil
 }
 
+export fn generateCallExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isCall() {
+    expression := item.asCall()
+    return AST.createCallExpression(helpers.e(ref expression.callee))
+  }
+
+  return nil
+}
+
 export fn generateReferenceExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
   if item.isReference() {
     expression := item.asReference()
     return AST.createUnaryExpression("&", helpers.e(ref expression.expression))
+  }
+
+  return nil
+}
+
+export fn generateUnaryExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isUnary() {
+    expression := item.asUnary()
+    validateContext(item.context is Analyzer.UnaryExpressionContext)
+    context := item.context as Analyzer.UnaryExpressionContext
+
+    if context.operandType.isFloat() {
+      castExpression := AST.createCastExpression(AST.createType(helpers._("bool")), helpers.e(ref expression.operand))
+
+      return AST.createUnaryExpression(
+        expression.operator.val,
+        castExpression.wrap(),
+        postfix: !expression.prefix
+      )
+    }
+
+    return AST.createUnaryExpression(
+      expression.operator.val,
+      helpers.e(ref expression.operand),
+      postfix: !expression.prefix
+    )
   }
 
   return nil
@@ -165,6 +197,12 @@ export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
     self.isFunction() ||
     self.isMap() ||
     self.isOptional()
+}
+
+export fn validateContext (valid: bool) {
+  if !valid {
+    throw error_NewError("Context is not set")
+  }
 }
 
 export obj Codegen {
@@ -388,10 +426,11 @@ export obj Codegen {
     mut result: AST.CExpression?
 
     if (
-      (result = generateCallExpression(helpers, item)) != nil ||
       (result = generateIdentifier(helpers, item)) != nil ||
+      (result = generateCallExpression(helpers, item)) != nil ||
       (result = generateLiteral(helpers, item)) != nil ||
-      (result = generateReferenceExpression(helpers, item)) != nil
+      (result = generateReferenceExpression(helpers, item)) != nil ||
+      (result = generateUnaryExpression(helpers, item)) != nil
     ) {
       return result
     }
@@ -416,7 +455,7 @@ export obj Codegen {
       return AST.createEmptyStatement()
     } elif item.isVariableDeclaration() {
       statement := item.asVariableDeclaration()
-      self._validateContext(item.context is Analyzer.VariableDeclarationContext)
+      validateContext(item.context is Analyzer.VariableDeclarationContext)
       context := item.context as Analyzer.VariableDeclarationContext
       typeName := self._typeName(context.varType)
       t := AST.createType(self._type(context.varType))
@@ -692,12 +731,6 @@ export obj Codegen {
         return AST.createTypedefDeclaration(AST.createType(helpers.t(t.t) + "*"), entity.codeName)
       }
     })
-  }
-
-  fn _validateContext (valid: bool) {
-    if !valid {
-      throw error_NewError("Context is not set")
-    }
   }
 }
 
