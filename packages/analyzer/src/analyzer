@@ -570,6 +570,11 @@ export obj AnalyzerFile {
         self.tc.set(code, rightType)
       }
 
+      it.context = Context.AssignmentExpressionContext{
+        leftType: leftType,
+        rightType: rightType
+      }
+
       return leftType.isReference() && !rightType.isReference() ? Type.unwrap(leftType) : leftType
     } elif it.isAwait() {
       mut expression := it.asAwait()
