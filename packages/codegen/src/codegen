@@ -58,6 +58,23 @@ export obj ExpressionHelpers {
   has: (str) -> bool
 }
 
+export fn isSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
+  if it.isAlias() {
+    t := it.asAlias()
+    return isSafeForTernaryAlternate(t.t)
+  }
+
+  return it.name == "any" ||
+    it.name == "str" ||
+    it.isArray() ||
+    it.isFunction() ||
+    it.isMap() ||
+    // todo
+    // it.isObj() ||
+    it.isOptional() ||
+    it.isUnion()
+}
+
 export fn generateIdentifier (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
   if item.isIdentifier() {
     expression := item.asIdentifier()
@@ -119,10 +136,32 @@ export fn generateLiteral (helpers: ExpressionHelpers, item: ref Parser.Expressi
   return nil
 }
 
+// todo finalize
 export fn generateCallExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
   if item.isCall() {
     expression := item.asCall()
     return AST.createCallExpression(helpers.e(ref expression.callee))
+  }
+
+  return nil
+}
+
+export fn generateConditionalExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isConditional() {
+    expression := item.asConditional()
+    validateContext(item.context is Analyzer.ConditionalExpressionContext)
+    context := item.context as Analyzer.ConditionalExpressionContext
+    mut alternate := helpers.e(ref expression.alternate)
+
+    if expression.alternate.isAssignment() && !isSafeForTernaryAlternate(context.alternateType) {
+      alternate = alternate.wrap()
+    }
+
+    return AST.createConditionalExpression(
+      helpers.e(ref expression.condition),
+      helpers.e(ref expression.consequent),
+      alternate
+    )
   }
 
   return nil
@@ -439,6 +478,7 @@ export obj Codegen {
       (result = generateIdentifier(helpers, item)) != nil ||
       (result = generateCallExpression(helpers, item)) != nil ||
       (result = generateLiteral(helpers, item)) != nil ||
+      (result = generateConditionalExpression(helpers, item)) != nil ||
       (result = generateReferenceExpression(helpers, item)) != nil ||
       (result = generateUnaryExpression(helpers, item)) != nil
     ) {

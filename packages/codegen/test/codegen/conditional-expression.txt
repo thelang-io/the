@@ -1,0 +1,17 @@
+main {
+  mut vBool: bool
+
+  access1 := vBool ? 0 : 1
+  vBool = true
+  access2 := vBool ? 0 : 1
+
+  lit1 := 1 > 2 ? 3 : 4
+  lit2 := true ? 2 : 3
+
+  unary1 := !false ? 0 : 1
+  unary2 := !true ? 0 : 1
+  unary3 := !!false ? 0 : 1
+  unary4 := !!true ? 0 : 1
+}
+===== code =====
+===== output =====
