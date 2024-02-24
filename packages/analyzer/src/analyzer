@@ -818,6 +818,12 @@ export obj AnalyzerFile {
       consequentType := guessTypeResult.first
       alternateType := guessTypeResult.second
 
+      it.context = Context.ConditionalExpressionContext{
+        conditionType: conditionType,
+        consequentType: consequentType,
+        alternateType: alternateType
+      }
+
       if consequentType.isNumber() && alternateType.isNumber() {
         return Type.largest(consequentType, alternateType)
       } elif !Type.similarTo(consequentType, alternateType) && !Type.similarTo(alternateType, consequentType) {

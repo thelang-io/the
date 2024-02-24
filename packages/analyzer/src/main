@@ -4,7 +4,12 @@
  */
 
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
-import IdentifierContext, UnaryExpressionContext, VariableDeclarationContext from "./context"
+import
+  IdentifierContext,
+  ConditionalExpressionContext,
+  UnaryExpressionContext,
+  VariableDeclarationContext
+from "./context"
 import
   Type,
   TypeBody,
@@ -38,6 +43,9 @@ export AnalyzerFile
 export AnalyzerFileState
 export AnalyzerState
 export IdentifierContext
+export ConditionalExpressionContext
+export UnaryExpressionContext
+export VariableDeclarationContext
 export Type
 export TypeBody
 export TypeProperty
@@ -55,11 +63,9 @@ export NamespaceType
 export ObjectType
 export OptionalType
 export ReferenceType
-export UnaryExpressionContext
 export UnionType
 export Var
 export VarMap
-export VariableDeclarationContext
 export analyze
 export largest
 export match
