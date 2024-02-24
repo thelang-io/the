@@ -38,8 +38,7 @@ export fn TEST_Codegen () {
     file.analyze(ref file.f.program.body)
 
     if !analyzer.errors.empty {
-      emptyErrors: str[]
-      EXPECT_EQ(analyzer.errors, emptyErrors)
+      EXPECT_EQ(analyzer.errors.join(os_EOL), "")
       continue
     }
 

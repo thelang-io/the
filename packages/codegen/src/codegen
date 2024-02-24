@@ -54,6 +54,12 @@ export obj EntityHelpers {
 export obj ExpressionHelpers {
   _: (str) -> str
   e: (ref Parser.Expression) -> AST.CExpression
+  functionCopy: (ref Analyzer.Type, AST.CExpression) -> AST.CExpression
+  functionEq: (ref Analyzer.Type, AST.CExpression, AST.CExpression) -> AST.CExpression
+  functionFree: (ref Analyzer.Type, AST.CExpression) -> AST.CExpression
+  functionNe: (ref Analyzer.Type, AST.CExpression, AST.CExpression) -> AST.CExpression
+  functionRealloc: (ref Analyzer.Type, AST.CExpression, AST.CExpression) -> AST.CExpression
+  functionStr: (ref Analyzer.Type, AST.CExpression) -> AST.CExpression
   get: (str) -> ref CodegenEntity
   has: (str) -> bool
 }
@@ -131,6 +137,52 @@ export fn generateLiteral (helpers: ExpressionHelpers, item: ref Parser.Expressi
     }
 
     return AST.createLiteral(rawValue)
+  }
+
+  return nil
+}
+
+export fn generateAssignmentExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isAssignment() {
+    expression := item.asAssignment()
+    validateContext(item.context is Analyzer.AssignmentExpressionContext)
+    context := item.context as Analyzer.AssignmentExpressionContext
+    left := helpers.e(ref expression.left)
+    mut right := helpers.e(ref expression.right)
+
+    if expression.operator.t == .OpPlusEq && (context.leftType.name == "str" || context.rightType.name == "str") {
+      return AST.createAssignmentExpression(
+        left,
+        "=",
+        AST.createCallExpression(AST.createIdentifier(helpers._("the_str_realloc")), [
+          left,
+          AST.createCallExpression(AST.createIdentifier(helpers._("the_str_concat")), [left, right])
+        ])
+      )
+    } elif (
+      context.leftType.name == "any" || context.rightType.name == "any" ||
+      context.leftType.name == "str" || context.rightType.name == "str" ||
+      context.leftType.isArray() || context.rightType.isArray() ||
+      context.leftType.isFunction() || context.rightType.isFunction() ||
+      context.leftType.isMap() || context.rightType.isMap() ||
+      // todo
+      // context.leftType.isObject() || context.rightType.isObject() ||
+      context.leftType.isOptional() || context.rightType.isOptional() ||
+      context.leftType.isUnion() || context.rightType.isUnion()
+    ) {
+      mut result := helpers.functionRealloc(context.leftType, left, right)
+
+      if !item.hasParent() {
+        result = helpers.functionCopy(context.leftType, result)
+      }
+
+      return result
+    } elif expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
+      right = AST.createBinaryExpression(left, expression.operator.val, right)
+      return AST.createAssignmentExpression(left, "=", right)
+    }
+
+    return AST.createAssignmentExpression(left, expression.operator.val, right)
   }
 
   return nil
@@ -441,6 +493,30 @@ export obj Codegen {
     )
   }
 
+  fn _functionCopy (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
+    return expression
+  }
+
+  fn _functionEq (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression, reverse := false) AST.CExpression {
+    return left
+  }
+
+  fn _functionFree (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
+    return expression
+  }
+
+  fn _functionNe (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
+    return self._functionEq(it, left, right, reverse: true)
+  }
+
+  fn _functionRealloc (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
+    return left
+  }
+
+  fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression, copy := true, escape := true) AST.CExpression {
+    return expression
+  }
+
   fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
     mut result: AST.CStatement[]
     l := items.len
@@ -462,6 +538,30 @@ export obj Codegen {
         selfRef := ref self // todo remove after v1
         return self._generateExpression(item)
       },
+      functionCopy: (it: ref Analyzer.Type, expression: AST.CExpression) -> AST.CExpression {
+        selfRef := ref self // todo remove after v1
+        return self._functionCopy(it, expression)
+      },
+      functionEq: (it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) -> AST.CExpression {
+        selfRef := ref self // todo remove after v1
+        return self._functionEq(it, left, right)
+      },
+      functionFree: (it: ref Analyzer.Type, expression: AST.CExpression) -> AST.CExpression {
+        selfRef := ref self // todo remove after v1
+        return self._functionFree(it, expression)
+      },
+      functionNe: (it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) -> AST.CExpression {
+        selfRef := ref self // todo remove after v1
+        return self._functionNe(it, left, right)
+      },
+      functionRealloc: (it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) -> AST.CExpression {
+        selfRef := ref self // todo remove after v1
+        return self._functionRealloc(it, left, right)
+      },
+      functionStr: (it: ref Analyzer.Type, expression: AST.CExpression) -> AST.CExpression {
+        selfRef := ref self // todo remove after v1
+        return self._functionStr(it, expression)
+      },
       get: (item: str) -> ref CodegenEntity {
         selfRef := ref self // todo remove after v1
         return self._getEntity(item)
@@ -478,6 +578,7 @@ export obj Codegen {
       (result = generateIdentifier(helpers, item)) != nil ||
       (result = generateCallExpression(helpers, item)) != nil ||
       (result = generateLiteral(helpers, item)) != nil ||
+      (result = generateAssignmentExpression(helpers, item)) != nil ||
       (result = generateConditionalExpression(helpers, item)) != nil ||
       (result = generateReferenceExpression(helpers, item)) != nil ||
       (result = generateUnaryExpression(helpers, item)) != nil

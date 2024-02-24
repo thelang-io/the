@@ -1,0 +1,18 @@
+main {
+  a := 1
+  mut b := a
+  b = a
+  mut c := a + b
+  c = b = a
+  mut d := 2
+  d = c = b = a
+  d = a + b
+  d = a + b + c
+  d = true ? 1 : 2 + a
+  d = true ? b = (1 + (c = 1) + a) : 3 + 5
+  d = ~a
+  d = ~a + ~b
+  d = ~a + ~b + ~c
+}
+===== code =====
+===== output =====
