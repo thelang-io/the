@@ -1765,8 +1765,8 @@ export obj AnalyzerFile {
         self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
       }
 
-      varType := statement.t == nil
-        ? self.e(ref (statement.initializer as Parser.Expression), withMutable: statement.mutable)
+      varType := statement.t == nil && statement.initializer != nil
+        ? self.e(ref statement.initializer, withMutable: statement.mutable && !statement.initializer.isAccess())
         : self.t(ref statement.t)
 
       if Type.match(varType, self.tm.get("void")) {
@@ -1779,7 +1779,11 @@ export obj AnalyzerFile {
       }
 
       if statement.t != nil && statement.initializer != nil {
-        initializerType := self.e(ref statement.initializer, Type.opt(varType), withMutable: statement.mutable)
+        initializerType := self.e(
+          ref statement.initializer,
+          Type.opt(varType),
+          withMutable: statement.mutable && !statement.initializer.isAccess()
+        )
 
         if !Type.similarTo(initializerType, varType) {
           self.raise(
