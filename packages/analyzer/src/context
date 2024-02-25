@@ -16,6 +16,11 @@ export obj AssignmentExpressionContext {
   mut rightType: ref Type
 }
 
+export obj BinaryExpressionContext {
+  mut leftType: ref Type
+  mut rightType: ref Type
+}
+
 export obj ConditionalExpressionContext {
   mut conditionType: ref Type
   mut consequentType: ref Type

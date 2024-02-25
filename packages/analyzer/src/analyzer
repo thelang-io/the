@@ -636,6 +636,11 @@ export obj AnalyzerFile {
         )
       }
 
+      it.context = Context.BinaryExpressionContext{
+        leftType: leftType,
+        rightType: rightType
+      }
+
       if (
         expression.operator.t == .OpEqEq ||
         expression.operator.t == .OpExclEq ||

@@ -64,23 +64,6 @@ export obj ExpressionHelpers {
   has: (str) -> bool
 }
 
-export fn isSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
-  if it.isAlias() {
-    t := it.asAlias()
-    return isSafeForTernaryAlternate(t.t)
-  }
-
-  return it.name == "any" ||
-    it.name == "str" ||
-    it.isArray() ||
-    it.isFunction() ||
-    it.isMap() ||
-    // todo
-    // it.isObj() ||
-    it.isOptional() ||
-    it.isUnion()
-}
-
 export fn generateIdentifier (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
   if item.isIdentifier() {
     expression := item.asIdentifier()
@@ -147,10 +130,12 @@ export fn generateAssignmentExpression (helpers: ExpressionHelpers, item: ref Pa
     expression := item.asAssignment()
     validateContext(item.context is Analyzer.AssignmentExpressionContext)
     context := item.context as Analyzer.AssignmentExpressionContext
+    leftType := Analyzer.unwrap(context.leftType, withReference: false)
+    rightType := Analyzer.unwrap(context.rightType, withReference: false)
     left := helpers.e(ref expression.left)
     mut right := helpers.e(ref expression.right)
 
-    if expression.operator.t == .OpPlusEq && (context.leftType.name == "str" || context.rightType.name == "str") {
+    if expression.operator.t == .OpPlusEq && (leftType.name == "str" || rightType.name == "str") {
       return AST.createAssignmentExpression(
         left,
         "=",
@@ -159,30 +144,56 @@ export fn generateAssignmentExpression (helpers: ExpressionHelpers, item: ref Pa
           AST.createCallExpression(AST.createIdentifier(helpers._("the_str_concat")), [left, right])
         ])
       )
-    } elif (
-      context.leftType.name == "any" || context.rightType.name == "any" ||
-      context.leftType.name == "str" || context.rightType.name == "str" ||
-      context.leftType.isArray() || context.rightType.isArray() ||
-      context.leftType.isFunction() || context.rightType.isFunction() ||
-      context.leftType.isMap() || context.rightType.isMap() ||
-      // todo
-      // context.leftType.isObject() || context.rightType.isObject() ||
-      context.leftType.isOptional() || context.rightType.isOptional() ||
-      context.leftType.isUnion() || context.rightType.isUnion()
-    ) {
-      mut result := helpers.functionRealloc(context.leftType, left, right)
-
-      if !item.hasParent() {
-        result = helpers.functionCopy(context.leftType, result)
-      }
-
-      return result
+    } elif !typePrimitive(leftType) || !typePrimitive(rightType) {
+      result := helpers.functionRealloc(leftType, left, right)
+      return item.hasParent() ? result : helpers.functionCopy(leftType, result)
     } elif expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
       right = AST.createBinaryExpression(left, expression.operator.val, right)
       return AST.createAssignmentExpression(left, "=", right)
     }
 
     return AST.createAssignmentExpression(left, expression.operator.val, right)
+  }
+
+  return nil
+}
+
+export fn generateBinaryExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isBinary() {
+    expression := item.asBinary()
+    validateContext(item.context is Analyzer.BinaryExpressionContext)
+    context := item.context as Analyzer.BinaryExpressionContext
+    leftType := Analyzer.unwrap(context.leftType, withReference: false)
+    rightType := Analyzer.unwrap(context.rightType, withReference: false)
+    left := helpers.e(ref expression.left)
+    mut right := helpers.e(ref expression.right)
+
+    if (
+      (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
+      (!typePrimitive(context.leftType) || !typePrimitive(context.rightType))
+    ) {
+      return expression.operator.t == .OpEqEq ? helpers.functionEq(leftType, left, right) : helpers.functionNe(leftType, left, right)
+    } elif leftType.name == "str" && rightType.name == "str" && (
+      expression.operator.t == .OpLt ||
+      expression.operator.t == .OpLtEq ||
+      expression.operator.t == .OpGt ||
+      expression.operator.t == .OpGtEq
+    ) {
+      direction := expression.operator.t == .OpLt
+        ? "lt"
+        : expression.operator.t == .OpLtEq
+          ? "le"
+          : expression.operator.t == .OpGt
+            ? "gt"
+            : "ge"
+
+      return AST.createCallExpression(AST.createIdentifier(helpers._("the_str_" + direction)), [left, right])
+    } elif expression.operator.t == .OpPlus && leftType.name == "str" && rightType.name == "str" {
+      result := AST.createCallExpression(AST.createIdentifier(helpers._("the_str_concat")), [left, right])
+      return item.hasParent() ? result : helpers.functionFree(leftType, result)
+    }
+
+    return AST.createBinaryExpression(left, expression.operator.val, right)
   }
 
   return nil
@@ -203,9 +214,10 @@ export fn generateConditionalExpression (helpers: ExpressionHelpers, item: ref P
     expression := item.asConditional()
     validateContext(item.context is Analyzer.ConditionalExpressionContext)
     context := item.context as Analyzer.ConditionalExpressionContext
+    alternateType := Analyzer.unwrap(context.alternateType, withReference: false)
     mut alternate := helpers.e(ref expression.alternate)
 
-    if expression.alternate.isAssignment() && !isSafeForTernaryAlternate(context.alternateType) {
+    if expression.alternate.isAssignment() && !typeSafeForTernaryAlternate(alternateType) {
       alternate = alternate.wrap()
     }
 
@@ -261,6 +273,32 @@ export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   elif parameter.required { return "FP3" }
   elif parameter.variadic { return "FP4" }
   else { return "FP1" }
+}
+
+export fn typePrimitive (it: ref Analyzer.Type) bool {
+  return !(
+    it.name == "any" ||
+    it.name == "str" ||
+    it.isArray() ||
+    it.isFunction() ||
+    it.isMap() ||
+    // todo
+    // it.isObject() ||
+    it.isOptional() ||
+    it.isUnion()
+  )
+}
+
+export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
+  return it.name == "any" ||
+    it.name == "str" ||
+    it.isArray() ||
+    it.isFunction() ||
+    it.isMap() ||
+    // todo
+    // it.isObj() ||
+    it.isOptional() ||
+    it.isUnion()
 }
 
 export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
@@ -497,7 +535,13 @@ export obj Codegen {
     return expression
   }
 
-  fn _functionEq (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression, reverse := false) AST.CExpression {
+  fn _functionEq (
+    mut self: ref Self,
+    it: ref Analyzer.Type,
+    left: AST.CExpression,
+    right: AST.CExpression,
+    reverse := false
+  ) AST.CExpression {
     return left
   }
 
@@ -505,15 +549,31 @@ export obj Codegen {
     return expression
   }
 
-  fn _functionNe (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
+  fn _functionNe (
+    mut self: ref Self,
+    it: ref Analyzer.Type,
+    left: AST.CExpression,
+    right: AST.CExpression
+  ) AST.CExpression {
     return self._functionEq(it, left, right, reverse: true)
   }
 
-  fn _functionRealloc (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
+  fn _functionRealloc (
+    mut self: ref Self,
+    it: ref Analyzer.Type,
+    left: AST.CExpression,
+    right: AST.CExpression
+  ) AST.CExpression {
     return left
   }
 
-  fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression, copy := true, escape := true) AST.CExpression {
+  fn _functionStr (
+    mut self: ref Self,
+    it: ref Analyzer.Type,
+    expression: AST.CExpression,
+    copy := true,
+    escape := true
+  ) AST.CExpression {
     return expression
   }
 
@@ -579,6 +639,7 @@ export obj Codegen {
       (result = generateCallExpression(helpers, item)) != nil ||
       (result = generateLiteral(helpers, item)) != nil ||
       (result = generateAssignmentExpression(helpers, item)) != nil ||
+      (result = generateBinaryExpression(helpers, item)) != nil ||
       (result = generateConditionalExpression(helpers, item)) != nil ||
       (result = generateReferenceExpression(helpers, item)) != nil ||
       (result = generateUnaryExpression(helpers, item)) != nil
@@ -865,7 +926,9 @@ export obj Codegen {
           // if shouldBeFreed(underlyingTypeInfo.type) {
           //   self.functionFree(underlyingTypeInfo.type, AST.createUnaryExpression("*", CodegenASTExprAccess::create("n")))
           // }
-          AST.createExpressionStatement(AST.createCallExpression(AST.createIdentifier(helpers._("the_safe_free")), [AST.createIdentifier("n")]))
+          AST.createExpressionStatement(
+            AST.createCallExpression(AST.createIdentifier(helpers._("the_safe_free")), [AST.createIdentifier("n")])
+          )
         ]))
       }
     })
