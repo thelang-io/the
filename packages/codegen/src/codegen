@@ -100,7 +100,7 @@ export fn generateLiteral (helpers: ExpressionHelpers, item: ref Parser.Expressi
     return AST.createLiteral(rawValue)
   } elif item.isNilLiteral() {
     expression := item.asNilLiteral()
-    return AST.createLiteral(helpers._("NULL"))
+    return AST.createIdentifier(helpers._("NULL"))
   } elif item.isStringLiteral() {
     expression := item.asStringLiteral()
     sanitizedValue := expression.value
@@ -226,6 +226,16 @@ export fn generateConditionalExpression (helpers: ExpressionHelpers, item: ref P
       helpers.e(ref expression.consequent),
       alternate
     )
+  }
+
+  return nil
+}
+
+export fn generateParenthesizedExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isParenthesized() {
+    expression := item.asParenthesized()
+    result := helpers.e(ref expression.expression)
+    return result.wrap()
   }
 
   return nil
@@ -376,6 +386,7 @@ export obj Codegen {
       "-pedantic-errors",
       "-Wno-gnu-binary-literal",
       "-Wno-strict-prototypes",
+      "-Wno-unused-but-set-variable",
       "-Wno-unused-value",
       "-Wno-unused-variable",
     ].concat(extraFlags).join(" ")
@@ -531,6 +542,98 @@ export obj Codegen {
     )
   }
 
+  fn _defaultInitializerObjectExpression (mut self: ref Self, it: ref Analyzer.Type) AST.CExpression {
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._defaultInitializerObjectExpression(t.t)
+    } elif it.name == "any" {
+      return AST.createCastExpression(AST.createType(self._("the_any_t")), AST.createInitializerListExpression([
+        AST.createLiteral(-1),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL"))
+      ]))
+    } elif it.name == "bool" {
+      return AST.createIdentifier(self._("false"))
+    } elif it.name == "char" {
+      return AST.createLiteral("'\\0'")
+    } elif it.name == "str" {
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_alloc")), [
+        AST.createLiteral("\"\"")
+      ])
+    } elif it.isArray() || it.isMap() {
+      return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), [
+        AST.createLiteral(0)
+      ])
+    // todo
+    // } elif it.isObject() {
+      // mut args: AST.CExpression[]
+      // loop i := 0; i < it.properties.len; i++ {
+      //   property := it.properties[i]
+      //   if property.builtin || property.t.isMethod() {
+      //     continue
+      //   }
+      //   args.push(self._defaultInitializerObjectExpression(property.t))
+      // }
+      // return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), args)
+    } elif it.isOptional() {
+      return AST.createIdentifier(self._("NULL"))
+    } elif it.isUnion() {
+      // todo
+    } elif !it.isFunction() && !it.isReference() {
+      return AST.createLiteral(0)
+    }
+
+    throw error_NewError("Tried default object expressions declaration on unknown type")
+  }
+
+  fn _defaultInitializerVariableDeclaration (mut self: ref Self, it: ref Analyzer.Type) AST.CExpression {
+    if it.isAlias () {
+      t := it.asAlias()
+      return self._defaultInitializerVariableDeclaration(t.t)
+    } elif it.name == "any" {
+      return AST.createInitializerListExpression([
+        AST.createLiteral(-1),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL"))
+      ])
+    } elif it.name == "bool" {
+      return AST.createIdentifier(self._("false"))
+    } elif it.name == "char" {
+      return AST.createLiteral("'\\0'")
+    } elif it.name == "str" {
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_alloc")), [AST.createLiteral("\"\"")])
+    } elif it.isArray() || it.isMap() {
+      return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), [
+        AST.createLiteral(0)
+      ])
+    // todo
+    // } elif it.isObject() {
+      // mut args : AST.CExpression[]
+      // loop i := 0; i < it.properties.len; i++ {
+      //   property := it.properties[i]
+      //   if property.builtin || property.t.isMethod() {
+      //     continue
+      //   }
+      //   args.push(self._defaultInitializerObjectExpression(property.t))
+      // }
+      // return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), args)
+    } elif it.isOptional() {
+      return AST.createIdentifier(self._("NULL"))
+    } elif it.isUnion() {
+      // todo
+    } elif !it.isFunction() && !it.isReference() {
+      return AST.createLiteral(0)
+    }
+
+    throw error_NewError("Tried default initializer variable declaration on unknown type")
+  }
+
   fn _functionCopy (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
     return expression
   }
@@ -638,6 +741,7 @@ export obj Codegen {
       (result = generateIdentifier(helpers, item)) != nil ||
       (result = generateCallExpression(helpers, item)) != nil ||
       (result = generateLiteral(helpers, item)) != nil ||
+      (result = generateParenthesizedExpression(helpers, item)) != nil ||
       (result = generateAssignmentExpression(helpers, item)) != nil ||
       (result = generateBinaryExpression(helpers, item)) != nil ||
       (result = generateConditionalExpression(helpers, item)) != nil ||
@@ -683,31 +787,15 @@ export obj Codegen {
         )
       }
 
-      if context.varType.isOptional() {
-        mut initializer: AST.CExpression?
+      // todo should always have initializer
+      // mut vBool: bool
+      // access1 := vBool ? 0 : 1
 
-        if statement.initializer != nil {
-          if !statement.initializer.isNilLiteral() {
-            initializer = self._generateExpression(ref statement.initializer)
-          }
-        }
+      initializer := statement.initializer == nil
+        ? self._defaultInitializerVariableDeclaration(context.varType)
+        : self._generateExpression(ref statement.initializer)
 
-        return AST.createVariableDeclaration(
-          t,
-          statement.name.name,
-          initializer == nil
-            ? AST.createIdentifier(self._("NULL"))
-            : AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), [initializer])
-        )
-      } else {
-        mut initializer: AST.CExpression?
-
-        if statement.initializer != nil {
-          initializer = self._generateExpression(ref statement.initializer)
-        }
-
-        return AST.createVariableDeclaration(t, statement.name.name, initializer)
-      }
+      return AST.createVariableDeclaration(t, statement.name.name, initializer)
     }
 
     throw error_NewError("Tried code generation for unknown statement")
