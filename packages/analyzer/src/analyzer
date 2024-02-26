@@ -503,6 +503,13 @@ export obj AnalyzerFile {
 
       if expression.elements.empty {
         if elementType == nil {
+          result := self.tm.createArray(elementType as ref Type.Type)
+
+          it.context = Context.ArrayExpressionContext{
+            t: result,
+            elementType: elementType
+          }
+
           self.raise(errors.E1007(), it.start, it.end)
           return self.tm.createArray(self.tm.get("any"))
         }
@@ -524,6 +531,13 @@ export obj AnalyzerFile {
             elementType = self.tm.unionAdd(elementType, t)
           }
         }
+      }
+
+      result := self.tm.createArray(elementType as ref Type.Type)
+
+      it.context = Context.ArrayExpressionContext{
+        t: result,
+        elementType: elementType
       }
 
       return self.tm.createArray(elementType as ref Type.Type)

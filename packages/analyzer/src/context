@@ -11,6 +11,11 @@ export obj IdentifierContext {
   mut targetType: (ref Type)?
 }
 
+export obj ArrayExpressionContext {
+  mut t: ref Type
+  mut elementType: ref Type
+}
+
 export obj AssignmentExpressionContext {
   mut leftType: ref Type
   mut rightType: ref Type

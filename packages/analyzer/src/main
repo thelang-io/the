@@ -6,6 +6,7 @@
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
 import
   IdentifierContext,
+  ArrayExpressionContext,
   AssignmentExpressionContext,
   BinaryExpressionContext,
   ConditionalExpressionContext,
@@ -45,6 +46,7 @@ export AnalyzerFile
 export AnalyzerFileState
 export AnalyzerState
 export IdentifierContext
+export ArrayExpressionContext
 export AssignmentExpressionContext
 export BinaryExpressionContext
 export ConditionalExpressionContext
