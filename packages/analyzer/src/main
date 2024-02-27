@@ -10,6 +10,7 @@ import
   AssignmentExpressionContext,
   BinaryExpressionContext,
   ConditionalExpressionContext,
+  IsExpressionContext,
   UnaryExpressionContext,
   VariableDeclarationContext
 from "./context"
@@ -50,6 +51,7 @@ export ArrayExpressionContext
 export AssignmentExpressionContext
 export BinaryExpressionContext
 export ConditionalExpressionContext
+export IsExpressionContext
 export UnaryExpressionContext
 export VariableDeclarationContext
 export Type

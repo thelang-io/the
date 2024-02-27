@@ -32,6 +32,11 @@ export obj ConditionalExpressionContext {
   mut alternateType: ref Type
 }
 
+export obj IsExpressionContext {
+  mut leftType: ref Type
+  mut rightType: ref Type
+}
+
 export obj UnaryExpressionContext {
   mut operandType: ref Type
 }

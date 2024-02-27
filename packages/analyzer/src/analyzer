@@ -902,6 +902,11 @@ export obj AnalyzerFile {
         )
       }
 
+      it.context = Context.IsExpressionContext{
+        leftType: expressionType,
+        rightType: t
+      }
+
       return self.tm.get("bool")
     } elif it.isMap() {
       mut expression := it.asMap()
