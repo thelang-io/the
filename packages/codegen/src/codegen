@@ -47,7 +47,9 @@ export obj CodegenEntity {
 
 export obj EntityHelpers {
   _: (str) -> str
+  mut lastTypeId: ref int
   t: (ref Analyzer.Type) -> str
+  typeDef: (ref Analyzer.Type) -> str
   typeName: (ref Analyzer.Type) -> str
 }
 
@@ -63,6 +65,7 @@ export obj ExpressionHelpers {
   get: (str) -> ref CodegenEntity
   has: (str) -> bool
   t: (ref Analyzer.Type) -> str
+  typeDef: (ref Analyzer.Type) -> str
   typeName: (ref Analyzer.Type) -> str
 }
 
@@ -253,6 +256,20 @@ export fn generateConditionalExpression (helpers: ExpressionHelpers, item: ref P
   return nil
 }
 
+export fn generateIsExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
+  if item.isIs() {
+    expression := item.asIs()
+    validateContext(item.context is Analyzer.IsExpressionContext)
+    context := item.context as Analyzer.IsExpressionContext
+    left := AST.createPropertyAccessExpression(helpers.e(ref expression.expression), "t")
+    right := AST.createIdentifier(helpers.typeDef(context.rightType))
+
+    return AST.createBinaryExpression(left, "==", right)
+  }
+
+  return nil
+}
+
 export fn generateParenthesizedExpression (helpers: ExpressionHelpers, item: ref Parser.Expression) AST.CExpression? {
   if item.isParenthesized() {
     expression := item.asParenthesized()
@@ -375,6 +392,7 @@ export obj Codegen {
   mut mainStatements: AST.CStatement[]
   mut globalStatements: AST.CStatement[]
   mut statements: AST.CStatement[]
+  mut lastTypeId: int
 
   fn init (mut self: ref Self) {
   }
@@ -505,9 +523,14 @@ export obj Codegen {
         selfRef := ref self // todo remove after v1
         return self._(name)
       },
+      lastTypeId: ref self.lastTypeId,
       t: (it: ref Analyzer.Type) -> str {
         selfRef := ref self // todo remove after v1
         return self._type(it)
+      },
+      typeDef: (it: ref Analyzer.Type) -> str {
+        selfRef := ref self // todo remove after v1
+        return self._typeDef(it)
       },
       typeName: (it: ref Analyzer.Type) -> str {
         selfRef := ref self // todo remove after v1
@@ -759,6 +782,10 @@ export obj Codegen {
         selfRef := ref self // todo remove after v1
         return self._type(it)
       },
+      typeDef: (it: ref Analyzer.Type) -> str {
+        selfRef := ref self // todo remove after v1
+        return self._typeDef(it)
+      },
       typeName: (it: ref Analyzer.Type) -> str {
         selfRef := ref self // todo remove after v1
         return self._typeName(it)
@@ -876,7 +903,7 @@ export obj Codegen {
     } elif it.name == "i64" {
       return self._("int64_t") + " "
     } elif it.name == "isize" {
-      return self._("ssize_t") + " "
+      return self._("ptrdiff_t") + " "
     } elif it.name == "rune" {
       return self._("wchar_t") + " "
     } elif it.name == "str" {
@@ -904,6 +931,7 @@ export obj Codegen {
       if !self._hasEntity(name) { self._typeReference(it, typeName, name) }
       return self._(name) + " "
     } elif (
+      it.isArray() ||
       it.isEnum() ||
       it.isFunction() ||
       it.isMap() ||
@@ -915,6 +943,24 @@ export obj Codegen {
     }
 
     throw error_NewError("Failed to generate type for '" + it.name + "'")
+  }
+
+  fn _typeDef (mut self: ref Self, it: ref Analyzer.Type) str {
+    typeName := "TYPE_" + self._typeName(it)
+
+    if self._hasEntity(typeName) {
+      return typeName
+    }
+
+    self.entities.push(CodegenEntity{
+      name: typeName,
+      codeName: typeName,
+      context: it,
+      generate: (helpers: EntityHelpers, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        lastTypeId := ++helpers.lastTypeId
+        return AST.createDefineDirective(entity.codeName, nil, lastTypeId.str())
+      }
+    })
   }
 
   fn _typeName (mut self: ref Self, it: ref Analyzer.Type) str {
