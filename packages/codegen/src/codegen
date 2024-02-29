@@ -680,31 +680,27 @@ export obj Codegen {
   }
 
   fn _functionCopy (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._functionCopy(t.t, expression)
+    } elif it.name == "any" {
+      return AST.createCallExpression(AST.createIdentifier(self._("any_copy")), [expression])
+    } elif it.name == "str" {
+      return AST.createCallExpression(AST.createIdentifier(self._("str_copy")), [expression])
+    } elif (
+      it.isArray() ||
+      it.isFunction() ||
+      it.isMap() ||
+      // todo
+      // it.isObject() ||
+      it.isOptional() ||
+      it.isUnion()
+    ) {
+      typeName := self._typeName(it)
+      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_copy")), [expression])
+    }
+
     return expression
-    // auto result = expr
-    // if (type->isAlias()) {
-    //   result = this->_genCopyFn(std::get<TypeAlias>(type->body).type, result)
-    // } else if (type->isAny()) {
-    //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("any_copy")), {result})
-    // } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("buffer_copy")), {result})
-    // } else if (
-    //   type->isArray() ||
-    //   type->isFn() ||
-    //   type->isMap() ||
-    //   type->isObj() ||
-    //   type->isOpt() ||
-    //   type->isUnion()
-    // ) {
-    //   auto typeInfo = this->_typeInfo(type)
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_copy")),
-    //     {result}
-    //   )
-    // } else if (type->isStr()) {
-    //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_copy")), {result})
-    // }
-    // return result
   }
 
   fn _functionEq (
@@ -714,78 +710,71 @@ export obj Codegen {
     right: AST.CExpression,
     reverse := false
   ) AST.CExpression {
-    return left
-    // auto direction = std::string(reverse ? "ne" : "eq");
-    // if (type->isAlias()) {
-    //   return this->_genEqFn(std::get<TypeAlias>(type->body).type, leftExpr, rightExpr, reverse);
-    // } else if (type->isAny()) {
-    //   return CodegenASTExprAssign::create(
-    //     CodegenASTExprAccess::create(leftExpr, "d"),
-    //     reverse ? "!=" : "==",
-    //     CodegenASTExprAccess::create(rightExpr, "d")
-    //   );
-    // } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    //   return CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("buffer_" + direction)),
-    //     {this->_genCopyFn(type, leftExpr), this->_genCopyFn(type, rightExpr)}
-    //   );
-    // } else if (
-    //   type->isArray() ||
-    //   type->isMap() ||
-    //   type->isObj() ||
-    //   type->isOpt() ||
-    //   type->isUnion()
-    // ) {
-    //   auto typeInfo = this->_typeInfo(type);
-    //   return CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_" + direction)),
-    //     {this->_genCopyFn(typeInfo.type, leftExpr), this->_genCopyFn(typeInfo.type, rightExpr)}
-    //   );
-    // } else if (type->isStr()) {
-    //   return CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("str_" + direction + "_str")),
-    //     {this->_genCopyFn(type, leftExpr), this->_genCopyFn(type, rightExpr)}
-    //   );
-    // } else {
-    //   return CodegenASTExprAssign::create(leftExpr, reverse ? "!=" : "==", rightExpr);
-    // }
+    direction := reverse ? "ne" : "eq"
+
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._functionEq(t.t, left, right, reverse)
+    } elif it.name == "any" {
+      //   return CodegenASTExprAssign::create(
+      //     CodegenASTExprAccess::create(leftExpr, "d"),
+      //     reverse ? "!=" : "==",
+      //     CodegenASTExprAccess::create(rightExpr, "d")
+      //   )
+    } elif it.name == "str" {
+      //   return CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_("str_" + direction)),
+      //     {this->_genCopyFn(type, leftExpr), this->_genCopyFn(type, rightExpr)}
+      //   )
+    } elif (
+      it.isArray() ||
+      it.isMap() ||
+      // todo
+      // it.isObject() ||
+      it.isOptional() ||
+      it.isUnion()
+    ) {
+      //   auto typeInfo = this->_typeInfo(type);
+      //   return CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_" + direction)),
+      //     {this->_genCopyFn(typeInfo.type, leftExpr), this->_genCopyFn(typeInfo.type, rightExpr)}
+      //   )
+    } else {
+      //   return CodegenASTExprAssign::create(leftExpr, reverse ? "!=" : "==", rightExpr)
+    }
   }
 
   fn _functionFree (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._functionFree(t.t, expression)
+    } elif it.name == "any" {
+      //   result = CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_("any_free")),
+      //     {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct any")), result)}
+      //   )
+    } elif it.name == "str" {
+      //   result = CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_("str_free")),
+      //     {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct str")), result)}
+      //   )
+    } elif (
+      it.isArray() ||
+      it.isFunction() ||
+      it.isMap() ||
+      // todo
+      // it.isObject() ||
+      it.isOptional() ||
+      it.isUnion()
+    ) {
+      //   auto typeInfo = this->_typeInfo(type);
+      //   result = CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_free")),
+      //     {CodegenASTExprCast::create(CodegenASTType::create(typeInfo.typeCodeTrimmed), result)}
+      //   )
+    }
+
     return expression
-    // auto result = expr;
-    // if (type->isAlias()) {
-    //   result = this->_genFreeFn(std::get<TypeAlias>(type->body).type, result);
-    // } else if (type->isAny()) {
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("any_free")),
-    //     {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct any")), result)}
-    //   );
-    // } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("buffer_free")),
-    //     {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct buffer")), result)}
-    //   );
-    // } else if (
-    //   type->isArray() ||
-    //   type->isFn() ||
-    //   type->isMap() ||
-    //   type->isObj() ||
-    //   type->isOpt() ||
-    //   type->isUnion()
-    // ) {
-    //   auto typeInfo = this->_typeInfo(type);
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_free")),
-    //     {CodegenASTExprCast::create(CodegenASTType::create(typeInfo.typeCodeTrimmed), result)}
-    //   );
-    // } else if (type->isStr()) {
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("str_free")),
-    //     {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct str")), result)}
-    //   );
-    // }
-    // return result;
   }
 
   fn _functionNe (
@@ -803,47 +792,42 @@ export obj Codegen {
     left: AST.CExpression,
     right: AST.CExpression
   ) AST.CExpression {
-    return left
-    // auto result = CodegenASTExprNull::create();
-    // if (type->isAlias()) {
-    //   result = this->_genReallocFn(std::get<TypeAlias>(type->body).type, leftExpr, rightExpr);
-    // } else if (type->isAny()) {
-    //   result = CodegenASTExprAssign::create(
-    //     leftExpr,
-    //     "=",
-    //     CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("any_realloc")), {leftExpr, rightExpr})
-    //   );
-    // } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
-    //   result = CodegenASTExprAssign::create(
-    //     leftExpr,
-    //     "=",
-    //     CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("buffer_realloc")), {leftExpr, rightExpr})
-    //   );
-    // } else if (
-    //   type->isArray() ||
-    //   type->isFn() ||
-    //   type->isMap() ||
-    //   type->isObj() ||
-    //   type->isOpt() ||
-    //   type->isUnion()
-    // ) {
-    //   auto typeInfo = this->_typeInfo(type);
-    //   result = CodegenASTExprAssign::create(
-    //     leftExpr,
-    //     "=",
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_realloc")),
-    //       {leftExpr, rightExpr}
-    //     )
-    //   );
-    // } else if (type->isStr()) {
-    //   result = CodegenASTExprAssign::create(
-    //     leftExpr,
-    //     "=",
-    //     CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_realloc")), {leftExpr, rightExpr})
-    //   );
-    // }
-    // return result;
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._functionRealloc(t.t, left, right)
+    } elif it.name == "any" {
+      //   result = CodegenASTExprAssign::create(
+      //     leftExpr,
+      //     "=",
+      //     CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("any_realloc")), {leftExpr, rightExpr})
+      //   );
+    } elif it.name == "str" {
+      //   result = CodegenASTExprAssign::create(
+      //     leftExpr,
+      //     "=",
+      //     CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_realloc")), {leftExpr, rightExpr})
+      //   );
+    } elif (
+      it.isArray() ||
+      it.isFunction() ||
+      it.isMap() ||
+      // todo
+      // it.isObject() ||
+      it.isOptional() ||
+      it.isUnion()
+    ) {
+      //   auto typeInfo = this->_typeInfo(type);
+      //   result = CodegenASTExprAssign::create(
+      //     leftExpr,
+      //     "=",
+      //     CodegenASTExprCall::create(
+      //       CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_realloc")),
+      //       {leftExpr, rightExpr}
+      //     )
+      //   );
+    }
+
+    return AST.createIdentifier(self._("NULL"))
   }
 
   fn _functionStr (
@@ -853,46 +837,43 @@ export obj Codegen {
     copy := true,
     escape := true
   ) AST.CExpression {
+    if it.isAlias() {
+      t := it.asAlias()
+      return self._functionStr(t.t, expression, copy, escape)
+    } elif it.name == "any" {
+      //   result = CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_("any_str")),
+      //     {copy ? this->_genCopyFn(realType, result) : result}
+      //   );
+    } elif it.name == "str" && escape {
+      //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_escape")), {result});
+    } elif it.name == "str" {
+      //   result = copy ? this->_genCopyFn(realType, result) : result;
+    } elif (
+      it.isArray() ||
+      it.isFunction() ||
+      it.isMap() ||
+      // todo
+      // it.isObject() ||
+      it.isOptional() ||
+      it.isUnion()
+    ) {
+      //   auto typeInfo = this->_typeInfo(realType);
+      //   result = CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
+      //     {copy ? this->_genCopyFn(realType, result) : result}
+      //   );
+    } elif it.isEnum() {
+      //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("enum_str")), {result});
+    } else {
+      //   auto typeInfo = this->_typeInfo(realType);
+      //   result = CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
+      //     {result}
+      //   );
+    }
+
     return expression
-    // auto realType = Type::real(type);
-    // auto result = expr;
-    // if (realType->isAny()) {
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("any_str")),
-    //     {copy ? this->_genCopyFn(realType, result) : result}
-    //   );
-    // } else if (realType->isObj() && realType->builtin && realType->codeName == "@buffer_Buffer") {
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("buffer_str")),
-    //     {copy ? this->_genCopyFn(realType, result) : result}
-    //   );
-    // } else if (
-    //   realType->isArray() ||
-    //   realType->isFn() ||
-    //   realType->isMap() ||
-    //   realType->isObj() ||
-    //   realType->isOpt() ||
-    //   realType->isUnion()
-    // ) {
-    //   auto typeInfo = this->_typeInfo(realType);
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
-    //     {copy ? this->_genCopyFn(realType, result) : result}
-    //   );
-    // } else if (realType->isEnum()) {
-    //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("enum_str")), {result});
-    // } else if (realType->isStr() && escape) {
-    //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_escape")), {result});
-    // } else if (realType->isStr()) {
-    //   result = copy ? this->_genCopyFn(realType, result) : result;
-    // } else {
-    //   auto typeInfo = this->_typeInfo(realType);
-    //   result = CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
-    //     {result}
-    //   );
-    // }
-    // return result;
   }
 
   fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
