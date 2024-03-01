@@ -609,11 +609,13 @@ export obj Codegen {
         AST.createLiteral("\"\"")
       ])
     } elif it.isArray() || it.isMap() {
-      return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), [
+      typeName := self._typeName(it)
+      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), [
         AST.createLiteral(0)
       ])
     // todo
     // } elif it.isObject() {
+      // typeName := self._typeName(it)
       // mut args: AST.CExpression[]
       // loop i := 0; i < it.properties.len; i++ {
       //   property := it.properties[i]
@@ -622,7 +624,7 @@ export obj Codegen {
       //   }
       //   args.push(self._defaultInitializerObjectExpression(property.t))
       // }
-      // return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), args)
+      // return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), args)
     } elif it.isOptional() {
       return AST.createIdentifier(self._("NULL"))
     } elif it.isUnion() {
@@ -654,11 +656,13 @@ export obj Codegen {
     } elif it.name == "str" {
       return AST.createCallExpression(AST.createIdentifier(self._("the_str_alloc")), [AST.createLiteral("\"\"")])
     } elif it.isArray() || it.isMap() {
-      return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), [
+      typeName := self._typeName(it)
+      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), [
         AST.createLiteral(0)
       ])
     // todo
     // } elif it.isObject() {
+      // typeName := self._typeName(it)
       // mut args : AST.CExpression[]
       // loop i := 0; i < it.properties.len; i++ {
       //   property := it.properties[i]
@@ -667,7 +671,7 @@ export obj Codegen {
       //   }
       //   args.push(self._defaultInitializerObjectExpression(property.t))
       // }
-      // return AST.createCallExpression(AST.createIdentifier(self._(it.name + "_alloc")), args)
+      // return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), args)
     } elif it.isOptional() {
       return AST.createIdentifier(self._("NULL"))
     } elif it.isUnion() {
@@ -716,16 +720,9 @@ export obj Codegen {
       t := it.asAlias()
       return self._functionEq(t.t, left, right, reverse)
     } elif it.name == "any" {
-      //   return CodegenASTExprAssign::create(
-      //     CodegenASTExprAccess::create(leftExpr, "d"),
-      //     reverse ? "!=" : "==",
-      //     CodegenASTExprAccess::create(rightExpr, "d")
-      //   )
+      return AST.createCallExpression(AST.createIdentifier(self._("the_any_" + direction)), [left, right])
     } elif it.name == "str" {
-      //   return CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_("str_" + direction)),
-      //     {this->_genCopyFn(type, leftExpr), this->_genCopyFn(type, rightExpr)}
-      //   )
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_" + direction)), [left, right])
     } elif (
       it.isArray() ||
       it.isMap() ||
@@ -734,13 +731,10 @@ export obj Codegen {
       it.isOptional() ||
       it.isUnion()
     ) {
-      //   auto typeInfo = this->_typeInfo(type);
-      //   return CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_" + direction)),
-      //     {this->_genCopyFn(typeInfo.type, leftExpr), this->_genCopyFn(typeInfo.type, rightExpr)}
-      //   )
+      typeName := self._typeName(it)
+      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_" + direction)), [left, right])
     } else {
-      //   return CodegenASTExprAssign::create(leftExpr, reverse ? "!=" : "==", rightExpr)
+      return AST.createAssignmentExpression(left, reverse ? "!=" : "==", right)
     }
   }
 
@@ -749,15 +743,13 @@ export obj Codegen {
       t := it.asAlias()
       return self._functionFree(t.t, expression)
     } elif it.name == "any" {
-      //   result = CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_("any_free")),
-      //     {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct any")), result)}
-      //   )
+      return AST.createCallExpression(AST.createIdentifier(self._("the_any_free")), [
+        AST.createCastExpression(AST.createType(self._("the_any_t")), expression)
+      ])
     } elif it.name == "str" {
-      //   result = CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_("str_free")),
-      //     {CodegenASTExprCast::create(CodegenASTType::create(this->_("struct str")), result)}
-      //   )
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_free")), [
+        AST.createCastExpression(AST.createType(self._("the_str_t")), expression)
+      ])
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -767,11 +759,11 @@ export obj Codegen {
       it.isOptional() ||
       it.isUnion()
     ) {
-      //   auto typeInfo = this->_typeInfo(type);
-      //   result = CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_free")),
-      //     {CodegenASTExprCast::create(CodegenASTType::create(typeInfo.typeCodeTrimmed), result)}
-      //   )
+      typeName := self._typeName(it)
+
+      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_free")), [
+        AST.createCastExpression(AST.createType(self._type(it)), expression)
+      ])
     }
 
     return expression
@@ -796,17 +788,17 @@ export obj Codegen {
       t := it.asAlias()
       return self._functionRealloc(t.t, left, right)
     } elif it.name == "any" {
-      //   result = CodegenASTExprAssign::create(
-      //     leftExpr,
-      //     "=",
-      //     CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("any_realloc")), {leftExpr, rightExpr})
-      //   );
+      return AST.createAssignmentExpression(
+        left,
+        "=",
+        AST.createCallExpression(AST.createIdentifier(self._("the_any_realloc")), [left, right])
+      )
     } elif it.name == "str" {
-      //   result = CodegenASTExprAssign::create(
-      //     leftExpr,
-      //     "=",
-      //     CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_realloc")), {leftExpr, rightExpr})
-      //   );
+      return AST.createAssignmentExpression(
+        left,
+        "=",
+        AST.createCallExpression(AST.createIdentifier(self._("the_str_realloc")), [left, right])
+      )
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -816,15 +808,13 @@ export obj Codegen {
       it.isOptional() ||
       it.isUnion()
     ) {
-      //   auto typeInfo = this->_typeInfo(type);
-      //   result = CodegenASTExprAssign::create(
-      //     leftExpr,
-      //     "=",
-      //     CodegenASTExprCall::create(
-      //       CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_realloc")),
-      //       {leftExpr, rightExpr}
-      //     )
-      //   );
+      typeName := self._typeName(it)
+
+      return AST.createAssignmentExpression(
+        left,
+        "=",
+        AST.createCallExpression(AST.createIdentifier(self._(typeName + "_realloc")), [left, right])
+      )
     }
 
     return AST.createIdentifier(self._("NULL"))
@@ -834,46 +824,23 @@ export obj Codegen {
     mut self: ref Self,
     it: ref Analyzer.Type,
     expression: AST.CExpression,
-    copy := true,
     escape := true
   ) AST.CExpression {
     if it.isAlias() {
       t := it.asAlias()
-      return self._functionStr(t.t, expression, copy, escape)
+      return self._functionStr(t.t, expression, escape)
     } elif it.name == "any" {
-      //   result = CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_("any_str")),
-      //     {copy ? this->_genCopyFn(realType, result) : result}
-      //   );
+      return AST.createCallExpression(AST.createIdentifier(self._("the_any_str")), [expression])
     } elif it.name == "str" && escape {
-      //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_escape")), {result});
-    } elif it.name == "str" {
-      //   result = copy ? this->_genCopyFn(realType, result) : result;
-    } elif (
-      it.isArray() ||
-      it.isFunction() ||
-      it.isMap() ||
-      // todo
-      // it.isObject() ||
-      it.isOptional() ||
-      it.isUnion()
-    ) {
-      //   auto typeInfo = this->_typeInfo(realType);
-      //   result = CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
-      //     {copy ? this->_genCopyFn(realType, result) : result}
-      //   );
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_escape")), [expression])
+    } elif it.name == "str" && escape {
+      return expression
     } elif it.isEnum() {
-      //   result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("enum_str")), {result});
+      return AST.createCallExpression(AST.createIdentifier(self._("the_enum_str")), [expression])
     } else {
-      //   auto typeInfo = this->_typeInfo(realType);
-      //   result = CodegenASTExprCall::create(
-      //     CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
-      //     {result}
-      //   );
+      typeName := self._typeName(it)
+      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_str")), [expression])
     }
-
-    return expression
   }
 
   fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
