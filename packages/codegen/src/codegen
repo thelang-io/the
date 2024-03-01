@@ -13,6 +13,7 @@ export obj CodegenAPIBuiltin {
   mut theByte: bool
   mut theError: bool
   mut theMacro: bool
+  mut theNumber: bool
   mut theSafe: bool
   mut theString: bool
   mut stdbool: bool
@@ -412,6 +413,7 @@ export obj Codegen {
       self.builtin.theByte ||
       self.builtin.theError ||
       self.builtin.theMacro ||
+      self.builtin.theNumber ||
       self.builtin.theSafe ||
       self.builtin.theString
     ) {
@@ -453,59 +455,154 @@ export obj Codegen {
       }
 
       return item.codeName
-    } elif name == "bool" || name == "true" || name == "false" {
+    } elif ["bool", "false", "true"].contains(name) {
       self.builtin.stdbool = true
     } elif (
-      name == "EXIT_FAILURE" ||
-      name == "EXIT_SUCCESS" ||
-      name == "NULL" ||
-      name == "exit" ||
-      name == "size_t"
+      [
+        "EXIT_FAILURE",
+        "NULL",
+        "exit",
+        "size_t"
+      ].contains(name)
     ) {
       self.builtin.stddef = true
     } elif (
-      name == "fprintf" ||
-      name == "printf" ||
-      name == "snprintf" ||
-      name == "sprintf" ||
-      name == "stderr" ||
-      name == "stdin" ||
-      name == "stdout"
+      [
+        "fprintf",
+        "printf",
+        "snprintf",
+        "sprintf",
+        "stderr",
+        "stdin",
+        "stdout"
+      ].contains(name)
     ) {
       self.builtin.stdio = true
     } elif (
-      name == "int8_t" ||
-      name == "int16_t" ||
-      name == "int32_t" ||
-      name == "int64_t" ||
-      name == "uint8_t" ||
-      name == "uint16_t" ||
-      name == "uint32_t" ||
-      name == "uint64_t"
+      [
+        "int8_t",
+        "int16_t",
+        "int32_t",
+        "int64_t",
+        "uint8_t",
+        "uint16_t",
+        "uint32_t",
+        "uint64_t"
+      ].contains(name)
     ) {
       self.builtin.stdint = true
-    } elif name == "wchar_t" {
-      self.builtin.wchar = true
-    } elif name == "the_any_t" {
-      self.builtin.theAny = true
-    } elif name == "the_bool_str" {
-      self.builtin.theBool = true
-    } elif name == "the_byte_str" {
-      self.builtin.theByte = true
-    } elif name == "THE_EOL" {
-      self.builtin.theMacro = true
-    } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc"].contains(name) {
-      self.builtin.theSafe = true
     } elif (
-      name == "err_stack_t" ||
-      name == "err_state_t" ||
-      name == "err_state"
+      [
+        "wchar_t"
+      ].contains(name)
+    ) {
+      self.builtin.wchar = true
+    } elif (
+      [
+        "the_any_t",
+        "the_any_copy",
+        "the_any_eq",
+        "the_any_free",
+        "the_any_ne",
+        "the_any_realloc",
+        "the_any_str"
+      ].contains(name)
+    ) {
+      self.builtin.theAny = true
+    } elif ["the_bool_str"].contains(name) {
+      self.builtin.theBool = true
+    } elif ["the_byte_str"].contains(name) {
+      self.builtin.theByte = true
+    } elif (
+      [
+        "the_Error_t",
+        "the_err_buf_t",
+        "the_err_stack_t",
+        "the_err_state",
+        "the_err_state_t",
+        "the_error_assign",
+        "the_error_assign_generic",
+        "the_error_buf_decrease",
+        "the_error_buf_increase",
+        "the_error_stack_pop",
+        "the_error_stack_push",
+        "the_error_unset",
+        "the_Error_alloc",
+        "the_Error_free"
+      ].contains(name)
     ) {
       self.builtin.theError = true
-    } elif ["the_str_t", "the_str_alloc", "the_str_free"].contains(name) {
+    } elif ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"].contains(name) {
+      self.builtin.theMacro = true
+    } elif (
+      [
+        "the_f32_str",
+        "the_f64_str",
+        "the_float_str",
+        "the_i8_str",
+        "the_i16_str",
+        "the_i32_str",
+        "the_i64_str",
+        "the_int_str",
+        "the_isize_str",
+        "the_u8_str",
+        "the_u16_str",
+        "the_u32_str",
+        "the_u64_str",
+        "the_usize_str"
+      ].contains(name)
+    ) {
+      self.builtin.theNumber = true
+    } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc", "the_safe_swap"].contains(name) {
+      self.builtin.theSafe = true
+    } elif (
+      [
+        "the_str_t",
+        "the_str_alloc",
+        "the_str_calloc",
+        "the_str_at",
+        "the_str_concat",
+        "the_str_contains",
+        "the_str_copy",
+        "the_str_empty",
+        "the_str_eq",
+        "the_str_escape",
+        "the_str_find",
+        "the_str_free",
+        "the_str_ge",
+        "the_str_gt",
+        "the_str_le",
+        "the_str_lines",
+        "the_str_lower",
+        "the_str_lowerFirst",
+        "the_str_lt",
+        "the_str_ne",
+        "the_str_not",
+        "the_str_realloc",
+        "the_str_replace",
+        "the_str_slice",
+        "the_str_split",
+        "the_str_toFloat",
+        "the_str_toF32",
+        "the_str_toF64",
+        "the_str_toIsize",
+        "the_str_toI8",
+        "the_str_toI16",
+        "the_str_toI32",
+        "the_str_toI64",
+        "the_str_toUsize",
+        "the_str_toU8",
+        "the_str_toU16",
+        "the_str_toU32",
+        "the_str_toU64",
+        "the_str_trim",
+        "the_str_trimEnd",
+        "the_str_trimStart",
+        "the_str_upper",
+        "the_str_upperFirst"
+      ].contains(name)
+    ) {
       self.builtin.theString = true
-    } elif ["str_free"].contains(name) {
-      return self._("the_str_free")
     } else {
       throw error_NewError("Tried activating unknown entity '" + name + "'")
     }
@@ -565,6 +662,7 @@ export obj Codegen {
     if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
     if self.builtin.theError { self.statements.push(AST.createIncludeDirective("the/error.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
+    if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
 
