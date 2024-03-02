@@ -1,0 +1,25 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+/* Reference: https://html.spec.whatwg.org/multipage/syntax.html */
+
+import
+  HTMLAttribute,
+  HTMLComment,
+  HTMLDocumentType,
+  HTMLElement,
+  HTMLNode,
+  HTMLText
+from "./types"
+import parse, toJSON from "./parser"
+
+export HTMLAttribute
+export HTMLComment
+export HTMLDocumentType
+export HTMLElement
+export HTMLNode
+export HTMLText
+export parse
+export toJSON

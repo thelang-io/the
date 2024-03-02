@@ -1,0 +1,39 @@
+<!DOCTYPE HTML><html><head><title>Hello</title></head><body><p>Welcome to this example.</p></body></html>
+===== out =====
+{
+  "nodeType": "DOCUMENT_TYPE_NODE",
+  "name": "html",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "html",
+  "childNodes": [
+    {
+      "nodeType": "ELEMENT_NODE",
+      "tagName": "head",
+      "childNodes": [
+        {
+          "nodeType": "ELEMENT_NODE",
+          "textContent": "Hello",
+          "tagName": "title",
+        },
+      ],
+    },
+    {
+      "nodeType": "ELEMENT_NODE",
+      "tagName": "body",
+      "childNodes": [
+        {
+          "nodeType": "ELEMENT_NODE",
+          "tagName": "p",
+          "childNodes": [
+            {
+              "nodeType": "TEXT_NODE",
+              "nodeValue": "Welcome to this example.",
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}

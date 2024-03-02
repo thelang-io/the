@@ -1,0 +1,25 @@
+<script>test <div></script>
+<title>test <div></title>
+<textarea>test <div></textarea>
+<style>test <div></style>
+===== out =====
+{
+  "nodeType": "ELEMENT_NODE",
+  "textContent": "test <div>",
+  "tagName": "script",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "textContent": "test <div>",
+  "tagName": "title",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "textContent": "test <div>",
+  "tagName": "textarea",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "textContent": "test <div>",
+  "tagName": "style",
+}

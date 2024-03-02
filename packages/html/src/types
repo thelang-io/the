@@ -1,0 +1,99 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import escape from "./utils"
+
+export obj HTMLAttribute {
+  mut name: str
+  mut value: str
+
+  fn toJSON (self: ref Self, indent := 0) str {
+    return ' '.repeat(indent) + "{" + os_EOL +
+      ' '.repeat(indent + 2) + "\"name\": \"" + self.name + "\"," + os_EOL +
+      (self.value.empty ? "" : ' '.repeat(indent + 2) + "\"value\": \"" + self.value + "\"," + os_EOL) +
+      ' '.repeat(indent) + "}"
+  }
+}
+
+export type HTMLNode = HTMLComment | HTMLDocumentType | HTMLElement | HTMLText
+
+export obj HTMLComment {
+  fn toJSON (self: ref Self, indent := 0) str {
+    return ' '.repeat(indent) + "{" + os_EOL +
+      ' '.repeat(indent + 2) + "\"nodeType\": \"COMMENT_NODE\"," + os_EOL +
+      ' '.repeat(indent) + "}"
+  }
+}
+
+export obj HTMLDocumentType {
+  mut name: str
+
+  fn toJSON (self: ref Self, indent := 0) str {
+    return ' '.repeat(indent) + "{" + os_EOL +
+      ' '.repeat(indent + 2) + "\"nodeType\": \"DOCUMENT_TYPE_NODE\"," + os_EOL +
+      (self.name.empty ? "" : ' '.repeat(indent + 2) + "\"name\": \"" + self.name + "\"," + os_EOL) +
+      ' '.repeat(indent) + "}"
+  }
+}
+
+export obj HTMLElement {
+  mut attributes: HTMLAttribute[]
+  mut childNodes: HTMLNode[]
+  mut tagName: str
+  mut textContent: str
+
+  fn hasAttributes (self: ref Self) bool {
+    return !self.attributes.empty
+  }
+
+  fn hasChildNodes (self: ref Self) bool {
+    return !self.childNodes.empty
+  }
+
+  fn toJSON (self: ref Self, indent := 0) str {
+    mut attributes := ""
+
+    self.attributes.forEach((it: HTMLAttribute, idx: int) -> void {
+      attributes += it.toJSON(indent + 4) + "," + os_EOL
+    })
+
+    mut childNodes := ""
+
+    self.childNodes.forEach((it: HTMLNode, idx: int) -> void {
+      if it is HTMLComment {
+        childNodes += it.toJSON(indent + 4) + "," + os_EOL
+      } elif it is HTMLDocumentType {
+        childNodes += it.toJSON(indent + 4) + "," + os_EOL
+      } elif it is HTMLElement {
+        childNodes += it.toJSON(indent + 4) + "," + os_EOL
+      } else {
+        childNodes += it.toJSON(indent + 4) + "," + os_EOL
+      }
+    })
+
+    return ' '.repeat(indent) + "{" + os_EOL +
+      ' '.repeat(indent + 2) + "\"nodeType\": \"ELEMENT_NODE\"," + os_EOL +
+      (self.textContent.empty ? "" : ' '.repeat(indent + 2) + "\"textContent\": \"" + escape(self.textContent) + "\"," + os_EOL) +
+      (self.tagName.empty ? "" : ' '.repeat(indent + 2) + "\"tagName\": \"" + self.tagName + "\"," + os_EOL) +
+      (!self.hasAttributes() ? "" : ' '.repeat(indent + 2) + "\"attributes\": [" + os_EOL) +
+      attributes +
+      (!self.hasAttributes() ? "" : ' '.repeat(indent + 2) + "]," + os_EOL) +
+      (!self.hasChildNodes() ? "" : ' '.repeat(indent + 2) + "\"childNodes\": [" + os_EOL) +
+      childNodes +
+      (!self.hasChildNodes() ? "" : ' '.repeat(indent + 2) + "]," + os_EOL) +
+      ' '.repeat(indent) + "}"
+  }
+}
+
+export obj HTMLText {
+  mut nodeValue: str
+
+  fn toJSON (self: ref Self, indent := 0) str {
+    return ' '.repeat(indent) + "{" + os_EOL +
+      ' '.repeat(indent + 2) + "\"nodeType\": \"TEXT_NODE\"," + os_EOL +
+      (self.nodeValue.empty ? "" : ' '.repeat(indent + 2) + "\"nodeValue\": \"" + escape(self.nodeValue) + "\"," + os_EOL) +
+      ' '.repeat(indent) + "}"
+  }
+}

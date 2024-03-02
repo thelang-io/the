@@ -1,0 +1,15 @@
+<!---->
+<!--test-->
+<!--
+test
+-->
+===== out =====
+{
+  "nodeType": "COMMENT_NODE",
+}
+{
+  "nodeType": "COMMENT_NODE",
+}
+{
+  "nodeType": "COMMENT_NODE",
+}

@@ -1,0 +1,245 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import HTMLAttribute, HTMLComment, HTMLDocumentType, HTMLElement, HTMLNode, HTMLText from "./types"
+import lower from "./utils"
+
+export const RAW_TEXT_ELEMENTS := [
+  "script",
+  "style",
+  "textarea",
+  "title",
+]
+
+export const VOID_ELEMENTS := [
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "source",
+  "track",
+  "wbr",
+]
+
+export obj HTMLParser {
+  mut code: str
+  mut codeLen: int
+  mut pos: int
+
+  fn init (mut self: ref Self, code: str) {
+    self.code = code
+    self.codeLen = self.code.len
+  }
+
+  fn attribute (mut self: ref Self) HTMLAttribute {
+    start := self.pos
+    mut attr := HTMLAttribute{}
+
+    self.walk((ch: char) -> bool {
+      return !ch.isWhitespace && ch != '"' && ch != '\'' && ch != '`' && ch != '>' && ch != '/' && ch != '='
+    })
+
+    attr.name = self.code.slice(start, self.pos)
+    self.walk((ch: char) -> bool { return ch.isWhitespace })
+
+    if !self.next('=') {
+      return attr
+    }
+
+    self.walk((ch: char) -> bool { return ch.isWhitespace })
+    valueStart := self.pos
+
+    if self.next('"') {
+      loop ; !self.eof() && !self.next('"'); self.pos++ {}
+      attr.value = self.code.slice(valueStart + 1, self.pos - 1)
+    } elif self.next('\'') {
+      loop ; !self.eof() && !self.next('\''); self.pos++ {}
+      attr.value = self.code.slice(valueStart + 1, self.pos - 1)
+    } else {
+      self.walk((ch: char) -> bool {
+        return !ch.isWhitespace && ch != '"' && ch != '\'' && ch != '`' && ch != '>' && ch != '/' && ch != '='
+      })
+
+      attr.value = self.code.slice(valueStart, self.pos)
+    }
+
+    return attr
+  }
+
+  fn comment (mut self: ref Self) HTMLNode {
+    loop ; !self.eof() && !self.next("-->"); self.pos++ {}
+    return HTMLComment{}
+  }
+
+  fn documentType (mut self: ref Self) HTMLNode {
+    loop ; !self.eof() && !self.next('>'); self.pos++ {}
+    return HTMLDocumentType{name: "html"}
+  }
+
+  fn eof (self: ref Self) bool {
+    return self.pos == self.codeLen
+  }
+
+  fn next (mut self: ref Self, value: char | str, mutate := true) bool {
+    if self.eof() {
+      return false
+    }
+
+    mut result := false
+
+    if (value is char) {
+      ch := self.code[self.pos]
+      result = ch == value
+
+      if result && mutate {
+        self.pos += 1
+      }
+    } else {
+      if self.pos + value.len - 1 >= self.codeLen {
+        return false
+      }
+
+      result = true
+
+      loop i := 0; i < value.len; i++ {
+        if self.code[self.pos + i].lower != value[i].lower {
+          result = false
+          break
+        }
+      }
+
+      if result && mutate {
+        self.pos += value.len
+      }
+    }
+
+    return result
+  }
+
+  fn node (mut self: ref Self) HTMLNode {
+    if self.next("<!doctype", mutate: false) {
+      return self.documentType()
+    } elif self.next("<!--", mutate: false) {
+      return self.comment()
+    } elif !self.next('<', mutate: false) {
+      return self.text()
+    }
+
+    self.pos += 1
+    tagNameStart := self.pos
+    mut element: HTMLElement
+
+    self.walk((ch: char) -> bool {
+      return !ch.isWhitespace && ch != '>' && ch != '"' && ch != '\'' && ch != '`'
+    })
+
+    if tagNameStart != self.pos {
+      element.tagName = self.code.slice(tagNameStart, self.pos)
+    }
+
+    loop !self.eof() {
+      self.walk((ch: char) -> bool { return ch.isWhitespace || ch == '/' })
+
+      if self.next('>') {
+        break
+      }
+
+      element.attributes.push(self.attribute())
+    }
+
+    if VOID_ELEMENTS.contains(element.tagName) {
+      return element
+    } elif RAW_TEXT_ELEMENTS.contains(element.tagName) {
+      contentStart := self.pos
+      closingTag := "</" + element.tagName + ">"
+
+      loop ; !self.eof() && !self.next(closingTag); self.pos++ {}
+      element.textContent = self.code.slice(contentStart, self.pos - closingTag.len)
+
+      return element
+    }
+
+    element.childNodes = self.parse(exitOnClosingTag: true)
+
+    if !self.next("</") {
+      return element
+    }
+
+    loop ; !self.eof() && !self.next('>'); self.pos++ {}
+    return element
+  }
+
+  fn parse (mut self: ref Self, exitOnClosingTag := false) HTMLNode[] {
+    mut nodes: HTMLNode[]
+
+    loop !self.eof() {
+      if exitOnClosingTag && self.next("</", mutate: false) {
+        break
+      }
+
+      node := self.node()
+
+      if (node is HTMLText) {
+        if node.nodeValue.trim().empty {
+          continue
+        }
+      }
+
+      nodes.push(node)
+    }
+
+    return nodes
+  }
+
+  fn text (mut self: ref Self) HTMLNode {
+    start := self.pos
+
+    loop !self.eof() && !self.next('<', mutate: false) {
+      self.pos++
+    }
+
+    return HTMLText{nodeValue: self.code.slice(start, self.pos)}
+  }
+
+  fn walk (mut self: ref Self, cb: (char) -> bool) {
+    loop ; !self.eof(); self.pos++ {
+      if !cb(self.code[self.pos]) {
+        break
+      }
+    }
+  }
+}
+
+export fn parse (code: str) HTMLNode[] {
+  mut parser := HTMLParser{}
+  parser.init(code)
+  return parser.parse()
+}
+
+export fn toJSON (nodes: ref HTMLNode[]) str {
+  mut result := ""
+
+  loop i := 0; i < nodes.len; i++ {
+    node := nodes[i] as HTMLNode
+
+    if node is HTMLComment {
+      result += node.toJSON() + os_EOL
+    } elif node is HTMLDocumentType {
+      result += node.toJSON() + os_EOL
+    } elif node is HTMLElement {
+      result += node.toJSON() + os_EOL
+    } else {
+      result += node.toJSON() + os_EOL
+    }
+  }
+
+  return result
+}
