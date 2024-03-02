@@ -1,0 +1,66 @@
+<area>
+<base>
+<br>
+<col>
+<embed>
+<hr>
+<img>
+<input>
+<link>
+<meta>
+<source>
+<track>
+<wbr>
+===== out =====
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "area",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "base",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "br",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "col",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "embed",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "hr",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "img",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "input",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "link",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "meta",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "source",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "track",
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "wbr",
+}

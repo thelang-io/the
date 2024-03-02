@@ -1,0 +1,29 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import parse, toJSON from "../src/parser"
+
+export obj HTMLParserTestSections {
+  mut in: str
+  mut out: str
+}
+
+export fn htmlParseTestSections (code: str) HTMLParserTestSections {
+  sections := code.split("===== out =====" + os_EOL)
+  return HTMLParserTestSections{in: sections[0], out: sections[1]}
+}
+
+export fn TEST_parse () {
+  files := fs_scandirSync("./test/parser")
+
+  files.forEach((it: str, idx: int) -> void {
+    content := fs_readFileSync("./test/parser/" + it).str()
+    sections := htmlParseTestSections(content)
+    nodes := parse(sections.in)
+    code := toJSON(ref nodes)
+
+    EXPECT_EQ(code, sections.out)
+  })
+}

@@ -1,0 +1,92 @@
+<a href="/test">Test</a><input required type="number" min=10 max=10><img alt='Image' src='/example.jpg'><a href = "/test">Test</a><input required><img alt = 'Image' src = '/example.jpg'>
+===== out =====
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "a",
+  "attributes": [
+    {
+      "name": "href",
+      "value": "/test",
+    },
+  ],
+  "childNodes": [
+    {
+      "nodeType": "TEXT_NODE",
+      "nodeValue": "Test",
+    },
+  ],
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "input",
+  "attributes": [
+    {
+      "name": "required",
+    },
+    {
+      "name": "type",
+      "value": "number",
+    },
+    {
+      "name": "min",
+      "value": "10",
+    },
+    {
+      "name": "max",
+      "value": "10",
+    },
+  ],
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "img",
+  "attributes": [
+    {
+      "name": "alt",
+      "value": "Image",
+    },
+    {
+      "name": "src",
+      "value": "/example.jpg",
+    },
+  ],
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "a",
+  "attributes": [
+    {
+      "name": "href",
+      "value": "/test",
+    },
+  ],
+  "childNodes": [
+    {
+      "nodeType": "TEXT_NODE",
+      "nodeValue": "Test",
+    },
+  ],
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "input",
+  "attributes": [
+    {
+      "name": "required",
+    },
+  ],
+}
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "img",
+  "attributes": [
+    {
+      "name": "alt",
+      "value": "Image",
+    },
+    {
+      "name": "src",
+      "value": "/example.jpg",
+    },
+  ],
+}
