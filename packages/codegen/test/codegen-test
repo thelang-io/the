@@ -5,7 +5,7 @@
 
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
-import Codegen from "../src/codegen"
+import Codegen, defaultState from "../src/codegen"
 import retrieveFileSections from "./utils"
 
 import Tests, EXPECT_EQ from "the/testing"
@@ -42,7 +42,7 @@ export fn TEST_Codegen () {
       continue
     }
 
-    mut generator := Codegen{analyzer: ref analyzer}
+    mut generator := Codegen{analyzer: ref analyzer, state: defaultState()}
     generator.init()
     generator.generate()
 
