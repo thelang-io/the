@@ -380,6 +380,110 @@ export fn generateVariableDeclaration (mut state: ref CodegenState, item: ref Pa
   return nil
 }
 
+export fn generateOptionalType (mut state: ref CodegenState, item: ref Analyzer.Type) str {
+  typeName := state.typeName(item)
+  name := typeName + "_t"
+
+  if state.has(name) {
+    return name
+  }
+
+  state.entities.push(CodegenEntity{
+    name: name,
+    codeName: name,
+    context: item,
+    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+      it := entity.context as ref Analyzer.Type
+      t := it.asOptional()
+      return AST.createTypedefDeclaration(AST.createType(state.t(t.t) + "*"), entity.codeName)
+    }
+  })
+
+  state.entities.push(CodegenEntity{
+    name: typeName + "_alloc",
+    codeName: typeName + "_alloc",
+    context: item,
+    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+      it := entity.context as ref Analyzer.Type
+      t := it.asOptional()
+      typeName := state.typeName(it)
+      name := typeName + "_t"
+      underlyingCType := AST.createType(state.t(t.t))
+
+      return AST.createFunctionDeclaration(AST.createType(state._(name)), entity.codeName, [
+        AST.createFunctionParameter(underlyingCType, "n")
+      ], AST.createCompoundStatement([
+        AST.createVariableDeclaration(
+          AST.createType(state._(name)),
+          "r",
+          AST.createCallExpression(AST.createIdentifier(state._("the_safe_alloc")), [
+            AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
+          ])
+        ),
+        AST.createExpressionStatement(
+          AST.createAssignmentExpression(
+            AST.createUnaryExpression("*", AST.createIdentifier("r")),
+            "=",
+            AST.createIdentifier("n")
+          )
+        ),
+        AST.createReturnStatement(AST.createIdentifier("r"))
+      ]))
+    }
+  })
+
+  state.entities.push(CodegenEntity{
+    name: typeName + "_free",
+    codeName: typeName + "_free",
+    context: item,
+    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+      it := entity.context as ref Analyzer.Type
+      typeName := state.typeName(it)
+      name := typeName + "_t"
+
+      return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
+        AST.createFunctionParameter(AST.createType(state._(name)), "n")
+      ], AST.createCompoundStatement([
+        AST.createIfStatement(
+          AST.createBinaryExpression(AST.createIdentifier("n"), "==", AST.createIdentifier(state._("NULL"))),
+          AST.createReturnStatement()
+        ),
+        // todo
+        // if shouldBeFreed(underlyingTypeInfo.type) {
+        //   state.functionFree(underlyingTypeInfo.type, AST.createUnaryExpression("*", CodegenASTExprAccess::create("n")))
+        // }
+        AST.createExpressionStatement(
+          AST.createCallExpression(AST.createIdentifier(state._("the_safe_free")), [AST.createIdentifier("n")])
+        )
+      ]))
+    }
+  })
+
+  return name
+}
+
+export fn generateReferenceType (mut state: ref CodegenState, item: ref Analyzer.Type) str {
+  typeName := state.typeName(item)
+  name := typeName + "_t"
+
+  if state.has(name) {
+    return name
+  }
+
+  state.entities.push(CodegenEntity{
+    name: name,
+    codeName: name,
+    context: item,
+    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+      it := entity.context as ref Analyzer.Type
+      t := it.asReference()
+      return AST.createTypedefDeclaration(AST.createType(state.t(t.t) + "*"), entity.codeName)
+    }
+  })
+
+  return name
+}
+
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   if parameter.mutable && parameter.required { return "FP5" }
   elif parameter.mutable && parameter.variadic { return "FP6" }
@@ -1132,14 +1236,10 @@ export obj Codegen {
     } elif it.name == "void" {
       return "void "
     } elif it.isOptional() {
-      typeName := self._typeName(it)
-      name := typeName + "_t"
-      if !self._hasEntity(name) { self._typeOptional(it, typeName, name) }
+      name := generateOptionalType(ref self.state, it)
       return self._(name) + " "
     } elif it.isReference() {
-      typeName := self._typeName(it)
-      name := typeName + "_t"
-      if !self._hasEntity(name) { self._typeReference(it, typeName, name) }
+      name := generateReferenceType(ref self.state, it)
       return self._(name) + " "
     } elif (
       it.isArray() ||
@@ -1230,92 +1330,6 @@ export obj Codegen {
     }
 
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
-  }
-
-  fn _typeOptional (mut self: ref Self, it: ref Analyzer.Type, typeName: str, name: str) {
-    self.state.entities.push(CodegenEntity{
-      name: name,
-      codeName: name,
-      context: it,
-      generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-        it := entity.context as ref Analyzer.Type
-        t := it.asOptional()
-        return AST.createTypedefDeclaration(AST.createType(state.t(t.t) + "*"), entity.codeName)
-      }
-    })
-
-    self.state.entities.push(CodegenEntity{
-      name: typeName + "_alloc",
-      codeName: typeName + "_alloc",
-      context: it,
-      generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-        it := entity.context as ref Analyzer.Type
-        t := it.asOptional()
-        typeName := state.typeName(it)
-        name := typeName + "_t"
-        underlyingCType := AST.createType(state.t(t.t))
-
-        return AST.createFunctionDeclaration(AST.createType(state._(name)), entity.codeName, [
-          AST.createFunctionParameter(underlyingCType, "n")
-        ], AST.createCompoundStatement([
-          AST.createVariableDeclaration(
-            AST.createType(state._(name)),
-            "r",
-            AST.createCallExpression(AST.createIdentifier(state._("the_safe_alloc")), [
-              AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
-            ])
-          ),
-          AST.createExpressionStatement(
-            AST.createAssignmentExpression(
-              AST.createUnaryExpression("*", AST.createIdentifier("r")),
-              "=",
-              AST.createIdentifier("n")
-            )
-          ),
-          AST.createReturnStatement(AST.createIdentifier("r"))
-        ]))
-      }
-    })
-
-    self.state.entities.push(CodegenEntity{
-      name: typeName + "_free",
-      codeName: typeName + "_free",
-      context: it,
-      generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-        it := entity.context as ref Analyzer.Type
-        typeName := state.typeName(it)
-        name := typeName + "_t"
-
-        return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
-          AST.createFunctionParameter(AST.createType(state._(name)), "n")
-        ], AST.createCompoundStatement([
-          AST.createIfStatement(
-            AST.createBinaryExpression(AST.createIdentifier("n"), "==", AST.createIdentifier(state._("NULL"))),
-            AST.createReturnStatement()
-          ),
-          // todo
-          // if shouldBeFreed(underlyingTypeInfo.type) {
-          //   self.functionFree(underlyingTypeInfo.type, AST.createUnaryExpression("*", CodegenASTExprAccess::create("n")))
-          // }
-          AST.createExpressionStatement(
-            AST.createCallExpression(AST.createIdentifier(state._("the_safe_free")), [AST.createIdentifier("n")])
-          )
-        ]))
-      }
-    })
-  }
-
-  fn _typeReference (mut self: ref Self, it: ref Analyzer.Type, typeName: str, name: str) {
-    self.state.entities.push(CodegenEntity{
-      name: name,
-      codeName: name,
-      context: it,
-      generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-        it := entity.context as ref Analyzer.Type
-        t := it.asReference()
-        return AST.createTypedefDeclaration(AST.createType(state.t(t.t) + "*"), entity.codeName)
-      }
-    })
   }
 }
 
