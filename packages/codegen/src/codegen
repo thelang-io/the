@@ -338,7 +338,7 @@ export fn generateExpressionStatement (mut state: ref CodegenState, item: ref Pa
 }
 
 export fn generateMainDeclaration (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isExpression() {
+  if item.isMainDeclaration() {
     statement := item.asMainDeclaration()
     statementBody := statement.body.asBlock()
 
