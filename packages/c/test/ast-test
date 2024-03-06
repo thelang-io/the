@@ -79,6 +79,11 @@ export fn TEST_AST_statementDefinition () {
   }, "Unable to generate definition for specified statement")
 }
 
+export fn TEST_AST_statementTerminated () {
+  statement1 := AST.createExpressionStatement(AST.createMacroInvocation("TEST", []), terminated: false)
+  EXPECT_EQ(statement1.stringify(), "TEST()" + os_EOL)
+}
+
 export fn TEST_AST_identifier () {
   expression1 := AST.createIdentifier("test")
   EXPECT_EQ(expression1.stringify(), "test")
@@ -189,6 +194,40 @@ export fn TEST_AST_initializerListExpression () {
     AST.createLiteral("3")
   ])
   EXPECT_EQ(expression3.stringify(), "{1, 2, 3}")
+}
+
+export fn TEST_AST_macroInvocation () {
+  expression1 := AST.createMacroInvocation("TEST", [])
+  EXPECT_EQ(expression1.stringify(), "TEST()")
+  expression2 := AST.createMacroInvocation("TEST", [
+    AST.createLiteral("1")
+  ])
+  EXPECT_EQ(expression2.stringify(), "TEST(1)")
+  expression3 := AST.createMacroInvocation("TEST", [
+    AST.createLiteral("1"),
+    AST.createLiteral("2")
+  ])
+  EXPECT_EQ(expression3.stringify(), "TEST(1, 2)")
+  expression4 := AST.createMacroInvocation("TEST", [
+    AST.createLiteral("1"),
+    AST.createLiteral("2"),
+    AST.createLiteral("3")
+  ])
+  EXPECT_EQ(expression4.stringify(), "TEST(1, 2, 3)")
+
+  expression5 := AST.createMacroInvocation("TEST", [
+    AST.createLiteral("int"),
+    AST.createLiteral("int"),
+    AST.createLiteral("int")
+  ])
+  EXPECT_EQ(expression5.stringify(), "TEST(int, int, int)")
+
+  expression6 := AST.createMacroInvocation("TEST", [
+    AST.createBreakStatement(),
+    AST.createContinueStatement(),
+    AST.createReturnStatement()
+  ])
+  EXPECT_EQ(expression6.stringify(), "TEST(break;, continue;, return;)")
 }
 
 export fn TEST_AST_propertyAccessExpression () {

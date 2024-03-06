@@ -13,6 +13,7 @@ export type CExpressionBody =
   CConditionalExpression |
   CElementAccessExpression |
   CInitializerListExpression |
+  CMacroInvocation |
   CPropertyAccessExpression |
   CUnaryExpression
 
@@ -69,6 +70,7 @@ export obj CExpression {
   fn asConditionalExpression (mut self: ref Self) ref CConditionalExpression { return ref(self.body as CConditionalExpression) }
   fn asElementAccessExpression (mut self: ref Self) ref CElementAccessExpression { return ref(self.body as CElementAccessExpression) }
   fn asInitializerListExpression (mut self: ref Self) ref CInitializerListExpression { return ref(self.body as CInitializerListExpression) }
+  fn asMacroInvocation (mut self: ref Self) ref CMacroInvocation { return ref(self.body as CMacroInvocation) }
   fn asPropertyAccessExpression (mut self: ref Self) ref CPropertyAccessExpression { return ref(self.body as CPropertyAccessExpression) }
   fn asUnaryExpression (mut self: ref Self) ref CUnaryExpression { return ref(self.body as CUnaryExpression) }
   fn isIdentifier (self: ref Self) bool { return self.body is CIdentifier }
@@ -80,6 +82,7 @@ export obj CExpression {
   fn isConditionalExpression (self: ref Self) bool { return self.body is CConditionalExpression }
   fn isElementAccessExpression (self: ref Self) bool { return self.body is CElementAccessExpression }
   fn isInitializerListExpression (self: ref Self) bool { return self.body is CInitializerListExpression }
+  fn isMacroInvocation (self: ref Self) bool { return self.body is CMacroInvocation }
   fn isPropertyAccessExpression (self: ref Self) bool { return self.body is CPropertyAccessExpression }
   fn isUnaryExpression (self: ref Self) bool { return self.body is CUnaryExpression }
 
@@ -117,6 +120,9 @@ export obj CExpression {
     } elif self.isInitializerListExpression() {
       expression := self.asInitializerListExpression()
       result = expression.stringify()
+    } elif self.isMacroInvocation() {
+      expression := self.asMacroInvocation()
+      result = expression.stringify()
     } elif self.isPropertyAccessExpression() {
       expression := self.asPropertyAccessExpression()
       result = expression.stringify()
@@ -137,6 +143,7 @@ export obj CExpression {
 
 export obj CStatement {
   mut body: CStatementBody
+  mut terminated: bool
   mut parent: (ref CStatement)?
   mut nextSibling: (ref CStatement)?
   mut prevSibling: (ref CStatement)?
@@ -222,7 +229,7 @@ export obj CStatement {
       result = statement.stringify()
     } elif self.isExpressionStatement() {
       statement := self.asExpressionStatement()
-      result = statement.stringify()
+      result = statement.stringify(terminated: self.terminated)
     } elif self.isFunctionDeclaration() {
       statement := self.asFunctionDeclaration()
       result = statement.stringify()
@@ -383,6 +390,30 @@ export obj CInitializerListExpression {
   }
 }
 
+export obj CMacroInvocation {
+  mut callee: str
+  mut arguments: (CExpression | CStatement | CType)[]
+
+  fn stringify (self: ref Self) str {
+    mut content := ""
+
+    loop i := 0; i < self.arguments.len; i++ {
+      argument := self.arguments[i] as CExpression | CStatement | CType
+      content += i == 0 ? "" : ", "
+
+      if argument is CExpression {
+        content += argument.stringify()
+      } elif argument is CStatement {
+        content += argument.stringify(root: false)
+      } else {
+        content += argument.stringify(definition: true)
+      }
+    }
+
+    return self.callee + "(" + content + ")"
+  }
+}
+
 export obj CPropertyAccessExpression {
   mut expression: CExpression
   mut property: str
@@ -498,8 +529,8 @@ export obj CEmptyStatement {
 export obj CExpressionStatement {
   mut expression: CExpression
 
-  fn stringify (self: ref Self) str {
-    return self.expression.stringify() + ";"
+  fn stringify (self: ref Self, terminated: bool) str {
+    return self.expression.stringify() + (terminated ? ";" : "")
   }
 }
 
@@ -700,6 +731,10 @@ export fn createInitializerListExpression (items: CExpression[]) CExpression {
   return createExpression(CInitializerListExpression{items: items})
 }
 
+export fn createMacroInvocation (callee: str, arguments: (CExpression | CStatement | CType)[]) CExpression {
+  return createExpression(CMacroInvocation{callee: callee, arguments: arguments})
+}
+
 export fn createPropertyAccessExpression (expression: CExpression, property: str, pointed := false) CExpression {
   return createExpression(CPropertyAccessExpression{expression: expression, property: property, pointed: pointed})
 }
@@ -738,8 +773,8 @@ export fn createEmptyStatement () CStatement {
   return createStatement(CEmptyStatement{})
 }
 
-export fn createExpressionStatement (expression: CExpression) CStatement {
-  return createStatement(CExpressionStatement{expression: expression})
+export fn createExpressionStatement (expression: CExpression, terminated := true) CStatement {
+  return createStatement(CExpressionStatement{expression: expression}, terminated: terminated)
 }
 
 export fn createForStatement (
@@ -813,8 +848,8 @@ export fn createExpression (body: CExpressionBody, parenthesized := false) CExpr
   return CExpression{body: body, parenthesized: parenthesized}
 }
 
-export fn createStatement (body: CStatementBody) CStatement {
-  return CStatement{body: body}
+export fn createStatement (body: CStatementBody, terminated := true) CStatement {
+  return CStatement{body: body, terminated: terminated}
 }
 
 export fn createType (value: str) CType {
