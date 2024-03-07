@@ -19,6 +19,7 @@ import
   CConditionalExpression,
   CElementAccessExpression,
   CInitializerListExpression,
+  CMacroInvocation,
   CPropertyAccessExpression,
   CUnaryExpression,
   CBreakStatement,
@@ -52,6 +53,7 @@ import
   createConditionalExpression,
   createElementAccessExpression,
   createInitializerListExpression,
+  createMacroInvocation,
   createPropertyAccessExpression,
   createUnaryExpression,
   createBreakStatement,
@@ -95,6 +97,7 @@ export CCastExpression
 export CConditionalExpression
 export CElementAccessExpression
 export CInitializerListExpression
+export CMacroInvocation
 export CPropertyAccessExpression
 export CUnaryExpression
 export CBreakStatement
