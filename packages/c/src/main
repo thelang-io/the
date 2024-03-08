@@ -131,6 +131,7 @@ export createCastExpression
 export createConditionalExpression
 export createElementAccessExpression
 export createInitializerListExpression
+export createMacroInvocation
 export createPropertyAccessExpression
 export createUnaryExpression
 export createBreakStatement
