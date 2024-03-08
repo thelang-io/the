@@ -7,8 +7,11 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
+// todo error object needs special generation rules to move message and stack properties up front
+
 export obj CodegenAPIBuiltin {
   mut theAny: bool
+  mut theArray: bool
   mut theBool: bool
   mut theByte: bool
   mut theError: bool
@@ -43,910 +46,7 @@ export obj CodegenEntity {
   mut name: str
   mut codeName: str
   mut context: any
-  mut generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement
-}
-
-export obj CodegenState {
-  _: (str) -> str
-  block: (ref Parser.Statement[]) -> AST.CStatement[]
-  defaultInitializerVariableDeclaration: (ref Analyzer.Type) -> AST.CExpression
-  e: (ref Parser.Expression) -> AST.CExpression
-  functionCopy: (ref Analyzer.Type, AST.CExpression) -> AST.CExpression
-  functionEq: (ref Analyzer.Type, AST.CExpression, AST.CExpression) -> AST.CExpression
-  functionFree: (ref Analyzer.Type, AST.CExpression) -> AST.CExpression
-  functionNe: (ref Analyzer.Type, AST.CExpression, AST.CExpression) -> AST.CExpression
-  functionRealloc: (ref Analyzer.Type, AST.CExpression, AST.CExpression) -> AST.CExpression
-  functionStr: (ref Analyzer.Type, AST.CExpression) -> AST.CExpression
-  get: (str) -> ref CodegenEntity
-  has: (str) -> bool
-  t: (ref Analyzer.Type) -> str
-  typeDef: (ref Analyzer.Type) -> str
-  typeName: (ref Analyzer.Type) -> str
-
-  mut builtin: CodegenAPIBuiltin
-  mut blockData: BlockData
-  mut entities: CodegenEntity[]
-  mut flags: str[]
-  mut lastTypeId: int
-  mut mainStatements: AST.CStatement[]
-  mut globalStatements: AST.CStatement[]
-  mut statements: AST.CStatement[]
-}
-
-export fn generateIdentifier (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isIdentifier() {
-    expression := item.asIdentifier()
-
-    if state.has(expression.name) {
-      return AST.createIdentifier(state._(expression.name))
-    } else {
-      return AST.createIdentifier(expression.name)
-    }
-  }
-
-  return nil
-}
-
-export fn generateLiteral (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isBooleanLiteral() {
-    expression := item.asBooleanLiteral()
-    return AST.createLiteral(state._(expression.value))
-  } elif item.isCharacterLiteral() {
-    expression := item.asCharacterLiteral()
-    return AST.createLiteral("L'" + expression.value + "'")
-  } elif item.isFloatingPointLiteral() {
-    expression := item.asFloatingPointLiteral()
-    return AST.createLiteral(expression.value)
-  } elif item.isIntegerLiteral() {
-    expression := item.asIntegerLiteral()
-    rawValue := expression.value.replace("O", "").replace("o", "")
-
-    if !rawValue.contains("b") && !rawValue.contains("B") && !rawValue.contains("x") && !rawValue.contains("X") {
-      numValue := rawValue.toU64()
-      return AST.createLiteral(rawValue + (numValue > 9223372036854775807 ? "U" : ""))
-    }
-
-    return AST.createLiteral(rawValue)
-  } elif item.isNilLiteral() {
-    expression := item.asNilLiteral()
-    return AST.createIdentifier(state._("NULL"))
-  } elif item.isStringLiteral() {
-    expression := item.asStringLiteral()
-    sanitizedValue := expression.value
-      .replace(os_EOL, "\" " + state._("THE_EOL") + " \"")
-      .replace("\n", "\" " + state._("THE_EOL") + " \"")
-    rawValue := "L\"" + sanitizedValue + "\""
-
-    if !item.hasParent() && item.hasParentNode() {
-      node := item.parentNode()
-
-      if node.isVariableDeclaration() {
-        return AST.createCallExpression(
-          AST.createIdentifier(state._("the_str_alloc")),
-          [AST.createLiteral(rawValue)]
-        )
-      }
-    }
-
-    return AST.createLiteral(rawValue)
-  }
-
-  return nil
-}
-
-export fn generateArrayExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isArray() {
-    expression := item.asArray()
-    validateContext(item.context is Analyzer.ArrayExpressionContext)
-    context := item.context as Analyzer.ArrayExpressionContext
-    typeName := state.typeName(context.t)
-    mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len)]
-
-    loop i := 0; i < expression.elements.len; i++ {
-      element := expression.elements[i]
-      arguments.push(state.e(element))
-    }
-
-    result := AST.createCallExpression(AST.createIdentifier(state._(typeName + "_alloc")), arguments)
-    return item.hasParent() ? result : state.functionFree(context.t, result)
-  }
-
-  return nil
-}
-
-export fn generateAssignmentExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isAssignment() {
-    expression := item.asAssignment()
-    validateContext(item.context is Analyzer.AssignmentExpressionContext)
-    context := item.context as Analyzer.AssignmentExpressionContext
-    leftType := Analyzer.unwrap(context.leftType, withReference: false)
-    rightType := Analyzer.unwrap(context.rightType, withReference: false)
-    left := state.e(ref expression.left)
-    mut right := state.e(ref expression.right)
-
-    if expression.operator.t == .OpPlusEq && (leftType.name == "str" || rightType.name == "str") {
-      return AST.createAssignmentExpression(
-        left,
-        "=",
-        AST.createCallExpression(AST.createIdentifier(state._("the_str_realloc")), [
-          left,
-          AST.createCallExpression(AST.createIdentifier(state._("the_str_concat")), [left, right])
-        ])
-      )
-    } elif !typePrimitive(leftType) || !typePrimitive(rightType) {
-      result := state.functionRealloc(leftType, left, right)
-      return item.hasParent() ? result : state.functionCopy(leftType, result)
-    } elif expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
-      right = AST.createBinaryExpression(left, expression.operator.val, right)
-      return AST.createAssignmentExpression(left, "=", right)
-    }
-
-    return AST.createAssignmentExpression(left, expression.operator.val, right)
-  }
-
-  return nil
-}
-
-export fn generateBinaryExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isBinary() {
-    expression := item.asBinary()
-    validateContext(item.context is Analyzer.BinaryExpressionContext)
-    context := item.context as Analyzer.BinaryExpressionContext
-    leftType := Analyzer.unwrap(context.leftType, withReference: false)
-    rightType := Analyzer.unwrap(context.rightType, withReference: false)
-    left := state.e(ref expression.left)
-    mut right := state.e(ref expression.right)
-
-    if (
-      (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
-      (!typePrimitive(context.leftType) || !typePrimitive(context.rightType))
-    ) {
-      return expression.operator.t == .OpEqEq ? state.functionEq(leftType, left, right) : state.functionNe(leftType, left, right)
-    } elif leftType.name == "str" && rightType.name == "str" && (
-      expression.operator.t == .OpLt ||
-      expression.operator.t == .OpLtEq ||
-      expression.operator.t == .OpGt ||
-      expression.operator.t == .OpGtEq
-    ) {
-      direction := expression.operator.t == .OpLt
-        ? "lt"
-        : expression.operator.t == .OpLtEq
-          ? "le"
-          : expression.operator.t == .OpGt
-            ? "gt"
-            : "ge"
-
-      return AST.createCallExpression(AST.createIdentifier(state._("the_str_" + direction)), [left, right])
-    } elif expression.operator.t == .OpPlus && leftType.name == "str" && rightType.name == "str" {
-      result := AST.createCallExpression(AST.createIdentifier(state._("the_str_concat")), [left, right])
-      return item.hasParent() ? result : state.functionFree(leftType, result)
-    }
-
-    return AST.createBinaryExpression(left, expression.operator.val, right)
-  }
-
-  return nil
-}
-
-// todo finalize
-export fn generateCallExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isCall() {
-    expression := item.asCall()
-    return AST.createCallExpression(state.e(ref expression.callee))
-  }
-
-  return nil
-}
-
-export fn generateConditionalExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isConditional() {
-    expression := item.asConditional()
-    validateContext(item.context is Analyzer.ConditionalExpressionContext)
-    context := item.context as Analyzer.ConditionalExpressionContext
-    alternateType := Analyzer.unwrap(context.alternateType, withReference: false)
-    mut alternate := state.e(ref expression.alternate)
-
-    if expression.alternate.isAssignment() && !typeSafeForTernaryAlternate(alternateType) {
-      alternate = alternate.wrap()
-    }
-
-    return AST.createConditionalExpression(
-      state.e(ref expression.condition),
-      state.e(ref expression.consequent),
-      alternate
-    )
-  }
-
-  return nil
-}
-
-export fn generateIsExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isIs() {
-    expression := item.asIs()
-    validateContext(item.context is Analyzer.IsExpressionContext)
-    context := item.context as Analyzer.IsExpressionContext
-    left := AST.createPropertyAccessExpression(state.e(ref expression.expression), "t")
-    right := AST.createIdentifier(state.typeDef(context.rightType))
-
-    return AST.createBinaryExpression(left, "==", right)
-  }
-
-  return nil
-}
-
-export fn generateParenthesizedExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isParenthesized() {
-    expression := item.asParenthesized()
-    result := state.e(ref expression.expression)
-    return result.wrap()
-  }
-
-  return nil
-}
-
-export fn generateReferenceExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isReference() {
-    expression := item.asReference()
-    return AST.createUnaryExpression("&", state.e(ref expression.expression))
-  }
-
-  return nil
-}
-
-export fn generateUnaryExpression (mut state: ref CodegenState, item: ref Parser.Expression) AST.CExpression? {
-  if item.isUnary() {
-    expression := item.asUnary()
-    validateContext(item.context is Analyzer.UnaryExpressionContext)
-    context := item.context as Analyzer.UnaryExpressionContext
-
-    if context.operandType.isFloat() {
-      castExpression := AST.createCastExpression(AST.createType(state._("bool")), state.e(ref expression.operand))
-
-      return AST.createUnaryExpression(
-        expression.operator.val,
-        castExpression.wrap(),
-        postfix: !expression.prefix
-      )
-    }
-
-    return AST.createUnaryExpression(
-      expression.operator.val,
-      state.e(ref expression.operand),
-      postfix: !expression.prefix
-    )
-  }
-
-  return nil
-}
-
-export fn generateBlockStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isBlock() {
-    statement := item.asBlock()
-    return AST.createCompoundStatement(state.block(ref statement.body))
-  }
-
-  return nil
-}
-
-export fn generateBreakStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isBreak() {
-    statement := item.asBreak()
-
-    // todo
-    // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    //   (*c)->append(
-    //     CodegenASTExprAssign::create(
-    //       CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
-    //       "=",
-    //       CodegenASTExprLiteral::create("1")
-    //     )->stmt()
-    //   );
-    //   if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
-    //     (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-    //   }
-    // } else {
-    //   (*c)->append(CodegenASTStmtBreak::create());
-    // }
-  }
-
-  return nil
-}
-
-export fn generateContinueStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isContinue() {
-    statement := item.asContinue()
-
-    // todo
-    // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-    //   if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
-    //     (*c)->append(
-    //       CodegenASTExprAssign::create(
-    //         CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
-    //         "=",
-    //         CodegenASTExprLiteral::create("1")
-    //       )->stmt()
-    //     );
-    //   }
-    //   if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
-    //     (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-    //   }
-    // } else {
-    //   (*c)->append(CodegenASTStmtContinue::create());
-    // }
-  }
-
-  return nil
-}
-
-export fn generateEnumDeclaration (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isEnumDeclaration() {
-    statement := item.asEnumDeclaration()
-
-    // todo
-    // auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
-    // auto members = nodeEnumDecl.members;
-    // auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
-    // auto enumType = std::get<TypeEnum>(nodeEnumDecl.type->body);
-    // if (phase != CODEGEN_PHASE_ALLOC && phase != CODEGEN_PHASE_FULL) {
-    //   return;
-    // }
-    // auto cDecl = CodegenASTStmtCompound::create();
-    // this->_apiEntity(typeName, CODEGEN_ENTITY_ENUM, [&] (auto &decl, [[maybe_unused]] auto &def) {
-    //   auto membersCode = std::string();
-    //   for (auto i = static_cast<std::size_t>(0); i < enumType.members.size(); i++) {
-    //     auto typeMember = enumType.members[i];
-    //     auto member = std::find_if(members.begin(), members.end(), [&] (const auto &it) -> bool {
-    //       return it.id == typeMember->name;
-    //     });
-    //     if (member != members.end()) {
-    //       membersCode += "  " + Codegen::name(typeMember->codeName);
-    //       if (member->init != std::nullopt) {
-    //         auto cInit = this->_nodeExpr(*member->init, member->init->type, node, &cDecl, true);
-    //         membersCode += " = " + cInit->str();
-    //       }
-    //       membersCode += i == enumType.members.size() - 1 ? EOL : "," EOL;
-    //     }
-    //   }
-    //   decl += "enum " + typeName + " {" EOL;
-    //   decl += membersCode;
-    //   decl += "};";
-    //   return 0;
-    // });
-    // this->_apiEntity(typeName + "_rawValue", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
-    //   auto typeInfo = this->_typeInfo(nodeEnumDecl.type);
-    //   decl += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCodeTrimmed + ");";
-    //   def += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCode + "n) {" EOL;
-    //   for (const auto &member : enumType.members) {
-    //     def += "  if (n == " + Codegen::name(member->codeName) + ")" R"( return _{str_alloc}(")" + member->name + R"(");)" EOL;
-    //   }
-    //   def += "}";
-    //   return 0;
-    // });
-  }
-
-  return nil
-}
-
-export fn generateExportDeclaration (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isExportDeclaration() {
-    statement := item.asExportDeclaration()
-
-    // todo
-    // if (
-    //   nodeExportDecl.declaration != std::nullopt &&
-    //   !std::holds_alternative<ASTNodeExpr>(*nodeExportDecl.declaration->body)
-    // ) {
-    //   return this->_node(c, *nodeExportDecl.declaration, phase);
-    // }
-  }
-
-  return nil
-}
-
-export fn generateExpressionStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isExpression() {
-    statement := item.asExpression()
-    return AST.createExpressionStatement(state.e(ref statement.expression))
-  }
-
-  return nil
-}
-
-export fn generateFunctionDeclaration (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isFunctionDeclaration() {
-    statement := item.asFunctionDeclaration()
-    // todo
-  }
-
-  return nil
-}
-
-export fn generateIfStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isIf() {
-    statement := item.asIf()
-
-    // todo
-    // auto initialStateTypeCasts = this->state.typeCasts;
-    // auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
-    // auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
-    // auto cBody = CodegenASTStmtCompound::create();
-    // (*c)->append(CodegenASTStmtIf::create(cCond, cBody));
-    // *c = cBody;
-    // bodyTypeCasts.merge(this->state.typeCasts);
-    // bodyTypeCasts.swap(this->state.typeCasts);
-    // this->varMap.save();
-    // this->_block(c, nodeIf.body);
-    // this->varMap.restore();
-    // this->state.typeCasts = initialStateTypeCasts;
-    // if (nodeIf.alt != std::nullopt) {
-    //   altTypeCasts.merge(this->state.typeCasts);
-    //   altTypeCasts.swap(this->state.typeCasts);
-    //   auto cAlt = CodegenASTStmtCompound::create();
-    //   if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
-    //     this->varMap.save();
-    //     this->_block(&cAlt, std::get<ASTBlock>(*nodeIf.alt));
-    //     this->varMap.restore();
-    //   } else {
-    //     this->_node(&cAlt, std::get<ASTNode>(*nodeIf.alt));
-    //     cAlt = cAlt->asCompound().body[0];
-    //   }
-    //   (*c)->exit()->setIfAlt(cAlt);
-    // }
-    // *c = (*c)->exit()->exit();
-    // this->state.typeCasts = initialStateTypeCasts;
-  }
-
-  return nil
-}
-
-export fn generateLoopStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isLoop() {
-    statement := item.asLoop()
-
-    // todo
-    // auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
-    // auto initialStateCleanUp = this->state.cleanUp;
-    // this->varMap.save();
-    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
-    // this->state.cleanUp.breakVarIdx += 1;
-    // this->state.cleanUp.continueVarIdx += 1;
-    // auto cBody = CodegenASTStmtCompound::create();
-    // if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
-    //   auto cCond = nodeLoop.cond == std::nullopt
-    //     ? CodegenASTExprLiteral::create("1")
-    //     : this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, c, true);
-    //   (*c)->append(CodegenASTStmtWhile::create(cCond, cBody));
-    //   *c = cBody;
-    // } else {
-    //   auto cInit = CodegenASTStmtNull::create();
-    //   auto cCond = CodegenASTExprNull::create();
-    //   auto cUpd = CodegenASTExprNull::create();
-    //   if (nodeLoop.init != std::nullopt) {
-    //     auto cCompound = CodegenASTStmtCompound::create();
-    //     this->_node(&cCompound, *nodeLoop.init);
-    //     if (!this->state.cleanUp.empty()) {
-    //       *c = (*c)->append(cCompound);
-    //     } else {
-    //       cInit = cCompound->asCompound().body[0];
-    //     }
-    //   }
-    //   if (nodeLoop.cond != std::nullopt) {
-    //     cCond = this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, c, true);
-    //   }
-    //   if (nodeLoop.upd != std::nullopt) {
-    //     cUpd = this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, c, true);
-    //   }
-    //   (*c)->append(CodegenASTStmtFor::create(cInit, cCond, cUpd, cBody));
-    //   *c = cBody;
-    // }
-    // auto saveStateCleanUp = this->state.cleanUp;
-    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp);
-    // this->_block(c, nodeLoop.body);
-    // if (this->state.cleanUp.continueVarUsed) {
-    //   (*c)->prepend(
-    //     CodegenASTStmtVarDecl::create(
-    //       CodegenASTType::create("unsigned char"),
-    //       CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
-    //       CodegenASTExprLiteral::create("0")
-    //     )
-    //   );
-    // }
-    // if (this->state.cleanUp.breakVarUsed) {
-    //   (*c)->prepend(
-    //     CodegenASTStmtVarDecl::create(
-    //       CodegenASTType::create("unsigned char"),
-    //       CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
-    //       CodegenASTExprLiteral::create("0")
-    //     )
-    //   );
-    // }
-    // *c = (*c)->exit()->exit();
-    // if (!saveStateCleanUp.empty()) {
-    //   saveStateCleanUp.gen(c);
-    //   if (saveStateCleanUp.returnVarUsed) {
-    //     (*c)->append(
-    //       CodegenASTStmtIf::create(
-    //         CodegenASTExprBinary::create(CodegenASTExprAccess::create("r"), "==", CodegenASTExprLiteral::create("1")),
-    //         initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-    //           ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
-    //           : this->state.returnType->isVoid()
-    //             ? CodegenASTStmtReturn::create()
-    //             : CodegenASTStmtReturn::create(CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()))
-    //       )
-    //     );
-    //   }
-    //   *c = (*c)->exit();
-    // }
-    // this->state.cleanUp.breakVarIdx -= 1;
-    // this->state.cleanUp.continueVarIdx -= 1;
-    // this->state.cleanUp = initialStateCleanUp;
-    // this->varMap.restore();
-  }
-
-  return nil
-}
-
-export fn generateMainDeclaration (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isMainDeclaration() {
-    statement := item.asMainDeclaration()
-    statementBody := statement.body.asBlock()
-
-    state.mainStatements = state.block(ref statementBody.body)
-    state.mainStatements.merge(state.blockData.getCleanup())
-
-    return AST.createEmptyStatement()
-  }
-
-  return nil
-}
-
-export fn generateObjectDeclaration (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isObjectDeclaration() {
-    statement := item.asObjectDeclaration()
-    // todo
-  }
-
-  return nil
-}
-
-export fn generateReturnStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isReturn() {
-    statement := item.asReturn()
-
-    // todo
-    // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) || this->state.cleanUp.returnVarUsed) {
-    //   auto parentNotRoot = this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT;
-    //   if (parentNotRoot && this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
-    //     (*c)->append(
-    //       CodegenASTExprAssign::create(
-    //         CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar()),
-    //         "=",
-    //         CodegenASTExprLiteral::create("1")
-    //       )->stmt()
-    //     );
-    //   }
-    //   if (nodeReturn.body != std::nullopt) {
-    //     (*c)->append(
-    //       CodegenASTExprAssign::create(
-    //         CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()),
-    //         "=",
-    //         this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c)
-    //       )->stmt()
-    //     );
-    //   }
-    //   auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
-    //   auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast(this->state.fnDeclBody);
-    //   if ((!nodeParentFunction && this->state.cleanUp.empty()) || !nodeIsLast) {
-    //     (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-    //   }
-    // } else if (nodeReturn.body != std::nullopt) {
-    //   auto cArg = this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c);
-    //   (*c)->append(CodegenASTStmtReturn::create(cArg));
-    // } else {
-    //   (*c)->append(
-    //     ASTChecker(node).insideMain()
-    //       ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))
-    //       : CodegenASTStmtReturn::create()
-    //   );
-    // }
-  }
-
-  return nil
-}
-
-export fn generateThrowStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isThrow() {
-    statement := item.asThrow()
-
-    // todo
-    // auto argTypeInfo = this->_typeInfo(nodeThrow.arg.type);
-    // auto cArg = this->_nodeExpr(nodeThrow.arg, argTypeInfo.type, node, c);
-    // auto argNodeExprDef = this->_typeDef(argTypeInfo.type);
-    // (*c)->append(
-    //   CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("error_assign")),
-    //     {
-    //       this->_genErrState(ASTChecker(node).insideMain(), false),
-    //       CodegenASTExprAccess::create(this->_(argNodeExprDef)),
-    //       CodegenASTExprCast::create(CodegenASTType::create("void *"), cArg),
-    //       CodegenASTExprCast::create(
-    //         CodegenASTType::create("void (*) (void *)"),
-    //         CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_(argTypeInfo.typeName + "_free")))
-    //       ),
-    //       CodegenASTExprLiteral::create(std::to_string(node.start.line)),
-    //       CodegenASTExprLiteral::create(std::to_string(node.start.col + 1))
-    //     }
-    //   )->stmt()
-    // );
-    // (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-  }
-
-  return nil
-}
-
-export fn generateTryStatement (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isTry() {
-    statement := item.asTry()
-
-    // todo
-    // auto nodeTry = std::get<ASTNodeTry>(*node.body);
-    // auto initialStateCleanUp = this->state.cleanUp;
-    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
-
-    // *c = (*c)->append(
-    //   CodegenASTStmtSwitch::create(
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("setjmp")),
-    //       {
-    //         CodegenASTExprAccess::create(
-    //           CodegenASTExprCall::create(
-    //             CodegenASTExprAccess::create(this->_("error_buf_increase")),
-    //             {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //           ),
-    //           "buf",
-    //           true
-    //         )
-    //       }
-    //     )
-    //   )
-    // );
-
-    // *c = (*c)->append(
-    //   CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), CodegenASTStmtCompound::create())
-    // );
-
-    // this->varMap.save();
-
-    // auto blockCleanUp = CodegenASTStmtCompound::create({
-    //   CodegenASTStmtIf::create(
-    //     CodegenASTExprBinary::create(
-    //       this->_genErrState(ASTChecker(node).insideMain(), false, "id"),
-    //       "!=",
-    //       CodegenASTExprLiteral::create("-1")
-    //     ),
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("longjmp")),
-    //       {
-    //         CodegenASTExprAccess::create(
-    //           this->_genErrState(ASTChecker(node).insideMain(), false, "buf_last"),
-    //           "buf",
-    //           true
-    //         ),
-    //         this->_genErrState(ASTChecker(node).insideMain(), false, "id")
-    //       }
-    //     )->stmt()
-    //   ),
-    //   CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("error_buf_decrease")),
-    //     {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //   )->stmt()
-    // });
-
-    // this->_block(c, nodeTry.body, true, blockCleanUp, true);
-    // (*c)->append(CodegenASTStmtBreak::create());
-    // *c = (*c)->exit()->exit();
-    // this->varMap.restore();
-    // this->state.cleanUp = initialStateCleanUp;
-
-    // for (const auto &handler : nodeTry.handlers) {
-    //   auto handlerVarDecl = std::get<ASTNodeVarDecl>(*handler.param.body);
-    //   auto handlerTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
-    //   auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
-    //   auto handleCodeName = Codegen::name(handlerVarDecl.var->codeName);
-
-    //   *c = (*c)->append(
-    //     CodegenASTStmtCase::create(
-    //       CodegenASTExprAccess::create(this->_(handlerDef)),
-    //       CodegenASTStmtCompound::create()
-    //     )
-    //   );
-
-    //   (*c)->append(
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("error_buf_decrease")),
-    //       {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //     )->stmt()
-    //   );
-
-    //   (*c)->append(
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("error_unset")),
-    //       {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //     )->stmt()
-    //   );
-
-    //   (*c)->append(
-    //     CodegenASTStmtVarDecl::create(
-    //       CodegenASTType::create(handlerTypeInfo.typeCodeConst),
-    //       CodegenASTExprAccess::create(handleCodeName),
-    //       CodegenASTExprCast::create(
-    //         CodegenASTType::create(handlerTypeInfo.typeCodeTrimmed),
-    //         this->_genErrState(ASTChecker(node).insideMain(), false, "ctx")
-    //       )
-    //     )
-    //   );
-
-    //   this->varMap.save();
-
-    //   this->_block(
-    //     c,
-    //     handler.body,
-    //     true,
-    //     this->_genFreeFn(handlerTypeInfo.type, CodegenASTExprAccess::create(handleCodeName))->stmt()
-    //   );
-
-    //   (*c)->append(CodegenASTStmtBreak::create());
-    //   *c = (*c)->exit()->exit();
-    //   this->varMap.restore();
-    // }
-
-    // *c = (*c)->append(CodegenASTStmtCase::create(nullptr, CodegenASTStmtCompound::create()));
-
-    // (*c)->append(
-    //   CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("error_buf_decrease")),
-    //     {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //   )->stmt()
-    // );
-
-    // (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-    // *c = (*c)->exit()->exit()->exit();
-  }
-
-  return nil
-}
-
-export fn generateVariableDeclaration (mut state: ref CodegenState, item: ref Parser.Statement) AST.CStatement? {
-  if item.isVariableDeclaration() {
-    statement := item.asVariableDeclaration()
-    validateContext(item.context is Analyzer.VariableDeclarationContext)
-    context := item.context as Analyzer.VariableDeclarationContext
-    typeName := state.typeName(context.varType)
-    t := AST.createType(state.t(context.varType))
-
-    if typeShouldBeFreed(context.varType) {
-      state.blockData.addCleanup(
-        AST.createExpressionStatement(
-          AST.createCallExpression(
-            AST.createIdentifier(state._(typeName + "_free")),
-            [AST.createIdentifier(statement.name.name)]
-          )
-        )
-      )
-    }
-
-    initializer := statement.initializer == nil
-      ? state.defaultInitializerVariableDeclaration(context.varType)
-      : state.e(ref statement.initializer)
-
-    return AST.createVariableDeclaration(t, statement.name.name, initializer)
-  }
-
-  return nil
-}
-
-export fn generateOptionalType (mut state: ref CodegenState, item: ref Analyzer.Type) str {
-  typeName := state.typeName(item)
-  name := typeName + "_t"
-
-  if state.has(name) {
-    return name
-  }
-
-  state.entities.push(CodegenEntity{
-    name: name,
-    codeName: name,
-    context: item,
-    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-      it := entity.context as ref Analyzer.Type
-      t := it.asOptional()
-      return AST.createTypedefDeclaration(AST.createType(state.t(t.t) + "*"), entity.codeName)
-    }
-  })
-
-  state.entities.push(CodegenEntity{
-    name: typeName + "_alloc",
-    codeName: typeName + "_alloc",
-    context: item,
-    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-      it := entity.context as ref Analyzer.Type
-      t := it.asOptional()
-      typeName := state.typeName(it)
-      name := typeName + "_t"
-      underlyingCType := AST.createType(state.t(t.t))
-
-      return AST.createFunctionDeclaration(AST.createType(state._(name)), entity.codeName, [
-        AST.createFunctionParameter(underlyingCType, "n")
-      ], AST.createCompoundStatement([
-        AST.createVariableDeclaration(
-          AST.createType(state._(name)),
-          "r",
-          AST.createCallExpression(AST.createIdentifier(state._("the_safe_alloc")), [
-            AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
-          ])
-        ),
-        AST.createExpressionStatement(
-          AST.createAssignmentExpression(
-            AST.createUnaryExpression("*", AST.createIdentifier("r")),
-            "=",
-            AST.createIdentifier("n")
-          )
-        ),
-        AST.createReturnStatement(AST.createIdentifier("r"))
-      ]))
-    }
-  })
-
-  state.entities.push(CodegenEntity{
-    name: typeName + "_free",
-    codeName: typeName + "_free",
-    context: item,
-    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-      it := entity.context as ref Analyzer.Type
-      typeName := state.typeName(it)
-      name := typeName + "_t"
-
-      return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
-        AST.createFunctionParameter(AST.createType(state._(name)), "n")
-      ], AST.createCompoundStatement([
-        AST.createIfStatement(
-          AST.createBinaryExpression(AST.createIdentifier("n"), "==", AST.createIdentifier(state._("NULL"))),
-          AST.createReturnStatement()
-        ),
-        // todo
-        // if shouldBeFreed(underlyingTypeInfo.type) {
-        //   state.functionFree(underlyingTypeInfo.type, AST.createUnaryExpression("*", CodegenASTExprAccess::create("n")))
-        // }
-        AST.createExpressionStatement(
-          AST.createCallExpression(AST.createIdentifier(state._("the_safe_free")), [AST.createIdentifier("n")])
-        )
-      ]))
-    }
-  })
-
-  return name
-}
-
-export fn generateReferenceType (mut state: ref CodegenState, item: ref Analyzer.Type) str {
-  typeName := state.typeName(item)
-  name := typeName + "_t"
-
-  if state.has(name) {
-    return name
-  }
-
-  state.entities.push(CodegenEntity{
-    name: name,
-    codeName: name,
-    context: item,
-    generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-      it := entity.context as ref Analyzer.Type
-      t := it.asReference()
-      return AST.createTypedefDeclaration(AST.createType(state.t(t.t) + "*"), entity.codeName)
-    }
-  })
-
-  return name
+  mut generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement
 }
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
@@ -1019,76 +119,21 @@ export fn validateContext (valid: bool) {
 
 export obj Codegen {
   mut analyzer: ref Analyzer.Analyzer
-  mut state: CodegenState
+  mut builtin: CodegenAPIBuiltin
+  mut blockData: BlockData
+  mut entities: CodegenEntity[]
+  mut flags: str[]
+  mut lastTypeId: int
+  mut mainStatements: AST.CStatement[]
+  mut globalStatements: AST.CStatement[]
+  mut statements: AST.CStatement[]
 
   fn init (mut self: ref Self) {
-    self.state = CodegenState{
-      _: (name: str) -> str {
-        selfRef := ref self // todo remove after v1
-        return self._(name)
-      },
-      block: (items: ref Parser.Statement[]) -> AST.CStatement[] {
-        selfRef := ref self // todo remove after v1
-        return self._generateBlock(items)
-      },
-      defaultInitializerVariableDeclaration: (item: ref Analyzer.Type) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._defaultInitializerVariableDeclaration(item)
-      },
-      e: (item: ref Parser.Expression) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._generateExpression(item)
-      },
-      functionCopy: (it: ref Analyzer.Type, expression: AST.CExpression) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._functionCopy(it, expression)
-      },
-      functionEq: (it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._functionEq(it, left, right)
-      },
-      functionFree: (it: ref Analyzer.Type, expression: AST.CExpression) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._functionFree(it, expression)
-      },
-      functionNe: (it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._functionNe(it, left, right)
-      },
-      functionRealloc: (it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._functionRealloc(it, left, right)
-      },
-      functionStr: (it: ref Analyzer.Type, expression: AST.CExpression) -> AST.CExpression {
-        selfRef := ref self // todo remove after v1
-        return self._functionStr(it, expression)
-      },
-      get: (item: str) -> ref CodegenEntity {
-        selfRef := ref self // todo remove after v1
-        return self._getEntity(item)
-      },
-      has: (item: str) -> bool {
-        selfRef := ref self // todo remove after v1
-        return self._hasEntity(item)
-      },
-      t: (it: ref Analyzer.Type) -> str {
-        selfRef := ref self // todo remove after v1
-        return self._type(it)
-      },
-      typeDef: (it: ref Analyzer.Type) -> str {
-        selfRef := ref self // todo remove after v1
-        return self._typeDef(it)
-      },
-      typeName: (it: ref Analyzer.Type) -> str {
-        selfRef := ref self // todo remove after v1
-        return self._typeName(it)
-      }
-    }
   }
 
   fn generate (mut self: ref Self) {
     mut file := self.analyzer.files.last()
-    self.state.globalStatements = self._generateBlock(ref file.f.program.body)
+    self.globalStatements = self._generateBlock(ref file.f.program.body)
     self._assemble()
   }
 
@@ -1096,14 +141,15 @@ export obj Codegen {
     mut extraFlags: str[]
 
     if (
-      self.state.builtin.theAny ||
-      self.state.builtin.theBool ||
-      self.state.builtin.theByte ||
-      self.state.builtin.theError ||
-      self.state.builtin.theMacro ||
-      self.state.builtin.theNumber ||
-      self.state.builtin.theSafe ||
-      self.state.builtin.theString
+      self.builtin.theAny ||
+      self.builtin.theArray ||
+      self.builtin.theBool ||
+      self.builtin.theByte ||
+      self.builtin.theError ||
+      self.builtin.theMacro ||
+      self.builtin.theNumber ||
+      self.builtin.theSafe ||
+      self.builtin.theString
     ) {
       extraFlags.push("-lthe")
     }
@@ -1120,15 +166,16 @@ export obj Codegen {
       "-Wno-unused-value",
       "-Wno-unused-variable",
     ].concat(extraFlags).join(" ")
+
     return result.empty ? "" : (" " + result)
   }
 
   fn stringify (self: ref Self) str {
     mut result := ""
-    l := self.state.statements.len
+    l := self.statements.len
 
     loop i := 0; i < l; i++ {
-      result += self.state.statements[i].stringify()
+      result += self.statements[i].stringify()
     }
 
     return result
@@ -1144,7 +191,7 @@ export obj Codegen {
 
       return item.codeName
     } elif ["bool", "false", "true"].contains(name) {
-      self.state.builtin.stdbool = true
+      self.builtin.stdbool = true
     } elif (
       [
         "EXIT_FAILURE",
@@ -1153,7 +200,7 @@ export obj Codegen {
         "size_t"
       ].contains(name)
     ) {
-      self.state.builtin.stddef = true
+      self.builtin.stddef = true
     } elif (
       [
         "fprintf",
@@ -1165,7 +212,7 @@ export obj Codegen {
         "stdout"
       ].contains(name)
     ) {
-      self.state.builtin.stdio = true
+      self.builtin.stdio = true
     } elif (
       [
         "int8_t",
@@ -1178,13 +225,13 @@ export obj Codegen {
         "uint64_t"
       ].contains(name)
     ) {
-      self.state.builtin.stdint = true
+      self.builtin.stdint = true
     } elif (
       [
         "wchar_t"
       ].contains(name)
     ) {
-      self.state.builtin.wchar = true
+      self.builtin.wchar = true
     } elif (
       [
         "the_any_t",
@@ -1196,11 +243,13 @@ export obj Codegen {
         "the_any_str"
       ].contains(name)
     ) {
-      self.state.builtin.theAny = true
+      self.builtin.theAny = true
+    } elif ["THE_ARRAY_DECLARE", "THE_ARRAY_DEFINE"].contains(name) {
+      self.builtin.theArray = true
     } elif ["the_bool_str"].contains(name) {
-      self.state.builtin.theBool = true
+      self.builtin.theBool = true
     } elif ["the_byte_str"].contains(name) {
-      self.state.builtin.theByte = true
+      self.builtin.theByte = true
     } elif (
       [
         "the_Error_t",
@@ -1219,9 +268,9 @@ export obj Codegen {
         "the_Error_free"
       ].contains(name)
     ) {
-      self.state.builtin.theError = true
+      self.builtin.theError = true
     } elif ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"].contains(name) {
-      self.state.builtin.theMacro = true
+      self.builtin.theMacro = true
     } elif (
       [
         "the_f32_str",
@@ -1240,9 +289,9 @@ export obj Codegen {
         "the_usize_str"
       ].contains(name)
     ) {
-      self.state.builtin.theNumber = true
+      self.builtin.theNumber = true
     } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc", "the_safe_swap"].contains(name) {
-      self.state.builtin.theSafe = true
+      self.builtin.theSafe = true
     } elif (
       [
         "the_str_t",
@@ -1290,7 +339,7 @@ export obj Codegen {
         "the_str_upperFirst"
       ].contains(name)
     ) {
-      self.state.builtin.theString = true
+      self.builtin.theString = true
     } else {
       throw error_NewError("Tried activating unknown entity '" + name + "'")
     }
@@ -1307,14 +356,14 @@ export obj Codegen {
       statements = []
       mut currentActive := 0
 
-      loop i := 0; i < self.state.entities.len; i++ {
-        entity := self.state.entities[i]
+      loop i := 0; i < self.entities.len; i++ {
+        entity := self.entities[i]
 
         if !entity.active {
           continue
         }
 
-        statements.push(entity.generate(ref self.state, ref file.tm, entity))
+        statements.push(entity.generate(self, ref file.tm, entity))
         currentActive++
       }
 
@@ -1325,30 +374,31 @@ export obj Codegen {
       prevActive = currentActive
     }
 
-    if self.state.builtin.theAny { self.state.statements.push(AST.createIncludeDirective("the/any.h")) }
-    if self.state.builtin.theBool { self.state.statements.push(AST.createIncludeDirective("the/bool.h")) }
-    if self.state.builtin.theByte { self.state.statements.push(AST.createIncludeDirective("the/byte.h")) }
-    if self.state.builtin.theError { self.state.statements.push(AST.createIncludeDirective("the/error.h")) }
-    if self.state.builtin.theMacro { self.state.statements.push(AST.createIncludeDirective("the/macro.h")) }
-    if self.state.builtin.theNumber { self.state.statements.push(AST.createIncludeDirective("the/number.h")) }
-    if self.state.builtin.theSafe { self.state.statements.push(AST.createIncludeDirective("the/safe.h")) }
-    if self.state.builtin.theString { self.state.statements.push(AST.createIncludeDirective("the/string.h")) }
+    if self.builtin.theAny { self.statements.push(AST.createIncludeDirective("the/any.h")) }
+    if self.builtin.theArray { self.statements.push(AST.createIncludeDirective("the/array.h")) }
+    if self.builtin.theBool { self.statements.push(AST.createIncludeDirective("the/bool.h")) }
+    if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
+    if self.builtin.theError { self.statements.push(AST.createIncludeDirective("the/error.h")) }
+    if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
+    if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
+    if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
+    if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
 
-    if self.state.builtin.stdbool { self.state.statements.push(AST.createIncludeDirective("stdbool.h")) }
-    if self.state.builtin.stddef { self.state.statements.push(AST.createIncludeDirective("stddef.h")) }
-    if self.state.builtin.stdio { self.state.statements.push(AST.createIncludeDirective("stdio.h")) }
-    if self.state.builtin.stdint { self.state.statements.push(AST.createIncludeDirective("stdint.h")) }
-    if self.state.builtin.stdlib { self.state.statements.push(AST.createIncludeDirective("stdlib.h")) }
-    if self.state.builtin.wchar { self.state.statements.push(AST.createIncludeDirective("wchar.h")) }
+    if self.builtin.stdbool { self.statements.push(AST.createIncludeDirective("stdbool.h")) }
+    if self.builtin.stddef { self.statements.push(AST.createIncludeDirective("stddef.h")) }
+    if self.builtin.stdio { self.statements.push(AST.createIncludeDirective("stdio.h")) }
+    if self.builtin.stdint { self.statements.push(AST.createIncludeDirective("stdint.h")) }
+    if self.builtin.stdlib { self.statements.push(AST.createIncludeDirective("stdlib.h")) }
+    if self.builtin.wchar { self.statements.push(AST.createIncludeDirective("wchar.h")) }
 
-    self.state.statements.merge(statements)
+    self.statements.merge(statements)
 
-    self.state.statements.push(
+    self.statements.push(
       AST.createFunctionDeclaration(
         AST.createType("int"),
         "main",
         [],
-        AST.createCompoundStatement(self.state.mainStatements)
+        AST.createCompoundStatement(self.mainStatements)
       )
     )
   }
@@ -1376,7 +426,8 @@ export obj Codegen {
       ])
     } elif it.isArray() || it.isMap() {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), [
+
+      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
         AST.createLiteral(0)
       ])
     // todo
@@ -1423,7 +474,7 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._("the_str_alloc")), [AST.createLiteral("\"\"")])
     } elif it.isArray() || it.isMap() {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), [
+      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
         AST.createLiteral(0)
       ])
     // todo
@@ -1510,6 +561,13 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._("the_str_free")), [
         AST.createCastExpression(AST.createType(self._("the_str_t")), expression)
       ])
+    } elif it.isArray() {
+      typeName := self._typeName(it)
+      t := self._type(it)
+
+      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_free")), [
+        AST.createCastExpression(AST.createType(t), expression)
+      ])
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -1527,10 +585,6 @@ export obj Codegen {
     }
 
     return expression
-  }
-
-  fn _functionNe (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
-    return self._functionEq(it, left, right, reverse: true)
   }
 
   fn _functionRealloc (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
@@ -1603,15 +657,17 @@ export obj Codegen {
     mut result: AST.CExpression?
 
     if (
-      (result = generateIdentifier(ref self.state, item)) != nil || // todo test
-      (result = generateCallExpression(ref self.state, item)) != nil || // todo test
-      (result = generateLiteral(ref self.state, item)) != nil ||
-      (result = generateParenthesizedExpression(ref self.state, item)) != nil ||
-      (result = generateAssignmentExpression(ref self.state, item)) != nil ||
-      (result = generateBinaryExpression(ref self.state, item)) != nil ||
-      (result = generateConditionalExpression(ref self.state, item)) != nil ||
-      (result = generateReferenceExpression(ref self.state, item)) != nil ||
-      (result = generateUnaryExpression(ref self.state, item)) != nil
+      (result = self._generateIdentifier(item)) != nil ||
+      (result = self._generateCallExpression(item)) != nil ||
+      (result = self._generateLiteral(item)) != nil ||
+      (result = self._generateParenthesizedExpression(item)) != nil ||
+      (result = self._generateArrayExpression(item)) != nil ||
+      (result = self._generateAssignmentExpression(item)) != nil ||
+      (result = self._generateBinaryExpression(item)) != nil ||
+      (result = self._generateConditionalExpression(item)) != nil ||
+      (result = self._generateIsExpression(item)) != nil ||
+      (result = self._generateReferenceExpression(item)) != nil ||
+      (result = self._generateUnaryExpression(item)) != nil
     ) {
       return result
     }
@@ -1623,21 +679,21 @@ export obj Codegen {
     mut result: AST.CStatement?
 
     if (
-      (result = generateBlockStatement(ref self.state, item)) != nil ||
-      (result = generateBreakStatement(ref self.state, item)) != nil ||
-      (result = generateContinueStatement(ref self.state, item)) != nil ||
-      (result = generateEnumDeclaration(ref self.state, item)) != nil ||
-      (result = generateExportDeclaration(ref self.state, item)) != nil ||
-      (result = generateExpressionStatement(ref self.state, item)) != nil ||
-      (result = generateFunctionDeclaration(ref self.state, item)) != nil ||
-      (result = generateIfStatement(ref self.state, item)) != nil ||
-      (result = generateLoopStatement(ref self.state, item)) != nil ||
-      (result = generateMainDeclaration(ref self.state, item)) != nil ||
-      (result = generateObjectDeclaration(ref self.state, item)) != nil ||
-      (result = generateReturnStatement(ref self.state, item)) != nil ||
-      (result = generateThrowStatement(ref self.state, item)) != nil ||
-      (result = generateTryStatement(ref self.state, item)) != nil ||
-      (result = generateVariableDeclaration(ref self.state, item)) != nil
+      (result = self._generateBlockStatement(item)) != nil ||
+      (result = self._generateBreakStatement(item)) != nil ||
+      (result = self._generateContinueStatement(item)) != nil ||
+      (result = self._generateEnumDeclaration(item)) != nil ||
+      (result = self._generateExportDeclaration(item)) != nil ||
+      (result = self._generateExpressionStatement(item)) != nil ||
+      (result = self._generateFunctionDeclaration(item)) != nil ||
+      (result = self._generateIfStatement(item)) != nil ||
+      (result = self._generateLoopStatement(item)) != nil ||
+      (result = self._generateMainDeclaration(item)) != nil ||
+      (result = self._generateObjectDeclaration(item)) != nil ||
+      (result = self._generateReturnStatement(item)) != nil ||
+      (result = self._generateThrowStatement(item)) != nil ||
+      (result = self._generateTryStatement(item)) != nil ||
+      (result = self._generateVariableDeclaration(item)) != nil
     ) {
       return result
     }
@@ -1645,9 +701,954 @@ export obj Codegen {
     throw error_NewError("Tried code generation for unknown statement")
   }
 
+  fn _generateIdentifier (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isIdentifier() {
+      expression := item.asIdentifier()
+
+      if self._hasEntity(expression.name) {
+        return AST.createIdentifier(self._(expression.name))
+      } else {
+        return AST.createIdentifier(expression.name)
+      }
+    }
+
+    return nil
+  }
+
+  fn _generateLiteral (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isBooleanLiteral() {
+      expression := item.asBooleanLiteral()
+      return AST.createLiteral(self._(expression.value))
+    } elif item.isCharacterLiteral() {
+      expression := item.asCharacterLiteral()
+      return AST.createLiteral("L'" + expression.value + "'")
+    } elif item.isFloatingPointLiteral() {
+      expression := item.asFloatingPointLiteral()
+      return AST.createLiteral(expression.value)
+    } elif item.isIntegerLiteral() {
+      expression := item.asIntegerLiteral()
+      rawValue := expression.value.replace("O", "").replace("o", "")
+
+      if !rawValue.contains("b") && !rawValue.contains("B") && !rawValue.contains("x") && !rawValue.contains("X") {
+        numValue := rawValue.toU64()
+        return AST.createLiteral(rawValue + (numValue > 9223372036854775807 ? "U" : ""))
+      }
+
+      return AST.createLiteral(rawValue)
+    } elif item.isNilLiteral() {
+      expression := item.asNilLiteral()
+      return AST.createIdentifier(self._("NULL"))
+    } elif item.isStringLiteral() {
+      expression := item.asStringLiteral()
+      sanitizedValue := expression.value
+        .replace(os_EOL, "\" " + self._("THE_EOL") + " \"")
+        .replace("\n", "\" " + self._("THE_EOL") + " \"")
+      rawValue := "L\"" + sanitizedValue + "\""
+
+      if !item.hasParent() && item.hasParentNode() {
+        node := item.parentNode()
+
+        if node.isVariableDeclaration() {
+          return AST.createCallExpression(
+            AST.createIdentifier(self._("the_str_alloc")),
+            [AST.createLiteral(rawValue)]
+          )
+        }
+      }
+
+      return AST.createLiteral(rawValue)
+    }
+
+    return nil
+  }
+
+  fn _generateArrayExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isArray() {
+      expression := item.asArray()
+      validateContext(item.context is Analyzer.ArrayExpressionContext)
+      context := item.context as Analyzer.ArrayExpressionContext
+      typeName := self._typeName(context.t)
+      mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len)]
+
+      loop i := 0; i < expression.elements.len; i++ {
+        element := expression.elements[i]
+        arguments.push(self._generateExpression(element))
+      }
+
+      result := AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), arguments)
+      return item.hasParent() ? result : self._functionFree(context.t, result)
+    }
+
+    return nil
+  }
+
+  fn _generateAssignmentExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isAssignment() {
+      expression := item.asAssignment()
+      validateContext(item.context is Analyzer.AssignmentExpressionContext)
+      context := item.context as Analyzer.AssignmentExpressionContext
+      leftType := Analyzer.unwrap(context.leftType, withReference: false)
+      rightType := Analyzer.unwrap(context.rightType, withReference: false)
+      left := self._generateExpression(ref expression.left)
+      mut right := self._generateExpression(ref expression.right)
+
+      if expression.operator.t == .OpPlusEq && (leftType.name == "str" || rightType.name == "str") {
+        return AST.createAssignmentExpression(
+          left,
+          "=",
+          AST.createCallExpression(AST.createIdentifier(self._("the_str_realloc")), [
+            left,
+            AST.createCallExpression(AST.createIdentifier(self._("the_str_concat")), [left, right])
+          ])
+        )
+      } elif !typePrimitive(leftType) || !typePrimitive(rightType) {
+        result := self._functionRealloc(leftType, left, right)
+        return item.hasParent() ? result : self._functionCopy(leftType, result)
+      } elif expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
+        right = AST.createBinaryExpression(left, expression.operator.val, right)
+        return AST.createAssignmentExpression(left, "=", right)
+      }
+
+      return AST.createAssignmentExpression(left, expression.operator.val, right)
+    }
+
+    return nil
+  }
+
+  fn _generateBinaryExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isBinary() {
+      expression := item.asBinary()
+      validateContext(item.context is Analyzer.BinaryExpressionContext)
+      context := item.context as Analyzer.BinaryExpressionContext
+      leftType := Analyzer.unwrap(context.leftType, withReference: false)
+      rightType := Analyzer.unwrap(context.rightType, withReference: false)
+      left := self._generateExpression(ref expression.left)
+      mut right := self._generateExpression(ref expression.right)
+
+      if (
+        (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
+        (!typePrimitive(context.leftType) || !typePrimitive(context.rightType))
+      ) {
+        return expression.operator.t == .OpEqEq
+          ? self._functionEq(leftType, left, right)
+          : self._functionEq(leftType, left, right, reverse: true)
+      } elif leftType.name == "str" && rightType.name == "str" && (
+        expression.operator.t == .OpLt ||
+        expression.operator.t == .OpLtEq ||
+        expression.operator.t == .OpGt ||
+        expression.operator.t == .OpGtEq
+      ) {
+        direction := expression.operator.t == .OpLt
+          ? "lt"
+          : expression.operator.t == .OpLtEq
+            ? "le"
+            : expression.operator.t == .OpGt
+              ? "gt"
+              : "ge"
+
+        return AST.createCallExpression(AST.createIdentifier(self._("the_str_" + direction)), [left, right])
+      } elif expression.operator.t == .OpPlus && leftType.name == "str" && rightType.name == "str" {
+        result := AST.createCallExpression(AST.createIdentifier(self._("the_str_concat")), [left, right])
+        return item.hasParent() ? result : self._functionFree(leftType, result)
+      }
+
+      return AST.createBinaryExpression(left, expression.operator.val, right)
+    }
+
+    return nil
+  }
+
+  // todo finish and test
+  fn _generateCallExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isCall() {
+      expression := item.asCall()
+      return AST.createCallExpression(self._generateExpression(ref expression.callee))
+    }
+
+    return nil
+  }
+
+  fn _generateConditionalExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isConditional() {
+      expression := item.asConditional()
+      validateContext(item.context is Analyzer.ConditionalExpressionContext)
+      context := item.context as Analyzer.ConditionalExpressionContext
+      alternateType := Analyzer.unwrap(context.alternateType, withReference: false)
+      mut alternate := self._generateExpression(ref expression.alternate)
+
+      if expression.alternate.isAssignment() && !typeSafeForTernaryAlternate(alternateType) {
+        alternate = alternate.wrap()
+      }
+
+      return AST.createConditionalExpression(
+        self._generateExpression(ref expression.condition),
+        self._generateExpression(ref expression.consequent),
+        alternate
+      )
+    }
+
+    return nil
+  }
+
+  fn _generateIsExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isIs() {
+      expression := item.asIs()
+      validateContext(item.context is Analyzer.IsExpressionContext)
+      context := item.context as Analyzer.IsExpressionContext
+      left := AST.createPropertyAccessExpression(self._generateExpression(ref expression.expression), "t")
+      right := AST.createIdentifier(self._typeDef(context.rightType))
+
+      return AST.createBinaryExpression(left, "==", right)
+    }
+
+    return nil
+  }
+
+  fn _generateParenthesizedExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isParenthesized() {
+      expression := item.asParenthesized()
+      result := self._generateExpression(ref expression.expression)
+      return result.wrap()
+    }
+
+    return nil
+  }
+
+  fn _generateReferenceExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isReference() {
+      expression := item.asReference()
+      return AST.createUnaryExpression("&", self._generateExpression(ref expression.expression))
+    }
+
+    return nil
+  }
+
+  fn _generateUnaryExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if item.isUnary() {
+      expression := item.asUnary()
+      validateContext(item.context is Analyzer.UnaryExpressionContext)
+      context := item.context as Analyzer.UnaryExpressionContext
+
+      if context.operandType.isFloat() {
+        castExpression := AST.createCastExpression(AST.createType(self._("bool")), self._generateExpression(ref expression.operand))
+
+        return AST.createUnaryExpression(
+          expression.operator.val,
+          castExpression.wrap(),
+          postfix: !expression.prefix
+        )
+      }
+
+      return AST.createUnaryExpression(
+        expression.operator.val,
+        self._generateExpression(ref expression.operand),
+        postfix: !expression.prefix
+      )
+    }
+
+    return nil
+  }
+
+  fn _generateBlockStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isBlock() {
+      statement := item.asBlock()
+      return AST.createCompoundStatement(self._generateBlock(ref statement.body))
+    }
+
+    return nil
+  }
+
+  fn _generateBreakStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isBreak() {
+      statement := item.asBreak()
+
+      // todo
+      // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+      //   (*c)->append(
+      //     CodegenASTExprAssign::create(
+      //       CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
+      //       "=",
+      //       CodegenASTExprLiteral::create("1")
+      //     )->stmt()
+      //   );
+      //   if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
+      //     (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+      //   }
+      // } else {
+      //   (*c)->append(CodegenASTStmtBreak::create());
+      // }
+    }
+
+    return nil
+  }
+
+  fn _generateContinueStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isContinue() {
+      statement := item.asContinue()
+
+      // todo
+      // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
+      //   if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
+      //     (*c)->append(
+      //       CodegenASTExprAssign::create(
+      //         CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
+      //         "=",
+      //         CodegenASTExprLiteral::create("1")
+      //       )->stmt()
+      //     );
+      //   }
+      //   if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
+      //     (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+      //   }
+      // } else {
+      //   (*c)->append(CodegenASTStmtContinue::create());
+      // }
+    }
+
+    return nil
+  }
+
+  fn _generateEnumDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isEnumDeclaration() {
+      statement := item.asEnumDeclaration()
+
+      // todo
+      // auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
+      // auto members = nodeEnumDecl.members;
+      // auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
+      // auto enumType = std::get<TypeEnum>(nodeEnumDecl.type->body);
+      // if (phase != CODEGEN_PHASE_ALLOC && phase != CODEGEN_PHASE_FULL) {
+      //   return;
+      // }
+      // auto cDecl = CodegenASTStmtCompound::create();
+      // this->_apiEntity(typeName, CODEGEN_ENTITY_ENUM, [&] (auto &decl, [[maybe_unused]] auto &def) {
+      //   auto membersCode = std::string();
+      //   for (auto i = static_cast<std::size_t>(0); i < enumType.members.size(); i++) {
+      //     auto typeMember = enumType.members[i];
+      //     auto member = std::find_if(members.begin(), members.end(), [&] (const auto &it) -> bool {
+      //       return it.id == typeMember->name;
+      //     });
+      //     if (member != members.end()) {
+      //       membersCode += "  " + Codegen::name(typeMember->codeName);
+      //       if (member->init != std::nullopt) {
+      //         auto cInit = this->_nodeExpr(*member->init, member->init->type, node, &cDecl, true);
+      //         membersCode += " = " + cInit->str();
+      //       }
+      //       membersCode += i == enumType.members.size() - 1 ? EOL : "," EOL;
+      //     }
+      //   }
+      //   decl += "enum " + typeName + " {" EOL;
+      //   decl += membersCode;
+      //   decl += "};";
+      //   return 0;
+      // });
+      // this->_apiEntity(typeName + "_rawValue", CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+      //   auto typeInfo = this->_typeInfo(nodeEnumDecl.type);
+      //   decl += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCodeTrimmed + ");";
+      //   def += "_{struct str} " + typeName + "_rawValue (" + typeInfo.typeCode + "n) {" EOL;
+      //   for (const auto &member : enumType.members) {
+      //     def += "  if (n == " + Codegen::name(member->codeName) + ")" R"( return _{str_alloc}(")" + member->name + R"(");)" EOL;
+      //   }
+      //   def += "}";
+      //   return 0;
+      // });
+    }
+
+    return nil
+  }
+
+  fn _generateExportDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isExportDeclaration() {
+      statement := item.asExportDeclaration()
+
+      // todo
+      // if (
+      //   nodeExportDecl.declaration != std::nullopt &&
+      //   !std::holds_alternative<ASTNodeExpr>(*nodeExportDecl.declaration->body)
+      // ) {
+      //   return this->_node(c, *nodeExportDecl.declaration, phase);
+      // }
+    }
+
+    return nil
+  }
+
+  fn _generateExpressionStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isExpression() {
+      statement := item.asExpression()
+      return AST.createExpressionStatement(self._generateExpression(ref statement.expression))
+    }
+
+    return nil
+  }
+
+  fn _generateFunctionDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isFunctionDeclaration() {
+      statement := item.asFunctionDeclaration()
+      // todo
+    }
+
+    return nil
+  }
+
+  fn _generateIfStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isIf() {
+      statement := item.asIf()
+
+      // todo
+      // auto initialStateTypeCasts = this->state.typeCasts;
+      // auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
+      // auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
+      // auto cBody = CodegenASTStmtCompound::create();
+      // (*c)->append(CodegenASTStmtIf::create(cCond, cBody));
+      // *c = cBody;
+      // bodyTypeCasts.merge(this->state.typeCasts);
+      // bodyTypeCasts.swap(this->state.typeCasts);
+      // this->varMap.save();
+      // this->_block(c, nodeIf.body);
+      // this->varMap.restore();
+      // this->state.typeCasts = initialStateTypeCasts;
+      // if (nodeIf.alt != std::nullopt) {
+      //   altTypeCasts.merge(this->state.typeCasts);
+      //   altTypeCasts.swap(this->state.typeCasts);
+      //   auto cAlt = CodegenASTStmtCompound::create();
+      //   if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
+      //     this->varMap.save();
+      //     this->_block(&cAlt, std::get<ASTBlock>(*nodeIf.alt));
+      //     this->varMap.restore();
+      //   } else {
+      //     this->_node(&cAlt, std::get<ASTNode>(*nodeIf.alt));
+      //     cAlt = cAlt->asCompound().body[0];
+      //   }
+      //   (*c)->exit()->setIfAlt(cAlt);
+      // }
+      // *c = (*c)->exit()->exit();
+      // this->state.typeCasts = initialStateTypeCasts;
+    }
+
+    return nil
+  }
+
+  fn _generateLoopStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isLoop() {
+      statement := item.asLoop()
+
+      // todo
+      // auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
+      // auto initialStateCleanUp = this->state.cleanUp;
+      // this->varMap.save();
+      // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
+      // this->state.cleanUp.breakVarIdx += 1;
+      // this->state.cleanUp.continueVarIdx += 1;
+      // auto cBody = CodegenASTStmtCompound::create();
+      // if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
+      //   auto cCond = nodeLoop.cond == std::nullopt
+      //     ? CodegenASTExprLiteral::create("1")
+      //     : this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, c, true);
+      //   (*c)->append(CodegenASTStmtWhile::create(cCond, cBody));
+      //   *c = cBody;
+      // } else {
+      //   auto cInit = CodegenASTStmtNull::create();
+      //   auto cCond = CodegenASTExprNull::create();
+      //   auto cUpd = CodegenASTExprNull::create();
+      //   if (nodeLoop.init != std::nullopt) {
+      //     auto cCompound = CodegenASTStmtCompound::create();
+      //     this->_node(&cCompound, *nodeLoop.init);
+      //     if (!this->state.cleanUp.empty()) {
+      //       *c = (*c)->append(cCompound);
+      //     } else {
+      //       cInit = cCompound->asCompound().body[0];
+      //     }
+      //   }
+      //   if (nodeLoop.cond != std::nullopt) {
+      //     cCond = this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, c, true);
+      //   }
+      //   if (nodeLoop.upd != std::nullopt) {
+      //     cUpd = this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, c, true);
+      //   }
+      //   (*c)->append(CodegenASTStmtFor::create(cInit, cCond, cUpd, cBody));
+      //   *c = cBody;
+      // }
+      // auto saveStateCleanUp = this->state.cleanUp;
+      // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp);
+      // this->_block(c, nodeLoop.body);
+      // if (this->state.cleanUp.continueVarUsed) {
+      //   (*c)->prepend(
+      //     CodegenASTStmtVarDecl::create(
+      //       CodegenASTType::create("unsigned char"),
+      //       CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
+      //       CodegenASTExprLiteral::create("0")
+      //     )
+      //   );
+      // }
+      // if (this->state.cleanUp.breakVarUsed) {
+      //   (*c)->prepend(
+      //     CodegenASTStmtVarDecl::create(
+      //       CodegenASTType::create("unsigned char"),
+      //       CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
+      //       CodegenASTExprLiteral::create("0")
+      //     )
+      //   );
+      // }
+      // *c = (*c)->exit()->exit();
+      // if (!saveStateCleanUp.empty()) {
+      //   saveStateCleanUp.gen(c);
+      //   if (saveStateCleanUp.returnVarUsed) {
+      //     (*c)->append(
+      //       CodegenASTStmtIf::create(
+      //         CodegenASTExprBinary::create(CodegenASTExprAccess::create("r"), "==", CodegenASTExprLiteral::create("1")),
+      //         initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+      //           ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+      //           : this->state.returnType->isVoid()
+      //             ? CodegenASTStmtReturn::create()
+      //             : CodegenASTStmtReturn::create(CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()))
+      //       )
+      //     );
+      //   }
+      //   *c = (*c)->exit();
+      // }
+      // this->state.cleanUp.breakVarIdx -= 1;
+      // this->state.cleanUp.continueVarIdx -= 1;
+      // this->state.cleanUp = initialStateCleanUp;
+      // this->varMap.restore();
+    }
+
+    return nil
+  }
+
+  fn _generateMainDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isMainDeclaration() {
+      statement := item.asMainDeclaration()
+      statementBody := statement.body.asBlock()
+
+      self.mainStatements = self._generateBlock(ref statementBody.body)
+      self.mainStatements.merge(self.blockData.getCleanup())
+
+      return AST.createEmptyStatement()
+    }
+
+    return nil
+  }
+
+  fn _generateObjectDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isObjectDeclaration() {
+      statement := item.asObjectDeclaration()
+      // todo
+    }
+
+    return nil
+  }
+
+  fn _generateReturnStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isReturn() {
+      statement := item.asReturn()
+
+      // todo
+      // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) || this->state.cleanUp.returnVarUsed) {
+      //   auto parentNotRoot = this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT;
+      //   if (parentNotRoot && this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
+      //     (*c)->append(
+      //       CodegenASTExprAssign::create(
+      //         CodegenASTExprAccess::create(this->state.cleanUp.currentReturnVar()),
+      //         "=",
+      //         CodegenASTExprLiteral::create("1")
+      //       )->stmt()
+      //     );
+      //   }
+      //   if (nodeReturn.body != std::nullopt) {
+      //     (*c)->append(
+      //       CodegenASTExprAssign::create(
+      //         CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()),
+      //         "=",
+      //         this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c)
+      //       )->stmt()
+      //     );
+      //   }
+      //   auto nodeParentFunction = ASTChecker(node.parent).is<ASTNodeFnDecl>() || ASTChecker(node.parent).is<ASTNodeObjDecl>();
+      //   auto nodeIsLast = node.parent != nullptr && ASTChecker(node).isLast(this->state.fnDeclBody);
+      //   if ((!nodeParentFunction && this->state.cleanUp.empty()) || !nodeIsLast) {
+      //     (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+      //   }
+      // } else if (nodeReturn.body != std::nullopt) {
+      //   auto cArg = this->_nodeExpr(*nodeReturn.body, this->state.returnType, node, c);
+      //   (*c)->append(CodegenASTStmtReturn::create(cArg));
+      // } else {
+      //   (*c)->append(
+      //     ASTChecker(node).insideMain()
+      //       ? CodegenASTStmtReturn::create(CodegenASTExprLiteral::create("0"))
+      //       : CodegenASTStmtReturn::create()
+      //   );
+      // }
+    }
+
+    return nil
+  }
+
+  fn _generateThrowStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isThrow() {
+      statement := item.asThrow()
+
+      // todo
+      // auto argTypeInfo = this->_typeInfo(nodeThrow.arg.type);
+      // auto cArg = this->_nodeExpr(nodeThrow.arg, argTypeInfo.type, node, c);
+      // auto argNodeExprDef = this->_typeDef(argTypeInfo.type);
+      // (*c)->append(
+      //   CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_("error_assign")),
+      //     {
+      //       this->_genErrState(ASTChecker(node).insideMain(), false),
+      //       CodegenASTExprAccess::create(this->_(argNodeExprDef)),
+      //       CodegenASTExprCast::create(CodegenASTType::create("void *"), cArg),
+      //       CodegenASTExprCast::create(
+      //         CodegenASTType::create("void (*) (void *)"),
+      //         CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_(argTypeInfo.typeName + "_free")))
+      //       ),
+      //       CodegenASTExprLiteral::create(std::to_string(node.start.line)),
+      //       CodegenASTExprLiteral::create(std::to_string(node.start.col + 1))
+      //     }
+      //   )->stmt()
+      // );
+      // (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+    }
+
+    return nil
+  }
+
+  fn _generateTryStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isTry() {
+      statement := item.asTry()
+
+      // todo
+      // auto nodeTry = std::get<ASTNodeTry>(*node.body);
+      // auto initialStateCleanUp = this->state.cleanUp;
+      // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
+
+      // *c = (*c)->append(
+      //   CodegenASTStmtSwitch::create(
+      //     CodegenASTExprCall::create(
+      //       CodegenASTExprAccess::create(this->_("setjmp")),
+      //       {
+      //         CodegenASTExprAccess::create(
+      //           CodegenASTExprCall::create(
+      //             CodegenASTExprAccess::create(this->_("error_buf_increase")),
+      //             {this->_genErrState(ASTChecker(node).insideMain(), false)}
+      //           ),
+      //           "buf",
+      //           true
+      //         )
+      //       }
+      //     )
+      //   )
+      // );
+
+      // *c = (*c)->append(
+      //   CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), CodegenASTStmtCompound::create())
+      // );
+
+      // this->varMap.save();
+
+      // auto blockCleanUp = CodegenASTStmtCompound::create({
+      //   CodegenASTStmtIf::create(
+      //     CodegenASTExprBinary::create(
+      //       this->_genErrState(ASTChecker(node).insideMain(), false, "id"),
+      //       "!=",
+      //       CodegenASTExprLiteral::create("-1")
+      //     ),
+      //     CodegenASTExprCall::create(
+      //       CodegenASTExprAccess::create(this->_("longjmp")),
+      //       {
+      //         CodegenASTExprAccess::create(
+      //           this->_genErrState(ASTChecker(node).insideMain(), false, "buf_last"),
+      //           "buf",
+      //           true
+      //         ),
+      //         this->_genErrState(ASTChecker(node).insideMain(), false, "id")
+      //       }
+      //     )->stmt()
+      //   ),
+      //   CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_("error_buf_decrease")),
+      //     {this->_genErrState(ASTChecker(node).insideMain(), false)}
+      //   )->stmt()
+      // });
+
+      // this->_block(c, nodeTry.body, true, blockCleanUp, true);
+      // (*c)->append(CodegenASTStmtBreak::create());
+      // *c = (*c)->exit()->exit();
+      // this->varMap.restore();
+      // this->state.cleanUp = initialStateCleanUp;
+
+      // for (const auto &handler : nodeTry.handlers) {
+      //   auto handlerVarDecl = std::get<ASTNodeVarDecl>(*handler.param.body);
+      //   auto handlerTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
+      //   auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
+      //   auto handleCodeName = Codegen::name(handlerVarDecl.var->codeName);
+
+      //   *c = (*c)->append(
+      //     CodegenASTStmtCase::create(
+      //       CodegenASTExprAccess::create(this->_(handlerDef)),
+      //       CodegenASTStmtCompound::create()
+      //     )
+      //   );
+
+      //   (*c)->append(
+      //     CodegenASTExprCall::create(
+      //       CodegenASTExprAccess::create(this->_("error_buf_decrease")),
+      //       {this->_genErrState(ASTChecker(node).insideMain(), false)}
+      //     )->stmt()
+      //   );
+
+      //   (*c)->append(
+      //     CodegenASTExprCall::create(
+      //       CodegenASTExprAccess::create(this->_("error_unset")),
+      //       {this->_genErrState(ASTChecker(node).insideMain(), false)}
+      //     )->stmt()
+      //   );
+
+      //   (*c)->append(
+      //     CodegenASTStmtVarDecl::create(
+      //       CodegenASTType::create(handlerTypeInfo.typeCodeConst),
+      //       CodegenASTExprAccess::create(handleCodeName),
+      //       CodegenASTExprCast::create(
+      //         CodegenASTType::create(handlerTypeInfo.typeCodeTrimmed),
+      //         this->_genErrState(ASTChecker(node).insideMain(), false, "ctx")
+      //       )
+      //     )
+      //   );
+
+      //   this->varMap.save();
+
+      //   this->_block(
+      //     c,
+      //     handler.body,
+      //     true,
+      //     this->_genFreeFn(handlerTypeInfo.type, CodegenASTExprAccess::create(handleCodeName))->stmt()
+      //   );
+
+      //   (*c)->append(CodegenASTStmtBreak::create());
+      //   *c = (*c)->exit()->exit();
+      //   this->varMap.restore();
+      // }
+
+      // *c = (*c)->append(CodegenASTStmtCase::create(nullptr, CodegenASTStmtCompound::create()));
+
+      // (*c)->append(
+      //   CodegenASTExprCall::create(
+      //     CodegenASTExprAccess::create(this->_("error_buf_decrease")),
+      //     {this->_genErrState(ASTChecker(node).insideMain(), false)}
+      //   )->stmt()
+      // );
+
+      // (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+      // *c = (*c)->exit()->exit()->exit();
+    }
+
+    return nil
+  }
+
+  fn _generateVariableDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
+    if item.isVariableDeclaration() {
+      statement := item.asVariableDeclaration()
+      validateContext(item.context is Analyzer.VariableDeclarationContext)
+      context := item.context as Analyzer.VariableDeclarationContext
+      typeName := self._typeName(context.varType)
+      t := AST.createType(self._type(context.varType))
+
+      if typeShouldBeFreed(context.varType) {
+        self.blockData.addCleanup(
+          AST.createExpressionStatement(
+            self._functionFree(context.varType, AST.createIdentifier(statement.name.name))
+          )
+        )
+      }
+
+      initializer := statement.initializer == nil
+        ? self._defaultInitializerVariableDeclaration(context.varType)
+        : self._generateExpression(ref statement.initializer)
+
+      return AST.createVariableDeclaration(t, statement.name.name, initializer)
+    }
+
+    return nil
+  }
+
+  fn _generateArrayType (mut self: ref Codegen, item: ref Analyzer.Type) str {
+    typeName := "the_" + self._typeName(item)
+    name := typeName + "_t"
+
+    if self._hasEntity(name) {
+      return name
+    }
+
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: item,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asArray()
+        typeName := self._typeName(it)
+
+        return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DECLARE"), [
+          AST.createIdentifier(typeName),
+          AST.createType(self._type(t.elementType))
+        ]), terminated: false)
+      }
+    })
+
+    methods := [
+      "alloc",
+      "at",
+      "clear",
+      "concat",
+      "contains",
+      "copy",
+      "empty",
+      "eq",
+      "filter",
+      "first",
+      "forEach",
+      "free",
+      "join",
+      "last",
+      "merge",
+      "ne",
+      "pop",
+      "push",
+      "realloc",
+      "remove",
+      "reverse",
+      "slice",
+      "sort",
+      "str"
+    ]
+
+    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+      self._(entity.context as str)
+      return AST.createEmptyStatement()
+    }
+
+    loop i := 0; i < methods.len; i++ {
+      methodName := methods[i] as str
+
+      self.entities.push(CodegenEntity{
+        name: typeName + "_" + methodName,
+        codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee
+      })
+    }
+
+    return name
+  }
+
+  fn _generateOptionalType (mut self: ref Codegen, item: ref Analyzer.Type) str {
+    typeName := self._typeName(item)
+    name := typeName + "_t"
+
+    if self._hasEntity(name) {
+      return name
+    }
+
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: item,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asOptional()
+        return AST.createTypedefDeclaration(AST.createType(self._type(t.t) + "*"), entity.codeName)
+      }
+    })
+
+    self.entities.push(CodegenEntity{
+      name: typeName + "_alloc",
+      codeName: typeName + "_alloc",
+      context: item,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asOptional()
+        typeName := self._typeName(it)
+        name := typeName + "_t"
+        underlyingCType := AST.createType(self._type(t.t))
+
+        return AST.createFunctionDeclaration(AST.createType(self._(name)), entity.codeName, [
+          AST.createFunctionParameter(underlyingCType, "n")
+        ], AST.createCompoundStatement([
+          AST.createVariableDeclaration(
+            AST.createType(self._(name)),
+            "r",
+            AST.createCallExpression(AST.createIdentifier(self._("the_safe_alloc")), [
+              AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
+            ])
+          ),
+          AST.createExpressionStatement(
+            AST.createAssignmentExpression(
+              AST.createUnaryExpression("*", AST.createIdentifier("r")),
+              "=",
+              AST.createIdentifier("n")
+            )
+          ),
+          AST.createReturnStatement(AST.createIdentifier("r"))
+        ]))
+      }
+    })
+
+    self.entities.push(CodegenEntity{
+      name: typeName + "_free",
+      codeName: typeName + "_free",
+      context: item,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        typeName := self._typeName(it)
+        name := typeName + "_t"
+
+        return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
+          AST.createFunctionParameter(AST.createType(self._(name)), "n")
+        ], AST.createCompoundStatement([
+          AST.createIfStatement(
+            AST.createBinaryExpression(AST.createIdentifier("n"), "==", AST.createIdentifier(self._("NULL"))),
+            AST.createReturnStatement()
+          ),
+          // todo
+          // if shouldBeFreed(underlyingTypeInfo.type) {
+          //   self._functionFree(underlyingTypeInfo.type, AST.createUnaryExpression("*", CodegenASTExprAccess::create("n")))
+          // }
+          AST.createExpressionStatement(
+            AST.createCallExpression(AST.createIdentifier(self._("the_safe_free")), [AST.createIdentifier("n")])
+          )
+        ]))
+      }
+    })
+
+    return name
+  }
+
+  fn _generateReferenceType (mut self: ref Codegen, item: ref Analyzer.Type) str {
+    typeName := self._typeName(item)
+    name := typeName + "_t"
+
+    if self._hasEntity(name) {
+      return name
+    }
+
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: item,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asReference()
+        return AST.createTypedefDeclaration(AST.createType(self._type(t.t) + "*"), entity.codeName)
+      }
+    })
+
+    return name
+  }
+
   fn _getEntity (self: ref Self, name: str) ref CodegenEntity {
-    loop i := self.state.entities.len - 1; i >= 0; i-- {
-      entity := self.state.entities[i]
+    loop i := self.entities.len - 1; i >= 0; i-- {
+      entity := self.entities[i]
 
       if entity.name == name {
         return entity
@@ -1658,8 +1659,8 @@ export obj Codegen {
   }
 
   fn _hasEntity (self: ref Self, name: str) bool {
-    loop i := self.state.entities.len - 1; i >= 0; i-- {
-      entity := self.state.entities[i]
+    loop i := self.entities.len - 1; i >= 0; i-- {
+      entity := self.entities[i]
 
       if entity.name == name {
         return true
@@ -1711,19 +1712,20 @@ export obj Codegen {
       return self._("size_t") + " "
     } elif it.name == "void" {
       return "void "
+    } elif it.isArray() {
+      name := self._generateArrayType(it)
+      return self._(name) + " "
     } elif it.isOptional() {
-      name := generateOptionalType(ref self.state, it)
+      name := self._generateOptionalType(it)
       return self._(name) + " "
     } elif it.isReference() {
-      name := generateReferenceType(ref self.state, it)
+      name := self._generateReferenceType(it)
       return self._(name) + " "
     } elif (
-      it.isArray() ||
       it.isEnum() ||
       it.isFunction() ||
       it.isMap() ||
       it.isObject() ||
-      it.isOptional() ||
       it.isUnion()
     ) {
       return self._(self._typeName(it) + "_t") + " "
@@ -1739,12 +1741,12 @@ export obj Codegen {
       return typeName
     }
 
-    self.state.entities.push(CodegenEntity{
+    self.entities.push(CodegenEntity{
       name: typeName,
       codeName: typeName,
       context: it,
-      generate: (mut state: ref CodegenState, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
-        lastTypeId := ++state.lastTypeId
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        lastTypeId := ++self.lastTypeId
         return AST.createDefineDirective(entity.codeName, nil, lastTypeId.str())
       }
     })
@@ -1809,28 +1811,8 @@ export obj Codegen {
   }
 }
 
-export fn defaultState () CodegenState {
-  return CodegenState{
-    _: (_1: str) -> str { return "" },
-    block: (_1: ref Parser.Statement[]) -> AST.CStatement[] { return [] },
-    defaultInitializerVariableDeclaration: (_1: ref Analyzer.Type) -> AST.CExpression { throw error_NewError("") },
-    e: (_1: ref Parser.Expression) -> AST.CExpression { throw error_NewError("") },
-    functionCopy: (_1: ref Analyzer.Type, _2: AST.CExpression) -> AST.CExpression { throw error_NewError("") },
-    functionEq: (_1: ref Analyzer.Type, _2: AST.CExpression, _3: AST.CExpression) -> AST.CExpression { throw error_NewError("") },
-    functionFree: (_1: ref Analyzer.Type, _2: AST.CExpression) -> AST.CExpression { throw error_NewError("") },
-    functionNe: (_1: ref Analyzer.Type, _2: AST.CExpression, _3: AST.CExpression) -> AST.CExpression { throw error_NewError("") },
-    functionRealloc: (_1: ref Analyzer.Type, _2: AST.CExpression, _3: AST.CExpression) -> AST.CExpression { throw error_NewError("") },
-    functionStr: (_1: ref Analyzer.Type, _2: AST.CExpression) -> AST.CExpression { throw error_NewError("") },
-    get: (_1: str) -> ref CodegenEntity { throw error_NewError("") },
-    has: (_1: str) -> bool { return false },
-    t: (_1: ref Analyzer.Type) -> str { return "" },
-    typeDef: (_1: ref Analyzer.Type) -> str { return "" },
-    typeName: (_1: ref Analyzer.Type) -> str { return "" },
-  }
-}
-
 export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str) {
-  mut generator := Codegen{analyzer: analyzer, state: defaultState()}
+  mut generator := Codegen{analyzer: analyzer}
   generator.init()
   generator.generate()
 

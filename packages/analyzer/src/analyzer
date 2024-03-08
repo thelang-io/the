@@ -503,15 +503,15 @@ export obj AnalyzerFile {
 
       if expression.elements.empty {
         if elementType == nil {
-          result := self.tm.createArray(elementType as ref Type.Type)
+          result := self.tm.createArray(self.tm.get("any"))
 
           it.context = Context.ArrayExpressionContext{
             t: result,
-            elementType: elementType
+            elementType: self.tm.get("any")
           }
 
           self.raise(errors.E1007(), it.start, it.end)
-          return self.tm.createArray(self.tm.get("any"))
+          return result
         }
       }
 
@@ -537,7 +537,7 @@ export obj AnalyzerFile {
 
       it.context = Context.ArrayExpressionContext{
         t: result,
-        elementType: elementType
+        elementType: elementType as ref Type.Type
       }
 
       return self.tm.createArray(elementType as ref Type.Type)
