@@ -15,6 +15,7 @@ export obj CodegenAPIBuiltin {
   mut theBool: bool
   mut theByte: bool
   mut theError: bool
+  mut theFn: bool
   mut theMacro: bool
   mut theNumber: bool
   mut theSafe: bool
@@ -145,6 +146,7 @@ export obj Codegen {
       self.builtin.theArray ||
       self.builtin.theBool ||
       self.builtin.theByte ||
+      self.builtin.theFn ||
       self.builtin.theError ||
       self.builtin.theMacro ||
       self.builtin.theNumber ||
@@ -269,6 +271,8 @@ export obj Codegen {
       ].contains(name)
     ) {
       self.builtin.theError = true
+    } elif ["THE_FUNCTION_DECLARE", "THE_FUNCTION_DEFINE", "the_fn_ctx_free_generic"].contains(name) {
+      self.builtin.theFn = true
     } elif ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"].contains(name) {
       self.builtin.theMacro = true
     } elif (
@@ -379,6 +383,7 @@ export obj Codegen {
     if self.builtin.theBool { self.statements.push(AST.createIncludeDirective("the/bool.h")) }
     if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
     if self.builtin.theError { self.statements.push(AST.createIncludeDirective("the/error.h")) }
+    if self.builtin.theFn { self.statements.push(AST.createIncludeDirective("the/fn.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
