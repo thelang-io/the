@@ -1099,36 +1099,16 @@ export obj Codegen {
   fn _generateIfStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
     if item.isIf() {
       statement := item.asIf()
+      condition := self._generateExpression(ref statement.condition)
+      consequent := self._generateStatement(ref statement.consequent)
+      mut alternate: AST.CStatement?
 
-      // todo
-      // auto initialStateTypeCasts = this->state.typeCasts;
-      // auto [bodyTypeCasts, altTypeCasts] = this->_evalTypeCasts(nodeIf.cond, node);
-      // auto cCond = this->_nodeExpr(nodeIf.cond, this->ast->typeMap.get("bool"), node, c);
-      // auto cBody = CodegenASTStmtCompound::create();
-      // (*c)->append(CodegenASTStmtIf::create(cCond, cBody));
-      // *c = cBody;
-      // bodyTypeCasts.merge(this->state.typeCasts);
-      // bodyTypeCasts.swap(this->state.typeCasts);
-      // this->varMap.save();
-      // this->_block(c, nodeIf.body);
-      // this->varMap.restore();
-      // this->state.typeCasts = initialStateTypeCasts;
-      // if (nodeIf.alt != std::nullopt) {
-      //   altTypeCasts.merge(this->state.typeCasts);
-      //   altTypeCasts.swap(this->state.typeCasts);
-      //   auto cAlt = CodegenASTStmtCompound::create();
-      //   if (std::holds_alternative<ASTBlock>(*nodeIf.alt)) {
-      //     this->varMap.save();
-      //     this->_block(&cAlt, std::get<ASTBlock>(*nodeIf.alt));
-      //     this->varMap.restore();
-      //   } else {
-      //     this->_node(&cAlt, std::get<ASTNode>(*nodeIf.alt));
-      //     cAlt = cAlt->asCompound().body[0];
-      //   }
-      //   (*c)->exit()->setIfAlt(cAlt);
-      // }
-      // *c = (*c)->exit()->exit();
-      // this->state.typeCasts = initialStateTypeCasts;
+      if statement.alternate != nil {
+        statementAlternate := statement.alternate
+        alternate = self._generateStatement(ref statementAlternate)
+      }
+
+      return AST.createIfStatement(condition, consequent, alternate)
     }
 
     return nil
@@ -1755,6 +1735,8 @@ export obj Codegen {
         return AST.createDefineDirective(entity.codeName, nil, lastTypeId.str())
       }
     })
+
+    return typeName
   }
 
   fn _typeName (mut self: ref Self, it: ref Analyzer.Type) str {
