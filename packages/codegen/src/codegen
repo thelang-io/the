@@ -271,7 +271,15 @@ export obj Codegen {
       ].contains(name)
     ) {
       self.builtin.theError = true
-    } elif ["THE_FUNCTION_DECLARE", "THE_FUNCTION_DEFINE", "the_fn_ctx_free_generic"].contains(name) {
+    } elif (
+      [
+        "THE_FUNCTION_DECLARE",
+        "THE_FUNCTION_DECLARE_WITH_PARAMS",
+        "THE_FUNCTION_DEFINE",
+        "THE_FUNCTION_DEFINE_WITH_PARAMS",
+        "the_fn_ctx_free_generic"
+      ].contains(name)
+    ) {
       self.builtin.theFn = true
     } elif ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"].contains(name) {
       self.builtin.theMacro = true
