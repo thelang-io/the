@@ -2,12 +2,25 @@ main {
   a := 1
   mut b := a
   b = a
-  mut c := !a + b
-  c = a + !b
-  mut d := !a + b + !c
-  d += a + !b + c
-  e := true ? a : !b + c
-  f := true ? c + !d + e : (b = a + !c)
+  mut c := a + b
+  c = a + b
+  mut d := a + b + c
+  d += a + b + c
+  e := true ? a : b + c
+  f := true ? c + d + e : (b = a + c)
 }
 ===== code =====
+#include <stdbool.h>
+#include <stdint.h>
+int main () {
+  int32_t a = 1;
+  int32_t b = a;
+  b = a;
+  int32_t c = a + b;
+  c = a + b;
+  int32_t d = a + b + c;
+  d += a + b + c;
+  int32_t e = true ? a : b + c;
+  int32_t f = true ? c + d + e : (b = a + c);
+}
 ===== output =====
