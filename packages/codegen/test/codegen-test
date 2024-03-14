@@ -10,6 +10,10 @@ import retrieveFileSections from "./utils"
 
 import Tests, EXPECT_EQ from "the/testing"
 
+export fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
+  EXPECT_EQ(test + os_EOL + a, test + os_EOL + b)
+}
+
 export fn TEST_Codegen () {
   files := fs_scandirSync("./test/codegen")
 
@@ -38,7 +42,7 @@ export fn TEST_Codegen () {
     file.analyze(ref file.f.program.body)
 
     if !analyzer.errors.empty {
-      EXPECT_EQ(analyzer.errors.join(os_EOL), "")
+      TEST_EXPECT_EQ(name, analyzer.errors.join(os_EOL), "")
       continue
     }
 
@@ -49,7 +53,7 @@ export fn TEST_Codegen () {
     generatedCode := generator.stringify()
 
     if fileSections.code != generatedCode {
-      EXPECT_EQ(fileSections.code, generatedCode)
+      TEST_EXPECT_EQ(name, fileSections.code, generatedCode)
       continue
     }
 
@@ -65,7 +69,7 @@ export fn TEST_Codegen () {
     fs_rmSync(codePath)
 
     if !errorMessage.empty {
-      EXPECT_EQ(errorMessage, "")
+      TEST_EXPECT_EQ(name, errorMessage, "")
       continue
     }
 
@@ -80,7 +84,7 @@ export fn TEST_Codegen () {
     fs_rmSync(executablePath)
 
     if actualOutput != fileSections.output {
-      EXPECT_EQ(actualOutput, fileSections.output)
+      TEST_EXPECT_EQ(name, actualOutput, fileSections.output)
     }
   }
 }

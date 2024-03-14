@@ -567,20 +567,12 @@ export obj Codegen {
       t := it.asAlias()
       return self._functionFree(t.t, expression)
     } elif it.name == "any" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_any_free")), [
-        AST.createCastExpression(AST.createType(self._("the_any_t")), expression)
-      ])
+      return AST.createCallExpression(AST.createIdentifier(self._("the_any_free")), [expression])
     } elif it.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_free")), [
-        AST.createCastExpression(AST.createType(self._("the_str_t")), expression)
-      ])
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_free")), [expression])
     } elif it.isArray() {
       typeName := self._typeName(it)
-      t := self._type(it)
-
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_free")), [
-        AST.createCastExpression(AST.createType(t), expression)
-      ])
+      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_free")), [expression])
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -591,10 +583,7 @@ export obj Codegen {
       it.isUnion()
     ) {
       typeName := self._typeName(it)
-
-      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_free")), [
-        AST.createCastExpression(AST.createType(self._type(it)), expression)
-      ])
+      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_free")), [expression])
     }
 
     return expression
@@ -1565,6 +1554,7 @@ export obj Codegen {
         name := typeName + "_t"
         underlyingCType := AST.createType(self._type(t.t))
 
+        // todo rename to self
         return AST.createFunctionDeclaration(AST.createType(self._(name)), entity.codeName, [
           AST.createFunctionParameter(underlyingCType, "n")
         ], AST.createCompoundStatement([
