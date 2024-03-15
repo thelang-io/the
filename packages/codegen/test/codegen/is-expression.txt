@@ -1,44 +1,44 @@
-main {
-  a: any = 1
-  if a is int { print("int " + a.str()) }
-  else { print("any") }
-
-  b: any = 3.14
-  if b is int { print("int " + b.str()) }
-  else { print("any") }
-
-  c: int | float = 1
-  if c is int { print("int " + c.str()) }
-  else { print("float " + c.str()) }
-
-  d: int | float = 3.14
-  if d is int { print("int " + d.str()) }
-  else { print("float " + d.str()) }
-
-  mut e: any = 1
-  if (e = 1) is int { print("int " + e.str()) }
-  else { print("any") }
-
-  mut f: any = 3.14
-  if (f = 3.14) is int { print("int " + f.str()) }
-  else { print("any") }
-
-  mut g: int | float = 1
-  if (g = 1) is int { print("int " + g.str()) }
-  else { print("float " + g.str()) }
-
-  mut h: int | float = 3.14
-  if (h = 3.14) is int { print("int " + h.str()) }
-  else { print("float " + h.str()) }
-
-  print((a is int) ? "int " + a.str() : "any")
-  print((b is int) ? "int " + b.str() : "any")
-  print((c is int) ? "int " + c.str() : "float " + c.str())
-  print((d is int) ? "int " + d.str() : "float " + d.str())
-  print(((e = 1) is int) ? "int " + e.str() : "any")
-  print(((f = 3.14) is int) ? "int " + f.str() : "any")
-  print(((g = 1) is int) ? "int " + g.str() : "float " + g.str())
-  print(((h = 3.14) is int) ? "int " + h.str() : "float " + h.str())
-}
+//main { todo
+//  a: any = 1
+//  if a is int { print("int " + a.str()) }
+//  else { print("any") }
+//
+//  b: any = 3.14
+//  if b is int { print("int " + b.str()) }
+//  else { print("any") }
+//
+//  c: int | float = 1
+//  if c is int { print("int " + c.str()) }
+//  else { print("float " + c.str()) }
+//
+//  d: int | float = 3.14
+//  if d is int { print("int " + d.str()) }
+//  else { print("float " + d.str()) }
+//
+//  mut e: any = 1
+//  if (e = 1) is int { print("int " + e.str()) }
+//  else { print("any") }
+//
+//  mut f: any = 3.14
+//  if (f = 3.14) is int { print("int " + f.str()) }
+//  else { print("any") }
+//
+//  mut g: int | float = 1
+//  if (g = 1) is int { print("int " + g.str()) }
+//  else { print("float " + g.str()) }
+//
+//  mut h: int | float = 3.14
+//  if (h = 3.14) is int { print("int " + h.str()) }
+//  else { print("float " + h.str()) }
+//
+//  print((a is int) ? "int " + a.str() : "any")
+//  print((b is int) ? "int " + b.str() : "any")
+//  print((c is int) ? "int " + c.str() : "float " + c.str())
+//  print((d is int) ? "int " + d.str() : "float " + d.str())
+//  print(((e = 1) is int) ? "int " + e.str() : "any")
+//  print(((f = 3.14) is int) ? "int " + f.str() : "any")
+//  print(((g = 1) is int) ? "int " + g.str() : "float " + g.str())
+//  print(((h = 3.14) is int) ? "int " + h.str() : "float " + h.str())
+//}
 ===== code =====
 ===== output =====

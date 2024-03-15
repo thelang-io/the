@@ -1524,6 +1524,84 @@ export obj Codegen {
     return name
   }
 
+  fn _generateFunctionType (mut self: ref Codegen, item: ref Analyzer.Type) str {
+    typeName := "the_" + self._typeName(item)
+    name := typeName + "_t"
+
+    if self._hasEntity(name) {
+      return name
+    }
+
+    itemType := item.asFunction()
+    hasParams := !itemType.parameters.empty
+
+    if hasParams {
+      self.entities.push(CodegenEntity{
+        name: name,
+        codeName: name,
+        context: item,
+        generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+          it := entity.context as ref Analyzer.Type
+          t := it.asFunction()
+          mut parametersTypeName := ""
+          mut parametersDefinition: AST.CStatement[]
+
+          loop i := 0; i < t.parameters.len; i++ {
+            parameter := t.parameters[i]
+            parametersTypeName += typeParameterId(parameter) + self._typeName(parameter.t)
+
+            parametersDefinition.push(AST.createStructureMemberDeclaration(
+              AST.createType(self._type(parameter.t)),
+              "n" + i.str()
+            ))
+          }
+
+          return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_FUNCTION_DECLARE_WITH_PARAMS"), [
+            AST.createIdentifier(t.asynchronous ? "s" : "a"),
+            AST.createType(self._type(t.returnType)),
+            AST.createIdentifier(parametersTypeName),
+            AST.createCompoundStatement(parametersDefinition)
+          ]), terminated: false)
+        }
+      })
+    } else {
+      self.entities.push(CodegenEntity{
+        name: name,
+        codeName: name,
+        context: item,
+        generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+          it := entity.context as ref Analyzer.Type
+          t := it.asFunction()
+
+          return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_FUNCTION_DECLARE"), [
+            AST.createIdentifier(t.asynchronous ? "s" : "a"),
+            AST.createType(self._type(t.returnType))
+          ]), terminated: false)
+        }
+      })
+    }
+
+    methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
+
+    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+      self._(entity.context as str)
+      return AST.createEmptyStatement()
+    }
+
+    loop i := 0; i < methods.len; i++ {
+      methodName := methods[i] as str
+
+      self.entities.push(CodegenEntity{
+        name: typeName + "_" + methodName,
+        codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee
+      })
+    }
+
+    return name
+  }
+
   fn _generateOptionalType (mut self: ref Codegen, item: ref Analyzer.Type) str {
     typeName := self._typeName(item)
     name := typeName + "_t"
@@ -1698,6 +1776,9 @@ export obj Codegen {
     } elif it.isArray() {
       name := self._generateArrayType(it)
       return self._(name) + " "
+    } elif it.isFunction() {
+      name := self._generateFunctionType(it)
+      return self._(name) + " "
     } elif it.isOptional() {
       name := self._generateOptionalType(it)
       return self._(name) + " "
@@ -1706,7 +1787,6 @@ export obj Codegen {
       return self._(name) + " "
     } elif (
       it.isEnum() ||
-      it.isFunction() ||
       it.isMap() ||
       it.isObject() ||
       it.isUnion()
