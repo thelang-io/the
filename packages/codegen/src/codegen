@@ -778,7 +778,18 @@ export obj Codegen {
       }
 
       result := AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), arguments)
-      return item.hasParent() ? result : self._functionFree(context.t, result)
+      mut wrapWithFree := false
+
+      if !item.hasParent() {
+        if item.hasParentNode() {
+          parentNode := item.parentNode()
+          wrapWithFree = !parentNode.isVariableDeclaration()
+        } else {
+          wrapWithFree = true
+        }
+      }
+
+      return wrapWithFree ? self._functionFree(context.t, result) : result
     }
 
     return nil
