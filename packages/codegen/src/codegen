@@ -1480,10 +1480,10 @@ export obj Codegen {
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
         it := entity.context as ref Analyzer.Type
         t := it.asArray()
-        typeName := self._typeName(it)
+        elementTypeName := self._typeName(t.elementType)
 
         return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DECLARE"), [
-          AST.createIdentifier(typeName),
+          AST.createIdentifier(elementTypeName),
           AST.createType(self._type(t.elementType))
         ]), terminated: false)
       }
