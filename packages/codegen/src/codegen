@@ -1481,6 +1481,7 @@ export obj Codegen {
         it := entity.context as ref Analyzer.Type
         t := it.asArray()
         elementTypeName := self._typeName(t.elementType)
+        // todo how to insert array define here?
 
         return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DECLARE"), [
           AST.createIdentifier(elementTypeName),
@@ -1505,7 +1506,6 @@ export obj Codegen {
       "join",
       "last",
       "merge",
-      "ne",
       "pop",
       "push",
       "realloc",
@@ -1718,6 +1718,69 @@ export obj Codegen {
     return name
   }
 
+  fn _generateUnionType (mut self: ref Codegen, item: ref Analyzer.Type) str {
+    typeName := "the_" + self._typeName(item)
+    name := typeName + "_t"
+
+    if self._hasEntity(name) {
+      return name
+    }
+
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: item,
+      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+        it := entity.context as ref Analyzer.Type
+        t := it.asFunction()
+        mut parametersTypeName := ""
+        mut allocBlock: AST.CStatement[]
+        mut copyBlock: AST.CStatement[]
+        mut eqBlock: AST.CStatement[]
+        mut freeBlock: AST.CStatement[]
+        mut strBlock: AST.CStatement[]
+
+        loop i := 0; i < t.parameters.len; i++ {
+          parameter := t.parameters[i]
+
+          allocBlock.push(AST.createStructureMemberDeclaration(
+            AST.createType(self._type(parameter.t)),
+            "self" + i.str()
+          ))
+        }
+
+        return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DECLARE"), [
+          AST.createIdentifier(entity.codeName.slice(10, -2)),
+          AST.createCompoundStatement(allocBlock),
+          AST.createCompoundStatement(copyBlock),
+          AST.createCompoundStatement(eqBlock),
+          AST.createCompoundStatement(freeBlock),
+          AST.createCompoundStatement(strBlock)
+        ]), terminated: false)
+      }
+    })
+
+    methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
+
+    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
+      self._(entity.context as str)
+      return AST.createEmptyStatement()
+    }
+
+    loop i := 0; i < methods.len; i++ {
+      methodName := methods[i] as str
+
+      self.entities.push(CodegenEntity{
+        name: typeName + "_" + methodName,
+        codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee
+      })
+    }
+
+    return name
+  }
+
   fn _getEntity (self: ref Self, name: str) ref CodegenEntity {
     loop i := self.entities.len - 1; i >= 0; i-- {
       entity := self.entities[i]
@@ -1796,11 +1859,14 @@ export obj Codegen {
     } elif it.isReference() {
       name := self._generateReferenceType(it)
       return self._(name) + " "
+    } elif it.isUnion() {
+      name := self._generateUnionType(it)
+      return self._(name) + " "
     } elif (
       it.isEnum() ||
-      it.isMap() ||
-      it.isObject() ||
-      it.isUnion()
+      it.isMap()
+      // todo
+      // it.isObject()
     ) {
       return self._(self._typeName(it) + "_t") + " "
     }
