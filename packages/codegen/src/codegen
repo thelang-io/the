@@ -1732,21 +1732,47 @@ export obj Codegen {
       context: item,
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
         it := entity.context as ref Analyzer.Type
-        t := it.asFunction()
-        mut parametersTypeName := ""
+        t := it.asUnion()
+
         mut allocBlock: AST.CStatement[]
         mut copyBlock: AST.CStatement[]
         mut eqBlock: AST.CStatement[]
         mut freeBlock: AST.CStatement[]
         mut strBlock: AST.CStatement[]
 
-        loop i := 0; i < t.parameters.len; i++ {
-          parameter := t.parameters[i]
+        loop i := 0; i < t.types.len; i++ {
+          subType := t.types[i]
+          typeDef := self._typeDef(subType)
+          typeDefIdx := 1
 
-          allocBlock.push(AST.createStructureMemberDeclaration(
-            AST.createType(self._type(parameter.t)),
-            "self" + i.str()
-          ))
+          allocBlock.push(
+            AST.createIfStatement(
+              AST.createBinaryExpression(
+                AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
+                "==",
+                AST.createIdentifier(self._(typeDef))
+              ),
+              AST.createExpressionStatement(
+                AST.createAssignmentExpression(
+                  AST.createPropertyAccessExpression(
+                    AST.createPropertyAccessExpression(
+                      AST.createIdentifier("self"),
+                      "data"
+                    ),
+                    "v" + typeDefIdx.str()
+                  ),
+                  "=",
+                  self._functionCopy(
+                    subType,
+                    AST.createCallExpression(AST.createIdentifier(self._("va_arg")), [
+                      AST.createIdentifier("args"),
+                      AST.createType(self._type(subType))
+                    ])
+                  )
+                )
+              )
+            )
+          )
         }
 
         return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DECLARE"), [
