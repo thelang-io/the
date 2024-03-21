@@ -128,6 +128,7 @@ export obj Codegen {
   mut mainStatements: AST.CStatement[]
   mut globalStatements: AST.CStatement[]
   mut statements: AST.CStatement[]
+  mut typeDefs: int[str]
 
   fn init (mut self: ref Self) {
   }
@@ -593,18 +594,6 @@ export obj Codegen {
     if it.isAlias() {
       t := it.asAlias()
       return self._functionRealloc(t.t, left, right)
-    } elif it.name == "any" {
-      return AST.createAssignmentExpression(
-        left,
-        "=",
-        AST.createCallExpression(AST.createIdentifier(self._("the_any_realloc")), [left, right])
-      )
-    } elif it.name == "str" {
-      return AST.createAssignmentExpression(
-        left,
-        "=",
-        AST.createCallExpression(AST.createIdentifier(self._("the_str_realloc")), [left, right])
-      )
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -619,7 +608,7 @@ export obj Codegen {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._(typeName + "_realloc")), [left, right])
+        AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_realloc")), [left, right])
       )
     }
 
@@ -1743,7 +1732,7 @@ export obj Codegen {
         loop i := 0; i < t.types.len; i++ {
           subType := t.types[i]
           typeDef := self._typeDef(subType)
-          typeDefIdx := 1
+          typeDefIdx := self.typeDefs.get(typeDef)
 
           allocBlock.push(
             AST.createIfStatement(
@@ -1913,6 +1902,7 @@ export obj Codegen {
       context: it,
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement {
         lastTypeId := ++self.lastTypeId
+        self.typeDefs.set(entity.codeName, lastTypeId)
         return AST.createDefineDirective(entity.codeName, nil, lastTypeId.str())
       }
     })

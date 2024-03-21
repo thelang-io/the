@@ -1,4 +1,4 @@
-main { todo
+main {
   a: any = 1
   if a is int { print("int " + a.str()) }
   else { print("any") }
