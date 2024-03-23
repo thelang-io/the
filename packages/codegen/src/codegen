@@ -20,6 +20,7 @@ export obj CodegenAPIBuiltin {
   mut theNumber: bool
   mut theSafe: bool
   mut theString: bool
+  mut theUnion: bool
   mut stdbool: bool
   mut stddef: bool
   mut stdint: bool
@@ -152,7 +153,8 @@ export obj Codegen {
       self.builtin.theMacro ||
       self.builtin.theNumber ||
       self.builtin.theSafe ||
-      self.builtin.theString
+      self.builtin.theString ||
+      self.builtin.theUnion
     ) {
       extraFlags.push("-lthe")
     }
@@ -353,6 +355,8 @@ export obj Codegen {
       ].contains(name)
     ) {
       self.builtin.theString = true
+    } elif ["THE_UNION_DECLARE", "THE_UNION_DEFINE"].contains(name) {
+      self.builtin.theUnion = true
     } else {
       throw error_NewError("Tried activating unknown entity '" + name + "'")
     }
@@ -405,6 +409,7 @@ export obj Codegen {
     if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
+    if self.builtin.theUnion { self.statements.push(AST.createIncludeDirective("the/union.h")) }
 
     if self.builtin.stdbool { self.statements.push(AST.createIncludeDirective("stdbool.h")) }
     if self.builtin.stddef { self.statements.push(AST.createIncludeDirective("stddef.h")) }
