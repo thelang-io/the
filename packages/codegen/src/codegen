@@ -1622,7 +1622,7 @@ export obj Codegen {
   }
 
   fn _generateOptionalType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := self._typeName(item)
+    typeName := "the_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -1636,70 +1636,39 @@ export obj Codegen {
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := it.asOptional()
-        return AST.createTypedefDeclaration(AST.createType(self._type(t.t) + "*"), entity.codeName)
+        underlyingType := self._type(it.t)
+        underlyingTypeName := self._typeName(it.t)
+
+        return [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_OPTIONAL_DECLARE"), [
+            underlyingTypeName,
+            underlyingType
+          ]), terminated: false),
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_OPTIONAL_DEFINE"), [
+            underlyingTypeName,
+            underlyingType
+          ]), terminated: false),
+        ]
       }
     })
 
-    self.entities.push(CodegenEntity{
-      name: typeName + "_alloc",
-      codeName: typeName + "_alloc",
-      context: item,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
-        it := entity.context as ref Analyzer.Type
-        t := it.asOptional()
-        typeName := self._typeName(it)
-        name := typeName + "_t"
-        underlyingCType := AST.createType(self._type(t.t))
+    methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
 
-        // todo rename to self
-        return AST.createFunctionDeclaration(AST.createType(self._(name)), entity.codeName, [
-          AST.createFunctionParameter(underlyingCType, "n")
-        ], AST.createCompoundStatement([
-          AST.createVariableDeclaration(
-            AST.createType(self._(name)),
-            "r",
-            AST.createCallExpression(AST.createIdentifier(self._("the_safe_alloc")), [
-              AST.createCallExpression(AST.createIdentifier("sizeof"), [underlyingCType])
-            ])
-          ),
-          AST.createExpressionStatement(
-            AST.createAssignmentExpression(
-              AST.createUnaryExpression("*", AST.createIdentifier("r")),
-              "=",
-              AST.createIdentifier("n")
-            )
-          ),
-          AST.createReturnStatement(AST.createIdentifier("r"))
-        ]))
-      }
-    })
+    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      self._(entity.context as str)
+      return AST.createEmptyStatement()
+    }
 
-    self.entities.push(CodegenEntity{
-      name: typeName + "_free",
-      codeName: typeName + "_free",
-      context: item,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
-        it := entity.context as ref Analyzer.Type
-        typeName := self._typeName(it)
-        name := typeName + "_t"
+    loop i := 0; i < methods.len; i++ {
+      methodName := methods[i] as str
 
-        return AST.createFunctionDeclaration(AST.createType("void"), entity.codeName, [
-          AST.createFunctionParameter(AST.createType(self._(name)), "n")
-        ], AST.createCompoundStatement([
-          AST.createIfStatement(
-            AST.createBinaryExpression(AST.createIdentifier("n"), "==", AST.createIdentifier(self._("NULL"))),
-            AST.createReturnStatement()
-          ),
-          // todo
-          // if shouldBeFreed(underlyingTypeInfo.type) {
-          //   self._functionFree(underlyingTypeInfo.type, AST.createUnaryExpression("*", CodegenASTExprAccess::create("n")))
-          // }
-          AST.createExpressionStatement(
-            AST.createCallExpression(AST.createIdentifier(self._("the_safe_free")), [AST.createIdentifier("n")])
-          )
-        ]))
-      }
-    })
+      self.entities.push(CodegenEntity{
+        name: typeName + "_" + methodName,
+        codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee
+      })
+    }
 
     return name
   }
