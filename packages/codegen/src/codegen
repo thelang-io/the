@@ -18,6 +18,7 @@ export obj CodegenAPIBuiltin {
   mut theFn: bool
   mut theMacro: bool
   mut theNumber: bool
+  mut theOptional: bool
   mut theSafe: bool
   mut theString: bool
   mut theUnion: bool
@@ -152,6 +153,7 @@ export obj Codegen {
       self.builtin.theError ||
       self.builtin.theMacro ||
       self.builtin.theNumber ||
+      self.builtin.theOptional ||
       self.builtin.theSafe ||
       self.builtin.theString ||
       self.builtin.theUnion
@@ -305,6 +307,8 @@ export obj Codegen {
       ].contains(name)
     ) {
       self.builtin.theNumber = true
+    } elif ["THE_OPTIONAL_DECLARE", "THE_OPTIONAL_DEFINE"].contains(name) {
+      self.builtin.theOptional = true
     } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc", "the_safe_swap"].contains(name) {
       self.builtin.theSafe = true
     } elif (
@@ -407,6 +411,7 @@ export obj Codegen {
     if self.builtin.theFn { self.statements.push(AST.createIncludeDirective("the/fn.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
+    if self.builtin.theOptional { self.statements.push(AST.createIncludeDirective("the/optional.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
     if self.builtin.theUnion { self.statements.push(AST.createIncludeDirective("the/union.h")) }
