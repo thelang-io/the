@@ -1,0 +1,17 @@
+main {
+  a: int? = nil
+}
+===== code =====
+#include <the/safe.h>
+#include <stddef.h>
+#include <stdint.h>
+typedef int32_t *opt_int_t;
+void opt_int_free (opt_int_t n) {
+  if (n == NULL) return;
+  the_safe_free(n);
+}
+int main () {
+  opt_int_t a = NULL;
+  opt_int_free(a);
+}
+===== output =====

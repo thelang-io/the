@@ -83,6 +83,8 @@ std::string Codegen::_typeNameOpt (Type *type) {
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 == _{NULL} && n2 == _{NULL} : ";
 
     if (underlyingTypeInfo.type->isAny()) {
+      def += this->_genEqFn(underlyingTypeInfo.type, cEq1->wrap(), cEq2->wrap())->str();
+    } else if (underlyingTypeInfo.type->isFn()) {
       def += this->_genEqFn(underlyingTypeInfo.type, CodegenASTExprAccess::create("n1"), CodegenASTExprAccess::create("n2"))->str();
     } else {
       def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2)->str();
@@ -107,6 +109,8 @@ std::string Codegen::_typeNameOpt (Type *type) {
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 != _{NULL} || n2 != _{NULL} : ";
 
     if (underlyingTypeInfo.type->isAny()) {
+      def += this->_genEqFn(underlyingTypeInfo.type, cEq1->wrap(), cEq2->wrap(), true)->str();
+    } else if (underlyingTypeInfo.type->isFn()) {
       def += this->_genEqFn(underlyingTypeInfo.type, CodegenASTExprAccess::create("n1"), CodegenASTExprAccess::create("n2"), true)->str();
     } else {
       def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2, true)->str();

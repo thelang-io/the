@@ -5,6 +5,16 @@
 
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
 import
+  IdentifierContext,
+  ArrayExpressionContext,
+  AssignmentExpressionContext,
+  BinaryExpressionContext,
+  ConditionalExpressionContext,
+  IsExpressionContext,
+  UnaryExpressionContext,
+  VariableDeclarationContext
+from "./context"
+import
   Type,
   TypeBody,
   TypeProperty,
@@ -36,6 +46,14 @@ export AnalyzerExport
 export AnalyzerFile
 export AnalyzerFileState
 export AnalyzerState
+export IdentifierContext
+export ArrayExpressionContext
+export AssignmentExpressionContext
+export BinaryExpressionContext
+export ConditionalExpressionContext
+export IsExpressionContext
+export UnaryExpressionContext
+export VariableDeclarationContext
 export Type
 export TypeBody
 export TypeProperty

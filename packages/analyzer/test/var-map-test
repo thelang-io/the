@@ -70,7 +70,7 @@ export fn TEST_VarMap_getThrows () {
   EXPECT_THROW_WITH_MESSAGE(() -> void {
     vmRef := ref vm // todo remove after v1
     vm.get("test1")
-  }, "Variable with this name doesn't exists")
+  }, "Variable with name 'test1' doesn't exists")
 }
 
 export fn TEST_VarMap_has () {

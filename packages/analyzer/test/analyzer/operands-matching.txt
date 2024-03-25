@@ -1,6 +1,6 @@
 main {
   mut v1: byte = 10
-  mut v2: char = 'a'
+  mut v2: rune = 'a'
   mut v3: rune = "a"[0]
   mut v4: str = "test"
   mut v5: i8 = -10

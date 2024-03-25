@@ -15,8 +15,8 @@ import analyzer from "the/analyzer"
 
 ## API
 
-### `analyze (f: ref Parser.File) str[]`
-Analyzes and generates errors for parsed file.
+### `analyze (mut f: ref Parser.File) str[]`
+Analyzes and generates errors for parsed file. Also, assigned context on all possible nodes.
 
 **Parameters**
 

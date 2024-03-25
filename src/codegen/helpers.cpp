@@ -580,6 +580,12 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genEqFn (Type *type, const std::shared
 
   if (type->isAlias()) {
     return this->_genEqFn(std::get<TypeAlias>(type->body).type, leftExpr, rightExpr, reverse);
+  } else if (type->isAny()) {
+    return CodegenASTExprAssign::create(
+      CodegenASTExprAccess::create(leftExpr, "d"),
+      reverse ? "!=" : "==",
+      CodegenASTExprAccess::create(rightExpr, "d")
+    );
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
     return CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("buffer_" + direction)),

@@ -402,6 +402,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
   "builtin-any-alloc-ref",
   "builtin-any-alloc-str",
   "builtin-any-alloc-union",
+  "builtin-any-eq",
+  "builtin-any-eq-ref",
+  "builtin-any-eq-root",
   "builtin-any-str",
   "builtin-any-str-ref",
   "builtin-any-str-root"

@@ -1,0 +1,19 @@
+main {
+
+  "";
+  "Hello, World!";
+  "Multiline\nString";
+  "Multiline
+String
+Multiline";
+
+}
+===== code =====
+#include <the/macro.h>
+int main () {
+  L"";
+  L"Hello, World!";
+  L"Multiline\nString";
+  L"Multiline" THE_EOL "String" THE_EOL "Multiline";
+}
+===== output =====

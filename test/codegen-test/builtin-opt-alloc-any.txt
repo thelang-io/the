@@ -118,7 +118,7 @@ struct any *__THE_1_opt_any_copy (const struct any *n) {
   return r;
 }
 bool __THE_1_opt_any_eq (struct any *n1, struct any *n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : n1 == n2;
+  bool r = (n1 == NULL || n2 == NULL) ? n1 == NULL && n2 == NULL : (*n1).d == (*n2).d;
   __THE_1_opt_any_free((struct any *) n1);
   __THE_1_opt_any_free((struct any *) n2);
   return r;
@@ -129,7 +129,7 @@ void __THE_1_opt_any_free (struct any *n) {
   free(n);
 }
 bool __THE_1_opt_any_ne (struct any *n1, struct any *n2) {
-  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : n1 != n2;
+  bool r = (n1 == NULL || n2 == NULL) ? n1 != NULL || n2 != NULL : (*n1).d != (*n2).d;
   __THE_1_opt_any_free((struct any *) n1);
   __THE_1_opt_any_free((struct any *) n2);
   return r;

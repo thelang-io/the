@@ -1,0 +1,96 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Analyzer from "the/analyzer"
+import * as Parser from "the/parser"
+import Codegen from "../src/codegen"
+import retrieveFileSections from "./utils"
+
+import Tests, EXPECT_EQ from "the/testing"
+
+export fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
+  EXPECT_EQ(test + os_EOL + a, test + os_EOL + b)
+}
+
+export fn TEST_Codegen () {
+  files := fs_scandirSync("./test/codegen")
+
+  if !fs_existsSync("./build") {
+    fs_mkdirSync("./build")
+  }
+
+  loop i := 0; i < files.len; i++ {
+    name := files[i].slice(0, -4)
+    fileSections := retrieveFileSections("./test/codegen/" + name + ".txt")
+    executablePath := "./build/" + name + ".out"
+    codePath := "./build/" + name + ".c"
+
+    mut analyzer := Analyzer.Analyzer{}
+
+    analyzer.files.push(Analyzer.AnalyzerFile{
+      cwd: process_cwd(),
+      analyzer: ref analyzer,
+      f: Parser.parse(fileSections.input),
+    })
+
+    mut file := analyzer.files.last()
+    Parser.interconnect(ref file.f)
+    file.reader = Parser.Reader_init(file.f.content)
+    file.init()
+    file.analyze(ref file.f.program.body)
+
+    if !analyzer.errors.empty {
+      TEST_EXPECT_EQ(name, analyzer.errors.join(os_EOL), "")
+      continue
+    }
+
+    mut generator := Codegen{analyzer: ref analyzer}
+    generator.init()
+    generator.generate()
+
+    generatedCode := generator.stringify()
+
+    if fileSections.code != generatedCode {
+      TEST_EXPECT_EQ(name, fileSections.code, generatedCode)
+      continue
+    }
+
+    fs_writeFileSync(codePath, generatedCode.toBuffer())
+    mut errorMessage := ""
+
+    try {
+      process_runSync("clang '" + codePath + "' -o '" + executablePath + "'" + generator.getFlags())
+    } catch err: error_Error {
+      errorMessage = err.message
+    }
+
+    fs_rmSync(codePath)
+
+    if !errorMessage.empty {
+      TEST_EXPECT_EQ(name, errorMessage, "")
+      continue
+    }
+
+    mut actualOutput := ""
+
+    try {
+      actualOutput = process_runSync(executablePath).str()
+    } catch err: error_Error {
+      actualOutput = err.message
+    }
+
+    fs_rmSync(executablePath)
+
+    if actualOutput != fileSections.output {
+      TEST_EXPECT_EQ(name, actualOutput, fileSections.output)
+    }
+  }
+}
+
+main {
+  mut tests := Tests{}
+  tests.register("Codegen", TEST_Codegen)
+  tests.run(process_args)
+}

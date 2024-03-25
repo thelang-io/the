@@ -246,7 +246,7 @@ class Codegen {
   std::shared_ptr<CodegenASTExpr> _exprLit (const ASTNodeExpr &, Type *, bool);
   std::shared_ptr<CodegenASTExpr> _exprMap (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprObj (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
-  std::shared_ptr<CodegenASTExpr> _exprObjDefaultField (const CodegenTypeInfo &);
+  std::shared_ptr<CodegenASTExpr> _exprObjDefaultField (const std::string &, const CodegenTypeInfo &);
   std::shared_ptr<CodegenASTExpr> _exprRef (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   std::shared_ptr<CodegenASTExpr> _exprUnary (const ASTNodeExpr &, Type *, const ASTNode &, std::shared_ptr<CodegenASTStmt> *, bool);
   void _fnDecl (std::shared_ptr<CodegenASTStmt> *, std::shared_ptr<Var>, const std::vector<std::shared_ptr<Var>> &, const std::vector<ASTFnParam> &, const std::optional<ASTBlock> &, const ASTNode &, CodegenPhase);
