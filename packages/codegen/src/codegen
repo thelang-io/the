@@ -1646,17 +1646,17 @@ export obj Codegen {
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := it.asOptional()
-        underlyingType := self._type(it.t)
-        underlyingTypeName := self._typeName(it.t)
+        underlyingType := self._type(t.t)
+        underlyingTypeName := self._typeName(t.t)
 
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_OPTIONAL_DECLARE"), [
-            underlyingTypeName,
-            underlyingType
+            AST.createIdentifier(underlyingTypeName),
+            AST.createType(underlyingType)
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_OPTIONAL_DEFINE"), [
-            underlyingTypeName,
-            underlyingType
+            AST.createIdentifier(underlyingTypeName),
+            AST.createType(underlyingType)
           ]), terminated: false),
         ]
       }
@@ -1700,8 +1700,8 @@ export obj Codegen {
         t := it.asReference()
 
         return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_REFERENCE_DECLARE"), [
-          self._typeName(it.t),
-          self._type(it.t)
+          AST.createIdentifier(self._typeName(t.t)),
+          AST.createType(self._type(t.t))
         ]), terminated: false)
       }
     })
