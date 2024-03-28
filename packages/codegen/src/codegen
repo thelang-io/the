@@ -991,21 +991,20 @@ export obj Codegen {
     if item.isBreak() {
       statement := item.asBreak()
 
-      // todo
-      // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_LOOP)) {
-      //   (*c)->append(
-      //     CodegenASTExprAssign::create(
-      //       CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
-      //       "=",
-      //       CodegenASTExprLiteral::create("1")
-      //     )->stmt()
-      //   );
-      //   if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
-      //     (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-      //   }
-      // } else {
-      //   (*c)->append(CodegenASTStmtBreak::create());
-      // }
+      if self.blockData.hasCleanup() { // todo check specifically for loop
+        //(*c)->append(
+        //  CodegenASTExprAssign::create(
+        //    CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
+        //    "=",
+        //    CodegenASTExprLiteral::create("1")
+        //  )->stmt()
+        //);
+        //if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
+        //  (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
+        //}
+      }
+
+      return AST.createContinueStatement()
     }
 
     return nil
@@ -1031,7 +1030,6 @@ export obj Codegen {
       }
 
       return AST.createContinueStatement()
-
     }
 
     return nil
