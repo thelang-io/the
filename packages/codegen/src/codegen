@@ -39,7 +39,7 @@ export obj BlockData {
   }
 
   fn hasCleanup (mut self: ref Self) bool {
-    return self.cleanUp.empty
+    return self.cleanup.empty
   }
 
   fn getCleanup (mut self: ref Self) AST.CStatement[] {
