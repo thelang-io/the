@@ -22,6 +22,7 @@ export obj CodegenAPIBuiltin {
   mut theReference: bool
   mut theSafe: bool
   mut theString: bool
+  mut theThreadPool: bool
   mut theUnion: bool
   mut stdbool: bool
   mut stddef: bool
