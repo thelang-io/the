@@ -163,6 +163,7 @@ export obj Codegen {
       self.builtin.theReference ||
       self.builtin.theSafe ||
       self.builtin.theString ||
+      self.builtin.theThreadPool ||
       self.builtin.theUnion
     ) {
       extraFlags.push("-lthe")
@@ -320,6 +321,8 @@ export obj Codegen {
       self.builtin.theReference = true
     } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc", "the_safe_swap"].contains(name) {
       self.builtin.theSafe = true
+    } elif ["the_thread_pool_init"].contains(name) {
+      self.builtin.theThreadPool = true
     } elif (
       [
         "the_str_t",
@@ -424,6 +427,7 @@ export obj Codegen {
     if self.builtin.theReference { self.statements.push(AST.createIncludeDirective("the/reference.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
+    if self.builtin.theThreadPool { self.statements.push(AST.createIncludeDirective("the/thread-pool.h")) }
     if self.builtin.theUnion { self.statements.push(AST.createIncludeDirective("the/union.h")) }
 
     if self.builtin.stdbool { self.statements.push(AST.createIncludeDirective("stdbool.h")) }
