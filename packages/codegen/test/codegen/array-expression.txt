@@ -5,9 +5,13 @@ main {
 }
 ===== code =====
 #include <the/array.h>
+#include <the/byte.h>
+#include <the/number.h>
 #include <stdint.h>
 THE_ARRAY_DECLARE(int, int32_t)
+THE_ARRAY_DEFINE(int, int32_t, int32_t, element, lhs_element == rhs_element, (void) element, the_int_str(element))
 THE_ARRAY_DECLARE(byte, unsigned char)
+THE_ARRAY_DEFINE(byte, unsigned char, int32_t, element, lhs_element == rhs_element, (void) element, the_byte_str(element))
 int main () {
   the_arr_int_t a = the_arr_int_alloc(3, 1, 2, 3);
   the_arr_byte_t b = the_arr_byte_alloc(3, 1, 2, 3);

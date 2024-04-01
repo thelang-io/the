@@ -93,6 +93,10 @@ export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
     it.isUnion()
 }
 
+export fn typeSafeForVaArg (mut tm: ref Analyzer.TypeMap, it: ref Analyzer.Type) ref Analyzer.Type {
+  return ["i8", "i16", "u8", "u16", "byte", "char"].contains(it.name) ? tm.get("i32") : it
+}
+
 export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
   if self.isAlias() {
     t := self.asAlias()
@@ -619,7 +623,7 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_free")), [expression])
     }
 
-    return expression
+    return AST.createCastExpression(AST.createType("void"), expression)
   }
 
   fn _functionRealloc (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
@@ -661,7 +665,7 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._("the_enum_str")), [expression])
     } else {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_str")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_str")), [expression])
     }
   }
 
@@ -1500,12 +1504,22 @@ export obj Codegen {
         it := entity.context as ref Analyzer.Type
         t := it.asArray()
         elementTypeName := self._typeName(t.elementType)
-        // todo how to insert array define here?
 
-        return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DECLARE"), [
-          AST.createIdentifier(elementTypeName),
-          AST.createType(self._type(t.elementType))
-        ]), terminated: false)
+        return [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DECLARE"), [
+            AST.createIdentifier(elementTypeName),
+            AST.createType(self._type(t.elementType))
+          ]), terminated: false),
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DEFINE"), [
+            AST.createIdentifier(elementTypeName),
+            AST.createType(self._type(t.elementType)),
+            AST.createType(self._type(typeSafeForVaArg(tm, t.elementType))),
+            self._functionCopy(t.elementType, AST.createIdentifier("element")),
+            self._functionEq(t.elementType, AST.createIdentifier("lhs_element"), AST.createIdentifier("rhs_element")),
+            self._functionFree(t.elementType, AST.createIdentifier("element")),
+            self._functionStr(t.elementType, AST.createIdentifier("element"))
+          ]), terminated: false)
+        ]
       }
     })
 
