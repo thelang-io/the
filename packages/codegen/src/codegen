@@ -24,6 +24,7 @@ export obj CodegenAPIBuiltin {
   mut theString: bool
   mut theThreadPool: bool
   mut theUnion: bool
+  mut stdarg: bool
   mut stdbool: bool
   mut stddef: bool
   mut stdint: bool
@@ -209,6 +210,8 @@ export obj Codegen {
       }
 
       return item.codeName
+    } elif ["va_arg", "va_copy", "va_end", "va_list", "va_start"].contains(name) {
+      self.builtin.stdarg = true
     } elif ["bool", "false", "true"].contains(name) {
       self.builtin.stdbool = true
     } elif (
@@ -434,6 +437,7 @@ export obj Codegen {
     if self.builtin.theThreadPool { self.statements.push(AST.createIncludeDirective("the/thread-pool.h")) }
     if self.builtin.theUnion { self.statements.push(AST.createIncludeDirective("the/union.h")) }
 
+    if self.builtin.stdarg { self.statements.push(AST.createIncludeDirective("stdarg.h")) }
     if self.builtin.stdbool { self.statements.push(AST.createIncludeDirective("stdbool.h")) }
     if self.builtin.stddef { self.statements.push(AST.createIncludeDirective("stddef.h")) }
     if self.builtin.stdio { self.statements.push(AST.createIncludeDirective("stdio.h")) }
@@ -1919,13 +1923,15 @@ export obj Codegen {
       return typeName
     }
 
+    lastTypeId := ++self.lastTypeId
+    self.typeDefs.set(typeName, lastTypeId)
+
     self.entities.push(CodegenEntity{
       name: typeName,
       codeName: typeName,
       context: it,
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
-        lastTypeId := ++self.lastTypeId
-        self.typeDefs.set(entity.codeName, lastTypeId)
+        typeDefIdx := self.typeDefs.get(entity.codeName)
         return AST.createDefineDirective(entity.codeName, nil, lastTypeId.str())
       }
     })
