@@ -2,16 +2,14 @@ main {
   a: int? = nil
 }
 ===== code =====
-#include <the/safe.h>
+#include <the/number.h>
+#include <the/optional.h>
 #include <stddef.h>
 #include <stdint.h>
-typedef int32_t *opt_int_t;
-void opt_int_free (opt_int_t n) {
-  if (n == NULL) return;
-  the_safe_free(n);
-}
+THE_OPTIONAL_DECLARE(int, int32_t)
+THE_OPTIONAL_DEFINE(int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
 int main () {
-  opt_int_t a = NULL;
-  opt_int_free(a);
+  the_opt_int_t a = NULL;
+  the_opt_int_free(a);
 }
 ===== output =====

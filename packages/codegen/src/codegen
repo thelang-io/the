@@ -624,7 +624,7 @@ export obj Codegen {
       it.isUnion()
     ) {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_free")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_free")), [expression])
     }
 
     return AST.createCastExpression(AST.createType("void"), expression)
@@ -1681,7 +1681,11 @@ export obj Codegen {
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_OPTIONAL_DEFINE"), [
             AST.createIdentifier(underlyingTypeName),
-            AST.createType(underlyingType)
+            AST.createType(underlyingType),
+            self._functionCopy(t.t, AST.createIdentifier("val")),
+            self._functionEq(t.t, AST.createIdentifier("lhs_val"), AST.createIdentifier("rhs_val")),
+            self._functionFree(t.t, AST.createIdentifier("val")),
+            self._functionStr(t.t, AST.createIdentifier("val"))
           ]), terminated: false),
         ]
       }
