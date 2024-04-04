@@ -1753,7 +1753,9 @@ export obj Codegen {
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := it.asUnion()
+        unionName := entity.codeName.slice(10, -2)
 
+        mut structureBlock: AST.CStatement[]
         mut allocBlock: AST.CStatement[]
         mut copyBlock: AST.CStatement[]
         mut eqBlock: AST.CStatement[]
@@ -1761,9 +1763,15 @@ export obj Codegen {
         mut strBlock: AST.CStatement[]
 
         loop i := 0; i < t.types.len; i++ {
-          subType := t.types[i]
+          subType := t.types[i] as ref Analyzer.Type
+          typeDecl := self._type(subType)
           typeDef := self._typeDef(subType)
           typeDefIdx := self.typeDefs.get(typeDef)
+          typeProperty := "v" + typeDefIdx.str()
+
+          structureBlock.push(
+            AST.createVariableDeclaration(AST.createType(typeDecl), typeProperty)
+          )
 
           allocBlock.push(
             AST.createIfStatement(
@@ -1779,14 +1787,14 @@ export obj Codegen {
                       AST.createIdentifier("self"),
                       "data"
                     ),
-                    "v" + typeDefIdx.str()
+                    typeProperty
                   ),
                   "=",
                   self._functionCopy(
                     subType,
                     AST.createCallExpression(AST.createIdentifier(self._("va_arg")), [
                       AST.createIdentifier("args"),
-                      AST.createType(self._type(subType))
+                      AST.createType(typeDecl)
                     ])
                   )
                 )
@@ -1795,14 +1803,20 @@ export obj Codegen {
           )
         }
 
-        return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DECLARE"), [
-          AST.createIdentifier(entity.codeName.slice(10, -2)),
-          AST.createCompoundStatement(allocBlock),
-          AST.createCompoundStatement(copyBlock),
-          AST.createCompoundStatement(eqBlock),
-          AST.createCompoundStatement(freeBlock),
-          AST.createCompoundStatement(strBlock)
-        ]), terminated: false)
+        return [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DECLARE"), [
+            AST.createIdentifier(unionName),
+            AST.createCompoundStatement(structureBlock)
+          ]), terminated: false),
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DEFINE"), [
+            AST.createIdentifier(unionName),
+            AST.createCompoundStatement(allocBlock),
+            AST.createCompoundStatement(copyBlock),
+            AST.createCompoundStatement(eqBlock),
+            AST.createCompoundStatement(freeBlock),
+            AST.createCompoundStatement(strBlock)
+          ]), terminated: false)
+        ]
       }
     })
 
