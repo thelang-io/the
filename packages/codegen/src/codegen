@@ -14,12 +14,14 @@ export obj CodegenAPIBuiltin {
   mut theArray: bool
   mut theBool: bool
   mut theByte: bool
+  mut theChar: bool
   mut theError: bool
   mut theFn: bool
   mut theMacro: bool
   mut theNumber: bool
   mut theOptional: bool
   mut theReference: bool
+  mut theRune: bool
   mut theSafe: bool
   mut theString: bool
   mut theThreadPool: bool
@@ -160,12 +162,14 @@ export obj Codegen {
       self.builtin.theArray ||
       self.builtin.theBool ||
       self.builtin.theByte ||
+      self.builtin.theChar ||
       self.builtin.theFn ||
       self.builtin.theError ||
       self.builtin.theMacro ||
       self.builtin.theNumber ||
       self.builtin.theOptional ||
       self.builtin.theReference ||
+      self.builtin.theRune ||
       self.builtin.theSafe ||
       self.builtin.theString ||
       self.builtin.theThreadPool ||
@@ -274,6 +278,22 @@ export obj Codegen {
       self.builtin.theByte = true
     } elif (
       [
+        "the_char_byte",
+        "the_char_isDigit",
+        "the_char_isLetter",
+        "the_char_isLetterOrDigit",
+        "the_char_isLower",
+        "the_char_isUpper",
+        "the_char_isWhitespace",
+        "the_char_lower",
+        "the_char_repeat",
+        "the_char_str",
+        "the_char_upper"
+      ].contains(name)
+    ) {
+      self.builtin.theChar = true
+    } elif (
+      [
         "the_Error_t",
         "the_err_buf_t",
         "the_err_stack_t",
@@ -326,6 +346,22 @@ export obj Codegen {
       self.builtin.theOptional = true
     } elif ["THE_REFERENCE_DECLARE"].contains(name) {
       self.builtin.theReference = true
+    } elif (
+      [
+        "the_rune_byte",
+        "the_rune_isDigit",
+        "the_rune_isLetter",
+        "the_rune_isLetterOrDigit",
+        "the_rune_isLower",
+        "the_rune_isUpper",
+        "the_rune_isWhitespace",
+        "the_rune_lower",
+        "the_rune_repeat",
+        "the_rune_str",
+        "the_rune_upper"
+      ].contains(name)
+    ) {
+      self.builtin.theRune = true
     } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc", "the_safe_swap"].contains(name) {
       self.builtin.theSafe = true
     } elif ["the_thread_pool_init"].contains(name) {
@@ -388,11 +424,13 @@ export obj Codegen {
   }
 
   fn _assemble (mut self: ref Self) {
+    mut defineStatements: AST.CStatement[]
     mut statements: AST.CStatement[]
     mut file := self.analyzer.files.last()
     mut prevActive := 0
 
     loop {
+      defineStatements = []
       statements = []
       mut currentActive := 0
 
@@ -406,7 +444,11 @@ export obj Codegen {
         result := entity.generate(self, ref file.tm, entity)
 
         if result is AST.CStatement {
-          statements.push(result)
+          if result.isDefineDirective() {
+            defineStatements.push(result)
+          } else {
+            statements.push(result)
+          }
         } else {
           resultStatements := result
           statements.merge(resultStatements)
@@ -426,12 +468,14 @@ export obj Codegen {
     if self.builtin.theArray { self.statements.push(AST.createIncludeDirective("the/array.h")) }
     if self.builtin.theBool { self.statements.push(AST.createIncludeDirective("the/bool.h")) }
     if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
+    if self.builtin.theChar { self.statements.push(AST.createIncludeDirective("the/char.h")) }
     if self.builtin.theError { self.statements.push(AST.createIncludeDirective("the/error.h")) }
     if self.builtin.theFn { self.statements.push(AST.createIncludeDirective("the/fn.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
     if self.builtin.theOptional { self.statements.push(AST.createIncludeDirective("the/optional.h")) }
     if self.builtin.theReference { self.statements.push(AST.createIncludeDirective("the/reference.h")) }
+    if self.builtin.theRune { self.statements.push(AST.createIncludeDirective("the/rune.h")) }
     if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
     if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
     if self.builtin.theThreadPool { self.statements.push(AST.createIncludeDirective("the/thread-pool.h")) }
@@ -445,6 +489,7 @@ export obj Codegen {
     if self.builtin.stdlib { self.statements.push(AST.createIncludeDirective("stdlib.h")) }
     if self.builtin.wchar { self.statements.push(AST.createIncludeDirective("wchar.h")) }
 
+    self.statements.merge(defineStatements)
     self.statements.merge(statements)
 
     self.statements.push(
@@ -1839,11 +1884,11 @@ export obj Codegen {
                 self._functionEq(
                   subType,
                   AST.createPropertyAccessExpression(
-                    AST.createPropertyAccessExpression(AST.createIdentifier("result"), "data"),
+                    AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
                     typeProperty
                   ),
                   AST.createPropertyAccessExpression(
-                    AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
+                    AST.createPropertyAccessExpression(AST.createIdentifier("rhs"), "data"),
                     typeProperty
                   )
                 )
@@ -2039,7 +2084,7 @@ export obj Codegen {
       context: it,
       generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         typeDefIdx := self.typeDefs.get(entity.codeName)
-        return AST.createDefineDirective(entity.codeName, nil, lastTypeId.str())
+        return AST.createDefineDirective(entity.codeName, nil, typeDefIdx.str())
       }
     })
 
