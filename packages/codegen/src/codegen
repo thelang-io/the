@@ -1801,6 +1801,95 @@ export obj Codegen {
               )
             )
           )
+
+          copyBlock.push(
+            AST.createIfStatement(
+              AST.createBinaryExpression(
+                AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
+                "==",
+                AST.createIdentifier(self._(typeDef))
+              ),
+              AST.createExpressionStatement(
+                AST.createAssignmentExpression(
+                  AST.createPropertyAccessExpression(
+                    AST.createPropertyAccessExpression(AST.createIdentifier("result"), "data"),
+                    typeProperty
+                  ),
+                  "=",
+                  self._functionCopy(
+                    subType,
+                    AST.createPropertyAccessExpression(
+                      AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
+                      typeProperty
+                    )
+                  )
+                )
+              )
+            )
+          )
+
+          eqBlock.push(
+            AST.createIfStatement(
+              AST.createBinaryExpression(
+                AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
+                "==",
+                AST.createIdentifier(self._(typeDef))
+              ),
+              AST.createReturnStatement(
+                self._functionEq(
+                  subType,
+                  AST.createPropertyAccessExpression(
+                    AST.createPropertyAccessExpression(AST.createIdentifier("result"), "data"),
+                    typeProperty
+                  ),
+                  AST.createPropertyAccessExpression(
+                    AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
+                    typeProperty
+                  )
+                )
+              )
+            )
+          )
+
+          if typeShouldBeFreed(subType) {
+            freeBlock.push(
+              AST.createIfStatement(
+                AST.createBinaryExpression(
+                  AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
+                  "==",
+                  AST.createIdentifier(self._(typeDef))
+                ),
+                AST.createExpressionStatement(
+                  self._functionFree(
+                    subType,
+                    AST.createPropertyAccessExpression(
+                      AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
+                      typeProperty
+                    )
+                  )
+                )
+              )
+            )
+          }
+
+          strBlock.push(
+            AST.createIfStatement(
+              AST.createBinaryExpression(
+                AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
+                "==",
+                AST.createIdentifier(self._(typeDef))
+              ),
+              AST.createReturnStatement(
+                self._functionStr(
+                  subType,
+                  AST.createPropertyAccessExpression(
+                    AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
+                    typeProperty
+                  )
+                )
+              )
+            )
+          )
         }
 
         return [
