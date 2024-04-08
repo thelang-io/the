@@ -972,37 +972,32 @@ export obj Codegen {
 
 
     calleeExpression := self._generateExpression(ref expression.callee)
-    mut arguments := [AST.createPropertyAccessExpression(calleeExpression, "ctx")]
-
+    mut args := [AST.createPropertyAccessExpression(calleeExpression, "ctx")]
+    mut paramsArgs: AST.CExpression = []
 
     if hasSelfParam {
-      //auto exprAccess = std::get<ASTExprAccess>(*exprCall.callee.body);
-      //auto nodeExprAccess = std::get<ASTNodeExpr>(*exprAccess.expr);
-      //cParamsArgs.push_back(
-      //  this->_genCopyFn(
-      //    fnType.callInfo.selfType,
-      //    this->_nodeExpr(nodeExprAccess, fnType.callInfo.selfType, parent, c, true)
-      //  )
-      //);
+      paramsArgs.push(self._generateExpression(ref expression.callee))
     }
 
     loop i := 0; i < fnType.params.len; i++ {
-      //auto param = fnType.params[i];
-      //auto paramTypeInfo = this->_typeInfo(param.type);
-      //auto foundArg = std::optional<ASTExprCallArg>{};
-      //auto foundArgIdx = static_cast<std::size_t>(0);
-      //if (param.name != std::nullopt) {
-      //  for (auto j = static_cast<std::size_t>(0); j < exprCall.args.size(); j++) {
-      //    if (exprCall.args[j].id == param.name) {
-      //      foundArgIdx = j;
-      //      foundArg = exprCall.args[foundArgIdx];
-      //      break;
-      //    }
-      //  }
-      //} else if (i < exprCall.args.size()) {
-      //  foundArgIdx = i;
-      //  foundArg = exprCall.args[foundArgIdx];
-      //}
+      param := fnType.params[i]
+      mut foundArgIdx := -1
+
+      if param.name != nil {
+        loop j := 0; j < expression.arguments.len; j++ {
+          arg := expression.arguments[j]
+          if arg.id == param.name {
+            foundArgIdx = j
+            break
+          }
+        }
+      } elif i < expression.arguments.len {
+        foundArgIdx = i
+      }
+
+      if !param.isRequired() && !param.variadic {
+      }
+
       //if (!param.required && !param.variadic) {
       //  cParamsArgs.push_back(CodegenASTExprLiteral::create(foundArg == std::nullopt ? "0" : "1"));
       //}
