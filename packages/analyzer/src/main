@@ -9,6 +9,8 @@ import
   ArrayExpressionContext,
   AssignmentExpressionContext,
   BinaryExpressionContext,
+  CallExpressionContext,
+  CallExpressionContextArgument,
   ConditionalExpressionContext,
   IsExpressionContext,
   UnaryExpressionContext,
@@ -50,6 +52,8 @@ export IdentifierContext
 export ArrayExpressionContext
 export AssignmentExpressionContext
 export BinaryExpressionContext
+export CallExpressionContext
+export CallExpressionContextArgument
 export ConditionalExpressionContext
 export IsExpressionContext
 export UnaryExpressionContext

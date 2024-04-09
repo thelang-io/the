@@ -705,11 +705,14 @@ export obj AnalyzerFile {
       mut hasNamed := false
       mut isVariadic := false
       mut variadicParameter: Type.TypeParameter?
+      mut variadicParameterIdx := -1
       mut parameterIdx := 0
+      mut contextArguments: Context.CallExpressionContextArgument[]
 
       loop i := 0; i < argumentsLen; i++ {
         mut argument := expression.arguments[i]
         mut parameter: Type.TypeParameter?
+        mut foundParameterIdx := -1
 
         if argument.name != nil {
           if passedParameters.contains(argument.name.name) {
@@ -723,6 +726,7 @@ export obj AnalyzerFile {
             if typeParameter.name != nil {
               if typeParameter.name == argument.name.name {
                 parameter = typeParameter as Type.TypeParameter
+                foundParameterIdx = j
                 break
               }
             }
@@ -739,16 +743,19 @@ export obj AnalyzerFile {
           hasNamed = true
           isVariadic = false
           variadicParameter = nil
+          variadicParameterIdx = -1
         } elif hasNamed {
           self.raise(errors.E1034(), argument.expression.start, argument.expression.end)
           break
         } elif isVariadic {
           parameter = variadicParameter
+          foundParameterIdx = variadicParameterIdx
         } elif parameterIdx >= parametersLen {
           self.raise(errors.E1032(), argument.expression.start, argument.expression.end)
           break
         } else {
           parameter = parameters[parameterIdx]
+          foundParameterIdx = parameterIdx
         }
 
         definiteParameter := parameter as Type.TypeParameter
@@ -756,6 +763,7 @@ export obj AnalyzerFile {
         if !isVariadic && definiteParameter.variadic {
           isVariadic = true
           variadicParameter = definiteParameter
+          variadicParameterIdx = foundParameterIdx
         }
 
         mut parameterType := definiteParameter.t
@@ -775,6 +783,13 @@ export obj AnalyzerFile {
           )
         }
 
+        contextArguments.push(Context.CallExpressionContextArgument{
+          argument: argument,
+          idx: foundParameterIdx,
+          t: t,
+          typeParameter: definiteParameter
+        })
+
         if !isVariadic {
           if definiteParameter.name != nil {
             passedParameters.push(definiteParameter.name)
@@ -792,6 +807,14 @@ export obj AnalyzerFile {
         } elif parameter.required {
           self.raise(errors.E1037(), it.start, it.end)
         }
+      }
+
+      it.context = Context.CallExpressionContext{
+        arguments: contextArguments,
+        asynchronous: asynchronous,
+        parameters: parameters,
+        returnType: returnType,
+        t: calleeType
       }
 
       return asynchronous ? calleeType : returnType

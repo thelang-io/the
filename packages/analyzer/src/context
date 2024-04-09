@@ -3,7 +3,8 @@
  * Licensed under the MIT License
  */
 
-import Type from "./type"
+import CallExpressionArgument from "the/parser"
+import Type, TypeParameter from "./type"
 
 export obj IdentifierContext {
   mut currentType: ref Type
@@ -24,6 +25,21 @@ export obj AssignmentExpressionContext {
 export obj BinaryExpressionContext {
   mut leftType: ref Type
   mut rightType: ref Type
+}
+
+export obj CallExpressionContextArgument {
+  mut argument: CallExpressionArgument
+  mut idx: int
+  mut t: ref Type
+  mut typeParameter: TypeParameter
+}
+
+export obj CallExpressionContext {
+  mut arguments: CallExpressionContextArgument[]
+  mut asynchronous: bool
+  mut parameters: TypeParameter[]
+  mut returnType: ref Type
+  mut t: ref Type
 }
 
 export obj ConditionalExpressionContext {
