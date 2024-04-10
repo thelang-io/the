@@ -61,19 +61,17 @@ export obj CodegenEntity {
   mut generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[]
 }
 
-export fn expressionShouldBeFreed (item: ref Parser.Expression) {
-  mut result := false
-
+export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   if !item.hasParent() {
     if item.hasParentNode() {
       parentNode := item.parentNode()
-      result = !parentNode.isVariableDeclaration()
+      return !parentNode.isVariableDeclaration()
     } else {
-      result = true
+      return true
     }
   }
 
-  return result
+  return false
 }
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
@@ -377,7 +375,15 @@ export obj Codegen {
       ].contains(name)
     ) {
       self.builtin.theRune = true
-    } elif ["the_safe_alloc", "the_safe_free", "the_safe_realloc", "the_safe_swap"].contains(name) {
+    } elif (
+      [
+        "the_safe_alloc",
+        "the_safe_calloc",
+        "the_safe_free",
+        "the_safe_realloc",
+        "the_safe_swap"
+      ].contains(name)
+    ) {
       self.builtin.theSafe = true
     } elif ["the_thread_pool_init"].contains(name) {
       self.builtin.theThreadPool = true
@@ -517,10 +523,10 @@ export obj Codegen {
     )
   }
 
-  fn _defaultInitializerObjectExpression (mut self: ref Self, it: ref Analyzer.Type) AST.CExpression {
+  fn _defaultInitializerExpression (mut self: ref Self, it: ref Analyzer.Type) AST.CExpression {
     if it.isAlias() {
       t := it.asAlias()
-      return self._defaultInitializerObjectExpression(t.t)
+      return self._defaultInitializerExpression(t.t)
     } elif it.name == "any" {
       return AST.createCastExpression(AST.createType(self._("the_any_t")), AST.createInitializerListExpression([
         AST.createLiteral(-1),
@@ -553,7 +559,7 @@ export obj Codegen {
       //   if property.builtin || property.t.isMethod() {
       //     continue
       //   }
-      //   args.push(self._defaultInitializerObjectExpression(property.t))
+      //   args.push(self._defaultInitializerExpression(property.t))
       // }
       // return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), args)
     } elif it.isOptional() {
@@ -567,10 +573,10 @@ export obj Codegen {
     throw error_NewError("Tried default object expressions declaration on unknown type")
   }
 
-  fn _defaultInitializerVariableDeclaration (mut self: ref Self, it: ref Analyzer.Type) AST.CExpression {
+  fn _defaultInitializerDeclaration (mut self: ref Self, it: ref Analyzer.Type) AST.CExpression {
     if it.isAlias () {
       t := it.asAlias()
-      return self._defaultInitializerVariableDeclaration(t.t)
+      return self._defaultInitializerDeclaration(t.t)
     } elif it.name == "any" {
       return AST.createInitializerListExpression([
         AST.createLiteral(-1),
@@ -600,7 +606,7 @@ export obj Codegen {
       //   if property.builtin || property.t.isMethod() {
       //     continue
       //   }
-      //   args.push(self._defaultInitializerObjectExpression(property.t))
+      //   args.push(self._defaultInitializerExpression(property.t))
       // }
       // return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_alloc")), args)
     } elif it.isOptional() {
@@ -955,125 +961,119 @@ export obj Codegen {
     }
 
     expression := item.asCall()
+    validateContext(item.context is Analyzer.CallExpressionContext)
+    context := item.context as Analyzer.CallExpressionContext
+    mut hasSelfParam := false
 
-    // auto line = std::to_string(nodeExpr.start.line);
-    // auto col = std::to_string(nodeExpr.start.col + 1);
-    // auto exprCall = std::get<ASTExprCall>(*nodeExpr.body);
-    // auto calleeTypeInfo = this->_typeInfo(exprCall.callee.type);
-    // auto fnType = std::get<TypeFn>(calleeTypeInfo.realType->body);
-    // auto expr = CodegenASTExprNull::create();
-    // auto isBuiltin = calleeTypeInfo.realType->builtin && !fnType.callInfo.empty();
-    // auto hasSelfParam = fnType.isMethod && fnType.callInfo.isSelfFirst;
-    // auto hasThrowParams = this->throws && !calleeTypeInfo.realType->builtin;
-    // auto hasParams = (!fnType.params.empty() || hasSelfParam || hasThrowParams) && !calleeTypeInfo.realType->builtin;
-    // auto paramsName = calleeTypeInfo.realTypeName + "P";
-    // auto cParamsArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
-    // auto cArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{};
+    if context.t.isMethod() {
+      t := context.t.asMethod()
+      hasSelfParam = t.withSelf
+    }
 
-
+    paramsName := self._typeParams(context.t)
+    hasParams := !context.parameters.empty || hasSelfParam
     calleeExpression := self._generateExpression(ref expression.callee)
-    mut args := [AST.createPropertyAccessExpression(calleeExpression, "ctx")]
-    mut paramsArgs: AST.CExpression = []
+    mut paramsArgs: AST.CExpression[]
+
+    mut args: (AST.CExpression | AST.CType)[] = [
+      AST.createPropertyAccessExpression(calleeExpression, "ctx")
+    ]
 
     if hasSelfParam {
       paramsArgs.push(self._generateExpression(ref expression.callee))
     }
 
-    loop i := 0; i < fnType.params.len; i++ {
-      param := fnType.params[i]
-      mut foundArgIdx := -1
+    loop i := 0; i < context.parameters.len; i++ {
+      param := context.parameters[i]
+      mut argIdx := -1
 
       if param.name != nil {
         loop j := 0; j < expression.arguments.len; j++ {
           arg := expression.arguments[j]
-          if arg.id == param.name {
-            foundArgIdx = j
-            break
+
+          if arg.name != nil {
+            if arg.name.name == param.name {
+              argIdx = j
+              break
+            }
           }
         }
       } elif i < expression.arguments.len {
-        foundArgIdx = i
+        argIdx = i
       }
 
-      if !param.isRequired() && !param.variadic {
+      if !param.required && !param.variadic {
+        paramsArgs.push(AST.createLiteral(argIdx == -1 ? "0" : "1"))
       }
 
-      //if (!param.required && !param.variadic) {
-      //  cParamsArgs.push_back(CodegenASTExprLiteral::create(foundArg == std::nullopt ? "0" : "1"));
-      //}
-      //if (param.variadic) {
-      //  auto paramTypeElementType = std::get<TypeArray>(param.type->body).elementType;
-      //  auto variadicArgs = std::vector<ASTExprCallArg>{};
-      //  if (foundArg != std::nullopt) {
-      //    variadicArgs.push_back(*foundArg);
-      //    for (auto j = foundArgIdx + 1; j < exprCall.args.size(); j++) {
-      //      auto arg = exprCall.args[j];
-      //      if (arg.id != std::nullopt && *arg.id != param.name) {
-      //        break;
-      //      }
-      //      variadicArgs.push_back(arg);
-      //    }
-      //  }
-      //  auto cVariadicArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{
-      //    CodegenASTExprLiteral::create(std::to_string(variadicArgs.size()))
-      //  };
-      //  for (const auto &variadicArg : variadicArgs) {
-      //    cVariadicArgs.push_back(this->_nodeExpr(variadicArg.expr, paramTypeElementType, parent, c));
-      //  }
-      //  cParamsArgs.push_back(
-      //    CodegenASTExprCall::create(
-      //      CodegenASTExprAccess::create(this->_(paramTypeInfo.typeName + "_alloc")),
-      //      cVariadicArgs
-      //    )
-      //  );
-      //} else if (foundArg != std::nullopt) {
-      //  cParamsArgs.push_back(this->_nodeExpr(foundArg->expr, paramTypeInfo.type, parent, c));
-      //} else {
-      //  cParamsArgs.push_back(this->_exprCallDefaultArg(paramTypeInfo));
-      //}
+      if param.variadic {
+        paramTypeName := self._typeName(param.t)
+        paramArrayType := param.t.asArray()
+        variadicType := paramArrayType.elementType
+        mut variadicArgs: AST.CExpression[]
+
+        if argIdx != -1 {
+          variadicArg := expression.arguments[argIdx]
+          variadicArgs(variadicArg.expression)
+
+          loop j := argIdx + 1; j < expression.arguments.len; j++ {
+            arg := expression.arguments[j]
+            if arg.name != nil && arg.name != param.name {
+              break
+            }
+          }
+        }
+
+        //if (foundArg != std::nullopt) {
+        //  variadicArgs.push_back(*foundArg);
+        //  for (auto j = foundArgIdx + 1; j < exprCall.args.size(); j++) {
+        //    auto arg = exprCall.args[j];
+        //    if (arg.id != std::nullopt && *arg.id != param.name) {
+        //      break;
+        //    }
+        //    variadicArgs.push_back(arg);
+        //  }
+        //}
+        //auto cVariadicArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{
+        //  CodegenASTExprLiteral::create(std::to_string(variadicArgs.size()))
+        //};
+        //for (const auto &variadicArg : variadicArgs) {
+        //  cVariadicArgs.push_back(this->_nodeExpr(variadicArg.expr, paramTypeElementType, parent, c));
+        //}
+        //cParamsArgs.push_back(
+        //  CodegenASTExprCall::create(
+        //    CodegenASTExprAccess::create(this->_(paramTypeInfo.typeName + "_alloc")),
+        //    cVariadicArgs
+        //  )
+        //);
+
+        paramsArgs.push(
+          AST.createCallExpression(
+            AST.createIdentifier(self._(paramTypeName + "_alloc")),
+            variadicArgs
+          )
+        )
+      } elif argIdx != -1 {
+        arg := expression.arguments[argIdx]
+        paramsArgs.push(self._generateExpression(arg.expression))
+      } else {
+        paramsArgs.push(self._defaultInitializerExpression(param.t))
+      }
     }
 
     if hasParams {
-      //cParamsArgs = CodegenASTExprCall::create(
-      //  CodegenASTExprAccess::create(this->_("xalloc")),
-      //  {
-      //    CodegenASTExprUnary::create("&", CodegenASTExprCast::create(
-      //      CodegenASTType::create("struct " + this->_(paramsName)),
-      //      CodegenASTExprInitList::create(cParamsArgs)
-      //    )),
-      //    CodegenASTExprCall::create(
-      //      CodegenASTExprAccess::create("sizeof"),
-      //      {CodegenASTType::create("struct " + this->_(paramsName))}
-      //    )
-      //  }
-      //);
+      args.push(AST.createCallExpression(AST.createIdentifier(self._("the_safe_calloc")), [
+        AST.createUnaryExpression("&", AST.createCastExpression(
+          AST.createType(self._(paramsName)),
+          AST.createInitializerListExpression(paramsArgs)
+        )),
+        AST.createCallExpression(AST.createIdentifier("sizeof"), [
+          AST.createType(self._(paramsName))
+        ])
+      ]))
     }
 
-
-
-    // auto fnName = CodegenASTExprAccess::create(Codegen::name(fnType.callInfo.codeName));
-    // if (calleeTypeInfo.realType->builtin && !fnType.callInfo.empty()) {
-    //   fnName = CodegenASTExprAccess::create(this->_(fnType.callInfo.codeName));
-    // } else if (fnType.callInfo.empty()) {
-    //   fnName = this->_nodeExpr(exprCall.callee, calleeTypeInfo.realType, parent, c, true);
-    // }
-    // if (
-    //   this->state.contextVars.contains(fnName->str()) &&
-    //   (nodeExpr.type->isRef() || !targetType->isRef())
-    // ) {
-    //   fnName = CodegenASTExprUnary::create("*", fnName);
-    // }
-    // if (fnName->isPointer()) {
-    //   fnName = fnName->wrap();
-    // }
-
-
-
-    result := AST.createCallExpression(
-      AST.createPropertyAccessExpression(calleeExpression, "func"),
-      arguments
-    )
-
+    result := AST.createCallExpression(AST.createPropertyAccessExpression(calleeExpression, "func"), args)
     return expressionShouldBeFreed(item) ? self._functionFree(context.t, result) : result
   }
 
@@ -1407,7 +1407,7 @@ export obj Codegen {
   }
 
   fn _generateMainDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
-    if item.isMainDeclaration() {
+    if !item.isMainDeclaration() {
       return nil
     }
 
@@ -1663,7 +1663,7 @@ export obj Codegen {
     }
 
     initializer := statement.initializer == nil
-      ? self._defaultInitializerVariableDeclaration(context.varType)
+      ? self._defaultInitializerDeclaration(context.varType)
       : self._generateExpression(ref statement.initializer)
 
     return AST.createVariableDeclaration(t, statement.name.name, initializer)
@@ -1825,6 +1825,16 @@ export obj Codegen {
       self.entities.push(CodegenEntity{
         name: typeName + "_" + methodName,
         codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee
+      })
+    }
+
+    if hasParams {
+      print(typeName + "P")
+      self.entities.push(CodegenEntity{
+        name: typeName + "P",
+        codeName: typeName + "P",
         context: name,
         generate: entityCallee
       })
@@ -2279,6 +2289,11 @@ export obj Codegen {
     }
 
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
+  }
+
+  fn _typeParams (mut self: ref Self, it: ref Analyzer.Type) str {
+    self._type(it)
+    return "the_" + self._typeName(it) + "P"
   }
 }
 
