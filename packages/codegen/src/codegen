@@ -1007,50 +1007,29 @@ export obj Codegen {
       }
 
       if param.variadic {
-        paramTypeName := self._typeName(param.t)
         paramArrayType := param.t.asArray()
         variadicType := paramArrayType.elementType
-        mut variadicArgs: AST.CExpression[]
+        mut variadicArgs: (AST.CExpression | AST.CType)[]
 
         if argIdx != -1 {
           variadicArg := expression.arguments[argIdx]
-          variadicArgs(variadicArg.expression)
+          variadicArgs.push(self._generateExpression(ref variadicArg.expression))
 
           loop j := argIdx + 1; j < expression.arguments.len; j++ {
             arg := expression.arguments[j]
-            if arg.name != nil && arg.name != param.name {
-              break
-            }
+            if arg.name != nil && arg.name != param.name { break }
+            variadicArgs.push(self._generateExpression(ref arg.expression))
           }
         }
 
-        //if (foundArg != std::nullopt) {
-        //  variadicArgs.push_back(*foundArg);
-        //  for (auto j = foundArgIdx + 1; j < exprCall.args.size(); j++) {
-        //    auto arg = exprCall.args[j];
-        //    if (arg.id != std::nullopt && *arg.id != param.name) {
-        //      break;
-        //    }
-        //    variadicArgs.push_back(arg);
-        //  }
-        //}
-        //auto cVariadicArgs = std::vector<std::shared_ptr<CodegenASTExpr>>{
-        //  CodegenASTExprLiteral::create(std::to_string(variadicArgs.size()))
-        //};
-        //for (const auto &variadicArg : variadicArgs) {
-        //  cVariadicArgs.push_back(this->_nodeExpr(variadicArg.expr, paramTypeElementType, parent, c));
-        //}
-        //cParamsArgs.push_back(
-        //  CodegenASTExprCall::create(
-        //    CodegenASTExprAccess::create(this->_(paramTypeInfo.typeName + "_alloc")),
-        //    cVariadicArgs
-        //  )
-        //);
+        mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len.str())]
+        variadicAllocArgs.merge(variadicArgs)
+        variadicAllocType := self._type(param.t, "_alloc")
 
         paramsArgs.push(
           AST.createCallExpression(
-            AST.createIdentifier(self._(paramTypeName + "_alloc")),
-            variadicArgs
+            AST.createIdentifier(variadicAllocType),
+            variadicAllocArgs
           )
         )
       } elif argIdx != -1 {
@@ -1831,7 +1810,6 @@ export obj Codegen {
     }
 
     if hasParams {
-      print(typeName + "P")
       self.entities.push(CodegenEntity{
         name: typeName + "P",
         codeName: typeName + "P",
@@ -2141,7 +2119,7 @@ export obj Codegen {
     return false
   }
 
-  fn _type (mut self: ref Self, it: ref Analyzer.Type) str {
+  fn _type (mut self: ref Self, it: ref Analyzer.Type, postfix := "_t") str { // todo
     if it.isAlias() {
       t := it.asAlias()
       return self._type(t.t)
@@ -2184,27 +2162,27 @@ export obj Codegen {
     } elif it.name == "void" {
       return "void "
     } elif it.isArray() {
-      name := self._generateArrayType(it)
-      return self._(name) + " "
+      self._generateArrayType(it)
+      return self._("the_" + self._typeName(it) + postfix) + " "
     } elif it.isFunction() {
-      name := self._generateFunctionType(it)
-      return self._(name) + " "
+      self._generateFunctionType(it)
+      return self._("the_" + self._typeName(it) + postfix) + " "
     } elif it.isOptional() {
-      name := self._generateOptionalType(it)
-      return self._(name) + " "
+      self._generateOptionalType(it)
+      return self._("the_" + self._typeName(it) + postfix) + " "
     } elif it.isReference() {
-      name := self._generateReferenceType(it)
-      return self._(name) + " "
+      self._generateReferenceType(it)
+      return self._("the_" + self._typeName(it) + postfix) + " "
     } elif it.isUnion() {
-      name := self._generateUnionType(it)
-      return self._(name) + " "
+      self._generateUnionType(it)
+      return self._("the_" + self._typeName(it) + postfix) + " "
     } elif (
       it.isEnum() ||
       it.isMap()
       // todo
       // it.isObject()
     ) {
-      return self._(self._typeName(it) + "_t") + " "
+      return self._("the_" + self._typeName(it) + postfix) + " "
     }
 
     throw error_NewError("Failed to generate type for '" + it.name + "'")
