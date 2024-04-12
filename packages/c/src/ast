@@ -286,7 +286,7 @@ export obj CFunctionParameter {
   mut name: str
 
   fn stringify (self: ref Self) str {
-    return self.t.stringify(declaration: true) + self.name
+    return self.name.empty ? self.t.stringify(definition: true) : self.t.stringify(declaration: true) + self.name
   }
 }
 
@@ -685,7 +685,7 @@ export obj CWhileStatement {
   }
 }
 
-export fn createFunctionParameter (t: CType, name: str) CFunctionParameter {
+export fn createFunctionParameter (t: CType, name := "") CFunctionParameter {
   return CFunctionParameter{t: t, name: name}
 }
 
