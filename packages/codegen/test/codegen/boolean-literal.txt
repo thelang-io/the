@@ -4,7 +4,7 @@ main {
 }
 ===== code =====
 #include <stdbool.h>
-int main () {
+int main (void) {
   bool a = true;
   bool b = false;
 }

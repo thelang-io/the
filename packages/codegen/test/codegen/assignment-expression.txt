@@ -17,7 +17,7 @@ main {
 ===== code =====
 #include <stdbool.h>
 #include <stdint.h>
-int main () {
+int main (void) {
   int32_t a = 1;
   int32_t b = a;
   b = a;

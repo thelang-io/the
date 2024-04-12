@@ -23,7 +23,7 @@ main {
   0o7777777777;
 }
 ===== code =====
-int main () {
+int main (void) {
   0B0;
   0b1;
   0b1000;

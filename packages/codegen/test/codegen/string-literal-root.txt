@@ -10,7 +10,7 @@ Multiline";
 }
 ===== code =====
 #include <the/macro.h>
-int main () {
+int main (void) {
   L"";
   L"Hello, World!";
   L"Multiline\nString";

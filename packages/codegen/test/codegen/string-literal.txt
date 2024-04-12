@@ -11,7 +11,7 @@ Multiline";
 ===== code =====
 #include <the/macro.h>
 #include <the/string.h>
-int main () {
+int main (void) {
   the_str_t a = the_str_alloc(L"");
   the_str_t b = the_str_alloc(L"Hello, World!");
   the_str_t c = the_str_alloc(L"Multiline\nString");

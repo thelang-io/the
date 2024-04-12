@@ -3,7 +3,7 @@ main {
   '\n';
 }
 ===== code =====
-int main () {
+int main (void) {
   L'a';
   L'\n';
 }

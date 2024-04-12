@@ -16,7 +16,7 @@ main {
 ===== code =====
 #include <stdbool.h>
 #include <stdint.h>
-int main () {
+int main (void) {
   bool vBool = false;
   int32_t access1 = vBool ? 0 : 1;
   vBool = true;

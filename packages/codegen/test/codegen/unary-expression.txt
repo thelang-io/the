@@ -108,7 +108,7 @@ main {
 ===== code =====
 #include <stdbool.h>
 #include <stdint.h>
-int main () {
+int main (void) {
   bool zBoolTrue = true;
   bool zBoolFalse = false;
   unsigned char zByteEmpty = 0;
