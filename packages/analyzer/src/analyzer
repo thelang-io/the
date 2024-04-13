@@ -397,7 +397,7 @@ export obj AnalyzerFile {
 
       if !self.vm.has(expression.name) {
         self.raise(errors.E1003(expression.name), it.start, it.end)
-        return targetType == nil ? self.tm.get("any") : targetType
+        return self.wrap(it, targetType, targetType == nil ? self.tm.get("any") : targetType)
       }
 
       var := self.vm.get(expression.name)
@@ -408,10 +408,10 @@ export obj AnalyzerFile {
 
       if targetType != nil {
         if Type.match(targetType, var.t) {
-          return var.t
+          return self.wrap(it, Type.opt(targetType), var.t)
         }
       } elif withoutTypeCast {
-        return var.t
+        return self.wrap(it, targetType, var.t)
       }
 
       code := Parser.stringifyExpression(it)
@@ -423,11 +423,11 @@ export obj AnalyzerFile {
         targetType: targetType
       }
 
-      return currentType
+      return self.wrap(it, targetType, currentType)
     } elif it.isBooleanLiteral() {
-      return self.tm.get("bool")
+      return self.wrap(it, targetType, self.tm.get("bool"))
     } elif it.isCharacterLiteral() {
-      return self.tm.get("rune")
+      return self.wrap(it, targetType, self.tm.get("rune"))
     } elif it.isFloatingPointLiteral() {
       mut expression := it.asFloatingPointLiteral()
       definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
@@ -443,7 +443,7 @@ export obj AnalyzerFile {
         self.raise(errors.E1030(t.toString()), it.start, it.end)
       }
 
-      return t
+      return self.wrap(it, targetType, t)
     } elif it.isIntegerLiteral() {
       mut expression := it.asIntegerLiteral()
       definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
@@ -471,7 +471,7 @@ export obj AnalyzerFile {
         self.raise(errors.E1029(t.toString()), it.start, it.end)
       }
 
-      return t
+      return self.wrap(it, targetType, t)
     } elif it.isNilLiteral() {
       mut t := self.tm.get("any")
 
@@ -485,9 +485,9 @@ export obj AnalyzerFile {
         }
       }
 
-      return t
+      return self.wrap(it, targetType, t)
     } elif it.isStringLiteral() {
-      return self.tm.get("str")
+      return self.wrap(it, targetType, self.tm.get("str"))
     } elif it.isArray() {
       mut expression := it.asArray()
       mut elementType: (ref Type.Type)?
@@ -511,7 +511,7 @@ export obj AnalyzerFile {
           }
 
           self.raise(errors.E1007(), it.start, it.end)
-          return result
+          return self.wrap(it, targetType, result)
         }
       }
 
@@ -540,7 +540,7 @@ export obj AnalyzerFile {
         elementType: elementType as ref Type.Type
       }
 
-      return self.tm.createArray(elementType as ref Type.Type)
+      return self.wrap(it, targetType, self.tm.createArray(elementType as ref Type.Type))
     } elif it.isAs() {
       mut expression := it.asAs()
       expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
@@ -550,7 +550,7 @@ export obj AnalyzerFile {
         self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
       }
 
-      return t
+      return self.wrap(it, targetType, t)
     } elif it.isAssignment() {
       mut expression := it.asAssignment()
 
@@ -589,7 +589,7 @@ export obj AnalyzerFile {
         rightType: rightType
       }
 
-      return leftType.isReference() && !rightType.isReference() ? Type.unwrap(leftType) : leftType
+      return self.wrap(it, targetType, leftType.isReference() && !rightType.isReference() ? Type.unwrap(leftType) : leftType)
     } elif it.isAwait() {
       mut expression := it.asAwait()
       expressionType := Type.unwrap(self.e(ref expression.expression))
@@ -606,10 +606,10 @@ export obj AnalyzerFile {
           self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
         }
 
-        return t.returnType
+        return self.wrap(it, targetType, t.returnType)
       } else {
         self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
-        return self.tm.get("any")
+        return self.wrap(it, targetType, self.tm.get("any"))
       }
     } elif it.isBinary() {
       initialTC := self.tc
@@ -663,14 +663,14 @@ export obj AnalyzerFile {
         expression.operator.t == .OpLt ||
         expression.operator.t == .OpLtEq
       ) {
-        return self.tm.get("bool")
+        return self.wrap(it, targetType, self.tm.get("bool"))
       } elif Type.match(leftType, self.tm.get("str")) && Type.match(rightType, self.tm.get("str")) {
-        return self.tm.get("str")
+        return self.wrap(it, targetType, self.tm.get("str"))
       } elif leftType.isNumber() && rightType.isNumber() {
-        return Type.largest(leftType, rightType)
+        return self.wrap(it, targetType, Type.largest(leftType, rightType))
       }
 
-      return leftType
+      return self.wrap(it, targetType, leftType)
     } elif it.isCall() {
       initialErrorsLen := self.analyzer.errors.len
       mut expression := it.asCall()
@@ -696,7 +696,7 @@ export obj AnalyzerFile {
         }
       } else {
         self.raise(errors.E1031(calleeType.toString()), expression.callee.start, expression.callee.end)
-        return self.tm.get("void")
+        return self.wrap(it, targetType, self.tm.get("void"))
       }
 
       argumentsLen := expression.arguments.len
@@ -817,7 +817,7 @@ export obj AnalyzerFile {
         t: calleeType
       }
 
-      return asynchronous ? calleeType : returnType
+      return self.wrap(it, targetType, asynchronous ? calleeType : returnType)
     } elif it.isClosure() {
       mut expression := it.asClosure()
       initialStateReturnType := self.state.returnType
@@ -837,7 +837,7 @@ export obj AnalyzerFile {
       self.vm.decrease()
       self.tm.decrease()
 
-      return self.tm.createFunction(expression.asynchronous, parameters, returnType)
+      return self.wrap(it, targetType, self.tm.createFunction(expression.asynchronous, parameters, returnType))
     } elif it.isConditional() {
       initialTC := self.tc
       mut expression := it.asConditional()
@@ -872,7 +872,7 @@ export obj AnalyzerFile {
       }
 
       if consequentType.isNumber() && alternateType.isNumber() {
-        return Type.largest(consequentType, alternateType)
+        return self.wrap(it, targetType, Type.largest(consequentType, alternateType))
       } elif !Type.similarTo(consequentType, alternateType) && !Type.similarTo(alternateType, consequentType) {
         self.raise(
           errors.E1019(consequentType.toString(), alternateType.toString()),
@@ -881,7 +881,7 @@ export obj AnalyzerFile {
         )
       }
 
-      return Type.similarTo(alternateType, consequentType) ? consequentType : alternateType
+      return self.wrap(it, targetType, Type.similarTo(alternateType, consequentType) ? consequentType : alternateType)
     } elif it.isElementAccess() {
       mut expression := it.asElementAccess()
       expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
@@ -904,14 +904,14 @@ export obj AnalyzerFile {
 
       if targetType != nil {
         if Type.match(targetType, t) {
-          return t
+          return self.wrap(it, Type.opt(targetType), t)
         }
       } elif withoutTypeCast {
-        return t
+        return self.wrap(it, targetType, t)
       }
 
       code := Parser.stringifyExpression(it)
-      return self.tc.has(code) ? self.tc.get(code) : t
+      return self.wrap(it, targetType, self.tc.has(code) ? self.tc.get(code) : t)
     } elif it.isIs() {
       mut expression := it.asIs()
       expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
@@ -930,7 +930,7 @@ export obj AnalyzerFile {
         rightType: t
       }
 
-      return self.tm.get("bool")
+      return self.wrap(it, targetType, self.tm.get("bool"))
     } elif it.isMap() {
       mut expression := it.asMap()
       mut t: (ref Type.Type)?
@@ -945,9 +945,9 @@ export obj AnalyzerFile {
 
       if expression.elements.empty && t == nil {
         self.raise(errors.E1016(), it.start, it.end)
-        return self.tm.createMap(self.tm.get("any"), self.tm.get("any"))
+        return self.wrap(it, targetType, self.tm.createMap(self.tm.get("any"), self.tm.get("any")))
       } elif expression.elements.empty {
-        return t
+        return self.wrap(it, targetType, t)
       }
 
       mut keyType: (ref Type.Type)?
@@ -989,7 +989,7 @@ export obj AnalyzerFile {
         }
       }
 
-      return self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type)
+      return self.wrap(it, targetType, self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type))
     } elif it.isMemberAccess() {
       mut expression := it.asMemberAccess()
       mut t: (ref Type.Type)?
@@ -1004,12 +1004,12 @@ export obj AnalyzerFile {
 
       if t == nil {
         self.raise(errors.E1020(), it.start, it.end)
-        return self.tm.get("any")
+        return self.wrap(it, targetType, self.tm.get("any"))
       } elif !t.hasEnumerator(expression.name.name) {
         self.raise(errors.E1021(expression.name.name), it.start, it.end)
       }
 
-      return t as ref Type.Type
+      return self.wrap(it, targetType, t as ref Type.Type)
     } elif it.isObject() {
       mut expression := it.asObject()
       t := self.t(ref expression.id)
@@ -1044,10 +1044,10 @@ export obj AnalyzerFile {
         }
       }
 
-      return t
+      return self.wrap(it, targetType, t)
     } elif it.isParenthesized() {
       mut expression := it.asParenthesized()
-      return self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
+      return self.wrap(it, targetType, self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext))
     } elif it.isPropertyAccess() {
       mut expression := it.asPropertyAccess()
       t := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
@@ -1061,19 +1061,19 @@ export obj AnalyzerFile {
 
         if targetType != nil {
           if Type.match(targetType, property.t) {
-            return property.t
+            return self.wrap(it, Type.opt(targetType), property.t)
           }
         } elif withoutTypeCast {
-          return property.t
+          return self.wrap(it, targetType, property.t)
         }
 
         code := Parser.stringifyExpression(it)
-        return self.tc.has(code) ? self.tc.get(code) : property.t
+        return self.wrap(it, targetType, self.tc.has(code) ? self.tc.get(code) : property.t)
       } elif t.isEnum() {
         if !t.hasEnumerator(expression.name.name) {
           self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
         }
-        return t
+        return self.wrap(it, targetType, t)
       } elif t.isNamespace() {
         namespaceType := t.asNamespace()
 
@@ -1087,14 +1087,14 @@ export obj AnalyzerFile {
 
             if targetType != nil {
               if Type.match(targetType, member.var.t) {
-                return member.var.t
+                return self.wrap(it, Type.opt(targetType), member.var.t)
               }
             } elif withoutTypeCast {
-              return member.var.t
+              return self.wrap(it, targetType, member.var.t)
             }
 
             code := Parser.stringifyExpression(it)
-            return self.tc.has(code) ? self.tc.get(code) : member.var.t
+            return self.wrap(it, targetType, self.tc.has(code) ? self.tc.get(code) : member.var.t)
           }
         }
 
@@ -1103,14 +1103,16 @@ export obj AnalyzerFile {
           expression.name.start,
           expression.name.end
         )
-        return targetType == nil ? self.tm.get("any") : targetType
+        return self.wrap(it, targetType, targetType == nil ? self.tm.get("any") : targetType)
       }
 
       self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
-      return targetType == nil ? self.tm.get("any") : targetType
+      return self.wrap(it, targetType, targetType == nil ? self.tm.get("any") : targetType)
     } elif it.isReference() {
       mut expression := it.asReference()
-      return self.tm.createReference(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
+      return self.wrap(it, targetType, self.tm.createReference(
+        self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+      ))
     } elif it.isUnary() {
       mut expression := it.asUnary()
 
@@ -1137,7 +1139,7 @@ export obj AnalyzerFile {
           )
         }
 
-        return self.tm.get("bool")
+        return self.wrap(it, targetType, self.tm.get("bool"))
       } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
         if !expression.operand.isAccess() {
           self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
@@ -1174,7 +1176,7 @@ export obj AnalyzerFile {
         }
       }
 
-      return operandType
+      return self.wrap(it, targetType, operandType)
     }
 
     throw error_NewError("Tried analyzing unknown expression")
@@ -2124,6 +2126,15 @@ export obj AnalyzerFile {
       consequent: consequent,
       alternate: alternate
     }
+  }
+
+  fn wrap (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, t: ref Type.Type) ref Type.Type {
+    it.typeContext = Context.TypeContext {
+      t: t,
+      targetType: targetType
+    }
+
+    return t
   }
 }
 

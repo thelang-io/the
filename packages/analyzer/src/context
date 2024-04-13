@@ -60,3 +60,9 @@ export obj UnaryExpressionContext {
 export obj VariableDeclarationContext {
   mut varType: ref Type
 }
+
+
+export obj TypeContext {
+  mut t: ref Type
+  mut targetType: (ref Type)?
+}
