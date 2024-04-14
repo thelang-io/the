@@ -288,16 +288,17 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       expr = CodegenASTExprUnary::create("*", expr);
     }
 
+    auto isTargetOptAndTypeNotOpt = targetType->isOpt() && !nodeExpr.type->isOpt() && nodeExpr.type->isRef() &&
+      std::get<TypeOptional>(targetType->body).type->matchStrict(nodeExpr.type);
+
     if (!nodeExpr.type->isRef() && targetType->isRef()) {
       expr = CodegenASTExprUnary::create("&", expr);
-    } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
+    } else if (nodeExpr.type->isRef() && !targetType->isRef() && !isTargetOptAndTypeNotOpt) {
       expr = CodegenASTExprUnary::create("*", expr);
     }
 
     auto isEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
     auto isRef = nodeExpr.type->isRef() && targetType->isRef();
-    auto isTargetOptAndTypeNotOpt = targetType->isOpt() && !nodeExpr.type->isOpt() &&
-      std::get<TypeOptional>(targetType->body).type->matchStrict(nodeExpr.type);
 
     if (
       !root &&
