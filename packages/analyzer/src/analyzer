@@ -392,791 +392,30 @@ export obj AnalyzerFile {
     withMutableNext := false,
     withoutTypeCast := false
   ) ref Type.Type {
-    if it.isIdentifier() {
-      mut expression := it.asIdentifier()
+    mut t: (ref Type.Type)?
 
-      if !self.vm.has(expression.name) {
-        self.raise(errors.E1003(expression.name), it.start, it.end)
-        return self.wrap(it, targetType, targetType == nil ? self.tm.get("any") : targetType)
-      }
-
-      var := self.vm.get(expression.name)
-
-      if withMutable && !var.mutable {
-        self.raise(errors.E1011(expression.name), it.start, it.end)
-      }
-
-      if targetType != nil {
-        if Type.match(targetType, var.t) {
-          return self.wrap(it, Type.opt(targetType), var.t)
-        }
-      } elif withoutTypeCast {
-        return self.wrap(it, targetType, var.t)
-      }
-
-      code := Parser.stringifyExpression(it)
-      currentType := self.tc.has(code) ? self.tc.get(code) : var.t
-
-      it.context = Context.IdentifierContext{
-        currentType: currentType,
-        originalType: var.t,
-        targetType: targetType
-      }
-
-      return self.wrap(it, targetType, currentType)
-    } elif it.isBooleanLiteral() {
-      return self.wrap(it, targetType, self.tm.get("bool"))
-    } elif it.isCharacterLiteral() {
-      return self.wrap(it, targetType, self.tm.get("rune"))
-    } elif it.isFloatingPointLiteral() {
-      mut expression := it.asFloatingPointLiteral()
-      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
-      t := Type.unwrap(definiteTargetType.isFloat() ? definiteTargetType : self.tm.get("float"), withOptional: true)
-
-      try {
-        if Type.match(t, self.tm.get("f32")) {
-          expression.value.toF32()
-        } else {
-          expression.value.toF64()
-        }
-      } catch err: error_Error {
-        self.raise(errors.E1030(t.toString()), it.start, it.end)
-      }
-
+    if (
+      (t = self._eIdentifier(it, targetType, withMutable, withoutTypeCast)) != nil ||
+      (t = self._eLiteral(it, targetType)) != nil ||
+      (t = self._eArray(it, targetType)) != nil ||
+      (t = self._eAs(it, targetType, withMutable, withMutableNext)) != nil ||
+      (t = self._eAssignment(it, targetType)) != nil ||
+      (t = self._eAwait(it, targetType)) != nil ||
+      (t = self._eBinary(it, targetType)) != nil ||
+      (t = self._eCall(it, targetType)) != nil ||
+      (t = self._eClosure(it, targetType)) != nil ||
+      (t = self._eConditional(it, targetType, withMutable, withMutableNext)) != nil ||
+      (t = self._eElementAccess(it, targetType, withMutable, withMutableNext, withoutTypeCast)) != nil ||
+      (t = self._eIs(it, targetType, withMutable, withMutableNext)) != nil ||
+      (t = self._eMap(it, targetType)) != nil ||
+      (t = self._eMemberAccess(it, targetType)) != nil ||
+      (t = self._eObject(it, targetType)) != nil ||
+      (t = self._eParenthesized(it, targetType, withMutable, withMutableNext)) != nil ||
+      (t = self._ePropertyAccess(it, targetType, withMutable, withMutableNext, withoutTypeCast)) != nil ||
+      (t = self._eReference(it, targetType, withMutable, withMutableNext)) != nil ||
+      (t = self._eUnary(it, targetType)) != nil
+    ) {
       return self.wrap(it, targetType, t)
-    } elif it.isIntegerLiteral() {
-      mut expression := it.asIntegerLiteral()
-      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
-      t := Type.unwrap(definiteTargetType.isInt() ? definiteTargetType : self.tm.get("int"), withOptional: true)
-
-      try {
-        if Type.match(t, self.tm.get("i8")) {
-          expression.value.toI8()
-        } elif Type.match(t, self.tm.get("i16")) {
-          expression.value.toI16()
-        } elif Type.match(t, self.tm.get("i32")) {
-          expression.value.toI32()
-        } elif Type.match(t, self.tm.get("i64")) {
-          expression.value.toI64()
-        } elif Type.match(t, self.tm.get("u8")) {
-          expression.value.toU8()
-        } elif Type.match(t, self.tm.get("u16")) {
-          expression.value.toU16()
-        } elif Type.match(t, self.tm.get("u32")) {
-          expression.value.toU32()
-        } elif Type.match(t, self.tm.get("u64")) {
-          expression.value.toU64()
-        }
-      } catch err: error_Error {
-        self.raise(errors.E1029(t.toString()), it.start, it.end)
-      }
-
-      return self.wrap(it, targetType, t)
-    } elif it.isNilLiteral() {
-      mut t := self.tm.get("any")
-
-      if targetType == nil {
-        self.raise(errors.E1004(), it.start, it.end)
-      } else {
-        t = Type.unwrap(targetType)
-
-        if !t.isOptional() {
-          self.raise(errors.E1006(t.toString()), it.start, it.end)
-        }
-      }
-
-      return self.wrap(it, targetType, t)
-    } elif it.isStringLiteral() {
-      return self.wrap(it, targetType, self.tm.get("str"))
-    } elif it.isArray() {
-      mut expression := it.asArray()
-      mut elementType: (ref Type.Type)?
-
-      if targetType != nil {
-        t := Type.unwrap(targetType, withOptional: true)
-
-        if t.isArray() {
-          t := t.asArray()
-          elementType = Type.opt(t.elementType)
-        }
-      }
-
-      if expression.elements.empty {
-        if elementType == nil {
-          result := self.tm.createArray(self.tm.get("any"))
-
-          it.context = Context.ArrayExpressionContext{
-            t: result,
-            elementType: self.tm.get("any")
-          }
-
-          self.raise(errors.E1007(), it.start, it.end)
-          return self.wrap(it, targetType, result)
-        }
-      }
-
-      elementsLen := expression.elements.len
-      elementTypeForced := elementType != nil
-
-      loop i := 0; i < elementsLen; i++ {
-        mut element := expression.elements[i]
-        t := self.e(ref element, elementType)
-
-        if elementType == nil {
-          elementType = t
-        } elif !Type.similarTo(t, elementType) {
-          if elementTypeForced {
-            self.raise(errors.E1008(t.toString(), elementType.toString()), element.start, element.end)
-          } else {
-            elementType = self.tm.unionAdd(elementType, t)
-          }
-        }
-      }
-
-      result := self.tm.createArray(elementType as ref Type.Type)
-
-      it.context = Context.ArrayExpressionContext{
-        t: result,
-        elementType: elementType as ref Type.Type
-      }
-
-      return self.wrap(it, targetType, self.tm.createArray(elementType as ref Type.Type))
-    } elif it.isAs() {
-      mut expression := it.asAs()
-      expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
-      t := self.t(ref expression.t)
-
-      if !expressionType.canBe(t) {
-        self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
-      }
-
-      return self.wrap(it, targetType, t)
-    } elif it.isAssignment() {
-      mut expression := it.asAssignment()
-
-      guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc // todo remove after v1
-        return self.e(ref expression.left, operandType, withMutable: true, withoutTypeCast: true)
-      }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc // todo remove after v1
-        return self.e(ref expression.right, operandType)
-      })
-
-      leftType := Type.unwrap(guessTypeResult.first, withReference: false)
-      rightType := Type.unwrap(guessTypeResult.second, withReference: false)
-
-      if !self.operands(expression.operator, leftType, rightType) {
-        self.raise(
-          errors.E1027(expression.operator.val, leftType.toString()),
-          expression.operator.start,
-          expression.operator.end
-        )
-      }
-
-      if !expression.left.isAccess() {
-        self.raise(errors.E1010(), expression.left.start, expression.left.end)
-      } elif (
-        Type.match(leftType, self.tm.get("any")) ||
-        (leftType.isOptional() && !rightType.isOptional()) ||
-        (leftType.isUnion() && leftType.hasType(rightType))
-      ) {
-        code := Parser.stringifyExpression(expression.left)
-        self.tc.set(code, rightType)
-      }
-
-      it.context = Context.AssignmentExpressionContext{
-        leftType: leftType,
-        rightType: rightType
-      }
-
-      return self.wrap(it, targetType, leftType.isReference() && !rightType.isReference() ? Type.unwrap(leftType) : leftType)
-    } elif it.isAwait() {
-      mut expression := it.asAwait()
-      expressionType := Type.unwrap(self.e(ref expression.expression))
-      parentNode := it.parentNode()
-
-      if !parentNode.hasAsyncParent() {
-        self.raise(errors.E1069(), it.start, it.end)
-      }
-
-      if expressionType.isFunction() {
-        t := expressionType.asFunction()
-
-        if !t.asynchronous {
-          self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
-        }
-
-        return self.wrap(it, targetType, t.returnType)
-      } else {
-        self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
-        return self.wrap(it, targetType, self.tm.get("any"))
-      }
-    } elif it.isBinary() {
-      initialTC := self.tc
-      mut expression := it.asBinary()
-      mut leftTypeCastResult: TypeCastResult?
-
-      guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc // todo remove after v1
-
-        if leftTypeCastResult == nil && expression.operator.t == .OpAmpAmp {
-          leftTypeCastResult = self.typeCast(ref expression.left)
-        }
-
-        return Type.unwrap(self.e(ref expression.left, operandType))
-      }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-        initialTC := ref self.tc // todo remove after v1
-
-        if leftTypeCastResult == nil {
-          return Type.unwrap(self.e(ref expression.right, operandType))
-        }
-
-        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
-        self.tc.merge(definiteLeftTypeCastResult.consequent)
-        result := Type.unwrap(self.e(ref expression.right, operandType))
-        self.tc = initialTC
-
-        return result
-      })
-
-      leftType := guessTypeResult.first
-      rightType := guessTypeResult.second
-
-      if !self.operands(expression.operator, leftType, rightType) {
-        self.raise(
-          errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()),
-          expression.operator.start,
-          expression.operator.end
-        )
-      }
-
-      it.context = Context.BinaryExpressionContext{
-        leftType: leftType,
-        rightType: rightType
-      }
-
-      if (
-        expression.operator.t == .OpEqEq ||
-        expression.operator.t == .OpExclEq ||
-        expression.operator.t == .OpGt ||
-        expression.operator.t == .OpGtEq ||
-        expression.operator.t == .OpLt ||
-        expression.operator.t == .OpLtEq
-      ) {
-        return self.wrap(it, targetType, self.tm.get("bool"))
-      } elif Type.match(leftType, self.tm.get("str")) && Type.match(rightType, self.tm.get("str")) {
-        return self.wrap(it, targetType, self.tm.get("str"))
-      } elif leftType.isNumber() && rightType.isNumber() {
-        return self.wrap(it, targetType, Type.largest(leftType, rightType))
-      }
-
-      return self.wrap(it, targetType, leftType)
-    } elif it.isCall() {
-      initialErrorsLen := self.analyzer.errors.len
-      mut expression := it.asCall()
-      calleeType := Type.unwrap(self.e(ref expression.callee))
-      mut asynchronous: bool
-      mut parameters: Type.TypeParameter[]
-      mut returnType := self.tm.get("void")
-
-      if calleeType.isFunction() {
-        t := calleeType.asFunction()
-        asynchronous = t.asynchronous
-        parameters = t.parameters
-        returnType = t.returnType
-      } elif calleeType.isMethod() {
-        t := calleeType.asMethod()
-        asynchronous = t.asynchronous
-        parameters = t.parameters
-        returnType = t.returnType
-
-        if t.withSelf && t.selfMutable && t.selfType.isReference() {
-          self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
-          self.e(ref expression.callee, withMutableNext: true)
-        }
-      } else {
-        self.raise(errors.E1031(calleeType.toString()), expression.callee.start, expression.callee.end)
-        return self.wrap(it, targetType, self.tm.get("void"))
-      }
-
-      argumentsLen := expression.arguments.len
-      parametersLen := parameters.len
-      mut passedParameters: str[]
-      mut hasNamed := false
-      mut isVariadic := false
-      mut variadicParameter: Type.TypeParameter?
-      mut variadicParameterIdx := -1
-      mut parameterIdx := 0
-      mut contextArguments: Context.CallExpressionContextArgument[]
-
-      loop i := 0; i < argumentsLen; i++ {
-        mut argument := expression.arguments[i]
-        mut parameter: Type.TypeParameter?
-        mut foundParameterIdx := -1
-
-        if argument.name != nil {
-          if passedParameters.contains(argument.name.name) {
-            self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
-            break
-          }
-
-          loop j := 0; j < parametersLen; j++ {
-            typeParameter := parameters[j]
-
-            if typeParameter.name != nil {
-              if typeParameter.name == argument.name.name {
-                parameter = typeParameter as Type.TypeParameter
-                foundParameterIdx = j
-                break
-              }
-            }
-          }
-
-          if parameter == nil {
-            self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
-            break
-          } elif parameter.variadic {
-            self.raise(errors.E1033(argument.name.name), argument.name.start, argument.name.end)
-            break
-          }
-
-          hasNamed = true
-          isVariadic = false
-          variadicParameter = nil
-          variadicParameterIdx = -1
-        } elif hasNamed {
-          self.raise(errors.E1034(), argument.expression.start, argument.expression.end)
-          break
-        } elif isVariadic {
-          parameter = variadicParameter
-          foundParameterIdx = variadicParameterIdx
-        } elif parameterIdx >= parametersLen {
-          self.raise(errors.E1032(), argument.expression.start, argument.expression.end)
-          break
-        } else {
-          parameter = parameters[parameterIdx]
-          foundParameterIdx = parameterIdx
-        }
-
-        definiteParameter := parameter as Type.TypeParameter
-
-        if !isVariadic && definiteParameter.variadic {
-          isVariadic = true
-          variadicParameter = definiteParameter
-          variadicParameterIdx = foundParameterIdx
-        }
-
-        mut parameterType := definiteParameter.t
-
-        if definiteParameter.variadic {
-          t := parameterType.asArray()
-          parameterType = t.elementType
-        }
-
-        t := Type.unwrap(self.e(ref argument.expression, Type.opt(parameterType)), withReference: false)
-
-        if !Type.similarTo(t, parameterType) {
-          self.raise(
-            errors.E1035(t.toString(), parameterType.toString()),
-            argument.expression.start,
-            argument.expression.end
-          )
-        }
-
-        contextArguments.push(Context.CallExpressionContextArgument{
-          argument: argument,
-          idx: foundParameterIdx,
-          t: t,
-          typeParameter: definiteParameter
-        })
-
-        if !isVariadic {
-          if definiteParameter.name != nil {
-            passedParameters.push(definiteParameter.name)
-          }
-
-          parameterIdx++
-        }
-      }
-
-      loop ; parameterIdx < parametersLen; parameterIdx++ {
-        parameter := parameters[parameterIdx]
-
-        if parameter.required && parameter.name != nil {
-          self.raise(errors.E1036(parameter.name), it.start, it.end)
-        } elif parameter.required {
-          self.raise(errors.E1037(), it.start, it.end)
-        }
-      }
-
-      it.context = Context.CallExpressionContext{
-        arguments: contextArguments,
-        asynchronous: asynchronous,
-        parameters: parameters,
-        returnType: returnType,
-        t: calleeType
-      }
-
-      return self.wrap(it, targetType, asynchronous ? calleeType : returnType)
-    } elif it.isClosure() {
-      mut expression := it.asClosure()
-      initialStateReturnType := self.state.returnType
-
-      self.tm.increase()
-      self.vm.increase()
-      parameters := self.functionParameters(ref expression.parameters)
-      returnType := self.t(ref expression.returnType)
-      self.state.returnType = returnType
-
-      if !Type.match(returnType, self.tm.get("void")) && !expression.body.isDeadEnd() {
-        self.raise(errors.E1061(), expression.returnType.start, expression.returnType.end)
-      }
-
-      self.statement(ref expression.body)
-      self.state.returnType = initialStateReturnType
-      self.vm.decrease()
-      self.tm.decrease()
-
-      return self.wrap(it, targetType, self.tm.createFunction(expression.asynchronous, parameters, returnType))
-    } elif it.isConditional() {
-      initialTC := self.tc
-      mut expression := it.asConditional()
-      typeCastResult := self.typeCast(ref expression.condition)
-      conditionType := Type.unwrap(self.e(ref expression.condition))
-
-      if !Type.match(conditionType, self.tm.get("bool")) {
-        self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
-      }
-
-      guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-        self.tc.merge(typeCastResult.consequent)
-        result := Type.unwrap(self.e(ref expression.consequent, operandType, withMutable: withMutable || withMutableNext))
-        self.tc = initialTC
-
-        return result
-      }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-        self.tc.merge(typeCastResult.alternate)
-        result := Type.unwrap(self.e(ref expression.alternate, operandType, withMutable: withMutable || withMutableNext))
-        self.tc = initialTC
-
-        return result
-      })
-
-      consequentType := guessTypeResult.first
-      alternateType := guessTypeResult.second
-
-      it.context = Context.ConditionalExpressionContext{
-        conditionType: conditionType,
-        consequentType: consequentType,
-        alternateType: alternateType
-      }
-
-      if consequentType.isNumber() && alternateType.isNumber() {
-        return self.wrap(it, targetType, Type.largest(consequentType, alternateType))
-      } elif !Type.similarTo(consequentType, alternateType) && !Type.similarTo(alternateType, consequentType) {
-        self.raise(
-          errors.E1019(consequentType.toString(), alternateType.toString()),
-          expression.consequent.start,
-          expression.alternate.end
-        )
-      }
-
-      return self.wrap(it, targetType, Type.similarTo(alternateType, consequentType) ? consequentType : alternateType)
-    } elif it.isElementAccess() {
-      mut expression := it.asElementAccess()
-      expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
-      argumentType := Type.unwrap(self.e(ref expression.argument))
-
-      if !Type.similarTo(argumentType, self.tm.get("i32")) {
-        self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
-      }
-
-      mut t := self.tm.createReference(self.tm.get("any"))
-
-      if expressionType.isArray() {
-        arrayType := expressionType.asArray()
-        t = self.tm.createReference(arrayType.elementType)
-      } elif Type.match(expressionType, self.tm.get("str")) {
-        t = self.tm.createReference(self.tm.get("rune"))
-      } else {
-        self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
-      }
-
-      if targetType != nil {
-        if Type.match(targetType, t) {
-          return self.wrap(it, Type.opt(targetType), t)
-        }
-      } elif withoutTypeCast {
-        return self.wrap(it, targetType, t)
-      }
-
-      code := Parser.stringifyExpression(it)
-      return self.wrap(it, targetType, self.tc.has(code) ? self.tc.get(code) : t)
-    } elif it.isIs() {
-      mut expression := it.asIs()
-      expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
-      t := self.t(ref expression.t)
-
-      if !expressionType.canBe(t) {
-        self.raise(errors.E1009(
-          expressionType.toString(), t.toString()),
-          expression.expression.start,
-          expression.expression.end
-        )
-      }
-
-      it.context = Context.IsExpressionContext{
-        leftType: expressionType,
-        rightType: t
-      }
-
-      return self.wrap(it, targetType, self.tm.get("bool"))
-    } elif it.isMap() {
-      mut expression := it.asMap()
-      mut t: (ref Type.Type)?
-
-      if targetType != nil {
-        maybeMapType := Type.unwrap(targetType, withOptional: true)
-
-        if maybeMapType.isMap() {
-          t = maybeMapType
-        }
-      }
-
-      if expression.elements.empty && t == nil {
-        self.raise(errors.E1016(), it.start, it.end)
-        return self.wrap(it, targetType, self.tm.createMap(self.tm.get("any"), self.tm.get("any")))
-      } elif expression.elements.empty {
-        return self.wrap(it, targetType, t)
-      }
-
-      mut keyType: (ref Type.Type)?
-      mut valueType: (ref Type.Type)?
-
-      if t != nil {
-        mapType := t.asMap()
-        keyType = Type.opt(mapType.keyType)
-        valueType = Type.opt(mapType.valueType)
-      }
-
-      keyTypeForced := keyType != nil
-      valueTypeForced := valueType != nil
-      elementsLen := expression.elements.len
-
-      loop i := 0; i < elementsLen; i++ {
-        mut element := expression.elements[i]
-        elementKeyType := self.e(ref element.key, keyType)
-        elementValueType := self.e(ref element.value, valueType)
-
-        if keyType == nil {
-          keyType = elementKeyType
-        } elif !Type.similarTo(elementKeyType, keyType) && keyTypeForced {
-          self.raise(errors.E1005(elementKeyType.toString(), keyType.toString()), element.key.start, element.key.end)
-        } elif !Type.similarTo(elementKeyType, keyType) {
-          keyType = self.tm.unionAdd(keyType, elementKeyType)
-        }
-
-        if valueType == nil {
-          valueType = elementValueType
-        } elif !Type.similarTo(elementValueType, valueType) && valueTypeForced {
-          self.raise(
-            errors.E1005(elementValueType.toString(), valueType.toString()),
-            element.value.start,
-            element.value.end
-          )
-        } elif !Type.similarTo(elementValueType, valueType) {
-          valueType = self.tm.unionAdd(valueType, elementValueType)
-        }
-      }
-
-      return self.wrap(it, targetType, self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type))
-    } elif it.isMemberAccess() {
-      mut expression := it.asMemberAccess()
-      mut t: (ref Type.Type)?
-
-      if targetType != nil {
-        maybeEnumType := Type.unwrap(targetType)
-
-        if maybeEnumType.isEnum() {
-          t = maybeEnumType
-        }
-      }
-
-      if t == nil {
-        self.raise(errors.E1020(), it.start, it.end)
-        return self.wrap(it, targetType, self.tm.get("any"))
-      } elif !t.hasEnumerator(expression.name.name) {
-        self.raise(errors.E1021(expression.name.name), it.start, it.end)
-      }
-
-      return self.wrap(it, targetType, t as ref Type.Type)
-    } elif it.isObject() {
-      mut expression := it.asObject()
-      t := self.t(ref expression.id)
-      propertiesLen := expression.properties.len
-      mut propertyNames: str[]
-
-      loop i := 0; i < propertiesLen; i++ {
-        mut property := expression.properties[i]
-
-        if !t.has(property.name.name) {
-          self.raise(errors.E1002(property.name.name, t.toString()), property.name.start, property.name.end)
-          self.e(ref property.value)
-        } else {
-          p := t.get(property.name.name)
-          propertyType := self.e(ref property.value, Type.opt(p.t))
-
-          if !Type.similarTo(propertyType, p.t) {
-            self.raise(errors.E1005(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
-          }
-
-          propertyNames.push(property.name.name)
-        }
-      }
-
-      typePropertiesLen := t.properties.len
-
-      loop i := 0; i < typePropertiesLen; i++ {
-        property := t.properties[i]
-
-        if !property.builtin && property.t.isRequired() && !propertyNames.contains(property.name) {
-          self.raise(errors.E1041(property.name, property.t.toString()), expression.id.start, expression.id.end)
-        }
-      }
-
-      return self.wrap(it, targetType, t)
-    } elif it.isParenthesized() {
-      mut expression := it.asParenthesized()
-      return self.wrap(it, targetType, self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext))
-    } elif it.isPropertyAccess() {
-      mut expression := it.asPropertyAccess()
-      t := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
-
-      if t.has(expression.name.name) {
-        property := t.get(expression.name.name)
-
-        if withMutable && !property.mutable {
-          self.raise(errors.E1012(expression.name.name), it.start, it.end)
-        }
-
-        if targetType != nil {
-          if Type.match(targetType, property.t) {
-            return self.wrap(it, Type.opt(targetType), property.t)
-          }
-        } elif withoutTypeCast {
-          return self.wrap(it, targetType, property.t)
-        }
-
-        code := Parser.stringifyExpression(it)
-        return self.wrap(it, targetType, self.tc.has(code) ? self.tc.get(code) : property.t)
-      } elif t.isEnum() {
-        if !t.hasEnumerator(expression.name.name) {
-          self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
-        }
-        return self.wrap(it, targetType, t)
-      } elif t.isNamespace() {
-        namespaceType := t.asNamespace()
-
-        if AnalyzerExport.has(ref namespaceType.members, expression.name.name) {
-          member := AnalyzerExport.get(ref namespaceType.members, expression.name.name)
-
-          if member.var != nil {
-            if withMutable && !member.var.mutable {
-              self.raise(errors.E1011(expression.name.name), it.start, it.end)
-            }
-
-            if targetType != nil {
-              if Type.match(targetType, member.var.t) {
-                return self.wrap(it, Type.opt(targetType), member.var.t)
-              }
-            } elif withoutTypeCast {
-              return self.wrap(it, targetType, member.var.t)
-            }
-
-            code := Parser.stringifyExpression(it)
-            return self.wrap(it, targetType, self.tc.has(code) ? self.tc.get(code) : member.var.t)
-          }
-        }
-
-        self.raise(
-          errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name),
-          expression.name.start,
-          expression.name.end
-        )
-        return self.wrap(it, targetType, targetType == nil ? self.tm.get("any") : targetType)
-      }
-
-      self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
-      return self.wrap(it, targetType, targetType == nil ? self.tm.get("any") : targetType)
-    } elif it.isReference() {
-      mut expression := it.asReference()
-      return self.wrap(it, targetType, self.tm.createReference(
-        self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
-      ))
-    } elif it.isUnary() {
-      mut expression := it.asUnary()
-
-      operandType := Type.unwrap(
-        expression.operator.t == .OpExcl
-          ? self.e(ref expression.operand)
-          : expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
-            ? self.e(ref expression.operand, withMutable: true)
-            : self.e(ref expression.operand, targetType)
-      )
-
-      it.context = Context.UnaryExpressionContext{operandType: operandType}
-
-      if expression.operator.t == .OpExcl {
-        if (
-          !Type.match(operandType, self.tm.get("bool")) &&
-          !Type.match(operandType, self.tm.get("byte")) &&
-          !operandType.isNumber()
-        ) {
-          self.raise(
-            errors.E1025(expression.operator.val, operandType.toString()),
-            expression.operator.start,
-            expression.operator.end
-          )
-        }
-
-        return self.wrap(it, targetType, self.tm.get("bool"))
-      } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
-        if !expression.operand.isAccess() {
-          self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
-        } elif !operandType.isNumber() {
-          self.raise(
-            errors.E1025(expression.operator.val, operandType.toString()),
-            expression.operator.start,
-            expression.operator.end
-          )
-        }
-      } elif expression.operator.t == .OpMinus {
-        if !operandType.isSignedInt() && !operandType.isFloat() {
-          self.raise(
-            errors.E1025(expression.operator.val, operandType.toString()),
-            expression.operator.start,
-            expression.operator.end
-          )
-        }
-      } elif expression.operator.t == .OpPlus {
-        if !operandType.isNumber() {
-          self.raise(
-            errors.E1025(expression.operator.val, operandType.toString()),
-            expression.operator.start,
-            expression.operator.end
-          )
-        }
-      } elif expression.operator.t == .OpTilde {
-        if !operandType.isInt() {
-          self.raise(
-            errors.E1025(expression.operator.val, operandType.toString()),
-            expression.operator.start,
-            expression.operator.end
-          )
-        }
-      }
-
-      return self.wrap(it, targetType, operandType)
     }
 
     throw error_NewError("Tried analyzing unknown expression")
@@ -2135,6 +1374,908 @@ export obj AnalyzerFile {
     }
 
     return t
+  }
+
+  fn _eIdentifier (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withoutTypeCast: bool) (ref Type.Type)? {
+    if !it.isIdentifier() {
+      return nil
+    }
+
+    mut expression := it.asIdentifier()
+
+    if !self.vm.has(expression.name) {
+      self.raise(errors.E1003(expression.name), it.start, it.end)
+      return targetType == nil ? self.tm.get("any") : targetType
+    }
+
+    var := self.vm.get(expression.name)
+
+    if withMutable && !var.mutable {
+      self.raise(errors.E1011(expression.name), it.start, it.end)
+    }
+
+    originalContext := Context.IdentifierContext{
+      currentType: var.t,
+      originalType: var.t
+    }
+
+    if targetType != nil {
+      if Type.match(targetType, var.t) {
+        it.context = originalContext
+        return var.t
+      }
+    } elif withoutTypeCast {
+      it.context = originalContext
+      return var.t
+    }
+
+    code := Parser.stringifyExpression(it)
+    currentType := self.tc.has(code) ? self.tc.get(code) : var.t
+
+    it.context = Context.IdentifierContext{
+      currentType: currentType,
+      originalType: var.t
+    }
+
+    return currentType
+  }
+
+  fn _eLiteral (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if it.isBooleanLiteral() {
+      return self.tm.get("bool")
+    } elif it.isCharacterLiteral() {
+      return self.tm.get("rune")
+    } elif it.isFloatingPointLiteral() {
+      mut expression := it.asFloatingPointLiteral()
+      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
+      t := Type.unwrap(definiteTargetType.isFloat() ? definiteTargetType : self.tm.get("float"), withOptional: true)
+
+      try {
+        if Type.match(t, self.tm.get("f32")) {
+          expression.value.toF32()
+        } else {
+          expression.value.toF64()
+        }
+      } catch err: error_Error {
+        self.raise(errors.E1030(t.toString()), it.start, it.end)
+      }
+
+      return t
+    } elif it.isIntegerLiteral() {
+      mut expression := it.asIntegerLiteral()
+      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
+      t := Type.unwrap(definiteTargetType.isInt() ? definiteTargetType : self.tm.get("int"), withOptional: true)
+
+      try {
+        if Type.match(t, self.tm.get("i8")) {
+          expression.value.toI8()
+        } elif Type.match(t, self.tm.get("i16")) {
+          expression.value.toI16()
+        } elif Type.match(t, self.tm.get("i32")) {
+          expression.value.toI32()
+        } elif Type.match(t, self.tm.get("i64")) {
+          expression.value.toI64()
+        } elif Type.match(t, self.tm.get("u8")) {
+          expression.value.toU8()
+        } elif Type.match(t, self.tm.get("u16")) {
+          expression.value.toU16()
+        } elif Type.match(t, self.tm.get("u32")) {
+          expression.value.toU32()
+        } elif Type.match(t, self.tm.get("u64")) {
+          expression.value.toU64()
+        }
+      } catch err: error_Error {
+        self.raise(errors.E1029(t.toString()), it.start, it.end)
+      }
+
+      return t
+    } elif it.isNilLiteral() {
+      mut t := self.tm.get("any")
+
+      if targetType == nil {
+        self.raise(errors.E1004(), it.start, it.end)
+      } else {
+        t = Type.unwrap(targetType)
+
+        if !t.isOptional() {
+          self.raise(errors.E1006(t.toString()), it.start, it.end)
+        }
+      }
+
+      return t
+    } elif it.isStringLiteral() {
+      return self.tm.get("str")
+    }
+
+    return nil
+  }
+
+  fn _eArray (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isArray() {
+      return nil
+    }
+
+    mut expression := it.asArray()
+    mut elementType: (ref Type.Type)?
+
+    if targetType != nil {
+      t := Type.unwrap(targetType, withOptional: true)
+
+      if t.isArray() {
+        t := t.asArray()
+        elementType = Type.opt(t.elementType)
+      }
+    }
+
+    if expression.elements.empty {
+      if elementType == nil {
+        result := self.tm.createArray(self.tm.get("any"))
+
+        it.context = Context.ArrayExpressionContext{
+          t: result,
+          elementType: self.tm.get("any")
+        }
+
+        self.raise(errors.E1007(), it.start, it.end)
+        return result
+      }
+    }
+
+    elementsLen := expression.elements.len
+    elementTypeForced := elementType != nil
+
+    loop i := 0; i < elementsLen; i++ {
+      mut element := expression.elements[i]
+      t := self.e(ref element, elementType)
+
+      if elementType == nil {
+        elementType = t
+      } elif !Type.similarTo(t, elementType) {
+        if elementTypeForced {
+          self.raise(errors.E1008(t.toString(), elementType.toString()), element.start, element.end)
+        } else {
+          elementType = self.tm.unionAdd(elementType, t)
+        }
+      }
+    }
+
+    result := self.tm.createArray(elementType as ref Type.Type)
+
+    it.context = Context.ArrayExpressionContext{
+      t: result,
+      elementType: elementType as ref Type.Type
+    }
+
+    return self.tm.createArray(elementType as ref Type.Type)
+  }
+
+  fn _eAs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) (ref Type.Type)? {
+    if !it.isAs() {
+      return nil
+    }
+
+    mut expression := it.asAs()
+    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+    t := self.t(ref expression.t)
+
+    if !expressionType.canBe(t) {
+      self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
+    }
+
+    return t
+  }
+
+  fn _eAssignment (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isAssignment() {
+      return nil
+    }
+
+    mut expression := it.asAssignment()
+
+    guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+      initialTC := ref self.tc // todo remove after v1
+      return self.e(ref expression.left, operandType, withMutable: true, withoutTypeCast: true)
+    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
+      initialTC := ref self.tc // todo remove after v1
+      return self.e(ref expression.right, operandType)
+    })
+
+    leftType := Type.unwrap(guessTypeResult.first, withReference: false)
+    rightType := Type.unwrap(guessTypeResult.second, withReference: false)
+
+    if !self.operands(expression.operator, leftType, rightType) {
+      self.raise(
+        errors.E1027(expression.operator.val, leftType.toString()),
+        expression.operator.start,
+        expression.operator.end
+      )
+    }
+
+    if !expression.left.isAccess() {
+      self.raise(errors.E1010(), expression.left.start, expression.left.end)
+    } elif (
+      Type.match(leftType, self.tm.get("any")) ||
+      (leftType.isOptional() && !rightType.isOptional()) ||
+      (leftType.isUnion() && leftType.hasType(rightType))
+    ) {
+      code := Parser.stringifyExpression(expression.left)
+      self.tc.set(code, rightType)
+    }
+
+    it.context = Context.AssignmentExpressionContext{
+      leftType: leftType,
+      rightType: rightType
+    }
+
+    return leftType.isReference() && !rightType.isReference() ? Type.unwrap(leftType) : leftType
+  }
+
+  fn _eAwait (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isAwait() {
+      return nil
+    }
+
+    mut expression := it.asAwait()
+    expressionType := Type.unwrap(self.e(ref expression.expression))
+    parentNode := it.parentNode()
+
+    if !parentNode.hasAsyncParent() {
+      self.raise(errors.E1069(), it.start, it.end)
+    }
+
+    if !expressionType.isFunction() {
+      self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
+      return self.tm.get("any")
+    }
+
+    t := expressionType.asFunction()
+
+    if !t.asynchronous {
+      self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
+    }
+
+    return t.returnType
+  }
+
+  fn _eBinary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isBinary() {
+      return nil
+    }
+
+    mut expression := it.asBinary()
+    mut leftTypeCastResult: TypeCastResult?
+
+    guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+      initialTC := ref self.tc // todo remove after v1
+
+      if leftTypeCastResult == nil && expression.operator.t == .OpAmpAmp {
+        leftTypeCastResult = self.typeCast(ref expression.left)
+      }
+
+      return Type.unwrap(self.e(ref expression.left, operandType))
+    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
+      initialTC := ref self.tc // todo remove after v1
+
+      if leftTypeCastResult == nil {
+        return Type.unwrap(self.e(ref expression.right, operandType))
+      }
+
+      definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+      self.tc.merge(definiteLeftTypeCastResult.consequent)
+      result := Type.unwrap(self.e(ref expression.right, operandType))
+      self.tc = initialTC
+
+      return result
+    })
+
+    leftType := guessTypeResult.first
+    rightType := guessTypeResult.second
+
+    if !self.operands(expression.operator, leftType, rightType) {
+      self.raise(
+        errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()),
+        expression.operator.start,
+        expression.operator.end
+      )
+    }
+
+    it.context = Context.BinaryExpressionContext{
+      leftType: leftType,
+      rightType: rightType
+    }
+
+    if (
+      expression.operator.t == .OpEqEq ||
+      expression.operator.t == .OpExclEq ||
+      expression.operator.t == .OpGt ||
+      expression.operator.t == .OpGtEq ||
+      expression.operator.t == .OpLt ||
+      expression.operator.t == .OpLtEq
+    ) {
+      return self.tm.get("bool")
+    } elif Type.match(leftType, self.tm.get("str")) && Type.match(rightType, self.tm.get("str")) {
+      return self.tm.get("str")
+    } elif leftType.isNumber() && rightType.isNumber() {
+      return Type.largest(leftType, rightType)
+    }
+
+    return leftType
+  }
+
+  fn _eCall (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isCall() {
+      return nil
+    }
+
+    initialErrorsLen := self.analyzer.errors.len
+    mut expression := it.asCall()
+    calleeType := Type.unwrap(self.e(ref expression.callee))
+    mut asynchronous: bool
+    mut parameters: Type.TypeParameter[]
+    mut returnType := self.tm.get("void")
+
+    if calleeType.isFunction() {
+      t := calleeType.asFunction()
+      asynchronous = t.asynchronous
+      parameters = t.parameters
+      returnType = t.returnType
+    } elif calleeType.isMethod() {
+      t := calleeType.asMethod()
+      asynchronous = t.asynchronous
+      parameters = t.parameters
+      returnType = t.returnType
+
+      if t.withSelf && t.selfMutable && t.selfType.isReference() {
+        self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
+        self.e(ref expression.callee, withMutableNext: true)
+      }
+    } else {
+      self.raise(errors.E1031(calleeType.toString()), expression.callee.start, expression.callee.end)
+      return self.tm.get("void")
+    }
+
+    argumentsLen := expression.arguments.len
+    parametersLen := parameters.len
+    mut passedParameters: str[]
+    mut hasNamed := false
+    mut isVariadic := false
+    mut variadicParameter: Type.TypeParameter?
+    mut variadicParameterIdx := -1
+    mut parameterIdx := 0
+    mut contextArguments: Context.CallExpressionContextArgument[]
+
+    loop i := 0; i < argumentsLen; i++ {
+      mut argument := expression.arguments[i]
+      mut parameter: Type.TypeParameter?
+      mut foundParameterIdx := -1
+
+      if argument.name != nil {
+        if passedParameters.contains(argument.name.name) {
+          self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
+          break
+        }
+
+        loop j := 0; j < parametersLen; j++ {
+          typeParameter := parameters[j]
+
+          if typeParameter.name != nil {
+            if typeParameter.name == argument.name.name {
+              parameter = typeParameter as Type.TypeParameter
+              foundParameterIdx = j
+              break
+            }
+          }
+        }
+
+        if parameter == nil {
+          self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
+          break
+        } elif parameter.variadic {
+          self.raise(errors.E1033(argument.name.name), argument.name.start, argument.name.end)
+          break
+        }
+
+        hasNamed = true
+        isVariadic = false
+        variadicParameter = nil
+        variadicParameterIdx = -1
+      } elif hasNamed {
+        self.raise(errors.E1034(), argument.expression.start, argument.expression.end)
+        break
+      } elif isVariadic {
+        parameter = variadicParameter
+        foundParameterIdx = variadicParameterIdx
+      } elif parameterIdx >= parametersLen {
+        self.raise(errors.E1032(), argument.expression.start, argument.expression.end)
+        break
+      } else {
+        parameter = parameters[parameterIdx]
+        foundParameterIdx = parameterIdx
+      }
+
+      definiteParameter := parameter as Type.TypeParameter
+
+      if !isVariadic && definiteParameter.variadic {
+        isVariadic = true
+        variadicParameter = definiteParameter
+        variadicParameterIdx = foundParameterIdx
+      }
+
+      mut parameterType := definiteParameter.t
+
+      if definiteParameter.variadic {
+        t := parameterType.asArray()
+        parameterType = t.elementType
+      }
+
+      t := Type.unwrap(self.e(ref argument.expression, Type.opt(parameterType)), withReference: false)
+
+      if !Type.similarTo(t, parameterType) {
+        self.raise(
+          errors.E1035(t.toString(), parameterType.toString()),
+          argument.expression.start,
+          argument.expression.end
+        )
+      }
+
+      contextArguments.push(Context.CallExpressionContextArgument{
+        argument: argument,
+        idx: foundParameterIdx,
+        t: t,
+        typeParameter: definiteParameter
+      })
+
+      if !isVariadic {
+        if definiteParameter.name != nil {
+          passedParameters.push(definiteParameter.name)
+        }
+
+        parameterIdx++
+      }
+    }
+
+    loop ; parameterIdx < parametersLen; parameterIdx++ {
+      parameter := parameters[parameterIdx]
+
+      if parameter.required && parameter.name != nil {
+        self.raise(errors.E1036(parameter.name), it.start, it.end)
+      } elif parameter.required {
+        self.raise(errors.E1037(), it.start, it.end)
+      }
+    }
+
+    it.context = Context.CallExpressionContext{
+      arguments: contextArguments,
+      asynchronous: asynchronous,
+      parameters: parameters,
+      returnType: returnType,
+      t: calleeType
+    }
+
+    return asynchronous ? calleeType : returnType
+  }
+
+  fn _eClosure (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isClosure() {
+      return nil
+    }
+
+    mut expression := it.asClosure()
+    initialStateReturnType := self.state.returnType
+
+    self.tm.increase()
+    self.vm.increase()
+    parameters := self.functionParameters(ref expression.parameters)
+    returnType := self.t(ref expression.returnType)
+    self.state.returnType = returnType
+
+    if !Type.match(returnType, self.tm.get("void")) && !expression.body.isDeadEnd() {
+      self.raise(errors.E1061(), expression.returnType.start, expression.returnType.end)
+    }
+
+    self.statement(ref expression.body)
+    self.state.returnType = initialStateReturnType
+    self.vm.decrease()
+    self.tm.decrease()
+
+    return self.tm.createFunction(expression.asynchronous, parameters, returnType)
+  }
+
+  fn _eConditional (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) (ref Type.Type)? {
+    if !it.isConditional() {
+      return nil
+    }
+
+    initialTC := self.tc
+    mut expression := it.asConditional()
+    typeCastResult := self.typeCast(ref expression.condition)
+    conditionType := Type.unwrap(self.e(ref expression.condition))
+
+    if !Type.match(conditionType, self.tm.get("bool")) {
+      self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
+    }
+
+    guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+      self.tc.merge(typeCastResult.consequent)
+      result := Type.unwrap(self.e(ref expression.consequent, operandType, withMutable: withMutable || withMutableNext))
+      self.tc = initialTC
+
+      return result
+    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
+      self.tc.merge(typeCastResult.alternate)
+      result := Type.unwrap(self.e(ref expression.alternate, operandType, withMutable: withMutable || withMutableNext))
+      self.tc = initialTC
+
+      return result
+    })
+
+    consequentType := guessTypeResult.first
+    alternateType := guessTypeResult.second
+
+    it.context = Context.ConditionalExpressionContext{
+      conditionType: conditionType,
+      consequentType: consequentType,
+      alternateType: alternateType
+    }
+
+    if consequentType.isNumber() && alternateType.isNumber() {
+      return Type.largest(consequentType, alternateType)
+    } elif !Type.similarTo(consequentType, alternateType) && !Type.similarTo(alternateType, consequentType) {
+      self.raise(
+        errors.E1019(consequentType.toString(), alternateType.toString()),
+        expression.consequent.start,
+        expression.alternate.end
+      )
+    }
+
+    return Type.similarTo(alternateType, consequentType) ? consequentType : alternateType
+  }
+
+  fn _eElementAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool, withoutTypeCast: bool) (ref Type.Type)? {
+    if !it.isElementAccess() {
+      return nil
+    }
+
+    mut expression := it.asElementAccess()
+    expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
+    argumentType := Type.unwrap(self.e(ref expression.argument))
+
+    if !Type.similarTo(argumentType, self.tm.get("i32")) {
+      self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
+    }
+
+    mut t := self.tm.createReference(self.tm.get("any"))
+
+    if expressionType.isArray() {
+      arrayType := expressionType.asArray()
+      t = self.tm.createReference(arrayType.elementType)
+    } elif Type.match(expressionType, self.tm.get("str")) {
+      t = self.tm.createReference(self.tm.get("rune"))
+    } else {
+      self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
+    }
+
+    if targetType != nil {
+      if Type.match(targetType, t) {
+        return t
+      }
+    } elif withoutTypeCast {
+      return t
+    }
+
+    code := Parser.stringifyExpression(it)
+    return self.tc.has(code) ? self.tc.get(code) : t
+  }
+
+  fn _eIs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) (ref Type.Type)? {
+    if !it.isIs() {
+      return nil
+    }
+
+    mut expression := it.asIs()
+    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+    t := self.t(ref expression.t)
+
+    if !expressionType.canBe(t) {
+      self.raise(errors.E1009(
+        expressionType.toString(), t.toString()),
+        expression.expression.start,
+        expression.expression.end
+      )
+    }
+
+    it.context = Context.IsExpressionContext{
+      leftType: expressionType,
+      rightType: t
+    }
+
+    return self.tm.get("bool")
+  }
+
+  fn _eMap (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isMap() {
+      return nil
+    }
+
+    mut expression := it.asMap()
+    mut t: (ref Type.Type)?
+
+    if targetType != nil {
+      maybeMapType := Type.unwrap(targetType, withOptional: true)
+
+      if maybeMapType.isMap() {
+        t = maybeMapType
+      }
+    }
+
+    if expression.elements.empty && t == nil {
+      self.raise(errors.E1016(), it.start, it.end)
+      return self.tm.createMap(self.tm.get("any"), self.tm.get("any"))
+    } elif expression.elements.empty {
+      return t
+    }
+
+    mut keyType: (ref Type.Type)?
+    mut valueType: (ref Type.Type)?
+
+    if t != nil {
+      mapType := t.asMap()
+      keyType = Type.opt(mapType.keyType)
+      valueType = Type.opt(mapType.valueType)
+    }
+
+    keyTypeForced := keyType != nil
+    valueTypeForced := valueType != nil
+    elementsLen := expression.elements.len
+
+    loop i := 0; i < elementsLen; i++ {
+      mut element := expression.elements[i]
+      elementKeyType := self.e(ref element.key, keyType)
+      elementValueType := self.e(ref element.value, valueType)
+
+      if keyType == nil {
+        keyType = elementKeyType
+      } elif !Type.similarTo(elementKeyType, keyType) && keyTypeForced {
+        self.raise(errors.E1005(elementKeyType.toString(), keyType.toString()), element.key.start, element.key.end)
+      } elif !Type.similarTo(elementKeyType, keyType) {
+        keyType = self.tm.unionAdd(keyType, elementKeyType)
+      }
+
+      if valueType == nil {
+        valueType = elementValueType
+      } elif !Type.similarTo(elementValueType, valueType) && valueTypeForced {
+        self.raise(
+          errors.E1005(elementValueType.toString(), valueType.toString()),
+          element.value.start,
+          element.value.end
+        )
+      } elif !Type.similarTo(elementValueType, valueType) {
+        valueType = self.tm.unionAdd(valueType, elementValueType)
+      }
+    }
+
+    return self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type)
+  }
+
+  fn _eMemberAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isMemberAccess() {
+      return nil
+    }
+
+    mut expression := it.asMemberAccess()
+    mut t: (ref Type.Type)?
+
+    if targetType != nil {
+      maybeEnumType := Type.unwrap(targetType)
+
+      if maybeEnumType.isEnum() {
+        t = maybeEnumType
+      }
+    }
+
+    if t == nil {
+      self.raise(errors.E1020(), it.start, it.end)
+      return self.tm.get("any")
+    } elif !t.hasEnumerator(expression.name.name) {
+      self.raise(errors.E1021(expression.name.name), it.start, it.end)
+    }
+
+    return t as ref Type.Type
+  }
+
+  fn _eObject (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isObject() {
+      return nil
+    }
+
+    mut expression := it.asObject()
+    t := self.t(ref expression.id)
+    propertiesLen := expression.properties.len
+    mut propertyNames: str[]
+
+    loop i := 0; i < propertiesLen; i++ {
+      mut property := expression.properties[i]
+
+      if !t.has(property.name.name) {
+        self.raise(errors.E1002(property.name.name, t.toString()), property.name.start, property.name.end)
+        self.e(ref property.value)
+      } else {
+        p := t.get(property.name.name)
+        propertyType := self.e(ref property.value, Type.opt(p.t))
+
+        if !Type.similarTo(propertyType, p.t) {
+          self.raise(errors.E1005(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
+        }
+
+        propertyNames.push(property.name.name)
+      }
+    }
+
+    typePropertiesLen := t.properties.len
+
+    loop i := 0; i < typePropertiesLen; i++ {
+      property := t.properties[i]
+
+      if !property.builtin && property.t.isRequired() && !propertyNames.contains(property.name) {
+        self.raise(errors.E1041(property.name, property.t.toString()), expression.id.start, expression.id.end)
+      }
+    }
+
+    return t
+  }
+
+  fn _eParenthesized (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) (ref Type.Type)? {
+    if !it.isParenthesized() {
+      return nil
+    }
+
+    mut expression := it.asParenthesized()
+    return self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
+  }
+
+  fn _ePropertyAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool, withoutTypeCast: bool) (ref Type.Type)? {
+    if !it.isPropertyAccess() {
+      return nil
+    }
+
+    mut expression := it.asPropertyAccess()
+    t := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
+
+    if t.has(expression.name.name) {
+      property := t.get(expression.name.name)
+
+      if withMutable && !property.mutable {
+        self.raise(errors.E1012(expression.name.name), it.start, it.end)
+      }
+
+      if targetType != nil {
+        if Type.match(targetType, property.t) {
+          return property.t
+        }
+      } elif withoutTypeCast {
+        return property.t
+      }
+
+      code := Parser.stringifyExpression(it)
+      return self.tc.has(code) ? self.tc.get(code) : property.t
+    } elif t.isEnum() {
+      if !t.hasEnumerator(expression.name.name) {
+        self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
+      }
+      return t
+    } elif t.isNamespace() {
+      namespaceType := t.asNamespace()
+
+      if AnalyzerExport.has(ref namespaceType.members, expression.name.name) {
+        member := AnalyzerExport.get(ref namespaceType.members, expression.name.name)
+
+        if member.var != nil {
+          if withMutable && !member.var.mutable {
+            self.raise(errors.E1011(expression.name.name), it.start, it.end)
+          }
+
+          if targetType != nil {
+            if Type.match(targetType, member.var.t) {
+              return member.var.t
+            }
+          } elif withoutTypeCast {
+            return member.var.t
+          }
+
+          code := Parser.stringifyExpression(it)
+          return self.tc.has(code) ? self.tc.get(code) : member.var.t
+        }
+      }
+
+      self.raise(
+        errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name),
+        expression.name.start,
+        expression.name.end
+      )
+      return targetType == nil ? self.tm.get("any") : targetType
+    }
+
+    self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
+    return targetType == nil ? self.tm.get("any") : targetType
+  }
+
+  fn _eReference (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) (ref Type.Type)? {
+    if !it.isReference() {
+      return nil
+    }
+
+    mut expression := it.asReference()
+    return self.tm.createReference(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
+  }
+
+  fn _eUnary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+    if !it.isUnary() {
+      return nil
+    }
+
+    mut expression := it.asUnary()
+
+    operandType := Type.unwrap(
+      expression.operator.t == .OpExcl
+        ? self.e(ref expression.operand)
+        : expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
+          ? self.e(ref expression.operand, withMutable: true)
+          : self.e(ref expression.operand, targetType)
+    )
+
+    it.context = Context.UnaryExpressionContext{operandType: operandType}
+
+    if expression.operator.t == .OpExcl {
+      if (
+        !Type.match(operandType, self.tm.get("bool")) &&
+        !Type.match(operandType, self.tm.get("byte")) &&
+        !operandType.isNumber()
+      ) {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end
+        )
+      }
+
+      return self.tm.get("bool")
+    } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
+      if !expression.operand.isAccess() {
+        self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
+      } elif !operandType.isNumber() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end
+        )
+      }
+    } elif expression.operator.t == .OpMinus {
+      if !operandType.isSignedInt() && !operandType.isFloat() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end
+        )
+      }
+    } elif expression.operator.t == .OpPlus {
+      if !operandType.isNumber() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end
+        )
+      }
+    } elif expression.operator.t == .OpTilde {
+      if !operandType.isInt() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end
+        )
+      }
+    }
+
+    return operandType
   }
 }
 

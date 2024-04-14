@@ -14,7 +14,8 @@ import
   ConditionalExpressionContext,
   IsExpressionContext,
   UnaryExpressionContext,
-  VariableDeclarationContext
+  VariableDeclarationContext,
+  TypeContext
 from "./context"
 import
   Type,
@@ -58,6 +59,7 @@ export ConditionalExpressionContext
 export IsExpressionContext
 export UnaryExpressionContext
 export VariableDeclarationContext
+export TypeContext
 export Type
 export TypeBody
 export TypeProperty

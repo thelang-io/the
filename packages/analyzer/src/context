@@ -9,7 +9,6 @@ import Type, TypeParameter from "./type"
 export obj IdentifierContext {
   mut currentType: ref Type
   mut originalType: ref Type
-  mut targetType: (ref Type)?
 }
 
 export obj ArrayExpressionContext {
@@ -60,7 +59,6 @@ export obj UnaryExpressionContext {
 export obj VariableDeclarationContext {
   mut varType: ref Type
 }
-
 
 export obj TypeContext {
   mut t: ref Type
