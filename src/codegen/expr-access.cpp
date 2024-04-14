@@ -296,8 +296,16 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
 
     auto isEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
     auto isRef = nodeExpr.type->isRef() && targetType->isRef();
+    auto isTargetOptAndTypeNotOpt = targetType->isOpt() && !nodeExpr.type->isOpt() &&
+      std::get<TypeOptional>(targetType->body).type->matchStrict(nodeExpr.type);
 
-    if (!root && !isEnumField && !isRef && !(fieldTypeHasCallInfo && !fieldType->isRef())) {
+    if (
+      !root &&
+      !isEnumField &&
+      !isRef &&
+      !(fieldTypeHasCallInfo && !fieldType->isRef()) &&
+      !isTargetOptAndTypeNotOpt
+    ) {
       expr = this->_genCopyFn(Type::real(nodeExpr.type), expr);
     }
 
