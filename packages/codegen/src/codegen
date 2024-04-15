@@ -2151,6 +2151,14 @@ export obj Codegen {
           )
         }
 
+        if freeBlock.empty {
+          freeBlock.push(
+            AST.createExpressionStatement(
+              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self"))
+            )
+          )
+        }
+
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DECLARE"), [
             AST.createIdentifier(unionName),
