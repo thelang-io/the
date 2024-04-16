@@ -13,14 +13,18 @@ main {
 #include <stdbool.h>
 #include <stdint.h>
 int main (void) {
+  int32_t c;
+  int32_t d;
+  int32_t e;
+  int32_t f;
   int32_t a = 1;
   int32_t b = a;
   b = a;
-  int32_t c = a + b;
   c = a + b;
-  int32_t d = a + b + c;
+  c = a + b;
+  d = a + b + c;
   d += a + b + c;
-  int32_t e = true ? a : b + c;
-  int32_t f = true ? c + d + e : (b = a + c);
+  e = true ? a : b + c;
+  f = true ? c + d + e : (b = a + c);
 }
 ===== output =====

@@ -36,20 +36,35 @@ export obj CodegenAPIBuiltin {
 }
 
 export obj BlockData {
-  mut cleanup: AST.CStatement[]
+  mut setup: AST.CStatement[]
+  mut teardown: AST.CStatement[]
 
-  fn addCleanup (mut self: ref Self, item: AST.CStatement) {
-    self.cleanup.push(item)
+  fn addSetup (mut self: ref Self, item: AST.CStatement) {
+    self.setup.push(item)
   }
 
-  fn hasCleanup (mut self: ref Self) bool {
-    return self.cleanup.empty
+  fn addTeardown (mut self: ref Self, item: AST.CStatement) {
+    self.teardown.push(item)
   }
 
-  fn getCleanup (mut self: ref Self) AST.CStatement[] {
-    mut cleanup := self.cleanup.reverse()
-    self.cleanup = []
-    return cleanup
+  fn hasSetup (mut self: ref Self) bool {
+    return self.setup.empty
+  }
+
+  fn hasTeardown (mut self: ref Self) bool {
+    return self.teardown.empty
+  }
+
+  fn getSetup (mut self: ref Self) AST.CStatement[] {
+    setup := self.setup
+    self.setup = []
+    return setup
+  }
+
+  fn getTeardown (mut self: ref Self) AST.CStatement[] {
+    teardown := self.teardown.reverse()
+    self.teardown = []
+    return teardown
   }
 }
 
@@ -67,6 +82,20 @@ export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
       parentNode := item.parentNode()
       return !parentNode.isVariableDeclaration()
     } else {
+      return true
+    }
+  }
+
+  return false
+}
+
+export fn statementHasPrecedingNonVarDecl (item: ref Parser.Statement) bool {
+  mut it := item
+
+  loop it.hasPrev() {
+    it = it.prev()
+
+    if !it.isVariableDeclaration() {
       return true
     }
   }
@@ -776,7 +805,7 @@ export obj Codegen {
     }
   }
 
-  fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
+  fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[], preserveData := false) AST.CStatement[] {
     mut result: AST.CStatement[]
     l := items.len
 
@@ -784,7 +813,10 @@ export obj Codegen {
       result.push(self._generateStatement(items[i]))
     }
 
-    return result
+    if !preserveData { return result }
+    mut resultWithSetup := self.blockData.getSetup()
+    resultWithSetup.merge(result)
+    return resultWithSetup
   }
 
   fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
@@ -1190,7 +1222,7 @@ export obj Codegen {
 
     statement := item.asBreak()
 
-    if self.blockData.hasCleanup() { // todo check specifically for loop
+    if self.blockData.hasTeardown() { // todo check specifically for loop
       //(*c)->append(
       //  CodegenASTExprAssign::create(
       //    CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
@@ -1213,7 +1245,7 @@ export obj Codegen {
 
     statement := item.asContinue()
 
-    if self.blockData.hasCleanup() { // todo check specifically for loop
+    if self.blockData.hasTeardown() { // todo check specifically for loop
       //if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
       //  (*c)->append(
       //    CodegenASTExprAssign::create(
@@ -1429,9 +1461,13 @@ export obj Codegen {
 
     statement := item.asMainDeclaration()
     statementBody := statement.body.asBlock()
+    mainStatements := self._generateBlock(ref statementBody.body, preserveData: true)
 
-    self.mainStatements = self._generateBlock(ref statementBody.body)
-    self.mainStatements.merge(self.blockData.getCleanup())
+    self.mainStatements.merge(self.blockData.getSetup())
+    d := self.mainStatements.len
+    self.mainStatements.merge(mainStatements)
+    a := self.mainStatements.len
+    self.mainStatements.merge(self.blockData.getTeardown())
 
     return AST.createEmptyStatement()
   }
@@ -1669,9 +1705,10 @@ export obj Codegen {
     context := item.context as Analyzer.VariableDeclarationContext
     typeName := self._typeName(context.varType)
     t := AST.createType(self._type(context.varType))
+    shouldSplitDeclaration := statementHasPrecedingNonVarDecl(item)
 
     if typeShouldBeFreed(context.varType) {
-      self.blockData.addCleanup(
+      self.blockData.addTeardown(
         AST.createExpressionStatement(
           self._functionFree(context.varType, AST.createIdentifier(statement.name.name))
         )
@@ -1682,7 +1719,17 @@ export obj Codegen {
       ? self._defaultInitializerDeclaration(context.varType)
       : self._generateExpression(ref statement.initializer)
 
-    return AST.createVariableDeclaration(t, statement.name.name, initializer)
+    if shouldSplitDeclaration {
+      self.blockData.addSetup(
+        AST.createVariableDeclaration(t, statement.name.name)
+      )
+
+      return AST.createExpressionStatement(
+        AST.createAssignmentExpression(AST.createIdentifier(statement.name.name), "=", initializer)
+      )
+    } else {
+      return AST.createVariableDeclaration(t, statement.name.name, initializer)
+    }
   }
 
   fn _generateAnyType (mut self: ref Codegen, item: ref Analyzer.Type) str {

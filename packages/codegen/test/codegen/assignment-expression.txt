@@ -18,12 +18,14 @@ main {
 #include <stdbool.h>
 #include <stdint.h>
 int main (void) {
+  int32_t c;
+  int32_t d;
   int32_t a = 1;
   int32_t b = a;
   b = a;
-  int32_t c = a + b;
+  c = a + b;
   c = b = a;
-  int32_t d = 2;
+  d = 2;
   d = c = b = a;
   d = a + b;
   d = a + b + c;

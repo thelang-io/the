@@ -17,15 +17,22 @@ main {
 #include <stdbool.h>
 #include <stdint.h>
 int main (void) {
+  int32_t access2;
+  int32_t lit1;
+  int32_t lit2;
+  int32_t unary1;
+  int32_t unary2;
+  int32_t unary3;
+  int32_t unary4;
   bool vBool = false;
   int32_t access1 = vBool ? 0 : 1;
   vBool = true;
-  int32_t access2 = vBool ? 0 : 1;
-  int32_t lit1 = 1 > 2 ? 3 : 4;
-  int32_t lit2 = true ? 2 : 3;
-  int32_t unary1 = !false ? 0 : 1;
-  int32_t unary2 = !true ? 0 : 1;
-  int32_t unary3 = !!false ? 0 : 1;
-  int32_t unary4 = !!true ? 0 : 1;
+  access2 = vBool ? 0 : 1;
+  lit1 = 1 > 2 ? 3 : 4;
+  lit2 = true ? 2 : 3;
+  unary1 = !false ? 0 : 1;
+  unary2 = !true ? 0 : 1;
+  unary3 = !!false ? 0 : 1;
+  unary4 = !!true ? 0 : 1;
 }
 ===== output =====
