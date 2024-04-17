@@ -28,7 +28,7 @@ export obj BinaryExpressionContext {
 
 export obj CallExpressionContextArgument {
   mut argument: CallExpressionArgument
-  mut idx: int
+  mut parameterIdx: int
   mut t: ref Type
   mut typeParameter: TypeParameter
 }

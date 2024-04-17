@@ -1820,7 +1820,7 @@ export obj AnalyzerFile {
 
       contextArguments.push(Context.CallExpressionContextArgument{
         argument: argument,
-        idx: foundParameterIdx,
+        parameterIdx: foundParameterIdx,
         t: t,
         typeParameter: definiteParameter
       })
