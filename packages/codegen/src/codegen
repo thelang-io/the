@@ -77,6 +77,15 @@ export obj CodegenEntity {
   mut generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[]
 }
 
+export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
+  if item.isPropertyAccess() {
+    body := item.asPropertyAccess()
+    return ["str"].contains(body.name.name)
+  }
+
+  return false
+}
+
 export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   if !item.hasParent() {
     if item.hasParentNode() {
@@ -114,6 +123,15 @@ export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
   expression := item.asExpressionStatement()
   macroInvocation := expression.expression.asMacroInvocation()
   return macroInvocation.callee.find("DECLARE") != -1
+}
+
+export fn typeHasSelfParam (it: ref Analyzer.Type) bool {
+  if it.isMethod() {
+    t := it.asMethod()
+    return t.withSelf
+  }
+
+  return false
 }
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
@@ -217,7 +235,6 @@ export obj Codegen {
       self.builtin.theBool ||
       self.builtin.theByte ||
       self.builtin.theChar ||
-      self.builtin.theFn ||
       self.builtin.theError ||
       self.builtin.theFn ||
       self.builtin.theGlobals ||
@@ -959,7 +976,14 @@ export obj Codegen {
       (result = self._generateReferenceExpression(item)) != nil ||
       (result = self._generateUnaryExpression(item)) != nil
     ) {
-      return self._wrap(item, result)
+      typeContext := item.typeContext as Analyzer.TypeContext
+      optionalTargetType := typeContext.targetType
+
+      if optionalTargetType == nil {
+        return result
+      }
+
+      return self._wrap(result, typeContext.t, optionalTargetType as ref Analyzer.Type)
     }
 
     throw error_NewError("Tried code generation for unknown expression")
@@ -996,13 +1020,18 @@ export obj Codegen {
       return nil
     }
 
+    validateContext(item.context is Analyzer.IdentifierContext)
+    context := item.context as Analyzer.IdentifierContext
     expression := item.asIdentifier()
+    mut name := expression.name
 
-    if self._hasEntity(expression.name) {
-      return AST.createIdentifier(self._(expression.name))
-    } else {
-      return AST.createIdentifier(expression.name)
+    if name == "print" {
+      name = self._("the_print")
+    } elif self._hasEntity(name) {
+      name = self._(name)
     }
+
+    return self._wrap(AST.createIdentifier(name), context.originalType, context.currentType)
   }
 
   fn _generateLiteral (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1156,66 +1185,36 @@ export obj Codegen {
     expression := item.asCall()
     validateContext(item.context is Analyzer.CallExpressionContext)
     context := item.context as Analyzer.CallExpressionContext
-    mut hasSelfParam := false
 
-    if context.t.isMethod() {
-      t := context.t.asMethod()
-      hasSelfParam = t.withSelf
+    if expressionIsBuiltinMethod(ref expression.callee) {
+      calleeBody := expression.callee.asPropertyAccess()
+
+      if calleeBody.name.name == "str" {
+        calleeExpressionTypeContext := calleeBody.expression.typeContext as Analyzer.TypeContext
+        return self._functionStr(calleeExpressionTypeContext.t, self._generateExpression(ref calleeBody.expression))
+      }
     }
 
-    paramsName := self._type(context.t, "_params_t")
-    hasParams := !context.parameters.empty || hasSelfParam
     calleeExpression := self._generateExpression(ref expression.callee)
     mut paramsArgs: AST.CExpression[]
 
-    mut args: (AST.CExpression | AST.CType)[] = [
-      AST.createPropertyAccessExpression(calleeExpression, "ctx")
-    ]
-
-    if hasSelfParam {
-      paramsArgs.push(self._generateExpression(ref expression.callee))
+    if typeHasSelfParam(context.t) {
+      paramsArgs.push(calleeExpression)
     }
 
     loop i := 0; i < context.parameters.len; i++ {
       param := context.parameters[i]
-      mut argIdx := -1
-
-      if param.name != nil {
-        loop j := 0; j < expression.arguments.len; j++ {
-          arg := expression.arguments[j]
-
-          if arg.name != nil {
-            if arg.name.name == param.name {
-              argIdx = j
-              break
-            }
-          }
-        }
-      } elif i < expression.arguments.len {
-        argIdx = i
-      }
-
-      if !param.required && !param.variadic {
-        paramsArgs.push(AST.createLiteral(argIdx == -1 ? "0" : "1"))
-      }
 
       if param.variadic {
-        paramArrayType := param.t.asArray()
-        variadicType := paramArrayType.elementType
         mut variadicArgs: (AST.CExpression | AST.CType)[]
 
-        if argIdx != -1 {
-          variadicArg := expression.arguments[argIdx]
-          variadicArgs.push(self._generateExpression(ref variadicArg.expression))
-
-          loop j := argIdx + 1; j < expression.arguments.len; j++ {
-            arg := expression.arguments[j]
-            if arg.name != nil && arg.name != param.name { break }
-            variadicArgs.push(self._generateExpression(ref arg.expression))
-          }
+        loop j := 0; j < context.arguments.len; j++ {
+          arg := context.arguments[j]
+          if arg.parameterIdx != i { continue }
+          variadicArgs.push(self._generateExpression(ref arg.argument.expression))
         }
 
-        mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len.str())]
+        mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len)]
         variadicAllocArgs.merge(variadicArgs)
         variadicAllocType := self._type(param.t, "_alloc")
 
@@ -1225,15 +1224,40 @@ export obj Codegen {
             variadicAllocArgs
           )
         )
-      } elif argIdx != -1 {
-        arg := expression.arguments[argIdx]
-        paramsArgs.push(self._generateExpression(arg.expression))
+
+        continue
+      }
+
+      mut argIdx := -1
+
+      loop j := 0; j < context.arguments.len; j++ {
+        arg := context.arguments[j]
+
+        if arg.parameterIdx == i {
+          argIdx = j
+          break
+        }
+      }
+
+      if !param.required {
+        paramsArgs.push(AST.createLiteral(argIdx == -1 ? "0" : "1"))
+      }
+
+      if argIdx != -1 {
+        arg := context.arguments[argIdx]
+        paramsArgs.push(self._generateExpression(arg.argument.expression))
       } else {
         paramsArgs.push(self._defaultInitializerExpression(param.t))
       }
     }
 
-    if hasParams {
+    mut args: (AST.CExpression | AST.CType)[] = [
+      AST.createPropertyAccessExpression(calleeExpression, "ctx")
+    ]
+
+    if !paramsArgs.empty {
+      paramsName := self._type(context.t, "_params_t")
+
       args.push(AST.createCallExpression(AST.createIdentifier(self._("the_safe_calloc")), [
         AST.createUnaryExpression("&", AST.createCastExpression(
           AST.createType(paramsName),
@@ -1246,7 +1270,10 @@ export obj Codegen {
     }
 
     result := AST.createCallExpression(AST.createPropertyAccessExpression(calleeExpression, "func"), args)
-    return expressionShouldBeFreed(item) ? self._functionFree(context.t, result) : result
+
+    return expressionShouldBeFreed(item) && typeShouldBeFreed(context.returnType)
+      ? self._functionFree(context.returnType, result)
+      : result
   }
 
   fn _generateConditionalExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -2460,23 +2487,26 @@ export obj Codegen {
       return self._("the_" + self._typeName(it) + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     }
 
-    throw error_NewError("Failed to generate type for '" + it.name + "'")
+    throw error_NewError("Failed to generate type for '" + it.toString() + "'")
   }
 
-  fn _wrap (mut self: ref Self, item: ref Parser.Expression, expression: AST.CExpression) AST.CExpression {
-    typeContext := item.typeContext as Analyzer.TypeContext
-    optionalTargetType := typeContext.targetType
-
-    if optionalTargetType == nil {
-      return expression
-    }
-
-    targetType := optionalTargetType as ref Analyzer.Type
-    t := typeContext.t
-
+  fn _wrap (
+    mut self: ref Self,
+    expression: AST.CExpression,
+    t: ref Analyzer.Type,
+    targetType: ref Analyzer.Type
+  ) AST.CExpression {
     if targetType.name == "any" && t.name != "any" {
       anyType := self._generateAnyType(t)
       return AST.createCallExpression(AST.createIdentifier(self._(anyType)), [expression])
+    } elif targetType.name != "any" && t.name == "any" {
+      typeName := self._typeDef(t)
+      typeDefIdx := self.typeDefs.get(typeName)
+
+      return AST.createPropertyAccessExpression(
+        AST.createPropertyAccessExpression(expression, "data"),
+        "v" + typeDefIdx.str()
+      )
     } elif targetType.isUnion() && !t.isUnion() {
       allocTargetType := self._type(targetType, "_alloc")
       typeDef := self._typeDef(t)
