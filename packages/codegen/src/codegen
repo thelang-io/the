@@ -17,6 +17,7 @@ export obj CodegenAPIBuiltin {
   mut theChar: bool
   mut theError: bool
   mut theFn: bool
+  mut theGlobals: bool
   mut theMacro: bool
   mut theNumber: bool
   mut theOptional: bool
@@ -218,6 +219,8 @@ export obj Codegen {
       self.builtin.theChar ||
       self.builtin.theFn ||
       self.builtin.theError ||
+      self.builtin.theFn ||
+      self.builtin.theGlobals ||
       self.builtin.theMacro ||
       self.builtin.theNumber ||
       self.builtin.theOptional ||
@@ -349,6 +352,7 @@ export obj Codegen {
       self.builtin.theChar = true
     } elif (
       [
+        "TYPE_Error",
         "the_Error_t",
         "the_err_buf_t",
         "the_err_stack_t",
@@ -376,6 +380,73 @@ export obj Codegen {
       ].contains(name)
     ) {
       self.builtin.theFn = true
+    } elif (
+      [
+        "the_arr_any_t",
+        "the_arr_any_alloc",
+        "the_arr_any_at",
+        "the_arr_any_clear",
+        "the_arr_any_concat",
+        "the_arr_any_contains",
+        "the_arr_any_copy",
+        "the_arr_any_empty",
+        "the_arr_any_eq",
+        "the_arr_any_filter",
+        "the_arr_any_first",
+        "the_arr_any_forEach",
+        "the_arr_any_free",
+        "the_arr_any_join",
+        "the_arr_any_last",
+        "the_arr_any_merge",
+        "the_arr_any_pop",
+        "the_arr_any_push",
+        "the_arr_any_realloc",
+        "the_arr_any_remove",
+        "the_arr_any_reverse",
+        "the_arr_any_slice",
+        "the_arr_any_sort",
+        "the_arr_any_str",
+
+        "the_fn_sFP3anyFRboolFE_t",
+        "the_fn_sFP3anyFRboolFE_params_t",
+        "the_fn_sFP3anyFRboolFE_alloc",
+        "the_fn_sFP3anyFRboolFE_copy",
+        "the_fn_sFP3anyFRboolFE_eq",
+        "the_fn_sFP3anyFRboolFE_free",
+        "the_fn_sFP3anyFRboolFE_realloc",
+        "the_fn_sFP3anyFRboolFE_str",
+
+        "the_fn_sFP3anyFP3intFRvoidFE_t",
+        "the_fn_sFP3anyFP3intFRvoidFE_params_t",
+        "the_fn_sFP3anyFP3intFRvoidFE_alloc",
+        "the_fn_sFP3anyFP3intFRvoidFE_copy",
+        "the_fn_sFP3anyFP3intFRvoidFE_eq",
+        "the_fn_sFP3anyFP3intFRvoidFE_free",
+        "the_fn_sFP3anyFP3intFRvoidFE_realloc",
+        "the_fn_sFP3anyFP3intFRvoidFE_str",
+
+        "the_fn_sFP3anyFP3anyFRintFE_t",
+        "the_fn_sFP3anyFP3anyFRintFE_params_t",
+        "the_fn_sFP3anyFP3anyFRintFE_alloc",
+        "the_fn_sFP3anyFP3anyFRintFE_copy",
+        "the_fn_sFP3anyFP3anyFRintFE_eq",
+        "the_fn_sFP3anyFP3anyFRintFE_free",
+        "the_fn_sFP3anyFP3anyFRintFE_realloc",
+        "the_fn_sFP3anyFP3anyFRintFE_str",
+
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_t",
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t",
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_alloc",
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_copy",
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_eq",
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_free",
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_realloc",
+        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_str",
+
+        "the_print"
+      ].contains(name)
+    ) {
+      self.builtin.theGlobals = true
     } elif ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"].contains(name) {
       self.builtin.theMacro = true
     } elif (
@@ -431,6 +502,58 @@ export obj Codegen {
       self.builtin.theThreadPool = true
     } elif (
       [
+        "the_arr_str_t",
+        "the_arr_str_alloc",
+        "the_arr_str_at",
+        "the_arr_str_clear",
+        "the_arr_str_concat",
+        "the_arr_str_contains",
+        "the_arr_str_copy",
+        "the_arr_str_empty",
+        "the_arr_str_eq",
+        "the_arr_str_filter",
+        "the_arr_str_first",
+        "the_arr_str_forEach",
+        "the_arr_str_free",
+        "the_arr_str_join",
+        "the_arr_str_last",
+        "the_arr_str_merge",
+        "the_arr_str_pop",
+        "the_arr_str_push",
+        "the_arr_str_realloc",
+        "the_arr_str_remove",
+        "the_arr_str_reverse",
+        "the_arr_str_slice",
+        "the_arr_str_sort",
+        "the_arr_str_str",
+
+        "the_fn_sFP3strFRboolFE_t",
+        "the_fn_sFP3strFRboolFE_params_t",
+        "the_fn_sFP3strFRboolFE_alloc",
+        "the_fn_sFP3strFRboolFE_copy",
+        "the_fn_sFP3strFRboolFE_eq",
+        "the_fn_sFP3strFRboolFE_free",
+        "the_fn_sFP3strFRboolFE_realloc",
+        "the_fn_sFP3strFRboolFE_str",
+
+        "the_fn_sFP3strFP3intFRvoidFE_t",
+        "the_fn_sFP3strFP3intFRvoidFE_params_t",
+        "the_fn_sFP3strFP3intFRvoidFE_alloc",
+        "the_fn_sFP3strFP3intFRvoidFE_copy",
+        "the_fn_sFP3strFP3intFRvoidFE_eq",
+        "the_fn_sFP3strFP3intFRvoidFE_free",
+        "the_fn_sFP3strFP3intFRvoidFE_realloc",
+        "the_fn_sFP3strFP3intFRvoidFE_str",
+
+        "the_fn_sFP3strFP3strFRintFE_t",
+        "the_fn_sFP3strFP3strFRintFE_params_t",
+        "the_fn_sFP3strFP3strFRintFE_alloc",
+        "the_fn_sFP3strFP3strFRintFE_copy",
+        "the_fn_sFP3strFP3strFRintFE_eq",
+        "the_fn_sFP3strFP3strFRintFE_free",
+        "the_fn_sFP3strFP3strFRintFE_realloc",
+        "the_fn_sFP3strFP3strFRintFE_str",
+
         "the_str_t",
         "the_str_alloc",
         "the_str_calloc",
@@ -550,6 +673,7 @@ export obj Codegen {
     if self.builtin.theChar { self.statements.push(AST.createIncludeDirective("the/char.h")) }
     if self.builtin.theError { self.statements.push(AST.createIncludeDirective("the/error.h")) }
     if self.builtin.theFn { self.statements.push(AST.createIncludeDirective("the/fn.h")) }
+    if self.builtin.theGlobals { self.statements.push(AST.createIncludeDirective("the/globals.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
     if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
     if self.builtin.theOptional { self.statements.push(AST.createIncludeDirective("the/optional.h")) }
