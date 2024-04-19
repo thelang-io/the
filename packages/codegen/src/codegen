@@ -1075,7 +1075,10 @@ export obj Codegen {
         }
       }
 
-      return AST.createLiteral(rawValue)
+      return AST.createCallExpression(
+        AST.createIdentifier(self._("the_str_alloc")),
+        [AST.createLiteral(rawValue)]
+      )
     }
 
     return nil
@@ -1884,7 +1887,8 @@ export obj Codegen {
   }
 
   fn _generateAnyType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    name := "the_any_" + self._typeName(item)
+    typeName := "the_any_" + self._typeName(item)
+    name := typeName + "_t"
 
     if self._hasEntity(name) {
       return name
@@ -1917,6 +1921,24 @@ export obj Codegen {
         ]
       }
     })
+
+    methods := ["alloc"]
+
+    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      self._(entity.context as str)
+      return AST.createEmptyStatement()
+    }
+
+    loop i := 0; i < methods.len; i++ {
+      methodName := methods[i] as str
+
+      self.entities.push(CodegenEntity{
+        name: typeName + "_" + methodName,
+        codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee
+      })
+    }
 
     return name
   }
@@ -2490,23 +2512,20 @@ export obj Codegen {
     throw error_NewError("Failed to generate type for '" + it.toString() + "'")
   }
 
-  fn _wrap (
-    mut self: ref Self,
-    expression: AST.CExpression,
-    t: ref Analyzer.Type,
-    targetType: ref Analyzer.Type
-  ) AST.CExpression {
+  fn _wrap (mut self: ref Self, expression: AST.CExpression, t: ref Analyzer.Type, targetType: ref Analyzer.Type) AST.CExpression {
     if targetType.name == "any" && t.name != "any" {
-      anyType := self._generateAnyType(t)
-      return AST.createCallExpression(AST.createIdentifier(self._(anyType)), [expression])
+      allocAnyType := self._generateAnyType(t).slice(0, -2) + "_alloc"
+      return AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
     } elif targetType.name != "any" && t.name == "any" {
-      typeName := self._typeDef(t)
-      typeDefIdx := self.typeDefs.get(typeName)
+      typeName := self._generateAnyType(targetType)
 
-      return AST.createPropertyAccessExpression(
-        AST.createPropertyAccessExpression(expression, "data"),
-        "v" + typeDefIdx.str()
+      // TODO: throw error if not possible to cast
+      innerExpression := AST.createCastExpression(
+        AST.createType(self._(typeName)),
+        AST.createPropertyAccessExpression(expression, "ctx")
       )
+
+      return AST.createUnaryExpression("*", innerExpression.wrap())
     } elif targetType.isUnion() && !t.isUnion() {
       allocTargetType := self._type(targetType, "_alloc")
       typeDef := self._typeDef(t)
@@ -2515,6 +2534,15 @@ export obj Codegen {
         AST.createIdentifier(self._(typeDef)),
         expression
       ])
+    } elif !targetType.isUnion() && t.isUnion() {
+      typeName := self._typeDef(targetType)
+      typeDefIdx := self.typeDefs.get(typeName)
+
+      // TODO: throw error if not possible to cast
+      return AST.createPropertyAccessExpression(
+        AST.createPropertyAccessExpression(expression, "data"),
+        "v" + typeDefIdx.str()
+      )
     }
 
     return expression
