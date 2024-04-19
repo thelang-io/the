@@ -206,6 +206,303 @@ export fn validateContext (valid: bool) {
   }
 }
 
+export const BUILTIN_ENTITIES := {
+  "stdarg": ["va_arg", "va_copy", "va_end", "va_list", "va_start"],
+  "stdbool": ["bool", "false", "true"],
+  "stddef": [
+    "EXIT_FAILURE",
+    "NULL",
+    "exit",
+    "size_t"
+  ],
+  "stdio": [
+    "fprintf",
+    "printf",
+    "snprintf",
+    "sprintf",
+    "stderr",
+    "stdin",
+    "stdout"
+  ],
+  "stdint": [
+    "int8_t",
+    "int16_t",
+    "int32_t",
+    "int64_t",
+    "uint8_t",
+    "uint16_t",
+    "uint32_t",
+    "uint64_t"
+  ],
+  "wchar": ["wchar_t"],
+  "theAny": [
+    "THE_ANY_DECLARE",
+    "THE_ANY_DEFINE",
+    "the_any_t",
+    "the_any_copy",
+    "the_any_eq",
+    "the_any_free",
+    "the_any_ne",
+    "the_any_realloc",
+    "the_any_str"
+  ],
+
+  "theArray": ["THE_ARRAY_DECLARE", "THE_ARRAY_DEFINE"],
+  "theBool": ["the_bool_str"],
+  "theByte": ["the_byte_str"],
+
+  "theChar": [
+    "the_char_byte",
+    "the_char_isDigit",
+    "the_char_isLetter",
+    "the_char_isLetterOrDigit",
+    "the_char_isLower",
+    "the_char_isUpper",
+    "the_char_isWhitespace",
+    "the_char_lower",
+    "the_char_repeat",
+    "the_char_str",
+    "the_char_upper"
+  ],
+
+  "theError": [
+    "TYPE_Error",
+    "the_Error_t",
+    "the_err_buf_t",
+    "the_err_stack_t",
+    "the_err_state",
+    "the_err_state_t",
+    "the_error_assign",
+    "the_error_assign_generic",
+    "the_error_buf_decrease",
+    "the_error_buf_increase",
+    "the_error_stack_pop",
+    "the_error_stack_push",
+    "the_error_unset",
+    "the_Error_alloc",
+    "the_Error_free"
+  ],
+
+  "theFn": [
+    "THE_FUNCTION_DECLARE",
+    "THE_FUNCTION_DECLARE_WITH_PARAMS",
+    "THE_FUNCTION_DEFINE",
+    "THE_FUNCTION_DEFINE_WITH_PARAMS",
+    "the_fn_ctx_free_generic"
+  ],
+
+  "theGlobals": [
+    "the_arr_any_t",
+    "the_arr_any_alloc",
+    "the_arr_any_at",
+    "the_arr_any_clear",
+    "the_arr_any_concat",
+    "the_arr_any_contains",
+    "the_arr_any_copy",
+    "the_arr_any_empty",
+    "the_arr_any_eq",
+    "the_arr_any_filter",
+    "the_arr_any_first",
+    "the_arr_any_forEach",
+    "the_arr_any_free",
+    "the_arr_any_join",
+    "the_arr_any_last",
+    "the_arr_any_merge",
+    "the_arr_any_pop",
+    "the_arr_any_push",
+    "the_arr_any_realloc",
+    "the_arr_any_remove",
+    "the_arr_any_reverse",
+    "the_arr_any_slice",
+    "the_arr_any_sort",
+    "the_arr_any_str",
+
+    "the_fn_sFP3anyFRboolFE_t",
+    "the_fn_sFP3anyFRboolFE_params_t",
+    "the_fn_sFP3anyFRboolFE_alloc",
+    "the_fn_sFP3anyFRboolFE_copy",
+    "the_fn_sFP3anyFRboolFE_eq",
+    "the_fn_sFP3anyFRboolFE_free",
+    "the_fn_sFP3anyFRboolFE_realloc",
+    "the_fn_sFP3anyFRboolFE_str",
+
+    "the_fn_sFP3anyFP3intFRvoidFE_t",
+    "the_fn_sFP3anyFP3intFRvoidFE_params_t",
+    "the_fn_sFP3anyFP3intFRvoidFE_alloc",
+    "the_fn_sFP3anyFP3intFRvoidFE_copy",
+    "the_fn_sFP3anyFP3intFRvoidFE_eq",
+    "the_fn_sFP3anyFP3intFRvoidFE_free",
+    "the_fn_sFP3anyFP3intFRvoidFE_realloc",
+    "the_fn_sFP3anyFP3intFRvoidFE_str",
+
+    "the_fn_sFP3anyFP3anyFRintFE_t",
+    "the_fn_sFP3anyFP3anyFRintFE_params_t",
+    "the_fn_sFP3anyFP3anyFRintFE_alloc",
+    "the_fn_sFP3anyFP3anyFRintFE_copy",
+    "the_fn_sFP3anyFP3anyFRintFE_eq",
+    "the_fn_sFP3anyFP3anyFRintFE_free",
+    "the_fn_sFP3anyFP3anyFRintFE_realloc",
+    "the_fn_sFP3anyFP3anyFRintFE_str",
+
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_t",
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t",
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_alloc",
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_copy",
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_eq",
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_free",
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_realloc",
+    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_str",
+
+    "the_print"
+  ],
+
+  "theMacro": ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"],
+
+  "theNumber": [
+    "the_f32_str",
+    "the_f64_str",
+    "the_float_str",
+    "the_i8_str",
+    "the_i16_str",
+    "the_i32_str",
+    "the_i64_str",
+    "the_int_str",
+    "the_isize_str",
+    "the_u8_str",
+    "the_u16_str",
+    "the_u32_str",
+    "the_u64_str",
+    "the_usize_str"
+  ],
+
+  "theOptional": ["THE_OPTIONAL_DECLARE", "THE_OPTIONAL_DEFINE"],
+  "theReference": ["THE_REFERENCE_DECLARE"],
+
+  "theRune": [
+    "the_rune_byte",
+    "the_rune_isDigit",
+    "the_rune_isLetter",
+    "the_rune_isLetterOrDigit",
+    "the_rune_isLower",
+    "the_rune_isUpper",
+    "the_rune_isWhitespace",
+    "the_rune_lower",
+    "the_rune_repeat",
+    "the_rune_str",
+    "the_rune_upper"
+  ],
+
+  "theSafe": [
+    "the_safe_alloc",
+    "the_safe_calloc",
+    "the_safe_free",
+    "the_safe_realloc",
+    "the_safe_swap"
+  ],
+
+  "theThreadPool": ["the_thread_pool_init"],
+
+  "theString": [
+    "the_arr_str_t",
+    "the_arr_str_alloc",
+    "the_arr_str_at",
+    "the_arr_str_clear",
+    "the_arr_str_concat",
+    "the_arr_str_contains",
+    "the_arr_str_copy",
+    "the_arr_str_empty",
+    "the_arr_str_eq",
+    "the_arr_str_filter",
+    "the_arr_str_first",
+    "the_arr_str_forEach",
+    "the_arr_str_free",
+    "the_arr_str_join",
+    "the_arr_str_last",
+    "the_arr_str_merge",
+    "the_arr_str_pop",
+    "the_arr_str_push",
+    "the_arr_str_realloc",
+    "the_arr_str_remove",
+    "the_arr_str_reverse",
+    "the_arr_str_slice",
+    "the_arr_str_sort",
+    "the_arr_str_str",
+
+    "the_fn_sFP3strFRboolFE_t",
+    "the_fn_sFP3strFRboolFE_params_t",
+    "the_fn_sFP3strFRboolFE_alloc",
+    "the_fn_sFP3strFRboolFE_copy",
+    "the_fn_sFP3strFRboolFE_eq",
+    "the_fn_sFP3strFRboolFE_free",
+    "the_fn_sFP3strFRboolFE_realloc",
+    "the_fn_sFP3strFRboolFE_str",
+
+    "the_fn_sFP3strFP3intFRvoidFE_t",
+    "the_fn_sFP3strFP3intFRvoidFE_params_t",
+    "the_fn_sFP3strFP3intFRvoidFE_alloc",
+    "the_fn_sFP3strFP3intFRvoidFE_copy",
+    "the_fn_sFP3strFP3intFRvoidFE_eq",
+    "the_fn_sFP3strFP3intFRvoidFE_free",
+    "the_fn_sFP3strFP3intFRvoidFE_realloc",
+    "the_fn_sFP3strFP3intFRvoidFE_str",
+
+    "the_fn_sFP3strFP3strFRintFE_t",
+    "the_fn_sFP3strFP3strFRintFE_params_t",
+    "the_fn_sFP3strFP3strFRintFE_alloc",
+    "the_fn_sFP3strFP3strFRintFE_copy",
+    "the_fn_sFP3strFP3strFRintFE_eq",
+    "the_fn_sFP3strFP3strFRintFE_free",
+    "the_fn_sFP3strFP3strFRintFE_realloc",
+    "the_fn_sFP3strFP3strFRintFE_str",
+
+    "the_str_t",
+    "the_str_alloc",
+    "the_str_calloc",
+    "the_str_at",
+    "the_str_concat",
+    "the_str_contains",
+    "the_str_copy",
+    "the_str_empty",
+    "the_str_eq",
+    "the_str_escape",
+    "the_str_find",
+    "the_str_free",
+    "the_str_ge",
+    "the_str_gt",
+    "the_str_le",
+    "the_str_lines",
+    "the_str_lower",
+    "the_str_lowerFirst",
+    "the_str_lt",
+    "the_str_ne",
+    "the_str_not",
+    "the_str_realloc",
+    "the_str_replace",
+    "the_str_slice",
+    "the_str_split",
+    "the_str_toFloat",
+    "the_str_toF32",
+    "the_str_toF64",
+    "the_str_toIsize",
+    "the_str_toI8",
+    "the_str_toI16",
+    "the_str_toI32",
+    "the_str_toI64",
+    "the_str_toUsize",
+    "the_str_toU8",
+    "the_str_toU16",
+    "the_str_toU32",
+    "the_str_toU64",
+    "the_str_trim",
+    "the_str_trimEnd",
+    "the_str_trimStart",
+    "the_str_upper",
+    "the_str_upperFirst"
+  ],
+
+  "theUnion": ["THE_UNION_DECLARE", "THE_UNION_DEFINE"]
+}
+
 export obj Codegen {
   mut analyzer: ref Analyzer.Analyzer
   mut builtin: CodegenAPIBuiltin
@@ -279,7 +576,7 @@ export obj Codegen {
   }
 
   fn _ (mut self: ref Self, name: str) str {
-    if self._hasEntity(name) {
+    if self._hasEntity(name, withBuiltin: false) {
       mut item := self._getEntity(name)
 
       if !item.active {
@@ -287,337 +584,51 @@ export obj Codegen {
       }
 
       return item.codeName
-    } elif ["va_arg", "va_copy", "va_end", "va_list", "va_start"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("stdarg").contains(name) {
       self.builtin.stdarg = true
-    } elif ["bool", "false", "true"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("stdbool").contains(name) {
       self.builtin.stdbool = true
-    } elif (
-      [
-        "EXIT_FAILURE",
-        "NULL",
-        "exit",
-        "size_t"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("stddef").contains(name) {
       self.builtin.stddef = true
-    } elif (
-      [
-        "fprintf",
-        "printf",
-        "snprintf",
-        "sprintf",
-        "stderr",
-        "stdin",
-        "stdout"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("stdio").contains(name) {
       self.builtin.stdio = true
-    } elif (
-      [
-        "int8_t",
-        "int16_t",
-        "int32_t",
-        "int64_t",
-        "uint8_t",
-        "uint16_t",
-        "uint32_t",
-        "uint64_t"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("stdint").contains(name) {
       self.builtin.stdint = true
-    } elif (
-      [
-        "wchar_t"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("wchar").contains(name) {
       self.builtin.wchar = true
-    } elif (
-      [
-        "THE_ANY_DECLARE",
-        "THE_ANY_DEFINE",
-        "the_any_t",
-        "the_any_copy",
-        "the_any_eq",
-        "the_any_free",
-        "the_any_ne",
-        "the_any_realloc",
-        "the_any_str"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theAny").contains(name) {
       self.builtin.theAny = true
-    } elif ["THE_ARRAY_DECLARE", "THE_ARRAY_DEFINE"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theArray").contains(name) {
       self.builtin.theArray = true
-    } elif ["the_bool_str"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theBool").contains(name) {
       self.builtin.theBool = true
-    } elif ["the_byte_str"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theByte").contains(name) {
       self.builtin.theByte = true
-    } elif (
-      [
-        "the_char_byte",
-        "the_char_isDigit",
-        "the_char_isLetter",
-        "the_char_isLetterOrDigit",
-        "the_char_isLower",
-        "the_char_isUpper",
-        "the_char_isWhitespace",
-        "the_char_lower",
-        "the_char_repeat",
-        "the_char_str",
-        "the_char_upper"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theChar").contains(name) {
       self.builtin.theChar = true
-    } elif (
-      [
-        "TYPE_Error",
-        "the_Error_t",
-        "the_err_buf_t",
-        "the_err_stack_t",
-        "the_err_state",
-        "the_err_state_t",
-        "the_error_assign",
-        "the_error_assign_generic",
-        "the_error_buf_decrease",
-        "the_error_buf_increase",
-        "the_error_stack_pop",
-        "the_error_stack_push",
-        "the_error_unset",
-        "the_Error_alloc",
-        "the_Error_free"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theError").contains(name) {
       self.builtin.theError = true
-    } elif (
-      [
-        "THE_FUNCTION_DECLARE",
-        "THE_FUNCTION_DECLARE_WITH_PARAMS",
-        "THE_FUNCTION_DEFINE",
-        "THE_FUNCTION_DEFINE_WITH_PARAMS",
-        "the_fn_ctx_free_generic"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theFn").contains(name) {
       self.builtin.theFn = true
-    } elif (
-      [
-        "the_arr_any_t",
-        "the_arr_any_alloc",
-        "the_arr_any_at",
-        "the_arr_any_clear",
-        "the_arr_any_concat",
-        "the_arr_any_contains",
-        "the_arr_any_copy",
-        "the_arr_any_empty",
-        "the_arr_any_eq",
-        "the_arr_any_filter",
-        "the_arr_any_first",
-        "the_arr_any_forEach",
-        "the_arr_any_free",
-        "the_arr_any_join",
-        "the_arr_any_last",
-        "the_arr_any_merge",
-        "the_arr_any_pop",
-        "the_arr_any_push",
-        "the_arr_any_realloc",
-        "the_arr_any_remove",
-        "the_arr_any_reverse",
-        "the_arr_any_slice",
-        "the_arr_any_sort",
-        "the_arr_any_str",
-
-        "the_fn_sFP3anyFRboolFE_t",
-        "the_fn_sFP3anyFRboolFE_params_t",
-        "the_fn_sFP3anyFRboolFE_alloc",
-        "the_fn_sFP3anyFRboolFE_copy",
-        "the_fn_sFP3anyFRboolFE_eq",
-        "the_fn_sFP3anyFRboolFE_free",
-        "the_fn_sFP3anyFRboolFE_realloc",
-        "the_fn_sFP3anyFRboolFE_str",
-
-        "the_fn_sFP3anyFP3intFRvoidFE_t",
-        "the_fn_sFP3anyFP3intFRvoidFE_params_t",
-        "the_fn_sFP3anyFP3intFRvoidFE_alloc",
-        "the_fn_sFP3anyFP3intFRvoidFE_copy",
-        "the_fn_sFP3anyFP3intFRvoidFE_eq",
-        "the_fn_sFP3anyFP3intFRvoidFE_free",
-        "the_fn_sFP3anyFP3intFRvoidFE_realloc",
-        "the_fn_sFP3anyFP3intFRvoidFE_str",
-
-        "the_fn_sFP3anyFP3anyFRintFE_t",
-        "the_fn_sFP3anyFP3anyFRintFE_params_t",
-        "the_fn_sFP3anyFP3anyFRintFE_alloc",
-        "the_fn_sFP3anyFP3anyFRintFE_copy",
-        "the_fn_sFP3anyFP3anyFRintFE_eq",
-        "the_fn_sFP3anyFP3anyFRintFE_free",
-        "the_fn_sFP3anyFP3anyFRintFE_realloc",
-        "the_fn_sFP3anyFP3anyFRintFE_str",
-
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_t",
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t",
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_alloc",
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_copy",
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_eq",
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_free",
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_realloc",
-        "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_str",
-
-        "the_print"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theGlobals").contains(name) {
       self.builtin.theGlobals = true
-    } elif ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theMacro").contains(name) {
       self.builtin.theMacro = true
-    } elif (
-      [
-        "the_f32_str",
-        "the_f64_str",
-        "the_float_str",
-        "the_i8_str",
-        "the_i16_str",
-        "the_i32_str",
-        "the_i64_str",
-        "the_int_str",
-        "the_isize_str",
-        "the_u8_str",
-        "the_u16_str",
-        "the_u32_str",
-        "the_u64_str",
-        "the_usize_str"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theNumber").contains(name) {
       self.builtin.theNumber = true
-    } elif ["THE_OPTIONAL_DECLARE", "THE_OPTIONAL_DEFINE"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theOptional").contains(name) {
       self.builtin.theOptional = true
-    } elif ["THE_REFERENCE_DECLARE"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theReference").contains(name) {
       self.builtin.theReference = true
-    } elif (
-      [
-        "the_rune_byte",
-        "the_rune_isDigit",
-        "the_rune_isLetter",
-        "the_rune_isLetterOrDigit",
-        "the_rune_isLower",
-        "the_rune_isUpper",
-        "the_rune_isWhitespace",
-        "the_rune_lower",
-        "the_rune_repeat",
-        "the_rune_str",
-        "the_rune_upper"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theRune").contains(name) {
       self.builtin.theRune = true
-    } elif (
-      [
-        "the_safe_alloc",
-        "the_safe_calloc",
-        "the_safe_free",
-        "the_safe_realloc",
-        "the_safe_swap"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theSafe").contains(name) {
       self.builtin.theSafe = true
-    } elif ["the_thread_pool_init"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theThreadPool").contains(name) {
       self.builtin.theThreadPool = true
-    } elif (
-      [
-        "the_arr_str_t",
-        "the_arr_str_alloc",
-        "the_arr_str_at",
-        "the_arr_str_clear",
-        "the_arr_str_concat",
-        "the_arr_str_contains",
-        "the_arr_str_copy",
-        "the_arr_str_empty",
-        "the_arr_str_eq",
-        "the_arr_str_filter",
-        "the_arr_str_first",
-        "the_arr_str_forEach",
-        "the_arr_str_free",
-        "the_arr_str_join",
-        "the_arr_str_last",
-        "the_arr_str_merge",
-        "the_arr_str_pop",
-        "the_arr_str_push",
-        "the_arr_str_realloc",
-        "the_arr_str_remove",
-        "the_arr_str_reverse",
-        "the_arr_str_slice",
-        "the_arr_str_sort",
-        "the_arr_str_str",
-
-        "the_fn_sFP3strFRboolFE_t",
-        "the_fn_sFP3strFRboolFE_params_t",
-        "the_fn_sFP3strFRboolFE_alloc",
-        "the_fn_sFP3strFRboolFE_copy",
-        "the_fn_sFP3strFRboolFE_eq",
-        "the_fn_sFP3strFRboolFE_free",
-        "the_fn_sFP3strFRboolFE_realloc",
-        "the_fn_sFP3strFRboolFE_str",
-
-        "the_fn_sFP3strFP3intFRvoidFE_t",
-        "the_fn_sFP3strFP3intFRvoidFE_params_t",
-        "the_fn_sFP3strFP3intFRvoidFE_alloc",
-        "the_fn_sFP3strFP3intFRvoidFE_copy",
-        "the_fn_sFP3strFP3intFRvoidFE_eq",
-        "the_fn_sFP3strFP3intFRvoidFE_free",
-        "the_fn_sFP3strFP3intFRvoidFE_realloc",
-        "the_fn_sFP3strFP3intFRvoidFE_str",
-
-        "the_fn_sFP3strFP3strFRintFE_t",
-        "the_fn_sFP3strFP3strFRintFE_params_t",
-        "the_fn_sFP3strFP3strFRintFE_alloc",
-        "the_fn_sFP3strFP3strFRintFE_copy",
-        "the_fn_sFP3strFP3strFRintFE_eq",
-        "the_fn_sFP3strFP3strFRintFE_free",
-        "the_fn_sFP3strFP3strFRintFE_realloc",
-        "the_fn_sFP3strFP3strFRintFE_str",
-
-        "the_str_t",
-        "the_str_alloc",
-        "the_str_calloc",
-        "the_str_at",
-        "the_str_concat",
-        "the_str_contains",
-        "the_str_copy",
-        "the_str_empty",
-        "the_str_eq",
-        "the_str_escape",
-        "the_str_find",
-        "the_str_free",
-        "the_str_ge",
-        "the_str_gt",
-        "the_str_le",
-        "the_str_lines",
-        "the_str_lower",
-        "the_str_lowerFirst",
-        "the_str_lt",
-        "the_str_ne",
-        "the_str_not",
-        "the_str_realloc",
-        "the_str_replace",
-        "the_str_slice",
-        "the_str_split",
-        "the_str_toFloat",
-        "the_str_toF32",
-        "the_str_toF64",
-        "the_str_toIsize",
-        "the_str_toI8",
-        "the_str_toI16",
-        "the_str_toI32",
-        "the_str_toI64",
-        "the_str_toUsize",
-        "the_str_toU8",
-        "the_str_toU16",
-        "the_str_toU32",
-        "the_str_toU64",
-        "the_str_trim",
-        "the_str_trimEnd",
-        "the_str_trimStart",
-        "the_str_upper",
-        "the_str_upperFirst"
-      ].contains(name)
-    ) {
+    } elif BUILTIN_ENTITIES.get("theString").contains(name) {
       self.builtin.theString = true
-    } elif ["THE_UNION_DECLARE", "THE_UNION_DEFINE"].contains(name) {
+    } elif BUILTIN_ENTITIES.get("theUnion").contains(name) {
       self.builtin.theUnion = true
     } else {
       throw error_NewError("Tried activating unknown entity '" + name + "'")
@@ -2429,12 +2440,24 @@ export obj Codegen {
     throw error_NewError("Entity with name '" + name + "' doesn't exists")
   }
 
-  fn _hasEntity (self: ref Self, name: str) bool {
+  fn _hasEntity (self: ref Self, name: str, withBuiltin := true) bool {
     loop i := self.entities.len - 1; i >= 0; i-- {
       entity := self.entities[i]
 
       if entity.name == name {
         return true
+      }
+    }
+
+    if withBuiltin {
+      builtinEntitiesValues := BUILTIN_ENTITIES.values
+
+      loop i := builtinEntitiesValues.len - 1; i >= 0; i-- {
+        entityValues := builtinEntitiesValues[i]
+
+        if entityValues.contains(name) {
+          return true
+        }
       }
     }
 
