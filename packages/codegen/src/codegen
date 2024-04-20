@@ -74,7 +74,7 @@ export obj CodegenEntity {
   mut name: str
   mut codeName: str
   mut context: any
-  mut generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[]
+  mut generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[]
 }
 
 export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
@@ -638,7 +638,6 @@ export obj Codegen {
   }
 
   fn _assemble (mut self: ref Self) {
-    mut file := self.analyzer.files.last()
     mut prevActive := 0
 
     loop {
@@ -651,7 +650,7 @@ export obj Codegen {
           continue
         }
 
-        entity.generate(self, ref file.tm, entity)
+        entity.generate(self, entity)
         currentActive++
       }
 
@@ -674,7 +673,7 @@ export obj Codegen {
         continue
       }
 
-      result := entity.generate(self, ref file.tm, entity)
+      result := entity.generate(self, entity)
       resultStatements := (result is AST.CStatement) ? [result] : result
 
       loop j := 0; j < resultStatements.len; j++ {
@@ -1909,7 +1908,7 @@ export obj Codegen {
       name: name,
       codeName: name,
       context: item,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := self._type(it)
         typeDef := self._typeDef(it)
@@ -1935,7 +1934,8 @@ export obj Codegen {
 
     methods := ["alloc"]
 
-    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+    // todo replace with GenerateReturnType
+    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
       self._(entity.context as str)
       return AST.createEmptyStatement()
     }
@@ -1966,7 +1966,7 @@ export obj Codegen {
       name: name,
       codeName: name,
       context: item,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := it.asArray()
         elementTypeName := self._typeName(t.elementType)
@@ -1979,7 +1979,7 @@ export obj Codegen {
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DEFINE"), [
             AST.createIdentifier(elementTypeName),
             AST.createType(self._type(t.elementType)),
-            AST.createType(self._type(typeSafeForVaArg(tm, t.elementType))),
+            AST.createType(self._type(typeSafeForVaArg(self._tm(), t.elementType))),
             self._functionCopy(t.elementType, AST.createIdentifier("element")),
             self._functionEq(t.elementType, AST.createIdentifier("lhs_element"), AST.createIdentifier("rhs_element")),
             self._functionFree(t.elementType, AST.createIdentifier("element")),
@@ -2015,7 +2015,7 @@ export obj Codegen {
       "str"
     ]
 
-    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
       self._(entity.context as str)
       return AST.createEmptyStatement()
     }
@@ -2050,7 +2050,7 @@ export obj Codegen {
         name: name,
         codeName: name,
         context: item,
-        generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+        generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
           it := entity.context as ref Analyzer.Type
           t := it.asFunction()
           returnType := self._type(t.returnType)
@@ -2097,7 +2097,7 @@ export obj Codegen {
         name: name,
         codeName: name,
         context: item,
-        generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+        generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
           it := entity.context as ref Analyzer.Type
           t := it.asFunction()
           returnType := self._type(t.returnType)
@@ -2118,7 +2118,7 @@ export obj Codegen {
 
     methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
 
-    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
       self._(entity.context as str)
       return AST.createEmptyStatement()
     }
@@ -2158,7 +2158,7 @@ export obj Codegen {
       name: name,
       codeName: name,
       context: item,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := it.asOptional()
         underlyingType := self._type(t.t)
@@ -2183,7 +2183,7 @@ export obj Codegen {
 
     methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
 
-    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
       self._(entity.context as str)
       return AST.createEmptyStatement()
     }
@@ -2214,7 +2214,7 @@ export obj Codegen {
       name: name,
       codeName: name,
       context: item,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := it.asReference()
 
@@ -2240,7 +2240,7 @@ export obj Codegen {
       name: name,
       codeName: name,
       context: item,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         it := entity.context as ref Analyzer.Type
         t := it.asUnion()
         unionName := entity.codeName.slice(10, -4)
@@ -2409,7 +2409,7 @@ export obj Codegen {
 
     methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
 
-    entityCallee := (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
       self._(entity.context as str)
       return AST.createEmptyStatement()
     }
@@ -2535,10 +2535,10 @@ export obj Codegen {
     throw error_NewError("Failed to generate type for '" + it.toString() + "'")
   }
 
-  fn _wrap (mut self: ref Self, expression: AST.CExpression, t: ref Analyzer.Type, targetType: ref Analyzer.Type) AST.CExpression {
+  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, t: ref Analyzer.Type, targetType: ref Analyzer.Type) AST.CExpression {
     if targetType.name == "any" && t.name != "any" {
       allocAnyType := self._generateAnyType(t).slice(0, -2) + "_alloc"
-      return AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
+      expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
     } elif targetType.name != "any" && t.name == "any" {
       typeName := self._generateAnyType(targetType)
 
@@ -2548,12 +2548,12 @@ export obj Codegen {
         AST.createPropertyAccessExpression(expression, "ctx")
       )
 
-      return AST.createUnaryExpression("*", innerExpression.wrap())
+      expression = AST.createUnaryExpression("*", innerExpression.wrap())
     } elif targetType.isUnion() && !t.isUnion() {
       allocTargetType := self._type(targetType, "_alloc")
       typeDef := self._typeDef(t)
 
-      return AST.createCallExpression(AST.createIdentifier(allocTargetType), [
+      expression = AST.createCallExpression(AST.createIdentifier(allocTargetType), [
         AST.createIdentifier(self._(typeDef)),
         expression
       ])
@@ -2562,7 +2562,7 @@ export obj Codegen {
       typeDefIdx := self.typeDefs.get(typeName)
 
       // TODO: throw error if not possible to cast
-      return AST.createPropertyAccessExpression(
+      expression = AST.createPropertyAccessExpression(
         AST.createPropertyAccessExpression(expression, "data"),
         "v" + typeDefIdx.str()
       )
@@ -2585,7 +2585,7 @@ export obj Codegen {
       name: typeName,
       codeName: typeName,
       context: it,
-      generate: (mut self: ref Codegen, mut tm: ref Analyzer.TypeMap, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> AST.CStatement | AST.CStatement[] {
         typeDefIdx := self.typeDefs.get(entity.codeName)
         return AST.createDefineDirective(entity.codeName, nil, typeDefIdx.str())
       }
