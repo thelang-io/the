@@ -90,24 +90,25 @@ export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
 
 export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
   if !item.hasParent() && item.hasParentNode() {
-    node := item.parentNode()
-    return !node.isVariableDeclaration()
+    parent := item.parentNode()
+    return !parent.isVariableDeclaration()
+  } elif item.isParenthesized() {
+    expression := item.asParenthesized()
+    return expressionShouldBeAllocated(ref expression.expression)
   }
 
-  return true
+  return !item.isIdentifier() && !item.isAssignment()
 }
 
 export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
-  if !item.hasParent() {
-    if item.hasParentNode() {
-      parentNode := item.parentNode()
-      return !parentNode.isVariableDeclaration()
-    } else {
-      return true
-    }
+  if item.hasParent() {
+    return false
+  } elif !item.hasParentNode() {
+    parent := item.parentNode()
+    return !parent.isVariableDeclaration()
+  } else {
+    return true
   }
-
-  return false
 }
 
 export fn statementHasPrecedingNonVarDecl (item: ref Parser.Statement) bool {
@@ -1048,7 +1049,7 @@ export obj Codegen {
       return self._wrap(result, item, typeContext.t, optionalTargetType as ref Analyzer.Type, transform: true)
     }
 
-    throw error_NewError("Tried code generation for unknown expression")
+    throw error_NewError("Tried code generation for unknown expression '" + Parser.stringifyExpression(item) + "'")
   }
 
   fn _generateStatement (mut self: ref Self, item: ref Parser.Statement) AST.CStatement {
@@ -1074,7 +1075,7 @@ export obj Codegen {
       return result
     }
 
-    throw error_NewError("Tried code generation for unknown statement")
+    throw error_NewError("Tried code generation for unknown statement '" + Parser.stringifyStatement(item) + "'")
   }
 
   fn _generateIdentifier (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1215,7 +1216,7 @@ export obj Codegen {
       expression.operator.t == .OpGt ||
       expression.operator.t == .OpGtEq
     ) {
-      direction := expression.operator.t == .OpLt
+      operator := expression.operator.t == .OpLt
         ? "lt"
         : expression.operator.t == .OpLtEq
           ? "le"
@@ -1223,10 +1224,9 @@ export obj Codegen {
             ? "gt"
             : "ge"
 
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_" + direction)), [left, right])
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_" + operator)), [left, right])
     } elif expression.operator.t == .OpPlus && leftType.name == "str" && rightType.name == "str" {
-      result := AST.createCallExpression(AST.createIdentifier(self._("the_str_concat")), [left, right])
-      return item.hasParent() ? result : self._functionFree(leftType, result)
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_concat")), [left, right])
     }
 
     return AST.createBinaryExpression(left, expression.operator.val, right)
@@ -1241,6 +1241,7 @@ export obj Codegen {
     validateContext(item.context is Analyzer.CallExpressionContext)
     context := item.context as Analyzer.CallExpressionContext
 
+    // todo problem somewhere here
     if expressionIsBuiltinMethod(ref expression.callee) {
       calleeBody := expression.callee.asPropertyAccess()
 
@@ -1324,11 +1325,7 @@ export obj Codegen {
       ]))
     }
 
-    result := AST.createCallExpression(AST.createPropertyAccessExpression(calleeExpression, "func"), args)
-
-    return expressionShouldBeFreed(item) && typeShouldBeFreed(context.returnType)
-      ? self._functionFree(context.returnType, result)
-      : result
+    return AST.createCallExpression(AST.createPropertyAccessExpression(calleeExpression, "func"), args)
   }
 
   fn _generateConditionalExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
