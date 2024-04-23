@@ -103,7 +103,7 @@ export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
 export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   if item.hasParent() {
     return false
-  } elif !item.hasParentNode() {
+  } elif item.hasParentNode() {
     parent := item.parentNode()
     return !parent.isVariableDeclaration()
   } else {
@@ -1241,7 +1241,6 @@ export obj Codegen {
     validateContext(item.context is Analyzer.CallExpressionContext)
     context := item.context as Analyzer.CallExpressionContext
 
-    // todo problem somewhere here
     if expressionIsBuiltinMethod(ref expression.callee) {
       calleeBody := expression.callee.asPropertyAccess()
 
@@ -2591,6 +2590,10 @@ export obj Codegen {
     targetType: ref Analyzer.Type,
     transform := false
   ) AST.CExpression {
+    if transform && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
+      expression = self._allocateExpression(t, expression)
+    }
+
     if targetType.name == "any" && t.name != "any" {
       allocAnyType := self._generateAnyType(t).slice(0, -2) + "_alloc"
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
