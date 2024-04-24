@@ -95,6 +95,20 @@ export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
   } elif item.isParenthesized() {
     expression := item.asParenthesized()
     return expressionShouldBeAllocated(ref expression.expression)
+  } elif item.hasParent() {
+    mut parent := item.parent()
+
+    loop parent.isParenthesized() {
+      if !parent.hasParent() {
+        break
+      }
+
+      parent = parent.parent()
+    }
+
+    if parent.isConditional() {
+      return false
+    }
   }
 
   return !item.isIdentifier() && !item.isAssignment()
@@ -2630,9 +2644,11 @@ export obj Codegen {
       return expression
     }
 
+    typesMatch := Analyzer.match(t, targetType)
+
     if typeShouldBeFreed(targetType) && expressionShouldBeFreed(item) {
       expression = self._functionFree(targetType, expression)
-    } elif typeShouldBeAllocated(targetType) && expressionShouldBeAllocated(item) {
+    } elif !typesMatch && typeShouldBeAllocated(targetType) && expressionShouldBeAllocated(item) {
       expression = self._allocateExpression(targetType, expression)
     }
 
