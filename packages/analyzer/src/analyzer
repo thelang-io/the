@@ -1562,6 +1562,11 @@ export obj AnalyzerFile {
       self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
     }
 
+    it.context = Context.AsExpressionContext{
+      currentType: t,
+      originalType: expressionType
+    }
+
     return t
   }
 

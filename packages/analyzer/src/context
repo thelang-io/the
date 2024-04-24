@@ -16,6 +16,11 @@ export obj ArrayExpressionContext {
   mut elementType: ref Type
 }
 
+export obj AsExpressionContext {
+  mut currentType: ref Type
+  mut originalType: ref Type
+}
+
 export obj AssignmentExpressionContext {
   mut leftType: ref Type
   mut rightType: ref Type
