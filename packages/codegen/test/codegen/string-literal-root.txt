@@ -10,10 +10,11 @@ Multiline";
 }
 ===== code =====
 #include <the/macro.h>
+#include <the/string.h>
 int main (void) {
-  L"";
-  L"Hello, World!";
-  L"Multiline\nString";
-  L"Multiline" THE_EOL "String" THE_EOL "Multiline";
+  the_str_free(the_str_alloc(L""));
+  the_str_free(the_str_alloc(L"Hello, World!"));
+  the_str_free(the_str_alloc(L"Multiline\nString"));
+  the_str_free(the_str_alloc(L"Multiline" THE_EOL "String" THE_EOL "Multiline"));
 }
 ===== output =====

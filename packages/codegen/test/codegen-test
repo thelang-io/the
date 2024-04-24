@@ -26,7 +26,6 @@ export fn TEST_Codegen () {
     fileSections := retrieveFileSections("./test/codegen/" + name + ".txt")
     executablePath := "./build/" + name + ".out"
     codePath := "./build/" + name + ".c"
-    if name != "is-expression" { continue }
 
     mut analyzer := Analyzer.Analyzer{}
 

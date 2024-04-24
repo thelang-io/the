@@ -1046,6 +1046,7 @@ export obj Codegen {
       (result = self._generateLiteral(item)) != nil ||
       (result = self._generateParenthesizedExpression(item)) != nil ||
       (result = self._generateArrayExpression(item)) != nil ||
+      (result = self._generateAsExpression(item)) != nil ||
       (result = self._generateAssignmentExpression(item)) != nil ||
       (result = self._generateBinaryExpression(item)) != nil ||
       (result = self._generateConditionalExpression(item)) != nil ||
@@ -1169,6 +1170,18 @@ export obj Codegen {
     }
 
     return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), arguments)
+  }
+
+  fn _generateAsExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if !item.isAs() {
+      return nil
+    }
+
+    expression := item.asAs()
+    validateContext(item.context is Analyzer.AsExpressionContext)
+    context := item.context as Analyzer.AsExpressionContext
+
+    return self._wrap(self._generateExpression(ref expression.expression), item, context.originalType, context.currentType)
   }
 
   fn _generateAssignmentExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -2604,7 +2617,9 @@ export obj Codegen {
     targetType: ref Analyzer.Type,
     transform := false
   ) AST.CExpression {
-    if transform && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
+    shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
+
+    if transform && !shouldFree && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
       expression = self._allocateExpression(t, expression)
     }
 
@@ -2646,7 +2661,7 @@ export obj Codegen {
 
     typesMatch := Analyzer.match(t, targetType)
 
-    if typeShouldBeFreed(targetType) && expressionShouldBeFreed(item) {
+    if shouldFree {
       expression = self._functionFree(targetType, expression)
     } elif !typesMatch && typeShouldBeAllocated(targetType) && expressionShouldBeAllocated(item) {
       expression = self._allocateExpression(targetType, expression)

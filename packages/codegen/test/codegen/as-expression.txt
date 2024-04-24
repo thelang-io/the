@@ -1,0 +1,232 @@
+main {
+  a: i8 = 10
+  print(a as i16)
+  print(a as i32)
+  print(a as int)
+  print(a as i64)
+  print(a as float)
+  print(a as f32)
+  print(a as f64)
+
+  b: u8 = 10
+  print(b as u16)
+  print(b as u32)
+  print(b as u64)
+  print(b as float)
+  print(b as f32)
+  print(b as f64)
+
+  c := 10
+  print(c as i32)
+  print(c as i64)
+  print(c as float)
+  print(c as f32)
+  print(c as f64)
+
+  d: byte = 65
+  print(d as i8)
+  print(d as u8)
+  print(d as char)
+  print(d as int)
+  print(d as float)
+
+  e := 'a'
+  print(e as i8)
+  print(e as u8)
+  print(e as int)
+  print(e as float)
+
+  f := true
+  print(f as i8)
+  print(f as u8)
+  print(f as int)
+  print(f as float)
+}
+===== code =====
+#include <the/any.h>
+#include <the/char.h>
+#include <the/globals.h>
+#include <the/number.h>
+#include <the/safe.h>
+#include <the/string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <wchar.h>
+#define TYPE_i16 1
+#define TYPE_i32 2
+#define TYPE_int 3
+#define TYPE_i64 4
+#define TYPE_float 5
+#define TYPE_f32 6
+#define TYPE_f64 7
+#define TYPE_u16 8
+#define TYPE_u32 9
+#define TYPE_u64 10
+#define TYPE_i8 11
+#define TYPE_u8 12
+#define TYPE_char 13
+THE_ANY_DECLARE(char, char)
+THE_ANY_DECLARE(u8, uint8_t)
+THE_ANY_DECLARE(i8, int8_t)
+THE_ANY_DECLARE(u64, uint64_t)
+THE_ANY_DECLARE(u32, uint32_t)
+THE_ANY_DECLARE(u16, uint16_t)
+THE_ANY_DECLARE(f64, double)
+THE_ANY_DECLARE(f32, float)
+THE_ANY_DECLARE(float, double)
+THE_ANY_DECLARE(i64, int64_t)
+THE_ANY_DECLARE(int, int32_t)
+THE_ANY_DECLARE(i32, int32_t)
+THE_ANY_DECLARE(i16, int16_t)
+THE_ANY_DEFINE(TYPE_char, char, char, val, lhs_val == rhs_val, (void) val, the_char_str(val))
+THE_ANY_DEFINE(TYPE_u8, u8, uint8_t, val, lhs_val == rhs_val, (void) val, the_u8_str(val))
+THE_ANY_DEFINE(TYPE_i8, i8, int8_t, val, lhs_val == rhs_val, (void) val, the_i8_str(val))
+THE_ANY_DEFINE(TYPE_u64, u64, uint64_t, val, lhs_val == rhs_val, (void) val, the_u64_str(val))
+THE_ANY_DEFINE(TYPE_u32, u32, uint32_t, val, lhs_val == rhs_val, (void) val, the_u32_str(val))
+THE_ANY_DEFINE(TYPE_u16, u16, uint16_t, val, lhs_val == rhs_val, (void) val, the_u16_str(val))
+THE_ANY_DEFINE(TYPE_f64, f64, double, val, lhs_val == rhs_val, (void) val, the_f64_str(val))
+THE_ANY_DEFINE(TYPE_f32, f32, float, val, lhs_val == rhs_val, (void) val, the_f32_str(val))
+THE_ANY_DEFINE(TYPE_float, float, double, val, lhs_val == rhs_val, (void) val, the_float_str(val))
+THE_ANY_DEFINE(TYPE_i64, i64, int64_t, val, lhs_val == rhs_val, (void) val, the_i64_str(val))
+THE_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
+THE_ANY_DEFINE(TYPE_i32, i32, int32_t, val, lhs_val == rhs_val, (void) val, the_i32_str(val))
+THE_ANY_DEFINE(TYPE_i16, i16, int16_t, val, lhs_val == rhs_val, (void) val, the_i16_str(val))
+int main (void) {
+  the_any_t __THE_1 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_2 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_3 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_4 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_5 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_6 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_7 = {-1, NULL, NULL, NULL, NULL, NULL};
+  uint8_t b;
+  the_any_t __THE_8 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_9 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_10 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_11 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_12 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_13 = {-1, NULL, NULL, NULL, NULL, NULL};
+  int32_t c;
+  the_any_t __THE_14 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_15 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_16 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_17 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_18 = {-1, NULL, NULL, NULL, NULL, NULL};
+  unsigned char d;
+  the_any_t __THE_19 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_20 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_21 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_22 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_23 = {-1, NULL, NULL, NULL, NULL, NULL};
+  wchar_t e;
+  the_any_t __THE_24 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_25 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_26 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_27 = {-1, NULL, NULL, NULL, NULL, NULL};
+  bool f;
+  the_any_t __THE_28 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_29 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_30 = {-1, NULL, NULL, NULL, NULL, NULL};
+  the_any_t __THE_31 = {-1, NULL, NULL, NULL, NULL, NULL};
+  int8_t a = 10;
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_1 = the_any_i16_alloc(a)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_2 = the_any_i32_alloc(a)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_3 = the_any_int_alloc(a)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_4 = the_any_i64_alloc(a)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_5 = the_any_float_alloc(a)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_6 = the_any_f32_alloc(a)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_7 = the_any_f64_alloc(a)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  b = 10;
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_8 = the_any_u16_alloc(b)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_9 = the_any_u32_alloc(b)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_10 = the_any_u64_alloc(b)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_11 = the_any_float_alloc(b)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_12 = the_any_f32_alloc(b)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_13 = the_any_f64_alloc(b)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  c = 10;
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_14 = the_any_i32_alloc(c)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_15 = the_any_i64_alloc(c)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_16 = the_any_float_alloc(c)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_17 = the_any_f32_alloc(c)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_18 = the_any_f64_alloc(c)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d = 65;
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_19 = the_any_i8_alloc(d)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_20 = the_any_u8_alloc(d)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_21 = the_any_char_alloc(d)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_22 = the_any_int_alloc(d)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_23 = the_any_float_alloc(d)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  e = L'a';
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_24 = the_any_i8_alloc(e)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_25 = the_any_u8_alloc(e)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_26 = the_any_int_alloc(e)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_27 = the_any_float_alloc(e)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  f = true;
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_28 = the_any_i8_alloc(f)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_29 = the_any_u8_alloc(f)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_30 = the_any_int_alloc(f)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, __THE_31 = the_any_float_alloc(f)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  the_any_free(__THE_31);
+  the_any_free(__THE_30);
+  the_any_free(__THE_29);
+  the_any_free(__THE_28);
+  the_any_free(__THE_27);
+  the_any_free(__THE_26);
+  the_any_free(__THE_25);
+  the_any_free(__THE_24);
+  the_any_free(__THE_23);
+  the_any_free(__THE_22);
+  the_any_free(__THE_21);
+  the_any_free(__THE_20);
+  the_any_free(__THE_19);
+  the_any_free(__THE_18);
+  the_any_free(__THE_17);
+  the_any_free(__THE_16);
+  the_any_free(__THE_15);
+  the_any_free(__THE_14);
+  the_any_free(__THE_13);
+  the_any_free(__THE_12);
+  the_any_free(__THE_11);
+  the_any_free(__THE_10);
+  the_any_free(__THE_9);
+  the_any_free(__THE_8);
+  the_any_free(__THE_7);
+  the_any_free(__THE_6);
+  the_any_free(__THE_5);
+  the_any_free(__THE_4);
+  the_any_free(__THE_3);
+  the_any_free(__THE_2);
+  the_any_free(__THE_1);
+}
+===== output =====
+10
+10
+10
+10
+10.0
+10.0
+10.0
+10
+10
+10
+10.0
+10.0
+10.0
+10
+10
+10.0
+10.0
+10.0
+65
+65
+A
+65
+65.0
+97
+97
+97
+97.0
+1
+1
+1
+1.0
