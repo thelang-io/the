@@ -2636,6 +2636,8 @@ export obj Codegen {
       )
 
       expression = AST.createUnaryExpression("*", innerExpression.wrap())
+    } elif !targetType.isReference() && t.isReference() {
+      expression = AST.createUnaryExpression("*", expression)
     } elif targetType.isUnion() && !t.isUnion() {
       allocTargetType := self._type(targetType, "_alloc")
       typeDef := self._typeDef(t)

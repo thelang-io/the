@@ -1,0 +1,23 @@
+main {
+  mut a := 1
+  mut b := 2
+
+  mut ref1 := ref a
+
+  ref1 += 1
+  ref1 = ref b
+  ref1 += 2
+
+  v01 := a + ref1
+  v02 := ref1 > b
+  v03 := ref1 + b
+  v04 := ref1 == b
+  v05 := ref1 - ref1
+  v06 := true ? a : ref1
+  v07 := false ? ref1 : b
+  v08 := false ? ref a : ref1
+  v09 := ~ref1
+  v10 := !(ref a)
+}
+===== code =====
+===== output =====
