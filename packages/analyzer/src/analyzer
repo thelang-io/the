@@ -555,7 +555,7 @@ export obj AnalyzerFile {
       targetType = secondType
     }
 
-    if firstTypeFailed {
+    if firstTypeFailed || !Type.match(secondType, firstType) {
       firstType = cb1(targetType)
     }
 
