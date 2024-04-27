@@ -555,9 +555,7 @@ export obj AnalyzerFile {
       targetType = secondType
     }
 
-    if firstTypeFailed || !Type.match(secondType, firstType) {
-      firstType = cb1(targetType)
-    }
+    firstType = cb1(targetType)
 
     return GuessTypeResult{
       first: firstType,
