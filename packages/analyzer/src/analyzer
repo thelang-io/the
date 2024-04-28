@@ -550,12 +550,16 @@ export obj AnalyzerFile {
 
     secondType := cb2(targetType)
     secondTypeFailed := self.analyzer.errors.len != initialErrorsLen
+    mut shouldResetFirst := firstTypeFailed
 
     if !secondTypeFailed {
       targetType = secondType
+      shouldResetFirst ||= !Type.match(firstType, secondType)
     }
 
-    firstType = cb1(targetType)
+    if shouldResetFirst {
+      firstType = cb1(targetType)
+    }
 
     return GuessTypeResult{
       first: firstType,
@@ -1655,24 +1659,24 @@ export obj AnalyzerFile {
         leftTypeCastResult = self.typeCast(ref expression.left)
       }
 
-      return Type.unwrap(self.e(ref expression.left, operandType))
+      return self.e(ref expression.left, operandType)
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       initialTC := ref self.tc // todo remove after v1
 
       if leftTypeCastResult == nil {
-        return Type.unwrap(self.e(ref expression.right, operandType))
+        return self.e(ref expression.right, operandType)
       }
 
       definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
       self.tc.merge(definiteLeftTypeCastResult.consequent)
-      result := Type.unwrap(self.e(ref expression.right, operandType))
+      result := self.e(ref expression.right, operandType)
       self.tc = initialTC
 
       return result
     })
 
-    leftType := guessTypeResult.first
-    rightType := guessTypeResult.second
+    leftType := Type.unwrap(guessTypeResult.first)
+    rightType := Type.unwrap(guessTypeResult.second)
 
     if !self.operands(expression.operator, leftType, rightType) {
       self.raise(
@@ -1900,20 +1904,20 @@ export obj AnalyzerFile {
 
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
       self.tc.merge(typeCastResult.consequent)
-      result := Type.unwrap(self.e(ref expression.consequent, operandType, withMutable: withMutable || withMutableNext))
+      result := self.e(ref expression.consequent, operandType, withMutable: withMutable || withMutableNext)
       self.tc = initialTC
 
       return result
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       self.tc.merge(typeCastResult.alternate)
-      result := Type.unwrap(self.e(ref expression.alternate, operandType, withMutable: withMutable || withMutableNext))
+      result := self.e(ref expression.alternate, operandType, withMutable: withMutable || withMutableNext)
       self.tc = initialTC
 
       return result
     })
 
-    consequentType := guessTypeResult.first
-    alternateType := guessTypeResult.second
+    consequentType := Type.unwrap(guessTypeResult.first)
+    alternateType := Type.unwrap(guessTypeResult.second)
 
     it.context = Context.ConditionalExpressionContext{
       conditionType: conditionType,
