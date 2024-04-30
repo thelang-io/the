@@ -1417,20 +1417,16 @@ export obj Codegen {
     expression := item.asUnary()
     validateContext(item.context is Analyzer.UnaryExpressionContext)
     context := item.context as Analyzer.UnaryExpressionContext
+    mut operand := self._generateExpression(ref expression.operand)
 
     if context.operandType.isFloat() {
-      castExpression := AST.createCastExpression(AST.createType(self._("bool")), self._generateExpression(ref expression.operand))
-
-      return AST.createUnaryExpression(
-        expression.operator.val,
-        castExpression.wrap(),
-        postfix: !expression.prefix
-      )
+      operand = AST.createCastExpression(AST.createType(self._("bool")), operand)
+      operand = operand.wrap()
     }
 
     return AST.createUnaryExpression(
       expression.operator.val,
-      self._generateExpression(ref expression.operand),
+      operand,
       postfix: !expression.prefix
     )
   }
