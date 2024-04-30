@@ -2224,13 +2224,22 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asUnary()
+    mutatingOperator := expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
+    mut potentialTargetType := targetType
+
+    if potentialTargetType == nil {
+      guardFailed := self.guard(() -> void {
+        initialTC := ref self.tc // todo remove after v1
+        potentialTargetType = Type.unwrap(self.e(ref expression.operand, withMutable: mutatingOperator))
+      })
+
+      if guardFailed {
+        potentialTargetType = targetType
+      }
+    }
 
     operandType := Type.unwrap(
-      expression.operator.t == .OpExcl
-        ? self.e(ref expression.operand)
-        : expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
-          ? self.e(ref expression.operand, withMutable: true)
-          : self.e(ref expression.operand, targetType)
+      self.e(ref expression.operand, potentialTargetType, withMutable: mutatingOperator)
     )
 
     it.context = Context.UnaryExpressionContext{operandType: operandType}
