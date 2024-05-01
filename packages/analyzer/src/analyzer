@@ -1919,8 +1919,8 @@ export obj AnalyzerFile {
       return result
     })
 
-    consequentType := Type.unwrap(guessTypeResult.first)
-    alternateType := Type.unwrap(guessTypeResult.second)
+    consequentType := Type.unwrap(guessTypeResult.first, withReference: false)
+    alternateType := Type.unwrap(guessTypeResult.second, withReference: false)
 
     it.context = Context.ConditionalExpressionContext{
       conditionType: conditionType,
@@ -2140,7 +2140,8 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asParenthesized()
-    return self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
+    expressionType := self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
+    return targetType != nil ? targetType : expressionType
   }
 
   fn _ePropertyAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool, withoutTypeCast: bool) (ref Type.Type)? {
