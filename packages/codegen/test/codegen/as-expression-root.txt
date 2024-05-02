@@ -1,0 +1,47 @@
+===== code =====
+main {
+  a: i8 = 10;
+  a as i16;
+  a as i32;
+  a as int;
+  a as i64;
+  a as float;
+  a as f32;
+  a as f64;
+
+  b: u8 = 10;
+  b as u16;
+  b as u32;
+  b as u64;
+  b as float;
+  b as f32;
+  b as f64;
+
+  c := 10;
+  c as i32;
+  c as i64;
+  c as float;
+  c as f32;
+  c as f64;
+
+  d: byte = 65;
+  d as i8;
+  d as u8;
+  d as char;
+  d as int;
+  d as float;
+
+  e := 'a';
+  e as i8;
+  e as u8;
+  e as byte;
+  e as int;
+  e as float;
+
+  f := true;
+  f as i8;
+  f as u8;
+  f as int;
+  f as float;
+}
+===== output =====

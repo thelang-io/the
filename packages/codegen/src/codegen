@@ -8,6 +8,17 @@ import * as AST from "the/c"
 import * as Parser from "the/parser"
 
 // todo error object needs special generation rules to move message and stack properties up front
+// todo implement await expression
+// todo implement closure expression
+// todo implement element access expression
+// todo implement map expression
+// todo implement member access expression
+// todo implement object expression
+// todo implement property access expression
+
+// to test:
+//  call
+// todo test expressions with types other than primitive
 
 export obj CodegenAPIBuiltin {
   mut theAny: bool

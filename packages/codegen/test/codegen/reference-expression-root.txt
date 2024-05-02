@@ -1,0 +1,14 @@
+main {
+  mut a := 1
+  mut b := 2;
+
+  ref a;
+  ref b;
+  (ref a) + (ref b);
+  true ? a : ref a;
+  false ? ref b : b;
+  false ? ref a : ref b;
+  !(ref a);
+}
+===== code =====
+===== output =====
