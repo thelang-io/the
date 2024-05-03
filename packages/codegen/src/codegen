@@ -10,14 +10,12 @@ import * as Parser from "the/parser"
 // todo error object needs special generation rules to move message and stack properties up front
 // todo implement await expression
 // todo implement closure expression
-// todo implement element access expression
 // todo implement map expression
 // todo implement member access expression
 // todo implement object expression
 // todo implement property access expression
 
-// to test:
-//  call
+// todo test call expression
 // todo test expressions with types other than primitive
 
 export obj CodegenAPIBuiltin {
@@ -1061,6 +1059,7 @@ export obj Codegen {
       (result = self._generateAssignmentExpression(item)) != nil ||
       (result = self._generateBinaryExpression(item)) != nil ||
       (result = self._generateConditionalExpression(item)) != nil ||
+      (result = self._generateElementAccessExpression(item)) != nil ||
       (result = self._generateIsExpression(item)) != nil ||
       (result = self._generateReferenceExpression(item)) != nil ||
       (result = self._generateUnaryExpression(item)) != nil
@@ -1385,6 +1384,60 @@ export obj Codegen {
       self._generateExpression(ref expression.consequent),
       alternate
     )
+  }
+
+  fn _generateElementAccessExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if !item.isElementAccess() {
+      return nil
+    }
+
+    // auto cObj = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, parent, c, true);
+    // auto cObjElem = this->_nodeExpr(*exprAccess.elem, this->ast->typeMap.get("int"), parent, c);
+    // auto fnName = objTypeInfo.realType->isArray() ? objTypeInfo.realTypeName + "_at" : "str_at";
+    // expr = CodegenASTExprCall::create(
+    //   CodegenASTExprAccess::create(this->_(fnName)),
+    //   {
+    //     this->_genErrState(ASTChecker(parent).insideMain(), false),
+    //     CodegenASTExprLiteral::create(line),
+    //     CodegenASTExprLiteral::create(col),
+    //     cObj,
+    //     cObjElem
+    //   }
+    // );
+    // auto exprText = expr->str();
+    // auto objMemberType = this->state.typeCasts.contains(exprText)
+    //   ? this->state.typeCasts[exprText]
+    //   : originalObjMemberType;
+    // if (originalObjMemberType->isOpt() && !objMemberType->isOpt()) {
+    //   expr = CodegenASTExprUnary::create("*", expr);
+    // }
+    // auto isTargetOptAndTypeNotOpt = targetType->isOpt() && !nodeExpr.type->isOpt() && nodeExpr.type->isRef() &&
+    //   std::get<TypeOptional>(targetType->body).type->matchStrict(nodeExpr.type);
+    // if (!nodeExpr.type->isRef() && targetType->isRef()) {
+    //   expr = CodegenASTExprUnary::create("&", expr);
+    // } else if (nodeExpr.type->isRef() && !targetType->isRef() && !isTargetOptAndTypeNotOpt) {
+    //   expr = CodegenASTExprUnary::create("*", expr);
+    // }
+    // auto isEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
+    // auto isRef = nodeExpr.type->isRef() && targetType->isRef();
+    // if (
+    //   !root &&
+    //   !isEnumField &&
+    //   !isRef &&
+    //   !(fieldTypeHasCallInfo && !fieldType->isRef()) &&
+    //   !isTargetOptAndTypeNotOpt
+    // ) {
+    //   expr = this->_genCopyFn(Type::real(nodeExpr.type), expr);
+    // }
+    // if (
+    //   root &&
+    //   nodeExpr.type->shouldBeFreed() &&
+    //   (exprAccess.prop == std::nullopt || (fieldType != nullptr && fieldType->shouldBeFreed()))
+    // ) {
+    //   expr = this->_genFreeFn(nodeExpr.type, expr);
+    // }
+
+    return nil
   }
 
   fn _generateIsExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
