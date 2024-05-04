@@ -1965,16 +1965,28 @@ export obj AnalyzerFile {
       self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
     }
 
+    originalContext := Context.ElementAccessExpressionContext{
+      t: t
+    }
+
     if targetType != nil {
       if Type.match(targetType, t) {
+        it.context = originalContext
         return t
       }
     } elif withoutTypeCast {
+      it.context = originalContext
       return t
     }
 
     code := Parser.stringifyExpression(it)
-    return self.tc.has(code) ? self.tc.get(code) : t
+    finalType := self.tc.has(code) ? self.tc.get(code) : t
+
+    it.context = Context.ElementAccessExpressionContext{
+      t: finalType
+    }
+
+    return finalType
   }
 
   fn _eIs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) (ref Type.Type)? {

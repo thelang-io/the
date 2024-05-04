@@ -13,6 +13,7 @@ import
   CallExpressionContext,
   CallExpressionContextArgument,
   ConditionalExpressionContext,
+  ElementAccessExpressionContext,
   IsExpressionContext,
   UnaryExpressionContext,
   VariableDeclarationContext,
@@ -58,6 +59,7 @@ export BinaryExpressionContext
 export CallExpressionContext
 export CallExpressionContextArgument
 export ConditionalExpressionContext
+export ElementAccessExpressionContext
 export IsExpressionContext
 export UnaryExpressionContext
 export VariableDeclarationContext
