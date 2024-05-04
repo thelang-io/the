@@ -1171,7 +1171,6 @@ export obj Codegen {
     expression := item.asArray()
     validateContext(item.context is Analyzer.ArrayExpressionContext)
     context := item.context as Analyzer.ArrayExpressionContext
-    typeName := self._typeName(context.t)
     mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len)]
 
     loop i := 0; i < expression.elements.len; i++ {
@@ -1179,7 +1178,7 @@ export obj Codegen {
       arguments.push(self._generateExpression(element))
     }
 
-    return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), arguments)
+    return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_alloc")), arguments)
   }
 
   fn _generateAsExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1391,53 +1390,14 @@ export obj Codegen {
       return nil
     }
 
-    // auto cObj = this->_nodeExpr(objNodeExpr, objTypeInfo.realType, parent, c, true);
-    // auto cObjElem = this->_nodeExpr(*exprAccess.elem, this->ast->typeMap.get("int"), parent, c);
-    // auto fnName = objTypeInfo.realType->isArray() ? objTypeInfo.realTypeName + "_at" : "str_at";
-    // expr = CodegenASTExprCall::create(
-    //   CodegenASTExprAccess::create(this->_(fnName)),
-    //   {
-    //     this->_genErrState(ASTChecker(parent).insideMain(), false),
-    //     CodegenASTExprLiteral::create(line),
-    //     CodegenASTExprLiteral::create(col),
-    //     cObj,
-    //     cObjElem
-    //   }
-    // );
-    // auto exprText = expr->str();
-    // auto objMemberType = this->state.typeCasts.contains(exprText)
-    //   ? this->state.typeCasts[exprText]
-    //   : originalObjMemberType;
-    // if (originalObjMemberType->isOpt() && !objMemberType->isOpt()) {
-    //   expr = CodegenASTExprUnary::create("*", expr);
-    // }
-    // auto isTargetOptAndTypeNotOpt = targetType->isOpt() && !nodeExpr.type->isOpt() && nodeExpr.type->isRef() &&
-    //   std::get<TypeOptional>(targetType->body).type->matchStrict(nodeExpr.type);
-    // if (!nodeExpr.type->isRef() && targetType->isRef()) {
-    //   expr = CodegenASTExprUnary::create("&", expr);
-    // } else if (nodeExpr.type->isRef() && !targetType->isRef() && !isTargetOptAndTypeNotOpt) {
-    //   expr = CodegenASTExprUnary::create("*", expr);
-    // }
-    // auto isEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
-    // auto isRef = nodeExpr.type->isRef() && targetType->isRef();
-    // if (
-    //   !root &&
-    //   !isEnumField &&
-    //   !isRef &&
-    //   !(fieldTypeHasCallInfo && !fieldType->isRef()) &&
-    //   !isTargetOptAndTypeNotOpt
-    // ) {
-    //   expr = this->_genCopyFn(Type::real(nodeExpr.type), expr);
-    // }
-    // if (
-    //   root &&
-    //   nodeExpr.type->shouldBeFreed() &&
-    //   (exprAccess.prop == std::nullopt || (fieldType != nullptr && fieldType->shouldBeFreed()))
-    // ) {
-    //   expr = this->_genFreeFn(nodeExpr.type, expr);
-    // }
+    expression := item.asElementAccess()
+    validateContext(item.context is Analyzer.ElementAccessExpressionContext)
+    context := item.context as Analyzer.ElementAccessExpressionContext
 
-    return nil
+    return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_at")), [
+      self._generateExpression(ref expression.expression),
+      self._generateExpression(ref expression.argument)
+    ])
   }
 
   fn _generateIsExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
