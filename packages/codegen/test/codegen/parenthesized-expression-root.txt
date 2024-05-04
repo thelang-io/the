@@ -2,4 +2,7 @@ main {
   (3 + 5)
 }
 ===== code =====
+int main (void) {
+  (3 + 5);
+}
 ===== output =====

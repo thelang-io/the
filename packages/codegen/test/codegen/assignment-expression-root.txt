@@ -3,4 +3,9 @@ main {
   a = 2
 }
 ===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t a = 1;
+  a = 2;
+}
 ===== output =====

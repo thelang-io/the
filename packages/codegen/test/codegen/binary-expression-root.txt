@@ -5,4 +5,13 @@ main {
   a + b
 }
 ===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t a;
+  int32_t b;
+  1 + 2;
+  a = 3;
+  b = 4;
+  a + b;
+}
 ===== output =====

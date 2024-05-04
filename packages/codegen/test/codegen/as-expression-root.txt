@@ -1,4 +1,3 @@
-===== code =====
 main {
   a: i8 = 10;
   a as i16;
@@ -34,7 +33,6 @@ main {
   e := 'a';
   e as i8;
   e as u8;
-  e as byte;
   e as int;
   e as float;
 
@@ -43,5 +41,53 @@ main {
   f as u8;
   f as int;
   f as float;
+}
+===== code =====
+#include <stdbool.h>
+#include <stdint.h>
+#include <wchar.h>
+int main (void) {
+  uint8_t b;
+  int32_t c;
+  unsigned char d;
+  wchar_t e;
+  bool f;
+  int8_t a = 10;
+  a;
+  a;
+  a;
+  a;
+  a;
+  a;
+  a;
+  b = 10;
+  b;
+  b;
+  b;
+  b;
+  b;
+  b;
+  c = 10;
+  c;
+  c;
+  c;
+  c;
+  c;
+  d = 65;
+  d;
+  d;
+  d;
+  d;
+  d;
+  e = L'a';
+  e;
+  e;
+  e;
+  e;
+  f = true;
+  f;
+  f;
+  f;
+  f;
 }
 ===== output =====

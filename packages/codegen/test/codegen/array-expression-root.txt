@@ -2,4 +2,12 @@ main {
   [1, 2, 3];
 }
 ===== code =====
+#include <the/array.h>
+#include <the/number.h>
+#include <stdint.h>
+THE_ARRAY_DECLARE(int, int32_t)
+THE_ARRAY_DEFINE(int, int32_t, int32_t, element, lhs_element == rhs_element, (void) element, the_int_str(element))
+int main (void) {
+  the_arr_int_free(the_arr_int_alloc(3, 1, 2, 3));
+}
 ===== output =====

@@ -5,4 +5,12 @@ main {
   b
 }
 ===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t b;
+  int32_t a = 1;
+  a;
+  b = 2;
+  b;
+}
 ===== output =====

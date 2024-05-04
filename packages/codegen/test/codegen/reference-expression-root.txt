@@ -11,4 +11,17 @@ main {
   !(ref a);
 }
 ===== code =====
+#include <stdbool.h>
+#include <stdint.h>
+int main (void) {
+  int32_t a = 1;
+  int32_t b = 2;
+  &a;
+  &b;
+  (*&a) + (*&b);
+  true ? a : *&a;
+  false ? *&b : b;
+  false ? &a : &b;
+  !(*&a);
+}
 ===== output =====
