@@ -388,6 +388,7 @@ export obj AnalyzerFile {
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)? = nil,
+    unwrap := false,
     withMutable := false,
     withMutableNext := false,
     withoutTypeCast := false
@@ -410,12 +411,12 @@ export obj AnalyzerFile {
       (t = self._eMap(it, targetType)) != nil ||
       (t = self._eMemberAccess(it, targetType)) != nil ||
       (t = self._eObject(it, targetType)) != nil ||
-      (t = self._eParenthesized(it, targetType, withMutable, withMutableNext)) != nil ||
+      (t = self._eParenthesized(it, targetType, unwrap, withMutable, withMutableNext)) != nil ||
       (t = self._ePropertyAccess(it, targetType, withMutable, withMutableNext, withoutTypeCast)) != nil ||
       (t = self._eReference(it, targetType, withMutable, withMutableNext)) != nil ||
       (t = self._eUnary(it, targetType)) != nil
     ) {
-      return self.wrap(it, targetType, t)
+      return self.wrap(it, targetType, t, unwrap: unwrap)
     }
 
     throw error_NewError("Tried analyzing unknown expression")
@@ -1369,12 +1370,38 @@ export obj AnalyzerFile {
     }
   }
 
-  fn wrap (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, t: ref Type.Type) ref Type.Type {
-    it.typeContext = Context.TypeContext {
+  fn wrap (
+    mut self: ref Self,
+    mut it: ref Parser.Expression,
+    targetType: (ref Type.Type)?,
+    t: ref Type.Type,
+    unwrap: bool
+  ) ref Type.Type {
+    if it.isParenthesized() {
+      expression := it.asParenthesized()
+      expressionTypeContext := expression.expression.typeContext as Context.TypeContext
+
+      it.typeContext = Context.TypeContext{
+        t: expressionTypeContext.targetType == nil ? expressionTypeContext.t : expressionTypeContext.targetType,
+        targetType: expressionTypeContext.targetType
+      }
+
+      return t
+    }
+
+    mut typeContext := Context.TypeContext{
       t: t,
       targetType: targetType
     }
 
+    if unwrap && targetType == nil {
+      typeContext.targetType = Type.opt(Type.unwrap(typeContext.t))
+    } elif unwrap {
+      definiteTargetType := targetType
+      typeContext.targetType = Type.opt(Type.unwrap(definiteTargetType))
+    }
+
+    it.typeContext = typeContext
     return t
   }
 
@@ -1581,7 +1608,6 @@ export obj AnalyzerFile {
 
     mut expression := it.asAssignment()
 
-    // when running guess type second type now it know what to cast to bs operandType is not empty
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
       initialTC := ref self.tc // todo remove after v1
       return self.e(ref expression.left, withMutable: true, withoutTypeCast: true)
@@ -1662,24 +1688,26 @@ export obj AnalyzerFile {
         leftTypeCastResult = self.typeCast(ref expression.left)
       }
 
-      return self.e(ref expression.left, operandType)
+      return self.e(ref expression.left, operandType, unwrap: true)
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       initialTC := ref self.tc // todo remove after v1
 
-      if leftTypeCastResult == nil {
-        return self.e(ref expression.right, operandType)
+      if leftTypeCastResult != nil {
+        definiteLeftTypeCastResult := leftTypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.consequent)
       }
 
-      definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
-      self.tc.merge(definiteLeftTypeCastResult.consequent)
-      result := self.e(ref expression.right, operandType)
-      self.tc = initialTC
+      result := self.e(ref expression.right, operandType, unwrap: true)
+
+      if leftTypeCastResult != nil {
+        self.tc = initialTC
+      }
 
       return result
     })
 
-    leftType := Type.unwrap(guessTypeResult.first)
-    rightType := Type.unwrap(guessTypeResult.second)
+    leftType := guessTypeResult.first
+    rightType := guessTypeResult.second
 
     if !self.operands(expression.operator, leftType, rightType) {
       self.raise(
@@ -2146,14 +2174,20 @@ export obj AnalyzerFile {
     return t
   }
 
-  fn _eParenthesized (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) (ref Type.Type)? {
+  fn _eParenthesized (
+    mut self: ref Self,
+    mut it: ref Parser.Expression,
+    targetType: (ref Type.Type)?,
+    unwrap: bool,
+    withMutable: bool,
+    withMutableNext: bool
+  ) (ref Type.Type)? {
     if !it.isParenthesized() {
       return nil
     }
 
     mut expression := it.asParenthesized()
-    expressionType := self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
-    return targetType != nil ? targetType : expressionType
+    return self.e(ref expression.expression, targetType, unwrap: unwrap, withMutable: withMutable || withMutableNext)
   }
 
   fn _ePropertyAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool, withoutTypeCast: bool) (ref Type.Type)? {
