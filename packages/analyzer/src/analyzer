@@ -1692,16 +1692,14 @@ export obj AnalyzerFile {
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       initialTC := ref self.tc // todo remove after v1
 
-      if leftTypeCastResult != nil {
-        definiteLeftTypeCastResult := leftTypeCastResult
-        self.tc.merge(definiteLeftTypeCastResult.consequent)
+      if leftTypeCastResult == nil {
+        return self.e(ref expression.right, operandType, unwrap: true)
       }
 
+      definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+      self.tc.merge(definiteLeftTypeCastResult.consequent)
       result := self.e(ref expression.right, operandType, unwrap: true)
-
-      if leftTypeCastResult != nil {
-        self.tc = initialTC
-      }
+      self.tc = initialTC
 
       return result
     })
