@@ -38,14 +38,14 @@ int main (void) {
   int32_t a = 1;
   int32_t b = 2;
   the_ref_int_t ref1 = &a;
-  ref1 += 1;
+  *ref1 += 1;
   ref1 = &b;
-  ref1 += 2;
+  *ref1 += 2;
   v01 = a + *ref1;
   v02 = *ref1 > b;
   v03 = *ref1 + b;
   v04 = *ref1 == b;
-  v05 = ref1 - ref1;
+  v05 = *ref1 - *ref1;
   v06 = true ? a : *ref1;
   v07 = false ? *ref1 : b;
   v08 = false ? &a : ref1;

@@ -11,7 +11,6 @@ import * as Parser from "the/parser"
 // todo implement await expression
 // todo implement closure expression
 // todo implement map expression
-// todo implement member access expression
 // todo implement object expression
 // todo implement property access expression
 
@@ -1237,7 +1236,7 @@ export obj Codegen {
     leftType := Analyzer.unwrap(context.leftType, withReference: false)
     rightType := Analyzer.unwrap(context.rightType, withReference: false)
     left := self._generateExpression(ref expression.left)
-    mut right := self._generateExpression(ref expression.right)
+    right := self._generateExpression(ref expression.right)
 
     if (
       (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
@@ -2649,7 +2648,7 @@ export obj Codegen {
     } elif targetType.name != "any" && t.name == "any" {
       typeName := self._generateAnyType(targetType)
 
-      // TODO: throw error if not possible to cast
+      // TODO: throw runtime error if not possible to cast
       innerExpression := AST.createCastExpression(
         AST.createType(self._(typeName)),
         AST.createPropertyAccessExpression(expression, "ctx")
@@ -2670,7 +2669,7 @@ export obj Codegen {
       typeName := self._typeDef(targetType)
       typeDefIdx := self.typeDefs.get(typeName)
 
-      // TODO: throw error if not possible to cast
+      // TODO: throw runtime error if not possible to cast
       expression = AST.createPropertyAccessExpression(
         AST.createPropertyAccessExpression(expression, "data"),
         "v" + typeDefIdx.str()
