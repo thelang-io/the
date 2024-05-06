@@ -1704,8 +1704,8 @@ export obj AnalyzerFile {
       return result
     })
 
-    leftType := guessTypeResult.first
-    rightType := guessTypeResult.second
+    leftType := Type.unwrap(guessTypeResult.first)
+    rightType := Type.unwrap(guessTypeResult.second)
 
     if !self.operands(expression.operator, leftType, rightType) {
       self.raise(
