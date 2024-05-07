@@ -13,6 +13,7 @@ import * as VarMap from "./var-map"
 import * as errors from "./errors"
 
 export type GuessTypeCallback = ((ref Type.Type)?) -> ref Type.Type
+export type GuessTypeMatcher = (ref Type.Type, ref Type.Type) -> bool
 
 export obj GuessTypeResult {
   first: ref Type.Type
@@ -537,7 +538,8 @@ export obj AnalyzerFile {
     return failed
   }
 
-  fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback) GuessTypeResult {
+  // todo remove match callback if not used later
+  fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback, match: GuessTypeMatcher? = nil) GuessTypeResult {
     initialErrorsLen := self.analyzer.errors.len
     mut targetType: (ref Type.Type)? = nil
     mut firstType := cb1(targetType)
@@ -555,7 +557,10 @@ export obj AnalyzerFile {
 
     if !secondTypeFailed {
       targetType = secondType
-      shouldResetFirst ||= !Type.match(firstType, secondType)
+
+      shouldResetFirst ||= !(
+        match != nil ? match(firstType, secondType) : Type.match(firstType, secondType)
+      )
     }
 
     if shouldResetFirst {
@@ -1610,7 +1615,7 @@ export obj AnalyzerFile {
 
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
       initialTC := ref self.tc // todo remove after v1
-      return self.e(ref expression.left, withMutable: true, withoutTypeCast: true)
+      return self.e(ref expression.left, operandType, withMutable: true, withoutTypeCast: true)
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       initialTC := ref self.tc // todo remove after v1
       return self.e(ref expression.right, operandType)
