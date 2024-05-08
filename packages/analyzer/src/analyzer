@@ -539,7 +539,7 @@ export obj AnalyzerFile {
   }
 
   // todo remove match callback if not used later
-  fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback, match: GuessTypeMatcher? = nil) GuessTypeResult {
+  fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback, match: GuessTypeMatcher) GuessTypeResult {
     initialErrorsLen := self.analyzer.errors.len
     mut targetType: (ref Type.Type)? = nil
     mut firstType := cb1(targetType)
@@ -557,10 +557,7 @@ export obj AnalyzerFile {
 
     if !secondTypeFailed {
       targetType = secondType
-
-      shouldResetFirst ||= !(
-        match != nil ? match(firstType, secondType) : Type.match(firstType, secondType)
-      )
+      shouldResetFirst ||= match(firstType, secondType)
     }
 
     if shouldResetFirst {
@@ -1619,6 +1616,8 @@ export obj AnalyzerFile {
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       initialTC := ref self.tc // todo remove after v1
       return self.e(ref expression.right, operandType)
+    }, (firstType: ref Type.Type, secondType: ref Type.Type) -> bool {
+      return firstType.isReference() && !secondType.isReference()
     })
 
     leftType := Type.unwrap(guessTypeResult.first, withReference: false)
@@ -1707,6 +1706,8 @@ export obj AnalyzerFile {
       self.tc = initialTC
 
       return result
+    }, (firstType: ref Type.Type, secondType: ref Type.Type) -> bool {
+      return !Type.match(firstType, secondType)
     })
 
     leftType := Type.unwrap(guessTypeResult.first)
@@ -1948,6 +1949,8 @@ export obj AnalyzerFile {
       self.tc = initialTC
 
       return result
+    }, (firstType: ref Type.Type, secondType: ref Type.Type) -> bool {
+      return !Type.match(firstType, secondType)
     })
 
     consequentType := Type.unwrap(guessTypeResult.first, withReference: false)
