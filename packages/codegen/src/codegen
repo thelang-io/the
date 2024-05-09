@@ -44,36 +44,63 @@ export obj CodegenAPIBuiltin {
   mut wchar: bool
 }
 
-export obj BlockData {
+export obj BlockDataContext {
   mut setup: AST.CStatement[]
   mut teardown: AST.CStatement[]
+}
+
+export obj BlockData {
+  mut blocks: BlockDataContext[]
+
+  fn init (mut self: ref Self) {
+  }
 
   fn addSetup (mut self: ref Self, item: AST.CStatement) {
-    self.setup.push(item)
+    self.blocks.last.setup.push(item)
   }
 
   fn addTeardown (mut self: ref Self, item: AST.CStatement) {
-    self.teardown.push(item)
+    self.blocks.last.teardown.push(item)
+  }
+
+  fn decrease (mut self: ref Self) BlockDataContext {
+    last := self.blocks.pop()
+
+    mut stack := ""
+
+    try {
+      throw error_NewError("")
+    } catch err: error_Error {
+      lines := err.stack.lines()
+      stack = lines[2]
+    }
+
+    result := BlockDataContext{
+      setup: last.setup,
+      teardown: last.teardown.reverse()
+    }
+
+    return result
+  }
+
+  fn increase (mut self: ref Self) {
+    self.blocks.push(BlockDataContext{})
   }
 
   fn hasSetup (mut self: ref Self) bool {
-    return self.setup.empty
+    return self.blocks.last.setup.empty
   }
 
   fn hasTeardown (mut self: ref Self) bool {
-    return self.teardown.empty
+    return self.blocks.last.teardown.empty
   }
 
-  fn getSetup (mut self: ref Self) AST.CStatement[] {
-    setup := self.setup
-    self.setup = []
-    return setup
+  fn mergeSetup (mut self: ref Self, other: AST.CStatement[]) {
+    self.blocks.last.setup.merge(other)
   }
 
-  fn getTeardown (mut self: ref Self) AST.CStatement[] {
-    teardown := self.teardown.reverse()
-    self.teardown = []
-    return teardown
+  fn mergeTeardown (mut self: ref Self, other: AST.CStatement[]) {
+    self.blocks.last.teardown.merge(other.reverse())
   }
 }
 
@@ -571,11 +598,13 @@ export obj Codegen {
   mut statements: AST.CStatement[]
   mut typeDefs: int[str]
 
-  fn init (mut self: ref Self) {}
+  fn init (mut self: ref Self) {
+    self.blockData.init()
+  }
 
   fn generate (mut self: ref Self) {
     mut file := self.analyzer.files.last()
-    self.globalStatements = self._generateBlock(ref file.f.program.body)
+    self.globalStatements = self._generateBlock(ref file.f.program.body, preserveData: true)
     self._assemble()
   }
 
@@ -795,12 +824,19 @@ export obj Codegen {
     self.statements.merge(macroInvocationDefineStatements.reverse())
     self.statements.merge(statements)
 
+    blockDataContext := self.blockData.decrease()
+    mut finalMainStatements: AST.CStatement[]
+
+    finalMainStatements.merge(blockDataContext.setup)
+    finalMainStatements.merge(self.mainStatements)
+    finalMainStatements.merge(blockDataContext.teardown)
+
     self.statements.push(
       AST.createFunctionDeclaration(
         AST.createType("int"),
         "main",
         [AST.createFunctionParameter(AST.createType("void"))],
-        AST.createCompoundStatement(self.mainStatements)
+        AST.createCompoundStatement(finalMainStatements)
       )
     )
   }
@@ -1032,6 +1068,7 @@ export obj Codegen {
   }
 
   fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[], preserveData := false) AST.CStatement[] {
+    self.blockData.increase()
     mut result: AST.CStatement[]
     l := items.len
 
@@ -1039,10 +1076,15 @@ export obj Codegen {
       result.push(self._generateStatement(items[i]))
     }
 
-    if !preserveData { return result }
-    mut resultWithSetup := self.blockData.getSetup()
-    resultWithSetup.merge(result)
-    return resultWithSetup
+    if preserveData { return result }
+    blockDataContext := self.blockData.decrease()
+
+    mut finalResult: AST.CStatement[]
+    finalResult.merge(blockDataContext.setup)
+    finalResult.merge(result)
+    finalResult.merge(blockDataContext.teardown)
+
+    return finalResult
   }
 
   fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
@@ -1709,13 +1751,11 @@ export obj Codegen {
 
     statement := item.asMainDeclaration()
     statementBody := statement.body.asBlock()
-    mainStatements := self._generateBlock(ref statementBody.body, preserveData: true)
+    self.mainStatements = self._generateBlock(ref statementBody.body, preserveData: true)
 
-    self.mainStatements.merge(self.blockData.getSetup())
-    d := self.mainStatements.len
-    self.mainStatements.merge(mainStatements)
-    a := self.mainStatements.len
-    self.mainStatements.merge(self.blockData.getTeardown())
+    blockDataContext := self.blockData.decrease()
+    self.blockData.mergeSetup(blockDataContext.setup)
+    self.blockData.mergeTeardown(blockDataContext.teardown)
 
     return AST.createEmptyStatement()
   }
