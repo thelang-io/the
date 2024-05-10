@@ -538,7 +538,6 @@ export obj AnalyzerFile {
     return failed
   }
 
-  // todo remove match callback if not used later
   fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback, match: GuessTypeMatcher) GuessTypeResult {
     initialErrorsLen := self.analyzer.errors.len
     mut targetType: (ref Type.Type)? = nil
