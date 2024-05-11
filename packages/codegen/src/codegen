@@ -44,16 +44,27 @@ export obj CodegenAPIBuiltin {
   mut wchar: bool
 }
 
+export enum BlockDataType {
+  Block,
+  Fn,
+  Loop
+}
+
 export obj BlockDataContext {
+  t: BlockDataType
+  mut breakVariable: int
+  mut continueVariable: int
+  mut label: int
   mut setup: AST.CStatement[]
   mut teardown: AST.CStatement[]
+  mut usedReturnVariable: bool
+  mut usedValueVariable: bool
 }
 
 export obj BlockData {
   mut blocks: BlockDataContext[]
 
-  fn init (mut self: ref Self) {
-  }
+  fn init (mut self: ref Self) {}
 
   fn addSetup (mut self: ref Self, item: AST.CStatement) {
     self.blocks.last.setup.push(item)
@@ -83,24 +94,60 @@ export obj BlockData {
     return result
   }
 
-  fn increase (mut self: ref Self) {
-    self.blocks.push(BlockDataContext{})
+  fn decreaseVariableIndexes (mut self: ref Self) {
+    self.blocks.last.breakVariable--
+    self.blocks.last.continueVariable--
   }
 
-  fn hasSetup (mut self: ref Self) bool {
-    return self.blocks.last.setup.empty
+  fn getBreakVariable (mut self: ref Self) str {
+    // todo
+    return "b"
   }
 
-  fn hasTeardown (mut self: ref Self) bool {
-    return self.blocks.last.teardown.empty
+  fn getContinueVariable (mut self: ref Self) str {
+    // todo
+    return "c"
   }
 
-  fn mergeSetup (mut self: ref Self, other: AST.CStatement[]) {
-    self.blocks.last.setup.merge(other)
+  fn getReturnVariable (mut self: ref Self) str {
+    // todo
+    return "r"
   }
 
-  fn mergeTeardown (mut self: ref Self, other: AST.CStatement[]) {
-    self.blocks.last.teardown.merge(other.reverse())
+  fn getValueVariable (mut self: ref Self) str {
+    // todo
+    return "v"
+  }
+
+  fn has (mut self: ref Self, t := BlockDataType.Block) bool {
+    // todo implement search
+    // return !self.blocks.last.teardown.empty
+    // return !self.blocks.last.setup.empty
+    return false
+  }
+
+  fn increase (mut self: ref Self, t := BlockDataType.Block) {
+    self.blocks.push(BlockDataContext{t: t})
+  }
+
+  fn increaseVariableIndexes (mut self: ref Self) {
+    self.blocks.last.breakVariable++
+    self.blocks.last.continueVariable++
+  }
+
+  fn merge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
+    self.blocks.last.setup.merge(setup)
+    self.blocks.last.teardown.merge(teardown)
+  }
+
+  fn usedBreakVariable (mut self: ref Self) bool {
+    // todo
+    return false
+  }
+
+  fn usedContinueVariable (mut self: ref Self) bool {
+    // todo
+    return false
   }
 }
 
@@ -591,10 +638,12 @@ export obj Codegen {
   mut blockData: BlockData
   mut entities: CodegenEntity[]
   mut flags: str[]
+  mut lastLabelId: int
   mut lastTypeId: int
   mut lastVarId: int
   mut mainStatements: AST.CStatement[]
   mut globalStatements: AST.CStatement[]
+  mut returnType: (ref Analyzer.Type)?
   mut statements: AST.CStatement[]
   mut typeDefs: int[str]
 
@@ -1512,7 +1561,7 @@ export obj Codegen {
 
     statement := item.asBreak()
 
-    if self.blockData.hasTeardown() { // todo check specifically for loop
+    if self.blockData.has(.Loop) {
       //(*c)->append(
       //  CodegenASTExprAssign::create(
       //    CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
@@ -1535,7 +1584,7 @@ export obj Codegen {
 
     statement := item.asContinue()
 
-    if self.blockData.hasTeardown() { // todo check specifically for loop
+    if self.blockData.has(.Loop) {
       //if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
       //  (*c)->append(
       //    CodegenASTExprAssign::create(
@@ -1662,86 +1711,93 @@ export obj Codegen {
 
     statement := item.asLoop()
 
-    // todo
-    // auto nodeLoop = std::get<ASTNodeLoop>(*node.body);
-    // auto initialStateCleanUp = this->state.cleanUp;
-    // this->varMap.save();
-    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
-    // this->state.cleanUp.breakVarIdx += 1;
-    // this->state.cleanUp.continueVarIdx += 1;
-    // auto cBody = CodegenASTStmtCompound::create();
-    // if (nodeLoop.init == std::nullopt && nodeLoop.upd == std::nullopt) {
-    //   auto cCond = nodeLoop.cond == std::nullopt
-    //     ? CodegenASTExprLiteral::create("1")
-    //     : this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, c, true);
-    //   (*c)->append(CodegenASTStmtWhile::create(cCond, cBody));
-    //   *c = cBody;
-    // } else {
-    //   auto cInit = CodegenASTStmtNull::create();
-    //   auto cCond = CodegenASTExprNull::create();
-    //   auto cUpd = CodegenASTExprNull::create();
-    //   if (nodeLoop.init != std::nullopt) {
-    //     auto cCompound = CodegenASTStmtCompound::create();
-    //     this->_node(&cCompound, *nodeLoop.init);
-    //     if (!this->state.cleanUp.empty()) {
-    //       *c = (*c)->append(cCompound);
-    //     } else {
-    //       cInit = cCompound->asCompound().body[0];
-    //     }
-    //   }
-    //   if (nodeLoop.cond != std::nullopt) {
-    //     cCond = this->_nodeExpr(*nodeLoop.cond, this->ast->typeMap.get("bool"), node, c, true);
-    //   }
-    //   if (nodeLoop.upd != std::nullopt) {
-    //     cUpd = this->_nodeExpr(*nodeLoop.upd, nodeLoop.upd->type, node, c, true);
-    //   }
-    //   (*c)->append(CodegenASTStmtFor::create(cInit, cCond, cUpd, cBody));
-    //   *c = cBody;
-    // }
-    // auto saveStateCleanUp = this->state.cleanUp;
-    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_LOOP, &saveStateCleanUp);
-    // this->_block(c, nodeLoop.body);
-    // if (this->state.cleanUp.continueVarUsed) {
-    //   (*c)->prepend(
-    //     CodegenASTStmtVarDecl::create(
-    //       CodegenASTType::create("unsigned char"),
-    //       CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
-    //       CodegenASTExprLiteral::create("0")
-    //     )
-    //   );
-    // }
-    // if (this->state.cleanUp.breakVarUsed) {
-    //   (*c)->prepend(
-    //     CodegenASTStmtVarDecl::create(
-    //       CodegenASTType::create("unsigned char"),
-    //       CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
-    //       CodegenASTExprLiteral::create("0")
-    //     )
-    //   );
-    // }
-    // *c = (*c)->exit()->exit();
-    // if (!saveStateCleanUp.empty()) {
-    //   saveStateCleanUp.gen(c);
-    //   if (saveStateCleanUp.returnVarUsed) {
-    //     (*c)->append(
-    //       CodegenASTStmtIf::create(
-    //         CodegenASTExprBinary::create(CodegenASTExprAccess::create("r"), "==", CodegenASTExprLiteral::create("1")),
-    //         initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-    //           ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
-    //           : this->state.returnType->isVoid()
-    //             ? CodegenASTStmtReturn::create()
-    //             : CodegenASTStmtReturn::create(CodegenASTExprAccess::create(this->state.cleanUp.currentValueVar()))
-    //       )
-    //     );
-    //   }
-    //   *c = (*c)->exit();
-    // }
-    // this->state.cleanUp.breakVarIdx -= 1;
-    // this->state.cleanUp.continueVarIdx -= 1;
-    // this->state.cleanUp = initialStateCleanUp;
-    // this->varMap.restore();
+    self.blockData.increase(.Loop)
+    self.blockData.increaseVariableIndexes()
 
-    return nil
+    mut variant := statement.initializer == nil && statement.update == nil ? "while" : "for"
+    mut initializer: AST.CStatement?
+    mut condition: AST.CExpression?
+    mut update: AST.CExpression?
+
+    if statement.initializer != nil {
+      // todo test if allocation happens during initialization
+      initializer = self._generateStatement(ref statement.initializer)
+    }
+
+    if statement.condition != nil {
+      condition = self._generateExpression(ref statement.condition)
+    } elif variant == "while" {
+      condition = AST.createLiteral(1)
+    }
+
+    if statement.update != nil {
+      update = self._generateExpression(ref statement.update)
+    }
+
+    // todo here it should convert to array if compound
+    mut body := [self._generateStatement(statement.body)]
+
+    if self.blockData.usedContinueVariable() {
+      // todo try with concat
+      bodySave := body
+      body = [
+        AST.createVariableDeclaration(
+          AST.createType("unsigned char"),
+          self.blockData.getContinueVariable(),
+          AST.createLiteral(0)
+        )
+      ]
+      body.merge(bodySave)
+    }
+
+    if self.blockData.usedBreakVariable() {
+      bodySave := body
+      body = [
+        AST.createVariableDeclaration(
+          AST.createType("unsigned char"),
+          self.blockData.getBreakVariable(),
+          AST.createLiteral(0)
+        )
+      ]
+      body.merge(bodySave)
+    }
+
+    statementBody := body.len == 1 ? body[0] : AST.createCompoundStatement(body)
+    mut result := variant == "while"
+      ? AST.createWhileStatement(condition as AST.CExpression, statementBody)
+      : AST.createForStatement(initializer, condition, update, statementBody)
+
+    self.blockData.decreaseVariableIndexes()
+    blockDataContext := self.blockData.decrease()
+
+    if !blockDataContext.setup.empty || !blockDataContext.teardown.empty {
+      mut newStatementBody := blockDataContext.setup
+      newStatementBody.push(result)
+      newStatementBody.merge(blockDataContext.teardown)
+
+      if blockDataContext.usedReturnVariable {
+        returnTypeName := self.returnType == nil ? "" : self.returnType.name
+
+        newStatementBody.push(
+          AST.createIfStatement(
+            AST.createBinaryExpression(
+              AST.createIdentifier(self.blockData.getReturnVariable()),
+              "==",
+              AST.createLiteral(1)
+            ),
+            self.blockData.has(.Fn)
+              ? AST.createGotoStatement(self._label())
+              : returnTypeName == "void"
+                ? AST.createReturnStatement()
+                : AST.createReturnStatement(AST.createIdentifier(self.blockData.getValueVariable()))
+          )
+        )
+      }
+
+      result = AST.createCompoundStatement(newStatementBody)
+    }
+
+    return result
   }
 
   fn _generateMainDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
@@ -1754,8 +1810,7 @@ export obj Codegen {
     self.mainStatements = self._generateBlock(ref statementBody.body, preserveData: true)
 
     blockDataContext := self.blockData.decrease()
-    self.blockData.mergeSetup(blockDataContext.setup)
-    self.blockData.mergeTeardown(blockDataContext.teardown)
+    self.blockData.merge(blockDataContext.setup, blockDataContext.teardown)
 
     return AST.createEmptyStatement()
   }
@@ -2585,6 +2640,11 @@ export obj Codegen {
     }
 
     return false
+  }
+
+  fn _label (mut self: ref Self) str {
+    self.lastLabelId++
+    return "L" + self.lastLabelId.str()
   }
 
   fn _tm (mut self: ref Self) ref Analyzer.TypeMap {
