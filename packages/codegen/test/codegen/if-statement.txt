@@ -1,0 +1,63 @@
+main {
+  if 0 {
+  }
+  if 1 {
+  }
+  if true {
+  }
+  if !true {
+  }
+
+  if 0 {
+  } else {
+  }
+
+  if false {
+  }
+
+  if true {
+  } else {
+  }
+
+  if true {
+  } elif false {
+  } else {
+  }
+
+  if false {
+  } elif true {
+  } elif 2 {
+  } elif 3 {
+  } elif 4 {
+  } else {
+  }
+
+  if 1 {
+    if 0 {
+    } else {
+    }
+  }
+
+  if 1 {
+    if 2 {
+    } elif 0 {
+    }
+  }
+
+  if 0 {
+    if 0 {
+    } elif 0 {
+    }
+  } else {
+  }
+
+  if 0 {
+  } elif 1 {
+  }
+
+  if 1 {
+  } elif 0 {
+  }
+}
+===== code =====
+===== output =====
