@@ -52,17 +52,23 @@ export enum BlockDataType {
 
 export obj BlockDataContext {
   t: BlockDataType
-  mut breakVariable: int
-  mut continueVariable: int
   mut label: int
   mut setup: AST.CStatement[]
   mut teardown: AST.CStatement[]
+  mut usedBreakVariable: bool
+  mut usedContinueVariable: bool
   mut usedReturnVariable: bool
   mut usedValueVariable: bool
+
+  fn empty (self :ref Self) bool {
+    return !self.setup.empty && !self.teardown.empty
+  }
 }
 
 export obj BlockData {
   mut blocks: BlockDataContext[]
+  mut lastBreakVariable: int
+  mut lastContinueVariable: int
 
   fn init (mut self: ref Self) {}
 
@@ -77,15 +83,6 @@ export obj BlockData {
   fn decrease (mut self: ref Self) BlockDataContext {
     last := self.blocks.pop()
 
-    mut stack := ""
-
-    try {
-      throw error_NewError("")
-    } catch err: error_Error {
-      lines := err.stack.lines()
-      stack = lines[2]
-    }
-
     result := BlockDataContext{
       setup: last.setup,
       teardown: last.teardown.reverse()
@@ -95,34 +92,55 @@ export obj BlockData {
   }
 
   fn decreaseVariableIndexes (mut self: ref Self) {
-    self.blocks.last.breakVariable--
-    self.blocks.last.continueVariable--
+    self.lastBreakVariable--
+    self.lastContinueVariable--
   }
 
   fn getBreakVariable (mut self: ref Self) str {
-    // todo
-    return "b"
+    self.loopUntil(.Loop, (mut block: ref BlockDataContext) -> void {
+      block.usedBreakVariable = true
+    })
+
+    return "b" + self.lastBreakVariable.str()
   }
 
   fn getContinueVariable (mut self: ref Self) str {
-    // todo
-    return "c"
+    self.loopUntil(.Loop, (mut block: ref BlockDataContext) -> void {
+      block.usedBreakVariable = true
+    })
+
+    return "c" + self.lastBreakVariable.str()
   }
 
   fn getReturnVariable (mut self: ref Self) str {
-    // todo
+    self.loopUntil(.Fn, (mut block: ref BlockDataContext) -> void {
+      block.usedReturnVariable = true
+    })
+
     return "r"
   }
 
   fn getValueVariable (mut self: ref Self) str {
-    // todo
+    self.loopUntil(.Fn, (mut block: ref BlockDataContext) -> void {
+      block.usedValueVariable = true
+    })
+
     return "v"
   }
 
-  fn has (mut self: ref Self, t := BlockDataType.Block) bool {
-    // todo implement search
-    // return !self.blocks.last.teardown.empty
-    // return !self.blocks.last.setup.empty
+  fn has (self: ref Self, t := BlockDataType.Block) bool {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      if !block.empty() {
+        return true
+      }
+
+      if block.t == t {
+        break
+      }
+    }
+
     return false
   }
 
@@ -131,22 +149,55 @@ export obj BlockData {
   }
 
   fn increaseVariableIndexes (mut self: ref Self) {
-    self.blocks.last.breakVariable++
-    self.blocks.last.continueVariable++
+    self.lastBreakVariable++
+    self.lastContinueVariable++
+  }
+
+  fn loopUntil (mut self: ref Self, t: BlockDataType, cb: (mut block: ref BlockDataContext) -> void) {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      mut block := self.blocks[i]
+      cb(block)
+
+      if block.t == t {
+        break
+      }
+    }
   }
 
   fn merge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
     self.blocks.last.setup.merge(setup)
-    self.blocks.last.teardown.merge(teardown)
+    self.blocks.last.teardown.merge(teardown.reverse())
   }
 
-  fn usedBreakVariable (mut self: ref Self) bool {
-    // todo
+  fn usedBreakVariable (self: ref Self) bool {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      if block.usedBreakVariable {
+        return true
+      }
+
+      if block.t == .Loop {
+        break
+      }
+    }
+
     return false
   }
 
-  fn usedContinueVariable (mut self: ref Self) bool {
-    // todo
+  fn usedContinueVariable (self: ref Self) bool {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      if block.usedContinueVariable {
+        return true
+      }
+
+      if block.t == .Loop {
+        break
+      }
+    }
+
     return false
   }
 }
@@ -1561,20 +1612,24 @@ export obj Codegen {
 
     statement := item.asBreak()
 
-    if self.blockData.has(.Loop) {
-      //(*c)->append(
-      //  CodegenASTExprAssign::create(
-      //    CodegenASTExprAccess::create(this->state.cleanUp.currentBreakVar()),
-      //    "=",
-      //    CodegenASTExprLiteral::create("1")
-      //  )->stmt()
-      //);
-      //if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
-      //  (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-      //}
+    if !self.blockData.has(.Loop) {
+      return AST.createBreakStatement()
     }
 
-    return AST.createContinueStatement()
+    mut result := AST.createExpressionStatement(
+      AST.createAssignmentExpression(
+        AST.createIdentifier(self.blockData.getBreakVariable()),
+        "=",
+        AST.createLiteral(1)
+      )
+    )
+
+    if item.hasNext() {
+      jumpStatement := AST.createGotoStatement(self._label())
+      result = AST.createCompoundStatement([result, jumpStatement])
+    }
+
+    return result
   }
 
   fn _generateContinueStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
@@ -1584,22 +1639,24 @@ export obj Codegen {
 
     statement := item.asContinue()
 
-    if self.blockData.has(.Loop) {
-      //if (!ASTChecker(node.parent).is<ASTNodeLoop>()) {
-      //  (*c)->append(
-      //    CodegenASTExprAssign::create(
-      //      CodegenASTExprAccess::create(this->state.cleanUp.currentContinueVar()),
-      //      "=",
-      //      CodegenASTExprLiteral::create("1")
-      //    )->stmt()
-      //  );
-      //}
-      //if (!ASTChecker(node).isLast(this->state.fnDeclBody)) {
-      //  (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-      //}
+    if !self.blockData.has(.Loop) {
+      return AST.createContinueStatement()
     }
 
-    return AST.createContinueStatement()
+    mut result := AST.createExpressionStatement(
+      AST.createAssignmentExpression(
+        AST.createIdentifier(self.blockData.getContinueVariable()),
+        "=",
+        AST.createLiteral(1)
+      )
+    )
+
+    if item.hasNext() {
+      jumpStatement := AST.createGotoStatement(self._label())
+      result = AST.createCompoundStatement([result, jumpStatement])
+    }
+
+    return result
   }
 
   fn _generateEnumDeclaration (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
@@ -1735,7 +1792,7 @@ export obj Codegen {
     }
 
     // todo here it should convert to array if compound
-    mut body := [self._generateStatement(statement.body)]
+    mut body := [self._generateStatement(ref statement.body)]
 
     if self.blockData.usedContinueVariable() {
       // todo try with concat
