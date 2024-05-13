@@ -839,7 +839,7 @@ export obj AnalyzerFile {
       typeCastResult := self.typeCast(ref statement.condition)
       conditionType := Type.unwrap(self.e(ref statement.condition, Type.opt(self.tm.get("bool"))))
 
-      if !Type.match(conditionType, self.tm.get("bool")) {
+      if !Type.match(conditionType, self.tm.get("bool")) && !conditionType.isNumber() {
         self.raise(errors.E1018(conditionType.toString()), statement.condition.start, statement.condition.end)
       }
 
@@ -1932,7 +1932,7 @@ export obj AnalyzerFile {
     typeCastResult := self.typeCast(ref expression.condition)
     conditionType := Type.unwrap(self.e(ref expression.condition))
 
-    if !Type.match(conditionType, self.tm.get("bool")) {
+    if !Type.match(conditionType, self.tm.get("bool")) && !conditionType.isNumber() {
       self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
     }
 
