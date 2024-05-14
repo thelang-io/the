@@ -50,6 +50,15 @@ export enum BlockDataType {
   Loop
 }
 
+export obj BlockDataVariable {
+  name: str
+  id: int
+
+  fn fullName (self: ref Self) str {
+    return self.name + "_" + self.id.str()
+  }
+}
+
 export obj BlockDataContext {
   t: BlockDataType
   mut label: int
@@ -59,8 +68,9 @@ export obj BlockDataContext {
   mut usedContinueVariable: bool
   mut usedReturnVariable: bool
   mut usedValueVariable: bool
+  mut variables: BlockDataVariable[]
 
-  fn empty (self :ref Self) bool {
+  fn empty (self: ref Self) bool {
     return self.setup.empty && self.teardown.empty
   }
 }
@@ -128,6 +138,22 @@ export obj BlockData {
     return "v"
   }
 
+  fn getVariable (mut self: ref Self, name: str) str {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      loop j := block.variables.len - 1; j >= 0; j-- {
+        variable := block.variables[j]
+
+        if variable.name == name {
+          return variable.fullName()
+        }
+      }
+    }
+
+    throw error_NewError("Variable with name '" + name + "' was not found")
+  }
+
   fn hasUntil (self: ref Self, t := BlockDataType.Block) bool {
     loop i := self.blocks.len - 1; i >= 0; i-- {
       block := self.blocks[i]
@@ -167,6 +193,34 @@ export obj BlockData {
   fn merge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
     self.blocks.last.setup.merge(setup)
     self.blocks.last.teardown.merge(teardown.reverse())
+  }
+
+  fn setVariable (mut self: ref Self, name: str) str {
+    mut id := 0
+
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      loop j := block.variables.len - 1; j >= 0; j-- {
+        variable := block.variables[j]
+
+        if variable.name == name {
+          id = variable.id + 1
+          break
+        }
+      }
+
+      if id != 0 {
+        break
+      }
+    }
+
+    self.blocks.last.variables.push(BlockDataVariable{
+      name: name,
+      id: id
+    })
+
+    return self.blocks.last.variables.last.fullName()
   }
 
   fn usedBreakVariable (self: ref Self) bool {
@@ -1258,6 +1312,8 @@ export obj Codegen {
       name = self._("the_print")
     } elif self._hasEntity(name) {
       name = self._(name)
+    } else {
+      name = self.blockData.getVariable(name)
     }
 
     return self._wrap(AST.createIdentifier(name), item, context.originalType, context.currentType)
@@ -2110,28 +2166,30 @@ export obj Codegen {
     t := AST.createType(self._type(context.varType))
     shouldSplitDeclaration := statementHasPrecedingNonVarDecl(item)
 
-    if typeShouldBeFreed(context.varType) {
-      self.blockData.addTeardown(
-        AST.createExpressionStatement(
-          self._functionFree(context.varType, AST.createIdentifier(statement.name.name))
-        )
-      )
-    }
-
     initializer := statement.initializer == nil
       ? self._defaultInitializerDeclaration(context.varType)
       : self._generateExpression(ref statement.initializer)
 
+    variableName := self.blockData.setVariable(statement.name.name)
+
+    if typeShouldBeFreed(context.varType) {
+      self.blockData.addTeardown(
+        AST.createExpressionStatement(
+          self._functionFree(context.varType, AST.createIdentifier(variableName))
+        )
+      )
+    }
+
     if shouldSplitDeclaration {
       self.blockData.addSetup(
-        AST.createVariableDeclaration(t, statement.name.name)
+        AST.createVariableDeclaration(t, variableName)
       )
 
       return AST.createExpressionStatement(
-        AST.createAssignmentExpression(AST.createIdentifier(statement.name.name), "=", initializer)
+        AST.createAssignmentExpression(AST.createIdentifier(variableName), "=", initializer)
       )
     } else {
-      return AST.createVariableDeclaration(t, statement.name.name, initializer)
+      return AST.createVariableDeclaration(t, variableName, initializer)
     }
   }
 

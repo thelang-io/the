@@ -9,7 +9,7 @@ main {
 THE_OPTIONAL_DECLARE(int, int32_t)
 THE_OPTIONAL_DEFINE(int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
 int main (void) {
-  the_opt_int_t a = NULL;
-  the_opt_int_free(a);
+  the_opt_int_t a_0 = NULL;
+  the_opt_int_free(a_0);
 }
 ===== output =====

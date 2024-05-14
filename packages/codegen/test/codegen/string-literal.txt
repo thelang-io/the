@@ -12,13 +12,13 @@ Multiline";
 #include <the/macro.h>
 #include <the/string.h>
 int main (void) {
-  the_str_t a = the_str_alloc(L"");
-  the_str_t b = the_str_alloc(L"Hello, World!");
-  the_str_t c = the_str_alloc(L"Multiline\nString");
-  the_str_t d = the_str_alloc(L"Multiline" THE_EOL "String" THE_EOL "Multiline");
-  the_str_free(d);
-  the_str_free(c);
-  the_str_free(b);
-  the_str_free(a);
+  the_str_t a_0 = the_str_alloc(L"");
+  the_str_t b_0 = the_str_alloc(L"Hello, World!");
+  the_str_t c_0 = the_str_alloc(L"Multiline\nString");
+  the_str_t d_0 = the_str_alloc(L"Multiline" THE_EOL "String" THE_EOL "Multiline");
+  the_str_free(d_0);
+  the_str_free(c_0);
+  the_str_free(b_0);
+  the_str_free(a_0);
 }
 ===== output =====

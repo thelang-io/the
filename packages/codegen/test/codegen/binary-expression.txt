@@ -22,23 +22,23 @@ main {
 #include <stdbool.h>
 #include <stdint.h>
 int main (void) {
-  int32_t a = 1 + 2;
-  int32_t b = 1 - 2;
-  int32_t c = 5 / 2;
-  int32_t d = 2 * 3;
-  int32_t e = 1 && 0;
-  bool f = 1 == 2;
-  bool g = 1 >= 2;
-  bool h = 1 > 2;
-  bool i = 0 <= 2;
-  bool j = 2 < 1;
-  bool k = 0 != 0;
-  int32_t l = 0 || 1;
-  int32_t m = 0 & 1;
-  int32_t n = 0 | 1;
-  int32_t o = 0 ^ 1;
-  int32_t p = 0 >> 2;
-  int32_t q = 0 << 2;
-  int32_t r = 4 % 2;
+  int32_t a_0 = 1 + 2;
+  int32_t b_0 = 1 - 2;
+  int32_t c_0 = 5 / 2;
+  int32_t d_0 = 2 * 3;
+  int32_t e_0 = 1 && 0;
+  bool f_0 = 1 == 2;
+  bool g_0 = 1 >= 2;
+  bool h_0 = 1 > 2;
+  bool i_0 = 0 <= 2;
+  bool j_0 = 2 < 1;
+  bool k_0 = 0 != 0;
+  int32_t l_0 = 0 || 1;
+  int32_t m_0 = 0 & 1;
+  int32_t n_0 = 0 | 1;
+  int32_t o_0 = 0 ^ 1;
+  int32_t p_0 = 0 >> 2;
+  int32_t q_0 = 0 << 2;
+  int32_t r_0 = 4 % 2;
 }
 ===== output =====

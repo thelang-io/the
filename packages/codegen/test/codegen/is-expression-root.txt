@@ -71,16 +71,16 @@ THE_UNION_DEFINE(intUSfloat, {
 THE_ANY_DEFINE(TYPE_float, float, double, val, lhs_val == rhs_val, (void) val, the_float_str(val))
 THE_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
 int main (void) {
-  the_any_t b;
-  the_union_intUSfloatUE_t c;
-  the_union_intUSfloatUE_t d;
-  the_any_t e;
+  the_any_t b_0;
+  the_union_intUSfloatUE_t c_0;
+  the_union_intUSfloatUE_t d_0;
+  the_any_t e_0;
   the_any_t __THE_13 = {-1, NULL, NULL, NULL, NULL, NULL};
-  the_any_t f;
+  the_any_t f_0;
   the_any_t __THE_16 = {-1, NULL, NULL, NULL, NULL, NULL};
-  the_union_intUSfloatUE_t g;
+  the_union_intUSfloatUE_t g_0;
   the_union_intUSfloatUE_t __THE_19 = the_union_intUSfloatUE_alloc(-1);
-  the_union_intUSfloatUE_t h;
+  the_union_intUSfloatUE_t h_0;
   the_union_intUSfloatUE_t __THE_24 = the_union_intUSfloatUE_alloc(-1);
   the_str_t __THE_29 = the_str_empty_val;
   the_str_t __THE_30 = the_str_empty_val;
@@ -110,106 +110,106 @@ int main (void) {
   the_union_intUSfloatUE_t __THE_54 = the_union_intUSfloatUE_alloc(-1);
   the_str_t __THE_55 = the_str_empty_val;
   the_str_t __THE_56 = the_str_empty_val;
-  the_any_t a = the_any_int_alloc(1);
-  if (a.type == TYPE_int) {
+  the_any_t a_0 = the_any_int_alloc(1);
+  if (a_0.type == TYPE_int) {
     the_str_t __THE_1 = the_str_empty_val;
     the_str_t __THE_2 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_1 = the_str_alloc(L"int "), __THE_2 = the_int_str(*((the_any_int_t) a.ctx))));
+    the_str_free(the_str_concat(__THE_1 = the_str_alloc(L"int "), __THE_2 = the_int_str(*((the_any_int_t) a_0.ctx))));
     the_str_free(__THE_2);
     the_str_free(__THE_1);
   }
-  b = the_any_float_alloc(3.14);
-  if (b.type == TYPE_int) {
+  b_0 = the_any_float_alloc(3.14);
+  if (b_0.type == TYPE_int) {
     the_str_t __THE_3 = the_str_empty_val;
     the_str_t __THE_4 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_3 = the_str_alloc(L"int "), __THE_4 = the_int_str(*((the_any_int_t) b.ctx))));
+    the_str_free(the_str_concat(__THE_3 = the_str_alloc(L"int "), __THE_4 = the_int_str(*((the_any_int_t) b_0.ctx))));
     the_str_free(__THE_4);
     the_str_free(__THE_3);
   }
-  c = the_union_intUSfloatUE_alloc(TYPE_int, 1);
-  if (c.type == TYPE_int) {
+  c_0 = the_union_intUSfloatUE_alloc(TYPE_int, 1);
+  if (c_0.type == TYPE_int) {
     the_str_t __THE_5 = the_str_empty_val;
     the_str_t __THE_6 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_5 = the_str_alloc(L"int "), __THE_6 = the_int_str(c.data.v1)));
+    the_str_free(the_str_concat(__THE_5 = the_str_alloc(L"int "), __THE_6 = the_int_str(c_0.data.v1)));
     the_str_free(__THE_6);
     the_str_free(__THE_5);
   }
   else {
     the_str_t __THE_7 = the_str_empty_val;
     the_str_t __THE_8 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_7 = the_str_alloc(L"float "), __THE_8 = the_float_str(c.data.v2)));
+    the_str_free(the_str_concat(__THE_7 = the_str_alloc(L"float "), __THE_8 = the_float_str(c_0.data.v2)));
     the_str_free(__THE_8);
     the_str_free(__THE_7);
   }
-  d = the_union_intUSfloatUE_alloc(TYPE_float, 3.14);
-  if (d.type == TYPE_int) {
+  d_0 = the_union_intUSfloatUE_alloc(TYPE_float, 3.14);
+  if (d_0.type == TYPE_int) {
     the_str_t __THE_9 = the_str_empty_val;
     the_str_t __THE_10 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_9 = the_str_alloc(L"int "), __THE_10 = the_int_str(d.data.v1)));
+    the_str_free(the_str_concat(__THE_9 = the_str_alloc(L"int "), __THE_10 = the_int_str(d_0.data.v1)));
     the_str_free(__THE_10);
     the_str_free(__THE_9);
   }
   else {
     the_str_t __THE_11 = the_str_empty_val;
     the_str_t __THE_12 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_11 = the_str_alloc(L"float "), __THE_12 = the_float_str(d.data.v2)));
+    the_str_free(the_str_concat(__THE_11 = the_str_alloc(L"float "), __THE_12 = the_float_str(d_0.data.v2)));
     the_str_free(__THE_12);
     the_str_free(__THE_11);
   }
-  e = the_any_int_alloc(1);
-  if ((e = the_any_realloc(e, __THE_13 = the_any_int_alloc(1))).type == TYPE_int) {
+  e_0 = the_any_int_alloc(1);
+  if ((e_0 = the_any_realloc(e_0, __THE_13 = the_any_int_alloc(1))).type == TYPE_int) {
     the_str_t __THE_14 = the_str_empty_val;
     the_str_t __THE_15 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_14 = the_str_alloc(L"int "), __THE_15 = the_int_str(*((the_any_int_t) e.ctx))));
+    the_str_free(the_str_concat(__THE_14 = the_str_alloc(L"int "), __THE_15 = the_int_str(*((the_any_int_t) e_0.ctx))));
     the_str_free(__THE_15);
     the_str_free(__THE_14);
   }
-  f = the_any_float_alloc(3.14);
-  if ((f = the_any_realloc(f, __THE_16 = the_any_float_alloc(3.14))).type == TYPE_int) {
+  f_0 = the_any_float_alloc(3.14);
+  if ((f_0 = the_any_realloc(f_0, __THE_16 = the_any_float_alloc(3.14))).type == TYPE_int) {
     the_str_t __THE_17 = the_str_empty_val;
     the_str_t __THE_18 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_17 = the_str_alloc(L"int "), __THE_18 = the_float_str(*((the_any_float_t) f.ctx))));
+    the_str_free(the_str_concat(__THE_17 = the_str_alloc(L"int "), __THE_18 = the_float_str(*((the_any_float_t) f_0.ctx))));
     the_str_free(__THE_18);
     the_str_free(__THE_17);
   }
-  g = the_union_intUSfloatUE_alloc(TYPE_int, 1);
-  if ((g = the_union_intUSfloatUE_realloc(g, __THE_19 = the_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) {
+  g_0 = the_union_intUSfloatUE_alloc(TYPE_int, 1);
+  if ((g_0 = the_union_intUSfloatUE_realloc(g_0, __THE_19 = the_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) {
     the_str_t __THE_20 = the_str_empty_val;
     the_str_t __THE_21 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_20 = the_str_alloc(L"int "), __THE_21 = the_int_str(g.data.v1)));
+    the_str_free(the_str_concat(__THE_20 = the_str_alloc(L"int "), __THE_21 = the_int_str(g_0.data.v1)));
     the_str_free(__THE_21);
     the_str_free(__THE_20);
   }
   else {
     the_str_t __THE_22 = the_str_empty_val;
     the_str_t __THE_23 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_22 = the_str_alloc(L"float "), __THE_23 = the_union_intUSfloatUE_str(g)));
+    the_str_free(the_str_concat(__THE_22 = the_str_alloc(L"float "), __THE_23 = the_union_intUSfloatUE_str(g_0)));
     the_str_free(__THE_23);
     the_str_free(__THE_22);
   }
-  h = the_union_intUSfloatUE_alloc(TYPE_float, 3.14);
-  if ((h = the_union_intUSfloatUE_realloc(h, __THE_24 = the_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_int) {
+  h_0 = the_union_intUSfloatUE_alloc(TYPE_float, 3.14);
+  if ((h_0 = the_union_intUSfloatUE_realloc(h_0, __THE_24 = the_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_int) {
     the_str_t __THE_25 = the_str_empty_val;
     the_str_t __THE_26 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_25 = the_str_alloc(L"int "), __THE_26 = the_float_str(h.data.v2)));
+    the_str_free(the_str_concat(__THE_25 = the_str_alloc(L"int "), __THE_26 = the_float_str(h_0.data.v2)));
     the_str_free(__THE_26);
     the_str_free(__THE_25);
   }
   else {
     the_str_t __THE_27 = the_str_empty_val;
     the_str_t __THE_28 = the_str_empty_val;
-    the_str_free(the_str_concat(__THE_27 = the_str_alloc(L"float "), __THE_28 = the_union_intUSfloatUE_str(h)));
+    the_str_free(the_str_concat(__THE_27 = the_str_alloc(L"float "), __THE_28 = the_union_intUSfloatUE_str(h_0)));
     the_str_free(__THE_28);
     the_str_free(__THE_27);
   }
-  the_str_free((a.type == TYPE_int) ? the_str_concat(__THE_29 = the_str_alloc(L"int "), __THE_30 = the_any_str(a)) : the_str_alloc(L"any"));
-  the_str_free((b.type == TYPE_int) ? the_str_concat(__THE_31 = the_str_alloc(L"int "), __THE_32 = the_any_str(b)) : the_str_alloc(L"any"));
-  the_str_free((c.type == TYPE_int) ? the_str_concat(__THE_35 = the_str_alloc(L"int "), __THE_36 = the_union_intUSfloatUE_str(c)) : the_str_concat(__THE_33 = the_str_alloc(L"float "), __THE_34 = the_union_intUSfloatUE_str(c)));
-  the_str_free((d.type == TYPE_int) ? the_str_concat(__THE_39 = the_str_alloc(L"int "), __THE_40 = the_union_intUSfloatUE_str(d)) : the_str_concat(__THE_37 = the_str_alloc(L"float "), __THE_38 = the_union_intUSfloatUE_str(d)));
-  the_str_free(((e = the_any_realloc(e, __THE_41 = the_any_int_alloc(1))).type == TYPE_int) ? the_str_concat(__THE_42 = the_str_alloc(L"int "), __THE_43 = the_int_str(*((the_any_int_t) e.ctx))) : the_str_alloc(L"any"));
-  the_str_free(((f = the_any_realloc(f, __THE_44 = the_any_float_alloc(3.14))).type == TYPE_int) ? the_str_concat(__THE_45 = the_str_alloc(L"int "), __THE_46 = the_float_str(*((the_any_float_t) f.ctx))) : the_str_alloc(L"any"));
-  the_str_free(((g = the_union_intUSfloatUE_realloc(g, __THE_49 = the_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) ? the_str_concat(__THE_50 = the_str_alloc(L"int "), __THE_51 = the_int_str(g.data.v1)) : the_str_concat(__THE_47 = the_str_alloc(L"float "), __THE_48 = the_union_intUSfloatUE_str(g)));
-  the_str_free(((h = the_union_intUSfloatUE_realloc(h, __THE_54 = the_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_int) ? the_str_concat(__THE_55 = the_str_alloc(L"int "), __THE_56 = the_float_str(h.data.v2)) : the_str_concat(__THE_52 = the_str_alloc(L"float "), __THE_53 = the_union_intUSfloatUE_str(h)));
+  the_str_free((a_0.type == TYPE_int) ? the_str_concat(__THE_29 = the_str_alloc(L"int "), __THE_30 = the_any_str(a_0)) : the_str_alloc(L"any"));
+  the_str_free((b_0.type == TYPE_int) ? the_str_concat(__THE_31 = the_str_alloc(L"int "), __THE_32 = the_any_str(b_0)) : the_str_alloc(L"any"));
+  the_str_free((c_0.type == TYPE_int) ? the_str_concat(__THE_35 = the_str_alloc(L"int "), __THE_36 = the_union_intUSfloatUE_str(c_0)) : the_str_concat(__THE_33 = the_str_alloc(L"float "), __THE_34 = the_union_intUSfloatUE_str(c_0)));
+  the_str_free((d_0.type == TYPE_int) ? the_str_concat(__THE_39 = the_str_alloc(L"int "), __THE_40 = the_union_intUSfloatUE_str(d_0)) : the_str_concat(__THE_37 = the_str_alloc(L"float "), __THE_38 = the_union_intUSfloatUE_str(d_0)));
+  the_str_free(((e_0 = the_any_realloc(e_0, __THE_41 = the_any_int_alloc(1))).type == TYPE_int) ? the_str_concat(__THE_42 = the_str_alloc(L"int "), __THE_43 = the_int_str(*((the_any_int_t) e_0.ctx))) : the_str_alloc(L"any"));
+  the_str_free(((f_0 = the_any_realloc(f_0, __THE_44 = the_any_float_alloc(3.14))).type == TYPE_int) ? the_str_concat(__THE_45 = the_str_alloc(L"int "), __THE_46 = the_float_str(*((the_any_float_t) f_0.ctx))) : the_str_alloc(L"any"));
+  the_str_free(((g_0 = the_union_intUSfloatUE_realloc(g_0, __THE_49 = the_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) ? the_str_concat(__THE_50 = the_str_alloc(L"int "), __THE_51 = the_int_str(g_0.data.v1)) : the_str_concat(__THE_47 = the_str_alloc(L"float "), __THE_48 = the_union_intUSfloatUE_str(g_0)));
+  the_str_free(((h_0 = the_union_intUSfloatUE_realloc(h_0, __THE_54 = the_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_int) ? the_str_concat(__THE_55 = the_str_alloc(L"int "), __THE_56 = the_float_str(h_0.data.v2)) : the_str_concat(__THE_52 = the_str_alloc(L"float "), __THE_53 = the_union_intUSfloatUE_str(h_0)));
   the_str_free(__THE_56);
   the_str_free(__THE_55);
   the_union_intUSfloatUE_free(__THE_54);
@@ -241,10 +241,10 @@ int main (void) {
   the_union_intUSfloatUE_free(__THE_24);
   the_union_intUSfloatUE_free(__THE_19);
   the_any_free(__THE_16);
-  the_any_free(f);
+  the_any_free(f_0);
   the_any_free(__THE_13);
-  the_any_free(e);
-  the_any_free(b);
-  the_any_free(a);
+  the_any_free(e_0);
+  the_any_free(b_0);
+  the_any_free(a_0);
 }
 ===== output =====
