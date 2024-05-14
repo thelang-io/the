@@ -61,7 +61,7 @@ export obj BlockDataContext {
   mut usedValueVariable: bool
 
   fn empty (self :ref Self) bool {
-    return !self.setup.empty && !self.teardown.empty
+    return self.setup.empty && self.teardown.empty
   }
 }
 
@@ -128,7 +128,7 @@ export obj BlockData {
     return "v"
   }
 
-  fn has (self: ref Self, t := BlockDataType.Block) bool {
+  fn hasUntil (self: ref Self, t := BlockDataType.Block) bool {
     loop i := self.blocks.len - 1; i >= 0; i-- {
       block := self.blocks[i]
 
@@ -1612,7 +1612,7 @@ export obj Codegen {
 
     statement := item.asBreak()
 
-    if !self.blockData.has(.Loop) {
+    if !self.blockData.hasUntil(.Loop) {
       return AST.createBreakStatement()
     }
 
@@ -1639,7 +1639,7 @@ export obj Codegen {
 
     statement := item.asContinue()
 
-    if !self.blockData.has(.Loop) {
+    if !self.blockData.hasUntil(.Loop) {
       return AST.createContinueStatement()
     }
 
@@ -1791,35 +1791,38 @@ export obj Codegen {
       update = self._generateExpression(ref statement.update)
     }
 
-    // todo here it should convert to array if compound
-    mut body := [self._generateStatement(ref statement.body)]
+    mut bodyIsBlock := statement.body.isBlock()
+    mut body: AST.CStatement[]
+
+    if bodyIsBlock {
+      blockStatement := statement.body.asBlock()
+      body = self._generateBlock(ref blockStatement.body)
+    } else {
+      body.push(self._generateStatement(ref statement.body))
+    }
 
     if self.blockData.usedContinueVariable() {
-      // todo try with concat
-      bodySave := body
       body = [
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
           self.blockData.getContinueVariable(),
           AST.createLiteral(0)
         )
-      ]
-      body.merge(bodySave)
+      ].concat(body)
     }
 
     if self.blockData.usedBreakVariable() {
-      bodySave := body
       body = [
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
           self.blockData.getBreakVariable(),
           AST.createLiteral(0)
         )
-      ]
-      body.merge(bodySave)
+      ].concat(body)
     }
 
-    statementBody := body.len == 1 ? body[0] : AST.createCompoundStatement(body)
+    statementBody := !bodyIsBlock && body.len == 1 ? body[0] : AST.createCompoundStatement(body)
+
     mut result := variant == "while"
       ? AST.createWhileStatement(condition as AST.CExpression, statementBody)
       : AST.createForStatement(initializer, condition, update, statementBody)
@@ -1827,7 +1830,7 @@ export obj Codegen {
     self.blockData.decreaseVariableIndexes()
     blockDataContext := self.blockData.decrease()
 
-    if !blockDataContext.setup.empty || !blockDataContext.teardown.empty {
+    if !blockDataContext.empty() {
       mut newStatementBody := blockDataContext.setup
       newStatementBody.push(result)
       newStatementBody.merge(blockDataContext.teardown)
@@ -1842,7 +1845,7 @@ export obj Codegen {
               "==",
               AST.createLiteral(1)
             ),
-            self.blockData.has(.Fn)
+            self.blockData.hasUntil(.Fn)
               ? AST.createGotoStatement(self._label())
               : returnTypeName == "void"
                 ? AST.createReturnStatement()
