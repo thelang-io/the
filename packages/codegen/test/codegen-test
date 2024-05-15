@@ -15,10 +15,26 @@ export fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
 }
 
 export fn TEST_Codegen () {
-  files := fs_scandirSync("./test/codegen")
+  allFiles := fs_scandirSync("./test/codegen")
+  mut files := allFiles
 
   if !fs_existsSync("./build") {
     fs_mkdirSync("./build")
+  }
+
+  mut containsOnly := false
+
+  loop i := 0; i < allFiles.len; i++ {
+    file := allFiles[i] as str
+
+    if file.slice(0, 5) == "only-" {
+      if !containsOnly {
+        files = []
+      }
+
+      files.push(file)
+      containsOnly = true
+    }
   }
 
   loop i := 0; i < files.len; i++ {
