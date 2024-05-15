@@ -1,0 +1,75 @@
+main {
+  v1 := "test1"
+
+  loop i := 0; i < 10; i++ {
+    v2 := "test2"
+    print("1 start", i)
+    v4 := "test4"
+    if i == 5 {
+      v5 := "test5"
+      break
+    }
+    v6 := "test6"
+    print("1 end", i)
+    v7 := "test7"
+  }
+
+  loop i := 0; i < 10; i++ {
+    print("2 start", i)
+    if i == 5 {
+      v2 := "test1"
+      break
+    }
+    print("2 end", i)
+  }
+
+  loop i := 0; i < 10; i++ {
+    v2 := "test1"
+    print("3 start", i)
+    if i == 5 { break }
+    print("3 end", i)
+  }
+
+  loop i := 0; i < 10; i++ {
+    print("4 start", i)
+    if i == 5 { break }
+    print("4 end", i)
+  }
+
+  loop j := ""; j != "iiiiiiiiii"; j += "i" {
+    v2 := "test2"
+    print("1 start", j)
+    v4 := "test4"
+    if j == "iiiii" {
+      v5 := "test5"
+      break
+    }
+    v6 := "test6"
+    print("1 end", j)
+    v7 := "test7"
+  }
+
+  loop j := ""; j != "iiiiiiiiii"; j += "i" {
+    print("2 start", j)
+    if j == "iiiii" {
+      v2 := "test1"
+      break
+    }
+    print("2 end", j)
+  }
+
+  loop j := ""; j != "iiiiiiiiii"; j += "i" {
+    v2 := "test1"
+    print("3 start", j)
+    if j == "iiiii" { break }
+    print("3 end", j)
+  }
+
+  loop j := ""; j != "iiiiiiiiii"; j += "i" {
+    print("4 start", j)
+    if j == "iiiii" { break }
+    print("4 end", j)
+  }
+}
+===== code =====
+===== output =====

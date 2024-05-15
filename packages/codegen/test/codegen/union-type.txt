@@ -1,0 +1,6 @@
+main {
+  var1: int | float
+  var2: rune | str
+}
+===== code =====
+===== output =====

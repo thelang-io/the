@@ -1,0 +1,6 @@
+main {
+  var1: (ref int)?
+  var2: (ref str)?
+}
+===== code =====
+===== output =====
