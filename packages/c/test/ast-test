@@ -98,8 +98,6 @@ export fn TEST_AST_literal () {
   EXPECT_EQ(expression3.stringify(), "'a'")
   expression4 := AST.createLiteral("\"test\"")
   EXPECT_EQ(expression4.stringify(), "\"test\"")
-  expression5 := AST.createLiteral(1)
-  EXPECT_EQ(expression5.stringify(), "1")
 }
 
 export fn TEST_AST_assignmentExpression () {

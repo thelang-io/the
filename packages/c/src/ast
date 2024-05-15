@@ -693,10 +693,8 @@ export fn createIdentifier (name: str) CExpression {
   return createExpression(CIdentifier{name: name})
 }
 
-export fn createLiteral (value: str | int) CExpression {
-  intValue := (value is int) ? value : 0
-  stringValue := (value is str) ? value : ""
-  return createExpression(CLiteral{intValue: intValue, stringValue: stringValue})
+export fn createLiteral (value: str) CExpression {
+  return createExpression(CLiteral{intValue: 0, stringValue: value})
 }
 
 export fn createAssignmentExpression (left: CExpression, operator: str, right: CExpression) CExpression {
