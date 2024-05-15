@@ -7,15 +7,42 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
-// todo error object needs special generation rules to move message and stack properties up front
-// todo implement await expression
-// todo implement closure expression
+// todo test Loop statement
+// todo test If statement
+// todo test VariableDeclaration statement
+
 // todo implement map expression
+// todo implement Block statement
+// todo test Map type
+
+// todo implement FunctionDeclaration statement
+// todo test call expression
+// todo implement Return statement
+// todo implement closure expression
+// todo test Function type
+// todo test MainDeclaration statement
+
+// todo implement ObjectDeclaration statement
+// todo implement ObjectDeclarationMethod statement
+// todo implement ObjectDeclarationProperty statement
 // todo implement object expression
 // todo implement property access expression
+// todo error object needs special generation rules to move message and stack properties up front
 
-// todo test call expression
+// todo implement EnumDeclaration statement
+// todo implement TypeAliasDeclaration statement
+
+// todo implement Throw statement
+// todo implement Try statement
+
+// todo implement ImportDeclaration statement
+// todo implement ExportDeclaration statement
+// todo implement ExportNamedDeclaration statement
+
 // todo test expressions with types other than primitive
+// todo implement await expression
+// todo implement async functions
+// todo implement Member type
 
 export obj CodegenAPIBuiltin {
   mut theAny: bool
@@ -1001,7 +1028,7 @@ export obj Codegen {
       return self._defaultInitializerExpression(t.t)
     } elif it.name == "any" {
       return AST.createCastExpression(AST.createType(self._("the_any_t")), AST.createInitializerListExpression([
-        AST.createLiteral(-1),
+        AST.createLiteral("-1"),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
@@ -1018,7 +1045,7 @@ export obj Codegen {
       typeName := self._typeName(it)
 
       return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
-        AST.createLiteral(0)
+        AST.createLiteral("0")
       ])
     // todo
     // } elif it.isObject() {
@@ -1037,10 +1064,10 @@ export obj Codegen {
     } elif it.isUnion() {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
-        AST.createLiteral(-1)
+        AST.createLiteral("-1")
       ])
     } elif !it.isFunction() && !it.isReference() {
-      return AST.createLiteral(0)
+      return AST.createLiteral("0")
     }
 
     throw error_NewError("Tried default object expressions declaration on unknown type '" + it.toString() + "'")
@@ -1052,7 +1079,7 @@ export obj Codegen {
       return self._defaultInitializerDeclaration(t.t)
     } elif it.name == "any" {
       return AST.createInitializerListExpression([
-        AST.createLiteral(-1),
+        AST.createLiteral("-1"),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
@@ -1068,7 +1095,7 @@ export obj Codegen {
     } elif it.isArray() || it.isMap() {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
-        AST.createLiteral(0)
+        AST.createLiteral("0")
       ])
     // todo
     // } elif it.isObject() {
@@ -1087,10 +1114,10 @@ export obj Codegen {
     } elif it.isUnion() {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
-        AST.createLiteral(-1)
+        AST.createLiteral("-1")
       ])
     } elif !it.isFunction() && !it.isReference() {
-      return AST.createLiteral(0)
+      return AST.createLiteral("0")
     }
 
     throw error_NewError("Tried default initializer variable declaration on unknown type '" + it.toString() + "'")
@@ -1368,7 +1395,7 @@ export obj Codegen {
     expression := item.asArray()
     validateContext(item.context is Analyzer.ArrayExpressionContext)
     context := item.context as Analyzer.ArrayExpressionContext
-    mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len)]
+    mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len.str())]
 
     loop i := 0; i < expression.elements.len; i++ {
       element := expression.elements[i]
@@ -1502,7 +1529,7 @@ export obj Codegen {
           variadicArgs.push(self._generateExpression(ref arg.argument.expression))
         }
 
-        mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len)]
+        mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len.str())]
         variadicAllocArgs.merge(variadicArgs)
         variadicAllocType := self._type(param.t, "_alloc")
 
@@ -1676,7 +1703,7 @@ export obj Codegen {
       AST.createAssignmentExpression(
         AST.createIdentifier(self.blockData.getBreakVariable()),
         "=",
-        AST.createLiteral(1)
+        AST.createLiteral("1")
       )
     )
 
@@ -1703,7 +1730,7 @@ export obj Codegen {
       AST.createAssignmentExpression(
         AST.createIdentifier(self.blockData.getContinueVariable()),
         "=",
-        AST.createLiteral(1)
+        AST.createLiteral("1")
       )
     )
 
@@ -1840,7 +1867,7 @@ export obj Codegen {
     if statement.condition != nil {
       condition = self._generateExpression(ref statement.condition)
     } elif variant == "while" {
-      condition = AST.createLiteral(1)
+      condition = AST.createLiteral("1")
     }
 
     if statement.update != nil {
@@ -1862,7 +1889,7 @@ export obj Codegen {
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
           self.blockData.getContinueVariable(),
-          AST.createLiteral(0)
+          AST.createLiteral("0")
         )
       ].concat(body)
     }
@@ -1872,7 +1899,7 @@ export obj Codegen {
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
           self.blockData.getBreakVariable(),
-          AST.createLiteral(0)
+          AST.createLiteral("0")
         )
       ].concat(body)
     }
@@ -1899,7 +1926,7 @@ export obj Codegen {
             AST.createBinaryExpression(
               AST.createIdentifier(self.blockData.getReturnVariable()),
               "==",
-              AST.createLiteral(1)
+              AST.createLiteral("1")
             ),
             self.blockData.hasUntil(.Fn)
               ? AST.createGotoStatement(self._label())
