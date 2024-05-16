@@ -286,6 +286,24 @@ export obj Statement {
     return false
   }
 
+  fn hasDirectLoopParent (self: ref Self) bool { // todo test
+    mut it := self
+
+    loop it.hasParent() {
+      p := it.parent()
+
+      if p.isLoop() {
+        return true
+      } elif !p.isBlock() {
+        return false
+      }
+
+      it = p
+    }
+
+    return false
+  }
+
   fn hasFunctionOrMainParent (self: ref Self) bool {
     mut it := self
 
