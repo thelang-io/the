@@ -12,8 +12,8 @@ import * as Parser from "the/parser"
 // todo test VariableDeclaration statement
 
 // todo implement map expression
-// todo implement Block statement
-// todo test Map type
+// todo implement map type
+// todo test expressions with types other than primitive
 
 // todo implement FunctionDeclaration statement
 // todo test call expression
@@ -27,7 +27,7 @@ import * as Parser from "the/parser"
 // todo implement ObjectDeclarationProperty statement
 // todo implement object expression
 // todo implement property access expression
-// todo error object needs special generation rules to move message and stack properties up front
+// todo error object needs special generation rules to move message and stack properties upfront
 
 // todo implement EnumDeclaration statement
 // todo implement TypeAliasDeclaration statement
@@ -38,11 +38,10 @@ import * as Parser from "the/parser"
 // todo implement ImportDeclaration statement
 // todo implement ExportDeclaration statement
 // todo implement ExportNamedDeclaration statement
+// todo implement Member type
 
-// todo test expressions with types other than primitive
 // todo implement await expression
 // todo implement async functions
-// todo implement Member type
 
 export obj CodegenAPIBuiltin {
   mut theAny: bool
@@ -88,6 +87,8 @@ export obj BlockDataVariable {
 
 export obj BlockDataContext {
   t: BlockDataType
+  mut breakVariableId: int
+  mut continueVariableId: int
   mut label: int
   mut setup: AST.CStatement[]
   mut teardown: AST.CStatement[]
@@ -96,6 +97,14 @@ export obj BlockDataContext {
   mut usedReturnVariable: bool
   mut usedValueVariable: bool
   mut variables: BlockDataVariable[]
+
+  fn breakVariable (self: ref Self) str {
+    return "b" + self.breakVariableId.str()
+  }
+
+  fn continueVariable (self: ref Self) str {
+    return "c" + self.continueVariableId.str()
+  }
 
   fn empty (self: ref Self) bool {
     return self.setup.empty && self.teardown.empty
@@ -106,6 +115,7 @@ export obj BlockData {
   mut blocks: BlockDataContext[]
   mut lastBreakVariable: int
   mut lastContinueVariable: int
+  mut lastLabel: int
 
   fn init (mut self: ref Self) {}
 
@@ -118,13 +128,8 @@ export obj BlockData {
   }
 
   fn decrease (mut self: ref Self) BlockDataContext {
-    last := self.blocks.pop()
-
-    result := BlockDataContext{
-      setup: last.setup,
-      teardown: last.teardown.reverse()
-    }
-
+    mut result := self.blocks.pop()
+    result.teardown = result.teardown.reverse()
     return result
   }
 
@@ -138,15 +143,22 @@ export obj BlockData {
       block.usedBreakVariable = true
     })
 
-    return "b" + self.lastBreakVariable.str()
+    return self.blocks.last.breakVariable()
   }
 
   fn getContinueVariable (mut self: ref Self) str {
     self.loopUntil(.Loop, (mut block: ref BlockDataContext) -> void {
-      block.usedBreakVariable = true
+      block.usedContinueVariable = true
     })
 
-    return "c" + self.lastBreakVariable.str()
+    return self.blocks.last.continueVariable()
+  }
+
+  fn getLabel (mut self: ref Self) str {
+    self.lastLabel++
+    label := "L" + self.lastLabel.str()
+    self.blocks.last.teardown.push(AST.createLabelStatement(label))
+    return label
   }
 
   fn getReturnVariable (mut self: ref Self) str {
@@ -198,12 +210,21 @@ export obj BlockData {
   }
 
   fn increase (mut self: ref Self, t := BlockDataType.Block) {
-    self.blocks.push(BlockDataContext{t: t})
+    self.blocks.push(BlockDataContext{
+      t: t,
+      breakVariableId: self.lastBreakVariable,
+      continueVariableId: self.lastContinueVariable,
+      label: self.lastLabel,
+      usedBreakVariable: self.blocks.len == 0 ? false : self.blocks.last.usedBreakVariable,
+      usedContinueVariable: self.blocks.len == 0 ? false : self.blocks.last.usedContinueVariable,
+      usedReturnVariable: self.blocks.len == 0 ? false : self.blocks.last.usedReturnVariable,
+      usedValueVariable: self.blocks.len == 0 ? false : self.blocks.last.usedValueVariable
+    })
   }
 
   fn increaseVariableIndexes (mut self: ref Self) {
-    self.lastBreakVariable++
-    self.lastContinueVariable++
+    self.blocks.last.breakVariableId = ++self.lastBreakVariable
+    self.blocks.last.continueVariableId = ++self.lastContinueVariable
   }
 
   fn loopUntil (mut self: ref Self, t: BlockDataType, cb: (mut block: ref BlockDataContext) -> void) {
@@ -251,35 +272,11 @@ export obj BlockData {
   }
 
   fn usedBreakVariable (self: ref Self) bool {
-    loop i := self.blocks.len - 1; i >= 0; i-- {
-      block := self.blocks[i]
-
-      if block.usedBreakVariable {
-        return true
-      }
-
-      if block.t == .Loop {
-        break
-      }
-    }
-
-    return false
+    return self.blocks.last.usedBreakVariable
   }
 
   fn usedContinueVariable (self: ref Self) bool {
-    loop i := self.blocks.len - 1; i >= 0; i-- {
-      block := self.blocks[i]
-
-      if block.usedContinueVariable {
-        return true
-      }
-
-      if block.t == .Loop {
-        break
-      }
-    }
-
-    return false
+    return self.blocks.last.usedContinueVariable
   }
 }
 
@@ -735,7 +732,6 @@ export const BUILTIN_ENTITIES := {
     "the_str_lower",
     "the_str_lowerFirst",
     "the_str_lt",
-    "the_str_ne",
     "the_str_not",
     "the_str_realloc",
     "the_str_replace",
@@ -770,7 +766,7 @@ export obj Codegen {
   mut blockData: BlockData
   mut entities: CodegenEntity[]
   mut flags: str[]
-  mut lastLabelId: int
+  mut insideLoopHeader: bool
   mut lastTypeId: int
   mut lastVarId: int
   mut mainStatements: AST.CStatement[]
@@ -1254,7 +1250,25 @@ export obj Codegen {
     l := items.len
 
     loop i := 0; i < l; i++ {
-      result.push(self._generateStatement(items[i]))
+      item := items[i]
+      result.push(self._generateStatement(item))
+
+      // todo
+      // auto node = nodes[i];
+      // if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
+      //   for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
+      //     this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC);
+      //   }
+      //   for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
+      //     this->_node(c, nodes[j], CODEGEN_PHASE_ALLOC_METHOD);
+      //   }
+      //   for (; i < nodes.size() && ASTChecker(nodes[i]).hoistingFriendly(); i++) {
+      //     this->_node(c, nodes[i], CODEGEN_PHASE_INIT);
+      //   }
+      //   i--;
+      // } else {
+      //   this->_node(c, node);
+      // }
     }
 
     if preserveData { return result }
@@ -1265,10 +1279,57 @@ export obj Codegen {
     finalResult.merge(result)
     finalResult.merge(blockDataContext.teardown)
 
+    parentIsLoop := l > 0 && items.first.hasDirectLoopParent()
+
+    if !parentIsLoop && blockDataContext.usedContinueVariable {
+      finalResult.push(
+        AST.createIfStatement(
+          AST.createBinaryExpression(
+            AST.createIdentifier(blockDataContext.continueVariable()),
+            "==",
+            AST.createLiteral("1")
+          ),
+          self.blockData.hasUntil(.Loop)
+            ? AST.createGotoStatement(self.blockData.getLabel())
+            : AST.createContinueStatement()
+        )
+      )
+    }
+
+    if blockDataContext.usedBreakVariable {
+      finalResult.push(
+        AST.createIfStatement(
+          AST.createBinaryExpression(
+            AST.createIdentifier(blockDataContext.breakVariable()),
+            "==",
+            AST.createLiteral("1")
+          ),
+          !parentIsLoop && self.blockData.hasUntil(.Loop)
+            ? AST.createGotoStatement(self.blockData.getLabel())
+            : AST.createBreakStatement()
+        )
+      )
+    }
+
+    if blockDataContext.usedReturnVariable { // todo !this->state.cleanUp.empty()
+      //(*c)->append(
+      //  CodegenASTStmtIf::create(
+      //    CodegenASTExprBinary::create(
+      //      CodegenASTExprAccess::create("r"),
+      //      "==",
+      //      CodegenASTExprLiteral::create("1")
+      //    ),
+      //    initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
+      //      ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
+      //      : CodegenASTStmtReturn::create()
+      //  )
+      //);
+    }
+
     return finalResult
   }
 
-  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
+  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression, transform := true) AST.CExpression {
     mut result: AST.CExpression?
 
     if (
@@ -1290,10 +1351,10 @@ export obj Codegen {
       optionalTargetType := typeContext.targetType
 
       if optionalTargetType == nil {
-        return self._wrap(result, item, typeContext.t, typeContext.t, transform: true)
+        return self._wrap(result, item, typeContext.t, typeContext.t, transform: transform)
       }
 
-      return self._wrap(result, item, typeContext.t, optionalTargetType as ref Analyzer.Type, transform: true)
+      return self._wrap(result, item, typeContext.t, optionalTargetType as ref Analyzer.Type, transform: transform)
     }
 
     throw error_NewError("Tried code generation for unknown expression '" + Parser.stringifyExpression(item) + "'")
@@ -1463,7 +1524,12 @@ export obj Codegen {
     left := self._generateExpression(ref expression.left)
     right := self._generateExpression(ref expression.right)
 
-    if (
+    if leftType.name == "str" && rightType.name == "str" && expression.operator.t == .OpExclEq {
+      return AST.createUnaryExpression(
+        "!",
+        AST.createCallExpression(AST.createIdentifier(self._("the_str_eq")), [left, right])
+      )
+    } elif (
       (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
       (!typePrimitive(context.leftType) || !typePrimitive(context.rightType))
     ) {
@@ -1708,7 +1774,7 @@ export obj Codegen {
     )
 
     if item.hasNext() {
-      jumpStatement := AST.createGotoStatement(self._label())
+      jumpStatement := AST.createGotoStatement(self.blockData.getLabel())
       result = AST.createCompoundStatement([result, jumpStatement])
     }
 
@@ -1735,7 +1801,7 @@ export obj Codegen {
     )
 
     if item.hasNext() {
-      jumpStatement := AST.createGotoStatement(self._label())
+      jumpStatement := AST.createGotoStatement(self.blockData.getLabel())
       result = AST.createCompoundStatement([result, jumpStatement])
     }
 
@@ -1864,14 +1930,16 @@ export obj Codegen {
       initializer = self._generateStatement(ref statement.initializer)
     }
 
+    // todo somehow teardown from condition + update should be freed inside loop itself
+
     if statement.condition != nil {
-      condition = self._generateExpression(ref statement.condition)
+      condition = self._generateExpression(ref statement.condition, transform: false)
     } elif variant == "while" {
       condition = AST.createLiteral("1")
     }
 
     if statement.update != nil {
-      update = self._generateExpression(ref statement.update)
+      update = self._generateExpression(ref statement.update, transform: false)
     }
 
     mut bodyIsBlock := statement.body.isBlock()
@@ -1929,7 +1997,7 @@ export obj Codegen {
               AST.createLiteral("1")
             ),
             self.blockData.hasUntil(.Fn)
-              ? AST.createGotoStatement(self._label())
+              ? AST.createGotoStatement(self.blockData.getLabel())
               : returnTypeName == "void"
                 ? AST.createReturnStatement()
                 : AST.createReturnStatement(AST.createIdentifier(self.blockData.getValueVariable()))
@@ -2785,11 +2853,6 @@ export obj Codegen {
     }
 
     return false
-  }
-
-  fn _label (mut self: ref Self) str {
-    self.lastLabelId++
-    return "L" + self.lastLabelId.str()
   }
 
   fn _tm (mut self: ref Self) ref Analyzer.TypeMap {
