@@ -286,24 +286,6 @@ export obj Statement {
     return false
   }
 
-  fn hasDirectLoopParent (self: ref Self) bool { // todo test
-    mut it := self
-
-    loop it.hasParent() {
-      p := it.parent()
-
-      if p.isLoop() {
-        return true
-      } elif !p.isBlock() {
-        return false
-      }
-
-      it = p
-    }
-
-    return false
-  }
-
   fn hasFunctionOrMainParent (self: ref Self) bool {
     mut it := self
 
@@ -420,6 +402,16 @@ export obj Statement {
       self.isTypeAliasDeclaration()
   }
 
+  fn isLoopDeep (self: ref Self) bool { // todo test
+    mut it := self
+
+    loop it.isBlock() && it.hasParent() {
+      it = it.parent()
+    }
+
+    return it.isLoop()
+  }
+
   fn next (self: ref Self) ref Statement {
     if self._next != nil {
       return self._next
@@ -432,6 +424,10 @@ export obj Statement {
       return self._parent
     }
     throw ParserError{message: "Tried accessing nil parent"}
+  }
+
+  fn parentMaybe (self: ref Self) (ref Statement)? { // todo test
+    return self._parent
   }
 
   fn prev (self: ref Self) ref Statement {
