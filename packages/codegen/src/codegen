@@ -7,6 +7,8 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
+// todo expression should free is incorrect
+// todo implement parsing of regex inside test output
 // todo test Loop statement
 // todo test If statement
 // todo test VariableDeclaration statement
@@ -109,6 +111,11 @@ export obj BlockDataContext {
   fn empty (self: ref Self) bool {
     return self.setup.empty && self.teardown.empty
   }
+
+  fn merge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
+    self.setup.merge(setup)
+    self.teardown.merge(teardown.reverse())
+  }
 }
 
 export obj BlockData {
@@ -125,6 +132,14 @@ export obj BlockData {
 
   fn addTeardown (mut self: ref Self, item: AST.CStatement) {
     self.blocks.last.teardown.push(item)
+  }
+
+  fn currentEmpty (self: ref Self) bool {
+    return self.blocks.empty ? true : self.blocks.last.empty()
+  }
+
+  fn currentMerge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
+    self.blocks.last.merge(setup, teardown)
   }
 
   fn decrease (mut self: ref Self) BlockDataContext {
@@ -155,6 +170,15 @@ export obj BlockData {
   }
 
   fn getLabel (mut self: ref Self) str {
+    if !self.blocks.last.teardown.empty {
+      lastTeardown := self.blocks.last.teardown.last
+
+      if lastTeardown.isLabelStatement() {
+        labelStatement := lastTeardown.asLabelStatement()
+        return labelStatement.name
+      }
+    }
+
     self.lastLabel++
     label := "L" + self.lastLabel.str()
     self.blocks.last.teardown.push(AST.createLabelStatement(label))
@@ -236,11 +260,6 @@ export obj BlockData {
         break
       }
     }
-  }
-
-  fn merge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
-    self.blocks.last.setup.merge(setup)
-    self.blocks.last.teardown.merge(teardown.reverse())
   }
 
   fn setVariable (mut self: ref Self, name: str) str {
@@ -781,7 +800,8 @@ export obj Codegen {
 
   fn generate (mut self: ref Self) {
     mut file := self.analyzer.files.last()
-    self.globalStatements = self._generateBlock(ref file.f.program.body, preserveData: true)
+    self.blockData.increase()
+    self.globalStatements = self._generateBlockBody(ref file.f.program.body)
     self._assemble()
   }
 
@@ -1001,12 +1021,12 @@ export obj Codegen {
     self.statements.merge(macroInvocationDefineStatements.reverse())
     self.statements.merge(statements)
 
-    blockDataContext := self.blockData.decrease()
+    dataContextBlock := self.blockData.decrease()
     mut finalMainStatements: AST.CStatement[]
 
-    finalMainStatements.merge(blockDataContext.setup)
+    finalMainStatements.merge(dataContextBlock.setup)
     finalMainStatements.merge(self.mainStatements)
-    finalMainStatements.merge(blockDataContext.teardown)
+    finalMainStatements.merge(dataContextBlock.teardown)
 
     self.statements.push(
       AST.createFunctionDeclaration(
@@ -1244,8 +1264,17 @@ export obj Codegen {
     }
   }
 
-  fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[], preserveData := false) AST.CStatement[] {
+  fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
+    if items.empty {
+      return []
+    }
     self.blockData.increase()
+    result := self._generateBlockBody(items)
+    blockData := self.blockData.decrease()
+    return self._generateBlockTail(result, items.first.parentMaybe(), ref blockData)
+  }
+
+  fn _generateBlockBody (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
     mut result: AST.CStatement[]
     l := items.len
 
@@ -1271,21 +1300,31 @@ export obj Codegen {
       // }
     }
 
-    if preserveData { return result }
-    blockDataContext := self.blockData.decrease()
+    return result
+  }
 
+  fn _generateBlockTail (
+    mut self: ref Self,
+    result: AST.CStatement[],
+    parent: (ref Parser.Statement)?,
+    blockData: ref BlockDataContext
+  ) AST.CStatement[] {
     mut finalResult: AST.CStatement[]
-    finalResult.merge(blockDataContext.setup)
+    finalResult.merge(blockData.setup)
     finalResult.merge(result)
-    finalResult.merge(blockDataContext.teardown)
+    finalResult.merge(blockData.teardown)
 
-    parentIsLoop := l > 0 && items.first.hasDirectLoopParent()
+    mut parentIsLoop := false
 
-    if !parentIsLoop && blockDataContext.usedContinueVariable {
+    if parent != nil {
+      parentIsLoop = parent.isLoopDeep()
+    }
+
+    if !parentIsLoop && blockData.usedContinueVariable {
       finalResult.push(
         AST.createIfStatement(
           AST.createBinaryExpression(
-            AST.createIdentifier(blockDataContext.continueVariable()),
+            AST.createIdentifier(blockData.continueVariable()),
             "==",
             AST.createLiteral("1")
           ),
@@ -1296,11 +1335,11 @@ export obj Codegen {
       )
     }
 
-    if blockDataContext.usedBreakVariable {
+    if blockData.usedBreakVariable {
       finalResult.push(
         AST.createIfStatement(
           AST.createBinaryExpression(
-            AST.createIdentifier(blockDataContext.breakVariable()),
+            AST.createIdentifier(blockData.breakVariable()),
             "==",
             AST.createLiteral("1")
           ),
@@ -1311,7 +1350,7 @@ export obj Codegen {
       )
     }
 
-    if blockDataContext.usedReturnVariable { // todo !this->state.cleanUp.empty()
+    if blockData.usedReturnVariable { // todo !this->state.cleanUp.empty()
       //(*c)->append(
       //  CodegenASTStmtIf::create(
       //    CodegenASTExprBinary::create(
@@ -1626,7 +1665,7 @@ export obj Codegen {
 
       if argIdx != -1 {
         arg := context.arguments[argIdx]
-        paramsArgs.push(self._generateExpression(arg.argument.expression))
+        paramsArgs.push(self._generateExpression(ref arg.argument.expression))
       } else {
         paramsArgs.push(self._defaultInitializerExpression(param.t))
       }
@@ -1916,57 +1955,99 @@ export obj Codegen {
     }
 
     statement := item.asLoop()
+    mut initializer: AST.CStatement?
+    mut condition: AST.CExpression?
+    mut update: AST.CExpression?
+    bodyIsBlock := statement.body.isBlock()
+    mut body: AST.CStatement[]
+
+    self.blockData.increase()
+
+    if statement.initializer != nil {
+      initializerStatement := self._generateStatement(ref statement.initializer)
+
+      if !self.blockData.currentEmpty() {
+        self.blockData.addSetup(initializerStatement)
+      } else {
+        // todo problem on this line or when accessing initializer
+        initializer = initializerStatement
+      }
+    }
 
     self.blockData.increase(.Loop)
     self.blockData.increaseVariableIndexes()
 
-    mut variant := statement.initializer == nil && statement.update == nil ? "while" : "for"
-    mut initializer: AST.CStatement?
-    mut condition: AST.CExpression?
-    mut update: AST.CExpression?
-
-    if statement.initializer != nil {
-      // todo test if allocation happens during initialization
-      initializer = self._generateStatement(ref statement.initializer)
-    }
-
-    // todo somehow teardown from condition + update should be freed inside loop itself
-
     if statement.condition != nil {
-      condition = self._generateExpression(ref statement.condition, transform: false)
-    } elif variant == "while" {
-      condition = AST.createLiteral("1")
+      self.blockData.increase()
+      conditionExpression := self._generateExpression(ref statement.condition, transform: false)
+      blockData := self.blockData.decrease()
+
+      if !blockData.empty() {
+        self.blockData.currentMerge(blockData.setup, blockData.teardown)
+
+        body.push(
+          AST.createIfStatement(
+            AST.createUnaryExpression("!", conditionExpression.wrap()),
+            AST.createCompoundStatement([
+              AST.createExpressionStatement(
+                AST.createAssignmentExpression(
+                  AST.createIdentifier(self.blockData.getBreakVariable()),
+                  "=",
+                  AST.createLiteral("1")
+                )
+              ),
+              AST.createGotoStatement(self.blockData.getLabel())
+            ])
+          )
+        )
+      } else {
+        condition = conditionExpression
+      }
     }
 
     if statement.update != nil {
-      update = self._generateExpression(ref statement.update, transform: false)
+      self.blockData.increase()
+      updateExpression := self._generateExpression(ref statement.update, transform: false)
+      blockData := self.blockData.decrease()
+
+      if !blockData.empty() {
+        self.blockData.currentMerge(blockData.setup, blockData.teardown)
+        self.blockData.addTeardown(AST.createExpressionStatement(updateExpression))
+      } else {
+        update = updateExpression
+      }
     }
 
-    mut bodyIsBlock := statement.body.isBlock()
-    mut body: AST.CStatement[]
+    mut bodyItems: Parser.Statement[]
 
     if bodyIsBlock {
       blockStatement := statement.body.asBlock()
-      body = self._generateBlock(ref blockStatement.body)
+      bodyItems.merge(blockStatement.body)
     } else {
-      body.push(self._generateStatement(ref statement.body))
+      bodyItems.push(statement.body)
     }
 
-    if self.blockData.usedContinueVariable() {
+    body.merge(self._generateBlockBody(ref bodyItems))
+    self.blockData.decreaseVariableIndexes()
+    blockDataLoop := self.blockData.decrease()
+    optItem: (ref Parser.Statement)? = item // todo delete after v1
+    body = self._generateBlockTail(body, optItem, ref blockDataLoop)
+
+    if blockDataLoop.usedContinueVariable {
       body = [
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
-          self.blockData.getContinueVariable(),
+          blockDataLoop.continueVariable(),
           AST.createLiteral("0")
         )
       ].concat(body)
     }
 
-    if self.blockData.usedBreakVariable() {
+    if blockDataLoop.usedBreakVariable {
       body = [
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
-          self.blockData.getBreakVariable(),
+          blockDataLoop.breakVariable(),
           AST.createLiteral("0")
         )
       ].concat(body)
@@ -1974,19 +2055,22 @@ export obj Codegen {
 
     statementBody := !bodyIsBlock && body.len == 1 ? body[0] : AST.createCompoundStatement(body)
 
-    mut result := variant == "while"
-      ? AST.createWhileStatement(condition as AST.CExpression, statementBody)
-      : AST.createForStatement(initializer, condition, update, statementBody)
+    if initializer == nil && condition == nil && update == nil {
+      condition = AST.createLiteral("1")
+    }
 
-    self.blockData.decreaseVariableIndexes()
-    blockDataContext := self.blockData.decrease()
+    mut result := initializer == nil && condition != nil && update == nil
+      ? AST.createWhileStatement(condition, statementBody)
+      : AST.createForStatement(nil, condition, update, statementBody)
 
-    if !blockDataContext.empty() {
-      mut newStatementBody := blockDataContext.setup
+    blockDataBlock := self.blockData.decrease()
+
+    if !blockDataBlock.empty() {
+      mut newStatementBody := blockDataBlock.setup
       newStatementBody.push(result)
-      newStatementBody.merge(blockDataContext.teardown)
+      newStatementBody.merge(blockDataBlock.teardown)
 
-      if blockDataContext.usedReturnVariable {
+      if blockDataBlock.usedReturnVariable {
         returnTypeName := self.returnType == nil ? "" : self.returnType.name
 
         newStatementBody.push(
@@ -2018,10 +2102,10 @@ export obj Codegen {
 
     statement := item.asMainDeclaration()
     statementBody := statement.body.asBlock()
-    self.mainStatements = self._generateBlock(ref statementBody.body, preserveData: true)
-
-    blockDataContext := self.blockData.decrease()
-    self.blockData.merge(blockDataContext.setup, blockDataContext.teardown)
+    self.blockData.increase()
+    self.mainStatements = self._generateBlockBody(ref statementBody.body)
+    dataContextBlock := self.blockData.decrease()
+    self.blockData.currentMerge(dataContextBlock.setup, dataContextBlock.teardown)
 
     return AST.createEmptyStatement()
   }

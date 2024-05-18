@@ -42,6 +42,7 @@ export fn TEST_Codegen () {
     fileSections := retrieveFileSections("./test/codegen/" + name + ".txt")
     executablePath := "./build/" + name + ".out"
     codePath := "./build/" + name + ".c"
+    print(name)
 
     mut analyzer := Analyzer.Analyzer{}
 

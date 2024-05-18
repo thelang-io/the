@@ -3,4 +3,11 @@ main {
   var2: str
 }
 ===== code =====
+#include <the/string.h>
+#include <stdint.h>
+int main (void) {
+  int32_t var1_0 = 0;
+  the_str_t var2_0 = the_str_empty_val;
+  the_str_free(var2_0);
+}
 ===== output =====
