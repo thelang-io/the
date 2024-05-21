@@ -3,4 +3,19 @@ main {
   var2: str?
 }
 ===== code =====
+#include <the/number.h>
+#include <the/optional.h>
+#include <the/string.h>
+#include <stddef.h>
+#include <stdint.h>
+THE_OPTIONAL_DECLARE(str, the_str_t)
+THE_OPTIONAL_DECLARE(int, int32_t)
+THE_OPTIONAL_DEFINE(str, the_str_t, the_str_copy(val), the_str_eq(lhs_val, rhs_val), the_str_free(val), the_str_escape(val))
+THE_OPTIONAL_DEFINE(int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
+int main (void) {
+  the_opt_int_t var1_0 = NULL;
+  the_opt_str_t var2_0 = NULL;
+  the_opt_str_free(var2_0);
+  the_opt_int_free(var1_0);
+}
 ===== output =====

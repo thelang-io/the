@@ -3,4 +3,58 @@ main {
   var2: rune | str
 }
 ===== code =====
+#include <the/number.h>
+#include <the/rune.h>
+#include <the/string.h>
+#include <the/union.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <wchar.h>
+#define TYPE_int 1
+#define TYPE_float 2
+#define TYPE_rune 3
+#define TYPE_str 4
+THE_UNION_DECLARE(runeUSstr, {
+  wchar_t v3;
+  the_str_t v4;
+})
+THE_UNION_DECLARE(intUSfloat, {
+  int32_t v1;
+  double v2;
+})
+THE_UNION_DEFINE(runeUSstr, {
+  if (self.type == TYPE_rune) self.data.v3 = va_arg(args, wchar_t);
+  if (self.type == TYPE_str) self.data.v4 = the_str_copy(va_arg(args, the_str_t));
+}, {
+  if (self.type == TYPE_rune) result.data.v3 = self.data.v3;
+  if (self.type == TYPE_str) result.data.v4 = the_str_copy(self.data.v4);
+}, {
+  if (self.type == TYPE_rune) return self.data.v3 == rhs.data.v3;
+  if (self.type == TYPE_str) return the_str_eq(self.data.v4, rhs.data.v4);
+}, {
+  if (self.type == TYPE_str) the_str_free(self.data.v4);
+}, {
+  if (self.type == TYPE_rune) return the_rune_str(self.data.v3);
+  if (self.type == TYPE_str) return the_str_escape(self.data.v4);
+})
+THE_UNION_DEFINE(intUSfloat, {
+  if (self.type == TYPE_int) self.data.v1 = va_arg(args, int32_t);
+  if (self.type == TYPE_float) self.data.v2 = va_arg(args, double);
+}, {
+  if (self.type == TYPE_int) result.data.v1 = self.data.v1;
+  if (self.type == TYPE_float) result.data.v2 = self.data.v2;
+}, {
+  if (self.type == TYPE_int) return self.data.v1 == rhs.data.v1;
+  if (self.type == TYPE_float) return self.data.v2 == rhs.data.v2;
+}, {
+  (void) self;
+}, {
+  if (self.type == TYPE_int) return the_int_str(self.data.v1);
+  if (self.type == TYPE_float) return the_float_str(self.data.v2);
+})
+int main (void) {
+  the_union_intUSfloatUE_t var1_0 = the_union_intUSfloatUE_alloc(-1);
+  the_union_runeUSstrUE_t var2_0 = the_union_runeUSstrUE_alloc(-1);
+  the_union_runeUSstrUE_free(var2_0);
+}
 ===== output =====

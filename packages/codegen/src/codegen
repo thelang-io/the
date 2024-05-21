@@ -2062,7 +2062,7 @@ export obj Codegen {
       condition = AST.createLiteral("1")
     }
 
-    mut result := AST.createForStatement(nil, condition, update, statementBody)
+    mut result := AST.createForStatement(initializer, condition, update, statementBody)
 
     if initializer == nil && condition != nil && update == nil {
       result = AST.createWhileStatement(condition, statementBody)
