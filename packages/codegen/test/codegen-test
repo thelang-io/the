@@ -8,10 +8,48 @@ import * as Parser from "the/parser"
 import Codegen from "../src/codegen"
 import retrieveFileSections from "./utils"
 
-import Tests, EXPECT_EQ from "the/testing"
+import Tests, EXPECT_EQ from "the/testing" // todo delete when done testing
+
+fn applyRegexTemplate (pattern: str, source: str) str {
+  sourceLen := source.len
+  mut templatePos := 0
+  mut sourcePos := 0
+  mut result := ""
+
+  loop {
+    patternSlice := pattern.slice(templatePos)
+    templateStart := patternSlice.find("{{")
+
+    if templateStart == -1 {
+      result += patternSlice
+      break
+    }
+
+    templateSlice := patternSlice.slice(templateStart)
+    templateEnd := templateSlice.find("}}")
+
+    if templateEnd == -1 {
+      result += patternSlice
+      break
+    }
+
+    beforeTemplate := patternSlice.slice(0, templateStart)
+    template := templateSlice.slice(2, templateEnd).trim()
+    result += beforeTemplate
+    templatePos += templateStart + templateEnd + 2
+
+    print("template", template)
+  }
+
+  return result
+}
 
 export fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
   EXPECT_EQ(test + os_EOL + a, test + os_EOL + b)
+}
+
+export fn TEST_EXPECT_REGEX (test: str, a: str, b: str) {
+  EXPECT_EQ(test + os_EOL + a, test + os_EOL + applyRegexTemplate(b, a))
 }
 
 export fn TEST_Codegen () {
@@ -101,7 +139,7 @@ export fn TEST_Codegen () {
     fs_rmSync(executablePath)
 
     if actualOutput != fileSections.output {
-      TEST_EXPECT_EQ(name, actualOutput, fileSections.output)
+      TEST_EXPECT_REGEX(name, actualOutput, fileSections.output)
     }
   }
 }
