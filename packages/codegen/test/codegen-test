@@ -11,7 +11,40 @@ import retrieveFileSections from "./utils"
 import Tests, EXPECT_EQ from "the/testing" // todo delete when done testing
 
 fn matchRegex (input: str, regex: str) int {
-  return 1
+  regexLen := regex.len
+  mut regexArr: char[]
+
+  loop i := 0; i < regexLen; i++ {
+    regexArr.push(regex[i])
+  }
+
+  inputLen := input.len
+  mut result := 0
+
+  if input.empty {
+    return 0
+  }
+
+  loop i := 0; i < regexLen && result < inputLen; i++ {
+    if regexArr[i] == '\\' && i != regexLen - 1 && i != inputLen - 1 {
+      nextTk := regexArr[i + 1]
+
+      if nextTk == 's' {
+        if input[result].isWhitespace {
+          result += 1
+          i += 1
+        } else {
+          break
+        }
+      } else {
+        throw error_NewError("Invalid regex '" + regex + "'")
+      }
+    } else {
+      throw error_NewError("Invalid regex '" + regex + "'")
+    }
+  }
+
+  return result
 }
 
 fn applyRegexTemplate (pattern: str, source: str) str {
