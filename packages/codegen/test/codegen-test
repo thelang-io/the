@@ -10,6 +10,10 @@ import retrieveFileSections from "./utils"
 
 import Tests, EXPECT_EQ from "the/testing" // todo delete when done testing
 
+fn matchRegex (input: str, regex: str) int {
+  return 1
+}
+
 fn applyRegexTemplate (pattern: str, source: str) str {
   sourceLen := source.len
   mut templatePos := 0
@@ -37,8 +41,11 @@ fn applyRegexTemplate (pattern: str, source: str) str {
     template := templateSlice.slice(2, templateEnd).trim()
     result += beforeTemplate
     templatePos += templateStart + templateEnd + 2
+    sourcePos += templateStart
 
-    print("template", template)
+    matchLength := matchRegex(source.slice(sourcePos), template)
+    result += source.slice(sourcePos, sourcePos + matchLength)
+    sourcePos += matchLength
   }
 
   return result
