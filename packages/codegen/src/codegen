@@ -1260,7 +1260,7 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._("the_enum_str")), [expression])
     } elif it.isReference() {
       t := it.asReference()
-      return self._functionStr(t.t, expression, escape)
+      return self._functionStr(t.t, AST.createUnaryExpression("*", expression), escape)
     } else {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_str")), [expression])

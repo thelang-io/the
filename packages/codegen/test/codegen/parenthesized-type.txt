@@ -3,4 +3,22 @@ main {
   var2: (ref str)?
 }
 ===== code =====
+#include <the/number.h>
+#include <the/optional.h>
+#include <the/reference.h>
+#include <the/string.h>
+#include <stddef.h>
+#include <stdint.h>
+THE_REFERENCE_DECLARE(str, the_str_t)
+THE_REFERENCE_DECLARE(int, int32_t)
+THE_OPTIONAL_DECLARE(ref_str, the_ref_str_t)
+THE_OPTIONAL_DECLARE(ref_int, the_ref_int_t)
+THE_OPTIONAL_DEFINE(ref_str, the_ref_str_t, val, lhs_val == rhs_val, (void) val, the_str_escape(*val))
+THE_OPTIONAL_DEFINE(ref_int, the_ref_int_t, val, lhs_val == rhs_val, (void) val, the_int_str(*val))
+int main (void) {
+  the_opt_ref_int_t var1_0 = NULL;
+  the_opt_ref_str_t var2_0 = NULL;
+  the_opt_ref_str_free(var2_0);
+  the_opt_ref_int_free(var1_0);
+}
 ===== output =====
