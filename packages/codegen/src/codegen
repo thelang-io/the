@@ -1388,6 +1388,7 @@ export obj Codegen {
       (result = self._generateConditionalExpression(item)) != nil ||
       (result = self._generateElementAccessExpression(item)) != nil ||
       (result = self._generateIsExpression(item)) != nil ||
+      (result = self._generatePropertyAccessExpression(item)) != nil ||
       (result = self._generateReferenceExpression(item)) != nil ||
       (result = self._generateUnaryExpression(item)) != nil
     ) {
@@ -1749,6 +1750,19 @@ export obj Codegen {
     expression := item.asParenthesized()
     result := self._generateExpression(ref expression.expression)
     return result.wrap()
+  }
+
+  fn _generatePropertyAccessExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if !item.isPropertyAccess() {
+      return nil
+    }
+
+    expression := item.asPropertyAccess()
+
+    return AST.createPropertyAccessExpression(
+      self._generateExpression(ref expression.expression),
+      expression.name.name
+    )
   }
 
   fn _generateReferenceExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
