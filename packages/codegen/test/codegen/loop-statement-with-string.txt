@@ -31,4 +31,125 @@ main {
   }
 }
 ===== code =====
+#include <the/macro.h>
+#include <the/string.h>
+int main (void) {
+  the_str_t a_0;
+  the_str_t b_0;
+  the_str_t c_0;
+  {
+    the_str_t i_0 = the_str_alloc(L"");
+    while (1) {
+      unsigned char b1 = 0;
+      the_str_t __THE_1 = the_str_empty_val;
+      the_str_t __THE_2 = the_str_empty_val;
+      the_str_t __THE_3 = the_str_empty_val;
+      if (!(!the_str_eq(i_0, __THE_1 = the_str_alloc(L"aaa")))) {
+        b1 = 1;
+        goto L1;
+      }
+      i_0 = the_str_realloc(i_0, __THE_3 = the_str_concat(i_0, __THE_2 = the_str_alloc(L"a")));
+      the_str_free(__THE_3);
+      the_str_free(__THE_2);
+L1:
+      the_str_free(__THE_1);
+      if (b1 == 1) break;
+    }
+    the_str_free(i_0);
+  }
+  a_0 = the_str_alloc(L"");
+  while (1) {
+    unsigned char b1 = 0;
+    the_str_t __THE_4 = the_str_empty_val;
+    the_str_t __THE_5 = the_str_empty_val;
+    the_str_t __THE_6 = the_str_empty_val;
+    if (!(!the_str_eq(a_0, __THE_4 = the_str_alloc(L"aaa")))) {
+      b1 = 1;
+      goto L2;
+    }
+    a_0 = the_str_realloc(a_0, __THE_6 = the_str_concat(a_0, __THE_5 = the_str_alloc(L"a")));
+    the_str_free(__THE_6);
+    the_str_free(__THE_5);
+L2:
+    the_str_free(__THE_4);
+    if (b1 == 1) break;
+  }
+  b_0 = the_str_alloc(L"");
+  while (1) {
+    unsigned char b1 = 0;
+    the_str_t __THE_7 = the_str_empty_val;
+    the_str_t __THE_8 = the_str_empty_val;
+    the_str_t __THE_9 = the_str_empty_val;
+    if (!(!the_str_eq(b_0, __THE_7 = the_str_alloc(L"aaa")))) {
+      b1 = 1;
+      goto L3;
+    }
+    b_0 = the_str_realloc(b_0, __THE_9 = the_str_concat(b_0, __THE_8 = the_str_alloc(L"a")));
+    the_str_free(__THE_9);
+    the_str_free(__THE_8);
+L3:
+    the_str_free(__THE_7);
+    if (b1 == 1) break;
+  }
+  c_0 = the_str_alloc(L"");
+  while (1) {
+    unsigned char b1 = 0;
+    the_str_t __THE_10 = the_str_empty_val;
+    the_str_t __THE_11 = the_str_empty_val;
+    the_str_t __THE_12 = the_str_empty_val;
+    if (the_str_eq(c_0, __THE_10 = the_str_alloc(L"aaa"))) {
+      b1 = 1;
+      if (b1 == 1) goto L4;
+    }
+    c_0 = the_str_realloc(c_0, __THE_12 = the_str_concat(c_0, __THE_11 = the_str_alloc(L"a")));
+    the_str_free(__THE_12);
+    the_str_free(__THE_11);
+L4:
+    the_str_free(__THE_10);
+    if (b1 == 1) break;
+  }
+  {
+    the_str_t d_0 = the_str_alloc(L"");
+    while (1) {
+      unsigned char b1 = 0;
+      the_str_t __THE_13 = the_str_empty_val;
+      the_str_t __THE_14 = the_str_empty_val;
+      the_str_t __THE_15 = the_str_empty_val;
+      if (!(!the_str_eq(d_0, __THE_13 = the_str_alloc(L"aaa")))) {
+        b1 = 1;
+        goto L5;
+      }
+      d_0 = the_str_realloc(d_0, __THE_15 = the_str_concat(d_0, __THE_14 = the_str_alloc(L"a")));
+      the_str_free(__THE_15);
+      the_str_free(__THE_14);
+L5:
+      the_str_free(__THE_13);
+      if (b1 == 1) break;
+    }
+    the_str_free(d_0);
+  }
+  {
+    the_str_t e_0 = the_str_alloc(L"");
+    while (1) {
+      unsigned char b1 = 0;
+      the_str_t __THE_16 = the_str_empty_val;
+      the_str_t __THE_17 = the_str_empty_val;
+      the_str_t __THE_18 = the_str_empty_val;
+      if (the_str_eq(e_0, __THE_18 = the_str_alloc(L"aaa"))) {
+        b1 = 1;
+        if (b1 == 1) goto L6;
+      }
+L6:
+      the_str_free(__THE_18);
+      e_0 = the_str_realloc(e_0, __THE_17 = the_str_concat(e_0, __THE_16 = the_str_alloc(L"a")));
+      the_str_free(__THE_17);
+      the_str_free(__THE_16);
+      if (b1 == 1) break;
+    }
+    the_str_free(e_0);
+  }
+  the_str_free(c_0);
+  the_str_free(b_0);
+  the_str_free(a_0);
+}
 ===== output =====

@@ -318,15 +318,17 @@ export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
   return false
 }
 
-export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
-  if !item.hasParent() && item.hasParentNode() {
-    parent := item.parentNode()
-    return !parent.isVariableDeclaration()
-  } elif item.isParenthesized() {
-    expression := item.asParenthesized()
-    return expressionShouldBeAllocated(ref expression.expression)
-  } elif item.hasParent() {
+export fn expressionResolve (item: ref Parser.Expression, up := false, down := false) ref Parser.Expression {
+  if up {
+    if !item.hasParent() {
+      return item
+    }
+
     mut parent := item.parent()
+
+    if !parent.isParenthesized() {
+      return item
+    }
 
     loop parent.isParenthesized() {
       if !parent.hasParent() {
@@ -336,23 +338,61 @@ export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
       parent = parent.parent()
     }
 
+    return parent
+  } elif down {
+    mut it := item
+
+    loop it.isParenthesized() {
+      tmp := it.asParenthesized()
+      it = tmp.expression
+    }
+
+    return it
+  }
+
+  return item
+}
+
+export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
+  itUp := expressionResolve(item, up: true)
+  itDown := expressionResolve(item, down: true)
+
+  if !itUp.hasParent() && itUp.hasParentNode() {
+    parentNode := itUp.parentNode()
+
+    if parentNode.isVariableDeclaration() {
+      return false
+    }
+  }
+
+  if itUp.hasParent() {
+    parent := itUp.parent()
+
     if parent.isConditional() {
       return false
     }
   }
 
-  return !item.isIdentifier() && !item.isAssignment()
+  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
 }
 
 export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
-  if item.hasParent() {
+  itUp := expressionResolve(item, up: true)
+  itDown := expressionResolve(item, down: true)
+
+  if itUp.hasParent() {
     return false
-  } elif item.hasParentNode() {
-    parent := item.parentNode()
-    return !parent.isVariableDeclaration()
-  } else {
-    return true
   }
+
+  if itUp.hasParentNode() {
+    parentNode := itUp.parentNode()
+
+    if parentNode.isVariableDeclaration() {
+      return false
+    }
+  }
+
+  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
 }
 
 export fn statementHasPrecedingNonVarDecl (item: ref Parser.Statement) bool {
@@ -1227,6 +1267,12 @@ export obj Codegen {
         "=",
         AST.createCallExpression(AST.createIdentifier(self._("the_any_realloc")), [left, right])
       )
+    } elif it.name == "str" {
+      return AST.createAssignmentExpression(
+        left,
+        "=",
+        AST.createCallExpression(AST.createIdentifier(self._("the_str_realloc")), [left, right])
+      )
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -1245,7 +1291,7 @@ export obj Codegen {
       )
     }
 
-    return AST.createIdentifier(self._("NULL"))
+    throw error_NewError("Tried re-allocating unknown type")
   }
 
   fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression, escape := true) AST.CExpression {
@@ -1537,17 +1583,16 @@ export obj Codegen {
     mut right := self._generateExpression(ref expression.right)
 
     if expression.operator.t == .OpPlusEq && (leftType.name == "str" || rightType.name == "str") {
-      return AST.createAssignmentExpression(
+      return self._functionRealloc(
+        leftType,
         left,
-        "=",
-        AST.createCallExpression(AST.createIdentifier(self._("the_str_realloc")), [
-          left,
+        self._allocateExpression(
+          leftType,
           AST.createCallExpression(AST.createIdentifier(self._("the_str_concat")), [left, right])
-        ])
+        )
       )
     } elif !typePrimitive(leftType) || !typePrimitive(rightType) {
-      result := self._functionRealloc(leftType, left, right)
-      return item.hasParent() ? result : self._functionCopy(leftType, result)
+      return self._functionRealloc(leftType, left, right)
     } elif expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
       right = AST.createBinaryExpression(left, expression.operator.val, right)
       return AST.createAssignmentExpression(left, "=", right)
