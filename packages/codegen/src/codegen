@@ -7,11 +7,8 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
-// todo expression should free is incorrect
-// todo implement parsing of regex inside test output
-// todo test Loop statement
-// todo test If statement
 // todo test VariableDeclaration statement
+// todo test property access expression
 
 // todo implement map expression
 // todo implement map type
@@ -33,6 +30,9 @@ import * as Parser from "the/parser"
 
 // todo implement EnumDeclaration statement
 // todo implement TypeAliasDeclaration statement
+
+// todo test If statement
+// todo add more tests for Loop statement with other types
 
 // todo implement Throw statement
 // todo implement Try statement
@@ -1157,22 +1157,22 @@ export obj Codegen {
       it.isUnion()
     ) {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_copy")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_copy")), [expression])
     }
 
     return expression
   }
 
   fn _functionEq (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression, reverse := false) AST.CExpression {
-    direction := reverse ? "ne" : "eq"
+    mut result := AST.createAssignmentExpression(left, reverse ? "!=" : "==", right)
 
     if it.isAlias() {
       t := it.asAlias()
-      return self._functionEq(t.t, left, right, reverse)
+      result = self._functionEq(t.t, left, right, reverse)
     } elif it.name == "any" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_any_" + direction)), [left, right])
+      result = AST.createCallExpression(AST.createIdentifier(self._("the_any_eq")), [left, right])
     } elif it.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_" + direction)), [left, right])
+      result = AST.createCallExpression(AST.createIdentifier(self._("the_str_eq")), [left, right])
     } elif (
       it.isArray() ||
       it.isMap() ||
@@ -1182,10 +1182,12 @@ export obj Codegen {
       it.isUnion()
     ) {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._(typeName + "_" + direction)), [left, right])
+      result = AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_eq")), [left, right])
     } else {
-      return AST.createAssignmentExpression(left, reverse ? "!=" : "==", right)
+      return result
     }
+
+    return reverse ? AST.createUnaryExpression("!", result) : result
   }
 
   fn _functionFree (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
@@ -1566,18 +1568,11 @@ export obj Codegen {
     left := self._generateExpression(ref expression.left)
     right := self._generateExpression(ref expression.right)
 
-    if leftType.name == "str" && rightType.name == "str" && expression.operator.t == .OpExclEq {
-      return AST.createUnaryExpression(
-        "!",
-        AST.createCallExpression(AST.createIdentifier(self._("the_str_eq")), [left, right])
-      )
-    } elif (
+    if (
       (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
       (!typePrimitive(context.leftType) || !typePrimitive(context.rightType))
     ) {
-      return expression.operator.t == .OpEqEq
-        ? self._functionEq(leftType, left, right)
-        : self._functionEq(leftType, left, right, reverse: true)
+      return self._functionEq(leftType, left, right, reverse: expression.operator.t == .OpExclEq)
     } elif leftType.name == "str" && rightType.name == "str" && (
       expression.operator.t == .OpLt ||
       expression.operator.t == .OpLtEq ||
@@ -3154,6 +3149,7 @@ export obj Codegen {
       t := it.asReference()
       return "ref_" + self._typeName(t.t)
     } elif it.isUnion() {
+      // todo account for different order of sub types
       t := it.asUnion()
       mut name := ""
 
