@@ -1,0 +1,34 @@
+main {
+  loop i: int | str = 0; i != "test"; i = "test" {
+  }
+
+  mut a: int | str = 0
+  loop ; a != "test"; a = "test" {
+  }
+
+  mut b: int | str = 0
+  loop ; b != "test"; {
+    b = "test"
+  }
+
+  mut c: int | str = 0
+  loop {
+    if c == "test" {
+      break
+    }
+
+    c = "test"
+  }
+
+  loop d: int | str = 0; d != "test"; {
+    d = "test"
+  }
+
+  loop e: int | str = 0;; e = "test" {
+    if e == "test" {
+      break
+    }
+  }
+}
+===== code =====
+===== output =====

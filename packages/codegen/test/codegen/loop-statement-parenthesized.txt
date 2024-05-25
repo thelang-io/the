@@ -1,0 +1,126 @@
+main {
+  mut a := 0
+
+  loop (a < 10) {
+    a++
+  }
+
+  mut b := 0
+  loop (;;) {
+    b++
+    if b == 10 {
+      break
+    }
+  }
+
+  loop (c := 0;;) {
+    c++
+    if c == 10 {
+      break
+    }
+  }
+
+  mut d := 0
+  loop (; d < 10;) {
+    d++
+  }
+
+  mut e := 0
+  loop (;; e++) {
+    if e == 10 {
+      break
+    }
+  }
+
+  loop (f := 0; f < 10;) {
+    f++
+  }
+
+  loop (g := 0;; g++) {
+    if g < 10 {
+      break
+    }
+  }
+
+  mut h := 0
+  loop (; h < 10; h++) {
+    if h < 10 {
+      break
+    }
+  }
+
+  loop (i := 0; i < 10; i++) {
+    print(i)
+  }
+}
+===== code =====
+#include <the/any.h>
+#include <the/globals.h>
+#include <the/number.h>
+#include <the/safe.h>
+#include <the/string.h>
+#include <stdint.h>
+#define TYPE_int 1
+THE_ANY_DECLARE(int, int32_t)
+THE_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
+int main (void) {
+  int32_t b_0;
+  int32_t d_0;
+  int32_t e_0;
+  int32_t h_0;
+  int32_t a_0 = 0;
+  while (a_0 < 10) {
+    a_0++;
+  }
+  b_0 = 0;
+  while (1) {
+    b_0++;
+    if (b_0 == 10) {
+      break;
+    }
+  }
+  for (int32_t c_0 = 0;;) {
+    c_0++;
+    if (c_0 == 10) {
+      break;
+    }
+  }
+  d_0 = 0;
+  while (d_0 < 10) {
+    d_0++;
+  }
+  e_0 = 0;
+  for (;; e_0++) {
+    if (e_0 == 10) {
+      break;
+    }
+  }
+  for (int32_t f_0 = 0; f_0 < 10;) {
+    f_0++;
+  }
+  for (int32_t g_0 = 0;; g_0++) {
+    if (g_0 < 10) {
+      break;
+    }
+  }
+  h_0 = 0;
+  for (; h_0 < 10; h_0++) {
+    if (h_0 < 10) {
+      break;
+    }
+  }
+  for (int32_t i_0 = 0; i_0 < 10; i_0++) {
+    the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, the_any_int_alloc(i_0)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  }
+}
+===== output =====
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9

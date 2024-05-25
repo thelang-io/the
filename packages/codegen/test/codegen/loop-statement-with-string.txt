@@ -1,0 +1,34 @@
+main {
+  loop i := ""; i != "aaa"; i += "a" {
+  }
+
+  mut a := ""
+  loop ; a != "aaa"; a += "a" {
+  }
+
+  mut b := ""
+  loop ; b != "aaa"; {
+    b += "a"
+  }
+
+  mut c := ""
+  loop {
+    if c == "aaa" {
+      break
+    }
+
+    c += "a"
+  }
+
+  loop d := ""; d != "aaa"; {
+    d += "a"
+  }
+
+  loop e := "";; e += "a" {
+    if e == "aaa" {
+      break
+    }
+  }
+}
+===== code =====
+===== output =====
