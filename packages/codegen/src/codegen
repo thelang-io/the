@@ -7,19 +7,8 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
-// todo test VariableDeclaration statement
-// todo test property access expression
-
 // todo implement map expression
 // todo implement map type
-// todo test expressions with types other than primitive
-
-// todo implement FunctionDeclaration statement
-// todo test call expression
-// todo implement Return statement
-// todo implement closure expression
-// todo test Function type
-// todo test MainDeclaration statement
 
 // todo implement ObjectDeclaration statement
 // todo implement ObjectDeclarationMethod statement
@@ -27,6 +16,16 @@ import * as Parser from "the/parser"
 // todo implement object expression
 // todo implement property access expression
 // todo error object needs special generation rules to move message and stack properties upfront
+
+// todo implement FunctionDeclaration statement
+// todo implement Return statement
+// todo implement closure expression
+// todo test Function type
+// todo test MainDeclaration statement
+// todo test call expression
+
+// todo test VariableDeclaration statement
+// todo test expressions with types other than primitive
 
 // todo implement EnumDeclaration statement
 // todo implement TypeAliasDeclaration statement
@@ -55,6 +54,7 @@ export obj CodegenAPIBuiltin {
   mut theFn: bool
   mut theGlobals: bool
   mut theMacro: bool
+  mut theMap: bool
   mut theNumber: bool
   mut theOptional: bool
   mut theReference: bool
@@ -673,6 +673,7 @@ export const BUILTIN_ENTITIES := {
   ],
 
   "theMacro": ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"],
+  "theMap": ["THE_MAP_DECLARE", "THE_MAP_DEFINE"],
 
   "theNumber": [
     "the_f32_str",
@@ -858,6 +859,7 @@ export obj Codegen {
       self.builtin.theFn ||
       self.builtin.theGlobals ||
       self.builtin.theMacro ||
+      self.builtin.theMap ||
       self.builtin.theNumber ||
       self.builtin.theOptional ||
       self.builtin.theReference ||
@@ -936,6 +938,8 @@ export obj Codegen {
       self.builtin.theGlobals = true
     } elif BUILTIN_ENTITIES.get("theMacro").contains(name) {
       self.builtin.theMacro = true
+    } elif BUILTIN_ENTITIES.get("theMap").contains(name) {
+      self.builtin.theMap = true
     } elif BUILTIN_ENTITIES.get("theNumber").contains(name) {
       self.builtin.theNumber = true
     } elif BUILTIN_ENTITIES.get("theOptional").contains(name) {
@@ -1039,6 +1043,7 @@ export obj Codegen {
     if self.builtin.theFn { self.statements.push(AST.createIncludeDirective("the/fn.h")) }
     if self.builtin.theGlobals { self.statements.push(AST.createIncludeDirective("the/globals.h")) }
     if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
+    if self.builtin.theMap { self.statements.push(AST.createIncludeDirective("the/map.h")) }
     if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
     if self.builtin.theOptional { self.statements.push(AST.createIncludeDirective("the/optional.h")) }
     if self.builtin.theReference { self.statements.push(AST.createIncludeDirective("the/reference.h")) }
