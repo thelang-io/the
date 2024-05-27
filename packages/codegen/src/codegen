@@ -2685,6 +2685,47 @@ export obj Codegen {
     return name
   }
 
+  fn _generateMapType (mut self: ref Codegen, item: ref Analyzer.Type) str {
+    typeName := "the_" + self._typeName(item)
+    name := typeName + "_t"
+
+    if self._hasEntity(name) {
+      return name
+    }
+
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: item,
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+        it := entity.context as ref Analyzer.Type
+        t := it.asMap()
+
+        return [] // todo
+      }
+    })
+
+    methods := ["alloc"]
+
+    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+      self._(entity.context as str)
+      return AST.createEmptyStatement()
+    }
+
+    loop i := 0; i < methods.len; i++ {
+      methodName := methods[i] as str
+
+      self.entities.push(CodegenEntity{
+        name: typeName + "_" + methodName,
+        codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee
+      })
+    }
+
+    return name
+  }
+
   fn _generateOptionalType (mut self: ref Codegen, item: ref Analyzer.Type) str {
     typeName := "the_" + self._typeName(item)
     name := typeName + "_t"
@@ -3070,6 +3111,8 @@ export obj Codegen {
         self._generateArrayType(it)
       } elif it.isFunction() {
         self._generateFunctionType(it)
+      } elif it.isMap() {
+        self._generateMapType(it)
       } elif it.isOptional() {
         self._generateOptionalType(it)
       } elif it.isReference() {
