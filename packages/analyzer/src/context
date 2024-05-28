@@ -61,6 +61,12 @@ export obj IsExpressionContext {
   mut rightType: ref Type
 }
 
+export obj MapExpressionContext {
+  mut t: ref Type
+  mut keyType: ref Type
+  mut valueType: ref Type
+}
+
 export obj UnaryExpressionContext {
   mut operandType: ref Type
 }

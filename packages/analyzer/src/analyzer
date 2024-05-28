@@ -2064,9 +2064,22 @@ export obj AnalyzerFile {
     }
 
     if expression.elements.empty && t == nil {
+      keyType := self.tm.get("any")
+      valueType := self.tm.get("any")
+      result := self.tm.createMap(keyType, valueType)
+      it.context = Context.MapExpressionContext{t: result, keyType: keyType, valueType: valueType}
+
       self.raise(errors.E1016(), it.start, it.end)
-      return self.tm.createMap(self.tm.get("any"), self.tm.get("any"))
+      return result
     } elif expression.elements.empty {
+      mapType := t.asMap()
+
+      it.context = Context.MapExpressionContext{
+        t: t,
+        keyType: mapType.keyType,
+        valueType: mapType.valueType
+      }
+
       return t
     }
 
@@ -2109,7 +2122,15 @@ export obj AnalyzerFile {
       }
     }
 
-    return self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type)
+    result := self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type)
+
+    it.context = Context.MapExpressionContext{
+      t: result,
+      keyType: keyType as ref Type.Type,
+      valueType: valueType as ref Type.Type
+    }
+
+    return result
   }
 
   fn _eMemberAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
