@@ -1439,6 +1439,7 @@ export obj Codegen {
       (result = self._generateConditionalExpression(item)) != nil ||
       (result = self._generateElementAccessExpression(item)) != nil ||
       (result = self._generateIsExpression(item)) != nil ||
+      (result = self._generateMapExpression(item)) != nil ||
       (result = self._generatePropertyAccessExpression(item)) != nil ||
       (result = self._generateReferenceExpression(item)) != nil ||
       (result = self._generateUnaryExpression(item)) != nil
@@ -1790,6 +1791,25 @@ export obj Codegen {
     right := AST.createIdentifier(self._typeDef(context.rightType))
 
     return AST.createBinaryExpression(left, "==", right)
+  }
+
+  fn _generateMapExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if !item.isMap() {
+      return nil
+    }
+
+    expression := item.asMap()
+    validateContext(item.context is Analyzer.MapExpressionContext)
+    context := item.context as Analyzer.MapExpressionContext
+    mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len.str())]
+
+    loop i := 0; i < expression.elements.len; i++ {
+      element := expression.elements[i]
+      arguments.push(self._generateExpression(element.key))
+      arguments.push(self._generateExpression(element.value))
+    }
+
+    return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_alloc")), arguments)
   }
 
   fn _generateParenthesizedExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -2705,7 +2725,25 @@ export obj Codegen {
       }
     })
 
-    methods := ["alloc"]
+    methods := [
+      "alloc",
+      "clear",
+      "copy",
+      "empty",
+      "eq",
+      "free",
+      "get",
+      "has",
+      "keys",
+      "merge",
+      "realloc",
+      "remove",
+      "reserve",
+      "set",
+      "shrink",
+      "str",
+      "values"
+    ]
 
     entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
       self._(entity.context as str)
