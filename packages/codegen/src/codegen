@@ -7,7 +7,6 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
-// todo implement map expression
 // todo implement map type
 
 // todo implement ObjectDeclaration statement
@@ -2721,7 +2720,12 @@ export obj Codegen {
         it := entity.context as ref Analyzer.Type
         t := it.asMap()
 
-        return [] // todo
+        return [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_MAP_DECLARE"), [
+          ]), terminated: false),
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_MAP_DEFINE"), [
+          ]), terminated: false)
+        ]
       }
     })
 
