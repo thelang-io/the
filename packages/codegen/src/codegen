@@ -2719,11 +2719,21 @@ export obj Codegen {
       generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
         it := entity.context as ref Analyzer.Type
         t := it.asMap()
+        keyTypeName := self._typeName(t.keyType)
+        valueTypeName := self._typeName(t.valueType)
 
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_MAP_DECLARE"), [
+            AST.createIdentifier(keyTypeName),
+            AST.createType(self._type(t.keyType)),
+            AST.createIdentifier(valueTypeName),
+            AST.createType(self._type(t.valueType))
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_MAP_DEFINE"), [
+            AST.createIdentifier(keyTypeName),
+            AST.createType(self._type(t.keyType)),
+            AST.createIdentifier(valueTypeName),
+            AST.createType(self._type(t.valueType))
           ]), terminated: false)
         ]
       }
