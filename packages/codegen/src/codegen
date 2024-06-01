@@ -2732,8 +2732,18 @@ export obj Codegen {
           AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_MAP_DEFINE"), [
             AST.createIdentifier(keyTypeName),
             AST.createType(self._type(t.keyType)),
+            AST.createType(self._type(typeSafeForVaArg(self._tm(), t.keyType))),
+            self._functionCopy(t.keyType, AST.createIdentifier("key")),
+            self._functionEq(t.keyType, AST.createIdentifier("lhs_key"), AST.createIdentifier("rhs_key")),
+            self._functionFree(t.keyType, AST.createIdentifier("key")),
+            self._functionStr(t.keyType, AST.createIdentifier("key")),
             AST.createIdentifier(valueTypeName),
-            AST.createType(self._type(t.valueType))
+            AST.createType(self._type(t.valueType)),
+            AST.createType(self._type(typeSafeForVaArg(self._tm(), t.valueType))),
+            self._functionCopy(t.valueType, AST.createIdentifier("value")),
+            self._functionEq(t.valueType, AST.createIdentifier("lhs_value"), AST.createIdentifier("rhs_value")),
+            self._functionFree(t.valueType, AST.createIdentifier("value")),
+            self._functionStr(t.valueType, AST.createIdentifier("value"))
           ]), terminated: false)
         ]
       }
