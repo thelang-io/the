@@ -1,0 +1,6 @@
+main {
+  var1: int[int]
+  var2: str[str]
+}
+===== code =====
+===== output =====

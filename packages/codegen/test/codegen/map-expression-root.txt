@@ -1,0 +1,12 @@
+main {
+  { "key": true };
+  { "key": 'a' };
+  { "key": 4.12 };
+  { "key": 1 };
+  { "key1": true, "key2": false };
+  { "key1": 'a', "key2": 'z' };
+  { "key1": 4.12, "key2": 4.12 };
+  { "key1": 1, "key2": 1 };
+}
+===== code =====
+===== output =====

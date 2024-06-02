@@ -1,0 +1,67 @@
+main {
+  a01: bool[str]
+  a02: byte[str]
+  a03: char[str]
+  a04: f32[str]
+  a05: f64[str]
+  a06: float[str]
+  a07: i8[str]
+  a08: i16[str]
+  a09: i32[str]
+  a10: i64[str]
+  a11: int[str]
+  a12: u8[str]
+  a13: u16[str]
+  a14: u32[str]
+  a15: u64[str]
+
+  b01: bool[str] = {}
+  b02: byte[str] = {}
+  b03: char[str] = {}
+  b04: f32[str] = {}
+  b05: f64[str] = {}
+  b06: float[str] = {}
+  b07: i8[str] = {}
+  b08: i16[str] = {}
+  b09: i32[str] = {}
+  b10: i64[str] = {}
+  b11: int[str] = {}
+  b12: u8[str] = {}
+  b13: u16[str] = {}
+  b14: u32[str] = {}
+  b15: u64[str] = {}
+
+  c01 := { "key": true }
+  c02: byte[str] = { "key": 0x0F }
+  c03 := { "key": 'a' }
+  c04: f32[str] = { "key": 6.32 }
+  c05: f64[str] = { "key": 3.14 }
+  c06 := { "key": 4.12 }
+  c07: i8[str] = { "key": -1 }
+  c08: i16[str] = { "key": -2 }
+  c09: i32[str] = { "key": -3 }
+  c10: i64[str] = { "key": -4 }
+  c11 := { "key": 1 }
+  c12: u8[str] = { "key": 1 }
+  c13: u16[str] = { "key": 2 }
+  c14: u32[str] = { "key": 3 }
+  c15: u64[str] = { "key": 4 }
+
+  d01 := { "key1": true, "key2": false }
+  d02: byte[str] = { "key1": 0x0F, "key2": 0x00 }
+  d03 := { "key1": 'a', "key2": 'z' }
+  d04: f32[str] = { "key1": 6.32, "key2": 6.32 }
+  d05: f64[str] = { "key1": 3.14, "key2": 3.14 }
+  d06 := { "key1": 4.12, "key2": 4.12 }
+  d07: i8[str] = { "key1": -1, "key2": -1 }
+  d08: i16[str] = { "key1": -2, "key2": -2 }
+  d09: i32[str] = { "key1": -3, "key2": -3 }
+  d10: i64[str] = { "key1": -4, "key2": -4 }
+  d11 := { "key1": 1, "key2": 1 }
+  d12: u8[str] = { "key1": 1, "key2": 1 }
+  d13: u16[str] = { "key1": 2, "key2": 2 }
+  d14: u32[str] = { "key1": 3, "key2": 3 }
+  d15: u64[str] = { "key1": 4, "key2": 4 }
+}
+===== code =====
+===== output =====
