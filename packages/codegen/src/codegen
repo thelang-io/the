@@ -792,6 +792,7 @@ export const BUILTIN_ENTITIES := {
     "the_str_lowerFirst",
     "the_str_lt",
     "the_str_not",
+    "the_str_quoted_escape",
     "the_str_realloc",
     "the_str_replace",
     "the_str_slice",
@@ -1298,21 +1299,19 @@ export obj Codegen {
     throw error_NewError("Tried re-allocating unknown type")
   }
 
-  fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression, escape := true) AST.CExpression {
+  fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
     if it.isAlias() {
       t := it.asAlias()
-      return self._functionStr(t.t, expression, escape)
+      return self._functionStr(t.t, expression)
     } elif it.name == "any" {
       return AST.createCallExpression(AST.createIdentifier(self._("the_any_str")), [expression])
-    } elif it.name == "str" && escape {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_escape")), [expression])
-    } elif it.name == "str" && escape {
-      return expression
+    } elif it.name == "str" {
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_quoted_escape")), [expression])
     } elif it.isEnum() {
       return AST.createCallExpression(AST.createIdentifier(self._("the_enum_str")), [expression])
     } elif it.isReference() {
       t := it.asReference()
-      return self._functionStr(t.t, AST.createUnaryExpression("*", expression), escape)
+      return self._functionStr(t.t, AST.createUnaryExpression("*", expression))
     } else {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_str")), [expression])
@@ -2740,10 +2739,10 @@ export obj Codegen {
             AST.createIdentifier(valueTypeName),
             AST.createType(self._type(t.valueType)),
             AST.createType(self._type(typeSafeForVaArg(self._tm(), t.valueType))),
-            self._functionCopy(t.valueType, AST.createIdentifier("value")),
-            self._functionEq(t.valueType, AST.createIdentifier("lhs_value"), AST.createIdentifier("rhs_value")),
-            self._functionFree(t.valueType, AST.createIdentifier("value")),
-            self._functionStr(t.valueType, AST.createIdentifier("value"))
+            self._functionCopy(t.valueType, AST.createIdentifier("val")),
+            self._functionEq(t.valueType, AST.createIdentifier("lhs_val"), AST.createIdentifier("rhs_val")),
+            self._functionFree(t.valueType, AST.createIdentifier("val")),
+            self._functionStr(t.valueType, AST.createIdentifier("val"))
           ]), terminated: false)
         ]
       }
