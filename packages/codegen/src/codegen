@@ -1299,19 +1299,21 @@ export obj Codegen {
     throw error_NewError("Tried re-allocating unknown type")
   }
 
-  fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
+  fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression, quote := false) AST.CExpression {
     if it.isAlias() {
       t := it.asAlias()
-      return self._functionStr(t.t, expression)
+      return self._functionStr(t.t, expression, quote: quote)
     } elif it.name == "any" {
       return AST.createCallExpression(AST.createIdentifier(self._("the_any_str")), [expression])
-    } elif it.name == "str" {
+    } elif it.name == "str" && quote {
       return AST.createCallExpression(AST.createIdentifier(self._("the_str_quoted_escape")), [expression])
+    } elif it.name == "str" {
+      return AST.createCallExpression(AST.createIdentifier(self._("the_str_copy")), [expression])
     } elif it.isEnum() {
       return AST.createCallExpression(AST.createIdentifier(self._("the_enum_str")), [expression])
     } elif it.isReference() {
       t := it.asReference()
-      return self._functionStr(t.t, AST.createUnaryExpression("*", expression))
+      return self._functionStr(t.t, AST.createUnaryExpression("*", expression), quote: quote)
     } else {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_str")), [expression])
@@ -1803,8 +1805,8 @@ export obj Codegen {
 
     loop i := 0; i < expression.elements.len; i++ {
       element := expression.elements[i]
-      arguments.push(self._generateExpression(element.key))
-      arguments.push(self._generateExpression(element.value))
+      arguments.push(self._generateExpression(ref element.key))
+      arguments.push(self._generateExpression(ref element.value))
     }
 
     return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_alloc")), arguments)
@@ -2540,7 +2542,7 @@ export obj Codegen {
             self._functionCopy(t.elementType, AST.createIdentifier("element")),
             self._functionEq(t.elementType, AST.createIdentifier("lhs_element"), AST.createIdentifier("rhs_element")),
             self._functionFree(t.elementType, AST.createIdentifier("element")),
-            self._functionStr(t.elementType, AST.createIdentifier("element"))
+            self._functionStr(t.elementType, AST.createIdentifier("element"), quote: true)
           ]), terminated: false)
         ]
       }
@@ -2742,7 +2744,7 @@ export obj Codegen {
             self._functionCopy(t.valueType, AST.createIdentifier("val")),
             self._functionEq(t.valueType, AST.createIdentifier("lhs_val"), AST.createIdentifier("rhs_val")),
             self._functionFree(t.valueType, AST.createIdentifier("val")),
-            self._functionStr(t.valueType, AST.createIdentifier("val"))
+            self._functionStr(t.valueType, AST.createIdentifier("val"), quote: true)
           ]), terminated: false)
         ]
       }
