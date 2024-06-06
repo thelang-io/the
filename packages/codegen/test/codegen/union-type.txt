@@ -35,7 +35,7 @@ THE_UNION_DEFINE(runeUSstr, {
   if (self.type == TYPE_str) the_str_free(self.data.v4);
 }, {
   if (self.type == TYPE_rune) return the_rune_str(self.data.v3);
-  if (self.type == TYPE_str) return the_str_escape(self.data.v4);
+  if (self.type == TYPE_str) return the_str_copy(self.data.v4);
 })
 THE_UNION_DEFINE(intUSfloat, {
   if (self.type == TYPE_int) self.data.v1 = va_arg(args, int32_t);

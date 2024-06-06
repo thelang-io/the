@@ -77,7 +77,7 @@ THE_UNION_DEFINE(intUSfloat, {
   if (self.type == TYPE_float) return the_float_str(self.data.v2);
 })
 THE_ANY_DEFINE(TYPE_float, float, double, val, lhs_val == rhs_val, (void) val, the_float_str(val))
-THE_ANY_DEFINE(TYPE_str, str, the_str_t, the_str_copy(val), the_str_eq(lhs_val, rhs_val), the_str_free(val), the_str_escape(val))
+THE_ANY_DEFINE(TYPE_str, str, the_str_t, the_str_copy(val), the_str_eq(lhs_val, rhs_val), the_str_free(val), the_str_copy(val))
 THE_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
 int main (void) {
   the_any_t b_0;
