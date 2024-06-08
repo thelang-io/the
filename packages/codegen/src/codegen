@@ -3231,8 +3231,6 @@ export obj Codegen {
       typeName := self._typeDef(targetType)
       typeDefIdx := self.typeDefs.get(typeName)
 
-      // todo problem is that it's casting value but it shouldn't in _eq fn
-
       // TODO: throw runtime error if not possible to cast
       expression = AST.createPropertyAccessExpression(
         AST.createPropertyAccessExpression(expression, "data"),
