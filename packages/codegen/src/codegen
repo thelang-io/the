@@ -57,12 +57,12 @@ export obj CodegenAPIBuiltin {
   mut d4Macro: bool
   mut d4Map: bool
   mut d4Number: bool
+  mut d4Object: bool
   mut d4Optional: bool
   mut d4Reference: bool
   mut d4Rune: bool
   mut d4Safe: bool
   mut d4String: bool
-  mut d4ThreadPool: bool
   mut d4Union: bool
   mut stdarg: bool
   mut stdbool: bool
@@ -693,6 +693,7 @@ export const BUILTIN_ENTITIES := {
     "d4_usize_str"
   ],
 
+  "d4Object": ["D4_OBJECT_DECLARE", "D4_OBJECT_DEFINE", "d4_obj_str_append"],
   "d4Optional": ["D4_OPTIONAL_DECLARE", "D4_OPTIONAL_DEFINE"],
   "d4Reference": ["D4_REFERENCE_DECLARE"],
 
@@ -717,8 +718,6 @@ export const BUILTIN_ENTITIES := {
     "d4_safe_realloc",
     "d4_safe_swap"
   ],
-
-  "d4ThreadPool": ["d4_thread_pool_init"],
 
   "d4String": [
     "d4_arr_str_t",
@@ -863,12 +862,12 @@ export obj Codegen {
       self.builtin.d4Macro ||
       self.builtin.d4Map ||
       self.builtin.d4Number ||
+      self.builtin.d4Object ||
       self.builtin.d4Optional ||
       self.builtin.d4Reference ||
       self.builtin.d4Rune ||
       self.builtin.d4Safe ||
       self.builtin.d4String ||
-      self.builtin.d4ThreadPool ||
       self.builtin.d4Union
     ) {
       extraFlags.push("-ld4")
@@ -944,6 +943,8 @@ export obj Codegen {
       self.builtin.d4Map = true
     } elif BUILTIN_ENTITIES.get("d4Number").contains(name) {
       self.builtin.d4Number = true
+    } elif BUILTIN_ENTITIES.get("d4Object").contains(name) {
+      self.builtin.d4Object = true
     } elif BUILTIN_ENTITIES.get("d4Optional").contains(name) {
       self.builtin.d4Optional = true
     } elif BUILTIN_ENTITIES.get("d4Reference").contains(name) {
@@ -952,8 +953,6 @@ export obj Codegen {
       self.builtin.d4Rune = true
     } elif BUILTIN_ENTITIES.get("d4Safe").contains(name) {
       self.builtin.d4Safe = true
-    } elif BUILTIN_ENTITIES.get("d4ThreadPool").contains(name) {
-      self.builtin.d4ThreadPool = true
     } elif BUILTIN_ENTITIES.get("d4String").contains(name) {
       self.builtin.d4String = true
     } elif BUILTIN_ENTITIES.get("d4Union").contains(name) {
@@ -1047,12 +1046,12 @@ export obj Codegen {
     if self.builtin.d4Macro { self.statements.push(AST.createIncludeDirective("d4/macro.h")) }
     if self.builtin.d4Map { self.statements.push(AST.createIncludeDirective("d4/map.h")) }
     if self.builtin.d4Number { self.statements.push(AST.createIncludeDirective("d4/number.h")) }
+    if self.builtin.d4Object { self.statements.push(AST.createIncludeDirective("d4/object.h")) }
     if self.builtin.d4Optional { self.statements.push(AST.createIncludeDirective("d4/optional.h")) }
     if self.builtin.d4Reference { self.statements.push(AST.createIncludeDirective("d4/reference.h")) }
     if self.builtin.d4Rune { self.statements.push(AST.createIncludeDirective("d4/rune.h")) }
     if self.builtin.d4Safe { self.statements.push(AST.createIncludeDirective("d4/safe.h")) }
     if self.builtin.d4String { self.statements.push(AST.createIncludeDirective("d4/string.h")) }
-    if self.builtin.d4ThreadPool { self.statements.push(AST.createIncludeDirective("d4/thread-pool.h")) }
     if self.builtin.d4Union { self.statements.push(AST.createIncludeDirective("d4/union.h")) }
 
     if self.builtin.stdarg { self.statements.push(AST.createIncludeDirective("stdarg.h")) }
