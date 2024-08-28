@@ -9,12 +9,12 @@ Multiline";
 
 }
 ===== code =====
-#include <the/macro.h>
-#include <the/string.h>
+#include <d4/macro.h>
+#include <d4/string.h>
 int main (void) {
-  the_str_free(the_str_alloc(L""));
-  the_str_free(the_str_alloc(L"Hello, World!"));
-  the_str_free(the_str_alloc(L"Multiline\nString"));
-  the_str_free(the_str_alloc(L"Multiline" THE_EOL "String" THE_EOL "Multiline"));
+  d4_str_free(d4_str_alloc(L""));
+  d4_str_free(d4_str_alloc(L"Hello, World!"));
+  d4_str_free(d4_str_alloc(L"Multiline\nString"));
+  d4_str_free(d4_str_alloc(L"Multiline" D4_EOL "String" D4_EOL "Multiline"));
 }
 ===== output =====

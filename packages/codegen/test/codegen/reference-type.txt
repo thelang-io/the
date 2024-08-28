@@ -5,17 +5,17 @@ main {
   var2: ref str = ref b
 }
 ===== code =====
-#include <the/macro.h>
-#include <the/reference.h>
-#include <the/string.h>
+#include <d4/macro.h>
+#include <d4/reference.h>
+#include <d4/string.h>
 #include <stdint.h>
-THE_REFERENCE_DECLARE(str, the_str_t)
-THE_REFERENCE_DECLARE(int, int32_t)
+D4_REFERENCE_DECLARE(str, d4_str_t)
+D4_REFERENCE_DECLARE(int, int32_t)
 int main (void) {
   int32_t a_0 = 0;
-  the_str_t b_0 = the_str_alloc(L"name");
-  the_ref_int_t var1_0 = &a_0;
-  the_ref_str_t var2_0 = &b_0;
-  the_str_free(b_0);
+  d4_str_t b_0 = d4_str_alloc(L"name");
+  d4_ref_int_t var1_0 = &a_0;
+  d4_ref_str_t var2_0 = &b_0;
+  d4_str_free(b_0);
 }
 ===== output =====

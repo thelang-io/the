@@ -54,15 +54,15 @@ main {
   }
 }
 ===== code =====
-#include <the/any.h>
-#include <the/globals.h>
-#include <the/number.h>
-#include <the/safe.h>
-#include <the/string.h>
+#include <d4/any.h>
+#include <d4/globals.h>
+#include <d4/number.h>
+#include <d4/safe.h>
+#include <d4/string.h>
 #include <stdint.h>
 #define TYPE_int 1
-THE_ANY_DECLARE(int, int32_t)
-THE_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, the_int_str(val))
+D4_ANY_DECLARE(int, int32_t)
+D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
 int main (void) {
   int32_t b_0;
   int32_t d_0;
@@ -110,7 +110,7 @@ int main (void) {
     }
   }
   for (int32_t i_0 = 0; i_0 < 10; i_0++) {
-    the_print.func(the_print.ctx, the_safe_calloc(&(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {the_arr_any_alloc(1, the_any_int_alloc(i_0)), 0, the_str_empty_val, 0, the_str_empty_val, 0, the_str_empty_val}, sizeof(the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+    d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
   }
 }
 ===== output =====

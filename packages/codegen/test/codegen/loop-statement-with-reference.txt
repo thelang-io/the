@@ -33,16 +33,16 @@ main {
   }
 }
 ===== code =====
-#include <the/reference.h>
+#include <d4/reference.h>
 #include <stdint.h>
-THE_REFERENCE_DECLARE(int, int32_t)
+D4_REFERENCE_DECLARE(int, int32_t)
 int main (void) {
-  the_ref_int_t a_0;
-  the_ref_int_t b_0;
-  the_ref_int_t c_0;
+  d4_ref_int_t a_0;
+  d4_ref_int_t b_0;
+  d4_ref_int_t c_0;
   int32_t testInt1_0 = 1;
   int32_t testInt2_0 = 2;
-  for (the_ref_int_t i_0 = &testInt1_0; *i_0 != *&testInt2_0; i_0 = (&testInt2_0)) {}
+  for (d4_ref_int_t i_0 = &testInt1_0; *i_0 != *&testInt2_0; i_0 = (&testInt2_0)) {}
   a_0 = &testInt1_0;
   for (; *a_0 != *&testInt2_0; a_0 = (&testInt2_0)) {}
   b_0 = &testInt1_0;
@@ -56,10 +56,10 @@ int main (void) {
     }
     c_0 = &testInt2_0;
   }
-  for (the_ref_int_t d_0 = &testInt1_0; *d_0 != *&testInt2_0;) {
+  for (d4_ref_int_t d_0 = &testInt1_0; *d_0 != *&testInt2_0;) {
     d_0 = &testInt2_0;
   }
-  for (the_ref_int_t e_0 = &testInt1_0;; e_0 = (&testInt2_0)) {
+  for (d4_ref_int_t e_0 = &testInt1_0;; e_0 = (&testInt2_0)) {
     if (*e_0 == (*&testInt2_0)) {
       break;
     }

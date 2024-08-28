@@ -31,129 +31,129 @@ main {
   }
 }
 ===== code =====
-#include <the/macro.h>
-#include <the/string.h>
+#include <d4/macro.h>
+#include <d4/string.h>
 int main (void) {
   {
-    the_str_t i_0 = the_str_alloc(L"");
+    d4_str_t i_0 = d4_str_alloc(L"");
     while (1) {
       unsigned char b1 = 0;
       unsigned char c1 = 0;
-      the_str_t __THE_1 = the_str_empty_val;
-      the_str_t __THE_2 = the_str_empty_val;
-      the_str_t __THE_3 = the_str_empty_val;
-      the_str_t __THE_4 = the_str_empty_val;
-      the_str_t __THE_5 = the_str_empty_val;
-      the_str_t __THE_6 = the_str_empty_val;
-      the_str_t k_0;
-      the_str_t __THE_7 = the_str_empty_val;
-      if (!(!the_str_eq(i_0, __THE_1 = the_str_alloc(L"aaa")))) {
+      d4_str_t __THE_1 = d4_str_empty_val;
+      d4_str_t __THE_2 = d4_str_empty_val;
+      d4_str_t __THE_3 = d4_str_empty_val;
+      d4_str_t __THE_4 = d4_str_empty_val;
+      d4_str_t __THE_5 = d4_str_empty_val;
+      d4_str_t __THE_6 = d4_str_empty_val;
+      d4_str_t k_0;
+      d4_str_t __THE_7 = d4_str_empty_val;
+      if (!(!d4_str_eq(i_0, __THE_1 = d4_str_alloc(L"aaa")))) {
         b1 = 1;
         goto L1;
       }
-      the_str_t j_0 = the_str_concat(__THE_4 = the_str_alloc(L"b"), i_0);
-      if (the_str_eq(j_0, __THE_5 = the_str_alloc(L"ba"))) {
+      d4_str_t j_0 = d4_str_concat(__THE_4 = d4_str_alloc(L"b"), i_0);
+      if (d4_str_eq(j_0, __THE_5 = d4_str_alloc(L"ba"))) {
         c1 = 1;
         if (c1 == 1) goto L2;
         if (b1 == 1) goto L2;
       }
-      k_0 = the_str_concat(j_0, __THE_6 = the_str_alloc(L"a"));
-      if (the_str_eq(k_0, __THE_7 = the_str_alloc(L"ba"))) {
+      k_0 = d4_str_concat(j_0, __THE_6 = d4_str_alloc(L"a"));
+      if (d4_str_eq(k_0, __THE_7 = d4_str_alloc(L"ba"))) {
         b1 = 1;
         if (c1 == 1) goto L3;
         if (b1 == 1) goto L3;
       }
 L3:
-      the_str_free(__THE_7);
-      the_str_free(k_0);
-      the_str_free(__THE_6);
+      d4_str_free(__THE_7);
+      d4_str_free(k_0);
+      d4_str_free(__THE_6);
 L2:
-      the_str_free(__THE_5);
-      the_str_free(j_0);
-      the_str_free(__THE_4);
-      i_0 = the_str_realloc(i_0, __THE_3 = the_str_concat(i_0, __THE_2 = the_str_alloc(L"a")));
-      the_str_free(__THE_3);
-      the_str_free(__THE_2);
+      d4_str_free(__THE_5);
+      d4_str_free(j_0);
+      d4_str_free(__THE_4);
+      i_0 = d4_str_realloc(i_0, __THE_3 = d4_str_concat(i_0, __THE_2 = d4_str_alloc(L"a")));
+      d4_str_free(__THE_3);
+      d4_str_free(__THE_2);
 L1:
-      the_str_free(__THE_1);
+      d4_str_free(__THE_1);
       if (b1 == 1) break;
     }
-    the_str_free(i_0);
+    d4_str_free(i_0);
   }
   {
-    the_str_t i_0 = the_str_alloc(L"");
+    d4_str_t i_0 = d4_str_alloc(L"");
     while (1) {
       unsigned char b1 = 0;
-      the_str_t __THE_8 = the_str_empty_val;
-      the_str_t __THE_9 = the_str_empty_val;
-      the_str_t __THE_10 = the_str_empty_val;
-      the_str_t __THE_11 = the_str_empty_val;
-      the_str_t __THE_12 = the_str_empty_val;
-      the_str_t k_0;
-      if (!(!the_str_eq(i_0, __THE_8 = the_str_alloc(L"aaa")))) {
+      d4_str_t __THE_8 = d4_str_empty_val;
+      d4_str_t __THE_9 = d4_str_empty_val;
+      d4_str_t __THE_10 = d4_str_empty_val;
+      d4_str_t __THE_11 = d4_str_empty_val;
+      d4_str_t __THE_12 = d4_str_empty_val;
+      d4_str_t k_0;
+      if (!(!d4_str_eq(i_0, __THE_8 = d4_str_alloc(L"aaa")))) {
         b1 = 1;
         goto L4;
       }
-      the_str_t j_0 = the_str_concat(__THE_11 = the_str_alloc(L"b"), i_0);
+      d4_str_t j_0 = d4_str_concat(__THE_11 = d4_str_alloc(L"b"), i_0);
       {
         b1 = 1;
         goto L5;
       }
-      k_0 = the_str_concat(j_0, __THE_12 = the_str_alloc(L"a"));
-      the_str_free(k_0);
-      the_str_free(__THE_12);
+      k_0 = d4_str_concat(j_0, __THE_12 = d4_str_alloc(L"a"));
+      d4_str_free(k_0);
+      d4_str_free(__THE_12);
 L5:
-      the_str_free(j_0);
-      the_str_free(__THE_11);
-      i_0 = the_str_realloc(i_0, __THE_10 = the_str_concat(i_0, __THE_9 = the_str_alloc(L"a")));
-      the_str_free(__THE_10);
-      the_str_free(__THE_9);
+      d4_str_free(j_0);
+      d4_str_free(__THE_11);
+      i_0 = d4_str_realloc(i_0, __THE_10 = d4_str_concat(i_0, __THE_9 = d4_str_alloc(L"a")));
+      d4_str_free(__THE_10);
+      d4_str_free(__THE_9);
 L4:
-      the_str_free(__THE_8);
+      d4_str_free(__THE_8);
       if (b1 == 1) break;
     }
-    the_str_free(i_0);
+    d4_str_free(i_0);
   }
   {
-    the_str_t i_0 = the_str_alloc(L"");
+    d4_str_t i_0 = d4_str_alloc(L"");
     while (1) {
       unsigned char b1 = 0;
       unsigned char c1 = 0;
-      the_str_t __THE_13 = the_str_empty_val;
-      the_str_t __THE_14 = the_str_empty_val;
-      the_str_t __THE_15 = the_str_empty_val;
-      the_str_t __THE_16 = the_str_empty_val;
-      the_str_t __THE_17 = the_str_empty_val;
-      the_str_t k_0;
-      if (!(!the_str_eq(i_0, __THE_13 = the_str_alloc(L"aaa")))) {
+      d4_str_t __THE_13 = d4_str_empty_val;
+      d4_str_t __THE_14 = d4_str_empty_val;
+      d4_str_t __THE_15 = d4_str_empty_val;
+      d4_str_t __THE_16 = d4_str_empty_val;
+      d4_str_t __THE_17 = d4_str_empty_val;
+      d4_str_t k_0;
+      if (!(!d4_str_eq(i_0, __THE_13 = d4_str_alloc(L"aaa")))) {
         b1 = 1;
         goto L6;
       }
-      the_str_t j_0 = the_str_concat(__THE_16 = the_str_alloc(L"b"), i_0);
+      d4_str_t j_0 = d4_str_concat(__THE_16 = d4_str_alloc(L"b"), i_0);
       {
         c1 = 1;
         goto L7;
       }
-      k_0 = the_str_concat(j_0, __THE_17 = the_str_alloc(L"a"));
-      the_str_free(k_0);
-      the_str_free(__THE_17);
+      k_0 = d4_str_concat(j_0, __THE_17 = d4_str_alloc(L"a"));
+      d4_str_free(k_0);
+      d4_str_free(__THE_17);
 L7:
-      the_str_free(j_0);
-      the_str_free(__THE_16);
-      i_0 = the_str_realloc(i_0, __THE_15 = the_str_concat(i_0, __THE_14 = the_str_alloc(L"a")));
-      the_str_free(__THE_15);
-      the_str_free(__THE_14);
+      d4_str_free(j_0);
+      d4_str_free(__THE_16);
+      i_0 = d4_str_realloc(i_0, __THE_15 = d4_str_concat(i_0, __THE_14 = d4_str_alloc(L"a")));
+      d4_str_free(__THE_15);
+      d4_str_free(__THE_14);
 L6:
-      the_str_free(__THE_13);
+      d4_str_free(__THE_13);
       if (b1 == 1) break;
     }
-    the_str_free(i_0);
+    d4_str_free(i_0);
   }
   while (1) {
     unsigned char b1 = 0;
-    the_str_t test2_0 = the_str_alloc(L"");
+    d4_str_t test2_0 = d4_str_alloc(L"");
     b1 = 1;
-    the_str_free(test2_0);
+    d4_str_free(test2_0);
     if (b1 == 1) break;
   }
 }

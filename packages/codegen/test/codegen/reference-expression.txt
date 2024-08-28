@@ -20,10 +20,10 @@ main {
   v10 := !(ref a)
 }
 ===== code =====
-#include <the/reference.h>
+#include <d4/reference.h>
 #include <stdbool.h>
 #include <stdint.h>
-THE_REFERENCE_DECLARE(int, int32_t)
+D4_REFERENCE_DECLARE(int, int32_t)
 int main (void) {
   int32_t v01_0;
   bool v02_0;
@@ -32,12 +32,12 @@ int main (void) {
   int32_t v05_0;
   int32_t v06_0;
   int32_t v07_0;
-  the_ref_int_t v08_0;
+  d4_ref_int_t v08_0;
   int32_t v09_0;
   bool v10_0;
   int32_t a_0 = 1;
   int32_t b_0 = 2;
-  the_ref_int_t ref1_0 = &a_0;
+  d4_ref_int_t ref1_0 = &a_0;
   *ref1_0 += 1;
   ref1_0 = &b_0;
   *ref1_0 += 2;

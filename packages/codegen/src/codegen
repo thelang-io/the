@@ -43,25 +43,27 @@ import * as Parser from "the/parser"
 // todo implement await expression
 // todo implement async functions
 
+// todo check whether all tests are transferred from old codegen
+
 export obj CodegenAPIBuiltin {
-  mut theAny: bool
-  mut theArray: bool
-  mut theBool: bool
-  mut theByte: bool
-  mut theChar: bool
-  mut theError: bool
-  mut theFn: bool
-  mut theGlobals: bool
-  mut theMacro: bool
-  mut theMap: bool
-  mut theNumber: bool
-  mut theOptional: bool
-  mut theReference: bool
-  mut theRune: bool
-  mut theSafe: bool
-  mut theString: bool
-  mut theThreadPool: bool
-  mut theUnion: bool
+  mut d4Any: bool
+  mut d4Array: bool
+  mut d4Bool: bool
+  mut d4Byte: bool
+  mut d4Char: bool
+  mut d4Error: bool
+  mut d4Fn: bool
+  mut d4Globals: bool
+  mut d4Macro: bool
+  mut d4Map: bool
+  mut d4Number: bool
+  mut d4Optional: bool
+  mut d4Reference: bool
+  mut d4Rune: bool
+  mut d4Safe: bool
+  mut d4String: bool
+  mut d4ThreadPool: bool
+  mut d4Union: bool
   mut stdarg: bool
   mut stdbool: bool
   mut stddef: bool
@@ -550,274 +552,274 @@ export const BUILTIN_ENTITIES := {
     "uint64_t"
   ],
   "wchar": ["wchar_t"],
-  "theAny": [
-    "THE_ANY_DECLARE",
-    "THE_ANY_DEFINE",
-    "the_any_t",
-    "the_any_copy",
-    "the_any_eq",
-    "the_any_free",
-    "the_any_ne",
-    "the_any_realloc",
-    "the_any_str"
+  "d4Any": [
+    "D4_ANY_DECLARE",
+    "D4_ANY_DEFINE",
+    "d4_any_t",
+    "d4_any_copy",
+    "d4_any_eq",
+    "d4_any_free",
+    "d4_any_ne",
+    "d4_any_realloc",
+    "d4_any_str"
   ],
 
-  "theArray": ["THE_ARRAY_DECLARE", "THE_ARRAY_DEFINE"],
-  "theBool": ["the_bool_str"],
-  "theByte": ["the_byte_str"],
+  "d4Array": ["D4_ARRAY_DECLARE", "D4_ARRAY_DEFINE"],
+  "d4Bool": ["d4_bool_str"],
+  "d4Byte": ["d4_byte_str"],
 
-  "theChar": [
-    "the_char_byte",
-    "the_char_isDigit",
-    "the_char_isLetter",
-    "the_char_isLetterOrDigit",
-    "the_char_isLower",
-    "the_char_isUpper",
-    "the_char_isWhitespace",
-    "the_char_lower",
-    "the_char_repeat",
-    "the_char_str",
-    "the_char_upper"
+  "d4Char": [
+    "d4_char_byte",
+    "d4_char_isDigit",
+    "d4_char_isLetter",
+    "d4_char_isLetterOrDigit",
+    "d4_char_isLower",
+    "d4_char_isUpper",
+    "d4_char_isWhitespace",
+    "d4_char_lower",
+    "d4_char_repeat",
+    "d4_char_str",
+    "d4_char_upper"
   ],
 
-  "theError": [
+  "d4Error": [
     "TYPE_Error",
-    "the_Error_t",
-    "the_err_buf_t",
-    "the_err_stack_t",
-    "the_err_state",
-    "the_err_state_t",
-    "the_error_assign",
-    "the_error_assign_generic",
-    "the_error_buf_decrease",
-    "the_error_buf_increase",
-    "the_error_stack_pop",
-    "the_error_stack_push",
-    "the_error_unset",
-    "the_Error_alloc",
-    "the_Error_free"
+    "d4_Error_t",
+    "d4_err_buf_t",
+    "d4_err_stack_t",
+    "d4_err_state",
+    "d4_err_state_t",
+    "d4_error_assign",
+    "d4_error_assign_generic",
+    "d4_error_buf_decrease",
+    "d4_error_buf_increase",
+    "d4_error_stack_pop",
+    "d4_error_stack_push",
+    "d4_error_unset",
+    "d4_Error_alloc",
+    "d4_Error_free"
   ],
 
-  "theFn": [
-    "THE_FUNCTION_DECLARE",
-    "THE_FUNCTION_DECLARE_WITH_PARAMS",
-    "THE_FUNCTION_DEFINE",
-    "THE_FUNCTION_DEFINE_WITH_PARAMS",
-    "the_fn_ctx_free_generic"
+  "d4Fn": [
+    "D4_FUNCTION_DECLARE",
+    "D4_FUNCTION_DECLARE_WITH_PARAMS",
+    "D4_FUNCTION_DEFINE",
+    "D4_FUNCTION_DEFINE_WITH_PARAMS",
+    "d4_fn_ctx_free_generic"
   ],
 
-  "theGlobals": [
-    "the_arr_any_t",
-    "the_arr_any_alloc",
-    "the_arr_any_at",
-    "the_arr_any_clear",
-    "the_arr_any_concat",
-    "the_arr_any_contains",
-    "the_arr_any_copy",
-    "the_arr_any_empty",
-    "the_arr_any_eq",
-    "the_arr_any_filter",
-    "the_arr_any_first",
-    "the_arr_any_forEach",
-    "the_arr_any_free",
-    "the_arr_any_join",
-    "the_arr_any_last",
-    "the_arr_any_merge",
-    "the_arr_any_pop",
-    "the_arr_any_push",
-    "the_arr_any_realloc",
-    "the_arr_any_remove",
-    "the_arr_any_reverse",
-    "the_arr_any_slice",
-    "the_arr_any_sort",
-    "the_arr_any_str",
+  "d4Globals": [
+    "d4_arr_any_t",
+    "d4_arr_any_alloc",
+    "d4_arr_any_at",
+    "d4_arr_any_clear",
+    "d4_arr_any_concat",
+    "d4_arr_any_contains",
+    "d4_arr_any_copy",
+    "d4_arr_any_empty",
+    "d4_arr_any_eq",
+    "d4_arr_any_filter",
+    "d4_arr_any_first",
+    "d4_arr_any_forEach",
+    "d4_arr_any_free",
+    "d4_arr_any_join",
+    "d4_arr_any_last",
+    "d4_arr_any_merge",
+    "d4_arr_any_pop",
+    "d4_arr_any_push",
+    "d4_arr_any_realloc",
+    "d4_arr_any_remove",
+    "d4_arr_any_reverse",
+    "d4_arr_any_slice",
+    "d4_arr_any_sort",
+    "d4_arr_any_str",
 
-    "the_fn_esFP3anyFRboolFE_t",
-    "the_fn_esFP3anyFRboolFE_params_t",
-    "the_fn_esFP3anyFRboolFE_alloc",
-    "the_fn_esFP3anyFRboolFE_copy",
-    "the_fn_esFP3anyFRboolFE_eq",
-    "the_fn_esFP3anyFRboolFE_free",
-    "the_fn_esFP3anyFRboolFE_realloc",
-    "the_fn_esFP3anyFRboolFE_str",
+    "d4_fn_esFP3anyFRboolFE_t",
+    "d4_fn_esFP3anyFRboolFE_params_t",
+    "d4_fn_esFP3anyFRboolFE_alloc",
+    "d4_fn_esFP3anyFRboolFE_copy",
+    "d4_fn_esFP3anyFRboolFE_eq",
+    "d4_fn_esFP3anyFRboolFE_free",
+    "d4_fn_esFP3anyFRboolFE_realloc",
+    "d4_fn_esFP3anyFRboolFE_str",
 
-    "the_fn_esFP3anyFP3intFRvoidFE_t",
-    "the_fn_esFP3anyFP3intFRvoidFE_params_t",
-    "the_fn_esFP3anyFP3intFRvoidFE_alloc",
-    "the_fn_esFP3anyFP3intFRvoidFE_copy",
-    "the_fn_esFP3anyFP3intFRvoidFE_eq",
-    "the_fn_esFP3anyFP3intFRvoidFE_free",
-    "the_fn_esFP3anyFP3intFRvoidFE_realloc",
-    "the_fn_esFP3anyFP3intFRvoidFE_str",
+    "d4_fn_esFP3anyFP3intFRvoidFE_t",
+    "d4_fn_esFP3anyFP3intFRvoidFE_params_t",
+    "d4_fn_esFP3anyFP3intFRvoidFE_alloc",
+    "d4_fn_esFP3anyFP3intFRvoidFE_copy",
+    "d4_fn_esFP3anyFP3intFRvoidFE_eq",
+    "d4_fn_esFP3anyFP3intFRvoidFE_free",
+    "d4_fn_esFP3anyFP3intFRvoidFE_realloc",
+    "d4_fn_esFP3anyFP3intFRvoidFE_str",
 
-    "the_fn_esFP3anyFP3anyFRintFE_t",
-    "the_fn_esFP3anyFP3anyFRintFE_params_t",
-    "the_fn_esFP3anyFP3anyFRintFE_alloc",
-    "the_fn_esFP3anyFP3anyFRintFE_copy",
-    "the_fn_esFP3anyFP3anyFRintFE_eq",
-    "the_fn_esFP3anyFP3anyFRintFE_free",
-    "the_fn_esFP3anyFP3anyFRintFE_realloc",
-    "the_fn_esFP3anyFP3anyFRintFE_str",
+    "d4_fn_esFP3anyFP3anyFRintFE_t",
+    "d4_fn_esFP3anyFP3anyFRintFE_params_t",
+    "d4_fn_esFP3anyFP3anyFRintFE_alloc",
+    "d4_fn_esFP3anyFP3anyFRintFE_copy",
+    "d4_fn_esFP3anyFP3anyFRintFE_eq",
+    "d4_fn_esFP3anyFP3anyFRintFE_free",
+    "d4_fn_esFP3anyFP3anyFRintFE_realloc",
+    "d4_fn_esFP3anyFP3anyFRintFE_str",
 
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_t",
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t",
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_alloc",
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_copy",
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_eq",
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_free",
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_realloc",
-    "the_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_str",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_t",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_alloc",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_copy",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_eq",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_free",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_realloc",
+    "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_str",
 
-    "the_print"
+    "d4_print"
   ],
 
-  "theMacro": ["THE_OS_WINDOWS", "THE_OS_MACOS", "THE_OS_LINUX", "THE_EOL", "THE_PATH_SEP"],
-  "theMap": ["THE_MAP_DECLARE", "THE_MAP_DEFINE"],
+  "d4Macro": ["D4_OS_WINDOWS", "D4_OS_MACOS", "D4_OS_LINUX", "D4_EOL", "D4_PATH_SEP"],
+  "d4Map": ["D4_MAP_DECLARE", "D4_MAP_DEFINE"],
 
-  "theNumber": [
-    "the_f32_str",
-    "the_f64_str",
-    "the_float_str",
-    "the_i8_str",
-    "the_i16_str",
-    "the_i32_str",
-    "the_i64_str",
-    "the_int_str",
-    "the_isize_str",
-    "the_u8_str",
-    "the_u16_str",
-    "the_u32_str",
-    "the_u64_str",
-    "the_usize_str"
+  "d4Number": [
+    "d4_f32_str",
+    "d4_f64_str",
+    "d4_float_str",
+    "d4_i8_str",
+    "d4_i16_str",
+    "d4_i32_str",
+    "d4_i64_str",
+    "d4_int_str",
+    "d4_isize_str",
+    "d4_u8_str",
+    "d4_u16_str",
+    "d4_u32_str",
+    "d4_u64_str",
+    "d4_usize_str"
   ],
 
-  "theOptional": ["THE_OPTIONAL_DECLARE", "THE_OPTIONAL_DEFINE"],
-  "theReference": ["THE_REFERENCE_DECLARE"],
+  "d4Optional": ["D4_OPTIONAL_DECLARE", "D4_OPTIONAL_DEFINE"],
+  "d4Reference": ["D4_REFERENCE_DECLARE"],
 
-  "theRune": [
-    "the_rune_byte",
-    "the_rune_isDigit",
-    "the_rune_isLetter",
-    "the_rune_isLetterOrDigit",
-    "the_rune_isLower",
-    "the_rune_isUpper",
-    "the_rune_isWhitespace",
-    "the_rune_lower",
-    "the_rune_repeat",
-    "the_rune_str",
-    "the_rune_upper"
+  "d4Rune": [
+    "d4_rune_byte",
+    "d4_rune_isDigit",
+    "d4_rune_isLetter",
+    "d4_rune_isLetterOrDigit",
+    "d4_rune_isLower",
+    "d4_rune_isUpper",
+    "d4_rune_isWhitespace",
+    "d4_rune_lower",
+    "d4_rune_repeat",
+    "d4_rune_str",
+    "d4_rune_upper"
   ],
 
-  "theSafe": [
-    "the_safe_alloc",
-    "the_safe_calloc",
-    "the_safe_free",
-    "the_safe_realloc",
-    "the_safe_swap"
+  "d4Safe": [
+    "d4_safe_alloc",
+    "d4_safe_calloc",
+    "d4_safe_free",
+    "d4_safe_realloc",
+    "d4_safe_swap"
   ],
 
-  "theThreadPool": ["the_thread_pool_init"],
+  "d4ThreadPool": ["d4_thread_pool_init"],
 
-  "theString": [
-    "the_arr_str_t",
-    "the_arr_str_alloc",
-    "the_arr_str_at",
-    "the_arr_str_clear",
-    "the_arr_str_concat",
-    "the_arr_str_contains",
-    "the_arr_str_copy",
-    "the_arr_str_empty",
-    "the_arr_str_eq",
-    "the_arr_str_filter",
-    "the_arr_str_first",
-    "the_arr_str_forEach",
-    "the_arr_str_free",
-    "the_arr_str_join",
-    "the_arr_str_last",
-    "the_arr_str_merge",
-    "the_arr_str_pop",
-    "the_arr_str_push",
-    "the_arr_str_realloc",
-    "the_arr_str_remove",
-    "the_arr_str_reverse",
-    "the_arr_str_slice",
-    "the_arr_str_sort",
-    "the_arr_str_str",
+  "d4String": [
+    "d4_arr_str_t",
+    "d4_arr_str_alloc",
+    "d4_arr_str_at",
+    "d4_arr_str_clear",
+    "d4_arr_str_concat",
+    "d4_arr_str_contains",
+    "d4_arr_str_copy",
+    "d4_arr_str_empty",
+    "d4_arr_str_eq",
+    "d4_arr_str_filter",
+    "d4_arr_str_first",
+    "d4_arr_str_forEach",
+    "d4_arr_str_free",
+    "d4_arr_str_join",
+    "d4_arr_str_last",
+    "d4_arr_str_merge",
+    "d4_arr_str_pop",
+    "d4_arr_str_push",
+    "d4_arr_str_realloc",
+    "d4_arr_str_remove",
+    "d4_arr_str_reverse",
+    "d4_arr_str_slice",
+    "d4_arr_str_sort",
+    "d4_arr_str_str",
 
-    "the_fn_esFP3strFRboolFE_t",
-    "the_fn_esFP3strFRboolFE_params_t",
-    "the_fn_esFP3strFRboolFE_alloc",
-    "the_fn_esFP3strFRboolFE_copy",
-    "the_fn_esFP3strFRboolFE_eq",
-    "the_fn_esFP3strFRboolFE_free",
-    "the_fn_esFP3strFRboolFE_realloc",
-    "the_fn_esFP3strFRboolFE_str",
+    "d4_fn_esFP3strFRboolFE_t",
+    "d4_fn_esFP3strFRboolFE_params_t",
+    "d4_fn_esFP3strFRboolFE_alloc",
+    "d4_fn_esFP3strFRboolFE_copy",
+    "d4_fn_esFP3strFRboolFE_eq",
+    "d4_fn_esFP3strFRboolFE_free",
+    "d4_fn_esFP3strFRboolFE_realloc",
+    "d4_fn_esFP3strFRboolFE_str",
 
-    "the_fn_esFP3strFP3intFRvoidFE_t",
-    "the_fn_esFP3strFP3intFRvoidFE_params_t",
-    "the_fn_esFP3strFP3intFRvoidFE_alloc",
-    "the_fn_esFP3strFP3intFRvoidFE_copy",
-    "the_fn_esFP3strFP3intFRvoidFE_eq",
-    "the_fn_esFP3strFP3intFRvoidFE_free",
-    "the_fn_esFP3strFP3intFRvoidFE_realloc",
-    "the_fn_esFP3strFP3intFRvoidFE_str",
+    "d4_fn_esFP3strFP3intFRvoidFE_t",
+    "d4_fn_esFP3strFP3intFRvoidFE_params_t",
+    "d4_fn_esFP3strFP3intFRvoidFE_alloc",
+    "d4_fn_esFP3strFP3intFRvoidFE_copy",
+    "d4_fn_esFP3strFP3intFRvoidFE_eq",
+    "d4_fn_esFP3strFP3intFRvoidFE_free",
+    "d4_fn_esFP3strFP3intFRvoidFE_realloc",
+    "d4_fn_esFP3strFP3intFRvoidFE_str",
 
-    "the_fn_esFP3strFP3strFRintFE_t",
-    "the_fn_esFP3strFP3strFRintFE_params_t",
-    "the_fn_esFP3strFP3strFRintFE_alloc",
-    "the_fn_esFP3strFP3strFRintFE_copy",
-    "the_fn_esFP3strFP3strFRintFE_eq",
-    "the_fn_esFP3strFP3strFRintFE_free",
-    "the_fn_esFP3strFP3strFRintFE_realloc",
-    "the_fn_esFP3strFP3strFRintFE_str",
+    "d4_fn_esFP3strFP3strFRintFE_t",
+    "d4_fn_esFP3strFP3strFRintFE_params_t",
+    "d4_fn_esFP3strFP3strFRintFE_alloc",
+    "d4_fn_esFP3strFP3strFRintFE_copy",
+    "d4_fn_esFP3strFP3strFRintFE_eq",
+    "d4_fn_esFP3strFP3strFRintFE_free",
+    "d4_fn_esFP3strFP3strFRintFE_realloc",
+    "d4_fn_esFP3strFP3strFRintFE_str",
 
-    "the_str_t",
-    "the_str_empty_val",
-    "the_str_alloc",
-    "the_str_calloc",
-    "the_str_at",
-    "the_str_concat",
-    "the_str_contains",
-    "the_str_copy",
-    "the_str_empty",
-    "the_str_eq",
-    "the_str_escape",
-    "the_str_find",
-    "the_str_free",
-    "the_str_ge",
-    "the_str_gt",
-    "the_str_le",
-    "the_str_lines",
-    "the_str_lower",
-    "the_str_lowerFirst",
-    "the_str_lt",
-    "the_str_not",
-    "the_str_quoted_escape",
-    "the_str_realloc",
-    "the_str_replace",
-    "the_str_slice",
-    "the_str_split",
-    "the_str_toFloat",
-    "the_str_toF32",
-    "the_str_toF64",
-    "the_str_toIsize",
-    "the_str_toI8",
-    "the_str_toI16",
-    "the_str_toI32",
-    "the_str_toI64",
-    "the_str_toUsize",
-    "the_str_toU8",
-    "the_str_toU16",
-    "the_str_toU32",
-    "the_str_toU64",
-    "the_str_trim",
-    "the_str_trimEnd",
-    "the_str_trimStart",
-    "the_str_upper",
-    "the_str_upperFirst"
+    "d4_str_t",
+    "d4_str_empty_val",
+    "d4_str_alloc",
+    "d4_str_calloc",
+    "d4_str_at",
+    "d4_str_concat",
+    "d4_str_contains",
+    "d4_str_copy",
+    "d4_str_empty",
+    "d4_str_eq",
+    "d4_str_escape",
+    "d4_str_find",
+    "d4_str_free",
+    "d4_str_ge",
+    "d4_str_gt",
+    "d4_str_le",
+    "d4_str_lines",
+    "d4_str_lower",
+    "d4_str_lowerFirst",
+    "d4_str_lt",
+    "d4_str_not",
+    "d4_str_quoted_escape",
+    "d4_str_realloc",
+    "d4_str_replace",
+    "d4_str_slice",
+    "d4_str_split",
+    "d4_str_toFloat",
+    "d4_str_toF32",
+    "d4_str_toF64",
+    "d4_str_toIsize",
+    "d4_str_toI8",
+    "d4_str_toI16",
+    "d4_str_toI32",
+    "d4_str_toI64",
+    "d4_str_toUsize",
+    "d4_str_toU8",
+    "d4_str_toU16",
+    "d4_str_toU32",
+    "d4_str_toU64",
+    "d4_str_trim",
+    "d4_str_trimEnd",
+    "d4_str_trimStart",
+    "d4_str_upper",
+    "d4_str_upperFirst"
   ],
 
-  "theUnion": ["THE_UNION_DECLARE", "THE_UNION_DEFINE"]
+  "d4Union": ["D4_UNION_DECLARE", "D4_UNION_DEFINE"]
 }
 
 export obj Codegen {
@@ -850,26 +852,26 @@ export obj Codegen {
     mut extraFlags: str[]
 
     if (
-      self.builtin.theAny ||
-      self.builtin.theArray ||
-      self.builtin.theBool ||
-      self.builtin.theByte ||
-      self.builtin.theChar ||
-      self.builtin.theError ||
-      self.builtin.theFn ||
-      self.builtin.theGlobals ||
-      self.builtin.theMacro ||
-      self.builtin.theMap ||
-      self.builtin.theNumber ||
-      self.builtin.theOptional ||
-      self.builtin.theReference ||
-      self.builtin.theRune ||
-      self.builtin.theSafe ||
-      self.builtin.theString ||
-      self.builtin.theThreadPool ||
-      self.builtin.theUnion
+      self.builtin.d4Any ||
+      self.builtin.d4Array ||
+      self.builtin.d4Bool ||
+      self.builtin.d4Byte ||
+      self.builtin.d4Char ||
+      self.builtin.d4Error ||
+      self.builtin.d4Fn ||
+      self.builtin.d4Globals ||
+      self.builtin.d4Macro ||
+      self.builtin.d4Map ||
+      self.builtin.d4Number ||
+      self.builtin.d4Optional ||
+      self.builtin.d4Reference ||
+      self.builtin.d4Rune ||
+      self.builtin.d4Safe ||
+      self.builtin.d4String ||
+      self.builtin.d4ThreadPool ||
+      self.builtin.d4Union
     ) {
-      extraFlags.push("-lthe")
+      extraFlags.push("-ld4")
     }
 
     result := [
@@ -920,42 +922,42 @@ export obj Codegen {
       self.builtin.stdint = true
     } elif BUILTIN_ENTITIES.get("wchar").contains(name) {
       self.builtin.wchar = true
-    } elif BUILTIN_ENTITIES.get("theAny").contains(name) {
-      self.builtin.theAny = true
-    } elif BUILTIN_ENTITIES.get("theArray").contains(name) {
-      self.builtin.theArray = true
-    } elif BUILTIN_ENTITIES.get("theBool").contains(name) {
-      self.builtin.theBool = true
-    } elif BUILTIN_ENTITIES.get("theByte").contains(name) {
-      self.builtin.theByte = true
-    } elif BUILTIN_ENTITIES.get("theChar").contains(name) {
-      self.builtin.theChar = true
-    } elif BUILTIN_ENTITIES.get("theError").contains(name) {
-      self.builtin.theError = true
-    } elif BUILTIN_ENTITIES.get("theFn").contains(name) {
-      self.builtin.theFn = true
-    } elif BUILTIN_ENTITIES.get("theGlobals").contains(name) {
-      self.builtin.theGlobals = true
-    } elif BUILTIN_ENTITIES.get("theMacro").contains(name) {
-      self.builtin.theMacro = true
-    } elif BUILTIN_ENTITIES.get("theMap").contains(name) {
-      self.builtin.theMap = true
-    } elif BUILTIN_ENTITIES.get("theNumber").contains(name) {
-      self.builtin.theNumber = true
-    } elif BUILTIN_ENTITIES.get("theOptional").contains(name) {
-      self.builtin.theOptional = true
-    } elif BUILTIN_ENTITIES.get("theReference").contains(name) {
-      self.builtin.theReference = true
-    } elif BUILTIN_ENTITIES.get("theRune").contains(name) {
-      self.builtin.theRune = true
-    } elif BUILTIN_ENTITIES.get("theSafe").contains(name) {
-      self.builtin.theSafe = true
-    } elif BUILTIN_ENTITIES.get("theThreadPool").contains(name) {
-      self.builtin.theThreadPool = true
-    } elif BUILTIN_ENTITIES.get("theString").contains(name) {
-      self.builtin.theString = true
-    } elif BUILTIN_ENTITIES.get("theUnion").contains(name) {
-      self.builtin.theUnion = true
+    } elif BUILTIN_ENTITIES.get("d4Any").contains(name) {
+      self.builtin.d4Any = true
+    } elif BUILTIN_ENTITIES.get("d4Array").contains(name) {
+      self.builtin.d4Array = true
+    } elif BUILTIN_ENTITIES.get("d4Bool").contains(name) {
+      self.builtin.d4Bool = true
+    } elif BUILTIN_ENTITIES.get("d4Byte").contains(name) {
+      self.builtin.d4Byte = true
+    } elif BUILTIN_ENTITIES.get("d4Char").contains(name) {
+      self.builtin.d4Char = true
+    } elif BUILTIN_ENTITIES.get("d4Error").contains(name) {
+      self.builtin.d4Error = true
+    } elif BUILTIN_ENTITIES.get("d4Fn").contains(name) {
+      self.builtin.d4Fn = true
+    } elif BUILTIN_ENTITIES.get("d4Globals").contains(name) {
+      self.builtin.d4Globals = true
+    } elif BUILTIN_ENTITIES.get("d4Macro").contains(name) {
+      self.builtin.d4Macro = true
+    } elif BUILTIN_ENTITIES.get("d4Map").contains(name) {
+      self.builtin.d4Map = true
+    } elif BUILTIN_ENTITIES.get("d4Number").contains(name) {
+      self.builtin.d4Number = true
+    } elif BUILTIN_ENTITIES.get("d4Optional").contains(name) {
+      self.builtin.d4Optional = true
+    } elif BUILTIN_ENTITIES.get("d4Reference").contains(name) {
+      self.builtin.d4Reference = true
+    } elif BUILTIN_ENTITIES.get("d4Rune").contains(name) {
+      self.builtin.d4Rune = true
+    } elif BUILTIN_ENTITIES.get("d4Safe").contains(name) {
+      self.builtin.d4Safe = true
+    } elif BUILTIN_ENTITIES.get("d4ThreadPool").contains(name) {
+      self.builtin.d4ThreadPool = true
+    } elif BUILTIN_ENTITIES.get("d4String").contains(name) {
+      self.builtin.d4String = true
+    } elif BUILTIN_ENTITIES.get("d4Union").contains(name) {
+      self.builtin.d4Union = true
     } else {
       throw error_NewError("Tried activating unknown entity '" + name + "'")
     }
@@ -1034,24 +1036,24 @@ export obj Codegen {
       }
     }
 
-    if self.builtin.theAny { self.statements.push(AST.createIncludeDirective("the/any.h")) }
-    if self.builtin.theArray { self.statements.push(AST.createIncludeDirective("the/array.h")) }
-    if self.builtin.theBool { self.statements.push(AST.createIncludeDirective("the/bool.h")) }
-    if self.builtin.theByte { self.statements.push(AST.createIncludeDirective("the/byte.h")) }
-    if self.builtin.theChar { self.statements.push(AST.createIncludeDirective("the/char.h")) }
-    if self.builtin.theError { self.statements.push(AST.createIncludeDirective("the/error.h")) }
-    if self.builtin.theFn { self.statements.push(AST.createIncludeDirective("the/fn.h")) }
-    if self.builtin.theGlobals { self.statements.push(AST.createIncludeDirective("the/globals.h")) }
-    if self.builtin.theMacro { self.statements.push(AST.createIncludeDirective("the/macro.h")) }
-    if self.builtin.theMap { self.statements.push(AST.createIncludeDirective("the/map.h")) }
-    if self.builtin.theNumber { self.statements.push(AST.createIncludeDirective("the/number.h")) }
-    if self.builtin.theOptional { self.statements.push(AST.createIncludeDirective("the/optional.h")) }
-    if self.builtin.theReference { self.statements.push(AST.createIncludeDirective("the/reference.h")) }
-    if self.builtin.theRune { self.statements.push(AST.createIncludeDirective("the/rune.h")) }
-    if self.builtin.theSafe { self.statements.push(AST.createIncludeDirective("the/safe.h")) }
-    if self.builtin.theString { self.statements.push(AST.createIncludeDirective("the/string.h")) }
-    if self.builtin.theThreadPool { self.statements.push(AST.createIncludeDirective("the/thread-pool.h")) }
-    if self.builtin.theUnion { self.statements.push(AST.createIncludeDirective("the/union.h")) }
+    if self.builtin.d4Any { self.statements.push(AST.createIncludeDirective("d4/any.h")) }
+    if self.builtin.d4Array { self.statements.push(AST.createIncludeDirective("d4/array.h")) }
+    if self.builtin.d4Bool { self.statements.push(AST.createIncludeDirective("d4/bool.h")) }
+    if self.builtin.d4Byte { self.statements.push(AST.createIncludeDirective("d4/byte.h")) }
+    if self.builtin.d4Char { self.statements.push(AST.createIncludeDirective("d4/char.h")) }
+    if self.builtin.d4Error { self.statements.push(AST.createIncludeDirective("d4/error.h")) }
+    if self.builtin.d4Fn { self.statements.push(AST.createIncludeDirective("d4/fn.h")) }
+    if self.builtin.d4Globals { self.statements.push(AST.createIncludeDirective("d4/globals.h")) }
+    if self.builtin.d4Macro { self.statements.push(AST.createIncludeDirective("d4/macro.h")) }
+    if self.builtin.d4Map { self.statements.push(AST.createIncludeDirective("d4/map.h")) }
+    if self.builtin.d4Number { self.statements.push(AST.createIncludeDirective("d4/number.h")) }
+    if self.builtin.d4Optional { self.statements.push(AST.createIncludeDirective("d4/optional.h")) }
+    if self.builtin.d4Reference { self.statements.push(AST.createIncludeDirective("d4/reference.h")) }
+    if self.builtin.d4Rune { self.statements.push(AST.createIncludeDirective("d4/rune.h")) }
+    if self.builtin.d4Safe { self.statements.push(AST.createIncludeDirective("d4/safe.h")) }
+    if self.builtin.d4String { self.statements.push(AST.createIncludeDirective("d4/string.h")) }
+    if self.builtin.d4ThreadPool { self.statements.push(AST.createIncludeDirective("d4/thread-pool.h")) }
+    if self.builtin.d4Union { self.statements.push(AST.createIncludeDirective("d4/union.h")) }
 
     if self.builtin.stdarg { self.statements.push(AST.createIncludeDirective("stdarg.h")) }
     if self.builtin.stdbool { self.statements.push(AST.createIncludeDirective("stdbool.h")) }
@@ -1088,7 +1090,7 @@ export obj Codegen {
       t := it.asAlias()
       return self._defaultInitializerExpression(t.t)
     } elif it.name == "any" {
-      return AST.createCastExpression(AST.createType(self._("the_any_t")), AST.createInitializerListExpression([
+      return AST.createCastExpression(AST.createType(self._("d4_any_t")), AST.createInitializerListExpression([
         AST.createLiteral("-1"),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
@@ -1101,11 +1103,11 @@ export obj Codegen {
     } elif it.name == "char" {
       return AST.createLiteral("'\\0'")
     } elif it.name == "str" {
-      return AST.createIdentifier(self._("the_str_empty_val"))
+      return AST.createIdentifier(self._("d4_str_empty_val"))
     } elif it.isArray() || it.isMap() {
       typeName := self._typeName(it)
 
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
         AST.createLiteral("0")
       ])
     // todo
@@ -1124,7 +1126,7 @@ export obj Codegen {
       return AST.createIdentifier(self._("NULL"))
     } elif it.isUnion() {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
         AST.createLiteral("-1")
       ])
     } elif !it.isFunction() && !it.isReference() {
@@ -1152,10 +1154,10 @@ export obj Codegen {
     } elif it.name == "char" {
       return AST.createLiteral("'\\0'")
     } elif it.name == "str" {
-      return AST.createIdentifier(self._("the_str_empty_val"))
+      return AST.createIdentifier(self._("d4_str_empty_val"))
     } elif it.isArray() || it.isMap() {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
         AST.createLiteral("0")
       ])
     // todo
@@ -1174,7 +1176,7 @@ export obj Codegen {
       return AST.createIdentifier(self._("NULL"))
     } elif it.isUnion() {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_alloc")), [
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
         AST.createLiteral("-1")
       ])
     } elif !it.isFunction() && !it.isReference() {
@@ -1189,9 +1191,9 @@ export obj Codegen {
       t := it.asAlias()
       return self._functionCopy(t.t, expression)
     } elif it.name == "any" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_any_copy")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_any_copy")), [expression])
     } elif it.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_copy")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_copy")), [expression])
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -1202,7 +1204,7 @@ export obj Codegen {
       it.isUnion()
     ) {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_copy")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_copy")), [expression])
     }
 
     return expression
@@ -1215,9 +1217,9 @@ export obj Codegen {
       t := it.asAlias()
       result = self._functionEq(t.t, left, right, reverse)
     } elif it.name == "any" {
-      result = AST.createCallExpression(AST.createIdentifier(self._("the_any_eq")), [left, right])
+      result = AST.createCallExpression(AST.createIdentifier(self._("d4_any_eq")), [left, right])
     } elif it.name == "str" {
-      result = AST.createCallExpression(AST.createIdentifier(self._("the_str_eq")), [left, right])
+      result = AST.createCallExpression(AST.createIdentifier(self._("d4_str_eq")), [left, right])
     } elif (
       it.isArray() ||
       it.isMap() ||
@@ -1227,7 +1229,7 @@ export obj Codegen {
       it.isUnion()
     ) {
       typeName := self._typeName(it)
-      result = AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_eq")), [left, right])
+      result = AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_eq")), [left, right])
     } else {
       return result
     }
@@ -1240,12 +1242,9 @@ export obj Codegen {
       t := it.asAlias()
       return self._functionFree(t.t, expression)
     } elif it.name == "any" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_any_free")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_any_free")), [expression])
     } elif it.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_free")), [expression])
-    } elif it.isArray() {
-      typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_free")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_free")), [expression])
     } elif (
       it.isArray() ||
       it.isFunction() ||
@@ -1256,7 +1255,7 @@ export obj Codegen {
       it.isUnion()
     ) {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_free")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_free")), [expression])
     }
 
     return AST.createCastExpression(AST.createType("void"), expression)
@@ -1270,13 +1269,13 @@ export obj Codegen {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._("the_any_realloc")), [left, right])
+        AST.createCallExpression(AST.createIdentifier(self._("d4_any_realloc")), [left, right])
       )
     } elif it.name == "str" {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._("the_str_realloc")), [left, right])
+        AST.createCallExpression(AST.createIdentifier(self._("d4_str_realloc")), [left, right])
       )
     } elif (
       it.isArray() ||
@@ -1292,7 +1291,7 @@ export obj Codegen {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_realloc")), [left, right])
+        AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_realloc")), [left, right])
       )
     }
 
@@ -1304,19 +1303,19 @@ export obj Codegen {
       t := it.asAlias()
       return self._functionStr(t.t, expression, quote: quote)
     } elif it.name == "any" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_any_str")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_any_str")), [expression])
     } elif it.name == "str" && quote {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_quoted_escape")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_quoted_escape")), [expression])
     } elif it.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_copy")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_copy")), [expression])
     } elif it.isEnum() {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_enum_str")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_enum_str")), [expression])
     } elif it.isReference() {
       t := it.asReference()
       return self._functionStr(t.t, AST.createUnaryExpression("*", expression), quote: quote)
     } else {
       typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("the_" + typeName + "_str")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_str")), [expression])
     }
   }
 
@@ -1494,7 +1493,7 @@ export obj Codegen {
     mut name := expression.name
 
     if name == "print" {
-      name = self._("the_print")
+      name = self._("d4_print")
     } elif self._hasEntity(name) {
       name = self._(name)
     } else {
@@ -1532,12 +1531,12 @@ export obj Codegen {
     } elif item.isStringLiteral() {
       expression := item.asStringLiteral()
       sanitizedValue := expression.value
-        .replace(os_EOL, "\" " + self._("THE_EOL") + " \"")
-        .replace("\n", "\" " + self._("THE_EOL") + " \"")
+        .replace(os_EOL, "\" " + self._("D4_EOL") + " \"")
+        .replace("\n", "\" " + self._("D4_EOL") + " \"")
       rawValue := "L\"" + sanitizedValue + "\""
 
       return AST.createCallExpression(
-        AST.createIdentifier(self._("the_str_alloc")),
+        AST.createIdentifier(self._("d4_str_alloc")),
         [AST.createLiteral(rawValue)]
       )
     }
@@ -1594,7 +1593,7 @@ export obj Codegen {
         left,
         self._allocateExpression(
           leftType,
-          AST.createCallExpression(AST.createIdentifier(self._("the_str_concat")), [left, right])
+          AST.createCallExpression(AST.createIdentifier(self._("d4_str_concat")), [left, right])
         )
       )
     } elif !typePrimitive(leftType) || !typePrimitive(rightType) {
@@ -1639,9 +1638,9 @@ export obj Codegen {
             ? "gt"
             : "ge"
 
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_" + operator)), [left, right])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_" + operator)), [left, right])
     } elif expression.operator.t == .OpPlus && leftType.name == "str" && rightType.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("the_str_concat")), [left, right])
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_concat")), [left, right])
     }
 
     return AST.createBinaryExpression(left, expression.operator.val, right)
@@ -1728,7 +1727,7 @@ export obj Codegen {
     if !paramsArgs.empty {
       paramsName := self._type(context.t, "_params_t")
 
-      args.push(AST.createCallExpression(AST.createIdentifier(self._("the_safe_calloc")), [
+      args.push(AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
         AST.createUnaryExpression("&", AST.createCastExpression(
           AST.createType(paramsName),
           AST.createInitializerListExpression(paramsArgs)
@@ -2457,7 +2456,7 @@ export obj Codegen {
   }
 
   fn _generateAnyType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := "the_any_" + self._typeName(item)
+    typeName := "d4_any_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -2475,11 +2474,11 @@ export obj Codegen {
         typeName := self._typeName(it)
 
         return [
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ANY_DECLARE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ANY_DECLARE"), [
             AST.createIdentifier(typeName),
             AST.createType(t)
           ]), terminated: false),
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ANY_DEFINE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ANY_DEFINE"), [
             AST.createIdentifier(self._(typeDef)),
             AST.createIdentifier(typeName),
             AST.createType(self._type(it)),
@@ -2514,7 +2513,7 @@ export obj Codegen {
   }
 
   fn _generateArrayType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := "the_" + self._typeName(item)
+    typeName := "d4_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -2531,11 +2530,11 @@ export obj Codegen {
         elementTypeName := self._typeName(t.elementType)
 
         return [
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DECLARE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ARRAY_DECLARE"), [
             AST.createIdentifier(elementTypeName),
             AST.createType(self._type(t.elementType))
           ]), terminated: false),
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_ARRAY_DEFINE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ARRAY_DEFINE"), [
             AST.createIdentifier(elementTypeName),
             AST.createType(self._type(t.elementType)),
             AST.createType(self._type(typeSafeForVaArg(self._tm(), t.elementType))),
@@ -2594,7 +2593,7 @@ export obj Codegen {
   }
 
   fn _generateFunctionType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := "the_" + self._typeName(item)
+    typeName := "d4_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -2635,14 +2634,14 @@ export obj Codegen {
           }
 
           return [
-            AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_FUNCTION_DECLARE_WITH_PARAMS"), [
+            AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DECLARE_WITH_PARAMS"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
               AST.createIdentifier(returnTypeName),
               AST.createType(returnType),
               AST.createIdentifier(parametersTypeName),
               AST.createCompoundStatement(parametersDefinition)
             ]), terminated: false),
-            AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_FUNCTION_DEFINE_WITH_PARAMS"), [
+            AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DEFINE_WITH_PARAMS"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
               AST.createIdentifier(returnTypeName),
               AST.createType(returnType),
@@ -2662,11 +2661,11 @@ export obj Codegen {
           returnType := self._type(t.returnType)
 
           return [
-            AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_FUNCTION_DECLARE"), [
+            AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DECLARE"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
               AST.createType(returnType)
             ]), terminated: false),
-            AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_FUNCTION_DEFINE"), [
+            AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DEFINE"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
               AST.createType(returnType)
             ]), terminated: false),
@@ -2706,7 +2705,7 @@ export obj Codegen {
   }
 
   fn _generateMapType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := "the_" + self._typeName(item)
+    typeName := "d4_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -2724,13 +2723,13 @@ export obj Codegen {
         valueTypeName := self._typeName(t.valueType)
 
         return [
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_MAP_DECLARE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_MAP_DECLARE"), [
             AST.createIdentifier(keyTypeName),
             AST.createType(self._type(t.keyType)),
             AST.createIdentifier(valueTypeName),
             AST.createType(self._type(t.valueType))
           ]), terminated: false),
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_MAP_DEFINE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_MAP_DEFINE"), [
             AST.createIdentifier(keyTypeName),
             AST.createType(self._type(t.keyType)),
             AST.createType(self._type(typeSafeForVaArg(self._tm(), t.keyType))),
@@ -2790,7 +2789,7 @@ export obj Codegen {
   }
 
   fn _generateOptionalType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := "the_" + self._typeName(item)
+    typeName := "d4_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -2808,11 +2807,11 @@ export obj Codegen {
         underlyingTypeName := self._typeName(t.t)
 
         return [
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_OPTIONAL_DECLARE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_OPTIONAL_DECLARE"), [
             AST.createIdentifier(underlyingTypeName),
             AST.createType(underlyingType)
           ]), terminated: false),
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_OPTIONAL_DEFINE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_OPTIONAL_DEFINE"), [
             AST.createIdentifier(underlyingTypeName),
             AST.createType(underlyingType),
             self._functionCopy(t.t, AST.createIdentifier("val")),
@@ -2846,7 +2845,7 @@ export obj Codegen {
   }
 
   fn _generateReferenceType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := "the_" + self._typeName(item)
+    typeName := "d4_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -2861,7 +2860,7 @@ export obj Codegen {
         it := entity.context as ref Analyzer.Type
         t := it.asReference()
 
-        return AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_REFERENCE_DECLARE"), [
+        return AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_REFERENCE_DECLARE"), [
           AST.createIdentifier(self._typeName(t.t)),
           AST.createType(self._type(t.t))
         ]), terminated: false)
@@ -2872,7 +2871,7 @@ export obj Codegen {
   }
 
   fn _generateUnionType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    typeName := "the_" + self._typeName(item)
+    typeName := "d4_" + self._typeName(item)
     name := typeName + "_t"
 
     if self._hasEntity(name) {
@@ -2886,7 +2885,7 @@ export obj Codegen {
       generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
         it := entity.context as ref Analyzer.Type
         t := it.asUnion()
-        unionName := entity.codeName.slice(10, -4)
+        unionName := entity.codeName.slice("d4_union_".len, "UE_t".len * -1)
 
         mut structureBlock: AST.CStatement[]
         mut allocBlock: AST.CStatement[]
@@ -3034,11 +3033,11 @@ export obj Codegen {
         }
 
         return [
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DECLARE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_UNION_DECLARE"), [
             AST.createIdentifier(unionName),
             AST.createCompoundStatement(structureBlock)
           ]), terminated: false),
-          AST.createExpressionStatement(AST.createMacroInvocation(self._("THE_UNION_DEFINE"), [
+          AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_UNION_DEFINE"), [
             AST.createIdentifier(unionName),
             AST.createCompoundStatement(allocBlock),
             AST.createCompoundStatement(copyBlock),
@@ -3122,7 +3121,7 @@ export obj Codegen {
       t := it.asAlias()
       return self._type(t.t)
     } elif it.name == "any" {
-      return self._("the_any_t") + " "
+      return self._("d4_any_t") + " "
     } elif it.name == "bool" {
       return self._("bool") + " "
     } elif it.name == "byte" {
@@ -3146,7 +3145,7 @@ export obj Codegen {
     } elif it.name == "rune" {
       return self._("wchar_t") + " "
     } elif it.name == "str" {
-      return self._("the_str" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+      return self._("d4_str" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     } elif it.name == "u8" {
       return self._("uint8_t") + " "
     } elif it.name == "u16" {
@@ -3184,7 +3183,7 @@ export obj Codegen {
         self._generateUnionType(it)
       }
 
-      return self._("the_" + self._typeName(it) + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+      return self._("d4_" + self._typeName(it) + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     }
 
     throw error_NewError("Failed to generate type for '" + it.toString() + "'")
