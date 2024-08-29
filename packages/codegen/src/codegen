@@ -469,7 +469,25 @@ export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
 }
 
 export fn typeSafeForVaArg (mut tm: ref Analyzer.TypeMap, it: ref Analyzer.Type) ref Analyzer.Type {
-  return ["i8", "i16", "u8", "u16", "byte", "char"].contains(it.name) ? tm.get("i32") : it
+  if it.isAlias() {
+    t := it.asAlias()
+    return typeSafeForVaArg(tm, t.t)
+  }
+
+  if it.name == "f32" {
+    return tm.get("float")
+  }
+
+  return [
+    "bool",
+    "byte",
+    "char",
+    "i8",
+    "i16",
+    "rune",
+    "u8",
+    "u16",
+  ].contains(it.name) ? tm.get("i32") : it
 }
 
 export fn typeShouldBeAllocated (self: ref Analyzer.Type) bool {
@@ -2718,32 +2736,41 @@ export obj Codegen {
       generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
         it := entity.context as ref Analyzer.Type
         t := it.asMap()
+        tm := self._tm()
+
+        self._type(tm.createArray(t.keyType))
+        self._type(tm.createArray(t.valueType))
+
+        keyType := self._type(t.keyType)
+        valueType := self._type(t.valueType)
+
         keyTypeName := self._typeName(t.keyType)
         valueTypeName := self._typeName(t.valueType)
 
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_MAP_DECLARE"), [
             AST.createIdentifier(keyTypeName),
-            AST.createType(self._type(t.keyType)),
+            AST.createType(keyType),
             AST.createIdentifier(valueTypeName),
-            AST.createType(self._type(t.valueType))
+            AST.createType(valueType),
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_MAP_DEFINE"), [
             AST.createIdentifier(keyTypeName),
-            AST.createType(self._type(t.keyType)),
-            AST.createType(self._type(typeSafeForVaArg(self._tm(), t.keyType))),
+            AST.createType(keyType),
+            AST.createType(self._type(typeSafeForVaArg(tm, t.keyType))),
             self._functionCopy(t.keyType, AST.createIdentifier("key")),
             self._functionEq(t.keyType, AST.createIdentifier("lhs_key"), AST.createIdentifier("rhs_key")),
             self._functionFree(t.keyType, AST.createIdentifier("key")),
             self._functionStr(t.keyType, AST.createIdentifier("key")),
+            self._functionStr(t.keyType, AST.createIdentifier("key"), quote: true),
             AST.createIdentifier(valueTypeName),
-            AST.createType(self._type(t.valueType)),
-            AST.createType(self._type(typeSafeForVaArg(self._tm(), t.valueType))),
+            AST.createType(valueType),
+            AST.createType(self._type(typeSafeForVaArg(tm, t.valueType))),
             self._functionCopy(t.valueType, AST.createIdentifier("val")),
             self._functionEq(t.valueType, AST.createIdentifier("lhs_val"), AST.createIdentifier("rhs_val")),
             self._functionFree(t.valueType, AST.createIdentifier("val")),
-            self._functionStr(t.valueType, AST.createIdentifier("val"), quote: true)
-          ]), terminated: false)
+            self._functionStr(t.valueType, AST.createIdentifier("val"), quote: true),
+          ]), terminated: false),
         ]
       }
     })
