@@ -48,6 +48,8 @@ export obj TypeMap {
     mut intType := self.items.last()
     self.items.push(Type.Type{name: "isize", body: Type.ObjectType{}})
     mut isizeType := self.items.last()
+    self.items.push(Type.Type{name: "never", body: Type.ObjectType{}})
+    mut neverType := self.items.last()
     self.items.push(Type.Type{name: "rune", body: Type.ObjectType{}})
     mut runeType := self.items.last()
     self.items.push(Type.Type{name: "u8", body: Type.ObjectType{}})

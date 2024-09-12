@@ -122,6 +122,9 @@ export obj isize {
   fn str (self: ref Self) str
 }
 
+/* Used when accessing this data is not possible. */
+export obj never {}
+
 /* Allows storing wide character as four byte. */
 export obj rune {
   /* Whether wide character is digit. */
