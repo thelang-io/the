@@ -3256,8 +3256,6 @@ export obj Codegen {
       typeName := self._typeDef(targetType)
       typeDefIdx := self.typeDefs.get(typeName)
 
-      // todo problem here again in analyzer TypeContext.targetType shouldn't be string for a union type
-
       // TODO: throw runtime error if not possible to cast
       expression = AST.createPropertyAccessExpression(
         AST.createPropertyAccessExpression(expression, "data"),
