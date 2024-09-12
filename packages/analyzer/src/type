@@ -105,6 +105,38 @@ export obj Type {
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
+  // todo test
+  fn canBeCastTo (self: ref Self, t: ref Type) bool {
+    a := unwrap(self, withReference: false)
+    b := unwrap(t, withReference: false)
+
+    if a.name == "any" || b.name == "any" {
+      return true
+    } elif a.isEnum() {
+      return b.name == "i32" || b.name == "int"
+    } elif a.isOptional() {
+      t1 := a.asOptional()
+      return match(t1.t, b)
+    } elif a.isReference() {
+      if b.name == "i32" || b.name == "int" {
+        return true
+      }
+
+      t1 := a.asReference()
+      return match(t1.t, b)
+    } elif a.isUnion() {
+      return a.hasType(b)
+    }
+
+    return
+      (a.name == "bool" && b.isNumber()) ||
+      (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
+      (a.name == "char" && b.isNumber()) ||
+      (a.name == "rune" && b.isNumber()) ||
+      (a.isFunction() && b.isFunction() && similarTo(a, b)) ||
+      (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
+  }
+
   fn get (self: ref Self, nameOrIndex: int | str) TypeProperty {
     t := unwrap(self)
     propertiesLen := t.properties.len
@@ -559,6 +591,23 @@ export fn match (type1: ref Type, type2: ref Type) bool {
   }
 
   return !a.name.empty && a.name == b.name
+}
+
+// todo test
+export fn promote (a: ref Type, b: ref Type) ref Type {
+  if match(a, b) {
+    return a
+  }
+
+  if a.canBeCastTo(b) {
+    return a
+  }
+
+  if b.canBeCastTo(a) {
+    return b
+  }
+
+  throw error_NewError("Unable to promote types '" + a.toString() + "' and '" + b.toString() + "'")
 }
 
 export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
