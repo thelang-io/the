@@ -434,7 +434,7 @@ export obj AnalyzerFile {
     unwrap := false,
     withMutable := false,
     withMutableNext := false,
-    withoutTypeCast := false
+    withoutTypeCast := false,
   ) ref Type.Type {
     mut t: (ref Type.Type)?
 
@@ -612,14 +612,8 @@ export obj AnalyzerFile {
     }
 
     definiteTargetType := Type.promote(firstType, secondType)
-
-    if !Type.match(definiteTargetType, firstType) {
-      firstType = cb1(Type.opt(definiteTargetType))
-    }
-
-    if !Type.match(definiteTargetType, secondType) {
-      secondType = cb2(Type.opt(definiteTargetType))
-    }
+    firstType = cb1(Type.opt(definiteTargetType))
+    secondType = cb2(Type.opt(definiteTargetType))
 
     return GuessTypeResult{first: firstType, second: secondType}
   }
@@ -1483,7 +1477,7 @@ export obj AnalyzerFile {
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)?,
     t: ref Type.Type,
-    unwrap: bool
+    unwrap: bool,
   ) ref Type.Type {
     if it.isParenthesized() {
       expression := it.asParenthesized()
@@ -2096,7 +2090,7 @@ export obj AnalyzerFile {
     targetType: (ref Type.Type)?,
     withMutable: bool,
     withMutableNext: bool,
-    withoutTypeCast: bool
+    withoutTypeCast: bool,
   ) (ref Type.Type)? {
     if !it.isElementAccess() {
       return nil
@@ -2150,7 +2144,7 @@ export obj AnalyzerFile {
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)?,
     withMutable: bool,
-    withMutableNext: bool
+    withMutableNext: bool,
   ) (ref Type.Type)? {
     if !it.isIs() {
       return nil
@@ -2335,7 +2329,7 @@ export obj AnalyzerFile {
     targetType: (ref Type.Type)?,
     unwrap: bool,
     withMutable: bool,
-    withMutableNext: bool
+    withMutableNext: bool,
   ) (ref Type.Type)? {
     if !it.isParenthesized() {
       return nil

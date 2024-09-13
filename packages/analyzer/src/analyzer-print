@@ -32,10 +32,45 @@ export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) s
   } elif statement.isExpression() {
     expressionStatement := statement.asExpression()
     result += analyzerPrintExpression(ref expressionStatement.expression, indent)
+  } elif statement.isLoop() {
+    loopStatement := statement.asLoop()
+    result += ' '.repeat(indent) + "LoopStatement(parenthesized=" + loopStatement.parenthesized.str() + ")\n"
+
+    if loopStatement.initializer != nil {
+      result += analyzerPrintStatement(ref loopStatement.initializer, indent + 2)
+    }
+
+    if loopStatement.condition != nil {
+      result += analyzerPrintExpression(ref loopStatement.condition, indent + 2)
+    }
+
+    if loopStatement.update != nil {
+      result += analyzerPrintExpression(ref loopStatement.update, indent + 2)
+    }
+
+    result += analyzerPrintStatement(ref loopStatement.body, indent + 2)
   } elif statement.isMainDeclaration() {
     mainDeclaration := statement.asMainDeclaration()
     result += ' '.repeat(indent) + "MainDeclaration\n"
     result += analyzerPrintStatement(ref mainDeclaration.body, indent + 2)
+  } elif statement.isVariableDeclaration() {
+    variableDeclaration := statement.asVariableDeclaration()
+
+    mut attributes := "name=" + variableDeclaration.name.name
+    attributes += " mutable=" + variableDeclaration.mutable.str()
+    attributes += " constant=" + variableDeclaration.constant.str()
+
+    if variableDeclaration.t != nil {
+      variableDeclarationType := variableDeclaration.t
+      attributes += " type=" + Parser.stringifyType(variableDeclarationType)
+    }
+
+    result += ' '.repeat(indent) + "VariableDeclaration(" + attributes + ")\n"
+
+    if variableDeclaration.initializer != nil {
+      variableDeclarationInitializer := variableDeclaration.initializer
+      result += analyzerPrintExpression(ref variableDeclarationInitializer, indent + 2)
+    }
   }
 
   return result

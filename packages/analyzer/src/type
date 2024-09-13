@@ -105,38 +105,6 @@ export obj Type {
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
-  // todo test
-  fn canBeCastTo (self: ref Self, t: ref Type) bool {
-    a := unwrap(self, withReference: false)
-    b := unwrap(t, withReference: false)
-
-    if a.name == "any" || b.name == "any" {
-      return true
-    } elif a.isEnum() {
-      return b.name == "i32" || b.name == "int"
-    } elif a.isOptional() {
-      t1 := a.asOptional()
-      return match(t1.t, b)
-    } elif a.isReference() {
-      if b.name == "i32" || b.name == "int" {
-        return true
-      }
-
-      t1 := a.asReference()
-      return match(t1.t, b)
-    } elif a.isUnion() {
-      return a.hasType(b)
-    }
-
-    return
-      (a.name == "bool" && b.isNumber()) ||
-      (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
-      (a.name == "char" && b.isNumber()) ||
-      (a.name == "rune" && b.isNumber()) ||
-      (a.isFunction() && b.isFunction() && similarTo(a, b)) ||
-      (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
-  }
-
   fn get (self: ref Self, nameOrIndex: int | str) TypeProperty {
     t := unwrap(self)
     propertiesLen := t.properties.len
@@ -208,6 +176,43 @@ export obj Type {
     }
 
     return false
+  }
+
+  // todo test
+  // todo account if lhs can be rhs, eg ref_int can be opt_ref_int
+  fn higherThan (self: ref Self, t: ref Type) bool {
+    a := unwrap(self, withReference: false)
+    b := unwrap(t, withReference: false)
+
+    if a.name == "any" || b.name == "any" {
+      return true
+    } elif a.isEnum() {
+      return b.name == "i32" || b.name == "int"
+    } elif a.isOptional() {
+      t1 := a.asOptional()
+      return match(t1.t, b)
+    } elif a.isReference() {
+      t1 := a.asReference()
+
+      if b.isReference() {
+        t2 := b.asReference()
+        return t1.t.higherThan(t2.t)
+      }
+
+      return false
+    } elif b.isReference() {
+      return true
+    } elif a.isUnion() {
+      return a.hasType(b)
+    }
+
+    return
+      (a.name == "bool" && b.isNumber()) ||
+      (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
+      (a.name == "char" && b.isNumber()) ||
+      (a.name == "rune" && b.isNumber()) ||
+      (a.isFunction() && b.isFunction() && similarTo(a, b)) ||
+      (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
   fn isErrorLike (self: ref Self) bool {
@@ -599,11 +604,11 @@ export fn promote (a: ref Type, b: ref Type) ref Type {
     return a
   }
 
-  if a.canBeCastTo(b) {
+  if a.higherThan(b) {
     return a
   }
 
-  if b.canBeCastTo(a) {
+  if b.higherThan(a) {
     return b
   }
 
