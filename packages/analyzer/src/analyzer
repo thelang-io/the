@@ -583,39 +583,40 @@ export obj AnalyzerFile {
   fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback) GuessTypeResult {
     initialErrorsLen := self.analyzer.errors.len
     mut targetType: (ref Type.Type)? = nil
-    mut firstType := cb1(targetType)
+    firstType := cb1(targetType)
     firstTypeFailed := self.analyzer.errors.len != initialErrorsLen
 
     if firstTypeFailed {
       self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
     } else {
-      targetType = firstType
+      targetType = Type.opt(firstType)
     }
 
-    mut secondType := cb2(targetType)
+    secondType := cb2(targetType)
     secondTypeFailed := self.analyzer.errors.len != initialErrorsLen
+    mut result := GuessTypeResult{first: firstType, second: secondType}
 
     if secondTypeFailed {
-      return GuessTypeResult{first: firstType, second: secondType}
+      return result
     }
 
-    targetType = secondType
+    targetType = Type.opt(result.second)
 
     if firstTypeFailed {
-      firstType = cb1(targetType)
+      result.first = cb1(targetType)
     }
 
     hasErrors := self.analyzer.errors.len != initialErrorsLen
 
-    if hasErrors {
-      return GuessTypeResult{first: firstType, second: secondType}
+    if hasErrors || !Type.promotionPossible(result.first, result.second) {
+      return result
     }
 
-    definiteTargetType := Type.promote(firstType, secondType)
-    firstType = cb1(Type.opt(definiteTargetType))
-    secondType = cb2(Type.opt(definiteTargetType))
+    targetType = Type.opt(Type.promote(result.first, result.second))
+    result.first = cb1(targetType)
+    result.second = cb2(targetType)
 
-    return GuessTypeResult{first: firstType, second: secondType}
+    return result
   }
 
   fn operands (mut self: ref Self, op: Parser.Token, type1: ref Type.Type, type2: ref Type.Type) bool {
@@ -1818,20 +1819,20 @@ export obj AnalyzerFile {
       return result
     })
 
-    leftType := getContextTargetType(ref expression.left)
-    rightType := getContextTargetType(ref expression.right)
-
-    if !self.operands(expression.operator, leftType, rightType) {
+    if !self.operands(expression.operator, guessTypeResult.first, guessTypeResult.second) {
       self.raise(
-        errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()),
+        errors.E1026(expression.operator.val, guessTypeResult.first.toString(), guessTypeResult.second.toString()),
         expression.operator.start,
         expression.operator.end
       )
     }
 
+    leftType := getContextTargetType(ref expression.left)
+    rightType := getContextTargetType(ref expression.right)
+
     it.context = Context.BinaryExpressionContext{
       leftType: leftType,
-      rightType: rightType
+      rightType: rightType,
     }
 
     if (
@@ -1843,9 +1844,11 @@ export obj AnalyzerFile {
       expression.operator.t == .OpLtEq
     ) {
       return self.tm.get("bool")
+    } elif Type.promotionPossible(leftType, rightType) {
+      return Type.promote(leftType, rightType)
     }
 
-    return Type.promote(leftType, rightType)
+    return leftType
   }
 
   fn _eCall (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
@@ -2079,9 +2082,11 @@ export obj AnalyzerFile {
         expression.consequent.start,
         expression.alternate.end
       )
+    } elif Type.promotionPossible(consequentType, alternateType) {
+      return Type.promote(consequentType, alternateType)
     }
 
-    return Type.promote(consequentType, alternateType)
+    return consequentType
   }
 
   fn _eElementAccess (

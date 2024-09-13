@@ -600,19 +600,18 @@ export fn match (type1: ref Type, type2: ref Type) bool {
 
 // todo test
 export fn promote (a: ref Type, b: ref Type) ref Type {
-  if match(a, b) {
+  if match(a, b) || a.higherThan(b) {
     return a
-  }
-
-  if a.higherThan(b) {
-    return a
-  }
-
-  if b.higherThan(a) {
+  } elif b.higherThan(a) {
     return b
   }
 
   throw error_NewError("Unable to promote types '" + a.toString() + "' and '" + b.toString() + "'")
+}
+
+// todo test
+export fn promotionPossible (a: ref Type, b: ref Type) bool {
+  return match(a, b) || a.higherThan(b) || b.higherThan(a)
 }
 
 export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
