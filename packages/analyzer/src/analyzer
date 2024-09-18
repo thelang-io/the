@@ -1303,6 +1303,7 @@ export obj AnalyzerFile {
     throw error_NewError("Tried analyzing unknown type")
   }
 
+  // todo test
   fn typeCast (mut self: ref Self, it: ref Parser.Expression) TypeCastResult {
     initialTC := self.tc
     mut consequent: (ref Type.Type)[str]
@@ -1310,22 +1311,19 @@ export obj AnalyzerFile {
 
     // todo make better type casting when VarDecl has initializer
     // todo make better type casting when re-cast inside of statement
-
-    // todo type casting for Array
-    // todo type casting for Assignment
-    // todo type casting for Await
     // todo type casting for Binary
-    // todo type casting for Call
-    // todo type casting for Closure
-    // todo type casting for Conditional
-    // todo type casting for ElementAccess
-    // todo type casting for Map
-    // todo type casting for MemberAccess
-    // todo type casting for Object
-    // todo type casting for PropertyAccess
-    // todo type casting for Reference
 
-    if it.isAs() {
+    if it.isArray() {
+      expression := it.asArray()
+
+      loop i := 0; i < expression.elements.len; i++ {
+        element := expression.elements[i]
+        typeCastResult := self.typeCast(element)
+
+        consequent.merge(typeCastResult.consequent)
+        alternate.merge(typeCastResult.alternate)
+      }
+    } elif it.isAs() {
       expression := it.asAs()
       typeCastResult := self.typeCast(ref expression.expression)
 
@@ -1333,6 +1331,13 @@ export obj AnalyzerFile {
       alternate.merge(typeCastResult.alternate)
     } elif it.isAssignment() {
       expression := it.asAssignment()
+      leftTypeCastResult := self.typeCast(ref expression.left)
+      rightTypeCastResult := self.typeCast(ref expression.right)
+
+      consequent.merge(leftTypeCastResult.consequent)
+      consequent.merge(rightTypeCastResult.consequent)
+      alternate.merge(leftTypeCastResult.alternate)
+      alternate.merge(rightTypeCastResult.alternate)
 
       if expression.operator.t == .OpEq {
         leftType := Type.unwrap(self.eNice(ref expression.left))
@@ -1342,6 +1347,12 @@ export obj AnalyzerFile {
         consequent.set(code, rightType)
         alternate.set(code, self.tm.get("never"))
       }
+    } elif it.isAwait() {
+      expression := it.asAwait()
+      typeCastResult := self.typeCast(ref expression.expression)
+
+      consequent.merge(typeCastResult.consequent)
+      alternate.merge(typeCastResult.alternate)
     } elif it.isBinary() {
       expression := it.asBinary()
 
@@ -1417,6 +1428,41 @@ export obj AnalyzerFile {
           }
         }
       }
+    } elif it.isCall() {
+      expression := it.asCall()
+      calleeTypeCastResult := self.typeCast(ref expression.callee)
+
+      consequent.merge(calleeTypeCastResult.consequent)
+      alternate.merge(calleeTypeCastResult.alternate)
+
+      loop i := 0; i < expression.arguments.len; i++ {
+        argument := expression.arguments[i]
+        argumentTypeCastResult := self.typeCast(ref argument.expression)
+
+        consequent.merge(argumentTypeCastResult.consequent)
+        alternate.merge(argumentTypeCastResult.alternate)
+      }
+    } elif it.isConditional() {
+      expression := it.asConditional()
+      conditionTypeCastResult := self.typeCast(ref expression.condition)
+      consequentTypeCastResult := self.typeCast(ref expression.consequent)
+      alternateTypeCastResult := self.typeCast(ref expression.alternate)
+
+      consequent.merge(conditionTypeCastResult.consequent)
+      consequent.merge(consequentTypeCastResult.consequent)
+      consequent.merge(alternateTypeCastResult.consequent)
+      alternate.merge(conditionTypeCastResult.alternate)
+      alternate.merge(consequentTypeCastResult.alternate)
+      alternate.merge(alternateTypeCastResult.alternate)
+    } elif it.isElementAccess() {
+      expression := it.asElementAccess()
+      typeCastResult := self.typeCast(ref expression.expression)
+      argumentTypeCastResult := self.typeCast(ref expression.argument)
+
+      consequent.merge(typeCastResult.consequent)
+      consequent.merge(argumentTypeCastResult.consequent)
+      alternate.merge(typeCastResult.alternate)
+      alternate.merge(argumentTypeCastResult.alternate)
     } elif it.isIs() {
       expression := it.asIs()
       typeCastResult := self.typeCast(ref expression.expression)
@@ -1446,8 +1492,43 @@ export obj AnalyzerFile {
           }
         }
       }
+    } elif it.isMap() {
+      expression := it.asMap()
+
+      loop i := 0; i < expression.elements.len; i++ {
+        element := expression.elements[i]
+        keyTypeCastResult := self.typeCast(ref element.key)
+        valueTypeCastResult := self.typeCast(ref element.value)
+
+        consequent.merge(keyTypeCastResult.consequent)
+        consequent.merge(valueTypeCastResult.consequent)
+        alternate.merge(keyTypeCastResult.alternate)
+        alternate.merge(valueTypeCastResult.alternate)
+      }
+    } elif it.isObject() {
+      expression := it.asObject()
+
+      loop i := 0; i < expression.properties.len; i++ {
+        property := expression.properties[i]
+        typeCastResult := self.typeCast(ref property.value)
+
+        consequent.merge(typeCastResult.consequent)
+        alternate.merge(typeCastResult.alternate)
+      }
     } elif it.isParenthesized() {
       expression := it.asParenthesized()
+      typeCastResult := self.typeCast(ref expression.expression)
+
+      consequent.merge(typeCastResult.consequent)
+      alternate.merge(typeCastResult.alternate)
+    } elif it.isPropertyAccess() {
+      expression := it.asPropertyAccess()
+      typeCastResult := self.typeCast(ref expression.expression)
+
+      consequent.merge(typeCastResult.consequent)
+      alternate.merge(typeCastResult.alternate)
+    } elif it.isReference() {
+      expression := it.asReference()
       typeCastResult := self.typeCast(ref expression.expression)
 
       consequent.merge(typeCastResult.consequent)
