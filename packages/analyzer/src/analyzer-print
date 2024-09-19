@@ -19,19 +19,154 @@ export fn analyzerPrint(statements: ref Parser.Statement[]) str {
 }
 
 // todo test
+export fn analyzerPrintFunction(parameters: Parser.FunctionParameter[], body: Parser.Statement?, indent: int) str {
+  mut result := ""
+
+  loop i := 0; i < parameters.len; i++ {
+    parameter := parameters[i]
+
+    result += "FunctionParameter("
+    result += "name=" + parameter.name.name + " "
+
+    if parameter.t != nil {
+      parameterType := parameter.t
+      result += "type=" + Parser.stringifyType(parameterType) + " "
+    }
+
+    result += "mutable=" + parameter.mutable.str() + " "
+    result += "variadic=" + parameter.variadic.str() + " "
+    result += ")\n"
+
+    if parameter.initializer != nil {
+      initializer := parameter.initializer
+      result += analyzerPrintExpression(ref initializer, indent + 2)
+    }
+  }
+
+  if body != nil {
+    analyzerPrintStatement(body, indent)
+  }
+
+  return ""
+}
+
+// todo test
+export fn analyzerPrintFunctionAttributes(name: Parser.Identifier?, returnType: Parser.Type?, asynchronous: bool) str {
+  mut result := "asynchronous=" + asynchronous.str()
+
+  if name != nil {
+    result += "name=" + name.name
+  }
+
+  if returnType != nil {
+    result += "return=" + Parser.stringifyType(returnType)
+  }
+
+  return result
+}
+
+// todo test
+export fn analyzerVariableDeclarationAttributes(name: Parser.Identifier, t: Parser.Type?, mutable: bool, constant: bool) str {
+  mut result := "name=" + name.name
+  result += " mutable=" + mutable.str()
+  result += " constant=" + constant.str()
+
+  if t != nil {
+    result += " type=" + Parser.stringifyType(t)
+  }
+
+  return result
+}
+
+// todo test
 export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) str {
   mut result := ""
 
   if statement.isBlock() {
-    block := statement.asBlock()
+    blockStatement := statement.asBlock()
 
-    loop i := 0; i < block.body.len; i++ {
-      bodyStatement := block.body[i]
+    loop i := 0; i < blockStatement.body.len; i++ {
+      bodyStatement := blockStatement.body[i]
       result += analyzerPrintStatement(bodyStatement, indent)
     }
+  } elif statement.isBreak() {
+    breakStatement := statement.asBreak()
+    result += ' '.repeat(indent) + "BreakStatement()\n"
+  } elif statement.isContinue() {
+    continueStatement := statement.asContinue()
+    result += ' '.repeat(indent) + "ContinueStatement()\n"
+  } elif statement.isEnumDeclaration() {
+    enumDeclaration := statement.asEnumDeclaration()
+    result += ' '.repeat(indent) + "EnumDeclaration(name=" + enumDeclaration.name.name + ")\n"
+
+    loop i := 0; i < enumDeclaration.members.len; i++ {
+      member := enumDeclaration.members[i]
+      result += ' '.repeat(indent + 2) + "EnumDeclarationMember(name=" + member.name.name + ")\n"
+
+      if member.initializer != nil {
+        initializer := member.initializer
+        result += analyzerPrintExpression(ref initializer, indent + 4)
+      }
+    }
+  } elif statement.isExportDeclaration() {
+    exportDeclaration := statement.asExportDeclaration()
+    result += ' '.repeat(indent) + "ExportDeclaration()\n"
+    result += analyzerPrintStatement(ref exportDeclaration.statement, indent + 2)
+  } elif statement.isExportNamedDeclaration() {
+    exportNamedDeclaration := statement.asExportNamedDeclaration()
+    result += ' '.repeat(indent) + "ExportNamedDeclaration()\n"
+    result += analyzerPrintExpression(ref exportNamedDeclaration.expression, indent + 2)
   } elif statement.isExpression() {
     expressionStatement := statement.asExpression()
     result += analyzerPrintExpression(ref expressionStatement.expression, indent)
+  } elif statement.isFunctionDeclaration() {
+    functionDeclaration := statement.asFunctionDeclaration()
+
+    attributes := analyzerPrintFunctionAttributes(
+      functionDeclaration.name,
+      functionDeclaration.returnType,
+      functionDeclaration.asynchronous,
+    )
+
+    result += ' '.repeat(indent) + "FunctionDeclaration(" + attributes + ")\n"
+
+    result += analyzerPrintFunction(
+      functionDeclaration.parameters,
+      functionDeclaration.body,
+      indent + 2,
+    )
+  } elif statement.isIf() {
+    ifStatement := statement.asIf()
+
+    result += ' '.repeat(indent) + "IfStatement()\n"
+    result += analyzerPrintExpression(ref ifStatement.condition, indent + 2)
+    result += analyzerPrintStatement(ref ifStatement.consequent, indent + 2)
+
+    if ifStatement.alternate != nil {
+      alternate := ifStatement.alternate
+      result += analyzerPrintStatement(ref alternate, indent + 2)
+    }
+  } elif statement.isImportDeclaration() {
+    importDeclaration := statement.asImportDeclaration()
+
+    result += ' '.repeat(indent) + "ImportDeclaration()\n"
+    result += analyzerPrintExpression(ref importDeclaration.source, indent + 2)
+
+    loop i := 0; i < importDeclaration.specifiers.len; i++ {
+      specifier := importDeclaration.specifiers[i] as Parser.ImportDeclarationSpecifier
+
+      if specifier is Parser.ImportSpecifier {
+        importSpecifier := specifier
+
+        result += ' '.repeat(indent + 2) + "ImportSpecifier("
+        result += "imported=" + importSpecifier.imported.name + " "
+        result += "local=" + importSpecifier.local.name
+        result += ")\n"
+      } else {
+        importNamespaceSpecifier := specifier
+        result += ' '.repeat(indent + 2) + "ImportNamespaceSpecifier(name=" + importNamespaceSpecifier.name.name + ")\n"
+      }
+    }
   } elif statement.isLoop() {
     loopStatement := statement.asLoop()
     result += ' '.repeat(indent) + "LoopStatement(parenthesized=" + loopStatement.parenthesized.str() + ")\n"
@@ -51,25 +186,95 @@ export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) s
     result += analyzerPrintStatement(ref loopStatement.body, indent + 2)
   } elif statement.isMainDeclaration() {
     mainDeclaration := statement.asMainDeclaration()
-    result += ' '.repeat(indent) + "MainDeclaration\n"
+    result += ' '.repeat(indent) + "MainDeclaration()\n"
     result += analyzerPrintStatement(ref mainDeclaration.body, indent + 2)
+  } elif statement.isObjectDeclaration() {
+    objectDeclaration := statement.asObjectDeclaration()
+    result += ' '.repeat(indent) + "ObjectDeclaration(name=" + objectDeclaration.name.name + ")\n"
+
+    loop i := 0; i < objectDeclaration.body.len; i++ {
+      bodyStatement := objectDeclaration.body[i]
+      result += analyzerPrintStatement(bodyStatement, indent + 2)
+    }
+  } elif statement.isObjectDeclarationMethod() {
+    objectDeclarationMethod := statement.asObjectDeclarationMethod()
+
+    attributes := analyzerPrintFunctionAttributes(
+      objectDeclarationMethod.name,
+      objectDeclarationMethod.returnType,
+      objectDeclarationMethod.asynchronous,
+    )
+
+    result += ' '.repeat(indent) + "ObjectDeclarationProperty(" + attributes + ")\n"
+
+    result += analyzerPrintFunction(
+      objectDeclarationMethod.parameters,
+      objectDeclarationMethod.body,
+      indent + 2,
+    )
+  } elif statement.isObjectDeclarationProperty() {
+    objectDeclarationProperty := statement.asObjectDeclarationProperty()
+
+    attributes := analyzerVariableDeclarationAttributes(
+      objectDeclarationProperty.name,
+      objectDeclarationProperty.t,
+      objectDeclarationProperty.mutable,
+      objectDeclarationProperty.constant,
+    )
+
+    result += ' '.repeat(indent) + "ObjectDeclarationProperty(" + attributes + ")\n"
+
+    if objectDeclarationProperty.initializer != nil {
+      initializer := objectDeclarationProperty.initializer
+      result += analyzerPrintExpression(ref initializer, indent + 2)
+    }
+  } elif statement.isReturn() {
+    returnStatement := statement.asReturn()
+    result += ' '.repeat(indent) + "ReturnStatement()\n"
+
+    if returnStatement.expression != nil {
+      returnExpression := returnStatement.expression
+      result += analyzerPrintExpression(ref returnStatement.expression, indent + 2)
+    }
+  } elif statement.isThrow() {
+    throwStatement := statement.asThrow()
+
+    result += ' '.repeat(indent) + "ThrowStatement()\n"
+    result += analyzerPrintExpression(ref throwStatement.expression, indent + 2)
+  } elif statement.isTry() {
+    tryStatement := statement.asTry()
+
+    result += ' '.repeat(indent) + "TryStatement()\n"
+    result += analyzerPrintStatement(ref tryStatement.body, indent + 2)
+
+    loop i := 0; i < tryStatement.handlers.len; i++ {
+      handler := tryStatement.handlers[i]
+      result += ' '.repeat(indent + 2) + "TryStatementHandler()\n"
+      result += analyzerPrintStatement(ref handler.parameter, indent + 4)
+      result += analyzerPrintStatement(ref handler.body, indent + 4)
+    }
+  } elif statement.isTypeAliasDeclaration() {
+    typeAliasDeclaration := statement.asTypeAliasDeclaration()
+
+    result += ' '.repeat(indent) + "TypeAliasDeclaration("
+      "name=" + typeAliasDeclaration.name.name + " " +
+      "type=" + Parser.stringifyType(typeAliasDeclaration.t) +
+      ")\n"
   } elif statement.isVariableDeclaration() {
     variableDeclaration := statement.asVariableDeclaration()
 
-    mut attributes := "name=" + variableDeclaration.name.name
-    attributes += " mutable=" + variableDeclaration.mutable.str()
-    attributes += " constant=" + variableDeclaration.constant.str()
-
-    if variableDeclaration.t != nil {
-      variableDeclarationType := variableDeclaration.t
-      attributes += " type=" + Parser.stringifyType(variableDeclarationType)
-    }
+    attributes := analyzerVariableDeclarationAttributes(
+      variableDeclaration.name,
+      variableDeclaration.t,
+      variableDeclaration.mutable,
+      variableDeclaration.constant,
+    )
 
     result += ' '.repeat(indent) + "VariableDeclaration(" + attributes + ")\n"
 
     if variableDeclaration.initializer != nil {
-      variableDeclarationInitializer := variableDeclaration.initializer
-      result += analyzerPrintExpression(ref variableDeclarationInitializer, indent + 2)
+      initializer := variableDeclaration.initializer
+      result += analyzerPrintExpression(ref initializer, indent + 2)
     }
   }
 
@@ -121,93 +326,106 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
     attributes += " value=" + stringLiteral.value
   } elif expression.isArray() {
     array := expression.asArray()
-    name = "Array"
+    name = "ArrayExpression"
     loop i := 0; i < array.elements.len; i++ {
       element := array.elements[i]
       result += analyzerPrintExpression(element, indent + 2)
     }
   } elif expression.isAs() {
     asExpression := expression.asAs()
-    name = "As"
+    name = "AsExpression"
     attributes += " type=" + Parser.stringifyType(asExpression.t)
     result += analyzerPrintExpression(ref asExpression.expression, indent + 2)
   } elif expression.isAssignment() {
     assignment := expression.asAssignment()
-    name = "Assignment"
+    name = "AssignmentExpression"
     attributes += " operator=" + assignment.operator.val
     result += analyzerPrintExpression(ref assignment.left, indent + 2)
     result += analyzerPrintExpression(ref assignment.right, indent + 2)
   } elif expression.isAwait() {
     awaitExpression := expression.asAwait()
-    name = "Await"
+    name = "AwaitExpression"
     result += analyzerPrintExpression(ref awaitExpression.expression, indent + 2)
   } elif expression.isBinary() {
     binary := expression.asBinary()
-    name = "Binary"
+    name = "BinaryExpression"
     attributes += " operator=" + binary.operator.val
     result += analyzerPrintExpression(ref binary.left, indent + 2)
     result += analyzerPrintExpression(ref binary.right, indent + 2)
   } elif expression.isCall() {
     call := expression.asCall()
-    name = "Call"
+    name = "CallExpression"
     result += analyzerPrintExpression(ref call.callee, indent + 2)
     loop i := 0; i < call.arguments.len; i++ {
       argument := call.arguments[i]
-      result += analyzerPrintExpression(ref argument.expression, indent + 2)
+      mut argumentAttributes := ""
+
+      if argument.name != nil {
+        argumentName := argument.name
+        argumentAttributes += "name=" + argumentName.name
+      }
+
+      result += ' '.repeat(indent + 2) + "CallExpressionArgument(" + argumentAttributes + ")\n"
+      result += analyzerPrintExpression(ref argument.expression, indent + 4)
     }
   } elif expression.isClosure() {
-    // todo
+    closure := expression.asClosure()
+    name = "ClosureExpression"
+    attributes += analyzerPrintFunctionAttributes(nil, closure.returnType, closure.asynchronous)
+    result += analyzerPrintFunction(closure.parameters, closure.body, indent + 2)
   } elif expression.isConditional() {
     conditional := expression.asConditional()
-    name = "Conditional"
+    name = "ConditionalExpression"
     result += analyzerPrintExpression(ref conditional.condition, indent + 2)
     result += analyzerPrintExpression(ref conditional.consequent, indent + 2)
     result += analyzerPrintExpression(ref conditional.alternate, indent + 2)
   } elif expression.isElementAccess() {
     elementAccess := expression.asElementAccess()
-    name = "ElementAccess"
+    name = "ElementAccessExpression"
     result += analyzerPrintExpression(ref elementAccess.expression, indent + 2)
     result += analyzerPrintExpression(ref elementAccess.argument, indent + 2)
   } elif expression.isIs() {
     isExpression := expression.asIs()
-    name = "Is"
+    name = "IsExpression"
     result += analyzerPrintExpression(ref isExpression.expression, indent + 2)
   } elif expression.isMap() {
     map := expression.asMap()
-    name = "Map"
+    name = "MapExpression"
     loop i := 0; i < map.elements.len; i++ {
       element := map.elements[i]
-      result += analyzerPrintExpression(ref element.key, indent + 2)
-      result += analyzerPrintExpression(ref element.value, indent + 2)
+      result += ' '.repeat(indent + 2) + "MapExpressionElement()\n"
+      result += analyzerPrintExpression(ref element.key, indent + 4)
+      result += analyzerPrintExpression(ref element.value, indent + 4)
     }
   } elif expression.isMemberAccess() {
     memberAccess := expression.asMemberAccess()
-    name = "MemberAccess"
+    name = "MemberAccessExpression"
     attributes += " name=" + memberAccess.name.name
   } elif expression.isObject() {
     object := expression.asObject()
-    name = "Object"
+    name = "ObjectExpression"
     attributes += " id=" + Parser.stringifyType(object.id)
     loop i := 0; i < object.properties.len; i++ {
       property := object.properties[i]
-      result += analyzerPrintExpression(ref property.value, indent + 2)
+      result += ' '.repeat(indent + 2) + "ObjectExpressionProperty(name=" + property.name.name + ")\n"
+      result += analyzerPrintExpression(ref property.value, indent + 4)
     }
   } elif expression.isParenthesized() {
     parenthesized := expression.asParenthesized()
-    name = "Parenthesized"
+    name = "ParenthesizedExpression"
     result += analyzerPrintExpression(ref parenthesized.expression, indent + 2)
   } elif expression.isPropertyAccess() {
     propertyAccess := expression.asPropertyAccess()
-    name = "PropertyAccess"
+    name = "PropertyAccessExpression"
     attributes += " name=" + propertyAccess.name.name
     result += analyzerPrintExpression(ref propertyAccess.expression, indent + 2)
   } elif expression.isReference() {
     reference := expression.asReference()
-    name = "Reference"
+    name = "ReferenceExpression"
     result += analyzerPrintExpression(ref reference.expression, indent + 2)
   } elif expression.isUnary() {
     unary := expression.asUnary()
-    name = "Unary"
+    name = "UnaryExpression"
     attributes += " operator=" + unary.operator.val + " prefix=" + unary.prefix.str()
     result += analyzerPrintExpression(ref unary.operand, indent + 2)
   }
