@@ -1,0 +1,5 @@
+main {
+  mut a: bool | int;
+  (a = true) ? a.str() : a;
+}
+===== out =====
