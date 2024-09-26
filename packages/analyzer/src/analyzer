@@ -1311,7 +1311,6 @@ export obj AnalyzerFile {
 
     // todo make better type casting when VarDecl has initializer
     // todo make better type casting when re-cast inside of statement
-    // todo type casting for Binary
 
     if it.isArray() {
       expression := it.asArray()
@@ -1340,7 +1339,6 @@ export obj AnalyzerFile {
       alternate.merge(rightTypeCastResult.alternate)
 
       if expression.operator.t == .OpEq {
-        leftType := Type.unwrap(self.eNice(ref expression.left))
         rightType := Type.unwrap(self.eNice(ref expression.right))
         code := Parser.stringifyExpression(expression.left)
 
@@ -1410,10 +1408,11 @@ export obj AnalyzerFile {
         }
       } elif expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq {
         if (
-          (expression.left.isAccess() && expression.right.isNilLiteral()) ||
-          (expression.right.isAccess() && expression.left.isNilLiteral())
+          (hasAccessExpression(ref expression.left) && expression.right.isNilLiteral()) ||
+          (hasAccessExpression(ref expression.right) && expression.left.isNilLiteral())
         ) {
-          left := expression.left.isAccess() ? ref expression.left : ref expression.right
+          accessExpression := expression.left.isNilLiteral() ? ref expression.right : ref expression.left
+          left := getAccessExpression(accessExpression)
           leftType := Type.unwrap(self.eNice(left))
 
           if leftType.isOptional() {
