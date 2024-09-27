@@ -197,6 +197,28 @@ export fn TEST_Statement_hasLoopParent () {
   EXPECT_FALSE(mainClosure6.body[0].hasLoopParent())
 }
 
+export fn TEST_Statement_isDeclaration () {
+  statement1 := Statement.create(t.EnumDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement2 := Statement.create(t.ExportDeclaration{statement: Statement.dummy()}, 0, 0)
+  statement3 := Statement.create(t.ExportNamedDeclaration{expression: Expression.dummy()}, 0, 0)
+  statement4 := Statement.create(t.FunctionDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement5 := Statement.create(t.ImportDeclaration{source: Expression.dummy()}, 0, 0)
+  statement6 := Statement.create(t.MainDeclaration{body: Statement.dummy()}, 0, 0)
+  statement7 := Statement.create(t.ObjectDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+  statement8 := Statement.create(t.TypeAliasDeclaration{name: Expression.dummyIdentifier(), t: Type.dummy()}, 0, 0)
+  statement9 := Statement.create(t.VariableDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+
+  EXPECT_TRUE(statement1.isDeclaration())
+  EXPECT_TRUE(statement2.isDeclaration())
+  EXPECT_TRUE(statement3.isDeclaration())
+  EXPECT_TRUE(statement4.isDeclaration())
+  EXPECT_TRUE(statement5.isDeclaration())
+  EXPECT_FALSE(statement6.isDeclaration())
+  EXPECT_TRUE(statement7.isDeclaration())
+  EXPECT_TRUE(statement8.isDeclaration())
+  EXPECT_FALSE(statement9.isDeclaration())
+}
+
 export fn TEST_Statement_isDeadEnd () {
   EXPECT_FALSE(testDeadEnd(""))
   EXPECT_TRUE(testDeadEnd("return"))
@@ -234,24 +256,14 @@ export fn TEST_Statement_isDeadEnd () {
   EXPECT_FALSE(testDeadEnd("try { return } catch err: Error { return } catch err2: Error { print() }"))
 }
 
-export fn TEST_Statement_isDeclaration () {
-  statement1 := Statement.create(t.EnumDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
-  statement2 := Statement.create(t.ExportDeclaration{statement: Statement.dummy()}, 0, 0)
-  statement3 := Statement.create(t.ExportNamedDeclaration{expression: Expression.dummy()}, 0, 0)
-  statement4 := Statement.create(t.FunctionDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
-  statement5 := Statement.create(t.ImportDeclaration{source: Expression.dummy()}, 0, 0)
-  statement6 := Statement.create(t.MainDeclaration{body: Statement.dummy()}, 0, 0)
-  statement7 := Statement.create(t.ObjectDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
-  statement8 := Statement.create(t.TypeAliasDeclaration{name: Expression.dummyIdentifier(), t: Type.dummy()}, 0, 0)
-  statement9 := Statement.create(t.VariableDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
+export fn TEST_Statement_isLoopDeep () {
+  mut f := parse("loop { break }")
+  interconnect(ref f)
 
-  EXPECT_TRUE(statement1.isDeclaration())
-  EXPECT_TRUE(statement2.isDeclaration())
-  EXPECT_TRUE(statement3.isDeclaration())
-  EXPECT_TRUE(statement4.isDeclaration())
-  EXPECT_TRUE(statement5.isDeclaration())
-  EXPECT_FALSE(statement6.isDeclaration())
-  EXPECT_TRUE(statement7.isDeclaration())
-  EXPECT_TRUE(statement8.isDeclaration())
-  EXPECT_FALSE(statement9.isDeclaration())
+  loopStatement := f.program.body[0].asLoop()
+  loopBodyStatement := loopStatement.body.asBlock()
+
+  EXPECT_TRUE(f.program.body[0].isLoopDeep())
+  EXPECT_TRUE(loopStatement.body.isLoopDeep())
+  EXPECT_FALSE(loopBodyStatement.body[0].isLoopDeep())
 }

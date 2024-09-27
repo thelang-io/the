@@ -63,6 +63,20 @@ export fn TEST_Parser_interconnect () {
   EXPECT_FALSE(f4MainBlock.body[0].hasPrev())
   EXPECT_TRUE(f4MainBlock.body[1].hasPrev())
   EXPECT_TRUE(f4MainBlock.body[2].hasPrev())
+
+  f4MainBlockFirstNext := f4MainBlock.body[0].next()
+  f4MainBlockFirstParent := f4MainBlock.body[0].parent()
+  f4MainBlockSecondPrev := f4MainBlock.body[1].prev()
+
+  EXPECT_TRUE(f4MainBlockFirstNext.isVariableDeclaration())
+  EXPECT_TRUE(f4MainBlockFirstParent.isBlock())
+  EXPECT_TRUE(f4MainBlockSecondPrev.isVariableDeclaration())
+
+  f4MainParentMaybe := f4.program.body[0].parentMaybe()
+  f4MainBlockParentMaybe := f4Main.body.parentMaybe()
+
+  EXPECT_TRUE(f4MainParentMaybe == nil)
+  EXPECT_FALSE(f4MainBlockParentMaybe == nil)
 }
 
 export fn TEST_Parser_interconnectExpression () {
@@ -79,4 +93,10 @@ export fn TEST_Parser_interconnectExpression () {
 
   EXPECT_TRUE(exprBody.elements[0].hasParent())
   EXPECT_TRUE(exprBody.elements[0].hasParentNode())
+
+  firstParent := exprBody.elements[0].parent()
+  firstParentNode := exprBody.elements[0].parentNode()
+
+  EXPECT_TRUE(firstParent.isArray())
+  EXPECT_TRUE(firstParentNode.isExpression())
 }

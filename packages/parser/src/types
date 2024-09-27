@@ -342,6 +342,17 @@ export obj Statement {
     return self._prev != nil
   }
 
+  fn isDeclaration (self: ref Self) bool {
+    return
+      self.isEnumDeclaration() ||
+      self.isExportDeclaration() ||
+      self.isExportNamedDeclaration() ||
+      self.isFunctionDeclaration() ||
+      self.isImportDeclaration() ||
+      self.isObjectDeclaration() ||
+      self.isTypeAliasDeclaration()
+  }
+
   fn isDeadEnd (self: ref Self, allowLoopStatements := true) bool {
     if self.isBlock() {
       statement := self.asBlock()
@@ -391,18 +402,7 @@ export obj Statement {
     return isLoopStatement || self.isReturn() || self.isThrow()
   }
 
-  fn isDeclaration (self: ref Self) bool {
-    return
-      self.isEnumDeclaration() ||
-      self.isExportDeclaration() ||
-      self.isExportNamedDeclaration() ||
-      self.isFunctionDeclaration() ||
-      self.isImportDeclaration() ||
-      self.isObjectDeclaration() ||
-      self.isTypeAliasDeclaration()
-  }
-
-  fn isLoopDeep (self: ref Self) bool { // todo test
+  fn isLoopDeep (self: ref Self) bool {
     mut it := self
 
     loop it.isBlock() && it.hasParent() {
@@ -426,7 +426,7 @@ export obj Statement {
     throw ParserError{message: "Tried accessing nil parent"}
   }
 
-  fn parentMaybe (self: ref Self) (ref Statement)? { // todo test
+  fn parentMaybe (self: ref Self) (ref Statement)? {
     return self._parent
   }
 

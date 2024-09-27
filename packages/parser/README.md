@@ -258,6 +258,32 @@ Checks whether expression's body contains corresponding type.
 expression.isIdentifier()
 ```
 
+### `Expression.hasParent () bool`
+Checks if expression has parent. Make sure to `interconnect` references.
+
+**Return value**
+
+Whether expression has parent expression.
+
+**Examples**
+
+```the
+expression.hasParent()
+```
+
+### `Expression.hasParentNode () bool`
+Checks if expression has parent statement. Make sure to `interconnect` references.
+
+**Return value**
+
+Whether expression has parent statement.
+
+**Examples**
+
+```the
+expression.hasParentNode()
+```
+
 ### `Expression.isAccess () bool`
 Checks whether expression is `Identifier`, `ElementAccess` or `PropertyAccess`.
 
@@ -270,6 +296,40 @@ Whether expression is `Identifier`, `ElementAccess` or `PropertyAccess`.
 ```the
 expression.isAccess()
 ```
+
+### `Expression.parent () ref Expression`
+Return expression's parent. Make sure to `interconnect` references.
+
+**Return value**
+
+Expression's parent.
+
+**Examples**
+
+```the
+expression.parent()
+```
+
+**Exceptions**
+
+- `ParserError` - thrown if tried accessing nil parent
+
+### `Expression.parentNode () ref Expression`
+Return expression's parent statement. Make sure to `interconnect` references.
+
+**Return value**
+
+Expression's parent statement.
+
+**Examples**
+
+```the
+expression.parentNode()
+```
+
+**Exceptions**
+
+- `ParserError` - thrown if tried accessing nil parent statement
 
 ### `Statement.asBlock () ref BlockStatement`
 ### `Statement.asBreak () ref BreakStatement`
@@ -447,6 +507,19 @@ Whether statements is dead end.
 statement.isDeadEnd()
 ```
 
+### `Statement.isLoopDeep () bool`
+Checks whether statement is loop, recursively skipping block statements.
+
+**Return value**
+
+Whether statement is loop, recursively skipping block statements.
+
+**Examples**
+
+```the
+statement.isLoopDeep()
+```
+
 ### `Statement.next () ref Statement`
 Return statement's next sibling. Make sure to `interconnect` references.
 
@@ -474,12 +547,25 @@ Statement's parent.
 **Examples**
 
 ```the
-statement.next()
+statement.parent()
 ```
 
 **Exceptions**
 
 - `ParserError` - thrown if tried accessing nil parent
+
+### `Statement.parentMaybe () (ref Statement)?`
+Return optional statement's parent. Usually parent is `nil` when parent is within the root scope. Make sure to `interconnect` references.
+
+**Return value**
+
+Optional statement's parent.
+
+**Examples**
+
+```the
+statement.parentMaybe()
+```
 
 ### `Statement.prev () ref Statement`
 Return statement's previous sibling. Make sure to `interconnect` references.

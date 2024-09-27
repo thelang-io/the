@@ -178,7 +178,7 @@ export obj Type {
     return false
   }
 
-  // todo test
+  // todo test, docs
   // todo account if lhs can be rhs, eg ref_int can be opt_ref_int
   fn higherThan (self: ref Self, t: ref Type) bool {
     a := unwrap(self, withReference: false)
@@ -598,7 +598,7 @@ export fn match (type1: ref Type, type2: ref Type) bool {
   return !a.name.empty && a.name == b.name
 }
 
-// todo test
+// todo test, docs
 export fn promote (a: ref Type, b: ref Type) ref Type {
   if match(a, b) || a.higherThan(b) {
     return a
@@ -609,7 +609,7 @@ export fn promote (a: ref Type, b: ref Type) ref Type {
   throw error_NewError("Unable to promote types '" + a.toString() + "' and '" + b.toString() + "'")
 }
 
-// todo test
+// todo test, docs
 export fn promotionPossible (a: ref Type, b: ref Type) bool {
   return match(a, b) || a.higherThan(b) || b.higherThan(a)
 }
