@@ -1,0 +1,23 @@
+obj Cond {
+  a: bool
+}
+
+main {
+  mut a: bool | int
+  b := Cond{a: a = true}.a ? a : false
+}
+===== out =====
+ObjectDeclaration(name=Cond)
+  ObjectDeclarationProperty(name=a mutable=false constant=false type=bool)
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int)
+  VariableDeclaration(name=b mutable=false constant=false)
+    ConditionalExpression(type=bool)
+      PropertyAccessExpression(type=bool name=a)
+        ObjectExpression(type=Cond id=Cond)
+          ObjectExpressionProperty(name=a)
+            AssignmentExpression(type=bool target=bool operator==)
+              Identifier(type=bool | int target=bool | int name=a)
+              BooleanLiteral(type=bool target=bool | int value=true)
+      Identifier(type=bool target=bool name=a)
+      BooleanLiteral(type=bool target=bool value=false)

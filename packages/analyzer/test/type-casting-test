@@ -45,7 +45,8 @@ export fn TEST_Analyzer_typeCasting () {
 
     EXPECT_EQ(analyzer.errors.join(os_EOL), "")
     out := analyzerPrint(ref file.f.program.body)
-    EXPECT_EQ(result.out, out)
+    banner := filePath.slice(0, -4) + os_EOL
+    EXPECT_EQ(banner + result.out, banner + out)
   }
 }
 

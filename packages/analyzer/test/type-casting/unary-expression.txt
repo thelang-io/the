@@ -1,0 +1,27 @@
+main {
+  mut a: bool | int
+  mut b: bool | int
+  c := !(a = 10) ? a : 20
+  d := !(b is int) ? a : b
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int)
+  VariableDeclaration(name=b mutable=true constant=false type=bool | int)
+  VariableDeclaration(name=c mutable=false constant=false)
+    ConditionalExpression(type=int)
+      UnaryExpression(type=bool operator=! prefix=true)
+        ParenthesizedExpression(type=int target=int)
+          AssignmentExpression(type=int target=int operator==)
+            Identifier(type=bool | int target=bool | int name=a)
+            IntegerLiteral(type=int target=bool | int value=10)
+      Identifier(type=int target=int name=a)
+      IntegerLiteral(type=int target=int value=20)
+  VariableDeclaration(name=d mutable=false constant=false)
+    ConditionalExpression(type=int)
+      UnaryExpression(type=bool operator=! prefix=true)
+        ParenthesizedExpression(type=bool target=bool)
+          IsExpression(type=bool target=bool)
+            Identifier(type=bool | int name=b)
+      Identifier(type=int target=int name=a)
+      Identifier(type=int target=int name=b)

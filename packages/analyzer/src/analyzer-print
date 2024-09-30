@@ -25,16 +25,16 @@ export fn analyzerPrintFunction(parameters: Parser.FunctionParameter[], body: Pa
   loop i := 0; i < parameters.len; i++ {
     parameter := parameters[i]
 
-    result += "FunctionParameter("
-    result += "name=" + parameter.name.name + " "
+    result += ' '.repeat(indent) + "FunctionParameter("
+    result += "name=" + parameter.name.name
 
     if parameter.t != nil {
       parameterType := parameter.t
-      result += "type=" + Parser.stringifyType(parameterType) + " "
+      result += " type=" + Parser.stringifyType(parameterType)
     }
 
-    result += "mutable=" + parameter.mutable.str() + " "
-    result += "variadic=" + parameter.variadic.str() + " "
+    result += " mutable=" + parameter.mutable.str()
+    result += " variadic=" + parameter.variadic.str()
     result += ")\n"
 
     if parameter.initializer != nil {
@@ -44,10 +44,11 @@ export fn analyzerPrintFunction(parameters: Parser.FunctionParameter[], body: Pa
   }
 
   if body != nil {
-    analyzerPrintStatement(body, indent)
+    definiteBody := body
+    result += analyzerPrintStatement(ref definiteBody, indent)
   }
 
-  return ""
+  return result
 }
 
 // todo test
@@ -55,14 +56,14 @@ export fn analyzerPrintFunctionAttributes(name: Parser.Identifier?, returnType: 
   mut result := "asynchronous=" + asynchronous.str()
 
   if name != nil {
-    result += "name=" + name.name
+    result += " name=" + name.name
   }
 
   if returnType != nil {
-    result += "return=" + Parser.stringifyType(returnType)
+    result += " return=" + Parser.stringifyType(returnType)
   }
 
-  return result
+  return result.trim()
 }
 
 // todo test
@@ -334,7 +335,7 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
   } elif expression.isAs() {
     asExpression := expression.asAs()
     name = "AsExpression"
-    attributes += " type=" + Parser.stringifyType(asExpression.t)
+    attributes += " as=" + Parser.stringifyType(asExpression.t)
     result += analyzerPrintExpression(ref asExpression.expression, indent + 2)
   } elif expression.isAssignment() {
     assignment := expression.asAssignment()

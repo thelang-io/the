@@ -45,6 +45,7 @@ import
 from "./type"
 import TypeMap, TypeMapMode from "./type-map"
 import VarMap from "./var-map"
+import stringify as stringifyTC from "./type-cast"
 import * as AnalyzerExport from "./analyzer-export"
 
 export Analyzer
@@ -90,4 +91,5 @@ export analyze
 export largest
 export match
 export similarTo
+export stringifyTC
 export unwrap

@@ -1,0 +1,27 @@
+fn cond (n: int) bool {
+  return n > 10
+}
+
+main {
+  mut a: bool | int
+  b := cond(a = 10) ? a : 20
+}
+===== out =====
+FunctionDeclaration(asynchronous=false name=cond return=bool)
+  FunctionParameter(name=n type=int mutable=false variadic=false)
+  ReturnStatement()
+    BinaryExpression(type=bool target=bool operator=>)
+      Identifier(type=int target=int name=n)
+      IntegerLiteral(type=int target=int value=10)
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int)
+  VariableDeclaration(name=b mutable=false constant=false)
+    ConditionalExpression(type=int)
+      CallExpression(type=bool)
+        Identifier(type=(n: int) -> bool name=cond)
+        CallExpressionArgument()
+          AssignmentExpression(type=int target=int operator==)
+            Identifier(type=bool | int target=bool | int name=a)
+            IntegerLiteral(type=int target=bool | int value=10)
+      Identifier(type=int target=int name=a)
+      IntegerLiteral(type=int target=int value=20)

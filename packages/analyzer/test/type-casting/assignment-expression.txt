@@ -1,5 +1,49 @@
 main {
-  mut a: bool | int;
-  (a = true) ? a.str() : a;
+  mut a: bool | int
+  mut b: bool | int
+
+  c := (a = (b is bool)) ? a.str() : b.str()
+  d := (a = !(b is bool)) ? b.str() : a.str()
+  e := (b = true) ? b : a
 }
 ===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int)
+  VariableDeclaration(name=b mutable=true constant=false type=bool | int)
+  VariableDeclaration(name=c mutable=false constant=false)
+    ConditionalExpression(type=str)
+      ParenthesizedExpression(type=bool)
+        AssignmentExpression(type=bool operator==)
+          Identifier(type=bool | int target=bool | int name=a)
+          ParenthesizedExpression(type=bool | int target=bool | int)
+            IsExpression(type=bool target=bool | int)
+              Identifier(type=bool | int name=b)
+      CallExpression(type=str target=str)
+        PropertyAccessExpression(type=(self: ref bool) -> str name=str)
+          Identifier(type=bool name=a)
+      CallExpression(type=str target=str)
+        PropertyAccessExpression(type=(self: ref int) -> str name=str)
+          Identifier(type=int name=b)
+  VariableDeclaration(name=d mutable=false constant=false)
+    ConditionalExpression(type=str)
+      ParenthesizedExpression(type=bool)
+        AssignmentExpression(type=bool operator==)
+          Identifier(type=bool | int target=bool | int name=a)
+          UnaryExpression(type=bool target=bool | int operator=! prefix=true)
+            ParenthesizedExpression(type=bool | int target=bool | int)
+              IsExpression(type=bool target=bool | int)
+                Identifier(type=bool | int name=b)
+      CallExpression(type=str target=str)
+        PropertyAccessExpression(type=(self: ref int) -> str name=str)
+          Identifier(type=int name=b)
+      CallExpression(type=str target=str)
+        PropertyAccessExpression(type=(self: ref bool) -> str name=str)
+          Identifier(type=bool name=a)
+  VariableDeclaration(name=e mutable=false constant=false)
+    ConditionalExpression(type=bool)
+      ParenthesizedExpression(type=bool)
+        AssignmentExpression(type=bool operator==)
+          Identifier(type=bool | int target=bool | int name=b)
+          BooleanLiteral(type=bool target=bool | int value=true)
+      Identifier(type=bool target=bool name=b)
+      Identifier(type=bool target=bool name=a)

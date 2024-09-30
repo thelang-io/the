@@ -1,0 +1,22 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Type from "./type"
+
+// TODO: test, docs
+export fn stringify (m: (ref Type.Type)[str]) str {
+  keys := m.keys
+  mut result := ""
+
+  loop i := 0; i < keys.len; i++ {
+    key := keys[i] as str
+    val := m.get(key)
+
+    result += i == 0 ? "" : ", "
+    result += key + ": " + val.toString()
+  }
+
+  return "{" + result + "}"
+}

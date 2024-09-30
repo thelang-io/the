@@ -7,6 +7,7 @@ import * as AnalyzerExport from "./analyzer-export"
 import * as Parser from "the/parser"
 import * as API from "./api"
 import * as Context from "./context"
+import * as TC from "./type-cast"
 import * as Type, Var from "./type"
 import * as TypeMap from "./type-map"
 import * as VarMap from "./var-map"
@@ -77,7 +78,7 @@ export fn getAccessExpression (expression: ref Parser.Expression) ref Parser.Exp
 // todo test
 export fn getContextTargetType (expression: ref Parser.Expression) ref Type.Type {
   if !(expression.typeContext is Context.TypeContext) {
-    throw error_NewError("Unable to retrieve target type from type context")
+    throw error_NewError("Unable to retrieve target type from empty type context")
   }
 
   ctx := expression.typeContext as Context.TypeContext
@@ -1303,8 +1304,7 @@ export obj AnalyzerFile {
     throw error_NewError("Tried analyzing unknown type")
   }
 
-  // todo test
-  fn typeCast (mut self: ref Self, it: ref Parser.Expression) TypeCastResult {
+  fn typeCast (mut self: ref Self, it: ref Parser.Expression, root := true) TypeCastResult {
     initialTC := self.tc
     mut consequent: (ref Type.Type)[str]
     mut alternate: (ref Type.Type)[str]
@@ -1316,53 +1316,43 @@ export obj AnalyzerFile {
       expression := it.asArray()
 
       loop i := 0; i < expression.elements.len; i++ {
-        element := expression.elements[i]
-        typeCastResult := self.typeCast(element)
-
-        consequent.merge(typeCastResult.consequent)
-        alternate.merge(typeCastResult.alternate)
+        self.typeCast(expression.elements[i], false)
       }
     } elif it.isAs() {
       expression := it.asAs()
-      typeCastResult := self.typeCast(ref expression.expression)
-
-      consequent.merge(typeCastResult.consequent)
-      alternate.merge(typeCastResult.alternate)
+      self.typeCast(ref expression.expression, false)
     } elif it.isAssignment() {
       expression := it.asAssignment()
-      leftTypeCastResult := self.typeCast(ref expression.left)
-      rightTypeCastResult := self.typeCast(ref expression.right)
+      self.typeCast(ref expression.left, false)
+      rightTypeCastResult := self.typeCast(ref expression.right, false)
 
-      consequent.merge(leftTypeCastResult.consequent)
       consequent.merge(rightTypeCastResult.consequent)
-      alternate.merge(leftTypeCastResult.alternate)
       alternate.merge(rightTypeCastResult.alternate)
 
       if expression.operator.t == .OpEq {
         rightType := Type.unwrap(self.eNice(ref expression.right))
         code := Parser.stringifyExpression(expression.left)
 
-        consequent.set(code, rightType)
-        alternate.set(code, self.tm.get("never"))
+        self.tc.set(code, rightType)
       }
     } elif it.isAwait() {
       expression := it.asAwait()
-      typeCastResult := self.typeCast(ref expression.expression)
-
-      consequent.merge(typeCastResult.consequent)
-      alternate.merge(typeCastResult.alternate)
+      self.typeCast(ref expression.expression, false)
     } elif it.isBinary() {
       expression := it.asBinary()
 
       if expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
-        leftTypeCastResult := self.typeCast(ref expression.left)
+        leftTypeCastResult := self.typeCast(ref expression.left, false)
+        afterLeftTC := self.tc
 
         if expression.operator.t == .OpAmpAmp {
           self.tc.merge(leftTypeCastResult.consequent)
         }
 
-        rightTypeCastResult := self.typeCast(ref expression.right)
-        self.tc = initialTC
+        rightTypeCastResult := self.typeCast(ref expression.right, false)
+        rightDiffTC := self.typeCastExclude(afterLeftTC)
+        self.tc = afterLeftTC
+        self.tc.merge(rightDiffTC)
 
         if expression.operator.t == .OpAmpAmp {
           consequent.merge(leftTypeCastResult.consequent)
@@ -1406,76 +1396,69 @@ export obj AnalyzerFile {
 
           alternate.set(name, t2)
         }
-      } elif expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq {
-        if (
-          (hasAccessExpression(ref expression.left) && expression.right.isNilLiteral()) ||
-          (hasAccessExpression(ref expression.right) && expression.left.isNilLiteral())
-        ) {
-          accessExpression := expression.left.isNilLiteral() ? ref expression.right : ref expression.left
-          left := getAccessExpression(accessExpression)
-          leftType := Type.unwrap(self.eNice(left))
+      } elif (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) && (
+        (hasAccessExpression(ref expression.left) && expression.right.isNilLiteral()) ||
+        (hasAccessExpression(ref expression.right) && expression.left.isNilLiteral())
+      ) {
+        accessExpression := expression.left.isNilLiteral() ? ref expression.right : ref expression.left
+        self.typeCast(accessExpression, false)
+        left := getAccessExpression(accessExpression)
+        leftType := Type.unwrap(self.eNice(left))
 
-          if leftType.isOptional() {
-            code := Parser.stringifyExpression(left)
-            t := leftType.asOptional()
+        if leftType.isOptional() {
+          code := Parser.stringifyExpression(left)
+          t := leftType.asOptional()
 
-            if expression.operator.t == .OpEqEq {
-              alternate.set(code, t.t)
-            } else {
-              consequent.set(code, t.t)
-            }
+          if expression.operator.t == .OpEqEq {
+            alternate.set(code, t.t)
+          } else {
+            consequent.set(code, t.t)
           }
         }
+      } else {
+        self.typeCast(ref expression.left, false)
+        self.typeCast(ref expression.right, false)
       }
     } elif it.isCall() {
       expression := it.asCall()
-      calleeTypeCastResult := self.typeCast(ref expression.callee)
-
-      consequent.merge(calleeTypeCastResult.consequent)
-      alternate.merge(calleeTypeCastResult.alternate)
+      self.typeCast(ref expression.callee, false)
 
       loop i := 0; i < expression.arguments.len; i++ {
         argument := expression.arguments[i]
-        argumentTypeCastResult := self.typeCast(ref argument.expression)
-
-        consequent.merge(argumentTypeCastResult.consequent)
-        alternate.merge(argumentTypeCastResult.alternate)
+        self.typeCast(ref argument.expression, false)
       }
     } elif it.isConditional() {
       expression := it.asConditional()
-      conditionTypeCastResult := self.typeCast(ref expression.condition)
-      consequentTypeCastResult := self.typeCast(ref expression.consequent)
-      alternateTypeCastResult := self.typeCast(ref expression.alternate)
 
-      consequent.merge(conditionTypeCastResult.consequent)
-      consequent.merge(consequentTypeCastResult.consequent)
-      consequent.merge(alternateTypeCastResult.consequent)
-      alternate.merge(conditionTypeCastResult.alternate)
-      alternate.merge(consequentTypeCastResult.alternate)
-      alternate.merge(alternateTypeCastResult.alternate)
+      conditionTypeCastResult := self.typeCast(ref expression.condition, false)
+      afterConditionTC := self.tc
+
+      self.tc.merge(conditionTypeCastResult.consequent)
+      self.typeCast(ref expression.consequent, false)
+      consequentDiffTC := self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
+
+      self.tc.merge(conditionTypeCastResult.alternate)
+      self.typeCast(ref expression.alternate, false)
+      alternateDiffTC := self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
+
+      self.typeCastMergeIntersecting(consequentDiffTC, alternateDiffTC)
     } elif it.isElementAccess() {
       expression := it.asElementAccess()
-      typeCastResult := self.typeCast(ref expression.expression)
-      argumentTypeCastResult := self.typeCast(ref expression.argument)
-
-      consequent.merge(typeCastResult.consequent)
-      consequent.merge(argumentTypeCastResult.consequent)
-      alternate.merge(typeCastResult.alternate)
-      alternate.merge(argumentTypeCastResult.alternate)
+      self.typeCast(ref expression.expression, false)
+      self.typeCast(ref expression.argument, false)
     } elif it.isIs() {
       expression := it.asIs()
-      typeCastResult := self.typeCast(ref expression.expression)
-
-      consequent.merge(typeCastResult.consequent)
-      alternate.merge(typeCastResult.alternate)
+      self.typeCast(ref expression.expression, false)
 
       if hasAccessExpression(ref expression.expression) {
         expressionType := Type.unwrap(self.eNice(ref expression.expression))
         t := self.t(ref expression.t)
         code := Parser.stringifyExpression(getAccessExpression(ref expression.expression))
 
-        if consequent.has(code) {
-          existingType := consequent.get(code)
+        if consequent.has(code) || self.tc.has(code) {
+          existingType := consequent.has(code) ? consequent.get(code) : self.tc.get(code)
 
           if Type.match(existingType, t) {
             alternate.set(code, self.tm.get("never"))
@@ -1496,60 +1479,94 @@ export obj AnalyzerFile {
 
       loop i := 0; i < expression.elements.len; i++ {
         element := expression.elements[i]
-        keyTypeCastResult := self.typeCast(ref element.key)
-        valueTypeCastResult := self.typeCast(ref element.value)
-
-        consequent.merge(keyTypeCastResult.consequent)
-        consequent.merge(valueTypeCastResult.consequent)
-        alternate.merge(keyTypeCastResult.alternate)
-        alternate.merge(valueTypeCastResult.alternate)
+        self.typeCast(ref element.key, false)
+        self.typeCast(ref element.value, false)
       }
     } elif it.isObject() {
       expression := it.asObject()
 
       loop i := 0; i < expression.properties.len; i++ {
         property := expression.properties[i]
-        typeCastResult := self.typeCast(ref property.value)
-
-        consequent.merge(typeCastResult.consequent)
-        alternate.merge(typeCastResult.alternate)
+        self.typeCast(ref property.value, false)
       }
     } elif it.isParenthesized() {
       expression := it.asParenthesized()
-      typeCastResult := self.typeCast(ref expression.expression)
+      typeCastResult := self.typeCast(ref expression.expression, false)
 
       consequent.merge(typeCastResult.consequent)
       alternate.merge(typeCastResult.alternate)
     } elif it.isPropertyAccess() {
       expression := it.asPropertyAccess()
-      typeCastResult := self.typeCast(ref expression.expression)
-
-      consequent.merge(typeCastResult.consequent)
-      alternate.merge(typeCastResult.alternate)
+      self.typeCast(ref expression.expression, false)
     } elif it.isReference() {
       expression := it.asReference()
-      typeCastResult := self.typeCast(ref expression.expression)
-
-      consequent.merge(typeCastResult.consequent)
-      alternate.merge(typeCastResult.alternate)
+      self.typeCast(ref expression.expression, false)
     } elif it.isUnary() {
       expression := it.asUnary()
-      typeCastResult := self.typeCast(ref expression.operand)
+      typeCastResult := self.typeCast(ref expression.operand, false)
 
       if expression.operator.t == .OpExcl {
         consequent.merge(typeCastResult.alternate)
         alternate.merge(typeCastResult.consequent)
-      } else {
-        consequent.merge(typeCastResult.consequent)
-        alternate.merge(typeCastResult.alternate)
       }
     }
 
-    self.tc = initialTC
+    if root {
+      self.tc = initialTC
+    }
 
     return TypeCastResult{
       consequent: consequent,
       alternate: alternate
+    }
+  }
+
+  // todo test
+  fn typeCastExclude (mut self: ref Self, tc: (ref Type.Type)[str]) (ref Type.Type)[str] {
+    keys := self.tc.keys
+    mut result: (ref Type.Type)[str]
+
+    loop i := keys.len - 1; i >= 0; i-- {
+      key := keys[i]
+
+      if tc.has(key) {
+        value1 := self.tc.get(key)
+        value2 := tc.get(key)
+
+        if Type.match(value1, value2) {
+          continue
+        }
+      }
+
+      result.set(key, self.tc.get(key))
+    }
+
+    return result
+  }
+
+  // todo test
+  fn typeCastMergeIntersecting (
+    mut self: ref Self,
+    result1: (ref Type.Type)[str],
+    result2: (ref Type.Type)[str],
+  ) {
+    keys := result1.keys
+
+    loop i := keys.len - 1; i >= 0; i-- {
+      key := keys[i]
+
+      if !result2.has(key) {
+        continue
+      }
+
+      value1 := result1.get(key)
+      value2 := result2.get(key)
+
+      if !Type.match(value1, value2) {
+        continue
+      }
+
+      self.tc.set(key, value1)
     }
   }
 
@@ -1833,10 +1850,10 @@ export obj AnalyzerFile {
 
     it.context = Context.AssignmentExpressionContext{
       leftType: leftType,
-      rightType: rightType
+      rightType: rightType,
     }
 
-    return leftType.isReference() && !rightType.isReference() ? Type.unwrap(leftType) : leftType
+    return rightType
   }
 
   fn _eAwait (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
@@ -2129,23 +2146,27 @@ export obj AnalyzerFile {
       self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
     }
 
-    initialTC := self.tc
+    afterConditionTC := self.tc
+    mut consequentDiffTC: (ref Type.Type)[str]
+    mut alternateDiffTC: (ref Type.Type)[str]
 
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
       self.tc.merge(typeCastResult.consequent)
       result := self.e(ref expression.consequent, operandType, withMutable: withMutable || withMutableNext)
-      self.tc = initialTC
+      consequentDiffTC = self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
 
       return result
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       self.tc.merge(typeCastResult.alternate)
       result := self.e(ref expression.alternate, operandType, withMutable: withMutable || withMutableNext)
-      self.tc = initialTC
+      alternateDiffTC = self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
 
       return result
     })
 
-    // todo find same types in type cast and join into global type cast
+    self.typeCastMergeIntersecting(consequentDiffTC, alternateDiffTC)
 
     consequentType := Type.unwrap(guessTypeResult.first, withReference: false)
     alternateType := Type.unwrap(guessTypeResult.second, withReference: false)
