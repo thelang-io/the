@@ -5,7 +5,7 @@
 
 import * as Type from "./type"
 
-// todo fix reference problem in v1
+// TODO: remove after reference problem fixed in v1
 export obj TypeArray {
   mut items: any[]
   mut len: int

@@ -7,7 +7,7 @@ import * as Parser from "the/parser"
 import Analyzer, AnalyzerFile from "../src/analyzer"
 import analyzerPrint from "../src/analyzer-print"
 
-import Tests, EXPECT_EQ from "the/testing" // todo delete when done testing
+import Tests, EXPECT_EQ from "the/testing" // TODO: delete when done testing
 
 export obj TypeCastingFileResult {
   in: str

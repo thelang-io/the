@@ -60,7 +60,7 @@ export obj AnalyzerFileArray {
   }
 }
 
-// todo test
+// TODO: test
 export fn getAccessExpression (expression: ref Parser.Expression) ref Parser.Expression {
   if expression.isAssignment() {
     body := expression.asAssignment()
@@ -75,7 +75,7 @@ export fn getAccessExpression (expression: ref Parser.Expression) ref Parser.Exp
   throw error_NewError("Unable to get access expression")
 }
 
-// todo test
+// TODO: test
 export fn getContextTargetType (expression: ref Parser.Expression) ref Type.Type {
   if !(expression.typeContext is Context.TypeContext) {
     throw error_NewError("Unable to retrieve target type from empty type context")
@@ -90,7 +90,7 @@ export fn getContextTargetType (expression: ref Parser.Expression) ref Type.Type
   return Type.unwrap(ctx.targetType as ref Type.Type)
 }
 
-// todo test
+// TODO: test
 export fn hasAccessExpression (expression: ref Parser.Expression) bool {
   if expression.isAssignment() {
     body := expression.asAssignment()
@@ -407,7 +407,7 @@ export obj AnalyzerFile {
         statementType := statement.t
 
         self.guard(() -> void {
-          initialTC := ref self.tc // todo remove after v1
+          initialTC := ref self.tc // TODO: remove after v1
           t = self.t(ref statementType)
         })
       }
@@ -820,7 +820,7 @@ export obj AnalyzerFile {
       mut exportVar: Var?
 
       guardFailed := self.guard(() -> void {
-        initialTC := ref self.tc // todo remove after v1
+        initialTC := ref self.tc // TODO: remove after v1
         exportType = Type.opt(self.t(ref parserType))
       })
 
@@ -911,6 +911,8 @@ export obj AnalyzerFile {
       } elif !statement.consequent.isDeadEnd() {
         self.tc = initialTC
       }
+
+      // TODO: find intersection tc and apply to global tc
     } elif it.isLoop() {
       initialTC := self.tc
       mut statement := it.asLoop()
@@ -961,6 +963,7 @@ export obj AnalyzerFile {
       self.tm.decrease()
 
       self.tc = initialTC
+      // TODO: find intersection tc and apply to global tc
     } elif it.isMainDeclaration() {
       mut statement := it.asMainDeclaration()
       initialReturnType := self.state.returnType
@@ -1129,6 +1132,7 @@ export obj AnalyzerFile {
       }
 
       if statement.t != nil && statement.initializer != nil {
+        // TODO: push new type to tc right away
         initializerType := self.e(
           ref statement.initializer,
           Type.opt(varType),
@@ -1309,9 +1313,6 @@ export obj AnalyzerFile {
     mut consequent: (ref Type.Type)[str]
     mut alternate: (ref Type.Type)[str]
 
-    // todo make better type casting when VarDecl has initializer
-    // todo make better type casting when re-cast inside of statement
-
     if it.isArray() {
       expression := it.asArray()
 
@@ -1339,6 +1340,7 @@ export obj AnalyzerFile {
       expression := it.asAwait()
       self.typeCast(ref expression.expression, false)
     } elif it.isBinary() {
+      // TODO: test and optimize
       expression := it.asBinary()
 
       if expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
@@ -1819,10 +1821,10 @@ export obj AnalyzerFile {
     mut expression := it.asAssignment()
 
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-      initialTC := ref self.tc // todo remove after v1
+      initialTC := ref self.tc // TODO: remove after v1
       return self.e(ref expression.left, operandType, withMutable: true, withoutTypeCast: true)
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-      initialTC := ref self.tc // todo remove after v1
+      initialTC := ref self.tc // TODO: remove after v1
       return self.e(ref expression.right, operandType)
     })
 
@@ -1894,7 +1896,7 @@ export obj AnalyzerFile {
     mut leftTypeCastResult: TypeCastResult?
 
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-      ref self.tc; // todo remove after v1
+      ref self.tc; // TODO: remove after v1
 
       if leftTypeCastResult == nil && expression.operator.t == .OpAmpAmp {
         leftTypeCastResult = self.typeCast(ref expression.left)
@@ -1902,7 +1904,7 @@ export obj AnalyzerFile {
 
       return self.e(ref expression.left, operandType, unwrap: true)
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-      ref self.tc; // todo remove after v1
+      ref self.tc; // TODO: remove after v1
 
       if leftTypeCastResult == nil {
         return self.e(ref expression.right, operandType, unwrap: true)
@@ -2544,7 +2546,7 @@ export obj AnalyzerFile {
 
     if potentialTargetType == nil {
       guardFailed := self.guard(() -> void {
-        initialTC := ref self.tc // todo remove after v1
+        initialTC := ref self.tc // TODO: remove after v1
         potentialTargetType = Type.unwrap(self.e(ref expression.operand, withMutable: mutatingOperator))
       })
 

@@ -47,17 +47,17 @@ export fn TEST_Type_getters () {
   EXPECT_FALSE(t1.isUnion())
 
   EXPECT_NO_THROW(() -> void {
-    refT1 := ref t1 // todo remove after v1
-    refT2 := ref t2 // todo remove after v1
-    refT3 := ref t3 // todo remove after v1
-    refT4 := ref t4 // todo remove after v1
-    refT5 := ref t5 // todo remove after v1
-    refT6 := ref t6 // todo remove after v1
-    refT7 := ref t7 // todo remove after v1
-    refT8 := ref t8 // todo remove after v1
-    refT9 := ref t9 // todo remove after v1
-    refT10 := ref t10 // todo remove after v1
-    refT11 := ref t11 // todo remove after v1
+    refT1 := ref t1 // TODO: remove after v1
+    refT2 := ref t2 // TODO: remove after v1
+    refT3 := ref t3 // TODO: remove after v1
+    refT4 := ref t4 // TODO: remove after v1
+    refT5 := ref t5 // TODO: remove after v1
+    refT6 := ref t6 // TODO: remove after v1
+    refT7 := ref t7 // TODO: remove after v1
+    refT8 := ref t8 // TODO: remove after v1
+    refT9 := ref t9 // TODO: remove after v1
+    refT10 := ref t10 // TODO: remove after v1
+    refT11 := ref t11 // TODO: remove after v1
 
     t1.asAlias()
     t2.asArray()
@@ -208,12 +208,12 @@ export fn TEST_Type_getThrows () {
   ])
 
   EXPECT_THROW_WITH_MESSAGE(() -> void {
-    refT := ref t // todo remove after v1
+    refT := ref t // TODO: remove after v1
     t.get("test")
   }, "Tried to get non-existing property 'test'")
 
   EXPECT_THROW_WITH_MESSAGE(() -> void {
-    refT := ref t // todo remove after v1
+    refT := ref t // TODO: remove after v1
     t.get(2)
   }, "Tried to get non-existing property at position 2")
 }

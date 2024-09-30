@@ -6,7 +6,7 @@
 import * as Parser from "the/parser"
 import * as Context from "./context"
 
-// todo test
+// TODO: test
 export fn analyzerPrint(statements: ref Parser.Statement[]) str {
   mut result := ""
 
@@ -18,7 +18,7 @@ export fn analyzerPrint(statements: ref Parser.Statement[]) str {
   return result
 }
 
-// todo test
+// TODO: test
 export fn analyzerPrintFunction(parameters: Parser.FunctionParameter[], body: Parser.Statement?, indent: int) str {
   mut result := ""
 
@@ -51,7 +51,7 @@ export fn analyzerPrintFunction(parameters: Parser.FunctionParameter[], body: Pa
   return result
 }
 
-// todo test
+// TODO: test
 export fn analyzerPrintFunctionAttributes(name: Parser.Identifier?, returnType: Parser.Type?, asynchronous: bool) str {
   mut result := "asynchronous=" + asynchronous.str()
 
@@ -66,7 +66,7 @@ export fn analyzerPrintFunctionAttributes(name: Parser.Identifier?, returnType: 
   return result.trim()
 }
 
-// todo test
+// TODO: test
 export fn analyzerVariableDeclarationAttributes(name: Parser.Identifier, t: Parser.Type?, mutable: bool, constant: bool) str {
   mut result := "name=" + name.name
   result += " mutable=" + mutable.str()
@@ -79,7 +79,7 @@ export fn analyzerVariableDeclarationAttributes(name: Parser.Identifier, t: Pars
   return result
 }
 
-// todo test
+// TODO: test
 export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) str {
   mut result := ""
 
@@ -282,7 +282,7 @@ export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) s
   return result
 }
 
-// todo test
+// TODO: test
 export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int) str {
   mut name := ""
   mut attributes := ""
