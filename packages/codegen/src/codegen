@@ -7,43 +7,43 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
-// todo implement map type
+// TODO: implement map type
 
-// todo implement ObjectDeclaration statement
-// todo implement ObjectDeclarationMethod statement
-// todo implement ObjectDeclarationProperty statement
-// todo implement object expression
-// todo implement property access expression
-// todo error object needs special generation rules to move message and stack properties upfront
+// TODO: implement ObjectDeclaration statement
+// TODO: implement ObjectDeclarationMethod statement
+// TODO: implement ObjectDeclarationProperty statement
+// TODO: implement object expression
+// TODO: implement property access expression
+// TODO: error object needs special generation rules to move message and stack properties upfront
 
-// todo implement FunctionDeclaration statement
-// todo implement Return statement
-// todo implement closure expression
-// todo test Function type
-// todo test MainDeclaration statement
-// todo test call expression
+// TODO: implement FunctionDeclaration statement
+// TODO: implement Return statement
+// TODO: implement closure expression
+// TODO: test Function type
+// TODO: test MainDeclaration statement
+// TODO: test call expression
 
-// todo test VariableDeclaration statement
-// todo test expressions with types other than primitive
+// TODO: test VariableDeclaration statement
+// TODO: test expressions with types other than primitive
 
-// todo implement EnumDeclaration statement
-// todo implement TypeAliasDeclaration statement
+// TODO: implement EnumDeclaration statement
+// TODO: implement TypeAliasDeclaration statement
 
-// todo test If statement
-// todo add more tests for Loop statement with other types
+// TODO: test If statement
+// TODO: add more tests for Loop statement with other types
 
-// todo implement Throw statement
-// todo implement Try statement
+// TODO: implement Throw statement
+// TODO: implement Try statement
 
-// todo implement ImportDeclaration statement
-// todo implement ExportDeclaration statement
-// todo implement ExportNamedDeclaration statement
-// todo implement Member type
+// TODO: implement ImportDeclaration statement
+// TODO: implement ExportDeclaration statement
+// TODO: implement ExportNamedDeclaration statement
+// TODO: implement Member type
 
-// todo implement await expression
-// todo implement async functions
+// TODO: implement await expression
+// TODO: implement async functions
 
-// todo check whether all tests are transferred from old codegen
+// TODO: check whether all tests are transferred from old codegen
 
 export obj CodegenAPIBuiltin {
   mut d4Any: bool
@@ -447,8 +447,7 @@ export fn typePrimitive (it: ref Analyzer.Type) bool {
     it.isArray() ||
     it.isFunction() ||
     it.isMap() ||
-    // todo
-    // it.isObject() ||
+    // TODO: it.isObject() ||
     it.isOptional() ||
     it.isUnion()
   )
@@ -461,8 +460,7 @@ export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
     it.isArray() ||
     it.isFunction() ||
     it.isMap() ||
-    // todo
-    // it.isObj() ||
+    // TODO: it.isObject() ||
     it.isOptional() ||
     it.isUnion()
   )
@@ -496,7 +494,7 @@ export fn typeShouldBeAllocated (self: ref Analyzer.Type) bool {
     return typeShouldBeAllocated(t.t)
   }
 
-  // todo object
+  // TODO: object
   return (
     self.name == "any" ||
     self.name == "str" ||
@@ -525,7 +523,7 @@ export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
     return false
   }
 
-  // todo object
+  // TODO: object
   return
     self.name == "any" ||
     self.name == "str" ||
@@ -1127,7 +1125,7 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
         AST.createLiteral("0")
       ])
-    // todo
+    // TODO: implement
     // } elif it.isObject() {
       // typeName := self._typeName(it)
       // mut args: AST.CExpression[]
@@ -1177,7 +1175,7 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
         AST.createLiteral("0")
       ])
-    // todo
+    // TODO: implement
     // } elif it.isObject() {
       // typeName := self._typeName(it)
       // mut args : AST.CExpression[]
@@ -1215,8 +1213,7 @@ export obj Codegen {
       it.isArray() ||
       it.isFunction() ||
       it.isMap() ||
-      // todo
-      // it.isObject() ||
+      // TODO: it.isObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
@@ -1240,8 +1237,7 @@ export obj Codegen {
     } elif (
       it.isArray() ||
       it.isMap() ||
-      // todo
-      // it.isObject() ||
+      // TODO: it.isObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
@@ -1266,8 +1262,7 @@ export obj Codegen {
       it.isArray() ||
       it.isFunction() ||
       it.isMap() ||
-      // todo
-      // it.isObject() ||
+      // TODO: it.isObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
@@ -1298,8 +1293,7 @@ export obj Codegen {
       it.isArray() ||
       it.isFunction() ||
       it.isMap() ||
-      // todo
-      // it.isObject() ||
+      // TODO: it.isObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
@@ -1354,7 +1348,7 @@ export obj Codegen {
       item := items[i]
       result.push(self._generateStatement(item))
 
-      // todo
+      // TODO: implement
       // auto node = nodes[i];
       // if (i < nodes.size() - 1 && nodeChecker.hoistingFriendly() && ASTChecker(nodes[i + 1]).hoistingFriendly()) {
       //   for (auto j = i; j < nodes.size() && ASTChecker(nodes[j]).hoistingFriendly(); j++) {
@@ -1422,7 +1416,7 @@ export obj Codegen {
       )
     }
 
-    if blockData.usedReturnVariable { // todo !this->state.cleanUp.empty()
+    if blockData.usedReturnVariable { // TODO: !this->state.cleanUp.empty()
       //(*c)->append(
       //  CodegenASTStmtIf::create(
       //    CodegenASTExprBinary::create(
@@ -1952,7 +1946,7 @@ export obj Codegen {
 
     statement := item.asEnumDeclaration()
 
-    // todo
+    // TODO: implement
     // auto nodeEnumDecl = std::get<ASTNodeEnumDecl>(*node.body);
     // auto members = nodeEnumDecl.members;
     // auto typeName = Codegen::typeName(nodeEnumDecl.type->codeName);
@@ -2001,7 +1995,7 @@ export obj Codegen {
 
     statement := item.asExportDeclaration()
 
-    // todo
+    // TODO: implement
     // if (
     //   nodeExportDecl.declaration != std::nullopt &&
     //   !std::holds_alternative<ASTNodeExpr>(*nodeExportDecl.declaration->body)
@@ -2025,7 +2019,7 @@ export obj Codegen {
     }
 
     statement := item.asFunctionDeclaration()
-    // todo
+    // TODO: implement
     return nil
   }
 
@@ -2067,7 +2061,7 @@ export obj Codegen {
       if !self.blockData.currentEmpty() {
         self.blockData.addSetup(initializerStatement)
       } else {
-        // todo problem on this line or when accessing initializer
+        // TODO: problem on this line or when accessing initializer
         initializer = initializerStatement
       }
     }
@@ -2128,7 +2122,7 @@ export obj Codegen {
     body.merge(self._generateBlockBody(ref bodyItems))
     self.blockData.decreaseVariableIndexes()
     blockDataLoop := self.blockData.decrease()
-    optItem: (ref Parser.Statement)? = item // todo delete after v1
+    optItem: (ref Parser.Statement)? = item // TODO: delete after v1
     body = self._generateBlockTail(body, optItem, ref blockDataLoop)
 
     if blockDataLoop.usedContinueVariable {
@@ -2216,7 +2210,7 @@ export obj Codegen {
     }
 
     statement := item.asObjectDeclaration()
-    // todo
+    // TODO: implement
     return nil
   }
 
@@ -2227,7 +2221,7 @@ export obj Codegen {
 
     statement := item.asReturn()
 
-    // todo
+    // TODO: implement
     // if (this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN) || this->state.cleanUp.returnVarUsed) {
     //   auto parentNotRoot = this->state.cleanUp.parent != nullptr && this->state.cleanUp.parent->type != CODEGEN_CLEANUP_ROOT;
     //   if (parentNotRoot && this->state.cleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)) {
@@ -2274,7 +2268,7 @@ export obj Codegen {
 
     statement := item.asThrow()
 
-    // todo
+    // TODO: implement
     // auto argTypeInfo = this->_typeInfo(nodeThrow.arg.type);
     // auto cArg = this->_nodeExpr(nodeThrow.arg, argTypeInfo.type, node, c);
     // auto argNodeExprDef = this->_typeDef(argTypeInfo.type);
@@ -2306,7 +2300,7 @@ export obj Codegen {
 
     statement := item.asTry()
 
-    // todo
+    // TODO: implement
     // auto nodeTry = std::get<ASTNodeTry>(*node.body);
     // auto initialStateCleanUp = this->state.cleanUp;
     // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
@@ -3189,8 +3183,7 @@ export obj Codegen {
       it.isEnum() ||
       it.isFunction() ||
       it.isMap() ||
-      // todo
-      // it.isObject() ||
+      // TODO: it.isObject() ||
       it.isOptional() ||
       it.isReference() ||
       it.isUnion()
@@ -3344,7 +3337,7 @@ export obj Codegen {
       t := it.asReference()
       return "ref_" + self._typeName(t.t)
     } elif it.isUnion() {
-      // todo account for different order of sub types
+      // TODO: account for different order of sub types
       t := it.asUnion()
       mut name := ""
 

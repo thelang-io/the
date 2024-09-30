@@ -8,7 +8,7 @@ import * as Parser from "the/parser"
 import Codegen from "../src/codegen"
 import retrieveFileSections from "./utils"
 
-import Tests, EXPECT_EQ from "the/testing" // todo delete when done testing
+import Tests, EXPECT_EQ from "the/testing" // TODO: delete when done testing
 
 fn matchRegex (input: str, regex: str) int {
   regexLen := regex.len
