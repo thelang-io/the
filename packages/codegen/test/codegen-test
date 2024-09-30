@@ -6,9 +6,14 @@
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
 import Codegen from "../src/codegen"
-import retrieveFileSections from "./utils"
 
 import Tests, EXPECT_EQ from "the/testing" // TODO: delete when done testing
+
+obj TestFileSections {
+  mut input: str
+  mut code: str
+  mut output: str
+}
 
 fn matchRegex (input: str, regex: str) int {
   regexLen := regex.len
@@ -84,11 +89,46 @@ fn applyRegexTemplate (pattern: str, source: str) str {
   return result
 }
 
-export fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
+fn retrieveFileSections (path: str) TestFileSections {
+  content := fs_readFileSync(path).str()
+  lines := content.lines(keepLineBreaks: true)
+  l := lines.len
+
+  mut result := TestFileSections{}
+  mut propertyId := 0
+
+  loop i := 0; i < l; i++ {
+    line := lines[i]
+
+    if "=====" == line.slice(0, 5) {
+      propertyName := line.trim().slice(6, -6)
+
+      if "code" == propertyName {
+        propertyId = 1
+      } elif "output" == propertyName {
+        propertyId = 2
+      }
+
+      continue
+    }
+
+    if 0 == propertyId {
+      result.input += line
+    } elif 1 == propertyId {
+      result.code += line
+    } elif 2 == propertyId {
+      result.output += line
+    }
+  }
+
+  return result
+}
+
+fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
   EXPECT_EQ(test + os_EOL + a, test + os_EOL + b)
 }
 
-export fn TEST_EXPECT_REGEX (test: str, a: str, b: str) {
+fn TEST_EXPECT_REGEX (test: str, a: str, b: str) {
   EXPECT_EQ(test + os_EOL + a, test + os_EOL + applyRegexTemplate(b, a))
 }
 
