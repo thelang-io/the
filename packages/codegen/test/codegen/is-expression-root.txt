@@ -17,24 +17,24 @@ main {
   if (e = 1) is int { "int " + e.str(); }
 
   mut f: any = 3.14
-  if (f = 3.14) is int { "never"; }
+  if (f = 3.14) is float { "float " + f.str(); }
 
   mut g: int | float = 1
   if (g = 1) is int { "int " + g.str(); }
   else { "never"; }
 
   mut h: int | float = 3.14
-  if (h = 3.14) is int { "never"; }
-  else { "float " + h.str(); }
+  if (h = 3.14) is float { "float " + h.str(); }
+  else { "never"; }
 
   (a is int) ? "int " + a.str() : "any";
   (b is int) ? "int " + b.str() : "any";
   (c is int) ? "int " + c.str() : "float " + c.str();
   (d is int) ? "int " + d.str() : "float " + d.str();
   ((e = 1) is int) ? "int " + e.str() : "never";
-  ((f = 3.14) is int) ? "never" : "float " + f.str();
+  ((f = 3.14) is float) ? "float " + f.str() : "never";
   ((g = 1) is int) ? "int " + g.str() : "never";
-  ((h = 3.14) is int) ? "never" : "float " + h.str();
+  ((h = 3.14) is float) ? "float " + h.str() : "never";
 }
 ===== code =====
 #include <d4/any.h>
@@ -79,11 +79,9 @@ int main (void) {
   d4_any_t f_0;
   d4_any_t __THE_12 = {-1, NULL, NULL, NULL, NULL, NULL};
   d4_union_intUSfloatUE_t g_0;
-  d4_union_intUSfloatUE_t __THE_13 = d4_union_intUSfloatUE_alloc(-1);
+  d4_union_intUSfloatUE_t __THE_15 = d4_union_intUSfloatUE_alloc(-1);
   d4_union_intUSfloatUE_t h_0;
-  d4_union_intUSfloatUE_t __THE_16 = d4_union_intUSfloatUE_alloc(-1);
-  d4_str_t __THE_19 = d4_str_empty_val;
-  d4_str_t __THE_20 = d4_str_empty_val;
+  d4_union_intUSfloatUE_t __THE_18 = d4_union_intUSfloatUE_alloc(-1);
   d4_str_t __THE_21 = d4_str_empty_val;
   d4_str_t __THE_22 = d4_str_empty_val;
   d4_str_t __THE_23 = d4_str_empty_val;
@@ -94,18 +92,20 @@ int main (void) {
   d4_str_t __THE_28 = d4_str_empty_val;
   d4_str_t __THE_29 = d4_str_empty_val;
   d4_str_t __THE_30 = d4_str_empty_val;
-  d4_any_t __THE_31 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_str_t __THE_31 = d4_str_empty_val;
   d4_str_t __THE_32 = d4_str_empty_val;
-  d4_str_t __THE_33 = d4_str_empty_val;
+  d4_any_t __THE_33 = {-1, NULL, NULL, NULL, NULL, NULL};
   d4_str_t __THE_34 = d4_str_empty_val;
   d4_str_t __THE_35 = d4_str_empty_val;
   d4_any_t __THE_36 = {-1, NULL, NULL, NULL, NULL, NULL};
-  d4_union_intUSfloatUE_t __THE_37 = d4_union_intUSfloatUE_alloc(-1);
+  d4_str_t __THE_37 = d4_str_empty_val;
   d4_str_t __THE_38 = d4_str_empty_val;
-  d4_str_t __THE_39 = d4_str_empty_val;
+  d4_union_intUSfloatUE_t __THE_39 = d4_union_intUSfloatUE_alloc(-1);
   d4_str_t __THE_40 = d4_str_empty_val;
   d4_str_t __THE_41 = d4_str_empty_val;
   d4_union_intUSfloatUE_t __THE_42 = d4_union_intUSfloatUE_alloc(-1);
+  d4_str_t __THE_43 = d4_str_empty_val;
+  d4_str_t __THE_44 = d4_str_empty_val;
   d4_any_t a_0 = d4_any_int_alloc(1);
   if (a_0.type == TYPE_int) {
     d4_str_t __THE_1 = d4_str_empty_val;
@@ -153,51 +153,57 @@ int main (void) {
     d4_str_free(__THE_10);
   }
   f_0 = d4_any_float_alloc(3.14);
-  if ((f_0 = d4_any_realloc(f_0, __THE_12 = d4_any_float_alloc(3.14))).type == TYPE_int) {
-    d4_str_free(d4_str_alloc(L"never"));
+  if ((f_0 = d4_any_realloc(f_0, __THE_12 = d4_any_float_alloc(3.14))).type == TYPE_float) {
+    d4_str_t __THE_13 = d4_str_empty_val;
+    d4_str_t __THE_14 = d4_str_empty_val;
+    d4_str_free(d4_str_concat(__THE_13 = d4_str_alloc(L"float "), __THE_14 = d4_float_str(*((d4_any_float_t) f_0.ctx))));
+    d4_str_free(__THE_14);
+    d4_str_free(__THE_13);
   }
   g_0 = d4_union_intUSfloatUE_alloc(TYPE_int, 1);
-  if ((g_0 = d4_union_intUSfloatUE_realloc(g_0, __THE_13 = d4_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) {
-    d4_str_t __THE_14 = d4_str_empty_val;
-    d4_str_t __THE_15 = d4_str_empty_val;
-    d4_str_free(d4_str_concat(__THE_14 = d4_str_alloc(L"int "), __THE_15 = d4_int_str(g_0.data.v1)));
-    d4_str_free(__THE_15);
-    d4_str_free(__THE_14);
+  if ((g_0 = d4_union_intUSfloatUE_realloc(g_0, __THE_15 = d4_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) {
+    d4_str_t __THE_16 = d4_str_empty_val;
+    d4_str_t __THE_17 = d4_str_empty_val;
+    d4_str_free(d4_str_concat(__THE_16 = d4_str_alloc(L"int "), __THE_17 = d4_int_str(g_0.data.v1)));
+    d4_str_free(__THE_17);
+    d4_str_free(__THE_16);
   }
   else {
     d4_str_free(d4_str_alloc(L"never"));
   }
   h_0 = d4_union_intUSfloatUE_alloc(TYPE_float, 3.14);
-  if ((h_0 = d4_union_intUSfloatUE_realloc(h_0, __THE_16 = d4_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_int) {
-    d4_str_free(d4_str_alloc(L"never"));
+  if ((h_0 = d4_union_intUSfloatUE_realloc(h_0, __THE_18 = d4_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_float) {
+    d4_str_t __THE_19 = d4_str_empty_val;
+    d4_str_t __THE_20 = d4_str_empty_val;
+    d4_str_free(d4_str_concat(__THE_19 = d4_str_alloc(L"float "), __THE_20 = d4_float_str(h_0.data.v2)));
+    d4_str_free(__THE_20);
+    d4_str_free(__THE_19);
   }
   else {
-    d4_str_t __THE_17 = d4_str_empty_val;
-    d4_str_t __THE_18 = d4_str_empty_val;
-    d4_str_free(d4_str_concat(__THE_17 = d4_str_alloc(L"float "), __THE_18 = d4_float_str(h_0.data.v2)));
-    d4_str_free(__THE_18);
-    d4_str_free(__THE_17);
+    d4_str_free(d4_str_alloc(L"never"));
   }
-  d4_str_free((a_0.type == TYPE_int) ? d4_str_concat(__THE_19 = d4_str_alloc(L"int "), __THE_20 = d4_int_str(*((d4_any_int_t) a_0.ctx))) : d4_str_alloc(L"any"));
-  d4_str_free((b_0.type == TYPE_int) ? d4_str_concat(__THE_21 = d4_str_alloc(L"int "), __THE_22 = d4_int_str(*((d4_any_int_t) b_0.ctx))) : d4_str_alloc(L"any"));
-  d4_str_free((c_0.type == TYPE_int) ? d4_str_concat(__THE_25 = d4_str_alloc(L"int "), __THE_26 = d4_int_str(c_0.data.v1)) : d4_str_concat(__THE_23 = d4_str_alloc(L"float "), __THE_24 = d4_float_str(c_0.data.v2)));
-  d4_str_free((d_0.type == TYPE_int) ? d4_str_concat(__THE_29 = d4_str_alloc(L"int "), __THE_30 = d4_int_str(d_0.data.v1)) : d4_str_concat(__THE_27 = d4_str_alloc(L"float "), __THE_28 = d4_float_str(d_0.data.v2)));
-  d4_str_free(((e_0 = d4_any_realloc(e_0, __THE_31 = d4_any_int_alloc(1))).type == TYPE_int) ? d4_str_concat(__THE_32 = d4_str_alloc(L"int "), __THE_33 = d4_int_str(*((d4_any_int_t) e_0.ctx))) : d4_str_alloc(L"never"));
-  d4_str_free(((f_0 = d4_any_realloc(f_0, __THE_36 = d4_any_float_alloc(3.14))).type == TYPE_int) ? d4_str_alloc(L"never") : d4_str_concat(__THE_34 = d4_str_alloc(L"float "), __THE_35 = d4_float_str(*((d4_any_float_t) f_0.ctx))));
-  d4_str_free(((g_0 = d4_union_intUSfloatUE_realloc(g_0, __THE_37 = d4_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) ? d4_str_concat(__THE_38 = d4_str_alloc(L"int "), __THE_39 = d4_int_str(g_0.data.v1)) : d4_str_alloc(L"never"));
-  d4_str_free(((h_0 = d4_union_intUSfloatUE_realloc(h_0, __THE_42 = d4_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_int) ? d4_str_alloc(L"never") : d4_str_concat(__THE_40 = d4_str_alloc(L"float "), __THE_41 = d4_float_str(h_0.data.v2)));
+  d4_str_free((a_0.type == TYPE_int) ? d4_str_concat(__THE_21 = d4_str_alloc(L"int "), __THE_22 = d4_int_str(*((d4_any_int_t) a_0.ctx))) : d4_str_alloc(L"any"));
+  d4_str_free((b_0.type == TYPE_int) ? d4_str_concat(__THE_23 = d4_str_alloc(L"int "), __THE_24 = d4_int_str(*((d4_any_int_t) b_0.ctx))) : d4_str_alloc(L"any"));
+  d4_str_free((c_0.type == TYPE_int) ? d4_str_concat(__THE_27 = d4_str_alloc(L"int "), __THE_28 = d4_int_str(c_0.data.v1)) : d4_str_concat(__THE_25 = d4_str_alloc(L"float "), __THE_26 = d4_float_str(c_0.data.v2)));
+  d4_str_free((d_0.type == TYPE_int) ? d4_str_concat(__THE_31 = d4_str_alloc(L"int "), __THE_32 = d4_int_str(d_0.data.v1)) : d4_str_concat(__THE_29 = d4_str_alloc(L"float "), __THE_30 = d4_float_str(d_0.data.v2)));
+  d4_str_free(((e_0 = d4_any_realloc(e_0, __THE_33 = d4_any_int_alloc(1))).type == TYPE_int) ? d4_str_concat(__THE_34 = d4_str_alloc(L"int "), __THE_35 = d4_int_str(*((d4_any_int_t) e_0.ctx))) : d4_str_alloc(L"never"));
+  d4_str_free(((f_0 = d4_any_realloc(f_0, __THE_36 = d4_any_float_alloc(3.14))).type == TYPE_float) ? d4_str_concat(__THE_37 = d4_str_alloc(L"float "), __THE_38 = d4_float_str(*((d4_any_float_t) f_0.ctx))) : d4_str_alloc(L"never"));
+  d4_str_free(((g_0 = d4_union_intUSfloatUE_realloc(g_0, __THE_39 = d4_union_intUSfloatUE_alloc(TYPE_int, 1))).type == TYPE_int) ? d4_str_concat(__THE_40 = d4_str_alloc(L"int "), __THE_41 = d4_int_str(g_0.data.v1)) : d4_str_alloc(L"never"));
+  d4_str_free(((h_0 = d4_union_intUSfloatUE_realloc(h_0, __THE_42 = d4_union_intUSfloatUE_alloc(TYPE_float, 3.14))).type == TYPE_float) ? d4_str_concat(__THE_43 = d4_str_alloc(L"float "), __THE_44 = d4_float_str(h_0.data.v2)) : d4_str_alloc(L"never"));
+  d4_str_free(__THE_44);
+  d4_str_free(__THE_43);
   d4_union_intUSfloatUE_free(__THE_42);
   d4_str_free(__THE_41);
   d4_str_free(__THE_40);
-  d4_str_free(__THE_39);
+  d4_union_intUSfloatUE_free(__THE_39);
   d4_str_free(__THE_38);
-  d4_union_intUSfloatUE_free(__THE_37);
+  d4_str_free(__THE_37);
   d4_any_free(__THE_36);
   d4_str_free(__THE_35);
   d4_str_free(__THE_34);
-  d4_str_free(__THE_33);
+  d4_any_free(__THE_33);
   d4_str_free(__THE_32);
-  d4_any_free(__THE_31);
+  d4_str_free(__THE_31);
   d4_str_free(__THE_30);
   d4_str_free(__THE_29);
   d4_str_free(__THE_28);
@@ -208,10 +214,8 @@ int main (void) {
   d4_str_free(__THE_23);
   d4_str_free(__THE_22);
   d4_str_free(__THE_21);
-  d4_str_free(__THE_20);
-  d4_str_free(__THE_19);
-  d4_union_intUSfloatUE_free(__THE_16);
-  d4_union_intUSfloatUE_free(__THE_13);
+  d4_union_intUSfloatUE_free(__THE_18);
+  d4_union_intUSfloatUE_free(__THE_15);
   d4_any_free(__THE_12);
   d4_any_free(f_0);
   d4_any_free(__THE_9);
