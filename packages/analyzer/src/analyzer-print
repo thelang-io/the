@@ -287,14 +287,14 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
   mut name := ""
   mut attributes := ""
   mut result := ""
-  mut typeContext := expression.typeContext
+  expressionContext := expression.context
 
-  if expression.typeContext is Context.TypeContext {
-    ctx := typeContext as Context.TypeContext
-    attributes += " type=" + ctx.t.toString()
+  if expression.context is Context.Context {
+    context := expressionContext as Context.Context
+    attributes += " initial=" + context.initialType.toString()
 
-    if ctx.targetType != nil {
-      targetType := ctx.targetType
+    if context.targetType != nil {
+      targetType := context.targetType
       attributes += " target=" + targetType.toString()
     }
   }

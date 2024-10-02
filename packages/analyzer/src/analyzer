@@ -76,21 +76,6 @@ export fn getAccessExpression (expression: ref Parser.Expression) ref Parser.Exp
 }
 
 // TODO: test
-export fn getContextTargetType (expression: ref Parser.Expression) ref Type.Type {
-  if !(expression.typeContext is Context.TypeContext) {
-    throw error_NewError("Unable to retrieve target type from empty type context")
-  }
-
-  ctx := expression.typeContext as Context.TypeContext
-
-  if ctx.targetType == nil {
-    throw error_NewError("Unable to retrieve target type from type context")
-  }
-
-  return Type.unwrap(ctx.targetType as ref Type.Type)
-}
-
-// TODO: test
 export fn hasAccessExpression (expression: ref Parser.Expression) bool {
   if expression.isAssignment() {
     body := expression.asAssignment()
@@ -407,7 +392,7 @@ export obj AnalyzerFile {
         statementType := statement.t
 
         self.guard(() -> void {
-          initialTC := ref self.tc // TODO: remove after v1
+          ref self.tc; // TODO: remove after v1
           t = self.t(ref statementType)
         })
       }
@@ -432,38 +417,35 @@ export obj AnalyzerFile {
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)? = nil,
-    unwrap := false,
+    noTypeCast := false,
     withMutable := false,
     withMutableNext := false,
-    withoutTypeCast := false,
   ) ref Type.Type {
-    mut t: (ref Type.Type)?
-
     if (
-      (t = self._eIdentifier(it, targetType, withMutable, withoutTypeCast)) != nil ||
-      (t = self._eLiteral(it, targetType)) != nil ||
-      (t = self._eArray(it, targetType)) != nil ||
-      (t = self._eAs(it, targetType, withMutable, withMutableNext)) != nil ||
-      (t = self._eAssignment(it, targetType)) != nil ||
-      (t = self._eAwait(it, targetType)) != nil ||
-      (t = self._eBinary(it, targetType)) != nil ||
-      (t = self._eCall(it, targetType)) != nil ||
-      (t = self._eClosure(it, targetType)) != nil ||
-      (t = self._eConditional(it, targetType, withMutable, withMutableNext)) != nil ||
-      (t = self._eElementAccess(it, targetType, withMutable, withMutableNext, withoutTypeCast)) != nil ||
-      (t = self._eIs(it, targetType, withMutable, withMutableNext)) != nil ||
-      (t = self._eMap(it, targetType)) != nil ||
-      (t = self._eMemberAccess(it, targetType)) != nil ||
-      (t = self._eObject(it, targetType)) != nil ||
-      (t = self._eParenthesized(it, targetType, unwrap, withMutable, withMutableNext)) != nil ||
-      (t = self._ePropertyAccess(it, targetType, withMutable, withMutableNext, withoutTypeCast)) != nil ||
-      (t = self._eReference(it, targetType, withMutable, withMutableNext)) != nil ||
-      (t = self._eUnary(it, targetType)) != nil
+      self._eIdentifier(it, targetType, noTypeCast, withMutable) ||
+      self._eLiteral(it, targetType) ||
+      self._eArray(it, targetType) ||
+      self._eAs(it, targetType, withMutable, withMutableNext) ||
+      self._eAssignment(it, targetType) ||
+      self._eAwait(it, targetType) ||
+      self._eBinary(it, targetType) ||
+      self._eCall(it, targetType) ||
+      self._eClosure(it, targetType) ||
+      self._eConditional(it, targetType, withMutable, withMutableNext) ||
+      self._eElementAccess(it, targetType, noTypeCast, withMutable, withMutableNext) ||
+      self._eIs(it, targetType, withMutable, withMutableNext) ||
+      self._eMap(it, targetType) ||
+      self._eMemberAccess(it, targetType) ||
+      self._eObject(it, targetType) ||
+      self._eParenthesized(it, targetType, withMutable, withMutableNext) ||
+      self._ePropertyAccess(it, targetType, noTypeCast, withMutable, withMutableNext) ||
+      self._eReference(it, targetType, withMutable, withMutableNext) ||
+      self._eUnary(it, targetType)
     ) {
-      return self.wrap(it, targetType, t, unwrap: unwrap)
+      return Context.target(it)
     }
 
-    throw error_NewError("Tried analyzing unknown expression")
+    throw error_NewError("Tried analyzing unknown expression '" + Parser.stringifyExpression(it) + "'")
   }
 
   fn eNice (mut self: ref Self, mut it: ref Parser.Expression) ref Type.Type {
@@ -583,44 +565,27 @@ export obj AnalyzerFile {
 
   fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback) GuessTypeResult {
     initialErrorsLen := self.analyzer.errors.len
-    mut targetType: (ref Type.Type)? = nil
-    firstType := cb1(targetType)
+    firstType := cb1(nil)
     firstTypeFailed := self.analyzer.errors.len != initialErrorsLen
 
     if firstTypeFailed {
       self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
-    } else {
-      targetType = Type.opt(firstType)
     }
 
-    secondType := cb2(targetType)
-    secondTypeFailed := self.analyzer.errors.len != initialErrorsLen
-    mut result := GuessTypeResult{first: firstType, second: secondType}
+    mut result := GuessTypeResult{
+      first: firstType,
+      second: cb2(firstTypeFailed ? nil : Type.opt(firstType)),
+    }
 
-    if secondTypeFailed {
+    if self.analyzer.errors.len != initialErrorsLen {
       return result
     }
 
-    targetType = Type.opt(result.second)
-
-    if firstTypeFailed {
-      result.first = cb1(targetType)
-    }
-
-    hasErrors := self.analyzer.errors.len != initialErrorsLen
-
-    if hasErrors || !Type.promotionPossible(result.first, result.second) {
-      return result
-    }
-
-    targetType = Type.opt(Type.promote(result.first, result.second))
-    result.first = cb1(targetType)
-    result.second = cb2(targetType)
-
+    result.first = cb1(Type.opt(result.second))
     return result
   }
 
-  fn operands (mut self: ref Self, op: Parser.Token, type1: ref Type.Type, type2: ref Type.Type) bool {
+  fn operands (mut self: ref Self, op: Parser.TokenType, type1: ref Type.Type, type2: ref Type.Type) bool {
     t1 := Type.unwrap(type1)
     t2 := Type.unwrap(type2)
 
@@ -628,7 +593,7 @@ export obj AnalyzerFile {
       return false
     }
 
-    if op.t == .OpGt || op.t == .OpGtEq || op.t == .OpLt || op.t == .OpLtEq {
+    if op == .OpGt || op == .OpGtEq || op == .OpLt || op == .OpLtEq {
       if (
         !(
           t1.isNumber() ||
@@ -648,7 +613,7 @@ export obj AnalyzerFile {
       ) {
         return false
       }
-    } elif op.t == .OpPlus || op.t == .OpPlusEq {
+    } elif op == .OpPlus || op == .OpPlusEq {
       if (
         !(t1.isNumber() || Type.match(t1, self.tm.get("byte")) || Type.match(t1, self.tm.get("str"))) ||
         !(t2.isNumber() || Type.match(t2, self.tm.get("byte")) || Type.match(t2, self.tm.get("str"))) ||
@@ -657,10 +622,10 @@ export obj AnalyzerFile {
         return false
       }
     } elif (
-      op.t == .OpMinus || op.t == .OpMinusEq ||
-      op.t == .OpPercent || op.t == .OpPercentEq ||
-      op.t == .OpSlash || op.t == .OpSlashEq ||
-      op.t == .OpStar || op.t == .OpStarEq
+      op == .OpMinus || op == .OpMinusEq ||
+      op == .OpPercent || op == .OpPercentEq ||
+      op == .OpSlash || op == .OpSlashEq ||
+      op == .OpStar || op == .OpStarEq
     ) {
       if (
         !(t1.isNumber() || Type.match(t1, self.tm.get("byte"))) ||
@@ -668,7 +633,7 @@ export obj AnalyzerFile {
       ) {
         return false
       }
-    } elif op.t == .OpAmpAmp || op.t == .OpAmpAmpEq || op.t == .OpPipePipe || op.t == .OpPipePipeEq {
+    } elif op == .OpAmpAmp || op == .OpAmpAmpEq || op == .OpPipePipe || op == .OpPipePipeEq {
       if (
         !(t1.isNumber() || Type.match(t1, self.tm.get("bool")) || Type.match(t1, self.tm.get("byte"))) ||
         !(t2.isNumber() || Type.match(t2, self.tm.get("bool")) || Type.match(t2, self.tm.get("byte")))
@@ -676,13 +641,21 @@ export obj AnalyzerFile {
         return false
       }
     } elif (
-      op.t == .OpAmp || op.t == .OpAmpEq ||
-      op.t == .OpCaret || op.t == .OpCaretEq ||
-      op.t == .OpLShift || op.t == .OpLShiftEq ||
-      op.t == .OpPipe || op.t == .OpPipeEq ||
-      op.t == .OpRShift || op.t == .OpRShiftEq
+      op == .OpAmp || op == .OpAmpEq ||
+      op == .OpCaret || op == .OpCaretEq ||
+      op == .OpLShift || op == .OpLShiftEq ||
+      op == .OpPipe || op == .OpPipeEq ||
+      op == .OpRShift || op == .OpRShiftEq
     ) {
       if !t1.isInt() || !t2.isInt() {
+        return false
+      }
+    } elif op == .OpEq {
+      if !Type.match(t1, t2) && !t2.canPromoteTo(t1) {
+        return false
+      }
+    } elif op == .OpEqEq || op == .OpExclEq || op == .OpQn {
+      if !Type.match(t1, t2) && !Type.canPromote(t1, t2) {
         return false
       }
     }
@@ -820,7 +793,7 @@ export obj AnalyzerFile {
       mut exportVar: Var?
 
       guardFailed := self.guard(() -> void {
-        initialTC := ref self.tc // TODO: remove after v1
+        ref self.tc; // TODO: remove after v1
         exportType = Type.opt(self.t(ref parserType))
       })
 
@@ -1169,8 +1142,6 @@ export obj AnalyzerFile {
           self.raise(errors.E1039(), statement.name.start, statement.name.end)
         }
       }
-
-      it.context = Context.VariableDeclarationContext{varType: varType}
     }
   }
 
@@ -1572,55 +1543,23 @@ export obj AnalyzerFile {
     }
   }
 
-  fn wrap (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    t: ref Type.Type,
-    unwrap: bool,
-  ) ref Type.Type {
-    if it.isParenthesized() {
-      expression := it.asParenthesized()
-      expressionTypeContext := expression.expression.typeContext as Context.TypeContext
-
-      it.typeContext = Context.TypeContext{
-        t: expressionTypeContext.targetType == nil ? expressionTypeContext.t : expressionTypeContext.targetType,
-        targetType: expressionTypeContext.targetType
-      }
-
-      return t
-    }
-
-    mut typeContext := Context.TypeContext{
-      t: t,
-      targetType: targetType
-    }
-
-    if unwrap {
-      unwrappedTargetType := Type.unwrap(targetType == nil ? t : targetType)
-      typeContext.targetType = Type.opt(unwrappedTargetType)
-    }
-
-    it.typeContext = typeContext
-    return t
-  }
-
   fn _eIdentifier (
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)?,
+    noTypeCast: bool,
     withMutable: bool,
-    withoutTypeCast: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isIdentifier() {
-      return nil
+      return false
     }
 
     mut expression := it.asIdentifier()
 
     if !self.vm.has(expression.name) {
+      Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
       self.raise(errors.E1003(expression.name), it.start, it.end)
-      return targetType == nil ? self.tm.get("any") : targetType
+      return true
     }
 
     var := self.vm.get(expression.name)
@@ -1629,132 +1568,158 @@ export obj AnalyzerFile {
       self.raise(errors.E1011(expression.name), it.start, it.end)
     }
 
-    originalContext := Context.IdentifierContext{
-      currentType: var.t,
-      originalType: var.t
-    }
+    Context.set(it, var.t)
 
     if targetType != nil {
       if Type.match(targetType, var.t) {
-        it.context = originalContext
-        return var.t
+        return true
       }
     }
 
-    if withoutTypeCast {
-      it.context = originalContext
-      return var.t
+    if noTypeCast {
+      return true
     }
 
     code := Parser.stringifyExpression(it)
-    currentType := self.tc.has(code) ? self.tc.get(code) : var.t
 
-    it.context = Context.IdentifierContext{
-      currentType: currentType,
-      originalType: var.t
+    if self.tc.has(code) {
+      Context.setTarget(it, self.tc.get(code))
     }
 
-    return currentType
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
-  fn _eLiteral (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
-    if it.isBooleanLiteral() {
-      return self.tm.get("bool")
-    } elif it.isCharacterLiteral() {
-      return self.tm.get("rune")
-    } elif it.isFloatingPointLiteral() {
-      mut expression := it.asFloatingPointLiteral()
-      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
-      t := Type.unwrap(definiteTargetType.isFloat() ? definiteTargetType : self.tm.get("float"), withOptional: true)
+  fn _eLiteral (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if it.isFloatingPointLiteral() {
+      expression := it.asFloatingPointLiteral()
+      possibleTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
+      definiteTargetType := Type.unwrap(possibleTargetType.isFloat() ? possibleTargetType : self.tm.get("float"))
 
       try {
-        if Type.match(t, self.tm.get("f32")) {
+        if Type.match(definiteTargetType, self.tm.get("f32")) {
           expression.value.toF32()
-        } else {
+        } elif Type.match(definiteTargetType, self.tm.get("f64")) {
           expression.value.toF64()
+        } else {
+          expression.value.toFloat()
         }
       } catch err: error_Error {
-        self.raise(errors.E1030(t.toString()), it.start, it.end)
+        self.raise(errors.E1030(definiteTargetType.toString()), it.start, it.end)
       }
 
-      return t
-    } elif it.isIntegerLiteral() {
-      mut expression := it.asIntegerLiteral()
-      definiteTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
-      t := Type.unwrap(definiteTargetType.isInt() ? definiteTargetType : self.tm.get("int"), withOptional: true)
+      Context.set(it, self.tm.get("float"))
+      Context.setTarget(it, definiteTargetType)
 
-      try {
-        if Type.match(t, self.tm.get("i8")) {
-          expression.value.toI8()
-        } elif Type.match(t, self.tm.get("i16")) {
-          expression.value.toI16()
-        } elif Type.match(t, self.tm.get("i32")) {
-          expression.value.toI32()
-        } elif Type.match(t, self.tm.get("i64")) {
-          expression.value.toI64()
-        } elif Type.match(t, self.tm.get("u8")) {
-          expression.value.toU8()
-        } elif Type.match(t, self.tm.get("u16")) {
-          expression.value.toU16()
-        } elif Type.match(t, self.tm.get("u32")) {
-          expression.value.toU32()
-        } elif Type.match(t, self.tm.get("u64")) {
-          expression.value.toU64()
-        }
-      } catch err: error_Error {
-        self.raise(errors.E1029(t.toString()), it.start, it.end)
-      }
-
-      return t
-    } elif it.isNilLiteral() {
-      mut t := self.tm.get("any")
-
-      if targetType == nil {
-        self.raise(errors.E1004(), it.start, it.end)
-      } else {
-        t = Type.unwrap(targetType)
-
-        if !t.isOptional() {
-          self.raise(errors.E1006(t.toString()), it.start, it.end)
-        }
-      }
-
-      return t
-    } elif it.isStringLiteral() {
-      return self.tm.get("str")
+      return true
     }
 
-    return nil
+    if it.isIntegerLiteral() {
+      expression := it.asIntegerLiteral()
+      possibleTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
+      definiteTargetType := Type.unwrap(possibleTargetType.isInt() ? possibleTargetType : self.tm.get("int"))
+      firstTwoDigits := expression.value.lower.slice(0, 2)
+      val := firstTwoDigits == "0b" || firstTwoDigits == "0o" ? expression.value.slice(2) : expression.value
+
+      try {
+        if Type.match(definiteTargetType, self.tm.get("i8")) {
+          val.toI8(0)
+        } elif Type.match(definiteTargetType, self.tm.get("i16")) {
+          val.toI16(0)
+        } elif Type.match(definiteTargetType, self.tm.get("i32")) {
+          val.toI32(0)
+        } elif Type.match(definiteTargetType, self.tm.get("i64")) {
+          val.toI64(0)
+        } elif Type.match(definiteTargetType, self.tm.get("u8")) {
+          val.toU8(0)
+        } elif Type.match(definiteTargetType, self.tm.get("u16")) {
+          val.toU16(0)
+        } elif Type.match(definiteTargetType, self.tm.get("u32")) {
+          val.toU32(0)
+        } elif Type.match(definiteTargetType, self.tm.get("u64")) {
+          val.toU64(0)
+        } elif Type.match(definiteTargetType, self.tm.get("f32")) {
+          expression.value.toF32() // TODO: test
+        } elif Type.match(definiteTargetType, self.tm.get("f64")) {
+          expression.value.toF64() // TODO: test
+        } else {
+          val.toInt(0)
+        }
+      } catch err: error_Error {
+        self.raise(errors.E1029(definiteTargetType.toString()), it.start, it.end)
+      }
+
+      Context.set(it, self.tm.get("int"))
+      Context.setTarget(it, definiteTargetType)
+
+      return true
+    }
+
+    if it.isNilLiteral() {
+      if targetType == nil {
+        Context.set(it, self.tm.get("any"))
+        self.raise(errors.E1004(), it.start, it.end)
+        return true
+      }
+
+      definiteTargetType := Type.unwrap(targetType as ref Type.Type)
+      Context.set(it, definiteTargetType)
+
+      if !definiteTargetType.isOptional() {
+        self.raise(errors.E1006(definiteTargetType.toString()), it.start, it.end)
+      }
+
+      return true
+    }
+
+    mut initialTypeMaybe: (ref Type.Type)?
+
+    if it.isBooleanLiteral() {
+      initialTypeMaybe = self.tm.get("bool")
+    } elif it.isCharacterLiteral() {
+      initialTypeMaybe = self.tm.get("rune")
+    } elif it.isStringLiteral() {
+      initialTypeMaybe = self.tm.get("str")
+    }
+
+    if initialTypeMaybe == nil {
+      return false
+    }
+
+    Context.set(it, initialTypeMaybe as ref Type.Type)
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
-  fn _eArray (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eArray (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isArray() {
-      return nil
+      return false
     }
 
     mut expression := it.asArray()
     mut elementType: (ref Type.Type)?
 
     if targetType != nil {
-      t := Type.unwrap(targetType, withOptional: true)
+      maybeArrayType := Type.unwrap(targetType, withOptional: true)
 
-      if t.isArray() {
-        t := t.asArray()
-        elementType = Type.opt(t.elementType)
+      if maybeArrayType.isArray() {
+        arrayType := maybeArrayType.asArray()
+        elementType = Type.opt(arrayType.elementType)
       }
     }
 
     if expression.elements.empty {
       if elementType == nil {
-        result := self.tm.createArray(self.tm.get("any"))
-
-        it.context = Context.ArrayExpressionContext{
-          t: result,
-          elementType: self.tm.get("any")
-        }
-
+        Context.set(it, self.tm.createArray(self.tm.get("any")))
         self.raise(errors.E1007(), it.start, it.end)
-        return result
+        return true
       }
     }
 
@@ -1776,14 +1741,8 @@ export obj AnalyzerFile {
       }
     }
 
-    result := self.tm.createArray(elementType as ref Type.Type)
-
-    it.context = Context.ArrayExpressionContext{
-      t: result,
-      elementType: elementType as ref Type.Type
-    }
-
-    return self.tm.createArray(elementType as ref Type.Type)
+    Context.set(it, self.tm.createArray(elementType as ref Type.Type))
+    return true
   }
 
   fn _eAs (
@@ -1792,75 +1751,77 @@ export obj AnalyzerFile {
     targetType: (ref Type.Type)?,
     withMutable: bool,
     withMutableNext: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isAs() {
-      return nil
+      return false
     }
 
     mut expression := it.asAs()
     expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
     t := self.t(ref expression.t)
 
-    if !expressionType.canBe(t) {
+    if !Type.match(expressionType, t) && !expressionType.canCastTo(t) {
       self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
     }
 
-    it.context = Context.AsExpressionContext{
-      currentType: t,
-      originalType: expressionType
+    Context.set(it, expressionType)
+    Context.setTarget(it, t)
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
     }
 
-    return t
+    return true
   }
 
-  fn _eAssignment (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eAssignment (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isAssignment() {
-      return nil
+      return false
     }
 
     mut expression := it.asAssignment()
 
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
-      initialTC := ref self.tc // TODO: remove after v1
-      return self.e(ref expression.left, operandType, withMutable: true, withoutTypeCast: true)
+      ref self.tc; // TODO: remove after v1
+      return self.e(ref expression.left, operandType, withMutable: true, noTypeCast: true)
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-      initialTC := ref self.tc // TODO: remove after v1
+      ref self.tc; // TODO: remove after v1
       return self.e(ref expression.right, operandType)
     })
 
-    leftType := Type.unwrap(guessTypeResult.first, withReference: false)
-    rightType := Type.unwrap(guessTypeResult.second, withReference: false)
+    leftType := guessTypeResult.first
+    rightType := guessTypeResult.second
 
-    if !self.operands(expression.operator, leftType, rightType) {
+    if !self.operands(expression.operator.t, leftType, rightType) {
       self.raise(
         errors.E1027(expression.operator.val, leftType.toString()),
         expression.operator.start,
-        expression.operator.end
+        expression.operator.end,
       )
     }
 
     if !expression.left.isAccess() {
       self.raise(errors.E1010(), expression.left.start, expression.left.end)
-    } elif (
-      Type.match(leftType, self.tm.get("any")) ||
-      (leftType.isOptional() && !rightType.isOptional()) ||
-      (leftType.isUnion() && leftType.hasType(rightType))
-    ) {
+    }
+
+    if !Type.match(leftType, rightType) {
       code := Parser.stringifyExpression(expression.left)
       self.tc.set(code, rightType)
     }
 
-    it.context = Context.AssignmentExpressionContext{
-      leftType: leftType,
-      rightType: rightType,
+    Context.set(it, guessTypeResult.first)
+    Context.setTarget(it, rightType)
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
     }
 
-    return rightType
+    return true
   }
 
-  fn _eAwait (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eAwait (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isAwait() {
-      return nil
+      return false
     }
 
     mut expression := it.asAwait()
@@ -1872,8 +1833,9 @@ export obj AnalyzerFile {
     }
 
     if !expressionType.isFunction() {
+      Context.set(it, self.tm.get("any"))
       self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
-      return self.tm.get("any")
+      return true
     }
 
     t := expressionType.asFunction()
@@ -1882,15 +1844,19 @@ export obj AnalyzerFile {
       self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
     }
 
-    return t.returnType
-  }
+    Context.set(it, t.returnType)
 
-  fn _eBinary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
-    if !it.isBinary() {
-      return nil
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
     }
 
-    initialTC := self.tc
+    return true
+  }
+
+  fn _eBinary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isBinary() {
+      return false
+    }
 
     mut expression := it.asBinary()
     mut leftTypeCastResult: TypeCastResult?
@@ -1898,40 +1864,39 @@ export obj AnalyzerFile {
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
       ref self.tc; // TODO: remove after v1
 
-      if leftTypeCastResult == nil && expression.operator.t == .OpAmpAmp {
-        leftTypeCastResult = self.typeCast(ref expression.left)
-      }
+      leftTypeCastResult = self.typeCast(ref expression.left)
+      result := self.e(ref expression.left, operandType)
 
-      return self.e(ref expression.left, operandType, unwrap: true)
+      return result
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-      ref self.tc; // TODO: remove after v1
+      beforeMergeTC := self.tc
 
-      if leftTypeCastResult == nil {
-        return self.e(ref expression.right, operandType, unwrap: true)
+      if expression.operator.t == .OpAmpAmp {
+        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.consequent)
+      } elif expression.operator.t == .OpPipePipe {
+        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.alternate)
       }
 
-      definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
-      self.tc.merge(definiteLeftTypeCastResult.consequent)
-      result := self.e(ref expression.right, operandType, unwrap: true)
-      self.tc = initialTC
+      afterMergeTC := self.tc
+      result := self.e(ref expression.right, operandType)
+      diffTC := self.typeCastExclude(afterMergeTC)
+      self.tc = beforeMergeTC
+      self.tc.merge(diffTC)
 
       return result
     })
 
-    if !self.operands(expression.operator, guessTypeResult.first, guessTypeResult.second) {
+    leftType := guessTypeResult.first
+    rightType := guessTypeResult.second
+
+    if !self.operands(expression.operator.t, leftType, rightType) {
       self.raise(
-        errors.E1026(expression.operator.val, guessTypeResult.first.toString(), guessTypeResult.second.toString()),
+        errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()),
         expression.operator.start,
-        expression.operator.end
+        expression.operator.end,
       )
-    }
-
-    leftType := getContextTargetType(ref expression.left)
-    rightType := getContextTargetType(ref expression.right)
-
-    it.context = Context.BinaryExpressionContext{
-      leftType: leftType,
-      rightType: rightType,
     }
 
     if (
@@ -1942,17 +1907,21 @@ export obj AnalyzerFile {
       expression.operator.t == .OpLt ||
       expression.operator.t == .OpLtEq
     ) {
-      return self.tm.get("bool")
-    } elif Type.promotionPossible(leftType, rightType) {
-      return Type.promote(leftType, rightType)
+      Context.set(it, self.tm.get("bool"))
+    } else {
+      Context.set(it, Type.promoteMaybe(leftType, rightType))
     }
 
-    return leftType
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
-  fn _eCall (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eCall (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isCall() {
-      return nil
+      return false
     }
 
     initialErrorsLen := self.analyzer.errors.len
@@ -1978,8 +1947,9 @@ export obj AnalyzerFile {
         self.e(ref expression.callee, withMutableNext: true)
       }
     } else {
+      Context.set(it, self.tm.get("void"))
       self.raise(errors.E1031(calleeType.toString()), expression.callee.start, expression.callee.end)
-      return self.tm.get("void")
+      return true
     }
 
     argumentsLen := expression.arguments.len
@@ -2062,15 +2032,14 @@ export obj AnalyzerFile {
         self.raise(
           errors.E1035(t.toString(), parameterType.toString()),
           argument.expression.start,
-          argument.expression.end
+          argument.expression.end,
         )
       }
 
       contextArguments.push(Context.CallExpressionContextArgument{
         argument: argument,
         parameterIdx: foundParameterIdx,
-        t: t,
-        typeParameter: definiteParameter
+        typeParameter: definiteParameter,
       })
 
       if !isVariadic {
@@ -2092,20 +2061,25 @@ export obj AnalyzerFile {
       }
     }
 
-    it.context = Context.CallExpressionContext{
+    Context.set(it, asynchronous ? calleeType : returnType)
+
+    Context.setExtra(it, Context.CallExpressionContextExtra{
       arguments: contextArguments,
       asynchronous: asynchronous,
       parameters: parameters,
       returnType: returnType,
-      t: calleeType
+    })
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
     }
 
-    return asynchronous ? calleeType : returnType
+    return true
   }
 
-  fn _eClosure (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eClosure (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isClosure() {
-      return nil
+      return false
     }
 
     mut expression := it.asClosure()
@@ -2126,7 +2100,13 @@ export obj AnalyzerFile {
     self.vm.decrease()
     self.tm.decrease()
 
-    return self.tm.createFunction(expression.asynchronous, parameters, returnType)
+    Context.set(it, self.tm.createFunction(expression.asynchronous, parameters, returnType))
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
   fn _eConditional (
@@ -2135,9 +2115,9 @@ export obj AnalyzerFile {
     targetType: (ref Type.Type)?,
     withMutable: bool,
     withMutableNext: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isConditional() {
-      return nil
+      return false
     }
 
     mut expression := it.asConditional()
@@ -2170,38 +2150,36 @@ export obj AnalyzerFile {
 
     self.typeCastMergeIntersecting(consequentDiffTC, alternateDiffTC)
 
-    consequentType := Type.unwrap(guessTypeResult.first, withReference: false)
-    alternateType := Type.unwrap(guessTypeResult.second, withReference: false)
+    consequentType := guessTypeResult.first
+    alternateType := guessTypeResult.second
 
-    it.context = Context.ConditionalExpressionContext{
-      conditionType: conditionType,
-      consequentType: consequentType,
-      alternateType: alternateType
-    }
-
-    if !Type.similarTo(consequentType, alternateType) && !Type.similarTo(alternateType, consequentType) {
+    if !self.operands(.OpQn, consequentType, alternateType) {
       self.raise(
         errors.E1019(consequentType.toString(), alternateType.toString()),
         expression.consequent.start,
-        expression.alternate.end
+        expression.alternate.end,
       )
-    } elif Type.promotionPossible(consequentType, alternateType) {
-      return Type.promote(consequentType, alternateType)
     }
 
-    return consequentType
+    Context.set(it, Type.promoteMaybe(consequentType, alternateType))
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
   fn _eElementAccess (
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)?,
+    noTypeCast: bool,
     withMutable: bool,
     withMutableNext: bool,
-    withoutTypeCast: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isElementAccess() {
-      return nil
+      return false
     }
 
     mut expression := it.asElementAccess()
@@ -2212,39 +2190,38 @@ export obj AnalyzerFile {
       self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
     }
 
-    mut t := self.tm.createReference(self.tm.get("any"))
-
     if expressionType.isArray() {
       arrayType := expressionType.asArray()
-      t = self.tm.createReference(arrayType.elementType)
+      Context.set(it, self.tm.createReference(arrayType.elementType))
     } elif Type.match(expressionType, self.tm.get("str")) {
-      t = self.tm.createReference(self.tm.get("rune"))
+      Context.set(it, self.tm.createReference(self.tm.get("rune")))
     } else {
+      Context.set(it, self.tm.createReference(self.tm.get("any")))
       self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
-    }
-
-    originalContext := Context.ElementAccessExpressionContext{
-      t: t
+      return true
     }
 
     if targetType != nil {
-      if Type.match(targetType, t) {
-        it.context = originalContext
-        return t
+      if Type.match(targetType, Context.initial(it)) {
+        return true
       }
-    } elif withoutTypeCast {
-      it.context = originalContext
-      return t
+    }
+
+    if noTypeCast {
+      return true
     }
 
     code := Parser.stringifyExpression(it)
-    finalType := self.tc.has(code) ? self.tc.get(code) : t
 
-    it.context = Context.ElementAccessExpressionContext{
-      t: finalType
+    if self.tc.has(code) {
+      Context.setTarget(it, self.tc.get(code))
     }
 
-    return finalType
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
   fn _eIs (
@@ -2253,74 +2230,55 @@ export obj AnalyzerFile {
     targetType: (ref Type.Type)?,
     withMutable: bool,
     withMutableNext: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isIs() {
-      return nil
+      return false
     }
 
     mut expression := it.asIs()
     expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
     t := self.t(ref expression.t)
 
-    if !expressionType.canBe(t) {
+    if !Type.match(expressionType, t) && !expressionType.canCastTo(t) {
       self.raise(errors.E1009(
         expressionType.toString(), t.toString()),
         expression.expression.start,
-        expression.expression.end
+        expression.expression.end,
       )
     }
 
-    it.context = Context.IsExpressionContext{
-      leftType: expressionType,
-      rightType: t
+    Context.set(it, self.tm.get("bool"))
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
     }
 
-    return self.tm.get("bool")
+    return true
   }
 
-  fn _eMap (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eMap (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isMap() {
-      return nil
+      return false
     }
 
     mut expression := it.asMap()
-    mut t: (ref Type.Type)?
+    mut keyType: (ref Type.Type)?
+    mut valueType: (ref Type.Type)?
 
     if targetType != nil {
       maybeMapType := Type.unwrap(targetType, withOptional: true)
 
       if maybeMapType.isMap() {
-        t = maybeMapType
+        mapType := maybeMapType.asMap()
+        keyType = Type.opt(mapType.keyType)
+        valueType = Type.opt(mapType.valueType)
       }
     }
 
-    if expression.elements.empty && t == nil {
-      keyType := self.tm.get("any")
-      valueType := self.tm.get("any")
-      result := self.tm.createMap(keyType, valueType)
-      it.context = Context.MapExpressionContext{t: result, keyType: keyType, valueType: valueType}
-
+    if expression.elements.empty && keyType == nil && valueType == nil {
+      Context.set(it, self.tm.createMap(self.tm.get("any"), self.tm.get("any")))
       self.raise(errors.E1016(), it.start, it.end)
-      return result
-    } elif expression.elements.empty {
-      mapType := t.asMap()
-
-      it.context = Context.MapExpressionContext{
-        t: t,
-        keyType: mapType.keyType,
-        valueType: mapType.valueType
-      }
-
-      return t
-    }
-
-    mut keyType: (ref Type.Type)?
-    mut valueType: (ref Type.Type)?
-
-    if t != nil {
-      mapType := t.asMap()
-      keyType = Type.opt(mapType.keyType)
-      valueType = Type.opt(mapType.valueType)
+      return true
     }
 
     keyTypeForced := keyType != nil
@@ -2353,61 +2311,64 @@ export obj AnalyzerFile {
       }
     }
 
-    result := self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type)
-
-    it.context = Context.MapExpressionContext{
-      t: result,
-      keyType: keyType as ref Type.Type,
-      valueType: valueType as ref Type.Type
-    }
-
-    return result
+    Context.set(it, self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type))
+    return true
   }
 
-  fn _eMemberAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eMemberAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isMemberAccess() {
-      return nil
+      return false
     }
 
     mut expression := it.asMemberAccess()
-    mut t: (ref Type.Type)?
+    mut maybeEnumType: (ref Type.Type)?
 
     if targetType != nil {
-      maybeEnumType := Type.unwrap(targetType)
+      possibleEnumType := Type.unwrap(targetType)
 
-      if maybeEnumType.isEnum() {
-        t = maybeEnumType
+      if possibleEnumType.isEnum() {
+        maybeEnumType = Type.opt(possibleEnumType)
       }
     }
 
-    if t == nil {
+    if maybeEnumType == nil {
+      Context.set(it, self.tm.get("any"))
       self.raise(errors.E1020(), it.start, it.end)
-      return self.tm.get("any")
-    } elif !t.hasEnumerator(expression.name.name) {
+      return true
+    }
+
+    enumType := maybeEnumType as ref Type.Type
+    Context.set(it, enumType)
+
+    if !enumType.hasEnumerator(expression.name.name) {
       self.raise(errors.E1021(expression.name.name), it.start, it.end)
     }
 
-    return t as ref Type.Type
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
-  fn _eObject (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eObject (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isObject() {
-      return nil
+      return false
     }
 
     mut expression := it.asObject()
-    t := self.t(ref expression.id)
+    objectType := self.t(ref expression.id)
     propertiesLen := expression.properties.len
     mut propertyNames: str[]
 
     loop i := 0; i < propertiesLen; i++ {
       mut property := expression.properties[i]
 
-      if !t.has(property.name.name) {
-        self.raise(errors.E1002(property.name.name, t.toString()), property.name.start, property.name.end)
+      if !objectType.has(property.name.name) {
+        self.raise(errors.E1002(property.name.name, objectType.toString()), property.name.start, property.name.end)
         self.e(ref property.value)
       } else {
-        p := t.get(property.name.name)
+        p := objectType.get(property.name.name)
         propertyType := self.e(ref property.value, Type.opt(p.t))
 
         if !Type.similarTo(propertyType, p.t) {
@@ -2418,106 +2379,147 @@ export obj AnalyzerFile {
       }
     }
 
-    typePropertiesLen := t.properties.len
+    typePropertiesLen := objectType.properties.len
 
     loop i := 0; i < typePropertiesLen; i++ {
-      property := t.properties[i]
+      property := objectType.properties[i]
 
       if !property.builtin && property.t.isRequired() && !propertyNames.contains(property.name) {
         self.raise(errors.E1041(property.name, property.t.toString()), expression.id.start, expression.id.end)
       }
     }
 
-    return t
+    Context.set(it, objectType)
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
   fn _eParenthesized (
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)?,
-    unwrap: bool,
     withMutable: bool,
     withMutableNext: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isParenthesized() {
-      return nil
+      return false
     }
 
     mut expression := it.asParenthesized()
-    return self.e(ref expression.expression, targetType, unwrap: unwrap, withMutable: withMutable || withMutableNext)
+    expressionType := self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
+    Context.set(it, expressionType)
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
   fn _ePropertyAccess (
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)?,
+    noTypeCast: bool,
     withMutable: bool,
     withMutableNext: bool,
-    withoutTypeCast: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isPropertyAccess() {
-      return nil
+      return false
     }
 
     mut expression := it.asPropertyAccess()
-    t := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
+    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+    t := Type.unwrap(expressionType)
 
     if t.has(expression.name.name) {
+      if !t.has(expression.name.name) {
+        Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
+        self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
+        return true
+      }
+
       property := t.get(expression.name.name)
 
       if withMutable && !property.mutable {
         self.raise(errors.E1012(expression.name.name), it.start, it.end)
       }
 
-      if targetType != nil {
-        if Type.match(targetType, property.t) {
-          return property.t
-        }
-      } elif withoutTypeCast {
-        return property.t
-      }
-
-      code := Parser.stringifyExpression(it)
-      return self.tc.has(code) ? self.tc.get(code) : property.t
+      Context.set(it, property.t)
     } elif t.isEnum() {
+      Context.set(it, t)
+
       if !t.hasEnumerator(expression.name.name) {
         self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
       }
-      return t
+
+      if targetType != nil {
+        Context.tryTarget(it, targetType)
+      }
+
+      return true
     } elif t.isNamespace() {
       namespaceType := t.asNamespace()
+      mut maybeExportVar: Type.Var?
 
       if AnalyzerExport.has(ref namespaceType.members, expression.name.name) {
         member := AnalyzerExport.get(ref namespaceType.members, expression.name.name)
 
         if member.var != nil {
-          if withMutable && !member.var.mutable {
-            self.raise(errors.E1011(expression.name.name), it.start, it.end)
-          }
-
-          if targetType != nil {
-            if Type.match(targetType, member.var.t) {
-              return member.var.t
-            }
-          } elif withoutTypeCast {
-            return member.var.t
-          }
-
-          code := Parser.stringifyExpression(it)
-          return self.tc.has(code) ? self.tc.get(code) : member.var.t
+          maybeExportVar = member.var
         }
       }
 
-      self.raise(
-        errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name),
-        expression.name.start,
-        expression.name.end
-      )
-      return targetType == nil ? self.tm.get("any") : targetType
+      if maybeExportVar == nil {
+        Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
+
+        self.raise(
+          errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name),
+          expression.name.start,
+          expression.name.end,
+        )
+
+        return true
+      }
+
+      exportVar := maybeExportVar as Type.Var
+
+      if withMutable && !exportVar.mutable {
+        self.raise(errors.E1011(expression.name.name), it.start, it.end)
+      }
+
+      Context.set(it, exportVar.t)
+    } else {
+      Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
+      self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
+      return true
     }
 
-    self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
-    return targetType == nil ? self.tm.get("any") : targetType
+    if targetType != nil {
+      if Type.match(targetType, Context.initial(it)) {
+        return true
+      }
+    }
+
+    if noTypeCast {
+      return true
+    }
+
+    code := Parser.stringifyExpression(it)
+
+    if self.tc.has(code) {
+      Context.setTarget(it, self.tc.get(code))
+    }
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
   fn _eReference (
@@ -2526,40 +2528,48 @@ export obj AnalyzerFile {
     targetType: (ref Type.Type)?,
     withMutable: bool,
     withMutableNext: bool,
-  ) (ref Type.Type)? {
+  ) bool {
     if !it.isReference() {
-      return nil
+      return false
     }
 
     mut expression := it.asReference()
-    return self.tm.createReference(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
+    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+    Context.set(it, self.tm.createReference(expressionType))
+
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 
-  fn _eUnary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) (ref Type.Type)? {
+  fn _eUnary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
     if !it.isUnary() {
-      return nil
+      return false
     }
 
     mut expression := it.asUnary()
     mutatingOperator := expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
-    mut potentialTargetType := targetType
+    mut maybeTargetType := targetType
 
-    if potentialTargetType == nil {
+    if maybeTargetType == nil {
+      mut potentialTargetType: (ref Type.Type)?
+
       guardFailed := self.guard(() -> void {
-        initialTC := ref self.tc // TODO: remove after v1
+        ref self.tc; // TODO: remove after v1
         potentialTargetType = Type.unwrap(self.e(ref expression.operand, withMutable: mutatingOperator))
       })
 
-      if guardFailed {
-        potentialTargetType = targetType
+      if !guardFailed {
+        maybeTargetType = potentialTargetType
       }
     }
 
-    operandType := Type.unwrap(
-      self.e(ref expression.operand, potentialTargetType, withMutable: mutatingOperator)
-    )
+    expressionType := self.e(ref expression.operand, maybeTargetType, withMutable: mutatingOperator)
+    operandType := Type.unwrap(expressionType)
 
-    it.context = Context.UnaryExpressionContext{operandType: operandType}
+    Context.set(it, expressionType)
 
     if expression.operator.t == .OpExcl {
       if (
@@ -2570,11 +2580,11 @@ export obj AnalyzerFile {
         self.raise(
           errors.E1025(expression.operator.val, operandType.toString()),
           expression.operator.start,
-          expression.operator.end
+          expression.operator.end,
         )
       }
 
-      return self.tm.get("bool")
+      Context.set(it, self.tm.get("bool"))
     } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
       if !expression.operand.isAccess() {
         self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
@@ -2582,7 +2592,7 @@ export obj AnalyzerFile {
         self.raise(
           errors.E1025(expression.operator.val, operandType.toString()),
           expression.operator.start,
-          expression.operator.end
+          expression.operator.end,
         )
       }
     } elif expression.operator.t == .OpMinus {
@@ -2590,7 +2600,7 @@ export obj AnalyzerFile {
         self.raise(
           errors.E1025(expression.operator.val, operandType.toString()),
           expression.operator.start,
-          expression.operator.end
+          expression.operator.end,
         )
       }
     } elif expression.operator.t == .OpPlus {
@@ -2598,7 +2608,7 @@ export obj AnalyzerFile {
         self.raise(
           errors.E1025(expression.operator.val, operandType.toString()),
           expression.operator.start,
-          expression.operator.end
+          expression.operator.end,
         )
       }
     } elif expression.operator.t == .OpTilde {
@@ -2606,12 +2616,16 @@ export obj AnalyzerFile {
         self.raise(
           errors.E1025(expression.operator.val, operandType.toString()),
           expression.operator.start,
-          expression.operator.end
+          expression.operator.end,
         )
       }
     }
 
-    return operandType
+    if targetType != nil {
+      Context.tryTarget(it, targetType)
+    }
+
+    return true
   }
 }
 
