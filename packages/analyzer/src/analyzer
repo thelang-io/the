@@ -442,6 +442,10 @@ export obj AnalyzerFile {
       self._eReference(it, targetType, withMutable, withMutableNext) ||
       self._eUnary(it, targetType)
     ) {
+      if !noTypeCast && targetType != nil {
+        Context.tryTarget(it, targetType)
+      }
+
       return Context.target(it)
     }
 
@@ -1586,10 +1590,6 @@ export obj AnalyzerFile {
       Context.setTarget(it, self.tc.get(code))
     }
 
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -1690,11 +1690,6 @@ export obj AnalyzerFile {
     }
 
     Context.set(it, initialTypeMaybe as ref Type.Type)
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -1764,13 +1759,7 @@ export obj AnalyzerFile {
       self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
     }
 
-    Context.set(it, expressionType)
-    Context.setTarget(it, t)
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
+    Context.set(it, t)
     return true
   }
 
@@ -1804,18 +1793,14 @@ export obj AnalyzerFile {
       self.raise(errors.E1010(), expression.left.start, expression.left.end)
     }
 
-    if !Type.match(leftType, rightType) {
+    initialRightType := Context.initial(ref expression.right)
+
+    if !Type.match(leftType, initialRightType) {
       code := Parser.stringifyExpression(expression.left)
-      self.tc.set(code, rightType)
+      self.tc.set(code, initialRightType)
     }
 
-    Context.set(it, guessTypeResult.first)
-    Context.setTarget(it, rightType)
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
+    Context.set(it, initialRightType)
     return true
   }
 
@@ -1845,11 +1830,6 @@ export obj AnalyzerFile {
     }
 
     Context.set(it, t.returnType)
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -1910,10 +1890,6 @@ export obj AnalyzerFile {
       Context.set(it, self.tm.get("bool"))
     } else {
       Context.set(it, Type.promoteMaybe(leftType, rightType))
-    }
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
     }
 
     return true
@@ -2070,10 +2046,6 @@ export obj AnalyzerFile {
       returnType: returnType,
     })
 
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2101,11 +2073,6 @@ export obj AnalyzerFile {
     self.tm.decrease()
 
     Context.set(it, self.tm.createFunction(expression.asynchronous, parameters, returnType))
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2162,11 +2129,6 @@ export obj AnalyzerFile {
     }
 
     Context.set(it, Type.promoteMaybe(consequentType, alternateType))
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2217,10 +2179,6 @@ export obj AnalyzerFile {
       Context.setTarget(it, self.tc.get(code))
     }
 
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2248,11 +2206,6 @@ export obj AnalyzerFile {
     }
 
     Context.set(it, self.tm.get("bool"))
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2344,10 +2297,6 @@ export obj AnalyzerFile {
       self.raise(errors.E1021(expression.name.name), it.start, it.end)
     }
 
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2390,11 +2339,6 @@ export obj AnalyzerFile {
     }
 
     Context.set(it, objectType)
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2410,12 +2354,10 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asParenthesized()
-    expressionType := self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
-    Context.set(it, expressionType)
+    self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
 
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
+    Context.set(it, Context.initial(ref expression.expression))
+    Context.setTarget(it, Context.target(ref expression.expression))
 
     return true
   }
@@ -2455,10 +2397,6 @@ export obj AnalyzerFile {
 
       if !t.hasEnumerator(expression.name.name) {
         self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
-      }
-
-      if targetType != nil {
-        Context.tryTarget(it, targetType)
       }
 
       return true
@@ -2515,10 +2453,6 @@ export obj AnalyzerFile {
       Context.setTarget(it, self.tc.get(code))
     }
 
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2537,10 +2471,6 @@ export obj AnalyzerFile {
     expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
     Context.set(it, self.tm.createReference(expressionType))
 
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
-    }
-
     return true
   }
 
@@ -2551,9 +2481,10 @@ export obj AnalyzerFile {
 
     mut expression := it.asUnary()
     mutatingOperator := expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
-    mut maybeTargetType := targetType
+    mut possibleTargetType := targetType
 
-    if maybeTargetType == nil {
+    if possibleTargetType == nil {
+      // TODO: is this really needed?
       mut potentialTargetType: (ref Type.Type)?
 
       guardFailed := self.guard(() -> void {
@@ -2562,14 +2493,26 @@ export obj AnalyzerFile {
       })
 
       if !guardFailed {
-        maybeTargetType = potentialTargetType
+        possibleTargetType = potentialTargetType
+      }
+    }
+
+    mut maybeTargetType: (ref Type.Type)?
+
+    if possibleTargetType != nil {
+      if (
+        Type.match(possibleTargetType, self.tm.get("bool")) ||
+        Type.match(possibleTargetType, self.tm.get("byte")) ||
+        possibleTargetType.isNumber()
+      ) {
+        maybeTargetType = Type.opt(possibleTargetType)
       }
     }
 
     expressionType := self.e(ref expression.operand, maybeTargetType, withMutable: mutatingOperator)
     operandType := Type.unwrap(expressionType)
 
-    Context.set(it, expressionType)
+    Context.set(it, operandType)
 
     if expression.operator.t == .OpExcl {
       if (
@@ -2619,10 +2562,6 @@ export obj AnalyzerFile {
           expression.operator.end,
         )
       }
-    }
-
-    if targetType != nil {
-      Context.tryTarget(it, targetType)
     }
 
     return true

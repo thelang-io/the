@@ -7,8 +7,6 @@ import * as Parser from "the/parser"
 import Analyzer, AnalyzerFile from "../src/analyzer"
 import analyzerPrint from "../src/analyzer-print"
 
-import Tests, EXPECT_EQ from "the/testing" // TODO: delete when done testing
-
 export obj TypeCastingFileResult {
   in: str
   out: str
@@ -48,10 +46,4 @@ export fn TEST_Analyzer_typeCasting () {
     banner := filePath.slice(0, -4) + os_EOL
     EXPECT_EQ(banner + result.out, banner + out)
   }
-}
-
-main {
-  mut tests := Tests{}
-  tests.register("Analyzer.typeCasting", TEST_Analyzer_typeCasting)
-  tests.run(process_args)
 }
