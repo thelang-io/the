@@ -1283,6 +1283,7 @@ export obj AnalyzerFile {
     throw error_NewError("Tried analyzing unknown type")
   }
 
+  // TODO: test type casting within statements/branches
   fn typeCast (mut self: ref Self, it: ref Parser.Expression, root := true) TypeCastResult {
     initialTC := self.tc
     mut consequent: (ref Type.Type)[str]
@@ -1315,63 +1316,63 @@ export obj AnalyzerFile {
       expression := it.asAwait()
       self.typeCast(ref expression.expression, false)
     } elif it.isBinary() {
-      // TODO: test and optimize
       expression := it.asBinary()
 
       if expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
         leftTypeCastResult := self.typeCast(ref expression.left, false)
-        afterLeftTC := self.tc
 
         if expression.operator.t == .OpAmpAmp {
           self.tc.merge(leftTypeCastResult.consequent)
+        } else {
+          self.tc.merge(leftTypeCastResult.alternate)
         }
 
         rightTypeCastResult := self.typeCast(ref expression.right, false)
-        rightDiffTC := self.typeCastExclude(afterLeftTC)
-        self.tc = afterLeftTC
-        self.tc.merge(rightDiffTC)
 
         if expression.operator.t == .OpAmpAmp {
           consequent.merge(leftTypeCastResult.consequent)
           consequent.merge(rightTypeCastResult.consequent)
+          alternate.merge(leftTypeCastResult.alternate)
+          alternate.merge(rightTypeCastResult.alternate)
+
+          leftTCAlternateKeys := leftTypeCastResult.alternate.keys
+
+          loop i := 0; i < leftTCAlternateKeys.len; i++ {
+            name := leftTCAlternateKeys[i]
+
+            if !rightTypeCastResult.alternate.has(name) {
+              continue
+            }
+
+            t1 := leftTypeCastResult.alternate.get(name)
+            t2 := rightTypeCastResult.alternate.get(name)
+
+            if !Type.match(t1, t2) {
+              alternate.set(name, self.tm.unionAdd(t1, t2))
+            }
+          }
         } else {
-          rightTypeCastConsequentKeys := rightTypeCastResult.consequent.keys
+          leftTCConsequentKeys := leftTypeCastResult.consequent.keys
 
-          loop i := 0; i < rightTypeCastConsequentKeys.len; i++ {
-            name := rightTypeCastConsequentKeys[i]
+          loop i := 0; i < leftTCConsequentKeys.len; i++ {
+            name := leftTCConsequentKeys[i]
 
-            if !leftTypeCastResult.consequent.has(name) {
+            if !rightTypeCastResult.consequent.has(name) {
               continue
             }
 
             t1 := leftTypeCastResult.consequent.get(name)
             t2 := rightTypeCastResult.consequent.get(name)
 
-            if !Type.match(t1, t2) {
-              consequent.set(name, self.tm.createUnion([t1, t2]))
+            if Type.match(t1, t2) {
+              consequent.set(name, t1)
             } else {
-              consequent.set(name, t2)
+              consequent.set(name, self.tm.unionAdd(t1, t2))
             }
           }
-        }
 
-        rightTypeCastAlternateKeys := rightTypeCastResult.alternate.keys
-
-        loop i := 0; i < rightTypeCastAlternateKeys.len; i++ {
-          name := rightTypeCastAlternateKeys[i]
-
-          if !leftTypeCastResult.alternate.has(name) {
-            continue
-          }
-
-          t1 := leftTypeCastResult.alternate.get(name)
-          t2 := rightTypeCastResult.alternate.get(name)
-
-          if !Type.match(t1, t2) {
-            continue
-          }
-
-          alternate.set(name, t2)
+          alternate.merge(leftTypeCastResult.alternate)
+          alternate.merge(rightTypeCastResult.alternate)
         }
       } elif (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) && (
         (hasAccessExpression(ref expression.left) && expression.right.isNilLiteral()) ||
@@ -1439,6 +1440,13 @@ export obj AnalyzerFile {
 
           if Type.match(existingType, t) {
             alternate.set(code, self.tm.get("never"))
+          } elif existingType.canCastTo(t) {
+            // TODO: test
+            consequent.set(code, t)
+
+            if expressionType.isUnion() {
+              alternate.set(code, self.tm.unionSub(expressionType, t))
+            }
           } else {
             consequent.set(code, self.tm.get("never"))
             alternate.set(code, existingType)
@@ -1494,11 +1502,10 @@ export obj AnalyzerFile {
 
     return TypeCastResult{
       consequent: consequent,
-      alternate: alternate
+      alternate: alternate,
     }
   }
 
-  // todo test
   fn typeCastExclude (mut self: ref Self, tc: (ref Type.Type)[str]) (ref Type.Type)[str] {
     keys := self.tc.keys
     mut result: (ref Type.Type)[str]
@@ -1521,7 +1528,6 @@ export obj AnalyzerFile {
     return result
   }
 
-  // todo test
   fn typeCastMergeIntersecting (
     mut self: ref Self,
     result1: (ref Type.Type)[str],
@@ -2480,36 +2486,20 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asUnary()
-    mutatingOperator := expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
-    mut possibleTargetType := targetType
-
-    if possibleTargetType == nil {
-      // TODO: is this really needed?
-      mut potentialTargetType: (ref Type.Type)?
-
-      guardFailed := self.guard(() -> void {
-        ref self.tc; // TODO: remove after v1
-        potentialTargetType = Type.unwrap(self.e(ref expression.operand, withMutable: mutatingOperator))
-      })
-
-      if !guardFailed {
-        possibleTargetType = potentialTargetType
-      }
-    }
-
+    mutating := expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
     mut maybeTargetType: (ref Type.Type)?
 
-    if possibleTargetType != nil {
+    if targetType != nil {
       if (
-        Type.match(possibleTargetType, self.tm.get("bool")) ||
-        Type.match(possibleTargetType, self.tm.get("byte")) ||
-        possibleTargetType.isNumber()
+        Type.match(targetType, self.tm.get("bool")) ||
+        Type.match(targetType, self.tm.get("byte")) ||
+        targetType.isNumber()
       ) {
-        maybeTargetType = Type.opt(possibleTargetType)
+        maybeTargetType = Type.opt(targetType)
       }
     }
 
-    expressionType := self.e(ref expression.operand, maybeTargetType, withMutable: mutatingOperator)
+    expressionType := self.e(ref expression.operand, maybeTargetType, withMutable: mutating)
     operandType := Type.unwrap(expressionType)
 
     Context.set(it, operandType)

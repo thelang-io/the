@@ -456,24 +456,51 @@ export obj TypeMap {
   }
 
   fn unionAdd (mut self: ref Self, a: ref Type.Type, b: ref Type.Type) ref Type.Type {
-    if !a.isUnion() {
-      return self.createUnion([a, b])
+    if a.isUnion() {
+      t := a.asUnion()
+      types := t.types
+      types.push(b)
+      return self.createUnion(types)
     }
 
-    t := a.asUnion()
-    types := t.types
-    types.push(b)
-    return self.createUnion(types)
+    if b.isUnion() {
+      // TODO: test
+      t := b.asUnion()
+      types := t.types
+      types.push(a)
+      return self.createUnion(types)
+    }
+
+    return self.createUnion([a, b])
   }
 
   fn unionSub (mut self: ref Self, a: ref Type.Type, b: ref Type.Type) ref Type.Type {
     t := a.asUnion()
     mut types := t.types
 
-    loop i := types.len - 1; i >= 0; i-- {
-      if Type.match(types[i] as ref Type.Type, b) {
-        types.remove(i)
+    if b.isUnion() {
+      // TODO: test
+      search := b.asUnion()
+
+      loop i := search.types.len - 1; i >= 0; i-- {
+        loop j := types.len - 1; j >= 0; j-- {
+          if Type.match(types[j] as ref Type.Type, search.types[i] as ref Type.Type) {
+            types.remove(j)
+            break
+          }
+        }
       }
+    } else {
+      loop i := types.len - 1; i >= 0; i-- {
+        if Type.match(types[i] as ref Type.Type, b) {
+          types.remove(i)
+        }
+      }
+    }
+
+    if types.len == 0 {
+      // TODO: test
+      return self.get("never")
     }
 
     if types.len == 1 {
