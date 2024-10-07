@@ -1,0 +1,159 @@
+main {
+  mut a1: int | str
+
+  if a1 is str {
+    p := a1 + "test"
+    a1 = 4
+  }
+
+  b1 := a1 + 4
+
+  mut a2: int | str
+
+  if a2 is str {
+    p := a2 + "test"
+    return
+  }
+
+  b2 := a2 + 4
+
+  mut a3: int | str
+
+  if a3 is int {
+    p := a3 + 3
+  } else {
+    return
+  }
+
+  b3 := a3 + 3
+
+  mut a4: int | str
+
+  if a4 is int {
+    return
+  } else {
+    p := a4 + "test"
+  }
+
+  b4 := a4 + "test"
+
+  mut a5: int | str
+  mut a6: int | str
+
+  if a5 is int {
+    a6 = 10
+  } else {
+    a6 = 20
+  }
+
+  b6 := a6 + 30
+
+  e: bool | int | str | rune
+
+  if e is int {
+    p := e + 3
+  } else if e is bool {
+    p := e == true
+  } elif e is rune {
+    p := e == 'b'
+  } else {
+    p := e + "test"
+  }
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a1 mutable=true constant=false type=int | str)
+  IfStatement()
+    IsExpression(initial=bool)
+      Identifier(initial=int | str name=a1)
+    VariableDeclaration(name=p mutable=false constant=false)
+      BinaryExpression(initial=str operator=+)
+        Identifier(initial=int | str target=str name=a1)
+        StringLiteral(initial=str value=test)
+    AssignmentExpression(initial=int operator==)
+      Identifier(initial=int | str name=a1)
+      IntegerLiteral(initial=int target=int | str value=4)
+  VariableDeclaration(name=b1 mutable=false constant=false)
+    BinaryExpression(initial=int operator=+)
+      Identifier(initial=int | str target=int name=a1)
+      IntegerLiteral(initial=int value=4)
+  VariableDeclaration(name=a2 mutable=true constant=false type=int | str)
+  IfStatement()
+    IsExpression(initial=bool)
+      Identifier(initial=int | str name=a2)
+    VariableDeclaration(name=p mutable=false constant=false)
+      BinaryExpression(initial=str operator=+)
+        Identifier(initial=int | str target=str name=a2)
+        StringLiteral(initial=str value=test)
+    ReturnStatement()
+  VariableDeclaration(name=b2 mutable=false constant=false)
+    BinaryExpression(initial=int operator=+)
+      Identifier(initial=int | str target=int name=a2)
+      IntegerLiteral(initial=int value=4)
+  VariableDeclaration(name=a3 mutable=true constant=false type=int | str)
+  IfStatement()
+    IsExpression(initial=bool)
+      Identifier(initial=int | str name=a3)
+    VariableDeclaration(name=p mutable=false constant=false)
+      BinaryExpression(initial=int operator=+)
+        Identifier(initial=int | str target=int name=a3)
+        IntegerLiteral(initial=int value=3)
+    ReturnStatement()
+  VariableDeclaration(name=b3 mutable=false constant=false)
+    BinaryExpression(initial=int operator=+)
+      Identifier(initial=int | str target=int name=a3)
+      IntegerLiteral(initial=int value=3)
+  VariableDeclaration(name=a4 mutable=true constant=false type=int | str)
+  IfStatement()
+    IsExpression(initial=bool)
+      Identifier(initial=int | str name=a4)
+    ReturnStatement()
+    VariableDeclaration(name=p mutable=false constant=false)
+      BinaryExpression(initial=str operator=+)
+        Identifier(initial=int | str target=str name=a4)
+        StringLiteral(initial=str value=test)
+  VariableDeclaration(name=b4 mutable=false constant=false)
+    BinaryExpression(initial=str operator=+)
+      Identifier(initial=int | str target=str name=a4)
+      StringLiteral(initial=str value=test)
+  VariableDeclaration(name=a5 mutable=true constant=false type=int | str)
+  VariableDeclaration(name=a6 mutable=true constant=false type=int | str)
+  IfStatement()
+    IsExpression(initial=bool)
+      Identifier(initial=int | str name=a5)
+    AssignmentExpression(initial=int operator==)
+      Identifier(initial=int | str name=a6)
+      IntegerLiteral(initial=int target=int | str value=10)
+    AssignmentExpression(initial=int operator==)
+      Identifier(initial=int | str name=a6)
+      IntegerLiteral(initial=int target=int | str value=20)
+  VariableDeclaration(name=b6 mutable=false constant=false)
+    BinaryExpression(initial=int operator=+)
+      Identifier(initial=int | str target=int name=a6)
+      IntegerLiteral(initial=int value=30)
+  VariableDeclaration(name=e mutable=false constant=false type=bool | int | str | rune)
+  IfStatement()
+    IsExpression(initial=bool)
+      Identifier(initial=bool | int | str | rune name=e)
+    VariableDeclaration(name=p mutable=false constant=false)
+      BinaryExpression(initial=int operator=+)
+        Identifier(initial=bool | int | str | rune target=int name=e)
+        IntegerLiteral(initial=int value=3)
+    IfStatement()
+      IsExpression(initial=bool)
+        Identifier(initial=bool | int | str | rune target=bool | str | rune name=e)
+      VariableDeclaration(name=p mutable=false constant=false)
+        BinaryExpression(initial=bool operator===)
+          Identifier(initial=bool | int | str | rune target=bool name=e)
+          BooleanLiteral(initial=bool value=true)
+      IfStatement()
+        IsExpression(initial=bool)
+          Identifier(initial=bool | int | str | rune target=str | rune name=e)
+        VariableDeclaration(name=p mutable=false constant=false)
+          BinaryExpression(initial=bool operator===)
+            Identifier(initial=bool | int | str | rune target=rune name=e)
+            CharacterLiteral(initial=rune value=b)
+        VariableDeclaration(name=p mutable=false constant=false)
+          BinaryExpression(initial=str operator=+)
+            Identifier(initial=bool | int | str | rune target=str name=e)
+            StringLiteral(initial=str value=test)

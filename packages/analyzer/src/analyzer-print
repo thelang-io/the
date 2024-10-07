@@ -388,6 +388,8 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
   } elif expression.isIs() {
     isExpression := expression.asIs()
     name = "IsExpression"
+    // TODO: type attribute
+    // attributes += " is=" + Parser.stringifyType(asExpression.t)
     result += analyzerPrintExpression(ref isExpression.expression, indent + 2)
   } elif expression.isMap() {
     map := expression.asMap()

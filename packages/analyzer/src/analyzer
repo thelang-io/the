@@ -2378,24 +2378,38 @@ export obj AnalyzerFile {
     }
 
     self.tc.merge(typeCastResult.consequent)
+    beforeConsequentTC := self.tc
     self.statement(ref statement.consequent)
     afterConsequentTC := self.tc
+    consequentDiffTC := self.typeCastExclude(beforeConsequentTC)
     self.tc = initialTC
-    self.tc.merge(typeCastResult.alternate)
 
-    if statement.alternate != nil {
-      self.statement(ref statement.alternate)
-
-      if statement.alternate.isDeadEnd() && !statement.consequent.isDeadEnd() {
-        self.tc = afterConsequentTC
-      } elif statement.alternate.isDeadEnd() || !statement.consequent.isDeadEnd() {
-        self.tc = initialTC
+    if statement.alternate == nil {
+      if statement.consequent.isDeadEnd() {
+        self.tc.merge(typeCastResult.alternate)
+      } else {
+        self.typeCastMergeIntersecting(typeCastResult.alternate, consequentDiffTC)
       }
-    } elif !statement.consequent.isDeadEnd() {
-      self.tc = initialTC
+
+      return true
     }
 
-    // TODO: find intersection tc and apply to global tc
+    alternate := ref (statement.alternate as Parser.Statement)
+
+    self.tc.merge(typeCastResult.alternate)
+    beforeAlternateTC := self.tc
+    self.statement(alternate)
+    afterAlternateTC := self.tc
+    alternateDiffTC := self.typeCastExclude(beforeAlternateTC)
+    self.tc = initialTC
+
+    if alternate.isDeadEnd() && !statement.consequent.isDeadEnd() {
+      self.tc = afterConsequentTC
+    } elif !alternate.isDeadEnd() && statement.consequent.isDeadEnd() {
+      self.tc = afterAlternateTC
+    } elif !alternate.isDeadEnd() && !statement.consequent.isDeadEnd() {
+      self.typeCastMergeIntersecting(consequentDiffTC, alternateDiffTC)
+    }
 
     return true
   }
@@ -2437,28 +2451,20 @@ export obj AnalyzerFile {
     }
 
     if statement.condition != nil {
-      typeCastResult := self.typeCast(ref statement.condition)
       conditionType := Type.unwrap(self.e(ref statement.condition, Type.opt(self.tm.get("bool"))))
 
       if !Type.match(self.tm.get("bool"), conditionType) {
         self.raise(errors.E1060(conditionType.toString()), statement.condition.start, statement.condition.end)
       }
-
-      self.tc.merge(typeCastResult.consequent)
     }
 
     if statement.update != nil {
       self.e(ref statement.update)
     }
 
-    self.tc = initialTC
-
     self.statement(ref statement.body)
     self.vm.decrease()
     self.tm.decrease()
-
-    self.tc = initialTC
-    // TODO: find intersection tc and apply to global tc
 
     return true
   }
