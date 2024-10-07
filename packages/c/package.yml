@@ -1,0 +1,8 @@
+name: the/c
+version: 0.1.0
+description: C programming language parser
+license: MIT
+main: src/main
+
+packages:
+  the/testing: 0.4.0

@@ -1,0 +1,39 @@
+main {
+  mut a: int | str
+  b: int | str
+
+  c := (a is int) ? a : 2
+  d := ((a = 10) is int) ? a : 3
+  e := ((a = b) is int) ? 4 : a
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=int | str)
+  VariableDeclaration(name=b mutable=false constant=false type=int | str)
+  VariableDeclaration(name=c mutable=false constant=false)
+    ConditionalExpression(type=int)
+      ParenthesizedExpression(type=bool)
+        IsExpression(type=bool)
+          Identifier(type=int | str name=a)
+      Identifier(type=int target=int name=a)
+      IntegerLiteral(type=int target=int value=2)
+  VariableDeclaration(name=d mutable=false constant=false)
+    ConditionalExpression(type=int)
+      ParenthesizedExpression(type=bool)
+        IsExpression(type=bool)
+          ParenthesizedExpression(type=int)
+            AssignmentExpression(type=int operator==)
+              Identifier(type=int | str target=int | str name=a)
+              IntegerLiteral(type=int target=int | str value=10)
+      Identifier(type=int target=int name=a)
+      IntegerLiteral(type=int target=int value=3)
+  VariableDeclaration(name=e mutable=false constant=false)
+    ConditionalExpression(type=int | str)
+      ParenthesizedExpression(type=bool)
+        IsExpression(type=bool)
+          ParenthesizedExpression(type=int | str)
+            AssignmentExpression(type=int | str operator==)
+              Identifier(type=int | str target=int | str name=a)
+              Identifier(type=int | str target=int | str name=b)
+      IntegerLiteral(type=int target=int | str value=4)
+      Identifier(type=int | str target=int | str name=a)

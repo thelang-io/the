@@ -41,7 +41,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_nodeVarDeclInit (const CodegenTypeInfo
 
     for (const auto &typeField : typeInfo.type->fields) {
       if (!typeField.builtin && !typeField.type->isMethod()) {
-        cArgs.push_back(this->_exprObjDefaultField(this->_typeInfo(typeField.type)));
+        cArgs.push_back(this->_exprObjDefaultField(typeField.name, this->_typeInfo(typeField.type)));
       }
     }
 

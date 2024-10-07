@@ -1,0 +1,55 @@
+main {
+  mut a := 1
+  mut b := 2
+
+  mut ref1 := ref a
+
+  ref1 += 1
+  ref1 = ref b
+  ref1 += 2
+
+  v01 := a + ref1
+  v02 := ref1 > b
+  v03 := ref1 + b
+  v04 := ref1 == b
+  v05 := ref1 - ref1
+  v06 := true ? a : ref1
+  v07 := false ? ref1 : b
+  v08 := false ? ref a : ref1
+  v09 := ~ref1
+  v10 := !(ref a)
+}
+===== code =====
+#include <d4/reference.h>
+#include <stdbool.h>
+#include <stdint.h>
+D4_REFERENCE_DECLARE(int, int32_t)
+int main (void) {
+  int32_t v01_0;
+  bool v02_0;
+  int32_t v03_0;
+  bool v04_0;
+  int32_t v05_0;
+  int32_t v06_0;
+  int32_t v07_0;
+  d4_ref_int_t v08_0;
+  int32_t v09_0;
+  bool v10_0;
+  int32_t a_0 = 1;
+  int32_t b_0 = 2;
+  d4_ref_int_t ref1_0 = &a_0;
+  *ref1_0 += 1;
+  ref1_0 = &b_0;
+  *ref1_0 += 2;
+  v01_0 = a_0 + *ref1_0;
+  v02_0 = *ref1_0 > b_0;
+  v03_0 = *ref1_0 + b_0;
+  v04_0 = *ref1_0 == b_0;
+  v05_0 = *ref1_0 - *ref1_0;
+  v06_0 = true ? a_0 : *ref1_0;
+  v07_0 = false ? *ref1_0 : b_0;
+  v08_0 = false ? &a_0 : ref1_0;
+  v09_0 = ~*ref1_0;
+  v10_0 = !(*&a_0);
+}
+===== output =====

@@ -1,0 +1,13 @@
+main {
+  a := (1 + 2) / 3
+  b := 2 * (3 + 5) / 4
+  c := 4 * (3 + 5)
+}
+===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t a_0 = (1 + 2) / 3;
+  int32_t b_0 = 2 * (3 + 5) / 4;
+  int32_t c_0 = 4 * (3 + 5);
+}
+===== output =====

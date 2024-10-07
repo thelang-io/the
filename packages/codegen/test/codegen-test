@@ -1,0 +1,231 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Analyzer from "the/analyzer"
+import * as Parser from "the/parser"
+import Codegen from "../src/codegen"
+
+import Tests, EXPECT_EQ from "the/testing" // TODO: delete when done testing
+
+obj TestFileSections {
+  mut input: str
+  mut code: str
+  mut output: str
+}
+
+fn matchRegex (input: str, regex: str) int {
+  regexLen := regex.len
+  mut regexArr: char[]
+
+  loop i := 0; i < regexLen; i++ {
+    regexArr.push(regex[i])
+  }
+
+  inputLen := input.len
+  mut result := 0
+
+  if input.empty {
+    return 0
+  }
+
+  loop i := 0; i < regexLen && result < inputLen; i++ {
+    if regexArr[i] == '\\' && i != regexLen - 1 && i != inputLen - 1 {
+      nextTk := regexArr[i + 1]
+
+      if nextTk == 's' {
+        if input[result].isWhitespace {
+          result += 1
+          i += 1
+        } else {
+          break
+        }
+      } else {
+        throw error_NewError("Invalid regex '" + regex + "'")
+      }
+    } else {
+      throw error_NewError("Invalid regex '" + regex + "'")
+    }
+  }
+
+  return result
+}
+
+fn applyRegexTemplate (pattern: str, source: str) str {
+  sourceLen := source.len
+  mut templatePos := 0
+  mut sourcePos := 0
+  mut result := ""
+
+  loop {
+    patternSlice := pattern.slice(templatePos)
+    templateStart := patternSlice.find("{{")
+
+    if templateStart == -1 {
+      result += patternSlice
+      break
+    }
+
+    templateSlice := patternSlice.slice(templateStart)
+    templateEnd := templateSlice.find("}}")
+
+    if templateEnd == -1 {
+      result += patternSlice
+      break
+    }
+
+    beforeTemplate := patternSlice.slice(0, templateStart)
+    template := templateSlice.slice(2, templateEnd).trim()
+    result += beforeTemplate
+    templatePos += templateStart + templateEnd + 2
+    sourcePos += templateStart
+
+    matchLength := matchRegex(source.slice(sourcePos), template)
+    result += source.slice(sourcePos, sourcePos + matchLength)
+    sourcePos += matchLength
+  }
+
+  return result
+}
+
+fn retrieveFileSections (path: str) TestFileSections {
+  content := fs_readFileSync(path).str()
+  lines := content.lines(keepLineBreaks: true)
+  l := lines.len
+
+  mut result := TestFileSections{}
+  mut propertyId := 0
+
+  loop i := 0; i < l; i++ {
+    line := lines[i]
+
+    if "=====" == line.slice(0, 5) {
+      propertyName := line.trim().slice(6, -6)
+
+      if "code" == propertyName {
+        propertyId = 1
+      } elif "output" == propertyName {
+        propertyId = 2
+      }
+
+      continue
+    }
+
+    if 0 == propertyId {
+      result.input += line
+    } elif 1 == propertyId {
+      result.code += line
+    } elif 2 == propertyId {
+      result.output += line
+    }
+  }
+
+  return result
+}
+
+fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
+  EXPECT_EQ(test + os_EOL + a, test + os_EOL + b)
+}
+
+fn TEST_EXPECT_REGEX (test: str, a: str, b: str) {
+  EXPECT_EQ(test + os_EOL + a, test + os_EOL + applyRegexTemplate(b, a))
+}
+
+export fn TEST_Codegen () {
+  allFiles := fs_scandirSync("./test/codegen")
+  mut files := allFiles
+
+  if !fs_existsSync("./build") {
+    fs_mkdirSync("./build")
+  }
+
+  mut containsOnly := false
+
+  loop i := 0; i < allFiles.len; i++ {
+    file := allFiles[i] as str
+
+    if file.slice(0, 5) == "only-" {
+      if !containsOnly {
+        files = []
+      }
+
+      files.push(file)
+      containsOnly = true
+    }
+  }
+
+  loop i := 0; i < files.len; i++ {
+    name := files[i].slice(0, -4)
+    fileSections := retrieveFileSections("./test/codegen/" + name + ".txt")
+    executablePath := "./build/" + name + ".out"
+    codePath := "./build/" + name + ".c"
+    print(name)
+
+    mut analyzer := Analyzer.Analyzer{}
+
+    analyzer.files.push(Analyzer.AnalyzerFile{
+      cwd: process_cwd(),
+      analyzer: ref analyzer,
+      f: Parser.parse(fileSections.input),
+    })
+
+    mut file := analyzer.files.last()
+    Parser.interconnect(ref file.f)
+    file.reader = Parser.Reader_init(file.f.content)
+    file.init()
+    file.analyze(ref file.f.program.body)
+
+    if !analyzer.errors.empty {
+      TEST_EXPECT_EQ(name, analyzer.errors.join(os_EOL), "")
+      continue
+    }
+
+    mut generator := Codegen{analyzer: ref analyzer}
+    generator.init()
+    generator.generate()
+
+    generatedCode := generator.stringify()
+
+    if fileSections.code != generatedCode {
+      TEST_EXPECT_EQ(name, fileSections.code, generatedCode)
+      continue
+    }
+
+    fs_writeFileSync(codePath, generatedCode.toBuffer())
+    mut errorMessage := ""
+
+    try {
+      process_runSync("clang '" + codePath + "' -o '" + executablePath + "'" + generator.getFlags())
+    } catch err: error_Error {
+      errorMessage = err.message
+    }
+
+    fs_rmSync(codePath)
+
+    if !errorMessage.empty {
+      TEST_EXPECT_EQ(name, errorMessage, "")
+      continue
+    }
+
+    mut actualOutput := ""
+
+    try {
+      actualOutput = process_runSync(executablePath).str()
+    } catch err: error_Error {
+      actualOutput = err.message
+    }
+
+    fs_rmSync(executablePath)
+
+    if actualOutput != fileSections.output {
+      TEST_EXPECT_REGEX(name, actualOutput, fileSections.output)
+    }
+  }
+}
+
+main {
+  mut tests := Tests{}
+  tests.register("Codegen", TEST_Codegen)
+  tests.run(process_args)
+}

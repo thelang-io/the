@@ -1,0 +1,10 @@
+main {
+  'a';
+  '\n';
+}
+===== code =====
+int main (void) {
+  L'a';
+  L'\n';
+}
+===== output =====

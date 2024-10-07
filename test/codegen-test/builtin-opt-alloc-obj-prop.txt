@@ -1,0 +1,610 @@
+======= stdin =======
+export obj Type {
+  mut name: str
+}
+
+export obj Var {
+  mut t: ref Type
+}
+
+export obj Analyzer {
+  mut vm: Var[int]
+
+  fn id (mut self: ref Self, val: int) (ref Type)? {
+    if !self.vm.has(val) {
+      return nil
+    }
+
+    v := self.vm.get(val)
+    return v.t
+  }
+}
+
+main {
+  t1 := Type{name: "str"}
+  mut analyzer := Analyzer{}
+  analyzer.vm.set(0, Var{t: ref t1})
+  print("0", analyzer.id(0))
+  print("1", analyzer.id(1))
+}
+======= code =======
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) || defined(__WIN32__)
+  #define THE_OS_WINDOWS
+  #define THE_EOL "\r\n"
+  #define THE_PATH_SEP "\\"
+#else
+  #if defined(__APPLE__)
+    #define THE_OS_MACOS
+  #elif defined(__linux__)
+    #define THE_OS_LINUX
+  #endif
+  #define THE_EOL "\n"
+  #define THE_PATH_SEP "/"
+#endif
+
+#include <inttypes.h>
+#include <setjmp.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_error_Error 1
+
+typedef struct err_buf {
+  jmp_buf buf;
+  struct err_buf *next;
+  struct err_buf *prev;
+} err_buf_t;
+typedef struct err_stack {
+  const char *file;
+  const char *name;
+  int line;
+  int col;
+  struct err_stack *next;
+  struct err_stack *prev;
+} err_stack_t;
+typedef struct {
+  int id;
+  void *ctx;
+  err_buf_t *buf_first;
+  err_buf_t *buf_last;
+  err_stack_t *stack_first;
+  err_stack_t *stack_last;
+  void (*_free) (void *);
+} err_state_t;
+struct str {
+  char *d;
+  size_t l;
+};
+
+struct error_Error;
+struct __THE_1_test_Type_0;
+struct __THE_1_test_Var_0;
+struct __THE_1_pair_intMStest_Var_0ME;
+struct __THE_1_map_intMStest_Var_0ME;
+struct __THE_1_test_Analyzer_0;
+struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FE;
+struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FEP;
+
+struct error_Error {
+  const struct str __THE_0_message;
+  const struct str __THE_0_stack;
+};
+struct __THE_1_test_Type_0 {
+  struct str __THE_0_name;
+};
+struct __THE_1_test_Var_0 {
+  struct __THE_1_test_Type_0 **__THE_0_t;
+};
+struct __THE_1_pair_intMStest_Var_0ME {
+  int32_t f;
+  struct __THE_1_test_Var_0 *s;
+};
+struct __THE_1_map_intMStest_Var_0ME {
+  struct __THE_1_pair_intMStest_Var_0ME *d;
+  size_t c;
+  size_t l;
+};
+struct __THE_1_test_Analyzer_0 {
+  struct __THE_1_map_intMStest_Var_0ME __THE_0_vm;
+};
+struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FE {
+  struct __THE_1_test_Type_0 ***(*f) (void *, void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FEP {
+  err_state_t *err_state;
+  int line;
+  int col;
+  struct __THE_1_test_Analyzer_0 **self;
+  int32_t n0;
+};
+
+err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
+
+void *alloc (size_t);
+void error_alloc (err_state_t *, size_t);
+void error_assign (err_state_t *, int, void *, void (*f) (void *), int, int);
+void error_buf_decrease (err_state_t *);
+err_buf_t *error_buf_increase (err_state_t *);
+void error_stack_pop (err_state_t *);
+void error_stack_pos (err_state_t *, int, int);
+void error_stack_push (err_state_t *, const char *, const char *, int, int);
+void error_stack_str (err_state_t *);
+void print (FILE *, const char *, ...);
+void *re_alloc (void *, size_t);
+struct str str_alloc (const char *);
+struct str str_concat_cstr (struct str, const char *);
+struct str str_concat_str (struct str, struct str);
+struct str str_copy (const struct str);
+struct str str_escape (const struct str);
+void str_free (struct str);
+void *xalloc (void *, size_t);
+struct error_Error *error_Error_alloc (struct str, struct str);
+void error_Error_free (struct error_Error *);
+struct __THE_1_test_Type_0 *__THE_1_test_Type_0_alloc (struct str);
+struct __THE_1_test_Type_0 *__THE_1_test_Type_0_copy (const struct __THE_1_test_Type_0 *);
+void __THE_1_test_Type_0_free (struct __THE_1_test_Type_0 *);
+struct str __THE_1_test_Type_0_str (struct __THE_1_test_Type_0 *);
+struct __THE_1_test_Var_0 *__THE_1_test_Var_0_alloc (struct __THE_1_test_Type_0 **);
+struct __THE_1_test_Var_0 *__THE_1_test_Var_0_copy (const struct __THE_1_test_Var_0 *);
+void __THE_1_test_Var_0_free (struct __THE_1_test_Var_0 *);
+struct __THE_1_map_intMStest_Var_0ME __THE_1_map_intMStest_Var_0ME_alloc (int, ...);
+struct __THE_1_map_intMStest_Var_0ME __THE_1_map_intMStest_Var_0ME_copy (const struct __THE_1_map_intMStest_Var_0ME);
+void __THE_1_map_intMStest_Var_0ME_free (struct __THE_1_map_intMStest_Var_0ME);
+struct __THE_1_test_Var_0 *__THE_1_map_intMStest_Var_0ME_get (err_state_t *, int, int, struct __THE_1_map_intMStest_Var_0ME, int32_t);
+bool __THE_1_map_intMStest_Var_0ME_has (struct __THE_1_map_intMStest_Var_0ME, int32_t);
+struct __THE_1_map_intMStest_Var_0ME *__THE_1_map_intMStest_Var_0ME_set (struct __THE_1_map_intMStest_Var_0ME *, int32_t, struct __THE_1_test_Var_0 *);
+struct __THE_1_test_Analyzer_0 *__THE_1_test_Analyzer_0_alloc (struct __THE_1_map_intMStest_Var_0ME);
+void __THE_1_test_Analyzer_0_free (struct __THE_1_test_Analyzer_0 *);
+struct __THE_1_test_Type_0 ***__THE_1_opt_ref_test_Type_0_alloc (struct __THE_1_test_Type_0 **);
+void __THE_1_opt_ref_test_Type_0_free (struct __THE_1_test_Type_0 ***);
+struct str __THE_1_opt_ref_test_Type_0_str (struct __THE_1_test_Type_0 ***);
+struct __THE_1_test_Type_0 ***__THE_1_test_AnalyzerSDid_0 (void *, void *);
+
+void *alloc (size_t n1) {
+  void *r = malloc(n1);
+  if (r == NULL) error_alloc(&err_state, n1);
+  return r;
+}
+void error_alloc (err_state_t *fn_err_state, size_t n1) {
+  char d[4096];
+  size_t l = 0;
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    const char *fmt = THE_EOL "  at %s (%s)";
+    size_t z = snprintf(NULL, 0, fmt, it->name, it->file);
+    if (l + z >= 4096) break;
+    sprintf(&d[l], fmt, it->name, it->file);
+    l += z;
+  }
+  fprintf(stderr, "Allocation Error: failed to allocate %zu bytes%s" THE_EOL, n1, d);
+  exit(EXIT_FAILURE);
+}
+void error_assign (err_state_t *fn_err_state, int id, void *ctx, void (*f) (void *), int line, int col) {
+  fn_err_state->id = id;
+  fn_err_state->ctx = ctx;
+  fn_err_state->_free = f;
+  error_stack_pos(fn_err_state, line, col);
+  error_stack_str(fn_err_state);
+}
+void error_buf_decrease (err_state_t *fn_err_state) {
+  err_buf_t *buf = fn_err_state->buf_last;
+  fn_err_state->buf_last = buf->prev;
+  free(buf);
+}
+err_buf_t *error_buf_increase (err_state_t *fn_err_state) {
+  err_buf_t *buf = alloc(sizeof(err_buf_t));
+  buf->next = NULL;
+  buf->prev = fn_err_state->buf_last;
+  if (fn_err_state->buf_first == NULL) fn_err_state->buf_first = buf;
+  if (fn_err_state->buf_last != NULL) fn_err_state->buf_last->next = buf;
+  fn_err_state->buf_last = buf;
+  return fn_err_state->buf_last;
+}
+void error_stack_pop (err_state_t *fn_err_state) {
+  err_stack_t *stack = fn_err_state->stack_last;
+  fn_err_state->stack_last = stack->prev;
+  free(stack);
+}
+void error_stack_pos (err_state_t *fn_err_state, int line, int col) {
+  if (line != 0) fn_err_state->stack_last->line = line;
+  if (col != 0) fn_err_state->stack_last->col = col;
+}
+void error_stack_push (err_state_t *fn_err_state, const char *file, const char *name, int line, int col) {
+  error_stack_pos(fn_err_state, line, col);
+  err_stack_t *stack = alloc(sizeof(err_stack_t));
+  stack->file = file;
+  stack->name = name;
+  stack->next = NULL;
+  stack->prev = fn_err_state->stack_last;
+  if (fn_err_state->stack_first == NULL) fn_err_state->stack_first = stack;
+  if (fn_err_state->stack_last != NULL) fn_err_state->stack_last->next = stack;
+  fn_err_state->stack_last = stack;
+}
+void error_stack_str (err_state_t *fn_err_state) {
+  struct str *stack = (struct str *) &((struct error_Error *) fn_err_state->ctx)->__THE_0_stack;
+  struct str message = ((struct error_Error *) fn_err_state->ctx)->__THE_0_message;
+  stack->l = message.l;
+  stack->d = re_alloc(stack->d, stack->l);
+  memcpy(stack->d, message.d, stack->l);
+  for (err_stack_t *it = fn_err_state->stack_last; it != NULL; it = it->prev) {
+    size_t z;
+    char *fmt;
+    if (it->col == 0 && it->line == 0) {
+      fmt = THE_EOL "  at %s (%s)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      fmt = THE_EOL "  at %s (%s:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line);
+    } else {
+      fmt = THE_EOL "  at %s (%s:%d:%d)";
+      z = snprintf(NULL, 0, fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->d = re_alloc(stack->d, stack->l + z + 1);
+    if (it->col == 0 && it->line == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file);
+    } else if (it->col == 0) {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line);
+    } else {
+      sprintf(&stack->d[stack->l], fmt, it->name, it->file, it->line, it->col);
+    }
+    stack->l += z;
+  }
+}
+void print (FILE *stream, const char *fmt, ...) {
+  char *d = alloc(1024);
+  size_t cap = 1024;
+  size_t len = 0;
+  size_t y;
+  va_list args;
+  va_start(args, fmt);
+  while (*fmt) {
+    switch (*fmt++) {
+      case 't': {
+        int a = va_arg(args, int);
+        y = a == 0 ? 5 : 4;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a == 0 ? "false" : "true", y);
+        break;
+      }
+      case 'b': {
+        unsigned int a = va_arg(args, unsigned int);
+        y = snprintf(NULL, 0, "%u", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%u", a);
+        break;
+      }
+      case 'c': {
+        char a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%c", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%c", a);
+        break;
+      }
+      case 'e':
+      case 'f':
+      case 'g': {
+        double a = va_arg(args, double);
+        y = snprintf(NULL, 0, "%f", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%f", a);
+        break;
+      }
+      case 'h':
+      case 'j':
+      case 'v':
+      case 'w': {
+        int a = va_arg(args, int);
+        y = snprintf(NULL, 0, "%d", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%d", a);
+        break;
+      }
+      case 'i':
+      case 'k': {
+        int32_t a = va_arg(args, int32_t);
+        y = snprintf(NULL, 0, "%" PRId32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId32, a);
+        break;
+      }
+      case 'l': {
+        int64_t a = va_arg(args, int64_t);
+        y = snprintf(NULL, 0, "%" PRId64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRId64, a);
+        break;
+      }
+      case 'p': {
+        void *a = va_arg(args, void *);
+        y = snprintf(NULL, 0, "%p", a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%p", a);
+        break;
+      }
+      case 's': {
+        struct str a = va_arg(args, struct str);
+        y = a.l;
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a.d, y);
+        free(a.d);
+        break;
+      }
+      case 'u': {
+        uint32_t a = va_arg(args, uint32_t);
+        y = snprintf(NULL, 0, "%" PRIu32, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu32, a);
+        break;
+      }
+      case 'y': {
+        uint64_t a = va_arg(args, uint64_t);
+        y = snprintf(NULL, 0, "%" PRIu64, a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        sprintf(&d[len], "%" PRIu64, a);
+        break;
+      }
+      case 'z': {
+        char *a = va_arg(args, char *);
+        y = strlen(a);
+        if (len + y >= cap) d = re_alloc(d, cap += (y / 1024 + 1) * 1024);
+        memcpy(&d[len], a, y);
+        break;
+      }
+    }
+    len += y;
+  }
+  va_end(args);
+  d[len] = '\0';
+  fputs(d, stream);
+  fflush(stream);
+  free(d);
+}
+void *re_alloc (void *n1, size_t n2) {
+  void *r = realloc(n1, n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  return r;
+}
+struct str str_alloc (const char *r) {
+  size_t l = strlen(r);
+  char *d = alloc(l);
+  memcpy(d, r, l);
+  return (struct str) {d, l};
+}
+struct str str_concat_cstr (struct str s, const char *r) {
+  size_t l = s.l + strlen(r);
+  char *d = alloc(l);
+  memcpy(d, s.d, s.l);
+  memcpy(&d[s.l], r, l - s.l);
+  free(s.d);
+  return (struct str) {d, l};
+}
+struct str str_concat_str (struct str s1, struct str s2) {
+  size_t l = s1.l + s2.l;
+  char *d = alloc(l);
+  memcpy(d, s1.d, s1.l);
+  memcpy(&d[s1.l], s2.d, s2.l);
+  free(s1.d);
+  free(s2.d);
+  return (struct str) {d, l};
+}
+struct str str_copy (const struct str s) {
+  char *d = alloc(s.l);
+  memcpy(d, s.d, s.l);
+  return (struct str) {d, s.l};
+}
+struct str str_escape (const struct str s) {
+  char *d = alloc(s.l);
+  size_t l = 0;
+  for (size_t i = 0; i < s.l; i++) {
+    char c = s.d[i];
+    if (c == '\f' || c == '\n' || c == '\r' || c == '\t' || c == '\v' || c == '"') {
+      if (l + 2 > s.l) d = re_alloc(d, l + 2);
+      d[l++] = '\\';
+      if (c == '\f') d[l++] = 'f';
+      else if (c == '\n') d[l++] = 'n';
+      else if (c == '\r') d[l++] = 'r';
+      else if (c == '\t') d[l++] = 't';
+      else if (c == '\v') d[l++] = 'v';
+      else if (c == '"') d[l++] = '"';
+      continue;
+    }
+    if (l + 1 > s.l) d = re_alloc(d, l + 1);
+    d[l++] = c;
+  }
+  return (struct str) {d, l};
+}
+void str_free (struct str s) {
+  free(s.d);
+}
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
+struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
+  struct error_Error *r = alloc(sizeof(struct error_Error));
+  struct error_Error s = {__THE_0_message, __THE_0_stack};
+  memcpy(r, &s, sizeof(struct error_Error));
+  return r;
+}
+void error_Error_free (struct error_Error *n) {
+  str_free((struct str) n->__THE_0_message);
+  str_free((struct str) n->__THE_0_stack);
+  free(n);
+}
+struct __THE_1_test_Type_0 *__THE_1_test_Type_0_alloc (struct str __THE_0_name) {
+  struct __THE_1_test_Type_0 *r = alloc(sizeof(struct __THE_1_test_Type_0));
+  struct __THE_1_test_Type_0 s = {__THE_0_name};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Type_0));
+  return r;
+}
+struct __THE_1_test_Type_0 *__THE_1_test_Type_0_copy (const struct __THE_1_test_Type_0 *n) {
+  struct __THE_1_test_Type_0 *r = alloc(sizeof(struct __THE_1_test_Type_0));
+  struct __THE_1_test_Type_0 s = {str_copy(n->__THE_0_name)};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Type_0));
+  return r;
+}
+void __THE_1_test_Type_0_free (struct __THE_1_test_Type_0 *n) {
+  str_free((struct str) n->__THE_0_name);
+  free(n);
+}
+struct str __THE_1_test_Type_0_str (struct __THE_1_test_Type_0 *n) {
+  struct str r = str_alloc("Type{");
+  r = str_concat_cstr(r, "name: \"");
+  r = str_concat_str(r, str_escape(n->__THE_0_name));
+  r = str_concat_cstr(r, "\"");
+  __THE_1_test_Type_0_free((struct __THE_1_test_Type_0 *) n);
+  return str_concat_cstr(r, "}");
+}
+struct __THE_1_test_Var_0 *__THE_1_test_Var_0_alloc (struct __THE_1_test_Type_0 **__THE_0_t) {
+  struct __THE_1_test_Var_0 *r = alloc(sizeof(struct __THE_1_test_Var_0));
+  struct __THE_1_test_Var_0 s = {__THE_0_t};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Var_0));
+  return r;
+}
+struct __THE_1_test_Var_0 *__THE_1_test_Var_0_copy (const struct __THE_1_test_Var_0 *n) {
+  struct __THE_1_test_Var_0 *r = alloc(sizeof(struct __THE_1_test_Var_0));
+  struct __THE_1_test_Var_0 s = {n->__THE_0_t};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Var_0));
+  return r;
+}
+void __THE_1_test_Var_0_free (struct __THE_1_test_Var_0 *n) {
+  free(n);
+}
+struct __THE_1_map_intMStest_Var_0ME __THE_1_map_intMStest_Var_0ME_alloc (int x, ...) {
+  struct __THE_1_pair_intMStest_Var_0ME *d = alloc(x * sizeof(struct __THE_1_pair_intMStest_Var_0ME));
+  va_list args;
+  va_start(args, x);
+  for (int i = 0; i < x; i++) d[i] = (struct __THE_1_pair_intMStest_Var_0ME) {va_arg(args, int32_t), va_arg(args, struct __THE_1_test_Var_0 *)};
+  va_end(args);
+  return (struct __THE_1_map_intMStest_Var_0ME) {d, x, x};
+}
+struct __THE_1_map_intMStest_Var_0ME __THE_1_map_intMStest_Var_0ME_copy (const struct __THE_1_map_intMStest_Var_0ME n) {
+  struct __THE_1_pair_intMStest_Var_0ME *d = alloc(n.c * sizeof(struct __THE_1_pair_intMStest_Var_0ME));
+  for (size_t i = 0; i < n.l; i++) d[i] = (struct __THE_1_pair_intMStest_Var_0ME) {n.d[i].f, __THE_1_test_Var_0_copy(n.d[i].s)};
+  return (struct __THE_1_map_intMStest_Var_0ME) {d, n.c, n.l};
+}
+void __THE_1_map_intMStest_Var_0ME_free (struct __THE_1_map_intMStest_Var_0ME n) {
+  for (size_t i = 0; i < n.l; i++) {
+    __THE_1_test_Var_0_free((struct __THE_1_test_Var_0 *) n.d[i].s);
+  }
+  free(n.d);
+}
+struct __THE_1_test_Var_0 *__THE_1_map_intMStest_Var_0ME_get (err_state_t *fn_err_state, int line, int col, struct __THE_1_map_intMStest_Var_0ME n, int32_t k) {
+  for (size_t i = 0; i < n.l; i++) {
+    if (n.d[i].f == k) {
+      struct __THE_1_test_Var_0 *r = __THE_1_test_Var_0_copy(n.d[i].s);
+      __THE_1_map_intMStest_Var_0ME_free((struct __THE_1_map_intMStest_Var_0ME) n);
+      return r;
+    }
+  }
+  __THE_1_map_intMStest_Var_0ME_free((struct __THE_1_map_intMStest_Var_0ME) n);
+  error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc(str_alloc("failed to get map value"), (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+  longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+}
+bool __THE_1_map_intMStest_Var_0ME_has (struct __THE_1_map_intMStest_Var_0ME n, int32_t k) {
+  bool r = false;
+  for (size_t i = 0; i < n.l; i++) {
+    if (n.d[i].f == k) {
+      r = true;
+      break;
+    }
+  }
+  __THE_1_map_intMStest_Var_0ME_free((struct __THE_1_map_intMStest_Var_0ME) n);
+  return r;
+}
+struct __THE_1_map_intMStest_Var_0ME *__THE_1_map_intMStest_Var_0ME_set (struct __THE_1_map_intMStest_Var_0ME *n, int32_t k, struct __THE_1_test_Var_0 *v) {
+  for (size_t i = 0; i < n->l; i++) {
+    if (n->d[i].f == k) {
+      __THE_1_test_Var_0_free((struct __THE_1_test_Var_0 *) n->d[i].s);
+      n->d[i].s = v;
+      return n;
+    }
+  }
+  if (n->l + 1 > n->c) n->d = re_alloc(n->d, (n->c = n->l + 1) * sizeof(struct __THE_1_pair_intMStest_Var_0ME));
+  n->d[n->l++] = (struct __THE_1_pair_intMStest_Var_0ME) {k, v};
+  return n;
+}
+struct __THE_1_test_Analyzer_0 *__THE_1_test_Analyzer_0_alloc (struct __THE_1_map_intMStest_Var_0ME __THE_0_vm) {
+  struct __THE_1_test_Analyzer_0 *r = alloc(sizeof(struct __THE_1_test_Analyzer_0));
+  struct __THE_1_test_Analyzer_0 s = {__THE_0_vm};
+  memcpy(r, &s, sizeof(struct __THE_1_test_Analyzer_0));
+  return r;
+}
+void __THE_1_test_Analyzer_0_free (struct __THE_1_test_Analyzer_0 *n) {
+  __THE_1_map_intMStest_Var_0ME_free((struct __THE_1_map_intMStest_Var_0ME) n->__THE_0_vm);
+  free(n);
+}
+struct __THE_1_test_Type_0 ***__THE_1_opt_ref_test_Type_0_alloc (struct __THE_1_test_Type_0 **n) {
+  struct __THE_1_test_Type_0 ***r = alloc(sizeof(struct __THE_1_test_Type_0 **));
+  *r = n;
+  return r;
+}
+void __THE_1_opt_ref_test_Type_0_free (struct __THE_1_test_Type_0 ***n) {
+  if (n == NULL) return;
+  free(n);
+}
+struct str __THE_1_opt_ref_test_Type_0_str (struct __THE_1_test_Type_0 ***n) {
+  if (n == NULL) return str_alloc("nil");
+  struct str r = __THE_1_test_Type_0_str(__THE_1_test_Type_0_copy(**n));
+  __THE_1_opt_ref_test_Type_0_free((struct __THE_1_test_Type_0 ***) n);
+  return r;
+}
+struct __THE_1_test_Type_0 ***__THE_1_test_AnalyzerSDid_0 (void *px, void *pp) {
+  unsigned char r = 0;
+  struct __THE_1_test_Type_0 ***v;
+  struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FEP *p = pp;
+  err_state_t *fn_err_state = p->err_state;
+  error_stack_push(fn_err_state, "/test", "Analyzer.id", p->line, p->col);
+  struct __THE_1_test_Analyzer_0 **__THE_0_self_0 = p->self;
+  const int32_t __THE_0_val_0 = p->n0;
+  if (!__THE_1_map_intMStest_Var_0ME_has(__THE_1_map_intMStest_Var_0ME_copy((*__THE_0_self_0)->__THE_0_vm), __THE_0_val_0)) {
+    r = 1;
+    v = NULL;
+    goto L1;
+  }
+  if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L2;
+  const struct __THE_1_test_Var_0 *__THE_0_v_0 = __THE_1_map_intMStest_Var_0ME_get(fn_err_state, 17, 10, __THE_1_map_intMStest_Var_0ME_copy((*__THE_0_self_0)->__THE_0_vm), __THE_0_val_0);
+  v = __THE_1_opt_ref_test_Type_0_alloc(__THE_0_v_0->__THE_0_t);
+  __THE_1_test_Var_0_free((struct __THE_1_test_Var_0 *) __THE_0_v_0);
+L2:
+  error_buf_decrease(fn_err_state);
+L1:
+  free(pp);
+  error_stack_pop(fn_err_state);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+  return v;
+}
+
+int main () {
+  error_stack_push(&err_state, "/test", "main", 0, 0);
+  const struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FE __THE_0_test_AnalyzerSDid_0 = (struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FE) {&__THE_1_test_AnalyzerSDid_0, NULL, 0};
+  const struct __THE_1_test_Type_0 *__THE_0_t1_0 = __THE_1_test_Type_0_alloc(str_alloc("str"));
+  struct __THE_1_test_Analyzer_0 *__THE_0_analyzer_0 = __THE_1_test_Analyzer_0_alloc(__THE_1_map_intMStest_Var_0ME_alloc(0));
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L4;
+  __THE_1_map_intMStest_Var_0ME_set(&__THE_0_analyzer_0->__THE_0_vm, 0, __THE_1_test_Var_0_alloc(&__THE_0_t1_0));
+  if (setjmp(err_state.buf_last->buf) != 0) goto L4;
+  print(stdout, "zzsz", "0", " ", __THE_1_opt_ref_test_Type_0_str(__THE_0_test_AnalyzerSDid_0.f(__THE_0_test_AnalyzerSDid_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FEP) {&err_state, 26, 14, &__THE_0_analyzer_0, 0}, sizeof(struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FEP)))), THE_EOL);
+  if (setjmp(err_state.buf_last->buf) != 0) goto L4;
+  print(stdout, "zzsz", "1", " ", __THE_1_opt_ref_test_Type_0_str(__THE_0_test_AnalyzerSDid_0.f(__THE_0_test_AnalyzerSDid_0.x, xalloc(&(struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FEP) {&err_state, 27, 14, &__THE_0_analyzer_0, 1}, sizeof(struct __THE_1_fn_sFSref_test_Analyzer_0FP3intFRopt_ref_test_Type_0FEP)))), THE_EOL);
+L4:
+  error_buf_decrease(&err_state);
+  __THE_1_test_Analyzer_0_free((struct __THE_1_test_Analyzer_0 *) __THE_0_analyzer_0);
+  __THE_1_test_Type_0_free((struct __THE_1_test_Type_0 *) __THE_0_t1_0);
+  error_stack_pop(&err_state);
+  if (err_state.id != -1) {
+    struct error_Error *err = err_state.ctx;
+    fprintf(stderr, "Uncaught Error: %.*s" THE_EOL, (int) err->__THE_0_stack.l, err->__THE_0_stack.d);
+    err_state._free(err_state.ctx);
+    exit(EXIT_FAILURE);
+  }
+}
+======= flags =======
+======= stdout =======
+0 Type{name: "str"}
+1 nil

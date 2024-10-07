@@ -1,0 +1,93 @@
+main {
+  a: i8 = 10;
+  a as i16;
+  a as i32;
+  a as int;
+  a as i64;
+  a as float;
+  a as f32;
+  a as f64;
+
+  b: u8 = 10;
+  b as u16;
+  b as u32;
+  b as u64;
+  b as float;
+  b as f32;
+  b as f64;
+
+  c := 10;
+  c as i32;
+  c as i64;
+  c as float;
+  c as f32;
+  c as f64;
+
+  d: byte = 65;
+  d as i8;
+  d as u8;
+  d as char;
+  d as int;
+  d as float;
+
+  e := 'a';
+  e as i8;
+  e as u8;
+  e as int;
+  e as float;
+
+  f := true;
+  f as i8;
+  f as u8;
+  f as int;
+  f as float;
+}
+===== code =====
+#include <stdbool.h>
+#include <stdint.h>
+#include <wchar.h>
+int main (void) {
+  uint8_t b_0;
+  int32_t c_0;
+  unsigned char d_0;
+  wchar_t e_0;
+  bool f_0;
+  int8_t a_0 = 10;
+  a_0;
+  a_0;
+  a_0;
+  a_0;
+  a_0;
+  a_0;
+  a_0;
+  b_0 = 10;
+  b_0;
+  b_0;
+  b_0;
+  b_0;
+  b_0;
+  b_0;
+  c_0 = 10;
+  c_0;
+  c_0;
+  c_0;
+  c_0;
+  c_0;
+  d_0 = 65;
+  d_0;
+  d_0;
+  d_0;
+  d_0;
+  d_0;
+  e_0 = L'a';
+  e_0;
+  e_0;
+  e_0;
+  e_0;
+  f_0 = true;
+  f_0;
+  f_0;
+  f_0;
+  f_0;
+}
+===== output =====

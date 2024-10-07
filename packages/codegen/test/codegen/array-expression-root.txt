@@ -1,0 +1,13 @@
+main {
+  [1, 2, 3];
+}
+===== code =====
+#include <d4/array.h>
+#include <d4/number.h>
+#include <stdint.h>
+D4_ARRAY_DECLARE(int, int32_t)
+D4_ARRAY_DEFINE(int, int32_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_int_str(element))
+int main (void) {
+  d4_arr_int_free(d4_arr_int_alloc(3, 1, 2, 3));
+}
+===== output =====

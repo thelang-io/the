@@ -83,6 +83,8 @@ std::string Codegen::_typeNameOpt (Type *type) {
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 == _{NULL} && n2 == _{NULL} : ";
 
     if (underlyingTypeInfo.type->isAny()) {
+      def += this->_genEqFn(underlyingTypeInfo.type, cEq1->wrap(), cEq2->wrap())->str();
+    } else if (underlyingTypeInfo.type->isFn()) {
       def += this->_genEqFn(underlyingTypeInfo.type, CodegenASTExprAccess::create("n1"), CodegenASTExprAccess::create("n2"))->str();
     } else {
       def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2)->str();
@@ -107,6 +109,8 @@ std::string Codegen::_typeNameOpt (Type *type) {
     def += "  _{bool} r = (n1 == _{NULL} || n2 == _{NULL}) ? n1 != _{NULL} || n2 != _{NULL} : ";
 
     if (underlyingTypeInfo.type->isAny()) {
+      def += this->_genEqFn(underlyingTypeInfo.type, cEq1->wrap(), cEq2->wrap(), true)->str();
+    } else if (underlyingTypeInfo.type->isFn()) {
       def += this->_genEqFn(underlyingTypeInfo.type, CodegenASTExprAccess::create("n1"), CodegenASTExprAccess::create("n2"), true)->str();
     } else {
       def += this->_genEqFn(underlyingTypeInfo.type, cEq1, cEq2, true)->str();
@@ -143,12 +147,12 @@ std::string Codegen::_typeNameOpt (Type *type) {
     def += "_{struct str} " + typeName + "_str (" + underlyingTypeInfo.typeRefCode + "n) {" EOL;
     def += R"(  if (n == _{NULL}) return _{str_alloc}("nil");)" EOL;
 
-    if (underlyingTypeInfo.realType->isStr()) {
+    if (underlyingTypeInfo.type->isStr()) {
       def += R"(  _{struct str} r = _{str_alloc}("\"");)" EOL;
-      def += "  r = _{str_concat_str}(r, " + this->_genStrFn(underlyingTypeInfo.realType, cStr)->str() + ");" EOL;
+      def += "  r = _{str_concat_str}(r, " + this->_genStrFn(underlyingTypeInfo.type, cStr)->str() + ");" EOL;
       def += R"(  r = _{str_concat_cstr}(r, "\"");)" EOL;
     } else {
-      def += "  _{struct str} r = " + this->_genStrFn(underlyingTypeInfo.realType, cStr)->str() + ";" EOL;
+      def += "  _{struct str} r = " + this->_genStrFn(underlyingTypeInfo.type, cStr)->str() + ";" EOL;
     }
 
     def += "  " + this->_genFreeFn(type, CodegenASTExprAccess::create("n"))->str() + ";" EOL;

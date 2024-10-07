@@ -47,17 +47,17 @@ export fn TEST_Type_getters () {
   EXPECT_FALSE(t1.isUnion())
 
   EXPECT_NO_THROW(() -> void {
-    refT1 := ref t1 // todo remove after v1
-    refT2 := ref t2 // todo remove after v1
-    refT3 := ref t3 // todo remove after v1
-    refT4 := ref t4 // todo remove after v1
-    refT5 := ref t5 // todo remove after v1
-    refT6 := ref t6 // todo remove after v1
-    refT7 := ref t7 // todo remove after v1
-    refT8 := ref t8 // todo remove after v1
-    refT9 := ref t9 // todo remove after v1
-    refT10 := ref t10 // todo remove after v1
-    refT11 := ref t11 // todo remove after v1
+    refT1 := ref t1 // TODO: remove after v1
+    refT2 := ref t2 // TODO: remove after v1
+    refT3 := ref t3 // TODO: remove after v1
+    refT4 := ref t4 // TODO: remove after v1
+    refT5 := ref t5 // TODO: remove after v1
+    refT6 := ref t6 // TODO: remove after v1
+    refT7 := ref t7 // TODO: remove after v1
+    refT8 := ref t8 // TODO: remove after v1
+    refT9 := ref t9 // TODO: remove after v1
+    refT10 := ref t10 // TODO: remove after v1
+    refT11 := ref t11 // TODO: remove after v1
 
     t1.asAlias()
     t2.asArray()
@@ -73,7 +73,7 @@ export fn TEST_Type_getters () {
   })
 }
 
-export fn TEST_Type_canBe () {
+export fn TEST_Type_canCastTo () {
   mut tm := TypeMap{}
   tm.init()
 
@@ -96,60 +96,60 @@ export fn TEST_Type_canBe () {
   t17 := tm.get("rune")
   t18 := tm.createFunction(false, [], tm.get("i64"))
 
-  EXPECT_FALSE(t2.canBe(tm.get("int")))
-  EXPECT_FALSE(t4.canBe(tm.get("int")))
-  EXPECT_FALSE(t5.canBe(tm.get("int")))
-  EXPECT_FALSE(t6.canBe(tm.get("int")))
-  EXPECT_FALSE(t7.canBe(tm.get("int")))
-  EXPECT_FALSE(t8.canBe(tm.get("int")))
-  EXPECT_TRUE(t1.canBe(tm.get("int")))
-  EXPECT_TRUE(tm.get("int").canBe(t1))
-  EXPECT_TRUE(t3.canBe(tm.get("int")))
-  EXPECT_TRUE(t9.canBe(tm.get("int")))
-  EXPECT_TRUE(t10.canBe(tm.get("int")))
-  EXPECT_TRUE(t10.canBe(tm.get("str")))
-  EXPECT_TRUE(t11.canBe(tm.get("str")))
-  EXPECT_TRUE(t11.canBe(tm.get("str")))
+  EXPECT_FALSE(t2.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t4.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t5.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t6.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t7.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t8.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t1.canCastTo(tm.get("int")))
+  EXPECT_TRUE(tm.get("int").canCastTo(t1))
+  EXPECT_TRUE(t3.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t9.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t10.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t10.canCastTo(tm.get("str")))
+  EXPECT_TRUE(t11.canCastTo(tm.get("str")))
+  EXPECT_TRUE(t11.canCastTo(tm.get("str")))
 
-  EXPECT_TRUE(t12.canBe(t3))
-  EXPECT_TRUE(t12.canBe(t9))
-  EXPECT_TRUE(t12.canBe(t10))
+  EXPECT_TRUE(t12.canCastTo(t3))
+  EXPECT_TRUE(t12.canCastTo(t9))
+  EXPECT_TRUE(t12.canCastTo(t10))
 
-  EXPECT_TRUE(t1.canBe(t13))
-  EXPECT_TRUE(t2.canBe(t13))
-  EXPECT_TRUE(t3.canBe(t13))
-  EXPECT_TRUE(t4.canBe(t13))
-  EXPECT_TRUE(t5.canBe(t13))
-  EXPECT_TRUE(t6.canBe(t13))
-  EXPECT_TRUE(t7.canBe(t13))
-  EXPECT_TRUE(t8.canBe(t13))
-  EXPECT_TRUE(t9.canBe(t13))
-  EXPECT_TRUE(t10.canBe(t13))
-  EXPECT_TRUE(t11.canBe(t13))
+  EXPECT_TRUE(t1.canCastTo(t13))
+  EXPECT_TRUE(t2.canCastTo(t13))
+  EXPECT_TRUE(t3.canCastTo(t13))
+  EXPECT_TRUE(t4.canCastTo(t13))
+  EXPECT_TRUE(t5.canCastTo(t13))
+  EXPECT_TRUE(t6.canCastTo(t13))
+  EXPECT_TRUE(t7.canCastTo(t13))
+  EXPECT_TRUE(t8.canCastTo(t13))
+  EXPECT_TRUE(t9.canCastTo(t13))
+  EXPECT_TRUE(t10.canCastTo(t13))
+  EXPECT_TRUE(t11.canCastTo(t13))
 
-  EXPECT_TRUE(t13.canBe(t1))
-  EXPECT_TRUE(t13.canBe(t2))
-  EXPECT_TRUE(t13.canBe(t3))
-  EXPECT_TRUE(t13.canBe(t4))
-  EXPECT_TRUE(t13.canBe(t5))
-  EXPECT_TRUE(t13.canBe(t6))
-  EXPECT_TRUE(t13.canBe(t7))
-  EXPECT_TRUE(t13.canBe(t8))
-  EXPECT_TRUE(t13.canBe(t9))
-  EXPECT_TRUE(t13.canBe(t10))
-  EXPECT_TRUE(t13.canBe(t11))
+  EXPECT_TRUE(t13.canCastTo(t1))
+  EXPECT_TRUE(t13.canCastTo(t2))
+  EXPECT_TRUE(t13.canCastTo(t3))
+  EXPECT_TRUE(t13.canCastTo(t4))
+  EXPECT_TRUE(t13.canCastTo(t5))
+  EXPECT_TRUE(t13.canCastTo(t6))
+  EXPECT_TRUE(t13.canCastTo(t7))
+  EXPECT_TRUE(t13.canCastTo(t8))
+  EXPECT_TRUE(t13.canCastTo(t9))
+  EXPECT_TRUE(t13.canCastTo(t10))
+  EXPECT_TRUE(t13.canCastTo(t11))
 
-  EXPECT_TRUE(t14.canBe(t12))
-  EXPECT_TRUE(t12.canBe(t14))
-  EXPECT_TRUE(t15.canBe(t16))
-  EXPECT_TRUE(t15.canBe(t12))
-  EXPECT_TRUE(t16.canBe(t15))
-  EXPECT_TRUE(t12.canBe(t15))
+  EXPECT_TRUE(t14.canCastTo(t12))
+  EXPECT_TRUE(t12.canCastTo(t14))
+  EXPECT_TRUE(t15.canCastTo(t16))
+  EXPECT_TRUE(t15.canCastTo(t12))
+  EXPECT_TRUE(t16.canCastTo(t15))
+  EXPECT_TRUE(t12.canCastTo(t15))
 
-  EXPECT_TRUE(t17.canBe(t12))
-  EXPECT_TRUE(t12.canBe(t17))
+  EXPECT_TRUE(t17.canCastTo(t12))
+  EXPECT_TRUE(t12.canCastTo(t17))
 
-  EXPECT_TRUE(t4.canBe(t18))
+  EXPECT_TRUE(t4.canCastTo(t18))
 
   t20 := tm.get("i8")
   t21 := tm.get("i64")
@@ -159,21 +159,21 @@ export fn TEST_Type_canBe () {
   t25 := tm.get("f32")
   t26 := tm.get("f64")
 
-  EXPECT_TRUE(t20.canBe(t21))
-  EXPECT_TRUE(t22.canBe(t23))
-  EXPECT_TRUE(t23.canBe(t24))
-  EXPECT_TRUE(t25.canBe(t26))
-  EXPECT_TRUE(t20.canBe(t25))
-  EXPECT_TRUE(t21.canBe(t26))
-  EXPECT_TRUE(t22.canBe(t21))
-  EXPECT_TRUE(t23.canBe(t21))
+  EXPECT_TRUE(t20.canCastTo(t21))
+  EXPECT_TRUE(t22.canCastTo(t23))
+  EXPECT_TRUE(t23.canCastTo(t24))
+  EXPECT_TRUE(t25.canCastTo(t26))
+  EXPECT_TRUE(t20.canCastTo(t25))
+  EXPECT_TRUE(t21.canCastTo(t26))
+  EXPECT_TRUE(t22.canCastTo(t21))
+  EXPECT_TRUE(t23.canCastTo(t21))
 
-  EXPECT_FALSE(t21.canBe(t20))
-  EXPECT_FALSE(t23.canBe(t22))
-  EXPECT_FALSE(t24.canBe(t23))
-  EXPECT_FALSE(t26.canBe(t25))
-  EXPECT_FALSE(t25.canBe(t20))
-  EXPECT_FALSE(t24.canBe(t26))
+  EXPECT_FALSE(t21.canCastTo(t20))
+  EXPECT_FALSE(t23.canCastTo(t22))
+  EXPECT_FALSE(t24.canCastTo(t23))
+  EXPECT_FALSE(t26.canCastTo(t25))
+  EXPECT_FALSE(t25.canCastTo(t20))
+  EXPECT_FALSE(t24.canCastTo(t26))
 }
 
 export fn TEST_Type_get () {
@@ -208,12 +208,12 @@ export fn TEST_Type_getThrows () {
   ])
 
   EXPECT_THROW_WITH_MESSAGE(() -> void {
-    refT := ref t // todo remove after v1
+    refT := ref t // TODO: remove after v1
     t.get("test")
   }, "Tried to get non-existing property 'test'")
 
   EXPECT_THROW_WITH_MESSAGE(() -> void {
-    refT := ref t // todo remove after v1
+    refT := ref t // TODO: remove after v1
     t.get(2)
   }, "Tried to get non-existing property at position 2")
 }

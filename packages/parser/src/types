@@ -87,6 +87,7 @@ export obj Type {
   mut body: TypeBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut context: any
 
   fn asArray (mut self: ref Self) ref ArrayType { return ref (self.body as ArrayType) }
   fn asFunction (mut self: ref Self) ref FunctionType { return ref (self.body as FunctionType) }
@@ -115,6 +116,8 @@ export obj Expression {
   mut body: ExpressionBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut context: any
+  mut typeContext: any
   mut _parent: (ref Expression)?
   mut _parentNode: (ref Statement)?
 
@@ -206,6 +209,7 @@ export obj Statement {
   mut body: StatementBody
   mut leadingComments: Token[]
   mut trailingComments: Token[]
+  mut context: any
   mut _next: (ref Statement)?
   mut _parent: (ref Statement)?
   mut _prev: (ref Statement)?
@@ -338,6 +342,17 @@ export obj Statement {
     return self._prev != nil
   }
 
+  fn isDeclaration (self: ref Self) bool {
+    return
+      self.isEnumDeclaration() ||
+      self.isExportDeclaration() ||
+      self.isExportNamedDeclaration() ||
+      self.isFunctionDeclaration() ||
+      self.isImportDeclaration() ||
+      self.isObjectDeclaration() ||
+      self.isTypeAliasDeclaration()
+  }
+
   fn isDeadEnd (self: ref Self, allowLoopStatements := true) bool {
     if self.isBlock() {
       statement := self.asBlock()
@@ -387,15 +402,14 @@ export obj Statement {
     return isLoopStatement || self.isReturn() || self.isThrow()
   }
 
-  fn isDeclaration (self: ref Self) bool {
-    return
-      self.isEnumDeclaration() ||
-      self.isExportDeclaration() ||
-      self.isExportNamedDeclaration() ||
-      self.isFunctionDeclaration() ||
-      self.isImportDeclaration() ||
-      self.isObjectDeclaration() ||
-      self.isTypeAliasDeclaration()
+  fn isLoopDeep (self: ref Self) bool {
+    mut it := self
+
+    loop it.isBlock() && it.hasParent() {
+      it = it.parent()
+    }
+
+    return it.isLoop()
   }
 
   fn next (self: ref Self) ref Statement {
@@ -410,6 +424,10 @@ export obj Statement {
       return self._parent
     }
     throw ParserError{message: "Tried accessing nil parent"}
+  }
+
+  fn parentMaybe (self: ref Self) (ref Statement)? {
+    return self._parent
   }
 
   fn prev (self: ref Self) ref Statement {

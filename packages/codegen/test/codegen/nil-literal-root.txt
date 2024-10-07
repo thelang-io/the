@@ -1,0 +1,15 @@
+main {
+  a: int? = nil
+}
+===== code =====
+#include <d4/number.h>
+#include <d4/optional.h>
+#include <stddef.h>
+#include <stdint.h>
+D4_OPTIONAL_DECLARE(int, int32_t)
+D4_OPTIONAL_DEFINE(int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+int main (void) {
+  d4_opt_int_t a_0 = NULL;
+  d4_opt_int_free(a_0);
+}
+===== output =====

@@ -1,0 +1,38 @@
+main {
+  mut vBool: bool
+
+  access1 := vBool ? 0 : 1
+  vBool = true
+  access2 := vBool ? 0 : 1
+
+  lit1 := 1 > 2 ? 3 : 4
+  lit2 := true ? 2 : 3
+
+  unary1 := !false ? 0 : 1
+  unary2 := !true ? 0 : 1
+  unary3 := !!false ? 0 : 1
+  unary4 := !!true ? 0 : 1
+}
+===== code =====
+#include <stdbool.h>
+#include <stdint.h>
+int main (void) {
+  int32_t access2_0;
+  int32_t lit1_0;
+  int32_t lit2_0;
+  int32_t unary1_0;
+  int32_t unary2_0;
+  int32_t unary3_0;
+  int32_t unary4_0;
+  bool vBool_0 = false;
+  int32_t access1_0 = vBool_0 ? 0 : 1;
+  vBool_0 = true;
+  access2_0 = vBool_0 ? 0 : 1;
+  lit1_0 = 1 > 2 ? 3 : 4;
+  lit2_0 = true ? 2 : 3;
+  unary1_0 = !false ? 0 : 1;
+  unary2_0 = !true ? 0 : 1;
+  unary3_0 = !!false ? 0 : 1;
+  unary4_0 = !!true ? 0 : 1;
+}
+===== output =====

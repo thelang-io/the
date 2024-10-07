@@ -1,0 +1,24 @@
+main {
+
+  a := "";
+  b := "Hello, World!";
+  c := "Multiline\nString";
+  d := "Multiline
+String
+Multiline";
+
+}
+===== code =====
+#include <d4/macro.h>
+#include <d4/string.h>
+int main (void) {
+  d4_str_t a_0 = d4_str_alloc(L"");
+  d4_str_t b_0 = d4_str_alloc(L"Hello, World!");
+  d4_str_t c_0 = d4_str_alloc(L"Multiline\nString");
+  d4_str_t d_0 = d4_str_alloc(L"Multiline" D4_EOL "String" D4_EOL "Multiline");
+  d4_str_free(d_0);
+  d4_str_free(c_0);
+  d4_str_free(b_0);
+  d4_str_free(a_0);
+}
+===== output =====

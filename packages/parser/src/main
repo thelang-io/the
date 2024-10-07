@@ -27,6 +27,7 @@ import
   AwaitExpression,
   BinaryExpression,
   CallExpression,
+  CallExpressionArgument,
   ClosureExpression,
   ConditionalExpression,
   ElementAccessExpression,
@@ -106,6 +107,7 @@ export AssignmentExpression
 export AwaitExpression
 export BinaryExpression
 export CallExpression
+export CallExpressionArgument
 export ClosureExpression
 export ConditionalExpression
 export ElementAccessExpression

@@ -1,0 +1,50 @@
+main {
+  mut i := 0
+  mut j := 0
+
+  loop i < 5 {
+    i += 2
+  }
+  loop i < 5 {
+    i += 2
+    j *= i
+  }
+
+  loop {
+    break
+  }
+
+  loop i / 3 < 20 {
+    mut k := 1
+
+    loop k < 10 {
+      k *= 2
+    }
+
+    i += k
+  }
+}
+===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t i_0 = 0;
+  int32_t j_0 = 0;
+  while (i_0 < 5) {
+    i_0 += 2;
+  }
+  while (i_0 < 5) {
+    i_0 += 2;
+    j_0 *= i_0;
+  }
+  while (1) {
+    break;
+  }
+  while (i_0 / 3 < 20) {
+    int32_t k_0 = 1;
+    while (k_0 < 10) {
+      k_0 *= 2;
+    }
+    i_0 += k_0;
+  }
+}
+===== output =====

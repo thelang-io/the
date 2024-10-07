@@ -1,0 +1,55 @@
+main {
+  loop i := 0; i < 10; i++ {
+    print("1 start", i)
+    if i == 5 { break }
+    print("1 end", i)
+  }
+}
+===== code =====
+#include <d4/any.h>
+#include <d4/globals.h>
+#include <d4/macro.h>
+#include <d4/number.h>
+#include <d4/safe.h>
+#include <d4/string.h>
+#include <stddef.h>
+#include <stdint.h>
+#define TYPE_str 1
+#define TYPE_int 2
+D4_ANY_DECLARE(int, int32_t)
+D4_ANY_DECLARE(str, d4_str_t)
+D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
+int main (void) {
+  for (int32_t i_0 = 0; i_0 < 10; i_0++) {
+    unsigned char b1 = 0;
+    d4_str_t __THE_1 = d4_str_empty_val;
+    d4_any_t __THE_2 = {-1, NULL, NULL, NULL, NULL, NULL};
+    d4_str_t __THE_3 = d4_str_empty_val;
+    d4_any_t __THE_4 = {-1, NULL, NULL, NULL, NULL, NULL};
+    d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(2, __THE_2 = d4_any_str_alloc(__THE_1 = d4_str_alloc(L"1 start")), d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+    if (i_0 == 5) {
+      b1 = 1;
+      if (b1 == 1) goto L1;
+    }
+    d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(2, __THE_4 = d4_any_str_alloc(__THE_3 = d4_str_alloc(L"1 end")), d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+    d4_any_free(__THE_4);
+    d4_str_free(__THE_3);
+L1:
+    d4_any_free(__THE_2);
+    d4_str_free(__THE_1);
+    if (b1 == 1) break;
+  }
+}
+===== output =====
+1 start 0
+1 end 0
+1 start 1
+1 end 1
+1 start 2
+1 end 2
+1 start 3
+1 end 3
+1 start 4
+1 end 4
+1 start 5

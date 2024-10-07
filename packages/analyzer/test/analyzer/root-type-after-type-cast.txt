@@ -5,6 +5,6 @@ fn test () {
     return
   }
 
-  b: str?
+  b: int?
   a = b
 }

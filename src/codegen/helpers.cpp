@@ -580,6 +580,12 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genEqFn (Type *type, const std::shared
 
   if (type->isAlias()) {
     return this->_genEqFn(std::get<TypeAlias>(type->body).type, leftExpr, rightExpr, reverse);
+  } else if (type->isAny()) {
+    return CodegenASTExprAssign::create(
+      CodegenASTExprAccess::create(leftExpr, "d"),
+      reverse ? "!=" : "==",
+      CodegenASTExprAccess::create(rightExpr, "d")
+    );
   } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
     return CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("buffer_" + direction)),
@@ -719,44 +725,46 @@ std::shared_ptr<CodegenASTExpr> Codegen::_genReallocFn (Type *type, const std::s
 }
 
 std::shared_ptr<CodegenASTExpr> Codegen::_genStrFn (Type *type, const std::shared_ptr<CodegenASTExpr> &expr, bool copy, bool escape) {
-  auto realType = Type::real(type);
   auto result = expr;
 
-  if (realType->isAny()) {
+  if (type->isAny()) {
     result = CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("any_str")),
-      {copy ? this->_genCopyFn(realType, result) : result}
+      {copy ? this->_genCopyFn(type, result) : result}
     );
-  } else if (realType->isObj() && realType->builtin && realType->codeName == "@buffer_Buffer") {
+  } else if (type->isObj() && type->builtin && type->codeName == "@buffer_Buffer") {
     result = CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("buffer_str")),
-      {copy ? this->_genCopyFn(realType, result) : result}
+      {copy ? this->_genCopyFn(type, result) : result}
     );
   } else if (
-    realType->isArray() ||
-    realType->isFn() ||
-    realType->isMap() ||
-    realType->isObj() ||
-    realType->isOpt() ||
-    realType->isUnion()
+    type->isArray() ||
+    type->isFn() ||
+    type->isMap() ||
+    type->isObj() ||
+    type->isOpt() ||
+    type->isUnion()
   ) {
-    auto typeInfo = this->_typeInfo(realType);
+    auto typeInfo = this->_typeInfo(type);
 
     result = CodegenASTExprCall::create(
-      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
-      {copy ? this->_genCopyFn(realType, result) : result}
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_str")),
+      {copy ? this->_genCopyFn(type, result) : result}
     );
-  } else if (realType->isEnum()) {
+  } else if (type->isEnum()) {
     result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("enum_str")), {result});
-  } else if (realType->isStr() && escape) {
+  } else if (type->isStr() && escape) {
     result = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_escape")), {result});
-  } else if (realType->isStr()) {
-    result = copy ? this->_genCopyFn(realType, result) : result;
+  } else if (type->isRef()) {
+    auto underlyingType = std::get<TypeRef>(type->body).refType;
+    result = this->_genStrFn(underlyingType, CodegenASTExprUnary::create("*", expr), copy, escape);
+  } else if (type->isStr()) {
+    result = copy ? this->_genCopyFn(type, result) : result;
   } else {
-    auto typeInfo = this->_typeInfo(realType);
+    auto typeInfo = this->_typeInfo(type);
 
     result = CodegenASTExprCall::create(
-      CodegenASTExprAccess::create(this->_(typeInfo.realTypeName + "_str")),
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_str")),
       {result}
     );
   }

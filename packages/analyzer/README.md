@@ -15,8 +15,8 @@ import analyzer from "the/analyzer"
 
 ## API
 
-### `analyze (f: ref Parser.File) str[]`
-Analyzes and generates errors for parsed file.
+### `analyze (mut f: ref Parser.File) str[]`
+Analyzes and generates errors for parsed file. Also, assigned context on all possible nodes.
 
 **Parameters**
 
@@ -196,7 +196,7 @@ Whether expression's body contains corresponding type.
 type.isAlias()
 ```
 
-### `Type.canBe (t: ref Type) bool`
+### `Type.canCastTo (t: ref Type) bool`
 Checks whether type can be cast to another type (should be used only on union type).
 
 **Parameters**
@@ -211,7 +211,7 @@ Whether type can be cast to another type.
 
 ```the
 mut tm := TypeMap{}
-type.canBe(tm.get("int"))
+type.canCastTo(tm.get("int"))
 ```
 
 ### `Type.get (nameOrIndex: int | str) TypeProperty`

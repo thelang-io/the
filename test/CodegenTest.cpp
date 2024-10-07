@@ -62,15 +62,15 @@ TEST(CodegenTest, StringifyFlags) {
 TEST(CodegenTest, ThrowsOnObjExprDefaultFieldInvalidType) {
   EXPECT_THROW_WITH_MESSAGE({
     codegenTestGen("obj Test { a: (int) -> void } main { a: Test }");
-  }, "tried object expression default field on invalid type");
+  }, "tried object expression default on field \"a\" on invalid type \"fn_sFP3intFRvoidFE\"");
 
   EXPECT_THROW_WITH_MESSAGE({
     codegenTestGen("obj Test { a: ref int } main { a: Test }");
-  }, "tried object expression default field on invalid type");
+  }, "tried object expression default on field \"a\" on invalid type \"ref_int\"");
 
   EXPECT_THROW_WITH_MESSAGE({
     codegenTestGen("obj Test { a: int | str } main { a: Test }");
-  }, "tried object expression default field on invalid type");
+  }, "tried object expression default on field \"a\" on invalid type \"union_intUSstrUE\"");
 }
 
 TEST(CodegenTest, ThrowsOnVarDeclInitInvalidType) {
@@ -402,6 +402,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
   "builtin-any-alloc-ref",
   "builtin-any-alloc-str",
   "builtin-any-alloc-union",
+  "builtin-any-eq",
+  "builtin-any-eq-ref",
+  "builtin-any-eq-root",
   "builtin-any-str",
   "builtin-any-str-ref",
   "builtin-any-str-root"
@@ -757,6 +760,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
   "builtin-opt-alloc-fn-async",
   "builtin-opt-alloc-map",
   "builtin-opt-alloc-obj",
+  "builtin-opt-alloc-obj-prop",
   "builtin-opt-alloc-opt",
   "builtin-opt-alloc-ref",
   "builtin-opt-alloc-str",

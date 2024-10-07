@@ -1,0 +1,355 @@
+main {
+  a01: bool[str]
+  a02: byte[str]
+  a03: char[str]
+  a04: f32[str]
+  a05: f64[str]
+  a06: float[str]
+  a07: i8[str]
+  a08: i16[str]
+  a09: i32[str]
+  a10: i64[str]
+  a11: int[str]
+  a12: u8[str]
+  a13: u16[str]
+  a14: u32[str]
+  a15: u64[str]
+
+  b01: bool[str] = {}
+  b02: byte[str] = {}
+  b03: char[str] = {}
+  b04: f32[str] = {}
+  b05: f64[str] = {}
+  b06: float[str] = {}
+  b07: i8[str] = {}
+  b08: i16[str] = {}
+  b09: i32[str] = {}
+  b10: i64[str] = {}
+  b11: int[str] = {}
+  b12: u8[str] = {}
+  b13: u16[str] = {}
+  b14: u32[str] = {}
+  b15: u64[str] = {}
+
+  c01 := { "key": true }
+  c02: byte[str] = { "key": 0x0F }
+  c03 := { "key": 'a' }
+  c04: f32[str] = { "key": 6.32 }
+  c05: f64[str] = { "key": 3.14 }
+  c06 := { "key": 4.12 }
+  c07: i8[str] = { "key": -1 }
+  c08: i16[str] = { "key": -2 }
+  c09: i32[str] = { "key": -3 }
+  c10: i64[str] = { "key": -4 }
+  c11 := { "key": 1 }
+  c12: u8[str] = { "key": 1 }
+  c13: u16[str] = { "key": 2 }
+  c14: u32[str] = { "key": 3 }
+  c15: u64[str] = { "key": 4 }
+
+  d01 := { "key1": true, "key2": false }
+  d02: byte[str] = { "key1": 0x0F, "key2": 0x00 }
+  d03 := { "key1": 'a', "key2": 'z' }
+  d04: f32[str] = { "key1": 6.32, "key2": 6.32 }
+  d05: f64[str] = { "key1": 3.14, "key2": 3.14 }
+  d06 := { "key1": 4.12, "key2": 4.12 }
+  d07: i8[str] = { "key1": -1, "key2": -1 }
+  d08: i16[str] = { "key1": -2, "key2": -2 }
+  d09: i32[str] = { "key1": -3, "key2": -3 }
+  d10: i64[str] = { "key1": -4, "key2": -4 }
+  d11 := { "key1": 1, "key2": 1 }
+  d12: u8[str] = { "key1": 1, "key2": 1 }
+  d13: u16[str] = { "key1": 2, "key2": 2 }
+  d14: u32[str] = { "key1": 3, "key2": 3 }
+  d15: u64[str] = { "key1": 4, "key2": 4 }
+}
+===== code =====
+#include <d4/array.h>
+#include <d4/bool.h>
+#include <d4/byte.h>
+#include <d4/char.h>
+#include <d4/macro.h>
+#include <d4/map.h>
+#include <d4/number.h>
+#include <d4/rune.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <wchar.h>
+D4_ARRAY_DECLARE(rune, wchar_t)
+D4_ARRAY_DECLARE(u64, uint64_t)
+D4_ARRAY_DECLARE(u32, uint32_t)
+D4_ARRAY_DECLARE(u16, uint16_t)
+D4_ARRAY_DECLARE(u8, uint8_t)
+D4_ARRAY_DECLARE(int, int32_t)
+D4_ARRAY_DECLARE(i64, int64_t)
+D4_ARRAY_DECLARE(i32, int32_t)
+D4_ARRAY_DECLARE(i16, int16_t)
+D4_ARRAY_DECLARE(i8, int8_t)
+D4_ARRAY_DECLARE(float, double)
+D4_ARRAY_DECLARE(f64, double)
+D4_ARRAY_DECLARE(f32, float)
+D4_ARRAY_DECLARE(char, char)
+D4_ARRAY_DECLARE(byte, unsigned char)
+D4_ARRAY_DECLARE(bool, bool)
+D4_MAP_DECLARE(str, d4_str_t, rune, wchar_t)
+D4_MAP_DECLARE(str, d4_str_t, u64, uint64_t)
+D4_MAP_DECLARE(str, d4_str_t, u32, uint32_t)
+D4_MAP_DECLARE(str, d4_str_t, u16, uint16_t)
+D4_MAP_DECLARE(str, d4_str_t, u8, uint8_t)
+D4_MAP_DECLARE(str, d4_str_t, int, int32_t)
+D4_MAP_DECLARE(str, d4_str_t, i64, int64_t)
+D4_MAP_DECLARE(str, d4_str_t, i32, int32_t)
+D4_MAP_DECLARE(str, d4_str_t, i16, int16_t)
+D4_MAP_DECLARE(str, d4_str_t, i8, int8_t)
+D4_MAP_DECLARE(str, d4_str_t, float, double)
+D4_MAP_DECLARE(str, d4_str_t, f64, double)
+D4_MAP_DECLARE(str, d4_str_t, f32, float)
+D4_MAP_DECLARE(str, d4_str_t, char, char)
+D4_MAP_DECLARE(str, d4_str_t, byte, unsigned char)
+D4_MAP_DECLARE(str, d4_str_t, bool, bool)
+D4_ARRAY_DEFINE(rune, wchar_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_rune_str(element))
+D4_ARRAY_DEFINE(u64, uint64_t, uint64_t, element, lhs_element == rhs_element, (void) element, d4_u64_str(element))
+D4_ARRAY_DEFINE(u32, uint32_t, uint32_t, element, lhs_element == rhs_element, (void) element, d4_u32_str(element))
+D4_ARRAY_DEFINE(u16, uint16_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_u16_str(element))
+D4_ARRAY_DEFINE(u8, uint8_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_u8_str(element))
+D4_ARRAY_DEFINE(int, int32_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_int_str(element))
+D4_ARRAY_DEFINE(i64, int64_t, int64_t, element, lhs_element == rhs_element, (void) element, d4_i64_str(element))
+D4_ARRAY_DEFINE(i32, int32_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_i32_str(element))
+D4_ARRAY_DEFINE(i16, int16_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_i16_str(element))
+D4_ARRAY_DEFINE(i8, int8_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_i8_str(element))
+D4_ARRAY_DEFINE(float, double, double, element, lhs_element == rhs_element, (void) element, d4_float_str(element))
+D4_ARRAY_DEFINE(f64, double, double, element, lhs_element == rhs_element, (void) element, d4_f64_str(element))
+D4_ARRAY_DEFINE(f32, float, double, element, lhs_element == rhs_element, (void) element, d4_f32_str(element))
+D4_ARRAY_DEFINE(char, char, int32_t, element, lhs_element == rhs_element, (void) element, d4_char_str(element))
+D4_ARRAY_DEFINE(byte, unsigned char, int32_t, element, lhs_element == rhs_element, (void) element, d4_byte_str(element))
+D4_ARRAY_DEFINE(bool, bool, int32_t, element, lhs_element == rhs_element, (void) element, d4_bool_str(element))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), rune, wchar_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_rune_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), u64, uint64_t, uint64_t, val, lhs_val == rhs_val, (void) val, d4_u64_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), u32, uint32_t, uint32_t, val, lhs_val == rhs_val, (void) val, d4_u32_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), u16, uint16_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_u16_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), u8, uint8_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_u8_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), int, int32_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), i64, int64_t, int64_t, val, lhs_val == rhs_val, (void) val, d4_i64_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), i32, int32_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_i32_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), i16, int16_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_i16_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), i8, int8_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_i8_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), float, double, double, val, lhs_val == rhs_val, (void) val, d4_float_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), f64, double, double, val, lhs_val == rhs_val, (void) val, d4_f64_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), f32, float, double, val, lhs_val == rhs_val, (void) val, d4_f32_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), char, char, int32_t, val, lhs_val == rhs_val, (void) val, d4_char_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), byte, unsigned char, int32_t, val, lhs_val == rhs_val, (void) val, d4_byte_str(val))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), bool, bool, int32_t, val, lhs_val == rhs_val, (void) val, d4_bool_str(val))
+int main (void) {
+  d4_str_t __THE_1 = d4_str_empty_val;
+  d4_str_t __THE_2 = d4_str_empty_val;
+  d4_str_t __THE_3 = d4_str_empty_val;
+  d4_str_t __THE_4 = d4_str_empty_val;
+  d4_str_t __THE_5 = d4_str_empty_val;
+  d4_str_t __THE_6 = d4_str_empty_val;
+  d4_str_t __THE_7 = d4_str_empty_val;
+  d4_str_t __THE_8 = d4_str_empty_val;
+  d4_str_t __THE_9 = d4_str_empty_val;
+  d4_str_t __THE_10 = d4_str_empty_val;
+  d4_str_t __THE_11 = d4_str_empty_val;
+  d4_str_t __THE_12 = d4_str_empty_val;
+  d4_str_t __THE_13 = d4_str_empty_val;
+  d4_str_t __THE_14 = d4_str_empty_val;
+  d4_str_t __THE_15 = d4_str_empty_val;
+  d4_str_t __THE_16 = d4_str_empty_val;
+  d4_str_t __THE_17 = d4_str_empty_val;
+  d4_str_t __THE_18 = d4_str_empty_val;
+  d4_str_t __THE_19 = d4_str_empty_val;
+  d4_str_t __THE_20 = d4_str_empty_val;
+  d4_str_t __THE_21 = d4_str_empty_val;
+  d4_str_t __THE_22 = d4_str_empty_val;
+  d4_str_t __THE_23 = d4_str_empty_val;
+  d4_str_t __THE_24 = d4_str_empty_val;
+  d4_str_t __THE_25 = d4_str_empty_val;
+  d4_str_t __THE_26 = d4_str_empty_val;
+  d4_str_t __THE_27 = d4_str_empty_val;
+  d4_str_t __THE_28 = d4_str_empty_val;
+  d4_str_t __THE_29 = d4_str_empty_val;
+  d4_str_t __THE_30 = d4_str_empty_val;
+  d4_str_t __THE_31 = d4_str_empty_val;
+  d4_str_t __THE_32 = d4_str_empty_val;
+  d4_str_t __THE_33 = d4_str_empty_val;
+  d4_str_t __THE_34 = d4_str_empty_val;
+  d4_str_t __THE_35 = d4_str_empty_val;
+  d4_str_t __THE_36 = d4_str_empty_val;
+  d4_str_t __THE_37 = d4_str_empty_val;
+  d4_str_t __THE_38 = d4_str_empty_val;
+  d4_str_t __THE_39 = d4_str_empty_val;
+  d4_str_t __THE_40 = d4_str_empty_val;
+  d4_str_t __THE_41 = d4_str_empty_val;
+  d4_str_t __THE_42 = d4_str_empty_val;
+  d4_str_t __THE_43 = d4_str_empty_val;
+  d4_str_t __THE_44 = d4_str_empty_val;
+  d4_str_t __THE_45 = d4_str_empty_val;
+  d4_map_strMSboolME_t a01_0 = d4_map_strMSboolME_alloc(0);
+  d4_map_strMSbyteME_t a02_0 = d4_map_strMSbyteME_alloc(0);
+  d4_map_strMScharME_t a03_0 = d4_map_strMScharME_alloc(0);
+  d4_map_strMSf32ME_t a04_0 = d4_map_strMSf32ME_alloc(0);
+  d4_map_strMSf64ME_t a05_0 = d4_map_strMSf64ME_alloc(0);
+  d4_map_strMSfloatME_t a06_0 = d4_map_strMSfloatME_alloc(0);
+  d4_map_strMSi8ME_t a07_0 = d4_map_strMSi8ME_alloc(0);
+  d4_map_strMSi16ME_t a08_0 = d4_map_strMSi16ME_alloc(0);
+  d4_map_strMSi32ME_t a09_0 = d4_map_strMSi32ME_alloc(0);
+  d4_map_strMSi64ME_t a10_0 = d4_map_strMSi64ME_alloc(0);
+  d4_map_strMSintME_t a11_0 = d4_map_strMSintME_alloc(0);
+  d4_map_strMSu8ME_t a12_0 = d4_map_strMSu8ME_alloc(0);
+  d4_map_strMSu16ME_t a13_0 = d4_map_strMSu16ME_alloc(0);
+  d4_map_strMSu32ME_t a14_0 = d4_map_strMSu32ME_alloc(0);
+  d4_map_strMSu64ME_t a15_0 = d4_map_strMSu64ME_alloc(0);
+  d4_map_strMSboolME_t b01_0 = d4_map_strMSboolME_alloc(0);
+  d4_map_strMSbyteME_t b02_0 = d4_map_strMSbyteME_alloc(0);
+  d4_map_strMScharME_t b03_0 = d4_map_strMScharME_alloc(0);
+  d4_map_strMSf32ME_t b04_0 = d4_map_strMSf32ME_alloc(0);
+  d4_map_strMSf64ME_t b05_0 = d4_map_strMSf64ME_alloc(0);
+  d4_map_strMSfloatME_t b06_0 = d4_map_strMSfloatME_alloc(0);
+  d4_map_strMSi8ME_t b07_0 = d4_map_strMSi8ME_alloc(0);
+  d4_map_strMSi16ME_t b08_0 = d4_map_strMSi16ME_alloc(0);
+  d4_map_strMSi32ME_t b09_0 = d4_map_strMSi32ME_alloc(0);
+  d4_map_strMSi64ME_t b10_0 = d4_map_strMSi64ME_alloc(0);
+  d4_map_strMSintME_t b11_0 = d4_map_strMSintME_alloc(0);
+  d4_map_strMSu8ME_t b12_0 = d4_map_strMSu8ME_alloc(0);
+  d4_map_strMSu16ME_t b13_0 = d4_map_strMSu16ME_alloc(0);
+  d4_map_strMSu32ME_t b14_0 = d4_map_strMSu32ME_alloc(0);
+  d4_map_strMSu64ME_t b15_0 = d4_map_strMSu64ME_alloc(0);
+  d4_map_strMSboolME_t c01_0 = d4_map_strMSboolME_alloc(1, __THE_1 = d4_str_alloc(L"key"), true);
+  d4_map_strMSbyteME_t c02_0 = d4_map_strMSbyteME_alloc(1, __THE_2 = d4_str_alloc(L"key"), 0x0F);
+  d4_map_strMSruneME_t c03_0 = d4_map_strMSruneME_alloc(1, __THE_3 = d4_str_alloc(L"key"), L'a');
+  d4_map_strMSf32ME_t c04_0 = d4_map_strMSf32ME_alloc(1, __THE_4 = d4_str_alloc(L"key"), 6.32);
+  d4_map_strMSf64ME_t c05_0 = d4_map_strMSf64ME_alloc(1, __THE_5 = d4_str_alloc(L"key"), 3.14);
+  d4_map_strMSfloatME_t c06_0 = d4_map_strMSfloatME_alloc(1, __THE_6 = d4_str_alloc(L"key"), 4.12);
+  d4_map_strMSi8ME_t c07_0 = d4_map_strMSi8ME_alloc(1, __THE_7 = d4_str_alloc(L"key"), -1);
+  d4_map_strMSi16ME_t c08_0 = d4_map_strMSi16ME_alloc(1, __THE_8 = d4_str_alloc(L"key"), -2);
+  d4_map_strMSi32ME_t c09_0 = d4_map_strMSi32ME_alloc(1, __THE_9 = d4_str_alloc(L"key"), -3);
+  d4_map_strMSi64ME_t c10_0 = d4_map_strMSi64ME_alloc(1, __THE_10 = d4_str_alloc(L"key"), -4);
+  d4_map_strMSintME_t c11_0 = d4_map_strMSintME_alloc(1, __THE_11 = d4_str_alloc(L"key"), 1);
+  d4_map_strMSu8ME_t c12_0 = d4_map_strMSu8ME_alloc(1, __THE_12 = d4_str_alloc(L"key"), 1);
+  d4_map_strMSu16ME_t c13_0 = d4_map_strMSu16ME_alloc(1, __THE_13 = d4_str_alloc(L"key"), 2);
+  d4_map_strMSu32ME_t c14_0 = d4_map_strMSu32ME_alloc(1, __THE_14 = d4_str_alloc(L"key"), 3);
+  d4_map_strMSu64ME_t c15_0 = d4_map_strMSu64ME_alloc(1, __THE_15 = d4_str_alloc(L"key"), 4);
+  d4_map_strMSboolME_t d01_0 = d4_map_strMSboolME_alloc(2, __THE_16 = d4_str_alloc(L"key1"), true, __THE_17 = d4_str_alloc(L"key2"), false);
+  d4_map_strMSbyteME_t d02_0 = d4_map_strMSbyteME_alloc(2, __THE_18 = d4_str_alloc(L"key1"), 0x0F, __THE_19 = d4_str_alloc(L"key2"), 0x00);
+  d4_map_strMSruneME_t d03_0 = d4_map_strMSruneME_alloc(2, __THE_20 = d4_str_alloc(L"key1"), L'a', __THE_21 = d4_str_alloc(L"key2"), L'z');
+  d4_map_strMSf32ME_t d04_0 = d4_map_strMSf32ME_alloc(2, __THE_22 = d4_str_alloc(L"key1"), 6.32, __THE_23 = d4_str_alloc(L"key2"), 6.32);
+  d4_map_strMSf64ME_t d05_0 = d4_map_strMSf64ME_alloc(2, __THE_24 = d4_str_alloc(L"key1"), 3.14, __THE_25 = d4_str_alloc(L"key2"), 3.14);
+  d4_map_strMSfloatME_t d06_0 = d4_map_strMSfloatME_alloc(2, __THE_26 = d4_str_alloc(L"key1"), 4.12, __THE_27 = d4_str_alloc(L"key2"), 4.12);
+  d4_map_strMSi8ME_t d07_0 = d4_map_strMSi8ME_alloc(2, __THE_28 = d4_str_alloc(L"key1"), -1, __THE_29 = d4_str_alloc(L"key2"), -1);
+  d4_map_strMSi16ME_t d08_0 = d4_map_strMSi16ME_alloc(2, __THE_30 = d4_str_alloc(L"key1"), -2, __THE_31 = d4_str_alloc(L"key2"), -2);
+  d4_map_strMSi32ME_t d09_0 = d4_map_strMSi32ME_alloc(2, __THE_32 = d4_str_alloc(L"key1"), -3, __THE_33 = d4_str_alloc(L"key2"), -3);
+  d4_map_strMSi64ME_t d10_0 = d4_map_strMSi64ME_alloc(2, __THE_34 = d4_str_alloc(L"key1"), -4, __THE_35 = d4_str_alloc(L"key2"), -4);
+  d4_map_strMSintME_t d11_0 = d4_map_strMSintME_alloc(2, __THE_36 = d4_str_alloc(L"key1"), 1, __THE_37 = d4_str_alloc(L"key2"), 1);
+  d4_map_strMSu8ME_t d12_0 = d4_map_strMSu8ME_alloc(2, __THE_38 = d4_str_alloc(L"key1"), 1, __THE_39 = d4_str_alloc(L"key2"), 1);
+  d4_map_strMSu16ME_t d13_0 = d4_map_strMSu16ME_alloc(2, __THE_40 = d4_str_alloc(L"key1"), 2, __THE_41 = d4_str_alloc(L"key2"), 2);
+  d4_map_strMSu32ME_t d14_0 = d4_map_strMSu32ME_alloc(2, __THE_42 = d4_str_alloc(L"key1"), 3, __THE_43 = d4_str_alloc(L"key2"), 3);
+  d4_map_strMSu64ME_t d15_0 = d4_map_strMSu64ME_alloc(2, __THE_44 = d4_str_alloc(L"key1"), 4, __THE_45 = d4_str_alloc(L"key2"), 4);
+  d4_map_strMSu64ME_free(d15_0);
+  d4_str_free(__THE_45);
+  d4_str_free(__THE_44);
+  d4_map_strMSu32ME_free(d14_0);
+  d4_str_free(__THE_43);
+  d4_str_free(__THE_42);
+  d4_map_strMSu16ME_free(d13_0);
+  d4_str_free(__THE_41);
+  d4_str_free(__THE_40);
+  d4_map_strMSu8ME_free(d12_0);
+  d4_str_free(__THE_39);
+  d4_str_free(__THE_38);
+  d4_map_strMSintME_free(d11_0);
+  d4_str_free(__THE_37);
+  d4_str_free(__THE_36);
+  d4_map_strMSi64ME_free(d10_0);
+  d4_str_free(__THE_35);
+  d4_str_free(__THE_34);
+  d4_map_strMSi32ME_free(d09_0);
+  d4_str_free(__THE_33);
+  d4_str_free(__THE_32);
+  d4_map_strMSi16ME_free(d08_0);
+  d4_str_free(__THE_31);
+  d4_str_free(__THE_30);
+  d4_map_strMSi8ME_free(d07_0);
+  d4_str_free(__THE_29);
+  d4_str_free(__THE_28);
+  d4_map_strMSfloatME_free(d06_0);
+  d4_str_free(__THE_27);
+  d4_str_free(__THE_26);
+  d4_map_strMSf64ME_free(d05_0);
+  d4_str_free(__THE_25);
+  d4_str_free(__THE_24);
+  d4_map_strMSf32ME_free(d04_0);
+  d4_str_free(__THE_23);
+  d4_str_free(__THE_22);
+  d4_map_strMSruneME_free(d03_0);
+  d4_str_free(__THE_21);
+  d4_str_free(__THE_20);
+  d4_map_strMSbyteME_free(d02_0);
+  d4_str_free(__THE_19);
+  d4_str_free(__THE_18);
+  d4_map_strMSboolME_free(d01_0);
+  d4_str_free(__THE_17);
+  d4_str_free(__THE_16);
+  d4_map_strMSu64ME_free(c15_0);
+  d4_str_free(__THE_15);
+  d4_map_strMSu32ME_free(c14_0);
+  d4_str_free(__THE_14);
+  d4_map_strMSu16ME_free(c13_0);
+  d4_str_free(__THE_13);
+  d4_map_strMSu8ME_free(c12_0);
+  d4_str_free(__THE_12);
+  d4_map_strMSintME_free(c11_0);
+  d4_str_free(__THE_11);
+  d4_map_strMSi64ME_free(c10_0);
+  d4_str_free(__THE_10);
+  d4_map_strMSi32ME_free(c09_0);
+  d4_str_free(__THE_9);
+  d4_map_strMSi16ME_free(c08_0);
+  d4_str_free(__THE_8);
+  d4_map_strMSi8ME_free(c07_0);
+  d4_str_free(__THE_7);
+  d4_map_strMSfloatME_free(c06_0);
+  d4_str_free(__THE_6);
+  d4_map_strMSf64ME_free(c05_0);
+  d4_str_free(__THE_5);
+  d4_map_strMSf32ME_free(c04_0);
+  d4_str_free(__THE_4);
+  d4_map_strMSruneME_free(c03_0);
+  d4_str_free(__THE_3);
+  d4_map_strMSbyteME_free(c02_0);
+  d4_str_free(__THE_2);
+  d4_map_strMSboolME_free(c01_0);
+  d4_str_free(__THE_1);
+  d4_map_strMSu64ME_free(b15_0);
+  d4_map_strMSu32ME_free(b14_0);
+  d4_map_strMSu16ME_free(b13_0);
+  d4_map_strMSu8ME_free(b12_0);
+  d4_map_strMSintME_free(b11_0);
+  d4_map_strMSi64ME_free(b10_0);
+  d4_map_strMSi32ME_free(b09_0);
+  d4_map_strMSi16ME_free(b08_0);
+  d4_map_strMSi8ME_free(b07_0);
+  d4_map_strMSfloatME_free(b06_0);
+  d4_map_strMSf64ME_free(b05_0);
+  d4_map_strMSf32ME_free(b04_0);
+  d4_map_strMScharME_free(b03_0);
+  d4_map_strMSbyteME_free(b02_0);
+  d4_map_strMSboolME_free(b01_0);
+  d4_map_strMSu64ME_free(a15_0);
+  d4_map_strMSu32ME_free(a14_0);
+  d4_map_strMSu16ME_free(a13_0);
+  d4_map_strMSu8ME_free(a12_0);
+  d4_map_strMSintME_free(a11_0);
+  d4_map_strMSi64ME_free(a10_0);
+  d4_map_strMSi32ME_free(a09_0);
+  d4_map_strMSi16ME_free(a08_0);
+  d4_map_strMSi8ME_free(a07_0);
+  d4_map_strMSfloatME_free(a06_0);
+  d4_map_strMSf64ME_free(a05_0);
+  d4_map_strMSf32ME_free(a04_0);
+  d4_map_strMScharME_free(a03_0);
+  d4_map_strMSbyteME_free(a02_0);
+  d4_map_strMSboolME_free(a01_0);
+}
+===== output =====

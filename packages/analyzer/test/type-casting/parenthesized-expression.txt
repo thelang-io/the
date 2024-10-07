@@ -1,0 +1,15 @@
+main {
+  mut a: bool | int
+  b := (a = true) ? a : false
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int)
+  VariableDeclaration(name=b mutable=false constant=false)
+    ConditionalExpression(type=bool)
+      ParenthesizedExpression(type=bool)
+        AssignmentExpression(type=bool operator==)
+          Identifier(type=bool | int target=bool | int name=a)
+          BooleanLiteral(type=bool target=bool | int value=true)
+      Identifier(type=bool target=bool name=a)
+      BooleanLiteral(type=bool target=bool value=false)

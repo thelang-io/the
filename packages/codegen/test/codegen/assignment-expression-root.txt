@@ -1,0 +1,11 @@
+main {
+  mut a := 1
+  a = 2
+}
+===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t a_0 = 1;
+  a_0 = 2;
+}
+===== output =====

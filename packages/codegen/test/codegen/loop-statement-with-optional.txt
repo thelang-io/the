@@ -1,0 +1,82 @@
+main {
+  loop i: int? = 0; i != nil; i = nil {
+  }
+
+  mut a: int? = 0
+  loop ; a != nil; a = nil {
+  }
+
+  mut b: int? = 0
+  loop ; b != nil; {
+    b = nil
+  }
+
+  mut c: int? = 0
+  loop {
+    if c == nil {
+      break
+    }
+
+    c = nil
+  }
+
+  loop d: int? = 0; d != nil; {
+    d = nil
+  }
+
+  loop e: int? = 0;; e = nil {
+    if e == nil {
+      break
+    }
+  }
+}
+===== code =====
+#include <d4/number.h>
+#include <d4/optional.h>
+#include <stddef.h>
+#include <stdint.h>
+D4_OPTIONAL_DECLARE(int, int32_t)
+D4_OPTIONAL_DEFINE(int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+int main (void) {
+  d4_opt_int_t a_0;
+  d4_opt_int_t b_0;
+  d4_opt_int_t c_0;
+  {
+    d4_opt_int_t i_0 = 0;
+    for (; !d4_opt_int_eq(i_0, NULL); i_0 = d4_opt_int_realloc(i_0, NULL)) {}
+    d4_opt_int_free(i_0);
+  }
+  a_0 = 0;
+  for (; !d4_opt_int_eq(a_0, NULL); a_0 = d4_opt_int_realloc(a_0, NULL)) {}
+  b_0 = 0;
+  while (!d4_opt_int_eq(b_0, NULL)) {
+    b_0 = d4_opt_int_realloc(b_0, NULL);
+  }
+  c_0 = 0;
+  while (1) {
+    if (d4_opt_int_eq(c_0, NULL)) {
+      break;
+    }
+    c_0 = d4_opt_int_realloc(c_0, NULL);
+  }
+  {
+    d4_opt_int_t d_0 = 0;
+    while (!d4_opt_int_eq(d_0, NULL)) {
+      d_0 = d4_opt_int_realloc(d_0, NULL);
+    }
+    d4_opt_int_free(d_0);
+  }
+  {
+    d4_opt_int_t e_0 = 0;
+    for (;; e_0 = d4_opt_int_realloc(e_0, NULL)) {
+      if (d4_opt_int_eq(e_0, NULL)) {
+        break;
+      }
+    }
+    d4_opt_int_free(e_0);
+  }
+  d4_opt_int_free(c_0);
+  d4_opt_int_free(b_0);
+  d4_opt_int_free(a_0);
+}
+===== output =====

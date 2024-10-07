@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "../Codegen.hpp"
 
-std::shared_ptr<CodegenASTExpr> Codegen::_exprObjDefaultField (const CodegenTypeInfo &typeInfo) {
+std::shared_ptr<CodegenASTExpr> Codegen::_exprObjDefaultField (const std::string &name, const CodegenTypeInfo &typeInfo) {
   if (typeInfo.type->isAny()) {
     return CodegenASTExprCast::create(
       CodegenASTType::create(this->_("struct any")),
@@ -39,7 +39,10 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprObjDefaultField (const CodegenType
   } else if (typeInfo.type->isChar()) {
     return CodegenASTExprLiteral::create(R"('\0')");
   } else if (typeInfo.type->isFn() || typeInfo.type->isRef() || typeInfo.type->isUnion()) {
-    throw Error("tried object expression default field on invalid type");
+    throw Error(
+      "tried object expression default on field \"" + name + "\" "
+      "on invalid type \"" + typeInfo.type->name + "\""
+    );
   } else if (typeInfo.type->isOpt()) {
     return CodegenASTExprAccess::create(this->_("NULL"));
   } else if (typeInfo.type->isObj() && typeInfo.type->builtin && typeInfo.type->codeName == "@buffer_Buffer") {
@@ -56,7 +59,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprObjDefaultField (const CodegenType
       }
 
       auto fieldTypeInfo = this->_typeInfo(typeField.type);
-      cFields.push_back(this->_exprObjDefaultField(fieldTypeInfo));
+      cFields.push_back(this->_exprObjDefaultField(typeField.name, fieldTypeInfo));
     }
 
     return CodegenASTExprCall::create(
@@ -92,7 +95,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprObj (const ASTNodeExpr &nodeExpr, 
     cFields.push_back(
       prop != exprObj.props.end()
         ? this->_nodeExpr(prop->init, typeField.type, parent, c)
-        : this->_exprObjDefaultField(fieldTypeInfo)
+        : this->_exprObjDefaultField(typeField.name, fieldTypeInfo)
     );
   }
 

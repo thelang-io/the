@@ -1,0 +1,192 @@
+main {
+  loop i: int | str = 0; i != "test"; i = "test" {
+  }
+
+  mut a: int | str = 0
+  loop ; "test" != a; a = "test" {
+  }
+
+  mut b: int | str = 0
+  loop ; b != "test"; {
+    b = "test"
+  }
+
+  mut c: int | str = 0
+  loop {
+    if c == "test" {
+      break
+    }
+
+    c = "test"
+  }
+
+  loop d: int | str = 0; d != "test"; {
+    d = "test"
+  }
+
+  loop e: int | str = 0;; e = "test" {
+    if e == "test" {
+      break
+    }
+  }
+}
+===== code =====
+#include <d4/macro.h>
+#include <d4/number.h>
+#include <d4/string.h>
+#include <d4/union.h>
+#include <stdarg.h>
+#include <stdint.h>
+#define TYPE_int 1
+#define TYPE_str 2
+D4_UNION_DECLARE(intUSstr, {
+  int32_t v1;
+  d4_str_t v2;
+})
+D4_UNION_DEFINE(intUSstr, {
+  if (self.type == TYPE_int) self.data.v1 = va_arg(args, int32_t);
+  if (self.type == TYPE_str) self.data.v2 = d4_str_copy(va_arg(args, d4_str_t));
+}, {
+  if (self.type == TYPE_int) result.data.v1 = self.data.v1;
+  if (self.type == TYPE_str) result.data.v2 = d4_str_copy(self.data.v2);
+}, {
+  if (self.type == TYPE_int) return self.data.v1 == rhs.data.v1;
+  if (self.type == TYPE_str) return d4_str_eq(self.data.v2, rhs.data.v2);
+}, {
+  if (self.type == TYPE_str) d4_str_free(self.data.v2);
+}, {
+  if (self.type == TYPE_int) return d4_int_str(self.data.v1);
+  if (self.type == TYPE_str) return d4_str_copy(self.data.v2);
+})
+int main (void) {
+  d4_union_intUSstrUE_t a_0;
+  d4_union_intUSstrUE_t b_0;
+  d4_union_intUSstrUE_t c_0;
+  {
+    d4_union_intUSstrUE_t i_0 = d4_union_intUSstrUE_alloc(TYPE_int, 0);
+    while (1) {
+      unsigned char b1 = 0;
+      d4_str_t __THE_1 = d4_str_empty_val;
+      d4_union_intUSstrUE_t __THE_2 = d4_union_intUSstrUE_alloc(-1);
+      d4_str_t __THE_3 = d4_str_empty_val;
+      d4_union_intUSstrUE_t __THE_4 = d4_union_intUSstrUE_alloc(-1);
+      if (!(!d4_union_intUSstrUE_eq(i_0, __THE_2 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_1 = d4_str_alloc(L"test"))))) {
+        b1 = 1;
+        goto L1;
+      }
+      i_0 = d4_union_intUSstrUE_realloc(i_0, __THE_4 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_3 = d4_str_alloc(L"test")));
+      d4_union_intUSstrUE_free(__THE_4);
+      d4_str_free(__THE_3);
+L1:
+      d4_union_intUSstrUE_free(__THE_2);
+      d4_str_free(__THE_1);
+      if (b1 == 1) break;
+    }
+    d4_union_intUSstrUE_free(i_0);
+  }
+  a_0 = d4_union_intUSstrUE_alloc(TYPE_int, 0);
+  while (1) {
+    unsigned char b1 = 0;
+    d4_str_t __THE_5 = d4_str_empty_val;
+    d4_union_intUSstrUE_t __THE_6 = d4_union_intUSstrUE_alloc(-1);
+    d4_str_t __THE_7 = d4_str_empty_val;
+    d4_union_intUSstrUE_t __THE_8 = d4_union_intUSstrUE_alloc(-1);
+    if (!(!d4_union_intUSstrUE_eq(__THE_6 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_5 = d4_str_alloc(L"test")), a_0))) {
+      b1 = 1;
+      goto L2;
+    }
+    a_0 = d4_union_intUSstrUE_realloc(a_0, __THE_8 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_7 = d4_str_alloc(L"test")));
+    d4_union_intUSstrUE_free(__THE_8);
+    d4_str_free(__THE_7);
+L2:
+    d4_union_intUSstrUE_free(__THE_6);
+    d4_str_free(__THE_5);
+    if (b1 == 1) break;
+  }
+  b_0 = d4_union_intUSstrUE_alloc(TYPE_int, 0);
+  while (1) {
+    unsigned char b1 = 0;
+    d4_str_t __THE_9 = d4_str_empty_val;
+    d4_union_intUSstrUE_t __THE_10 = d4_union_intUSstrUE_alloc(-1);
+    d4_str_t __THE_11 = d4_str_empty_val;
+    d4_union_intUSstrUE_t __THE_12 = d4_union_intUSstrUE_alloc(-1);
+    if (!(!d4_union_intUSstrUE_eq(b_0, __THE_10 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_9 = d4_str_alloc(L"test"))))) {
+      b1 = 1;
+      goto L3;
+    }
+    b_0 = d4_union_intUSstrUE_realloc(b_0, __THE_12 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_11 = d4_str_alloc(L"test")));
+    d4_union_intUSstrUE_free(__THE_12);
+    d4_str_free(__THE_11);
+L3:
+    d4_union_intUSstrUE_free(__THE_10);
+    d4_str_free(__THE_9);
+    if (b1 == 1) break;
+  }
+  c_0 = d4_union_intUSstrUE_alloc(TYPE_int, 0);
+  while (1) {
+    unsigned char b1 = 0;
+    d4_str_t __THE_13 = d4_str_empty_val;
+    d4_union_intUSstrUE_t __THE_14 = d4_union_intUSstrUE_alloc(-1);
+    d4_str_t __THE_15 = d4_str_empty_val;
+    d4_union_intUSstrUE_t __THE_16 = d4_union_intUSstrUE_alloc(-1);
+    if (d4_union_intUSstrUE_eq(c_0, __THE_14 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_13 = d4_str_alloc(L"test")))) {
+      b1 = 1;
+      if (b1 == 1) goto L4;
+    }
+    c_0 = d4_union_intUSstrUE_realloc(c_0, __THE_16 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_15 = d4_str_alloc(L"test")));
+    d4_union_intUSstrUE_free(__THE_16);
+    d4_str_free(__THE_15);
+L4:
+    d4_union_intUSstrUE_free(__THE_14);
+    d4_str_free(__THE_13);
+    if (b1 == 1) break;
+  }
+  {
+    d4_union_intUSstrUE_t d_0 = d4_union_intUSstrUE_alloc(TYPE_int, 0);
+    while (1) {
+      unsigned char b1 = 0;
+      d4_str_t __THE_17 = d4_str_empty_val;
+      d4_union_intUSstrUE_t __THE_18 = d4_union_intUSstrUE_alloc(-1);
+      d4_str_t __THE_19 = d4_str_empty_val;
+      d4_union_intUSstrUE_t __THE_20 = d4_union_intUSstrUE_alloc(-1);
+      if (!(!d4_union_intUSstrUE_eq(d_0, __THE_18 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_17 = d4_str_alloc(L"test"))))) {
+        b1 = 1;
+        goto L5;
+      }
+      d_0 = d4_union_intUSstrUE_realloc(d_0, __THE_20 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_19 = d4_str_alloc(L"test")));
+      d4_union_intUSstrUE_free(__THE_20);
+      d4_str_free(__THE_19);
+L5:
+      d4_union_intUSstrUE_free(__THE_18);
+      d4_str_free(__THE_17);
+      if (b1 == 1) break;
+    }
+    d4_union_intUSstrUE_free(d_0);
+  }
+  {
+    d4_union_intUSstrUE_t e_0 = d4_union_intUSstrUE_alloc(TYPE_int, 0);
+    while (1) {
+      unsigned char b1 = 0;
+      d4_str_t __THE_21 = d4_str_empty_val;
+      d4_union_intUSstrUE_t __THE_22 = d4_union_intUSstrUE_alloc(-1);
+      d4_str_t __THE_23 = d4_str_empty_val;
+      d4_union_intUSstrUE_t __THE_24 = d4_union_intUSstrUE_alloc(-1);
+      if (d4_union_intUSstrUE_eq(e_0, __THE_24 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_23 = d4_str_alloc(L"test")))) {
+        b1 = 1;
+        if (b1 == 1) goto L6;
+      }
+L6:
+      d4_union_intUSstrUE_free(__THE_24);
+      d4_str_free(__THE_23);
+      e_0 = d4_union_intUSstrUE_realloc(e_0, __THE_22 = d4_union_intUSstrUE_alloc(TYPE_str, __THE_21 = d4_str_alloc(L"test")));
+      d4_union_intUSstrUE_free(__THE_22);
+      d4_str_free(__THE_21);
+      if (b1 == 1) break;
+    }
+    d4_union_intUSstrUE_free(e_0);
+  }
+  d4_union_intUSstrUE_free(c_0);
+  d4_union_intUSstrUE_free(b_0);
+  d4_union_intUSstrUE_free(a_0);
+}
+===== output =====

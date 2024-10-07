@@ -40,7 +40,7 @@ export obj VarMap {
       }
     }
 
-    throw error_NewError("Variable with this name doesn't exists")
+    throw error_NewError("Variable with name '" + name + "' doesn't exists")
   }
 
   fn has (mut self: ref Self, name: str, global := true) bool {

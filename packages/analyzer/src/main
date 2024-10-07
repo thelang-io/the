@@ -5,6 +5,22 @@
 
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
 import
+  IdentifierContext,
+  ArrayExpressionContext,
+  AsExpressionContext,
+  AssignmentExpressionContext,
+  BinaryExpressionContext,
+  CallExpressionContext,
+  CallExpressionContextArgument,
+  ConditionalExpressionContext,
+  ElementAccessExpressionContext,
+  IsExpressionContext,
+  MapExpressionContext,
+  UnaryExpressionContext,
+  VariableDeclarationContext,
+  TypeContext
+from "./context"
+import
   Type,
   TypeBody,
   TypeProperty,
@@ -29,6 +45,7 @@ import
 from "./type"
 import TypeMap, TypeMapMode from "./type-map"
 import VarMap from "./var-map"
+import stringify as stringifyTC from "./type-cast"
 import * as AnalyzerExport from "./analyzer-export"
 
 export Analyzer
@@ -36,6 +53,20 @@ export AnalyzerExport
 export AnalyzerFile
 export AnalyzerFileState
 export AnalyzerState
+export IdentifierContext
+export ArrayExpressionContext
+export AsExpressionContext
+export AssignmentExpressionContext
+export BinaryExpressionContext
+export CallExpressionContext
+export CallExpressionContextArgument
+export ConditionalExpressionContext
+export ElementAccessExpressionContext
+export IsExpressionContext
+export MapExpressionContext
+export UnaryExpressionContext
+export VariableDeclarationContext
+export TypeContext
 export Type
 export TypeBody
 export TypeProperty
@@ -60,4 +91,5 @@ export analyze
 export largest
 export match
 export similarTo
+export stringifyTC
 export unwrap

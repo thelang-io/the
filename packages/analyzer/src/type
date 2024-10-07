@@ -59,49 +59,71 @@ export obj Type {
   fn isReference (self: ref Self) bool { return self.body is ReferenceType }
   fn isUnion (self: ref Self) bool { return self.body is UnionType }
 
-  fn canBe (self: ref Self, t: ref Type) bool {
+  // TODO: retest, docs, test recursion
+  fn canCastTo (self: ref Self, to: ref Type) bool {
     a := unwrap(self, withReference: false)
-    b := unwrap(t, withReference: false)
+    b := unwrap(to, withReference: false)
 
     if a.name == "any" || b.name == "any" {
       return true
-    } elif a.isEnum() {
-      return b.name == "i32" || b.name == "int"
     } elif a.isOptional() {
-      t1 := a.asOptional()
-      return match(t1.t, b)
+      t := a.asOptional()
+      return t.t.canCastTo(b)
     } elif a.isReference() {
-      if b.name == "i32" || b.name == "int" {
-        return true
-      }
-
-      t1 := a.asReference()
-      return match(t1.t, b)
+      t := a.asReference()
+      return t.t.canCastTo(b) || (b.isNumber() && numberMatch(b.name, "i32"))
     } elif a.isUnion() {
       return a.hasType(b)
     }
 
-    if b.isEnum() {
-      return a.name == "i32" || a.name == "int"
-    } elif b.isOptional() {
-      t1 := b.asOptional()
-      return match(t1.t, a)
-    } elif b.isReference() {
-      return a.name == "i32" || a.name == "int"
+    if b.isOptional() {
+      t := b.asOptional()
+      return a.canCastTo(t.t)
     } elif b.isUnion() {
       return b.hasType(a)
     }
 
     return
       (a.name == "bool" && b.isNumber()) ||
-      (b.name == "bool" && a.isNumber()) ||
-      (a.name == "byte" && (b.name == "char" || b.isNumber())) ||
-      (b.name == "byte" && (a.name == "char" || a.isNumber())) ||
-      (a.name == "char" && b.isNumber()) ||
-      (b.name == "char" && a.isNumber()) ||
-      (a.name == "rune" && b.isNumber()) ||
-      (b.name == "rune" && a.isNumber()) ||
-      (a.isFunction() && b.isFunction() && similarTo(a, b)) ||
+      (a.name == "byte" && b.name == "char") ||
+      (b.name == "byte" && a.name == "char") ||
+      (a.name == "byte" && b.isNumber() && numberMatch(b.name, "u8")) ||
+      (b.name == "byte" && a.isNumber() && numberMatch(a.name, "u8")) ||
+      (a.name == "char" && b.isNumber() && numberMatch(b.name, "i8")) ||
+      (b.name == "char" && a.isNumber() && numberMatch(a.name, "i8")) ||
+      (a.name == "rune" && b.isNumber() && numberMatch(b.name, "i32")) ||
+      (b.name == "rune" && a.isNumber() && numberMatch(a.name, "i32")) ||
+      (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
+  }
+
+  // TODO: test, docs
+  fn canPromoteTo (self: ref Self, to: ref Type) bool {
+    a := unwrap(self, withReference: false)
+    b := unwrap(to, withReference: false)
+
+    if b.name == "any" {
+      return true
+    } elif b.isOptional() {
+      t := b.asOptional()
+      return a.canPromoteTo(t.t)
+    } elif a.isReference() {
+      t1 := a.asReference()
+
+      if b.isReference() {
+        t2 := b.asReference()
+        return t1.t.canPromoteTo(t2.t)
+      }
+
+      return t1.t.canPromoteTo(b) || (b.isNumber() && numberMatch(b.name, "i32"))
+    } elif b.isUnion() {
+      return b.hasType(a)
+    }
+
+    return
+      (a.name == "bool" && b.isNumber()) ||
+      (a.name == "byte" && (b.name == "char" || (b.isNumber() && numberMatch(b.name, "u8")))) ||
+      (a.name == "char" && (b.name == "byte" || (b.isNumber() && numberMatch(b.name, "i8")))) ||
+      (a.name == "rune" && b.isNumber() && numberMatch(b.name, "i32")) ||
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
@@ -167,6 +189,19 @@ export obj Type {
   }
 
   fn hasType (self: ref Self, search: ref Type) bool {
+    if search.isUnion() {
+      // TODO: test
+      searchUnion := search.asUnion()
+
+      loop i := searchUnion.types.len - 1; i >= 0; i-- {
+        if !self.hasType(searchUnion.types[i] as ref Type) {
+          return false
+        }
+      }
+
+      return true
+    }
+
     t := self.asUnion()
 
     loop i := t.types.len - 1; i >= 0; i-- {
@@ -392,6 +427,12 @@ export obj UnionType {
   mut types: (ref Type)[]
 }
 
+// TODO: test, docs
+export fn canPromote (a: ref Type, b: ref Type) bool {
+  return a.canPromoteTo(b) || b.canPromoteTo(a)
+}
+
+// TODO: remove
 export fn largest (a: ref Type, b: ref Type) ref Type {
   return (
     ((a.name == "f64" || a.name == "float") && (b.name == "f64" || b.name == "float")) ||
@@ -460,11 +501,7 @@ export fn match (type1: ref Type, type2: ref Type) bool {
   a := unwrap(type1, withReference: false)
   b := unwrap(type2, withReference: false)
 
-  if a.isReference() && b.isReference() {
-    t1 := a.asReference()
-    t2 := b.asReference()
-    return match(t1.t, t2.t)
-  } elif a.isArray() && b.isArray() {
+  if a.isArray() && b.isArray() {
     t1 := a.asArray()
     t2 := b.asArray()
     return match(t1.elementType, t2.elementType)
@@ -539,6 +576,10 @@ export fn match (type1: ref Type, type2: ref Type) bool {
     t1 := a.asOptional()
     t2 := b.asOptional()
     return match(t1.t, t2.t)
+  } elif a.isReference() && b.isReference() {
+    t1 := a.asReference()
+    t2 := b.asReference()
+    return match(t1.t, t2.t)
   } elif a.isUnion() && b.isUnion() {
     t1 := a.asUnion()
     t2 := b.asUnion()
@@ -550,7 +591,19 @@ export fn match (type1: ref Type, type2: ref Type) bool {
     }
 
     loop i := 0; i < types1Len; i++ {
-      if !b.hasType(t1.types[i] as ref Type) {
+      t1Type := t1.types[i] as ref Type
+      mut found := false
+
+      loop j := 0; j < types2Len; j++ {
+        t2Type := t2.types[j] as ref Type
+
+        if match(t1Type, t2Type) {
+          found = true
+          break
+        }
+      }
+
+      if !found {
         return false
       }
     }
@@ -561,6 +614,33 @@ export fn match (type1: ref Type, type2: ref Type) bool {
   return !a.name.empty && a.name == b.name
 }
 
+// TODO: test, docs
+export fn promote (a: ref Type, b: ref Type) ref Type {
+  if b.canPromoteTo(a) {
+    return a
+  }
+
+  if a.canPromoteTo(b) {
+    return b
+  }
+
+  throw error_NewError("Unable to promote types '" + a.toString() + "' and '" + b.toString() + "'")
+}
+
+// TODO: test, docs
+export fn promoteMaybe (a: ref Type, b: ref Type) ref Type {
+  if b.canPromoteTo(a) {
+    return a
+  }
+
+  if a.canPromoteTo(b) {
+    return b
+  }
+
+  return a
+}
+
+// TODO: validate correctness
 export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
   a := unwrap(similarToType, withReference: false)
   b := unwrap(typeToCompare, withReference: false)
@@ -729,6 +809,7 @@ export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
   return false
 }
 
+// TODO: remove after v1
 export fn opt (t: ref Type) (ref Type)? {
   mut a: (ref Type)? = t
   return a

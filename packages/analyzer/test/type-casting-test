@@ -1,0 +1,57 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import Analyzer, AnalyzerFile from "../src/analyzer"
+import analyzerPrint from "../src/analyzer-print"
+
+import Tests, EXPECT_EQ from "the/testing" // TODO: delete when done testing
+
+export obj TypeCastingFileResult {
+  in: str
+  out: str
+}
+
+export fn parseTestFile (path: str) TypeCastingFileResult {
+  content := fs_readFileSync(path).str()
+  outLoc := content.find("===== out =====")
+  inContent := outLoc == -1 ? content : content.slice(0, outLoc)
+  outContent := outLoc == -1 ? "" : content.slice(outLoc + 15 + os_EOL.len)
+
+  return TypeCastingFileResult{
+    in: inContent,
+    out: outContent,
+  }
+}
+
+export fn TEST_Analyzer_typeCasting () {
+  files := fs_scandirSync("./test/type-casting")
+
+  loop i := 0; i < files.len; i++ {
+    filePath := files[i] as str
+    if filePath.slice(-4) != ".txt" { continue }
+
+    result := parseTestFile("./test/type-casting/" + filePath)
+    mut f := Parser.parse(result.in)
+    Parser.interconnect(ref f)
+    mut analyzer := Analyzer{}
+    analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer, f: f})
+    mut file := analyzer.files.last()
+    file.reader = Parser.Reader_init(file.f.content)
+    file.init()
+    file.analyze(ref file.f.program.body)
+
+    EXPECT_EQ(analyzer.errors.join(os_EOL), "")
+    out := analyzerPrint(ref file.f.program.body)
+    banner := filePath.slice(0, -4) + os_EOL
+    EXPECT_EQ(banner + result.out, banner + out)
+  }
+}
+
+main {
+  mut tests := Tests{}
+  tests.register("Analyzer.typeCasting", TEST_Analyzer_typeCasting)
+  tests.run(process_args)
+}
