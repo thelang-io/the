@@ -11,15 +11,15 @@ The Programming Language is a rapid, minimalistic, elegant, high-performance, hi
 ## Mission
 Our mission is to support every possible scenario of development with less effort from developer and centralize development around The Programming Language by providing building, deployment and testing tools.
 
-## How To Contribute
-To contribute, please send us a [pull request](https://github.com/thelang-io/the/compare) from your fork of this repository. \
-New developers may find notes in [CONTRIBUTING.md](CONTRIBUTING.md) file helpful to start contributing.
-
-## Using
-In order to use The Programming Language please refer to [CLI](https://github.com/thelang-io/cli).
+## How To Use
+In order to use The programming language please refer to [CLI installation](https://docs.thelang.io/guides/installation.html).
 
 ## Files Extension
 The Programming Language files have no file extension.
+
+## How To Contribute
+To contribute, please send us a [pull request](https://github.com/thelang-io/the/compare) from your fork of this repository. \
+New developers may find notes in [CONTRIBUTING.md](CONTRIBUTING.md) file helpful to start contributing.
 
 ## Supported Operating Systems
 The Programming Language is built and tested on the following operating systems:
@@ -27,13 +27,13 @@ The Programming Language is built and tested on the following operating systems:
 | Operating System | Version       | Architecture  | Support  |
 |:-----------------|---------------|---------------|----------|
 |                  |               |               |          |
-| macOS            | 11 - 13       | Intel x86-64  | Official |
+| macOS            | 11 - 14       | Intel x86-64  | Official |
 |                  |               |               |          |
-|                  | 11 - 13       | Apple Silicon | Official |
+|                  | 11 - 14       | Apple Silicon | Official |
 |                  |               |               |          |
 | Linux Ubuntu     | 20.04 - 22.04 | Intel x86-64  | Official |
 |                  |               |               |          |
-| Windows          | 10            | Intel x86-64  | Official |
+| Windows          | 10 - 11       | Intel x86-64  | Official |
 |                  |               |               |          |
 
 ## The Author
