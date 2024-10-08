@@ -258,6 +258,28 @@ Checks whether expression's body contains corresponding type.
 expression.isIdentifier()
 ```
 
+### `Expression.getAccess (withAssignment := false) bool`
+Finds `Identifier`, `ElementAccess` or `PropertyAccess` expression skipping parenthesized expression.
+
+**Parameters**
+
+- `withAssignment` - whether to treat left side of assignment as access
+
+**Return value**
+
+Whether expression is `Identifier`, `ElementAccess` or `PropertyAccess`.
+
+**Examples**
+
+```the
+expression.getAccess()
+expression.getAccess(withAssignment: true)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to get access expression
+
 ### `Expression.hasParent () bool`
 Checks if expression has parent. Make sure to `interconnect` references.
 
@@ -284,8 +306,12 @@ Whether expression has parent statement.
 expression.hasParentNode()
 ```
 
-### `Expression.isAccess () bool`
+### `Expression.isAccess (withAssignment := false) bool`
 Checks whether expression is `Identifier`, `ElementAccess` or `PropertyAccess`.
+
+**Parameters**
+
+- `withAssignment` - whether to treat left side of assignment as access
 
 **Return value**
 
@@ -295,6 +321,7 @@ Whether expression is `Identifier`, `ElementAccess` or `PropertyAccess`.
 
 ```the
 expression.isAccess()
+expression.isAccess(withAssignment: true)
 ```
 
 ### `Expression.parent () ref Expression`

@@ -171,6 +171,20 @@ export obj Expression {
   fn isReference (self: ref Self) bool { return self.body is ReferenceExpression }
   fn isUnary (self: ref Self) bool { return self.body is UnaryExpression }
 
+  fn getAccess (self: ref Self, withAssignment := false) ref Self {
+    if withAssignment && self.isAssignment() {
+      expression := self.asAssignment()
+      return expression.left.getAccess(withAssignment: withAssignment)
+    } elif self.isParenthesized() {
+      expression := self.asParenthesized()
+      return expression.expression.getAccess(withAssignment: withAssignment)
+    } elif self.isAccess() {
+      return self
+    }
+
+    throw error_NewError("Unable to get access expression")
+  }
+
   fn hasParent (self: ref Self) bool {
     return self._parent != nil
   }
@@ -179,10 +193,13 @@ export obj Expression {
     return self._parentNode != nil
   }
 
-  fn isAccess (self: ref Self) bool {
-    if self.isParenthesized() {
+  fn isAccess (self: ref Self, withAssignment := false) bool {
+    if withAssignment && self.isAssignment() {
+      expression := self.asAssignment()
+      return expression.left.isAccess(withAssignment: withAssignment)
+    } elif self.isParenthesized() {
       expression := self.asParenthesized()
-      return expression.expression.isAccess()
+      return expression.expression.isAccess(withAssignment: withAssignment)
     }
 
     return self.isIdentifier() || self.isElementAccess() || self.isPropertyAccess()
