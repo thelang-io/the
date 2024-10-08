@@ -175,7 +175,7 @@ export fn TEST_Type_canCastTo () {
   EXPECT_TRUE(t17.canCastTo(t12))
   EXPECT_TRUE(t12.canCastTo(t17))
 
-  EXPECT_FALSE(t4.canCastTo(t18))
+  EXPECT_TRUE(t4.canCastTo(t18))
 
   t20 := tm.get("i8")
   t21 := tm.get("i64")

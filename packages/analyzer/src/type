@@ -96,6 +96,7 @@ export obj Type {
       (b.name == "char" && a.isNumber() && numberMatch(a.name, "i8")) ||
       (a.name == "rune" && b.isNumber() && numberMatch(b.name, "i32")) ||
       (b.name == "rune" && a.isNumber() && numberMatch(a.name, "i32")) ||
+      (a.isFunction() && b.isFunction() && similarTo(a, b)) ||
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 

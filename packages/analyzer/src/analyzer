@@ -417,6 +417,7 @@ export obj AnalyzerFile {
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)? = nil,
+    noTargetPromote := false,
     noTypeCast := false,
     withMutable := false,
     withMutableNext := false,
@@ -437,12 +438,12 @@ export obj AnalyzerFile {
       self._eMap(it, targetType) ||
       self._eMemberAccess(it, targetType) ||
       self._eObject(it, targetType) ||
-      self._eParenthesized(it, targetType, withMutable, withMutableNext) ||
+      self._eParenthesized(it, targetType, noTargetPromote, withMutable, withMutableNext) ||
       self._ePropertyAccess(it, targetType, noTypeCast, withMutable, withMutableNext) ||
       self._eReference(it, targetType, withMutable, withMutableNext) ||
       self._eUnary(it, targetType)
     ) {
-      if !noTypeCast && targetType != nil {
+      if !noTargetPromote && targetType != nil {
         Context.tryTarget(it, targetType)
       }
 
@@ -1211,7 +1212,7 @@ export obj AnalyzerFile {
         self.raise(errors.E1029(definiteTargetType.toString()), it.start, it.end)
       }
 
-      Context.set(it, self.tm.get("int"))
+      Context.set(it, definiteTargetType.isFloat() ? self.tm.get("float") : self.tm.get("int"))
       Context.setTarget(it, definiteTargetType)
 
       return true
@@ -1905,6 +1906,7 @@ export obj AnalyzerFile {
     mut self: ref Self,
     mut it: ref Parser.Expression,
     targetType: (ref Type.Type)?,
+    noTargetPromote: bool,
     withMutable: bool,
     withMutableNext: bool,
   ) bool {
@@ -1913,7 +1915,13 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asParenthesized()
-    self.e(ref expression.expression, targetType, withMutable: withMutable || withMutableNext)
+
+    self.e(
+      ref expression.expression,
+      targetType,
+      noTargetPromote: noTargetPromote,
+      withMutable: withMutable || withMutableNext,
+    )
 
     Context.set(it, Context.initial(ref expression.expression))
     Context.setTarget(it, Context.target(ref expression.expression))
@@ -2039,22 +2047,15 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asUnary()
-    mutating := expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus
-    mut maybeTargetType: (ref Type.Type)?
 
-    if targetType != nil {
-      if (
-        Type.match(targetType, self.tm.get("bool")) ||
-        Type.match(targetType, self.tm.get("byte")) ||
-        targetType.isNumber()
-      ) {
-        maybeTargetType = Type.opt(targetType)
-      }
-    }
+    expressionType := self.e(
+      ref expression.operand,
+      targetType,
+      noTargetPromote: true,
+      withMutable: expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus,
+    )
 
-    expressionType := self.e(ref expression.operand, maybeTargetType, withMutable: mutating)
     operandType := Type.unwrap(expressionType)
-
     Context.set(it, operandType)
 
     if expression.operator.t == .OpExcl {
@@ -2702,11 +2703,11 @@ export obj AnalyzerFile {
     }
 
     if statement.t != nil && statement.initializer != nil {
-      // TODO: push new type to tc right away
       initializerType := self.e(
         ref statement.initializer,
         Type.opt(varType),
-        withMutable: statement.mutable && !statement.initializer.isAccess()
+        noTargetPromote: true,
+        withMutable: statement.mutable && !statement.initializer.isAccess(),
       )
 
       if !Type.similarTo(initializerType, varType) {
@@ -2716,6 +2717,8 @@ export obj AnalyzerFile {
           statement.initializer.end,
         )
       }
+
+      self.tc.set(statement.name.name, initializerType)
     }
 
     if statement.initializer == nil && varType.isRequired() {
