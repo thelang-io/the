@@ -60,34 +60,6 @@ export obj AnalyzerFileArray {
   }
 }
 
-// TODO: test
-export fn getAccessExpression (expression: ref Parser.Expression) ref Parser.Expression {
-  if expression.isAssignment() {
-    body := expression.asAssignment()
-    return getAccessExpression(ref body.left)
-  } elif expression.isParenthesized() {
-    body := expression.asParenthesized()
-    return getAccessExpression(ref body.expression)
-  } elif expression.isAccess() {
-    return expression
-  }
-
-  throw error_NewError("Unable to get access expression")
-}
-
-// TODO: test
-export fn hasAccessExpression (expression: ref Parser.Expression) bool {
-  if expression.isAssignment() {
-    body := expression.asAssignment()
-    return hasAccessExpression(ref body.left)
-  } elif expression.isParenthesized() {
-    body := expression.asParenthesized()
-    return hasAccessExpression(ref body.expression)
-  }
-
-  return expression.isAccess()
-}
-
 export obj AnalyzerFile {
   mut cwd: str
   mut analyzer: ref Analyzer
@@ -928,12 +900,12 @@ export obj AnalyzerFile {
           alternate.merge(rightTypeCastResult.alternate)
         }
       } elif (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) && (
-        (hasAccessExpression(ref expression.left) && expression.right.isNilLiteral()) ||
-        (hasAccessExpression(ref expression.right) && expression.left.isNilLiteral())
+        (expression.left.isAccess(withAssignment: true) && expression.right.isNilLiteral()) ||
+        (expression.right.isAccess(withAssignment: true) && expression.left.isNilLiteral())
       ) {
         accessExpression := expression.left.isNilLiteral() ? ref expression.right : ref expression.left
         self.typeCast(accessExpression, false)
-        left := getAccessExpression(accessExpression)
+        left := accessExpression.getAccess(withAssignment: true)
         leftType := Type.unwrap(self.eNice(left))
 
         if leftType.isOptional() {
@@ -983,10 +955,10 @@ export obj AnalyzerFile {
       expression := it.asIs()
       self.typeCast(ref expression.expression, false)
 
-      if hasAccessExpression(ref expression.expression) {
+      if expression.expression.isAccess(withAssignment: true) {
         expressionType := Type.unwrap(self.eNice(ref expression.expression))
         t := self.t(ref expression.t)
-        code := Parser.stringifyExpression(getAccessExpression(ref expression.expression))
+        code := Parser.stringifyExpression(expression.expression.getAccess(withAssignment: true))
 
         if consequent.has(code) || self.tc.has(code) {
           existingType := consequent.has(code) ? consequent.get(code) : self.tc.get(code)
