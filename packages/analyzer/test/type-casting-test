@@ -5,7 +5,10 @@
 
 import * as Parser from "the/parser"
 import Analyzer, AnalyzerFile from "../src/analyzer"
+import * as Type from "../src/type"
+import TypeMap from "../src/type-map"
 import analyzerPrint from "../src/analyzer-print"
+import stringify as stringifyTC from "../src/type-cast"
 
 export obj TypeCastingFileResult {
   in: str
@@ -24,7 +27,7 @@ export fn parseTestFile (path: str) TypeCastingFileResult {
   }
 }
 
-export fn TEST_Analyzer_typeCasting () {
+export fn TEST_TypeCasting () {
   files := fs_scandirSync("./test/type-casting")
 
   loop i := 0; i < files.len; i++ {
@@ -46,4 +49,17 @@ export fn TEST_Analyzer_typeCasting () {
     banner := filePath.slice(0, -4) + os_EOL
     EXPECT_EQ(banner + result.out, banner + out)
   }
+}
+
+export fn TEST_TypeCasting_stringify () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  tc1: (ref Type.Type)[str] = {}
+  tc2 := { "var": tm.get("int") }
+  tc3 := { "var1": tm.get("int"), "var2": tm.createUnion([tm.get("u32"), tm.get("u64")]) }
+
+  EXPECT_EQ(stringifyTC(tc1), "{}")
+  EXPECT_EQ(stringifyTC(tc2), "{var: int}")
+  EXPECT_EQ(stringifyTC(tc3), "{var1: int, var2: u32 | u64}")
 }

@@ -71,6 +71,24 @@ tm := TypeMap{}
 result := similarTo(tm.get("i8"), tm.get("int"))
 ```
 
+### `stringifyTC (tc: (ref Type)[str]) str`
+Generates string representation of type cast.
+
+**Parameters**
+
+- `tc` - type cast to generate string representation for
+
+**Return value**
+
+String representation of type cast.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+result := stringifyTC({ "var": tm.get("int") })
+```
+
 ### `unwrap (t: ref Type, withOptional := false, withReference := true) ref Type`
 Recursively unwraps alias type and returns underlying type.
 
@@ -178,11 +196,11 @@ type.isAlias()
 ```
 
 ### `Type.canCastTo (t: ref Type) bool`
-Checks whether type can be cast to another type (should be used only on union type).
+Checks whether type can be cast to another type (used for AsExpression or IsExpression).
 
 **Parameters**
 
-- `t` - another type to check if possible to cast to
+- `to` - another type to check if possible to cast to
 
 **Return value**
 

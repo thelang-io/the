@@ -59,10 +59,13 @@ export obj Type {
   fn isReference (self: ref Self) bool { return self.body is ReferenceType }
   fn isUnion (self: ref Self) bool { return self.body is UnionType }
 
-  // TODO: retest, docs, test recursion
   fn canCastTo (self: ref Self, to: ref Type) bool {
     a := unwrap(self, withReference: false)
     b := unwrap(to, withReference: false)
+
+    if match(a, b) {
+      return true
+    }
 
     if a.name == "any" || b.name == "any" {
       return true
