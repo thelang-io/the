@@ -38,7 +38,6 @@ import
   ReferenceType,
   UnionType,
   Var,
-  largest,
   match,
   similarTo,
   unwrap
@@ -88,7 +87,6 @@ export UnionType
 export Var
 export VarMap
 export analyze
-export largest
 export match
 export similarTo
 export stringifyTC

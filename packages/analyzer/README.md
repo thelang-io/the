@@ -33,25 +33,6 @@ mut f := Parser.parse("path/to/file")
 error := analyze(ref f)
 ```
 
-### `largest (a: ref Type, b: ref Type) ref Type`
-Find largest type among two passed types.
-
-**Parameters**
-
-- `a` - first type to check
-- `b` - second type to check
-
-**Return value**
-
-Largest type among two passed types.
-
-**Examples**
-
-```the
-tm := TypeMap{}
-c := largest(tm.get("int"), tm.get("i8"))
-```
-
 ### `match (type1: ref Type, type2: ref Type) bool`
 Check whether one type strictly matches another.
 

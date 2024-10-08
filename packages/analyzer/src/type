@@ -432,58 +432,6 @@ export fn canPromote (a: ref Type, b: ref Type) bool {
   return a.canPromoteTo(b) || b.canPromoteTo(a)
 }
 
-// TODO: remove
-export fn largest (a: ref Type, b: ref Type) ref Type {
-  return (
-    ((a.name == "f64" || a.name == "float") && (b.name == "f64" || b.name == "float")) ||
-    ((a.name == "f64" || a.name == "float") && b.name == "f32") ||
-    ((a.name == "f64" || a.name == "float") && b.name == "u32") ||
-    ((a.name == "f64" || a.name == "float") && b.name == "u16") ||
-    ((a.name == "f64" || a.name == "float") && b.name == "u8") ||
-    ((a.name == "f64" || a.name == "float") && (b.name == "i64" || b.name == "isize")) ||
-    ((a.name == "f64" || a.name == "float") && (b.name == "i32" || b.name == "int")) ||
-    ((a.name == "f64" || a.name == "float") && b.name == "i16") ||
-    ((a.name == "f64" || a.name == "float") && b.name == "i8") ||
-
-    (a.name == "f32" && b.name == "f32") ||
-    (a.name == "f32" && b.name == "u16") ||
-    (a.name == "f32" && b.name == "u8") ||
-    (a.name == "f32" && (b.name == "i32" || b.name == "int")) ||
-    (a.name == "f32" && b.name == "i16") ||
-    (a.name == "f32" && b.name == "i8") ||
-
-    ((a.name == "i64" || a.name == "isize") && b.name == "u32") ||
-    ((a.name == "i64" || a.name == "isize") && b.name == "u16") ||
-    ((a.name == "i64" || a.name == "isize") && b.name == "u8") ||
-    ((a.name == "i64" || a.name == "isize") && (b.name == "i64" || b.name == "isize")) ||
-    ((a.name == "i64" || a.name == "isize") && (b.name == "i32" || b.name == "int")) ||
-    ((a.name == "i64" || a.name == "isize") && b.name == "i16") ||
-    ((a.name == "i64" || a.name == "isize") && b.name == "i8") ||
-    ((a.name == "u64" || a.name == "usize") && (b.name == "u64" || b.name == "usize")) ||
-    ((a.name == "u64" || a.name == "usize") && b.name == "u32") ||
-    ((a.name == "u64" || a.name == "usize") && b.name == "u16") ||
-    ((a.name == "u64" || a.name == "usize") && b.name == "u8") ||
-
-    ((a.name == "i32" || a.name == "int") && b.name == "u16") ||
-    ((a.name == "i32" || a.name == "int") && b.name == "u8") ||
-    ((a.name == "i32" || a.name == "int") && (b.name == "i32" || b.name == "int")) ||
-    ((a.name == "i32" || a.name == "int") && b.name == "i16") ||
-    ((a.name == "i32" || a.name == "int") && b.name == "i8") ||
-    (a.name == "u32" && b.name == "u32") ||
-    (a.name == "u32" && b.name == "u16") ||
-    (a.name == "u32" && b.name == "u8") ||
-
-    (a.name == "i16" && b.name == "u8") ||
-    (a.name == "i16" && b.name == "i16") ||
-    (a.name == "i16" && b.name == "i8") ||
-    (a.name == "u16" && b.name == "u16") ||
-    (a.name == "u16" && b.name == "u8") ||
-
-    (a.name == "i8" && b.name == "i8") ||
-    (a.name == "u8" && b.name == "u8")
-  ) ? a : b
-}
-
 export fn numberMatch (a: str, b: str) bool {
   return (a == "i8" && b == "i8") ||
     (a == "i16" && (b == "i16" || b == "u8" || numberMatch("i8", b))) ||
@@ -640,7 +588,6 @@ export fn promoteMaybe (a: ref Type, b: ref Type) ref Type {
   return a
 }
 
-// TODO: validate correctness
 export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
   a := unwrap(similarToType, withReference: false)
   b := unwrap(typeToCompare, withReference: false)
@@ -650,12 +597,10 @@ export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
   } elif (
     a.name == "any" ||
     (a.name == "bool" && b.name == "bool") ||
-    (a.name == "byte" && (b.name == "byte" || b.isInt())) ||
-    (b.name == "byte" && (a.name == "byte" || a.isInt())) ||
-    (a.name == "char" && b.name == "char") ||
+    (a.name == "byte" && (b.name == "byte" || b.name == "char" || b.isInt())) ||
+    (a.name == "char" && (b.name == "byte" || b.name == "char")) ||
     (a.name == "rune" && b.name == "rune") ||
     (a.name == "str" && b.name == "str") ||
-    (a.name == "void" && b.name == "void") ||
     (a.isNumber() && b.isNumber() && numberMatch(a.name, b.name))
   ) {
     return true
@@ -798,7 +743,19 @@ export fn similarTo (typeToCompare: ref Type, similarToType: ref Type) bool {
     }
 
     loop i := 0; i < types1Len; i++ {
-      if !b.hasType(t1.types[i] as ref Type) {
+      t1Type := t1.types[i] as ref Type
+      mut found := false
+
+      loop j := 0; j < types2Len; j++ {
+        t2Type := t2.types[j] as ref Type
+
+        if similarTo(t1Type, t2Type) {
+          found = true
+          break
+        }
+      }
+
+      if !found {
         return false
       }
     }

@@ -2712,7 +2712,7 @@ export obj AnalyzerFile {
         self.raise(
           errors.E1005(initializerType.toString(), varType.toString()),
           statement.initializer.start,
-          statement.initializer.end
+          statement.initializer.end,
         )
       }
     }
