@@ -45,3 +45,7 @@ const a43: u16 = 10
 const a44: u32 = 10
 const a45: u64 = 10
 const a46: usize = 10
+
+const a47: f32 = 10
+const a48: f64 = 10
+const a49: float = 10

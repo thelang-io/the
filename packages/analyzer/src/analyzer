@@ -992,8 +992,7 @@ export obj AnalyzerFile {
 
           if Type.match(existingType, t) {
             alternate.set(code, self.tm.get("never"))
-          } elif existingType.canCastTo(t) { // TODO: should use cast or promote?
-            // TODO: test
+          } elif existingType.canCastTo(t) {
             consequent.set(code, t)
 
             if expressionType.isUnion() {
@@ -1178,7 +1177,7 @@ export obj AnalyzerFile {
     if it.isIntegerLiteral() {
       expression := it.asIntegerLiteral()
       possibleTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
-      definiteTargetType := Type.unwrap(possibleTargetType.isInt() ? possibleTargetType : self.tm.get("int"))
+      definiteTargetType := Type.unwrap(possibleTargetType.isNumber() ? possibleTargetType : self.tm.get("int"))
       firstTwoDigits := expression.value.lower.slice(0, 2)
       val := firstTwoDigits == "0b" || firstTwoDigits == "0o" ? expression.value.slice(2) : expression.value
 
@@ -1200,9 +1199,11 @@ export obj AnalyzerFile {
         } elif Type.match(definiteTargetType, self.tm.get("u64")) {
           val.toU64(0)
         } elif Type.match(definiteTargetType, self.tm.get("f32")) {
-          expression.value.toF32() // TODO: test
+          expression.value.toF32()
         } elif Type.match(definiteTargetType, self.tm.get("f64")) {
-          expression.value.toF64() // TODO: test
+          expression.value.toF64()
+        } elif Type.match(definiteTargetType, self.tm.get("float")) {
+          expression.value.toFloat()
         } else {
           val.toInt(0)
         }

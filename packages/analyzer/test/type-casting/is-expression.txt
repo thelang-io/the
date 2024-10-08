@@ -9,6 +9,16 @@ main {
   f: u32 | str
   g := (f is str) ? 4 : f
   h := (f is u32) ? f : 4
+
+  m: bool | int | str
+
+  if m is int {
+    p := m + 3
+  } elif m is bool {
+    p := m == true
+  } else {
+    p := m + "test"
+  }
 }
 ===== out =====
 MainDeclaration()
@@ -56,3 +66,22 @@ MainDeclaration()
           Identifier(initial=u32 | str name=f)
       Identifier(initial=u32 | str target=u32 name=f)
       IntegerLiteral(initial=int target=u32 value=4)
+  VariableDeclaration(name=m mutable=false constant=false type=bool | int | str)
+  IfStatement()
+    IsExpression(initial=bool is=int)
+      Identifier(initial=bool | int | str name=m)
+    VariableDeclaration(name=p mutable=false constant=false)
+      BinaryExpression(initial=int operator=+)
+        Identifier(initial=bool | int | str target=int name=m)
+        IntegerLiteral(initial=int value=3)
+    IfStatement()
+      IsExpression(initial=bool is=bool)
+        Identifier(initial=bool | int | str target=bool | str name=m)
+      VariableDeclaration(name=p mutable=false constant=false)
+        BinaryExpression(initial=bool operator===)
+          Identifier(initial=bool | int | str target=bool name=m)
+          BooleanLiteral(initial=bool value=true)
+      VariableDeclaration(name=p mutable=false constant=false)
+        BinaryExpression(initial=str operator=+)
+          Identifier(initial=bool | int | str target=str name=m)
+          StringLiteral(initial=str value=test)
