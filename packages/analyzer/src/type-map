@@ -456,19 +456,20 @@ export obj TypeMap {
   }
 
   fn unionAdd (mut self: ref Self, a: ref Type.Type, b: ref Type.Type) ref Type.Type {
+    if a.isUnion() && b.isUnion() {
+      t1 := a.asUnion()
+      t2 := b.asUnion()
+      return self.createUnion(t1.types.concat(t2.types))
+    }
+
     if a.isUnion() {
       t := a.asUnion()
-      types := t.types
-      types.push(b)
-      return self.createUnion(types)
+      return self.createUnion(t.types.concat([b]))
     }
 
     if b.isUnion() {
-      // TODO: test
       t := b.asUnion()
-      types := t.types
-      types.push(a)
-      return self.createUnion(types)
+      return self.createUnion(t.types.concat([a]))
     }
 
     return self.createUnion([a, b])
@@ -479,7 +480,6 @@ export obj TypeMap {
     mut types := t.types
 
     if b.isUnion() {
-      // TODO: test
       search := b.asUnion()
 
       loop i := search.types.len - 1; i >= 0; i-- {
@@ -499,7 +499,6 @@ export obj TypeMap {
     }
 
     if types.len == 0 {
-      // TODO: test
       return self.get("never")
     }
 
