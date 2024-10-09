@@ -25,7 +25,6 @@ export obj CallExpressionContextExtra {
   mut returnType: ref Type.Type
 }
 
-// TODO: test, docs
 export fn initial (it: ref Parser.Expression) ref Type.Type {
   if !(it.context is Context) {
     throw error_NewError("Tried getting initial for expression '" + Parser.stringifyExpression(it) + "' that has no context")
@@ -35,12 +34,10 @@ export fn initial (it: ref Parser.Expression) ref Type.Type {
   return context.initialType
 }
 
-// TODO: test, docs
 export fn set (mut it: ref Parser.Expression, initialType: ref Type.Type) {
   it.context = Context{initialType: initialType}
 }
 
-// TODO: test, docs
 export fn setExtra (mut it: ref Parser.Expression, extra: any) {
   if !(it.context is Context) {
     throw error_NewError("Tried setting extra for expression '" + Parser.stringifyExpression(it) + "' that has no context")
@@ -50,7 +47,6 @@ export fn setExtra (mut it: ref Parser.Expression, extra: any) {
   context.extra = extra
 }
 
-// TODO: test, docs
 export fn setTarget (mut it: ref Parser.Expression, targetType: ref Type.Type) {
   if !(it.context is Context) {
     throw error_NewError("Tried setting target for expression '" + Parser.stringifyExpression(it) + "' that has no context")
@@ -63,7 +59,6 @@ export fn setTarget (mut it: ref Parser.Expression, targetType: ref Type.Type) {
   }
 }
 
-// TODO: test, docs
 export fn target (it: ref Parser.Expression) ref Type.Type {
   if !(it.context is Context) {
     throw error_NewError("Tried getting target for expression '" + Parser.stringifyExpression(it) + "' that has no context")
@@ -73,7 +68,6 @@ export fn target (it: ref Parser.Expression) ref Type.Type {
   return context.targetType == nil ? context.initialType : context.targetType
 }
 
-// TODO: test, docs
 export fn tryTarget (mut it: ref Parser.Expression, targetType: ref Type.Type) {
   if !(it.context is Context) {
     throw error_NewError("Tried setting possible target for expression '" + Parser.stringifyExpression(it) + "' that has no context")

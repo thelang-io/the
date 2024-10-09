@@ -33,6 +33,135 @@ mut f := Parser.parse("path/to/file")
 error := analyze(ref f)
 ```
 
+### `contextInitial (it: ref Parser.Expression) ref Type`
+Returns initial type of expression context.
+
+**Parameters**
+
+- `it` - expression to return initial type for
+
+**Return value**
+
+Initial type of expression context.
+
+**Examples**
+
+```the
+initialType := contextInitial(ref expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextSet (mut it: ref Parser.Expression, initialType: ref Type) void`
+Creates expression context and sets initial type.
+
+**Parameters**
+
+- `it` - expression to create context and set initial type for
+- `initialType` - initial type of the expression context
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+tm := TypeMap{}
+contextSet(ref expression, tm.get("int"))
+```
+
+### `contextSetExtra (mut it: ref Parser.Expression, extra: any) void`
+Sets extra field on expression context.
+
+**Parameters**
+
+- `it` - expression to set context extra field for
+- `extra` - data to be stored in extra field
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+contextSetExtra(ref expression, Extra{})
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextSetTarget (mut it: ref Parser.Expression, targetType: ref Type) void`
+Sets target type on expression context.
+
+**Parameters**
+
+- `it` - expression to set context target type for
+- `targetType` - target type of the expression context
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+tm := TypeMap{}
+contextSetTarget(ref expression, tm.get("int"))
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextTarget (it: ref Parser.Expression) ref Type`
+Returns target type or, if not set, initial type of expression context.
+
+**Parameters**
+
+- `it` - expression to return target type for
+
+**Return value**
+
+Target type of expression context.
+
+**Examples**
+
+```the
+targetType := contextTarget(ref expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextTryTarget (mut it: ref Parser.Expression, targetType: ref Type) void`
+Sets target type on expression context if initial type can promote to it.
+
+**Parameters**
+
+- `it` - expression to set context target type for
+- `targetType` - target type of the expression context
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+tm := TypeMap{}
+contextTryTarget(ref expression, tm.get("int"))
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
 ### `match (type1: ref Type, type2: ref Type) bool`
 Check whether one type strictly matches another.
 

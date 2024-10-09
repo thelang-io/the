@@ -5,20 +5,15 @@
 
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
 import
-  IdentifierContext,
-  ArrayExpressionContext,
-  AsExpressionContext,
-  AssignmentExpressionContext,
-  BinaryExpressionContext,
-  CallExpressionContext,
+  Context,
   CallExpressionContextArgument,
-  ConditionalExpressionContext,
-  ElementAccessExpressionContext,
-  IsExpressionContext,
-  MapExpressionContext,
-  UnaryExpressionContext,
-  VariableDeclarationContext,
-  TypeContext
+  CallExpressionContextExtra,
+  initial as contextInitial,
+  set as contextSet,
+  setExtra as contextSetExtra,
+  setTarget as contextSetTarget,
+  target as contextTarget,
+  tryTarget as contextTryTarget
 from "./context"
 import
   Type,
@@ -52,20 +47,17 @@ export AnalyzerExport
 export AnalyzerFile
 export AnalyzerFileState
 export AnalyzerState
-export IdentifierContext
-export ArrayExpressionContext
-export AsExpressionContext
-export AssignmentExpressionContext
-export BinaryExpressionContext
-export CallExpressionContext
+
+export Context
 export CallExpressionContextArgument
-export ConditionalExpressionContext
-export ElementAccessExpressionContext
-export IsExpressionContext
-export MapExpressionContext
-export UnaryExpressionContext
-export VariableDeclarationContext
-export TypeContext
+export CallExpressionContextExtra
+export contextInitial
+export contextSet
+export contextSetExtra
+export contextSetTarget
+export contextTarget
+export contextTryTarget
+
 export Type
 export TypeBody
 export TypeProperty
