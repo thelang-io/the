@@ -439,19 +439,6 @@ Whether statement is placed inside async parent.
 statement.hasAsyncParent()
 ```
 
-### `Statement.hasFunctionOrMainParent () bool`
-Check whether statement is placed inside function or main declaration.
-
-**Return value**
-
-Whether statement is placed inside function or main declaration.
-
-**Examples**
-
-```the
-statement.hasFunctionOrMainParent()
-```
-
 ### `Statement.hasLoopParent () bool`
 Check whether statement is placed inside loop statement.
 

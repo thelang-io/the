@@ -303,27 +303,6 @@ export obj Statement {
     return false
   }
 
-  fn hasFunctionOrMainParent (self: ref Self) bool {
-    mut it := self
-
-    loop it.hasParent() {
-      p := it.parent()
-
-      if (
-        p.isExpression() ||
-        p.isFunctionDeclaration() ||
-        p.isMainDeclaration() ||
-        p.isObjectDeclarationMethod()
-      ) {
-        return true
-      }
-
-      it = p
-    }
-
-    return false
-  }
-
   fn hasLoopParent (self: ref Self) bool {
     mut it := self
 

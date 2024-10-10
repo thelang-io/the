@@ -109,44 +109,6 @@ export fn TEST_Statement_hasAsyncParent () {
   EXPECT_TRUE(mainClosure7.body[0].hasAsyncParent())
 }
 
-export fn TEST_Statement_hasFunctionOrMainParent () {
-  mut f1 := parse("return")
-  interconnect(ref f1)
-  EXPECT_FALSE(f1.program.body[0].hasFunctionOrMainParent())
-
-  mut f2 := parse("main { return }")
-  interconnect(ref f2)
-  mainDeclaration2 := f2.program.body[0].asMainDeclaration()
-  mainDeclarationBody2 := mainDeclaration2.body.asBlock()
-  EXPECT_TRUE(mainDeclarationBody2.body[0].hasFunctionOrMainParent())
-
-  mut f3 := parse("fn test () { return }")
-  interconnect(ref f3)
-  functionDeclaration3 := f3.program.body[0].asFunctionDeclaration()
-  if functionDeclaration3.body != nil {
-    functionDeclarationBody3 := functionDeclaration3.body.asBlock()
-    EXPECT_TRUE(functionDeclarationBody3.body[0].hasFunctionOrMainParent())
-  }
-
-  mut f4 := parse("obj Test { fn test () { return } }")
-  interconnect(ref f4)
-  objectDeclaration4 := f4.program.body[0].asObjectDeclaration()
-  methodDeclaration4 := objectDeclaration4.body[0].asObjectDeclarationMethod()
-  if methodDeclaration4.body != nil {
-    methodDeclarationBody4 := methodDeclaration4.body.asBlock()
-    EXPECT_TRUE(methodDeclarationBody4.body[0].hasFunctionOrMainParent())
-  }
-
-  mut f5 := parse("main { () -> void { return } }")
-  interconnect(ref f5)
-  mainDeclaration5 := f5.program.body[0].asMainDeclaration()
-  mainDeclarationBody5 := mainDeclaration5.body.asBlock()
-  mainExpression5 := mainDeclarationBody5.body[0].asExpression()
-  mainExpressionBody5 := mainExpression5.expression.asClosure()
-  mainClosure5 := mainExpressionBody5.body.asBlock()
-  EXPECT_TRUE(mainClosure5.body[0].hasFunctionOrMainParent())
-}
-
 export fn TEST_Statement_hasLoopParent () {
   mut f1 := parse("break")
   interconnect(ref f1)
