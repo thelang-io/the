@@ -2561,7 +2561,7 @@ export obj AnalyzerFile {
 
     mut statement := it.asReturn()
 
-    if !it.hasFunctionOrMainParent() {
+    if self.state.returnType == nil {
       self.raise(errors.E1057(), it.start, it.end)
     }
 
