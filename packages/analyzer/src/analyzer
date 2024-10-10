@@ -1284,14 +1284,22 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asAs()
-    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
     t := self.t(ref expression.t)
+
+    expressionType := self.e(
+      ref expression.expression,
+      Type.opt(t),
+      noTargetPromote: true,
+      withMutable: withMutable || withMutableNext,
+    )
 
     if !expressionType.canCastTo(t) {
       self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
     }
 
-    Context.set(it, t)
+    Context.set(it, expressionType)
+    Context.setTarget(it, t)
+
     return true
   }
 
