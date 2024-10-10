@@ -6,7 +6,6 @@
 import * as Parser from "the/parser"
 import * as Context from "./context"
 
-// TODO: test
 export fn analyzerPrint(statements: ref Parser.Statement[]) str {
   mut result := ""
 
@@ -282,7 +281,6 @@ export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) s
   return result
 }
 
-// TODO: test
 export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int) str {
   mut name := ""
   mut attributes := ""
@@ -372,7 +370,7 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
   } elif expression.isClosure() {
     closure := expression.asClosure()
     name = "ClosureExpression"
-    attributes += analyzerPrintFunctionAttributes(nil, closure.returnType, closure.asynchronous)
+    attributes += " " + analyzerPrintFunctionAttributes(nil, closure.returnType, closure.asynchronous)
     result += analyzerPrintFunction(closure.parameters, closure.body, indent + 2)
   } elif expression.isConditional() {
     conditional := expression.asConditional()

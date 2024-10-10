@@ -1,0 +1,5 @@
+const a := true as u8
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true)
+  AsExpression(initial=bool target=u8 as=u8)
+    BooleanLiteral(initial=bool value=true)
