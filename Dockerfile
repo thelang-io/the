@@ -27,11 +27,9 @@ RUN apt-get update && \
 
 RUN curl -fsSL https://cdn.thelang.io/deps.tar.gz | tar -xz
 ENV DEPS_DIR="$PWD/the/native/linux"
-RUN curl -fsSL https://cdn.thelang.io/cli | bash
 
 WORKDIR /app
 COPY . .
-RUN the run scripts/pre-process-codegen
 RUN cmake . -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
 RUN cmake --build .
 

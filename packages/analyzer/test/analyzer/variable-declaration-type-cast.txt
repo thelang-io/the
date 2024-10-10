@@ -1,0 +1,4 @@
+main {
+  a: int | str = 1
+  b: int = a + 3
+}

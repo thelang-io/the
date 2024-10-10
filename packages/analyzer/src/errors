@@ -232,7 +232,7 @@ export fn E1056 () str {
 }
 
 export fn E1057 () str {
-  return "E1057 - Return statement can only be used within an enclosing function or main declaration"
+  return "E1057 - Return statement can only be used within an enclosing function, closure or main declaration"
 }
 
 // export fn E1058 () str {

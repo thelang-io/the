@@ -1,0 +1,5 @@
+const a := nil as int?
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true)
+  AsExpression(initial=int? as=int?)
+    NilLiteral(initial=int?)

@@ -2,5 +2,4 @@
 build/
 coverage/
 lab/
-src/codegen-api.hpp
 *.out

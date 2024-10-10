@@ -1,0 +1,121 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import * as Context from "../src/context"
+import * as Type from "../src/type"
+import TypeMap from "../src/type-map"
+
+obj TypeContextTestData {
+  mut expr: Parser.Expression
+  mut tm: TypeMap
+}
+
+fn beforEach () TypeContextTestData {
+  mut tm := TypeMap{}
+  tm.init()
+
+  f := Parser.parse("test")
+  statement := f.program.body[0].asExpression()
+
+  return TypeContextTestData{
+    expr: statement.expression,
+    tm: tm,
+  }
+}
+
+export fn TEST_TypeContext_initial () {
+  EXPECT_NO_THROW(() -> void {
+    data := beforEach()
+
+    Context.set(ref data.expr, data.tm.get("int"))
+    EXPECT_TRUE(Type.match(Context.initial(ref data.expr), data.tm.get("int")))
+  })
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    data := beforEach()
+    Context.initial(ref data.expr)
+  }, "Tried getting initial for expression 'test' that has no context")
+}
+
+export fn TEST_TypeContext_set () {
+  data := beforEach()
+  Context.set(ref data.expr, data.tm.get("int"))
+
+  EXPECT_TRUE(data.expr.context is Context.Context)
+  context := data.expr.context as Context.Context
+  EXPECT_TRUE(Type.match(context.initialType, data.tm.get("int")))
+}
+
+export fn TEST_TypeContext_setExtra () {
+  EXPECT_NO_THROW(() -> void {
+    data := beforEach()
+    Context.set(ref data.expr, data.tm.get("int"))
+    Context.setExtra(ref data.expr, 10)
+
+    context := data.expr.context as Context.Context
+    EXPECT_EQ(context.extra, 10)
+  })
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    data := beforEach()
+    Context.setExtra(ref data.expr, 10)
+  }, "Tried setting extra for expression 'test' that has no context")
+}
+
+export fn TEST_TypeContext_setTarget () {
+  EXPECT_NO_THROW(() -> void {
+    data := beforEach()
+    Context.set(ref data.expr, data.tm.get("int"))
+    Context.setTarget(ref data.expr, data.tm.get("str"))
+
+    context := data.expr.context as Context.Context
+
+    EXPECT_TRUE(context.targetType != nil)
+    EXPECT_TRUE(Type.match(context.targetType as (ref Type.Type), data.tm.get("str")))
+  })
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    data := beforEach()
+    Context.setTarget(ref data.expr, data.tm.get("int"))
+  }, "Tried setting target for expression 'test' that has no context")
+}
+
+export fn TEST_TypeContext_target () {
+  EXPECT_NO_THROW(() -> void {
+    data := beforEach()
+
+    Context.set(ref data.expr, data.tm.get("int"))
+    EXPECT_TRUE(Type.match(Context.target(ref data.expr), data.tm.get("int")))
+
+    Context.setTarget(ref data.expr, data.tm.get("str"))
+    EXPECT_TRUE(Type.match(Context.target(ref data.expr), data.tm.get("str")))
+  })
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    data := beforEach()
+    Context.target(ref data.expr)
+  }, "Tried getting target for expression 'test' that has no context")
+}
+
+export fn TEST_TypeContext_tryTarget () {
+  EXPECT_NO_THROW(() -> void {
+    data := beforEach()
+    Context.set(ref data.expr, data.tm.get("int"))
+    context := ref (data.expr.context as Context.Context)
+
+    Context.tryTarget(ref data.expr, data.tm.get("str"))
+    EXPECT_TRUE(context.targetType == nil)
+
+    Context.tryTarget(ref data.expr, data.tm.get("i64"))
+    EXPECT_TRUE(context.targetType != nil)
+    EXPECT_TRUE(Type.match(context.targetType as (ref Type.Type), data.tm.get("i64")))
+  })
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    data := beforEach()
+    Context.tryTarget(ref data.expr, data.tm.get("int"))
+  }, "Tried setting possible target for expression 'test' that has no context")
+}

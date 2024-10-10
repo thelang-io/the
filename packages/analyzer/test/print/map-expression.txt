@@ -1,0 +1,19 @@
+const a: str[str] = {}
+const b := {"key": "val"}
+const c := {"key1": "val1", "key2": "val2"}
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true type=str[str])
+  MapExpression(initial=str[str])
+VariableDeclaration(name=b mutable=false constant=true)
+  MapExpression(initial=str[str])
+    MapExpressionElement()
+      StringLiteral(initial=str value=key)
+      StringLiteral(initial=str value=val)
+VariableDeclaration(name=c mutable=false constant=true)
+  MapExpression(initial=str[str])
+    MapExpressionElement()
+      StringLiteral(initial=str value=key1)
+      StringLiteral(initial=str value=val1)
+    MapExpressionElement()
+      StringLiteral(initial=str value=key2)
+      StringLiteral(initial=str value=val2)

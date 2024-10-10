@@ -1,0 +1,15 @@
+main {
+  a: bool | int | str
+
+  if a is int {
+    b := a + 3
+  } elif a is rune {
+    print("never")
+  }
+}
+===== err =====
+E1009-is-expression-with-tc.txt:6:10: AnalyzeError: E1009 - Type casting is not possible from `bool | str` to `rune`
+5 |     b := a + 3
+6 |   } elif a is rune {
+  |          ^
+7 |     print("never")

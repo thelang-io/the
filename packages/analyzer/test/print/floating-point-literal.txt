@@ -1,0 +1,5 @@
+const a := 1.23 as float?
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true)
+  AsExpression(initial=float target=float? as=float?)
+    FloatingPointLiteral(initial=float value=1.23)
