@@ -2673,6 +2673,10 @@ export obj AnalyzerFile {
       ? self.e(ref statement.initializer, withMutable: statement.mutable && !statement.initializer.isAccess())
       : self.t(ref statement.t)
 
+    it.context = Context.VariableDeclarationContext{
+      varType: varType,
+    }
+
     if Type.match(varType, self.tm.get("void")) {
       if statement.t == nil {
         initializer := statement.initializer as Parser.Expression

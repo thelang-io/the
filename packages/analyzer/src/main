@@ -8,6 +8,7 @@ import
   Context,
   CallExpressionContextArgument,
   CallExpressionContextExtra,
+  VariableDeclarationContext,
   initial as contextInitial,
   set as contextSet,
   setExtra as contextSetExtra,
@@ -54,6 +55,7 @@ export AnalyzerState
 export Context
 export CallExpressionContextArgument
 export CallExpressionContextExtra
+export VariableDeclarationContext
 export contextInitial
 export contextSet
 export contextSetExtra

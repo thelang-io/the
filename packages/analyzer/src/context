@@ -9,7 +9,6 @@ import * as Type from "./type"
 export obj Context {
   mut initialType: ref Type.Type
   mut targetType: (ref Type.Type)?
-  mut extra: any
 }
 
 export obj CallExpressionContextArgument {
@@ -23,6 +22,10 @@ export obj CallExpressionContextExtra {
   mut asynchronous: bool
   mut parameters: Type.TypeParameter[]
   mut returnType: ref Type.Type
+}
+
+export obj VariableDeclarationContext {
+  mut varType: ref Type.Type
 }
 
 export fn initial (it: ref Parser.Expression) ref Type.Type {
@@ -43,8 +46,7 @@ export fn setExtra (mut it: ref Parser.Expression, extra: any) {
     throw error_NewError("Tried setting extra for expression '" + Parser.stringifyExpression(it) + "' that has no context")
   }
 
-  mut context := ref (it.context as Context)
-  context.extra = extra
+  it.contextExtra = extra
 }
 
 export fn setTarget (mut it: ref Parser.Expression, targetType: ref Type.Type) {
