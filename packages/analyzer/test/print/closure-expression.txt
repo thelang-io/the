@@ -1,6 +1,6 @@
 const a := () -> void {}
 const b := (i: int) -> int { return i }
-const c := async (mut i: int, j: int...) -> int {
+const c := async (mut i: int, o := 10, p: u8 = 20, j: int...) -> int {
   k := i - j[0]
   return k
 }
@@ -13,8 +13,12 @@ VariableDeclaration(name=b mutable=false constant=true)
     ReturnStatement()
       Identifier(initial=int name=i)
 VariableDeclaration(name=c mutable=false constant=true)
-  ClosureExpression(initial=async (mut i: int, j: int...) -> int asynchronous=true return=int)
+  ClosureExpression(initial=async (mut i: int, o: int, p: u8, j: int...) -> int asynchronous=true return=int)
     FunctionParameter(name=i type=int mutable=true variadic=false)
+    FunctionParameter(name=o mutable=false variadic=false)
+      IntegerLiteral(initial=int value=10)
+    FunctionParameter(name=p type=u8 mutable=false variadic=false)
+      IntegerLiteral(initial=int target=u8 value=20)
     FunctionParameter(name=j type=int mutable=false variadic=true)
     VariableDeclaration(name=k mutable=false constant=false)
       BinaryExpression(initial=int operator=-)

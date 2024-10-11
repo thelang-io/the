@@ -1,0 +1,9 @@
+main {
+  loop {
+    continue
+  }
+}
+===== out =====
+MainDeclaration()
+  LoopStatement(parenthesized=false)
+    ContinueStatement()

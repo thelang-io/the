@@ -7,8 +7,6 @@ import * as Parser from "the/parser"
 import Analyzer, AnalyzerFile from "../src/analyzer"
 import analyzerPrint from "../src/analyzer-print"
 
-// import EXPECT_EQ, Tests from "the/testing"
-
 export obj PrintTestFileResult {
   in: str
   out: str
@@ -29,7 +27,6 @@ export fn TEST_Print () {
   loop i := 0; i < files.len; i++ {
     filePath := files[i] as str
     if filePath.slice(-4) != ".txt" { continue }
-    if filePath != "closure-expression.txt" { continue }
 
     result := parseTestFile("./test/print/" + filePath)
     mut f := Parser.parse(result.in)
@@ -47,9 +44,3 @@ export fn TEST_Print () {
     EXPECT_EQ(banner + result.out, banner + out)
   }
 }
-
-// main {
-//   mut tests := Tests{}
-//   tests.register("Print", TEST_Print)
-//   tests.run(process_args)
-// }
