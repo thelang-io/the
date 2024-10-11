@@ -117,7 +117,7 @@ export obj Expression {
   mut leadingComments: Token[]
   mut trailingComments: Token[]
   mut context: any
-  mut typeContext: any
+  mut contextExtra: any
   mut _parent: (ref Expression)?
   mut _parentNode: (ref Statement)?
 
