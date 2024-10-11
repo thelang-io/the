@@ -1,0 +1,39 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Type from "../src/type"
+import TypeMap from "../src/type-map"
+
+export fn TEST_TypeMap_unionAdd () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createUnion([tm.get("int"), tm.get("str")])
+  t2 := tm.createUnion([tm.get("int"), tm.get("str"), tm.get("bool")])
+  t3 := tm.createUnion([tm.get("bool"), tm.get("float")])
+  t4 := tm.createUnion([tm.get("int"), tm.get("str"), tm.get("bool"), tm.get("float")])
+
+  EXPECT_TRUE(Type.match(tm.unionAdd(tm.get("int"), tm.get("str")), t1))
+  EXPECT_TRUE(Type.match(tm.unionAdd(t1, tm.get("bool")), t2))
+  EXPECT_TRUE(Type.match(tm.unionAdd(tm.get("bool"), t1), t2))
+  EXPECT_TRUE(Type.match(tm.unionAdd(t1, t3), t4))
+}
+
+export fn TEST_TypeMap_unionSub () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createUnion([tm.get("int"), tm.get("str")])
+  t2 := tm.createUnion([tm.get("int"), tm.get("str"), tm.get("bool")])
+  t3 := tm.createUnion([tm.get("bool"), tm.get("float")])
+  t4 := tm.createUnion([tm.get("int"), tm.get("str"), tm.get("bool"), tm.get("float")])
+
+  EXPECT_TRUE(Type.match(tm.unionSub(t1, t1), tm.get("never")))
+  EXPECT_TRUE(Type.match(tm.unionSub(t1, tm.get("str")), tm.get("int")))
+  EXPECT_TRUE(Type.match(tm.unionSub(t2, t1), tm.get("bool")))
+  EXPECT_TRUE(Type.match(tm.unionSub(t4, t1), t3))
+  EXPECT_TRUE(Type.match(tm.unionSub(t4, t3), t1))
+  EXPECT_TRUE(Type.match(tm.unionSub(t1, t3), t1))
+}

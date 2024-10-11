@@ -1,0 +1,13 @@
+fn test () {}
+
+main {
+  a := 10
+  b := 20
+}
+===== out =====
+FunctionDeclaration(asynchronous=false name=test)
+MainDeclaration()
+  VariableDeclaration(name=a mutable=false constant=false)
+    IntegerLiteral(initial=int value=10)
+  VariableDeclaration(name=b mutable=false constant=false)
+    IntegerLiteral(initial=int value=20)

@@ -1,0 +1,5 @@
+type A = str
+type B = str[str]
+===== out =====
+TypeAliasDeclaration(name=A type=str)
+TypeAliasDeclaration(name=B type=str[str])

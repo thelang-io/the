@@ -33,24 +33,153 @@ mut f := Parser.parse("path/to/file")
 error := analyze(ref f)
 ```
 
-### `largest (a: ref Type, b: ref Type) ref Type`
-Find largest type among two passed types.
+### `canPromote (a: ref Type, b: ref Type) bool`
+Checks whether it's possible to promote type A to type B.
 
 **Parameters**
 
-- `a` - first type to check
-- `b` - second type to check
+- `a` - type to promote
+- `b` - type to promote to
 
 **Return value**
 
-Largest type among two passed types.
+Whether it's possible to promote type A to type B.
 
 **Examples**
 
 ```the
 tm := TypeMap{}
-c := largest(tm.get("int"), tm.get("i8"))
+canPromote(tm.get("int"), tm.get("i64"))
 ```
+
+### `contextInitial (it: ref Parser.Expression) ref Type`
+Returns initial type of expression context.
+
+**Parameters**
+
+- `it` - expression to return initial type for
+
+**Return value**
+
+Initial type of expression context.
+
+**Examples**
+
+```the
+initialType := contextInitial(ref expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextSet (mut it: ref Parser.Expression, initialType: ref Type) void`
+Creates expression context and sets initial type.
+
+**Parameters**
+
+- `it` - expression to create context and set initial type for
+- `initialType` - initial type of the expression context
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+tm := TypeMap{}
+contextSet(ref expression, tm.get("int"))
+```
+
+### `contextSetExtra (mut it: ref Parser.Expression, extra: any) void`
+Sets extra field on expression context.
+
+**Parameters**
+
+- `it` - expression to set context extra field for
+- `extra` - data to be stored in extra field
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+contextSetExtra(ref expression, Extra{})
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextSetTarget (mut it: ref Parser.Expression, targetType: ref Type) void`
+Sets target type on expression context.
+
+**Parameters**
+
+- `it` - expression to set context target type for
+- `targetType` - target type of the expression context
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+tm := TypeMap{}
+contextSetTarget(ref expression, tm.get("int"))
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextTarget (it: ref Parser.Expression) ref Type`
+Returns target type or, if not set, initial type of expression context.
+
+**Parameters**
+
+- `it` - expression to return target type for
+
+**Return value**
+
+Target type of expression context.
+
+**Examples**
+
+```the
+targetType := contextTarget(ref expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
+
+### `contextTryTarget (mut it: ref Parser.Expression, targetType: ref Type) void`
+Sets target type on expression context if initial type can promote to it.
+
+**Parameters**
+
+- `it` - expression to set context target type for
+- `targetType` - target type of the expression context
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+tm := TypeMap{}
+contextTryTarget(ref expression, tm.get("int"))
+```
+
+**Exceptions**
+
+- `Error` - thrown for expression that has no context
 
 ### `match (type1: ref Type, type2: ref Type) bool`
 Check whether one type strictly matches another.
@@ -71,6 +200,48 @@ tm := TypeMap{}
 result := match(tm.get("int"), tm.get("i8"))
 ```
 
+### `promote (a: ref Type, b: ref Type) ref Type`
+Finds whether it's possible to promote type A to B or vice-versa, otherwise throws error.
+
+**Parameters**
+
+- `a` - first type to check
+- `b` - second type to check
+
+**Return value**
+
+Promoted type A to B or vice-versa.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+type := promote(tm.get("int"), tm.get("i64"))
+```
+
+**Exceptions**
+
+- `Error` - thrown when unable to promote types
+
+### `promoteMaybe (a: ref Type, b: ref Type) ref Type`
+Finds whether it's possible to promote type A to B or vice-versa, otherwise return type A.
+
+**Parameters**
+
+- `a` - first type to check
+- `b` - second type to check
+
+**Return value**
+
+Promoted type A to B or vice-versa.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+type := promoteMaybe(tm.get("int"), tm.get("i64"))
+```
+
 ### `similarTo (typeToCompare: ref Type, similarToType: ref Type) bool`
 Check whether one type is similar another.
 
@@ -88,6 +259,24 @@ Whether one type is similar another.
 ```the
 tm := TypeMap{}
 result := similarTo(tm.get("i8"), tm.get("int"))
+```
+
+### `stringifyTC (tc: (ref Type)[str]) str`
+Generates string representation of type cast.
+
+**Parameters**
+
+- `tc` - type cast to generate string representation for
+
+**Return value**
+
+String representation of type cast.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+result := stringifyTC({ "var": tm.get("int") })
 ```
 
 ### `unwrap (t: ref Type, withOptional := false, withReference := true) ref Type`
@@ -165,7 +354,7 @@ These methods are shortcuts for `as` expression.
 
 **Return value**
 
-Body casted to corresponding body type.
+Body cast to corresponding body type.
 
 **Examples**
 
@@ -196,12 +385,12 @@ Whether expression's body contains corresponding type.
 type.isAlias()
 ```
 
-### `Type.canCastTo (t: ref Type) bool`
-Checks whether type can be cast to another type (should be used only on union type).
+### `Type.canCastTo (to: ref Type) bool`
+Checks whether type can be cast to another type (used for AsExpression or IsExpression).
 
 **Parameters**
 
-- `t` - another type to check if possible to cast to
+- `to` - another type to check if possible to cast to
 
 **Return value**
 
@@ -211,7 +400,25 @@ Whether type can be cast to another type.
 
 ```the
 mut tm := TypeMap{}
-type.canCastTo(tm.get("int"))
+tm.get("u8").canCastTo(tm.get("int"))
+```
+
+### `Type.canPromoteTo (to: ref Type) bool`
+Checks whether type can be promoted to another type.
+
+**Parameters**
+
+- `to` - another type to check if possible to promote to
+
+**Return value**
+
+Whether type can be promoted to another type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.get("u8").canPromoteTo(tm.get("int"))
 ```
 
 ### `Type.get (nameOrIndex: int | str) TypeProperty`
@@ -272,7 +479,7 @@ result := type.hasEnumerator("Color")
 ```
 
 ### `Type.hasType (search: ref Type) bool`
-Checks whether union type has specified sub type (should be used only on union type).
+Checks whether union type has specified subtype (should be used only on union type).
 
 **Parameters**
 
@@ -280,7 +487,7 @@ Checks whether union type has specified sub type (should be used only on union t
 
 **Return value**
 
-Whether union type has specified sub type.
+Whether union type has specified subtype.
 
 **Examples**
 

@@ -1,0 +1,96 @@
+obj Test {
+  a: int
+  mut b: str
+
+  fn test1 () void
+  fn test2 (i: int) int
+  async fn test3 (mut i: int, o := 10, p: u8 = 20, j: int...) int
+
+  fn test4 (self: Self) void
+  fn test5 (self: ref Self, i: int) int
+  async fn test6 (mut self: ref Self, mut i: int, o := 10, p: u8 = 20, j: int...) int
+
+  fn test7 () {}
+  fn test8 (i: int) int { return i }
+  async fn test9 (mut i: int, o := 10, p: u8 = 20, j: int...) int {
+    k := i - j[0]
+    return k
+  }
+
+  fn test10 (self: Self) {}
+  fn test11 (self: ref Self, i: int) int { return i }
+  async fn test12 (mut self: ref Self, mut i: int, o := 10, p: u8 = 20, j: int...) int {
+    k := i - j[0]
+    return k
+  }
+}
+===== out =====
+ObjectDeclaration(name=Test)
+  ObjectDeclarationProperty(name=a mutable=false constant=false type=int)
+  ObjectDeclarationProperty(name=b mutable=true constant=false type=str)
+  ObjectDeclarationMethod(asynchronous=false name=test1 return=void)
+  ObjectDeclarationMethod(asynchronous=false name=test2 return=int)
+    FunctionParameter(name=i type=int mutable=false variadic=false)
+  ObjectDeclarationMethod(asynchronous=true name=test3 return=int)
+    FunctionParameter(name=i type=int mutable=true variadic=false)
+    FunctionParameter(name=o mutable=false variadic=false)
+      IntegerLiteral(initial=int value=10)
+    FunctionParameter(name=p type=u8 mutable=false variadic=false)
+      IntegerLiteral(initial=int target=u8 value=20)
+    FunctionParameter(name=j type=int mutable=false variadic=true)
+  ObjectDeclarationMethod(asynchronous=false name=test4 return=void)
+    FunctionParameter(name=self type=Self mutable=false variadic=false)
+  ObjectDeclarationMethod(asynchronous=false name=test5 return=int)
+    FunctionParameter(name=self type=ref Self mutable=false variadic=false)
+    FunctionParameter(name=i type=int mutable=false variadic=false)
+  ObjectDeclarationMethod(asynchronous=true name=test6 return=int)
+    FunctionParameter(name=self type=ref Self mutable=true variadic=false)
+    FunctionParameter(name=i type=int mutable=true variadic=false)
+    FunctionParameter(name=o mutable=false variadic=false)
+      IntegerLiteral(initial=int value=10)
+    FunctionParameter(name=p type=u8 mutable=false variadic=false)
+      IntegerLiteral(initial=int target=u8 value=20)
+    FunctionParameter(name=j type=int mutable=false variadic=true)
+  ObjectDeclarationMethod(asynchronous=false name=test7)
+  ObjectDeclarationMethod(asynchronous=false name=test8 return=int)
+    FunctionParameter(name=i type=int mutable=false variadic=false)
+    ReturnStatement()
+      Identifier(initial=int name=i)
+  ObjectDeclarationMethod(asynchronous=true name=test9 return=int)
+    FunctionParameter(name=i type=int mutable=true variadic=false)
+    FunctionParameter(name=o mutable=false variadic=false)
+      IntegerLiteral(initial=int value=10)
+    FunctionParameter(name=p type=u8 mutable=false variadic=false)
+      IntegerLiteral(initial=int target=u8 value=20)
+    FunctionParameter(name=j type=int mutable=false variadic=true)
+    VariableDeclaration(name=k mutable=false constant=false)
+      BinaryExpression(initial=int operator=-)
+        Identifier(initial=int name=i)
+        ElementAccessExpression(initial=ref int target=int)
+          Identifier(initial=int[] name=j)
+          IntegerLiteral(initial=int value=0)
+    ReturnStatement()
+      Identifier(initial=int name=k)
+  ObjectDeclarationMethod(asynchronous=false name=test10)
+    FunctionParameter(name=self type=Self mutable=false variadic=false)
+  ObjectDeclarationMethod(asynchronous=false name=test11 return=int)
+    FunctionParameter(name=self type=ref Self mutable=false variadic=false)
+    FunctionParameter(name=i type=int mutable=false variadic=false)
+    ReturnStatement()
+      Identifier(initial=int name=i)
+  ObjectDeclarationMethod(asynchronous=true name=test12 return=int)
+    FunctionParameter(name=self type=ref Self mutable=true variadic=false)
+    FunctionParameter(name=i type=int mutable=true variadic=false)
+    FunctionParameter(name=o mutable=false variadic=false)
+      IntegerLiteral(initial=int value=10)
+    FunctionParameter(name=p type=u8 mutable=false variadic=false)
+      IntegerLiteral(initial=int target=u8 value=20)
+    FunctionParameter(name=j type=int mutable=false variadic=true)
+    VariableDeclaration(name=k mutable=false constant=false)
+      BinaryExpression(initial=int operator=-)
+        Identifier(initial=int name=i)
+        ElementAccessExpression(initial=ref int target=int)
+          Identifier(initial=int[] name=j)
+          IntegerLiteral(initial=int value=0)
+    ReturnStatement()
+      Identifier(initial=int name=k)

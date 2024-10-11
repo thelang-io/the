@@ -1,0 +1,9 @@
+main {
+  loop {
+    break
+  }
+}
+===== out =====
+MainDeclaration()
+  LoopStatement(parenthesized=false)
+    BreakStatement()

@@ -1,0 +1,88 @@
+main {
+  if (true) print(1)
+
+  if true {}
+
+  if true {
+    print(2)
+  } elif false {
+    print(3)
+  }
+
+  if true {
+    print(4)
+  } elif false {
+    print(5)
+  } else {
+    print(6)
+  }
+
+  if true {
+    print(7)
+  } else {
+    print(8)
+  }
+
+  if (true) print(9)
+  else print(10)
+}
+===== out =====
+MainDeclaration()
+  IfStatement()
+    ParenthesizedExpression(initial=bool)
+      BooleanLiteral(initial=bool value=true)
+    CallExpression(initial=void)
+      Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+      CallExpressionArgument()
+        IntegerLiteral(initial=int target=any value=1)
+  IfStatement()
+    BooleanLiteral(initial=bool value=true)
+  IfStatement()
+    BooleanLiteral(initial=bool value=true)
+    CallExpression(initial=void)
+      Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+      CallExpressionArgument()
+        IntegerLiteral(initial=int target=any value=2)
+    IfStatement()
+      BooleanLiteral(initial=bool value=false)
+      CallExpression(initial=void)
+        Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+        CallExpressionArgument()
+          IntegerLiteral(initial=int target=any value=3)
+  IfStatement()
+    BooleanLiteral(initial=bool value=true)
+    CallExpression(initial=void)
+      Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+      CallExpressionArgument()
+        IntegerLiteral(initial=int target=any value=4)
+    IfStatement()
+      BooleanLiteral(initial=bool value=false)
+      CallExpression(initial=void)
+        Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+        CallExpressionArgument()
+          IntegerLiteral(initial=int target=any value=5)
+      CallExpression(initial=void)
+        Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+        CallExpressionArgument()
+          IntegerLiteral(initial=int target=any value=6)
+  IfStatement()
+    BooleanLiteral(initial=bool value=true)
+    CallExpression(initial=void)
+      Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+      CallExpressionArgument()
+        IntegerLiteral(initial=int target=any value=7)
+    CallExpression(initial=void)
+      Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+      CallExpressionArgument()
+        IntegerLiteral(initial=int target=any value=8)
+  IfStatement()
+    ParenthesizedExpression(initial=bool)
+      BooleanLiteral(initial=bool value=true)
+    CallExpression(initial=void)
+      Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+      CallExpressionArgument()
+        IntegerLiteral(initial=int target=any value=9)
+    CallExpression(initial=void)
+      Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+      CallExpressionArgument()
+        IntegerLiteral(initial=int target=any value=10)

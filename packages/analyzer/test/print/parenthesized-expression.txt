@@ -1,0 +1,5 @@
+const a := (10)
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true)
+  ParenthesizedExpression(initial=int)
+    IntegerLiteral(initial=int value=10)

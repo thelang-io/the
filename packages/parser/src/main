@@ -67,6 +67,7 @@ import
   Expression,
   Statement,
   Token,
+  TokenType,
   Type,
   File,
   Program
@@ -147,6 +148,7 @@ export VariableDeclaration
 export Expression
 export Statement
 export Token
+export TokenType
 export Type
 export File
 export Program

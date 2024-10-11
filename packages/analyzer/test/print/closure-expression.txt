@@ -1,0 +1,30 @@
+const a := () -> void {}
+const b := (i: int) -> int { return i }
+const c := async (mut i: int, o := 10, p: u8 = 20, j: int...) -> int {
+  k := i - j[0]
+  return k
+}
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true)
+  ClosureExpression(initial=() -> void asynchronous=false return=void)
+VariableDeclaration(name=b mutable=false constant=true)
+  ClosureExpression(initial=(i: int) -> int asynchronous=false return=int)
+    FunctionParameter(name=i type=int mutable=false variadic=false)
+    ReturnStatement()
+      Identifier(initial=int name=i)
+VariableDeclaration(name=c mutable=false constant=true)
+  ClosureExpression(initial=async (mut i: int, o: int, p: u8, j: int...) -> int asynchronous=true return=int)
+    FunctionParameter(name=i type=int mutable=true variadic=false)
+    FunctionParameter(name=o mutable=false variadic=false)
+      IntegerLiteral(initial=int value=10)
+    FunctionParameter(name=p type=u8 mutable=false variadic=false)
+      IntegerLiteral(initial=int target=u8 value=20)
+    FunctionParameter(name=j type=int mutable=false variadic=true)
+    VariableDeclaration(name=k mutable=false constant=false)
+      BinaryExpression(initial=int operator=-)
+        Identifier(initial=int name=i)
+        ElementAccessExpression(initial=ref int target=int)
+          Identifier(initial=int[] name=j)
+          IntegerLiteral(initial=int value=0)
+    ReturnStatement()
+      Identifier(initial=int name=k)

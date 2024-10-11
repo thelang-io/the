@@ -1,0 +1,12 @@
+fn test () void {
+  return
+}
+fn test2 () int {
+  return 10
+}
+===== out =====
+FunctionDeclaration(asynchronous=false name=test return=void)
+  ReturnStatement()
+FunctionDeclaration(asynchronous=false name=test2 return=int)
+  ReturnStatement()
+    IntegerLiteral(initial=int value=10)

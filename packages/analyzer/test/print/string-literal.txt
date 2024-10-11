@@ -1,0 +1,5 @@
+const a := "test" as str?
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true)
+  AsExpression(initial=str target=str? as=str?)
+    StringLiteral(initial=str value=test)
