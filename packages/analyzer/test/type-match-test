@@ -861,6 +861,47 @@ export fn TEST_Type_similarToUnion () {
   EXPECT_FALSE(Type.similarTo(type1, tm.get("int")))
 }
 
+export fn TEST_Type_canPromote () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  EXPECT_TRUE(Type.canPromote(tm.createOptional(tm.get("int")), tm.get("int")))
+  EXPECT_TRUE(Type.canPromote(tm.get("int"), tm.createOptional(tm.get("int"))))
+  EXPECT_FALSE(Type.canPromote(tm.get("str"), tm.get("int")))
+}
+
+export fn TEST_Type_promote () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  EXPECT_NO_THROW(() -> void {
+    ref tm; // TODO: remove after v1
+    t1 := Type.promote(tm.createOptional(tm.get("int")), tm.get("int"))
+    t2 := Type.promote(tm.get("int"), tm.createOptional(tm.get("int")))
+
+    EXPECT_TRUE(Type.match(t1, tm.createOptional(tm.get("int"))))
+    EXPECT_TRUE(Type.match(t2, tm.createOptional(tm.get("int"))))
+  })
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    ref tm; // TODO: remove after v1
+    Type.promote(tm.get("str"), tm.get("int"))
+  }, "Unable to promote types 'str' and 'int'")
+}
+
+export fn TEST_Type_promoteMaybe () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := Type.promoteMaybe(tm.createOptional(tm.get("int")), tm.get("int"))
+  t2 := Type.promoteMaybe(tm.get("int"), tm.createOptional(tm.get("int")))
+  t3 := Type.promoteMaybe(tm.get("int"), tm.get("str"))
+
+  EXPECT_TRUE(Type.match(t1, tm.createOptional(tm.get("int"))))
+  EXPECT_TRUE(Type.match(t2, tm.createOptional(tm.get("int"))))
+  EXPECT_TRUE(Type.match(t3, tm.get("int")))
+}
+
 export fn TEST_Type_unwrap () {
   mut tm := TypeMap{}
   tm.init()

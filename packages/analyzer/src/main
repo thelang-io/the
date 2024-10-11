@@ -33,7 +33,10 @@ import
   ReferenceType,
   UnionType,
   Var,
+  canPromote,
   match,
+  promote,
+  promoteMaybe,
   similarTo,
   unwrap
 from "./type"
@@ -79,7 +82,10 @@ export UnionType
 export Var
 export VarMap
 export analyze
+export canPromote
 export match
+export promote
+export promoteMaybe
 export similarTo
 export stringifyTC
 export unwrap

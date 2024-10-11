@@ -100,26 +100,32 @@ export obj Type {
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
-  // TODO: test, docs
   fn canPromoteTo (self: ref Self, to: ref Type) bool {
     a := unwrap(self, withReference: false)
     b := unwrap(to, withReference: false)
+
+    if match(a, b) {
+      return false
+    }
 
     if b.name == "any" {
       return true
     } elif b.isOptional() {
       t := b.asOptional()
-      return a.canPromoteTo(t.t)
+      return a.canPromoteTo(t.t) || match(a, t.t)
     } elif a.isReference() {
       t1 := a.asReference()
 
       if b.isReference() {
         t2 := b.asReference()
-        return t1.t.canPromoteTo(t2.t)
+        return t1.t.canPromoteTo(t2.t) || match(t1.t, t2.t)
       }
 
-      return t1.t.canPromoteTo(b) || (b.isNumber() && numberMatch(b.name, "i32"))
-    } elif b.isUnion() {
+      return
+        t1.t.canPromoteTo(b) ||
+        match(t1.t,b) ||
+        (b.isNumber() && numberMatch(b.name, "i32"))
+    } elif b.isUnion() && !match(a, b) {
       return b.hasType(a)
     }
 
@@ -194,7 +200,6 @@ export obj Type {
 
   fn hasType (self: ref Self, search: ref Type) bool {
     if search.isUnion() {
-      // TODO: test
       searchUnion := search.asUnion()
 
       loop i := searchUnion.types.len - 1; i >= 0; i-- {
@@ -431,7 +436,6 @@ export obj UnionType {
   mut types: (ref Type)[]
 }
 
-// TODO: test, docs
 export fn canPromote (a: ref Type, b: ref Type) bool {
   return a.canPromoteTo(b) || b.canPromoteTo(a)
 }
@@ -566,7 +570,6 @@ export fn match (type1: ref Type, type2: ref Type) bool {
   return !a.name.empty && a.name == b.name
 }
 
-// TODO: test, docs
 export fn promote (a: ref Type, b: ref Type) ref Type {
   if b.canPromoteTo(a) {
     return a
@@ -579,7 +582,6 @@ export fn promote (a: ref Type, b: ref Type) ref Type {
   throw error_NewError("Unable to promote types '" + a.toString() + "' and '" + b.toString() + "'")
 }
 
-// TODO: test, docs
 export fn promoteMaybe (a: ref Type, b: ref Type) ref Type {
   if b.canPromoteTo(a) {
     return a

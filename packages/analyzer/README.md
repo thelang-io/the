@@ -33,6 +33,25 @@ mut f := Parser.parse("path/to/file")
 error := analyze(ref f)
 ```
 
+### `canPromote (a: ref Type, b: ref Type) bool`
+Checks whether it's possible to promote type A to type B.
+
+**Parameters**
+
+- `a` - type to promote
+- `b` - type to promote to
+
+**Return value**
+
+Whether it's possible to promote type A to type B.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+canPromote(tm.get("int"), tm.get("i64"))
+```
+
 ### `contextInitial (it: ref Parser.Expression) ref Type`
 Returns initial type of expression context.
 
@@ -181,6 +200,48 @@ tm := TypeMap{}
 result := match(tm.get("int"), tm.get("i8"))
 ```
 
+### `promote (a: ref Type, b: ref Type) ref Type`
+Finds whether it's possible to promote type A to B or vice-versa, otherwise throws error.
+
+**Parameters**
+
+- `a` - first type to check
+- `b` - second type to check
+
+**Return value**
+
+Promoted type A to B or vice-versa.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+type := promote(tm.get("int"), tm.get("i64"))
+```
+
+**Exceptions**
+
+- `Error` - thrown when unable to promote types
+
+### `promoteMaybe (a: ref Type, b: ref Type) ref Type`
+Finds whether it's possible to promote type A to B or vice-versa, otherwise return type A.
+
+**Parameters**
+
+- `a` - first type to check
+- `b` - second type to check
+
+**Return value**
+
+Promoted type A to B or vice-versa.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+type := promoteMaybe(tm.get("int"), tm.get("i64"))
+```
+
 ### `similarTo (typeToCompare: ref Type, similarToType: ref Type) bool`
 Check whether one type is similar another.
 
@@ -293,7 +354,7 @@ These methods are shortcuts for `as` expression.
 
 **Return value**
 
-Body casted to corresponding body type.
+Body cast to corresponding body type.
 
 **Examples**
 
@@ -324,7 +385,7 @@ Whether expression's body contains corresponding type.
 type.isAlias()
 ```
 
-### `Type.canCastTo (t: ref Type) bool`
+### `Type.canCastTo (to: ref Type) bool`
 Checks whether type can be cast to another type (used for AsExpression or IsExpression).
 
 **Parameters**
@@ -339,7 +400,25 @@ Whether type can be cast to another type.
 
 ```the
 mut tm := TypeMap{}
-type.canCastTo(tm.get("int"))
+tm.get("u8").canCastTo(tm.get("int"))
+```
+
+### `Type.canPromoteTo (to: ref Type) bool`
+Checks whether type can be promoted to another type.
+
+**Parameters**
+
+- `to` - another type to check if possible to promote to
+
+**Return value**
+
+Whether type can be promoted to another type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+tm.get("u8").canPromoteTo(tm.get("int"))
 ```
 
 ### `Type.get (nameOrIndex: int | str) TypeProperty`
@@ -400,7 +479,7 @@ result := type.hasEnumerator("Color")
 ```
 
 ### `Type.hasType (search: ref Type) bool`
-Checks whether union type has specified sub type (should be used only on union type).
+Checks whether union type has specified subtype (should be used only on union type).
 
 **Parameters**
 
@@ -408,7 +487,7 @@ Checks whether union type has specified sub type (should be used only on union t
 
 **Return value**
 
-Whether union type has specified sub type.
+Whether union type has specified subtype.
 
 **Examples**
 
