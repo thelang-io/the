@@ -24,6 +24,10 @@ export obj CallExpressionContextExtra {
   mut returnType: ref Type.Type
 }
 
+export obj IsExpressionContextExtra {
+  mut t: ref Type.Type
+}
+
 export obj VariableDeclarationContext {
   mut varType: ref Type.Type
 }

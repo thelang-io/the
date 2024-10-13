@@ -1052,11 +1052,7 @@ export obj AnalyzerFile {
     return result
   }
 
-  fn typeCastMergeIntersecting (
-    mut self: ref Self,
-    result1: (ref Type.Type)[str],
-    result2: (ref Type.Type)[str],
-  ) {
+  fn typeCastMergeIntersecting (mut self: ref Self, result1: (ref Type.Type)[str], result2: (ref Type.Type)[str]) {
     keys := result1.keys
 
     loop i := keys.len - 1; i >= 0; i-- {
@@ -1077,13 +1073,7 @@ export obj AnalyzerFile {
     }
   }
 
-  fn _eIdentifier (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    noTypeCast: bool,
-    withMutable: bool,
-  ) bool {
+  fn _eIdentifier (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool) bool {
     if !it.isIdentifier() {
       return false
     }
@@ -1272,13 +1262,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eAs (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    withMutable: bool,
-    withMutableNext: bool,
-  ) bool {
+  fn _eAs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
     if !it.isAs() {
       return false
     }
@@ -1616,13 +1600,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eConditional (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    withMutable: bool,
-    withMutableNext: bool,
-  ) bool {
+  fn _eConditional (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
     if !it.isConditional() {
       return false
     }
@@ -1672,14 +1650,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eElementAccess (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    noTypeCast: bool,
-    withMutable: bool,
-    withMutableNext: bool,
-  ) bool {
+  fn _eElementAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool, withMutableNext: bool) bool {
     if !it.isElementAccess() {
       return false
     }
@@ -1722,13 +1693,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eIs (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    withMutable: bool,
-    withMutableNext: bool,
-  ) bool {
+  fn _eIs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
     if !it.isIs() {
       return false
     }
@@ -1746,6 +1711,8 @@ export obj AnalyzerFile {
     }
 
     Context.set(it, self.tm.get("bool"))
+    Context.setExtra(it, Context.IsExpressionContextExtra{t: t})
+
     return true
   }
 
@@ -1882,14 +1849,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eParenthesized (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    noTargetPromote: bool,
-    withMutable: bool,
-    withMutableNext: bool,
-  ) bool {
+  fn _eParenthesized (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTargetPromote: bool, withMutable: bool, withMutableNext: bool) bool {
     if !it.isParenthesized() {
       return false
     }
@@ -1909,14 +1869,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _ePropertyAccess (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    noTypeCast: bool,
-    withMutable: bool,
-    withMutableNext: bool,
-  ) bool {
+  fn _ePropertyAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool, withMutableNext: bool) bool {
     if !it.isPropertyAccess() {
       return false
     }
@@ -2003,13 +1956,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eReference (
-    mut self: ref Self,
-    mut it: ref Parser.Expression,
-    targetType: (ref Type.Type)?,
-    withMutable: bool,
-    withMutableNext: bool,
-  ) bool {
+  fn _eReference (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
     if !it.isReference() {
       return false
     }
