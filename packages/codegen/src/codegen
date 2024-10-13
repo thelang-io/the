@@ -422,6 +422,7 @@ export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
   return macroInvocation.callee.find("DECLARE") != -1
 }
 
+// TODO: move to analyzer
 export fn typeHasSelfParam (it: ref Analyzer.Type) bool {
   if it.isMethod() {
     t := it.asMethod()
@@ -440,6 +441,7 @@ export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   else { return "FP1" }
 }
 
+// TODO: move to analyzer
 export fn typePrimitive (it: ref Analyzer.Type) bool {
   return !(
     it.name == "any" ||
@@ -531,12 +533,6 @@ export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
     self.isFunction() ||
     self.isMap() ||
     self.isOptional()
-}
-
-export fn validateContext (valid: bool) {
-  if !valid {
-    throw error_NewError("Context is not set")
-  }
 }
 
 export const BUILTIN_ENTITIES := {
@@ -1453,14 +1449,10 @@ export obj Codegen {
       (result = self._generateReferenceExpression(item)) != nil ||
       (result = self._generateUnaryExpression(item)) != nil
     ) {
-      typeContext := item.typeContext as Analyzer.TypeContext
-      optionalTargetType := typeContext.targetType
+      initialType := Analyzer.contextInitial(item)
+      targetType := Analyzer.contextTarget(item)
 
-      if optionalTargetType == nil {
-        return self._wrap(result, item, typeContext.t, typeContext.t, transform: transform)
-      }
-
-      return self._wrap(result, item, typeContext.t, optionalTargetType as ref Analyzer.Type, transform: transform)
+      return self._wrap(result, item, initialType, targetType, transform: transform)
     }
 
     throw error_NewError("Tried code generation for unknown expression '" + Parser.stringifyExpression(item) + "'")
@@ -1497,8 +1489,6 @@ export obj Codegen {
       return nil
     }
 
-    validateContext(item.context is Analyzer.IdentifierContext)
-    context := item.context as Analyzer.IdentifierContext
     expression := item.asIdentifier()
     mut name := expression.name
 
@@ -1510,7 +1500,7 @@ export obj Codegen {
       name = self.blockData.getVariable(name)
     }
 
-    return self._wrap(AST.createIdentifier(name), item, context.originalType, context.currentType)
+    return AST.createIdentifier(name)
   }
 
   fn _generateLiteral (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1560,8 +1550,7 @@ export obj Codegen {
     }
 
     expression := item.asArray()
-    validateContext(item.context is Analyzer.ArrayExpressionContext)
-    context := item.context as Analyzer.ArrayExpressionContext
+    targetType := Analyzer.contextTarget(item)
     mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len.str())]
 
     loop i := 0; i < expression.elements.len; i++ {
@@ -1569,7 +1558,7 @@ export obj Codegen {
       arguments.push(self._generateExpression(element))
     }
 
-    return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_alloc")), arguments)
+    return AST.createCallExpression(AST.createIdentifier(self._type(targetType, "_alloc")), arguments)
   }
 
   fn _generateAsExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1578,10 +1567,7 @@ export obj Codegen {
     }
 
     expression := item.asAs()
-    validateContext(item.context is Analyzer.AsExpressionContext)
-    context := item.context as Analyzer.AsExpressionContext
-
-    return self._wrap(self._generateExpression(ref expression.expression), item, context.originalType, context.currentType)
+    return self._generateExpression(ref expression.expression)
   }
 
   fn _generateAssignmentExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1590,10 +1576,8 @@ export obj Codegen {
     }
 
     expression := item.asAssignment()
-    validateContext(item.context is Analyzer.AssignmentExpressionContext)
-    context := item.context as Analyzer.AssignmentExpressionContext
-    leftType := Analyzer.unwrap(context.leftType, withReference: false)
-    rightType := Analyzer.unwrap(context.rightType, withReference: false)
+    leftType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.left), withReference: false)
+    rightType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.right), withReference: false)
     left := self._generateExpression(ref expression.left)
     mut right := self._generateExpression(ref expression.right)
 
@@ -1622,16 +1606,14 @@ export obj Codegen {
     }
 
     expression := item.asBinary()
-    validateContext(item.context is Analyzer.BinaryExpressionContext)
-    context := item.context as Analyzer.BinaryExpressionContext
-    leftType := Analyzer.unwrap(context.leftType, withReference: false)
-    rightType := Analyzer.unwrap(context.rightType, withReference: false)
+    leftType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.left), withReference: false)
+    rightType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.right), withReference: false)
     left := self._generateExpression(ref expression.left)
     right := self._generateExpression(ref expression.right)
 
     if (
       (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
-      (!typePrimitive(context.leftType) || !typePrimitive(context.rightType))
+      (!typePrimitive(leftType) || !typePrimitive(rightType))
     ) {
       return self._functionEq(leftType, left, right, reverse: expression.operator.t == .OpExclEq)
     } elif leftType.name == "str" && rightType.name == "str" && (
@@ -1662,33 +1644,38 @@ export obj Codegen {
     }
 
     expression := item.asCall()
-    validateContext(item.context is Analyzer.CallExpressionContext)
-    context := item.context as Analyzer.CallExpressionContext
+
+    if !(item.contextExtra is Analyzer.CallExpressionContextExtra) {
+      throw error_NewError("Expected CallExpression context extra")
+    }
+
+    contextExtra := item.contextExtra as Analyzer.CallExpressionContextExtra
 
     if expressionIsBuiltinMethod(ref expression.callee) {
       calleeBody := expression.callee.asPropertyAccess()
 
       if calleeBody.name.name == "str" {
-        calleeExpressionTypeContext := calleeBody.expression.typeContext as Analyzer.TypeContext
-        return self._functionStr(calleeExpressionTypeContext.t, self._generateExpression(ref calleeBody.expression))
+        calleeTargetType := Analyzer.contextTarget(ref calleeBody.expression)
+        return self._functionStr(calleeTargetType, self._generateExpression(ref calleeBody.expression))
       }
     }
 
+    calleeTargetType := Analyzer.contextTarget(ref expression.callee)
     calleeExpression := self._generateExpression(ref expression.callee)
     mut paramsArgs: AST.CExpression[]
 
-    if typeHasSelfParam(context.t) {
+    if typeHasSelfParam(calleeTargetType) {
       paramsArgs.push(calleeExpression)
     }
 
-    loop i := 0; i < context.parameters.len; i++ {
-      param := context.parameters[i]
+    loop i := 0; i < contextExtra.parameters.len; i++ {
+      param := contextExtra.parameters[i]
 
       if param.variadic {
         mut variadicArgs: (AST.CExpression | AST.CType)[]
 
-        loop j := 0; j < context.arguments.len; j++ {
-          arg := context.arguments[j]
+        loop j := 0; j < contextExtra.arguments.len; j++ {
+          arg := contextExtra.arguments[j]
           if arg.parameterIdx != i { continue }
           variadicArgs.push(self._generateExpression(ref arg.argument.expression))
         }
@@ -1703,8 +1690,8 @@ export obj Codegen {
 
       mut argIdx := -1
 
-      loop j := 0; j < context.arguments.len; j++ {
-        arg := context.arguments[j]
+      loop j := 0; j < contextExtra.arguments.len; j++ {
+        arg := contextExtra.arguments[j]
 
         if arg.parameterIdx == i {
           argIdx = j
@@ -1717,7 +1704,7 @@ export obj Codegen {
       }
 
       if argIdx != -1 {
-        arg := context.arguments[argIdx]
+        arg := contextExtra.arguments[argIdx]
         paramsArgs.push(self._generateExpression(ref arg.argument.expression))
       } else {
         paramsArgs.push(self._defaultInitializerExpression(param.t))
@@ -1729,7 +1716,7 @@ export obj Codegen {
     ]
 
     if !paramsArgs.empty {
-      paramsName := self._type(context.t, "_params_t")
+      paramsName := self._type(calleeTargetType, "_params_t")
 
       args.push(AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
         AST.createUnaryExpression("&", AST.createCastExpression(
@@ -1751,9 +1738,7 @@ export obj Codegen {
     }
 
     expression := item.asConditional()
-    validateContext(item.context is Analyzer.ConditionalExpressionContext)
-    context := item.context as Analyzer.ConditionalExpressionContext
-    alternateType := Analyzer.unwrap(context.alternateType, withReference: false)
+    alternateType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.alternate), withReference: false)
     mut alternate := self._generateExpression(ref expression.alternate)
 
     if alternate.isAssignmentExpression() && !typeSafeForTernaryAlternate(alternateType) {
@@ -1773,10 +1758,9 @@ export obj Codegen {
     }
 
     expression := item.asElementAccess()
-    validateContext(item.context is Analyzer.ElementAccessExpressionContext)
-    context := item.context as Analyzer.ElementAccessExpressionContext
+    targetType := Analyzer.contextTarget(item)
 
-    return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_at")), [
+    return AST.createCallExpression(AST.createIdentifier(self._type(targetType, "_at")), [
       self._generateExpression(ref expression.expression),
       self._generateExpression(ref expression.argument),
     ])
@@ -1788,10 +1772,14 @@ export obj Codegen {
     }
 
     expression := item.asIs()
-    validateContext(item.context is Analyzer.IsExpressionContext)
-    context := item.context as Analyzer.IsExpressionContext
+
+    if !(item.contextExtra is Analyzer.IsExpressionContextExtra) {
+      throw error_NewError("Expected IsExpression context extra")
+    }
+
+    contextExtra := item.contextExtra as Analyzer.IsExpressionContextExtra
     left := AST.createPropertyAccessExpression(self._generateExpression(ref expression.expression), "type")
-    right := AST.createIdentifier(self._typeDef(context.rightType))
+    right := AST.createIdentifier(self._typeDef(contextExtra.t))
 
     return AST.createBinaryExpression(left, "==", right)
   }
@@ -1802,8 +1790,7 @@ export obj Codegen {
     }
 
     expression := item.asMap()
-    validateContext(item.context is Analyzer.MapExpressionContext)
-    context := item.context as Analyzer.MapExpressionContext
+    targetType := Analyzer.contextTarget(item)
     mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len.str())]
 
     loop i := 0; i < expression.elements.len; i++ {
@@ -1812,7 +1799,7 @@ export obj Codegen {
       arguments.push(self._generateExpression(ref element.value))
     }
 
-    return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_alloc")), arguments)
+    return AST.createCallExpression(AST.createIdentifier(self._type(targetType, "_alloc")), arguments)
   }
 
   fn _generateParenthesizedExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1853,11 +1840,10 @@ export obj Codegen {
     }
 
     expression := item.asUnary()
-    validateContext(item.context is Analyzer.UnaryExpressionContext)
-    context := item.context as Analyzer.UnaryExpressionContext
+    operandType := Analyzer.contextTarget(ref expression.operand)
     mut operand := self._generateExpression(ref expression.operand)
 
-    if context.operandType.isFloat() {
+    if operandType.isFloat() {
       operand = AST.createCastExpression(AST.createType(self._("bool")), operand)
       operand = operand.wrap()
     }
@@ -2426,7 +2412,11 @@ export obj Codegen {
     }
 
     statement := item.asVariableDeclaration()
-    validateContext(item.context is Analyzer.VariableDeclarationContext)
+
+    if !(item.context is Analyzer.VariableDeclarationContext) {
+      throw error_NewError("Expected VariableDeclaration context")
+    }
+
     context := item.context as Analyzer.VariableDeclarationContext
     typeName := self._typeName(context.varType)
     t := AST.createType(self._type(context.varType))
