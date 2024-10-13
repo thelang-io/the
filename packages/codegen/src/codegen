@@ -76,7 +76,7 @@ export obj CodegenAPIBuiltin {
 export enum BlockDataType {
   Block,
   Fn,
-  Loop
+  Loop,
 }
 
 export obj BlockDataVariable {
@@ -243,7 +243,7 @@ export obj BlockData {
       usedBreakVariable: self.blocks.len == 0 ? false : self.blocks.last.usedBreakVariable,
       usedContinueVariable: self.blocks.len == 0 ? false : self.blocks.last.usedContinueVariable,
       usedReturnVariable: self.blocks.len == 0 ? false : self.blocks.last.usedReturnVariable,
-      usedValueVariable: self.blocks.len == 0 ? false : self.blocks.last.usedValueVariable
+      usedValueVariable: self.blocks.len == 0 ? false : self.blocks.last.usedValueVariable,
     })
   }
 
@@ -285,7 +285,7 @@ export obj BlockData {
 
     self.blocks.last.variables.push(BlockDataVariable{
       name: name,
-      id: id
+      id: id,
     })
 
     return self.blocks.last.variables.last.fullName()
@@ -546,7 +546,7 @@ export const BUILTIN_ENTITIES := {
     "EXIT_FAILURE",
     "NULL",
     "exit",
-    "size_t"
+    "size_t",
   ],
   "stdio": [
     "fprintf",
@@ -555,7 +555,7 @@ export const BUILTIN_ENTITIES := {
     "sprintf",
     "stderr",
     "stdin",
-    "stdout"
+    "stdout",
   ],
   "stdint": [
     "int8_t",
@@ -565,7 +565,7 @@ export const BUILTIN_ENTITIES := {
     "uint8_t",
     "uint16_t",
     "uint32_t",
-    "uint64_t"
+    "uint64_t",
   ],
   "wchar": ["wchar_t"],
   "d4Any": [
@@ -577,7 +577,7 @@ export const BUILTIN_ENTITIES := {
     "d4_any_free",
     "d4_any_ne",
     "d4_any_realloc",
-    "d4_any_str"
+    "d4_any_str",
   ],
 
   "d4Array": ["D4_ARRAY_DECLARE", "D4_ARRAY_DEFINE"],
@@ -595,7 +595,7 @@ export const BUILTIN_ENTITIES := {
     "d4_char_lower",
     "d4_char_repeat",
     "d4_char_str",
-    "d4_char_upper"
+    "d4_char_upper",
   ],
 
   "d4Error": [
@@ -613,7 +613,7 @@ export const BUILTIN_ENTITIES := {
     "d4_error_stack_push",
     "d4_error_unset",
     "d4_Error_alloc",
-    "d4_Error_free"
+    "d4_Error_free",
   ],
 
   "d4Fn": [
@@ -621,7 +621,7 @@ export const BUILTIN_ENTITIES := {
     "D4_FUNCTION_DECLARE_WITH_PARAMS",
     "D4_FUNCTION_DEFINE",
     "D4_FUNCTION_DEFINE_WITH_PARAMS",
-    "d4_fn_ctx_free_generic"
+    "d4_fn_ctx_free_generic",
   ],
 
   "d4Globals": [
@@ -686,7 +686,7 @@ export const BUILTIN_ENTITIES := {
     "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_realloc",
     "d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_str",
 
-    "d4_print"
+    "d4_print",
   ],
 
   "d4Macro": ["D4_OS_WINDOWS", "D4_OS_MACOS", "D4_OS_LINUX", "D4_EOL", "D4_PATH_SEP"],
@@ -706,7 +706,7 @@ export const BUILTIN_ENTITIES := {
     "d4_u16_str",
     "d4_u32_str",
     "d4_u64_str",
-    "d4_usize_str"
+    "d4_usize_str",
   ],
 
   "d4Object": ["D4_OBJECT_DECLARE", "D4_OBJECT_DEFINE", "d4_obj_str_append"],
@@ -724,7 +724,7 @@ export const BUILTIN_ENTITIES := {
     "d4_rune_lower",
     "d4_rune_repeat",
     "d4_rune_str",
-    "d4_rune_upper"
+    "d4_rune_upper",
   ],
 
   "d4Safe": [
@@ -732,7 +732,7 @@ export const BUILTIN_ENTITIES := {
     "d4_safe_calloc",
     "d4_safe_free",
     "d4_safe_realloc",
-    "d4_safe_swap"
+    "d4_safe_swap",
   ],
 
   "d4String": [
@@ -831,7 +831,7 @@ export const BUILTIN_ENTITIES := {
     "d4_str_trimEnd",
     "d4_str_trimStart",
     "d4_str_upper",
-    "d4_str_upperFirst"
+    "d4_str_upperFirst",
   ],
 
   "d4Union": ["D4_UNION_DECLARE", "D4_UNION_DEFINE"]
@@ -985,11 +985,13 @@ export obj Codegen {
     tmpVarId := AST.createIdentifier(tmpVar)
 
     self.blockData.addSetup(
-      AST.createVariableDeclaration(AST.createType(self._type(t)), tmpVar, self._defaultInitializerDeclaration(t))
+      AST.createVariableDeclaration(
+        AST.createType(self._type(t)), tmpVar, self._defaultInitializerDeclaration(t),
+      ),
     )
 
     self.blockData.addTeardown(
-      AST.createExpressionStatement(self._functionFree(t, tmpVarId))
+      AST.createExpressionStatement(self._functionFree(t, tmpVarId)),
     )
 
     return AST.createAssignmentExpression(tmpVarId, "=", expression)
@@ -1095,8 +1097,8 @@ export obj Codegen {
         AST.createType("int"),
         "main",
         [AST.createFunctionParameter(AST.createType("void"))],
-        AST.createCompoundStatement(finalMainStatements)
-      )
+        AST.createCompoundStatement(finalMainStatements),
+      ),
     )
   }
 
@@ -1111,7 +1113,7 @@ export obj Codegen {
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
-        AST.createIdentifier(self._("NULL"))
+        AST.createIdentifier(self._("NULL")),
       ]))
     } elif it.name == "bool" {
       return AST.createIdentifier(self._("false"))
@@ -1123,7 +1125,7 @@ export obj Codegen {
       typeName := self._typeName(it)
 
       return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
-        AST.createLiteral("0")
+        AST.createLiteral("0"),
       ])
     // TODO: implement
     // } elif it.isObject() {
@@ -1142,7 +1144,7 @@ export obj Codegen {
     } elif it.isUnion() {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
-        AST.createLiteral("-1")
+        AST.createLiteral("-1"),
       ])
     } elif !it.isFunction() && !it.isReference() {
       return AST.createLiteral("0")
@@ -1162,7 +1164,7 @@ export obj Codegen {
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
-        AST.createIdentifier(self._("NULL"))
+        AST.createIdentifier(self._("NULL")),
       ])
     } elif it.name == "bool" {
       return AST.createIdentifier(self._("false"))
@@ -1173,7 +1175,7 @@ export obj Codegen {
     } elif it.isArray() || it.isMap() {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
-        AST.createLiteral("0")
+        AST.createLiteral("0"),
       ])
     // TODO: implement
     // } elif it.isObject() {
@@ -1192,7 +1194,7 @@ export obj Codegen {
     } elif it.isUnion() {
       typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_alloc")), [
-        AST.createLiteral("-1")
+        AST.createLiteral("-1"),
       ])
     } elif !it.isFunction() && !it.isReference() {
       return AST.createLiteral("0")
@@ -1281,13 +1283,13 @@ export obj Codegen {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._("d4_any_realloc")), [left, right])
+        AST.createCallExpression(AST.createIdentifier(self._("d4_any_realloc")), [left, right]),
       )
     } elif it.name == "str" {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._("d4_str_realloc")), [left, right])
+        AST.createCallExpression(AST.createIdentifier(self._("d4_str_realloc")), [left, right]),
       )
     } elif (
       it.isArray() ||
@@ -1302,7 +1304,7 @@ export obj Codegen {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_realloc")), [left, right])
+        AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_realloc")), [left, right]),
       )
     }
 
@@ -1334,9 +1336,11 @@ export obj Codegen {
     if items.empty {
       return []
     }
+
     self.blockData.increase()
     result := self._generateBlockBody(items)
     blockData := self.blockData.decrease()
+
     return self._generateBlockTail(result, items.first.parentMaybe(), ref blockData)
   }
 
@@ -1369,12 +1373,7 @@ export obj Codegen {
     return result
   }
 
-  fn _generateBlockTail (
-    mut self: ref Self,
-    result: AST.CStatement[],
-    parent: (ref Parser.Statement)?,
-    blockData: ref BlockDataContext
-  ) AST.CStatement[] {
+  fn _generateBlockTail (mut self: ref Self, result: AST.CStatement[], parent: (ref Parser.Statement)?, blockData: ref BlockDataContext) AST.CStatement[] {
     mut finalResult: AST.CStatement[]
     finalResult.merge(blockData.setup)
     finalResult.merge(result)
@@ -1392,11 +1391,11 @@ export obj Codegen {
           AST.createBinaryExpression(
             AST.createIdentifier(blockData.continueVariable()),
             "==",
-            AST.createLiteral("1")
+            AST.createLiteral("1"),
           ),
           self.blockData.hasUntil(.Loop)
             ? AST.createGotoStatement(self.blockData.getLabel())
-            : AST.createContinueStatement()
+            : AST.createContinueStatement(),
         )
       )
     }
@@ -1407,11 +1406,11 @@ export obj Codegen {
           AST.createBinaryExpression(
             AST.createIdentifier(blockData.breakVariable()),
             "==",
-            AST.createLiteral("1")
+            AST.createLiteral("1"),
           ),
           !parentIsLoop && self.blockData.hasUntil(.Loop)
             ? AST.createGotoStatement(self.blockData.getLabel())
-            : AST.createBreakStatement()
+            : AST.createBreakStatement(),
         )
       )
     }
@@ -1548,7 +1547,7 @@ export obj Codegen {
 
       return AST.createCallExpression(
         AST.createIdentifier(self._("d4_str_alloc")),
-        [AST.createLiteral(rawValue)]
+        [AST.createLiteral(rawValue)],
       )
     }
 
@@ -1604,8 +1603,8 @@ export obj Codegen {
         left,
         self._allocateExpression(
           leftType,
-          AST.createCallExpression(AST.createIdentifier(self._("d4_str_concat")), [left, right])
-        )
+          AST.createCallExpression(AST.createIdentifier(self._("d4_str_concat")), [left, right]),
+        ),
       )
     } elif !typePrimitive(leftType) || !typePrimitive(rightType) {
       return self._functionRealloc(leftType, left, right)
@@ -1697,13 +1696,7 @@ export obj Codegen {
         mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len.str())]
         variadicAllocArgs.merge(variadicArgs)
         variadicAllocType := self._type(param.t, "_alloc")
-
-        paramsArgs.push(
-          AST.createCallExpression(
-            AST.createIdentifier(variadicAllocType),
-            variadicAllocArgs
-          )
-        )
+        paramsArgs.push(AST.createCallExpression(AST.createIdentifier(variadicAllocType), variadicAllocArgs))
 
         continue
       }
@@ -1741,11 +1734,11 @@ export obj Codegen {
       args.push(AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
         AST.createUnaryExpression("&", AST.createCastExpression(
           AST.createType(paramsName),
-          AST.createInitializerListExpression(paramsArgs)
+          AST.createInitializerListExpression(paramsArgs),
         )),
         AST.createCallExpression(AST.createIdentifier("sizeof"), [
-          AST.createType(paramsName)
-        ])
+          AST.createType(paramsName),
+        ]),
       ]))
     }
 
@@ -1770,7 +1763,7 @@ export obj Codegen {
     return AST.createConditionalExpression(
       self._generateExpression(ref expression.condition),
       self._generateExpression(ref expression.consequent),
-      alternate
+      alternate,
     )
   }
 
@@ -1785,7 +1778,7 @@ export obj Codegen {
 
     return AST.createCallExpression(AST.createIdentifier(self._type(context.t, "_at")), [
       self._generateExpression(ref expression.expression),
-      self._generateExpression(ref expression.argument)
+      self._generateExpression(ref expression.argument),
     ])
   }
 
@@ -1841,7 +1834,7 @@ export obj Codegen {
 
     return AST.createPropertyAccessExpression(
       self._generateExpression(ref expression.expression),
-      expression.name.name
+      expression.name.name,
     )
   }
 
@@ -1872,7 +1865,7 @@ export obj Codegen {
     return AST.createUnaryExpression(
       expression.operator.val,
       operand,
-      postfix: !expression.prefix
+      postfix: !expression.prefix,
     )
   }
 
@@ -1900,7 +1893,7 @@ export obj Codegen {
       AST.createAssignmentExpression(
         AST.createIdentifier(self.blockData.getBreakVariable()),
         "=",
-        AST.createLiteral("1")
+        AST.createLiteral("1"),
       )
     )
 
@@ -1927,7 +1920,7 @@ export obj Codegen {
       AST.createAssignmentExpression(
         AST.createIdentifier(self.blockData.getContinueVariable()),
         "=",
-        AST.createLiteral("1")
+        AST.createLiteral("1"),
       )
     )
 
@@ -2085,12 +2078,12 @@ export obj Codegen {
                 AST.createAssignmentExpression(
                   AST.createIdentifier(self.blockData.getBreakVariable()),
                   "=",
-                  AST.createLiteral("1")
-                )
+                  AST.createLiteral("1"),
+                ),
               ),
-              AST.createGotoStatement(self.blockData.getLabel())
-            ])
-          )
+              AST.createGotoStatement(self.blockData.getLabel()),
+            ]),
+          ),
         )
       } else {
         condition = conditionExpression
@@ -2130,7 +2123,7 @@ export obj Codegen {
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
           blockDataLoop.continueVariable(),
-          AST.createLiteral("0")
+          AST.createLiteral("0"),
         )
       ].concat(body)
     }
@@ -2140,7 +2133,7 @@ export obj Codegen {
         AST.createVariableDeclaration(
           AST.createType("unsigned char"),
           blockDataLoop.breakVariable(),
-          AST.createLiteral("0")
+          AST.createLiteral("0"),
         )
       ].concat(body)
     }
@@ -2172,14 +2165,14 @@ export obj Codegen {
             AST.createBinaryExpression(
               AST.createIdentifier(self.blockData.getReturnVariable()),
               "==",
-              AST.createLiteral("1")
+              AST.createLiteral("1"),
             ),
             self.blockData.hasUntil(.Fn)
               ? AST.createGotoStatement(self.blockData.getLabel())
               : returnTypeName == "void"
                 ? AST.createReturnStatement()
-                : AST.createReturnStatement(AST.createIdentifier(self.blockData.getValueVariable()))
-          )
+                : AST.createReturnStatement(AST.createIdentifier(self.blockData.getValueVariable())),
+          ),
         )
       }
 
@@ -2448,18 +2441,18 @@ export obj Codegen {
     if typeShouldBeFreed(context.varType) {
       self.blockData.addTeardown(
         AST.createExpressionStatement(
-          self._functionFree(context.varType, AST.createIdentifier(variableName))
-        )
+          self._functionFree(context.varType, AST.createIdentifier(variableName)),
+        ),
       )
     }
 
     if shouldSplitDeclaration {
       self.blockData.addSetup(
-        AST.createVariableDeclaration(t, variableName)
+        AST.createVariableDeclaration(t, variableName),
       )
 
       return AST.createExpressionStatement(
-        AST.createAssignmentExpression(AST.createIdentifier(variableName), "=", initializer)
+        AST.createAssignmentExpression(AST.createIdentifier(variableName), "=", initializer),
       )
     } else {
       return AST.createVariableDeclaration(t, variableName, initializer)
@@ -2487,7 +2480,7 @@ export obj Codegen {
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ANY_DECLARE"), [
             AST.createIdentifier(typeName),
-            AST.createType(t)
+            AST.createType(t),
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ANY_DEFINE"), [
             AST.createIdentifier(self._(typeDef)),
@@ -2496,8 +2489,8 @@ export obj Codegen {
             self._functionCopy(it, AST.createIdentifier("val")),
             self._functionEq(it, AST.createIdentifier("lhs_val"), AST.createIdentifier("rhs_val")),
             self._functionFree(it, AST.createIdentifier("val")),
-            self._functionStr(it, AST.createIdentifier("val"))
-          ]), terminated: false)
+            self._functionStr(it, AST.createIdentifier("val")),
+          ]), terminated: false),
         ]
       }
     })
@@ -2516,7 +2509,7 @@ export obj Codegen {
         name: typeName + "_" + methodName,
         codeName: typeName + "_" + methodName,
         context: name,
-        generate: entityCallee
+        generate: entityCallee,
       })
     }
 
@@ -2543,7 +2536,7 @@ export obj Codegen {
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ARRAY_DECLARE"), [
             AST.createIdentifier(elementTypeName),
-            AST.createType(self._type(t.elementType))
+            AST.createType(self._type(t.elementType)),
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ARRAY_DEFINE"), [
             AST.createIdentifier(elementTypeName),
@@ -2552,8 +2545,8 @@ export obj Codegen {
             self._functionCopy(t.elementType, AST.createIdentifier("element")),
             self._functionEq(t.elementType, AST.createIdentifier("lhs_element"), AST.createIdentifier("rhs_element")),
             self._functionFree(t.elementType, AST.createIdentifier("element")),
-            self._functionStr(t.elementType, AST.createIdentifier("element"), quote: true)
-          ]), terminated: false)
+            self._functionStr(t.elementType, AST.createIdentifier("element"), quote: true),
+          ]), terminated: false),
         ]
       }
     })
@@ -2596,7 +2589,7 @@ export obj Codegen {
         name: typeName + "_" + methodName,
         codeName: typeName + "_" + methodName,
         context: name,
-        generate: entityCallee
+        generate: entityCallee,
       })
     }
 
@@ -2634,13 +2627,13 @@ export obj Codegen {
             if !parameter.required && !parameter.variadic {
               parametersDefinition.push(AST.createStructureMemberDeclaration(
                 AST.createType("unsigned char"),
-                "o" + i.str()
+                "o" + i.str(),
               ))
             }
 
             parametersDefinition.push(AST.createStructureMemberDeclaration(
               AST.createType(self._type(parameter.t)),
-              "n" + i.str()
+              "n" + i.str(),
             ))
           }
 
@@ -2650,14 +2643,14 @@ export obj Codegen {
               AST.createIdentifier(returnTypeName),
               AST.createType(returnType),
               AST.createIdentifier(parametersTypeName),
-              AST.createCompoundStatement(parametersDefinition)
+              AST.createCompoundStatement(parametersDefinition),
             ]), terminated: false),
             AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DEFINE_WITH_PARAMS"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
               AST.createIdentifier(returnTypeName),
               AST.createType(returnType),
-              AST.createIdentifier(parametersTypeName)
-            ]), terminated: false)
+              AST.createIdentifier(parametersTypeName),
+            ]), terminated: false),
           ]
         }
       })
@@ -2674,11 +2667,11 @@ export obj Codegen {
           return [
             AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DECLARE"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
-              AST.createType(returnType)
+              AST.createType(returnType),
             ]), terminated: false),
             AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DEFINE"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
-              AST.createType(returnType)
+              AST.createType(returnType),
             ]), terminated: false),
           ]
         }
@@ -2699,7 +2692,7 @@ export obj Codegen {
         name: typeName + "_" + methodName,
         codeName: typeName + "_" + methodName,
         context: name,
-        generate: entityCallee
+        generate: entityCallee,
       })
     }
 
@@ -2801,7 +2794,7 @@ export obj Codegen {
         name: typeName + "_" + methodName,
         codeName: typeName + "_" + methodName,
         context: name,
-        generate: entityCallee
+        generate: entityCallee,
       })
     }
 
@@ -2829,7 +2822,7 @@ export obj Codegen {
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_OPTIONAL_DECLARE"), [
             AST.createIdentifier(underlyingTypeName),
-            AST.createType(underlyingType)
+            AST.createType(underlyingType),
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_OPTIONAL_DEFINE"), [
             AST.createIdentifier(underlyingTypeName),
@@ -2837,7 +2830,7 @@ export obj Codegen {
             self._functionCopy(t.t, AST.createIdentifier("val")),
             self._functionEq(t.t, AST.createIdentifier("lhs_val"), AST.createIdentifier("rhs_val")),
             self._functionFree(t.t, AST.createIdentifier("val")),
-            self._functionStr(t.t, AST.createIdentifier("val"))
+            self._functionStr(t.t, AST.createIdentifier("val")),
           ]), terminated: false),
         ]
       }
@@ -2857,7 +2850,7 @@ export obj Codegen {
         name: typeName + "_" + methodName,
         codeName: typeName + "_" + methodName,
         context: name,
-        generate: entityCallee
+        generate: entityCallee,
       })
     }
 
@@ -2882,7 +2875,7 @@ export obj Codegen {
 
         return AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_REFERENCE_DECLARE"), [
           AST.createIdentifier(self._typeName(t.t)),
-          AST.createType(self._type(t.t))
+          AST.createType(self._type(t.t)),
         ]), terminated: false)
       }
     })
@@ -2922,7 +2915,7 @@ export obj Codegen {
           typeProperty := "v" + typeDefIdx.str()
 
           structureBlock.push(
-            AST.createVariableDeclaration(AST.createType(typeDecl), typeProperty)
+            AST.createVariableDeclaration(AST.createType(typeDecl), typeProperty),
           )
 
           allocBlock.push(
@@ -2930,28 +2923,28 @@ export obj Codegen {
               AST.createBinaryExpression(
                 AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
                 "==",
-                AST.createIdentifier(self._(typeDef))
+                AST.createIdentifier(self._(typeDef)),
               ),
               AST.createExpressionStatement(
                 AST.createAssignmentExpression(
                   AST.createPropertyAccessExpression(
                     AST.createPropertyAccessExpression(
                       AST.createIdentifier("self"),
-                      "data"
+                      "data",
                     ),
-                    typeProperty
+                    typeProperty,
                   ),
                   "=",
                   self._functionCopy(
                     subType,
                     AST.createCallExpression(AST.createIdentifier(self._("va_arg")), [
                       AST.createIdentifier("args"),
-                      AST.createType(typeDecl)
-                    ])
-                  )
-                )
-              )
-            )
+                      AST.createType(typeDecl),
+                    ]),
+                  ),
+                ),
+              ),
+            ),
           )
 
           copyBlock.push(
@@ -2959,25 +2952,25 @@ export obj Codegen {
               AST.createBinaryExpression(
                 AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
                 "==",
-                AST.createIdentifier(self._(typeDef))
+                AST.createIdentifier(self._(typeDef)),
               ),
               AST.createExpressionStatement(
                 AST.createAssignmentExpression(
                   AST.createPropertyAccessExpression(
                     AST.createPropertyAccessExpression(AST.createIdentifier("result"), "data"),
-                    typeProperty
+                    typeProperty,
                   ),
                   "=",
                   self._functionCopy(
                     subType,
                     AST.createPropertyAccessExpression(
                       AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
-                      typeProperty
-                    )
-                  )
-                )
-              )
-            )
+                      typeProperty,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           )
 
           eqBlock.push(
@@ -2985,22 +2978,22 @@ export obj Codegen {
               AST.createBinaryExpression(
                 AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
                 "==",
-                AST.createIdentifier(self._(typeDef))
+                AST.createIdentifier(self._(typeDef)),
               ),
               AST.createReturnStatement(
                 self._functionEq(
                   subType,
                   AST.createPropertyAccessExpression(
                     AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
-                    typeProperty
+                    typeProperty,
                   ),
                   AST.createPropertyAccessExpression(
                     AST.createPropertyAccessExpression(AST.createIdentifier("rhs"), "data"),
-                    typeProperty
-                  )
-                )
-              )
-            )
+                    typeProperty,
+                  ),
+                ),
+              ),
+            ),
           )
 
           if typeShouldBeFreed(subType) {
@@ -3009,18 +3002,18 @@ export obj Codegen {
                 AST.createBinaryExpression(
                   AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
                   "==",
-                  AST.createIdentifier(self._(typeDef))
+                  AST.createIdentifier(self._(typeDef)),
                 ),
                 AST.createExpressionStatement(
                   self._functionFree(
                     subType,
                     AST.createPropertyAccessExpression(
                       AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
-                      typeProperty
-                    )
-                  )
-                )
-              )
+                      typeProperty,
+                    ),
+                  ),
+                ),
+              ),
             )
           }
 
@@ -3029,33 +3022,33 @@ export obj Codegen {
               AST.createBinaryExpression(
                 AST.createPropertyAccessExpression(AST.createIdentifier("self"), "type"),
                 "==",
-                AST.createIdentifier(self._(typeDef))
+                AST.createIdentifier(self._(typeDef)),
               ),
               AST.createReturnStatement(
                 self._functionStr(
                   subType,
                   AST.createPropertyAccessExpression(
                     AST.createPropertyAccessExpression(AST.createIdentifier("self"), "data"),
-                    typeProperty
-                  )
-                )
-              )
-            )
+                    typeProperty,
+                  ),
+                ),
+              ),
+            ),
           )
         }
 
         if freeBlock.empty {
           freeBlock.push(
             AST.createExpressionStatement(
-              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self"))
-            )
+              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
+            ),
           )
         }
 
         return [
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_UNION_DECLARE"), [
             AST.createIdentifier(unionName),
-            AST.createCompoundStatement(structureBlock)
+            AST.createCompoundStatement(structureBlock),
           ]), terminated: false),
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_UNION_DEFINE"), [
             AST.createIdentifier(unionName),
@@ -3063,8 +3056,8 @@ export obj Codegen {
             AST.createCompoundStatement(copyBlock),
             AST.createCompoundStatement(eqBlock),
             AST.createCompoundStatement(freeBlock),
-            AST.createCompoundStatement(strBlock)
-          ]), terminated: false)
+            AST.createCompoundStatement(strBlock),
+          ]), terminated: false),
         ]
       }
     })
@@ -3083,7 +3076,7 @@ export obj Codegen {
         name: typeName + "_" + methodName,
         codeName: typeName + "_" + methodName,
         context: name,
-        generate: entityCallee
+        generate: entityCallee,
       })
     }
 
@@ -3208,14 +3201,7 @@ export obj Codegen {
     throw error_NewError("Failed to generate type for '" + it.toString() + "'")
   }
 
-  fn _wrap (
-    mut self: ref Self,
-    mut expression: AST.CExpression,
-    item: ref Parser.Expression,
-    t: ref Analyzer.Type,
-    targetType: ref Analyzer.Type,
-    transform := false
-  ) AST.CExpression {
+  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, transform := false) AST.CExpression {
     shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
 
     if transform && !shouldFree && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
@@ -3252,7 +3238,7 @@ export obj Codegen {
       // TODO: throw runtime error if not possible to cast
       expression = AST.createPropertyAccessExpression(
         AST.createPropertyAccessExpression(expression, "data"),
-        "v" + typeDefIdx.str()
+        "v" + typeDefIdx.str(),
       )
     }
 
@@ -3288,7 +3274,7 @@ export obj Codegen {
       generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
         typeDefIdx := self.typeDefs.get(entity.codeName)
         return AST.createDefineDirective(entity.codeName, nil, typeDefIdx.str())
-      }
+      },
     })
 
     return typeName
