@@ -832,10 +832,13 @@ export obj AnalyzerFile {
       alternate.merge(rightTypeCastResult.alternate)
 
       if expression.operator.t == .OpEq {
+        leftType := Type.unwrap(self.eNice(ref expression.left))
         rightType := Type.unwrap(self.eNice(ref expression.right))
         code := Parser.stringifyExpression(expression.left)
 
-        self.tc.set(code, rightType)
+        if Type.canNarrow(leftType, rightType) {
+          self.tc.set(code, rightType)
+        }
       }
     } elif it.isAwait() {
       expression := it.asAwait()
@@ -1319,7 +1322,7 @@ export obj AnalyzerFile {
 
     initialRightType := Context.initial(ref expression.right)
 
-    if !Type.match(leftType, initialRightType) {
+    if Type.canNarrow(leftType, initialRightType) {
       code := Parser.stringifyExpression(expression.left)
       self.tc.set(code, initialRightType)
     }
@@ -2637,7 +2640,6 @@ export obj AnalyzerFile {
       initializerType := self.e(
         ref statement.initializer,
         Type.opt(varType),
-        noTargetPromote: true,
         withMutable: statement.mutable && !statement.initializer.isAccess(),
       )
 
@@ -2649,7 +2651,11 @@ export obj AnalyzerFile {
         )
       }
 
-      self.tc.set(statement.name.name, initializerType)
+      initialInitializerType := Context.initial(ref statement.initializer)
+
+      if Type.canNarrow(varType, initialInitializerType) && !Type.match(varType, initialInitializerType) {
+        self.tc.set(statement.name.name, initialInitializerType)
+      }
     }
 
     if statement.initializer == nil && varType.isRequired() {

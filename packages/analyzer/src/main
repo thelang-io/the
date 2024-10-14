@@ -35,6 +35,7 @@ import
   ReferenceType,
   UnionType,
   Var,
+  canNarrow,
   canPromote,
   match,
   promote,
@@ -86,6 +87,7 @@ export UnionType
 export Var
 export VarMap
 export analyze
+export canNarrow
 export canPromote
 export match
 export promote
