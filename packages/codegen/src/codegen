@@ -1567,7 +1567,20 @@ export obj Codegen {
     }
 
     expression := item.asAs()
-    return self._generateExpression(ref expression.expression)
+
+    if !(item.contextExtra is Analyzer.AsExpressionContextExtra) {
+      throw error_NewError("Expected AsExpression context extra")
+    }
+
+    initialType := Analyzer.contextInitial(item)
+    contextExtra := item.contextExtra as Analyzer.AsExpressionContextExtra
+    result := self._generateExpression(ref expression.expression)
+
+    if Analyzer.match(contextExtra.fromType, initialType) {
+      return result
+    }
+
+    return self._wrap(result, item, contextExtra.fromType, initialType)
   }
 
   fn _generateAssignmentExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -3230,6 +3243,14 @@ export obj Codegen {
         AST.createPropertyAccessExpression(expression, "data"),
         "v" + typeDefIdx.str(),
       )
+    } elif !Analyzer.match(t, targetType) && (
+      targetType.name == "bool" ||
+      targetType.name == "byte" ||
+      targetType.name == "char" ||
+      targetType.name == "rune" ||
+      targetType.isNumber()
+    ) {
+      expression = AST.createCastExpression(AST.createType(self._type(targetType)), expression)
     }
 
     if !transform {
