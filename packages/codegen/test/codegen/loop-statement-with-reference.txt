@@ -42,25 +42,25 @@ int main (void) {
   d4_ref_int_t c_0;
   int32_t testInt1_0 = 1;
   int32_t testInt2_0 = 2;
-  for (d4_ref_int_t i_0 = &testInt1_0; *i_0 != *&testInt2_0; i_0 = (&testInt2_0)) {}
+  for (d4_ref_int_t i_0 = &testInt1_0; i_0 != &testInt2_0; i_0 = (&testInt2_0)) {}
   a_0 = &testInt1_0;
-  for (; *a_0 != *&testInt2_0; a_0 = (&testInt2_0)) {}
+  for (; a_0 != &testInt2_0; a_0 = (&testInt2_0)) {}
   b_0 = &testInt1_0;
-  while (*b_0 != *&testInt2_0) {
+  while (b_0 != &testInt2_0) {
     b_0 = &testInt2_0;
   }
   c_0 = &testInt1_0;
   while (1) {
-    if (*c_0 == (*&testInt2_0)) {
+    if (c_0 == (&testInt2_0)) {
       break;
     }
     c_0 = &testInt2_0;
   }
-  for (d4_ref_int_t d_0 = &testInt1_0; *d_0 != *&testInt2_0;) {
+  for (d4_ref_int_t d_0 = &testInt1_0; d_0 != &testInt2_0;) {
     d_0 = &testInt2_0;
   }
   for (d4_ref_int_t e_0 = &testInt1_0;; e_0 = (&testInt2_0)) {
-    if (*e_0 == (*&testInt2_0)) {
+    if (e_0 == (&testInt2_0)) {
       break;
     }
   }

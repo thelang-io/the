@@ -33,6 +33,25 @@ mut f := Parser.parse("path/to/file")
 error := analyze(ref f)
 ```
 
+### `canNarrow (fromType: ref Type, toType: ref Type) bool`
+Checks whether it's possible to narrow from type to another type.
+
+**Parameters**
+
+- `fromType` - type to narrow from
+- `toType` - type to narrow to
+
+**Return value**
+
+Whether it's possible to narrow from type to another type.
+
+**Examples**
+
+```the
+tm := TypeMap{}
+canNarrow(tm.get("int"), tm.get("i64"))
+```
+
 ### `canPromote (a: ref Type, b: ref Type) bool`
 Checks whether it's possible to promote type A to type B.
 

@@ -861,6 +861,25 @@ export fn TEST_Type_similarToUnion () {
   EXPECT_FALSE(Type.similarTo(type1, tm.get("int")))
 }
 
+export fn TEST_Type_canNarrow () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  EXPECT_FALSE(Type.canNarrow(tm.createOptional(tm.get("int")), tm.get("str")))
+  EXPECT_FALSE(Type.canNarrow(tm.createUnion([tm.get("int"), tm.get("str")]), tm.get("rune")))
+  EXPECT_FALSE(Type.canNarrow(tm.createUnion([tm.get("int"), tm.get("str"), tm.get("rune")]), tm.createUnion([tm.get("int"), tm.get("char")])))
+
+  EXPECT_TRUE(Type.canNarrow(tm.get("any"), tm.get("any")))
+  EXPECT_TRUE(Type.canNarrow(tm.get("int"), tm.get("int")))
+  EXPECT_TRUE(Type.canNarrow(tm.createOptional(tm.get("int")), tm.createOptional(tm.get("int"))))
+  EXPECT_TRUE(Type.canNarrow(tm.createUnion([tm.get("int"), tm.get("str")]), tm.createUnion([tm.get("int"), tm.get("str")])))
+
+  EXPECT_TRUE(Type.canNarrow(tm.get("any"), tm.get("int")))
+  EXPECT_TRUE(Type.canNarrow(tm.createOptional(tm.get("int")), tm.get("int")))
+  EXPECT_TRUE(Type.canNarrow(tm.createUnion([tm.get("int"), tm.get("str")]), tm.get("int")))
+  EXPECT_TRUE(Type.canNarrow(tm.createUnion([tm.get("int"), tm.get("str"), tm.get("rune")]), tm.createUnion([tm.get("int"), tm.get("str")])))
+}
+
 export fn TEST_Type_canPromote () {
   mut tm := TypeMap{}
   tm.init()
