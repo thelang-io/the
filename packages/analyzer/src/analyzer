@@ -1284,8 +1284,8 @@ export obj AnalyzerFile {
       self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
     }
 
-    Context.set(it, expressionType)
-    Context.setTarget(it, t)
+    Context.set(it, t)
+    Context.setExtra(it, Context.AsExpressionContextExtra{fromType: expressionType})
 
     return true
   }
@@ -1366,34 +1366,16 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asBinary()
-    mut leftTypeCastResult: TypeCastResult?
+    mut guessTypeResult := GuessTypeResult{first: self.tm.get("int"), second: self.tm.get("int")}
 
-    guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+    guardFailed := self.guard(() -> void {
       ref self.tc; // TODO: remove after v1
-
-      leftTypeCastResult = self.typeCast(ref expression.left)
-      result := self.e(ref expression.left, operandType)
-
-      return result
-    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
-      beforeMergeTC := self.tc
-
-      if expression.operator.t == .OpAmpAmp {
-        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
-        self.tc.merge(definiteLeftTypeCastResult.consequent)
-      } elif expression.operator.t == .OpPipePipe {
-        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
-        self.tc.merge(definiteLeftTypeCastResult.alternate)
-      }
-
-      afterMergeTC := self.tc
-      result := self.e(ref expression.right, operandType)
-      diffTC := self.typeCastExclude(afterMergeTC)
-      self.tc = beforeMergeTC
-      self.tc.merge(diffTC)
-
-      return result
+      guessTypeResult = self._eBinaryGuess(it)
     })
+
+    if guardFailed || !self.operands(expression.operator.t, guessTypeResult.first, guessTypeResult.second) {
+      guessTypeResult = self._eBinaryGuess(it, noTypeCast: true)
+    }
 
     leftType := guessTypeResult.first
     rightType := guessTypeResult.second
@@ -1420,6 +1402,38 @@ export obj AnalyzerFile {
     }
 
     return true
+  }
+
+  fn _eBinaryGuess (mut self: ref Self, mut it: ref Parser.Expression, noTypeCast := false) GuessTypeResult {
+    mut expression := it.asBinary()
+    mut leftTypeCastResult: TypeCastResult?
+
+    return self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+      ref self.tc; // TODO: remove after v1
+
+      leftTypeCastResult = self.typeCast(ref expression.left)
+      result := self.e(ref expression.left, operandType, noTypeCast: noTypeCast)
+
+      return result
+    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
+      beforeMergeTC := self.tc
+
+      if expression.operator.t == .OpAmpAmp {
+        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.consequent)
+      } elif expression.operator.t == .OpPipePipe {
+        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.alternate)
+      }
+
+      afterMergeTC := self.tc
+      result := self.e(ref expression.right, operandType, noTypeCast: noTypeCast)
+      diffTC := self.typeCastExclude(afterMergeTC)
+      self.tc = beforeMergeTC
+      self.tc.merge(diffTC)
+
+      return result
+    })
   }
 
   fn _eCall (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
@@ -2390,13 +2404,15 @@ export obj AnalyzerFile {
       }
     }
 
+    self.statement(ref statement.body)
+
     if statement.update != nil {
       self.e(ref statement.update)
     }
 
-    self.statement(ref statement.body)
     self.vm.decrease()
     self.tm.decrease()
+    self.tc = initialTC
 
     return true
   }

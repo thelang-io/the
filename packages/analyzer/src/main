@@ -6,6 +6,7 @@
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
 import
   Context,
+  AsExpressionContextExtra,
   CallExpressionContextArgument,
   CallExpressionContextExtra,
   IsExpressionContextExtra,
@@ -55,6 +56,7 @@ export AnalyzerFileState
 export AnalyzerState
 
 export Context
+export AsExpressionContextExtra
 export CallExpressionContextArgument
 export CallExpressionContextExtra
 export IsExpressionContextExtra

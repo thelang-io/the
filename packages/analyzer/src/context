@@ -11,6 +11,10 @@ export obj Context {
   mut targetType: (ref Type.Type)?
 }
 
+export obj AsExpressionContextExtra {
+  mut fromType: ref Type.Type
+}
+
 export obj CallExpressionContextArgument {
   mut argument: Parser.CallExpressionArgument
   mut parameterIdx: int
