@@ -260,12 +260,19 @@ export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) s
   } elif statement.isVariableDeclaration() {
     variableDeclaration := statement.asVariableDeclaration()
 
-    attributes := analyzerVariableDeclarationAttributes(
+    mut attributes := analyzerVariableDeclarationAttributes(
       variableDeclaration.name,
       variableDeclaration.t,
       variableDeclaration.mutable,
       variableDeclaration.constant,
     )
+
+    statementContext := statement.context
+
+    if statement.context is Context.VariableDeclarationContext {
+      context := statementContext as Context.VariableDeclarationContext
+      attributes += " context:varType=" + context.varType.toString()
+    }
 
     result += ' '.repeat(indent) + "VariableDeclaration(" + attributes + ")\n"
 
@@ -331,6 +338,11 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
     asExpression := expression.asAs()
     name = "AsExpression"
     attributes += " as=" + Parser.stringifyType(asExpression.t)
+    expressionContextExtra := expression.contextExtra
+    if expression.contextExtra is Context.AsExpressionContextExtra {
+      contextExtra := expressionContextExtra as Context.AsExpressionContextExtra
+      attributes += " extra:from=" + contextExtra.fromType.toString()
+    }
     result += analyzerPrintExpression(ref asExpression.expression, indent + 2)
   } elif expression.isAssignment() {
     assignment := expression.asAssignment()
@@ -384,6 +396,11 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
     isExpression := expression.asIs()
     name = "IsExpression"
     attributes += " is=" + Parser.stringifyType(isExpression.t)
+    expressionContextExtra := expression.contextExtra
+    if expression.contextExtra is Context.IsExpressionContextExtra {
+      contextExtra := expressionContextExtra as Context.IsExpressionContextExtra
+      attributes += " extra:type=" + contextExtra.t.toString()
+    }
     result += analyzerPrintExpression(ref isExpression.expression, indent + 2)
   } elif expression.isMap() {
     map := expression.asMap()
