@@ -159,6 +159,11 @@ export fn TEST_AST_castExpression () {
   EXPECT_EQ(expression1.stringify(), "(int) test")
 }
 
+export fn TEST_AST_commaExpression () {
+  expression1 := AST.createCommaExpression(AST.createIdentifier("a"), AST.createIdentifier("b"))
+  EXPECT_EQ(expression1.stringify(), "a, b")
+}
+
 export fn TEST_AST_conditionalExpression () {
   expression1 := AST.createConditionalExpression(
     AST.createIdentifier("test"),

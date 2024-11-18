@@ -16,6 +16,7 @@ import
   CBinaryExpression,
   CCallExpression,
   CCastExpression,
+  CCommaExpression,
   CConditionalExpression,
   CElementAccessExpression,
   CInitializerListExpression,
@@ -94,6 +95,7 @@ export CAssignmentExpression
 export CBinaryExpression
 export CCallExpression
 export CCastExpression
+export CCommaExpression
 export CConditionalExpression
 export CElementAccessExpression
 export CInitializerListExpression
