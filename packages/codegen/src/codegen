@@ -1791,9 +1791,16 @@ export obj Codegen {
     }
 
     contextExtra := item.contextExtra as Analyzer.IsExpressionContextExtra
-    left := AST.createPropertyAccessExpression(self._generateExpression(ref expression.expression), "type")
+    mut left := self._generateExpression(ref expression.expression)
+    leftType := Analyzer.contextTarget(ref expression.expression)
     right := AST.createIdentifier(self._typeDef(contextExtra.t))
 
+    if Analyzer.match(contextExtra.t, leftType) {
+      result := AST.createCommaExpression(left, AST.createIdentifier(self._("true")))
+      return result.wrap()
+    }
+
+    left = AST.createPropertyAccessExpression(left, "type")
     return AST.createBinaryExpression(left, "==", right)
   }
 
