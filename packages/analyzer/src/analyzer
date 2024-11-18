@@ -1145,25 +1145,36 @@ export obj AnalyzerFile {
       possibleTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
       definiteTargetType := Type.unwrap(possibleTargetType.isNumber() ? possibleTargetType : self.tm.get("int"))
       firstTwoDigits := expression.value.lower.slice(0, 2)
-      val := firstTwoDigits == "0b" || firstTwoDigits == "0o" ? expression.value.slice(2) : expression.value
+
+      val := firstTwoDigits == "0b" || firstTwoDigits == "0o" || firstTwoDigits == "0x"
+        ? expression.value.slice(2)
+        : expression.value
+
+      base := firstTwoDigits == "0o"
+        ? 8
+        : firstTwoDigits == "0b"
+          ? 2
+          : firstTwoDigits == "0x"
+            ? 16
+            : 0
 
       try {
         if Type.match(definiteTargetType, self.tm.get("i8")) {
-          val.toI8(0)
+          val.toI8(base)
         } elif Type.match(definiteTargetType, self.tm.get("i16")) {
-          val.toI16(0)
+          val.toI16(base)
         } elif Type.match(definiteTargetType, self.tm.get("i32")) {
-          val.toI32(0)
+          val.toI32(base)
         } elif Type.match(definiteTargetType, self.tm.get("i64")) {
-          val.toI64(0)
+          val.toI64(base)
         } elif Type.match(definiteTargetType, self.tm.get("u8")) {
-          val.toU8(0)
+          val.toU8(base)
         } elif Type.match(definiteTargetType, self.tm.get("u16")) {
-          val.toU16(0)
+          val.toU16(base)
         } elif Type.match(definiteTargetType, self.tm.get("u32")) {
-          val.toU32(0)
+          val.toU32(base)
         } elif Type.match(definiteTargetType, self.tm.get("u64")) {
-          val.toU64(0)
+          val.toU64(base)
         } elif Type.match(definiteTargetType, self.tm.get("f32")) {
           expression.value.toF32()
         } elif Type.match(definiteTargetType, self.tm.get("f64")) {
@@ -1171,7 +1182,7 @@ export obj AnalyzerFile {
         } elif Type.match(definiteTargetType, self.tm.get("float")) {
           expression.value.toFloat()
         } else {
-          val.toInt(0)
+          val.toInt(base)
         }
       } catch err: error_Error {
         self.raise(errors.E1029(definiteTargetType.toString()), it.start, it.end)
