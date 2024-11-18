@@ -51,6 +51,7 @@ import
   createBinaryExpression,
   createCallExpression,
   createCastExpression,
+  createCommaExpression,
   createConditionalExpression,
   createElementAccessExpression,
   createInitializerListExpression,
@@ -130,6 +131,7 @@ export createAssignmentExpression
 export createBinaryExpression
 export createCallExpression
 export createCastExpression
+export createCommaExpression
 export createConditionalExpression
 export createElementAccessExpression
 export createInitializerListExpression
