@@ -1619,10 +1619,21 @@ export obj Codegen {
     }
 
     expression := item.asBinary()
-    leftType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.left), withReference: false)
-    rightType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.right), withReference: false)
-    left := self._generateExpression(ref expression.left)
-    right := self._generateExpression(ref expression.right)
+    wrappedLeftType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.left), withReference: false)
+    leftType := Analyzer.unwrap(wrappedLeftType)
+    wrappedRightType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.right), withReference: false)
+    rightType := Analyzer.unwrap(wrappedRightType)
+    mut left := self._generateExpression(ref expression.left)
+    mut right := self._generateExpression(ref expression.right)
+    operatorSafeForRef := expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq
+
+    if !operatorSafeForRef && wrappedLeftType.isReference() {
+      left = self._wrap(left, ref expression.left, wrappedLeftType, leftType)
+    }
+
+    if !operatorSafeForRef && wrappedRightType.isReference() {
+      right = self._wrap(right, ref expression.right, wrappedRightType, rightType)
+    }
 
     if (
       (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) &&
@@ -1860,8 +1871,13 @@ export obj Codegen {
     }
 
     expression := item.asUnary()
-    operandType := Analyzer.contextTarget(ref expression.operand)
+    wrappedOperandType := Analyzer.contextTarget(ref expression.operand)
+    operandType := Analyzer.unwrap(wrappedOperandType)
     mut operand := self._generateExpression(ref expression.operand)
+
+    if wrappedOperandType.isReference() {
+      operand = self._wrap(operand, ref expression.operand, wrappedOperandType, operandType)
+    }
 
     if operandType.isFloat() {
       operand = AST.createCastExpression(AST.createType(self._("bool")), operand)

@@ -50,6 +50,6 @@ int main (void) {
   v07_0 = false ? *ref1_0 : b_0;
   v08_0 = false ? &a_0 : ref1_0;
   v09_0 = ~*ref1_0;
-  v10_0 = !(*&a_0);
+  v10_0 = !*(&a_0);
 }
 ===== output =====
