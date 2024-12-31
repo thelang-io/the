@@ -248,7 +248,9 @@ export obj Codegen {
 
     self.blockData.addSetup(
       AST.createVariableDeclaration(
-        AST.createType(self._type(t)), tmpVar, self._defaultInitializerDeclaration(t),
+        AST.createType(self._type(t)),
+        tmpVar,
+        self._defaultInitializerDeclaration(t),
       ),
     )
 
