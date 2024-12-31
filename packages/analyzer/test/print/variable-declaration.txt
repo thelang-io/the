@@ -7,14 +7,14 @@ main {
   f: u16
 }
 ===== out =====
-VariableDeclaration(name=a mutable=true constant=false)
+VariableDeclaration(name=a mutable=true constant=false context:varType=int)
   IntegerLiteral(initial=int value=10)
-VariableDeclaration(name=b mutable=false constant=true type=u8)
+VariableDeclaration(name=b mutable=false constant=true type=u8 context:varType=u8)
   IntegerLiteral(initial=int target=u8 value=20)
-VariableDeclaration(name=c mutable=false constant=true type=u16)
+VariableDeclaration(name=c mutable=false constant=true type=u16 context:varType=u16)
 MainDeclaration()
-  VariableDeclaration(name=d mutable=true constant=false)
+  VariableDeclaration(name=d mutable=true constant=false context:varType=int)
     IntegerLiteral(initial=int value=40)
-  VariableDeclaration(name=e mutable=false constant=false type=u8)
+  VariableDeclaration(name=e mutable=false constant=false type=u8 context:varType=u8)
     IntegerLiteral(initial=int target=u8 value=50)
-  VariableDeclaration(name=f mutable=false constant=false type=u16)
+  VariableDeclaration(name=f mutable=false constant=false type=u16 context:varType=u16)

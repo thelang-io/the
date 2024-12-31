@@ -1,0 +1,11 @@
+main {
+  a: byte = 10
+  b := a as i16
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=false constant=false type=byte context:varType=byte)
+    IntegerLiteral(initial=int value=10)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=i16)
+    AsExpression(initial=i16 as=i16 extra:from=byte)
+      Identifier(initial=byte name=a)

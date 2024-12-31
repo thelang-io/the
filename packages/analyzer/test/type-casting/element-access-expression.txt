@@ -5,9 +5,9 @@ main {
 }
 ===== out =====
 MainDeclaration()
-  VariableDeclaration(name=arr mutable=true constant=false type=bool[])
-  VariableDeclaration(name=a mutable=true constant=false type=bool | int)
-  VariableDeclaration(name=b mutable=false constant=false)
+  VariableDeclaration(name=arr mutable=true constant=false type=bool[] context:varType=bool[])
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int context:varType=bool | int)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=int)
     ConditionalExpression(initial=int)
       ElementAccessExpression(initial=ref bool)
         Identifier(initial=bool[] name=arr)

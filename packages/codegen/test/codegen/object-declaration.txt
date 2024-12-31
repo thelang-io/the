@@ -1,0 +1,20 @@
+obj Person {
+  mut name: str;
+  mut age: int;
+  mut pets: (ref Pet)[]
+}
+obj Pet {
+  mut name: str;
+  mut age: int;
+  mut owner: ref Person
+}
+main {
+  mut person := Person{name: "Daniel", age: 28}
+  dog := Pet{name: "Eric", age: 4, owner: ref person}
+  cat := Pet{name: "Sam", age: 8, owner: ref person}
+
+  person.pets.push(ref dog)
+  person.pets.push(ref cat)
+}
+===== code =====
+===== output =====

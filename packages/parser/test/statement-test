@@ -175,7 +175,7 @@ export fn TEST_Statement_isDeclaration () {
   EXPECT_TRUE(statement3.isDeclaration())
   EXPECT_TRUE(statement4.isDeclaration())
   EXPECT_TRUE(statement5.isDeclaration())
-  EXPECT_FALSE(statement6.isDeclaration())
+  EXPECT_TRUE(statement6.isDeclaration())
   EXPECT_TRUE(statement7.isDeclaration())
   EXPECT_TRUE(statement8.isDeclaration())
   EXPECT_FALSE(statement9.isDeclaration())

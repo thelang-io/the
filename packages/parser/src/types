@@ -345,6 +345,7 @@ export obj Statement {
       self.isExportNamedDeclaration() ||
       self.isFunctionDeclaration() ||
       self.isImportDeclaration() ||
+      self.isMainDeclaration() ||
       self.isObjectDeclaration() ||
       self.isTypeAliasDeclaration()
   }

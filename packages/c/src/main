@@ -16,6 +16,7 @@ import
   CBinaryExpression,
   CCallExpression,
   CCastExpression,
+  CCommaExpression,
   CConditionalExpression,
   CElementAccessExpression,
   CInitializerListExpression,
@@ -50,6 +51,7 @@ import
   createBinaryExpression,
   createCallExpression,
   createCastExpression,
+  createCommaExpression,
   createConditionalExpression,
   createElementAccessExpression,
   createInitializerListExpression,
@@ -94,6 +96,7 @@ export CAssignmentExpression
 export CBinaryExpression
 export CCallExpression
 export CCastExpression
+export CCommaExpression
 export CConditionalExpression
 export CElementAccessExpression
 export CInitializerListExpression
@@ -128,6 +131,7 @@ export createAssignmentExpression
 export createBinaryExpression
 export createCallExpression
 export createCastExpression
+export createCommaExpression
 export createConditionalExpression
 export createElementAccessExpression
 export createInitializerListExpression

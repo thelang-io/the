@@ -436,6 +436,49 @@ export obj UnionType {
   mut types: (ref Type)[]
 }
 
+export fn canNarrow (fromType: ref Type, toType: ref Type) bool {
+  a := unwrap(fromType, withReference: false)
+  b := unwrap(toType, withReference: false)
+
+  if match(a, b) {
+    return true
+  }
+
+  if a.isOptional() {
+    t := a.asOptional()
+    return canNarrow(t.t, b)
+  } elif a.isUnion() {
+    t := a.asUnion()
+    mut search: (ref Type)[]
+
+    if b.isUnion() {
+      bType := b.asUnion()
+      search = bType.types
+    } else {
+      search = [b]
+    }
+
+    loop i := search.len - 1; i >= 0; i-- {
+      mut found := false
+
+      loop j := t.types.len - 1; j >= 0 ; j-- {
+        if canNarrow(t.types[j] as ref Type, search[i] as ref Type) {
+          found = true
+          break
+        }
+      }
+
+      if !found {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  return a.name == "any"
+}
+
 export fn canPromote (a: ref Type, b: ref Type) bool {
   return a.canPromoteTo(b) || b.canPromoteTo(a)
 }

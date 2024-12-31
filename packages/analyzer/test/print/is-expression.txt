@@ -1,7 +1,7 @@
 const a: int | str
 const b := a is int
 ===== out =====
-VariableDeclaration(name=a mutable=false constant=true type=int | str)
-VariableDeclaration(name=b mutable=false constant=true)
-  IsExpression(initial=bool is=int)
+VariableDeclaration(name=a mutable=false constant=true type=int | str context:varType=int | str)
+VariableDeclaration(name=b mutable=false constant=true context:varType=bool)
+  IsExpression(initial=bool is=int extra:type=int)
     Identifier(initial=int | str name=a)

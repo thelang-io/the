@@ -6,8 +6,10 @@
 import Analyzer, AnalyzerFile, AnalyzerFileState, AnalyzerState, analyze from "./analyzer"
 import
   Context,
+  AsExpressionContextExtra,
   CallExpressionContextArgument,
   CallExpressionContextExtra,
+  IsExpressionContextExtra,
   VariableDeclarationContext,
   initial as contextInitial,
   set as contextSet,
@@ -34,6 +36,7 @@ import
   ReferenceType,
   UnionType,
   Var,
+  canNarrow,
   canPromote,
   match,
   promote,
@@ -53,8 +56,10 @@ export AnalyzerFileState
 export AnalyzerState
 
 export Context
+export AsExpressionContextExtra
 export CallExpressionContextArgument
 export CallExpressionContextExtra
+export IsExpressionContextExtra
 export VariableDeclarationContext
 export contextInitial
 export contextSet
@@ -84,6 +89,7 @@ export UnionType
 export Var
 export VarMap
 export analyze
+export canNarrow
 export canPromote
 export match
 export promote

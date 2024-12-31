@@ -1,10 +1,10 @@
 const a := [10]
 const b := a[0]
 ===== out =====
-VariableDeclaration(name=a mutable=false constant=true)
+VariableDeclaration(name=a mutable=false constant=true context:varType=int[])
   ArrayExpression(initial=int[])
     IntegerLiteral(initial=int value=10)
-VariableDeclaration(name=b mutable=false constant=true)
+VariableDeclaration(name=b mutable=false constant=true context:varType=ref int)
   ElementAccessExpression(initial=ref int)
     Identifier(initial=int[] name=a)
     IntegerLiteral(initial=int value=0)

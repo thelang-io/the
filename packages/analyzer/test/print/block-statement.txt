@@ -7,7 +7,7 @@ main {
 ===== out =====
 FunctionDeclaration(asynchronous=false name=test)
 MainDeclaration()
-  VariableDeclaration(name=a mutable=false constant=false)
+  VariableDeclaration(name=a mutable=false constant=false context:varType=int)
     IntegerLiteral(initial=int value=10)
-  VariableDeclaration(name=b mutable=false constant=false)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=int)
     IntegerLiteral(initial=int value=20)
