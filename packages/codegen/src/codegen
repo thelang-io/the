@@ -25,13 +25,6 @@ import
   typeShouldBeFreed
 from "./helpers"
 
-// TODO: implement ObjectDeclaration statement
-// TODO: implement ObjectDeclarationMethod statement
-// TODO: implement ObjectDeclarationProperty statement
-// TODO: implement object expression
-// TODO: implement property access expression
-// TODO: error object needs special generation rules to move message and stack properties upfront
-
 // TODO: implement FunctionDeclaration statement
 // TODO: implement Return statement
 // TODO: implement closure expression
