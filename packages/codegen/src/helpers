@@ -1,0 +1,233 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Analyzer from "the/analyzer"
+import * as AST from "the/c"
+import * as Parser from "the/parser"
+
+export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
+  if item.isPropertyAccess() {
+    body := item.asPropertyAccess()
+    return ["str"].contains(body.name.name)
+  }
+
+  return false
+}
+
+export fn expressionResolve (item: ref Parser.Expression, up := false, down := false) ref Parser.Expression {
+  if up {
+    if !item.hasParent() {
+      return item
+    }
+
+    mut parent := item.parent()
+
+    if !parent.isParenthesized() {
+      return item
+    }
+
+    loop parent.isParenthesized() {
+      if !parent.hasParent() {
+        break
+      }
+
+      parent = parent.parent()
+    }
+
+    return parent
+  } elif down {
+    mut it := item
+
+    loop it.isParenthesized() {
+      tmp := it.asParenthesized()
+      it = tmp.expression
+    }
+
+    return it
+  }
+
+  return item
+}
+
+export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
+  itUp := expressionResolve(item, up: true)
+  itDown := expressionResolve(item, down: true)
+
+  if !itUp.hasParent() && itUp.hasParentNode() {
+    parentNode := itUp.parentNode()
+
+    if parentNode.isVariableDeclaration() {
+      return false
+    }
+  }
+
+  if itUp.hasParent() {
+    parent := itUp.parent()
+
+    if parent.isConditional() {
+      return false
+    }
+  }
+
+  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
+}
+
+export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
+  itUp := expressionResolve(item, up: true)
+  itDown := expressionResolve(item, down: true)
+
+  if itUp.hasParent() {
+    return false
+  }
+
+  if itUp.hasParentNode() {
+    parentNode := itUp.parentNode()
+
+    if parentNode.isVariableDeclaration() {
+      return false
+    }
+  }
+
+  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
+}
+
+export fn statementHasPrecedingNonVarDecl (item: ref Parser.Statement) bool {
+  mut it := item
+
+  loop it.hasPrev() {
+    it = it.prev()
+
+    if !it.isVariableDeclaration() {
+      return true
+    }
+  }
+
+  return false
+}
+
+export fn statementIsMacroInvocation (item: ref AST.CStatement) bool {
+  if !item.isExpressionStatement() { return false }
+  expression := item.asExpressionStatement()
+  return expression.expression.isMacroInvocation()
+}
+
+export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
+  expression := item.asExpressionStatement()
+  macroInvocation := expression.expression.asMacroInvocation()
+  return macroInvocation.callee.find("DECLARE") != -1
+}
+
+// TODO: move to analyzer
+export fn typeHasSelfParam (it: ref Analyzer.Type) bool {
+  if it.isMethod() {
+    t := it.asMethod()
+    return t.withSelf
+  }
+
+  return false
+}
+
+export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
+  if parameter.mutable && parameter.required { return "FP5" }
+  elif parameter.mutable && parameter.variadic { return "FP6" }
+  elif parameter.mutable { return "FP2" }
+  elif parameter.required { return "FP3" }
+  elif parameter.variadic { return "FP4" }
+  else { return "FP1" }
+}
+
+// TODO: move to analyzer
+export fn typePrimitive (it: ref Analyzer.Type) bool {
+  return !(
+    it.name == "any" ||
+    it.name == "str" ||
+    it.isArray() ||
+    it.isFunction() ||
+    it.isMap() ||
+    // TODO: it.isObject() ||
+    it.isOptional() ||
+    it.isUnion()
+  )
+}
+
+export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
+  return !(
+    it.name == "any" ||
+    it.name == "str" ||
+    it.isArray() ||
+    it.isFunction() ||
+    it.isMap() ||
+    // TODO: it.isObject() ||
+    it.isOptional() ||
+    it.isUnion()
+  )
+}
+
+export fn typeSafeForVaArg (mut tm: ref Analyzer.TypeMap, it: ref Analyzer.Type) ref Analyzer.Type {
+  if it.isAlias() {
+    t := it.asAlias()
+    return typeSafeForVaArg(tm, t.t)
+  }
+
+  if it.name == "f32" {
+    return tm.get("float")
+  }
+
+  return [
+    "bool",
+    "byte",
+    "char",
+    "i8",
+    "i16",
+    "rune",
+    "u8",
+    "u16",
+  ].contains(it.name) ? tm.get("i32") : it
+}
+
+export fn typeShouldBeAllocated (self: ref Analyzer.Type) bool {
+  if self.isAlias() {
+    t := self.asAlias()
+    return typeShouldBeAllocated(t.t)
+  }
+
+  // TODO: object
+  return (
+    self.name == "any" ||
+    self.name == "str" ||
+    self.isArray() ||
+    self.isMap() ||
+    self.isOptional() ||
+    self.isUnion()
+  )
+}
+
+export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
+  if self.isAlias() {
+    t := self.asAlias()
+    return typeShouldBeFreed(t.t)
+  } elif self.isUnion() {
+    t := self.asUnion()
+
+    loop i := 0; i < t.types.len; i++ {
+      subType := t.types[i]
+
+      if typeShouldBeFreed(subType) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  // TODO: object
+  return
+    self.name == "any" ||
+    self.name == "str" ||
+    self.isArray() ||
+    self.isFunction() ||
+    self.isMap() ||
+    self.isOptional()
+}

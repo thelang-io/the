@@ -1,0 +1,233 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as AST from "the/c"
+
+export enum BlockDataType {
+  Block,
+  Fn,
+  Loop,
+}
+
+export obj BlockDataVariable {
+  name: str
+  id: int
+
+  fn fullName (self: ref Self) str {
+    return self.name + "_" + self.id.str()
+  }
+}
+
+export obj BlockDataContext {
+  t: BlockDataType
+  mut breakVariableId: int
+  mut continueVariableId: int
+  mut label: int
+  mut setup: AST.CStatement[]
+  mut teardown: AST.CStatement[]
+  mut usedBreakVariable: bool
+  mut usedContinueVariable: bool
+  mut usedReturnVariable: bool
+  mut usedValueVariable: bool
+  mut variables: BlockDataVariable[]
+
+  fn breakVariable (self: ref Self) str {
+    return "b" + self.breakVariableId.str()
+  }
+
+  fn continueVariable (self: ref Self) str {
+    return "c" + self.continueVariableId.str()
+  }
+
+  fn empty (self: ref Self) bool {
+    return self.setup.empty && self.teardown.empty
+  }
+
+  fn merge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
+    self.setup.merge(setup)
+    self.teardown.merge(teardown.reverse())
+  }
+}
+
+export obj BlockData {
+  mut blocks: BlockDataContext[]
+  mut lastBreakVariable: int
+  mut lastContinueVariable: int
+  mut lastLabel: int
+
+  fn init (mut self: ref Self) {}
+
+  fn addSetup (mut self: ref Self, item: AST.CStatement) {
+    self.blocks.last.setup.push(item)
+  }
+
+  fn addTeardown (mut self: ref Self, item: AST.CStatement) {
+    self.blocks.last.teardown.push(item)
+  }
+
+  fn currentEmpty (self: ref Self) bool {
+    return self.blocks.empty ? true : self.blocks.last.empty()
+  }
+
+  fn currentMerge (mut self: ref Self, setup: AST.CStatement[], teardown: AST.CStatement[]) {
+    self.blocks.last.merge(setup, teardown)
+  }
+
+  fn decrease (mut self: ref Self) BlockDataContext {
+    mut result := self.blocks.pop()
+    result.teardown = result.teardown.reverse()
+    return result
+  }
+
+  fn decreaseVariableIndexes (mut self: ref Self) {
+    self.lastBreakVariable--
+    self.lastContinueVariable--
+  }
+
+  fn getBreakVariable (mut self: ref Self) str {
+    self.loopUntil(.Loop, (mut block: ref BlockDataContext) -> void {
+      block.usedBreakVariable = true
+    })
+
+    return self.blocks.last.breakVariable()
+  }
+
+  fn getContinueVariable (mut self: ref Self) str {
+    self.loopUntil(.Loop, (mut block: ref BlockDataContext) -> void {
+      block.usedContinueVariable = true
+    })
+
+    return self.blocks.last.continueVariable()
+  }
+
+  fn getLabel (mut self: ref Self) str {
+    if !self.blocks.last.teardown.empty {
+      lastTeardown := self.blocks.last.teardown.last
+
+      if lastTeardown.isLabelStatement() {
+        labelStatement := lastTeardown.asLabelStatement()
+        return labelStatement.name
+      }
+    }
+
+    self.lastLabel++
+    label := "L" + self.lastLabel.str()
+    self.blocks.last.teardown.push(AST.createLabelStatement(label))
+    return label
+  }
+
+  fn getReturnVariable (mut self: ref Self) str {
+    self.loopUntil(.Fn, (mut block: ref BlockDataContext) -> void {
+      block.usedReturnVariable = true
+    })
+
+    return "r"
+  }
+
+  fn getValueVariable (mut self: ref Self) str {
+    self.loopUntil(.Fn, (mut block: ref BlockDataContext) -> void {
+      block.usedValueVariable = true
+    })
+
+    return "v"
+  }
+
+  fn getVariable (mut self: ref Self, name: str) str {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      loop j := block.variables.len - 1; j >= 0; j-- {
+        variable := block.variables[j]
+
+        if variable.name == name {
+          return variable.fullName()
+        }
+      }
+    }
+
+    throw error_NewError("Variable with name '" + name + "' was not found")
+  }
+
+  fn hasUntil (self: ref Self, t := BlockDataType.Block) bool {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      if !block.empty() {
+        return true
+      }
+
+      if block.t == t {
+        break
+      }
+    }
+
+    return false
+  }
+
+  fn increase (mut self: ref Self, t := BlockDataType.Block) {
+    self.blocks.push(BlockDataContext{
+      t: t,
+      breakVariableId: self.lastBreakVariable,
+      continueVariableId: self.lastContinueVariable,
+      label: self.lastLabel,
+      usedBreakVariable: self.blocks.len == 0 ? false : self.blocks.last.usedBreakVariable,
+      usedContinueVariable: self.blocks.len == 0 ? false : self.blocks.last.usedContinueVariable,
+      usedReturnVariable: self.blocks.len == 0 ? false : self.blocks.last.usedReturnVariable,
+      usedValueVariable: self.blocks.len == 0 ? false : self.blocks.last.usedValueVariable,
+    })
+  }
+
+  fn increaseVariableIndexes (mut self: ref Self) {
+    self.blocks.last.breakVariableId = ++self.lastBreakVariable
+    self.blocks.last.continueVariableId = ++self.lastContinueVariable
+  }
+
+  fn loopUntil (mut self: ref Self, t: BlockDataType, cb: (mut block: ref BlockDataContext) -> void) {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      mut block := self.blocks[i]
+      cb(block)
+
+      if block.t == t {
+        break
+      }
+    }
+  }
+
+  fn setVariable (mut self: ref Self, name: str) str {
+    mut id := 0
+
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      loop j := block.variables.len - 1; j >= 0; j-- {
+        variable := block.variables[j]
+
+        if variable.name == name {
+          id = variable.id + 1
+          break
+        }
+      }
+
+      if id != 0 {
+        break
+      }
+    }
+
+    self.blocks.last.variables.push(BlockDataVariable{
+      name: name,
+      id: id,
+    })
+
+    return self.blocks.last.variables.last.fullName()
+  }
+
+  fn usedBreakVariable (self: ref Self) bool {
+    return self.blocks.last.usedBreakVariable
+  }
+
+  fn usedContinueVariable (self: ref Self) bool {
+    return self.blocks.last.usedContinueVariable
+  }
+}
