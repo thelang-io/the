@@ -276,7 +276,7 @@ export obj CStatement {
       result = statement.stringify()
     } elif self.isVariableDeclaration() {
       statement := self.asVariableDeclaration()
-      result = statement.stringify()
+      result = statement.stringify(terminated: self.terminated)
     } elif self.isWhileStatement() {
       statement := self.asWhileStatement()
       result = statement.stringify(indent)
@@ -687,12 +687,12 @@ export obj CVariableDeclaration {
   mut name: str
   mut initializer: CExpression?
 
-  fn stringify (self: ref Self) str {
+  fn stringify (self: ref Self, terminated: bool) str {
     mut result := self.t.stringify(declaration: true) + self.name
     if self.initializer != nil {
       result += " = " + self.initializer.stringify()
     }
-    return result + ";"
+    return result + (terminated ? ";" : "")
   }
 }
 
@@ -858,8 +858,8 @@ export fn createTypedefDeclaration (t: CType, name: str) CStatement {
   return createStatement(CTypedefDeclaration{t: t, name: name})
 }
 
-export fn createVariableDeclaration (t: CType, name: str, initializer: CExpression? = nil) CStatement {
-  return createStatement(CVariableDeclaration{t: t, name: name, initializer: initializer})
+export fn createVariableDeclaration (t: CType, name: str, initializer: CExpression? = nil, terminated := true) CStatement {
+  return createStatement(CVariableDeclaration{t: t, name: name, initializer: initializer}, terminated: terminated)
 }
 
 export fn createWhileStatement (condition: CExpression, body: CStatement) CStatement {
