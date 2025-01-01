@@ -2462,6 +2462,10 @@ export obj AnalyzerFile {
     initialStateSelf := self.state.selfType
     t := self.tm.get(statement.name.name)
 
+    it.context = Context.ObjectDeclarationContext{
+      selfType: t,
+    }
+
     self.state.selfType = Type.opt(t)
     self.tm.setSelf(Type.opt(t))
     self.analyze(ref statement.body)
