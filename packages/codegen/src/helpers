@@ -119,14 +119,17 @@ export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
   return macroInvocation.callee.find("DECLARE") != -1
 }
 
-// TODO: move to analyzer
-export fn typeHasSelfParam (it: ref Analyzer.Type) bool {
-  if it.isMethod() {
-    t := it.asMethod()
-    return t.withSelf
-  }
-
-  return false
+export fn typeIsSimple (it: ref Analyzer.Type) bool {
+  return !(
+    it.name == "any" ||
+    it.name == "str" ||
+    it.isArray() ||
+    it.isFunction() ||
+    it.isMap() ||
+    it.isCustomObject() ||
+    it.isOptional() ||
+    it.isUnion()
+  )
 }
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
@@ -136,20 +139,6 @@ export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   elif parameter.required { return "FP3" }
   elif parameter.variadic { return "FP4" }
   else { return "FP1" }
-}
-
-// TODO: move to analyzer
-export fn typePrimitive (it: ref Analyzer.Type) bool {
-  return !(
-    it.name == "any" ||
-    it.name == "str" ||
-    it.isArray() ||
-    it.isFunction() ||
-    it.isMap() ||
-    // TODO: it.isObject() ||
-    it.isOptional() ||
-    it.isUnion()
-  )
 }
 
 export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
