@@ -23,6 +23,7 @@ import
   typeShouldBeAllocated,
   typeShouldBeFreed
 from "./helpers"
+import sortStrAsc from "./utils"
 
 // TODO: implement FunctionDeclaration statement
 // TODO: implement Return statement
@@ -2858,17 +2859,16 @@ export obj Codegen {
       t := it.asReference()
       return "ref_" + self._typeName(t.t)
     } elif it.isUnion() {
-      // TODO: account for different order of sub types
       t := it.asUnion()
-      mut name := ""
+      mut names: str[]
 
       loop i := 0; i < t.types.len; i++ {
         subType := t.types[i] as ref Analyzer.Type
-        name += i == 0 ? "" : "US"
-        name += self._typeName(subType)
+        names.push(self._typeName(subType))
       }
 
-      return "union_" + name + "UE"
+      namesSorted := names.sort(sortStrAsc)
+      return "union_" + namesSorted.join("US") + "UE"
     }
 
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
