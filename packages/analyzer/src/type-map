@@ -20,8 +20,6 @@ export obj TypeMap {
   fn init (mut self: ref Self) {
     self.mode = .Regular
 
-    self.items.push(Type.Type{name: "Buffer", body: Type.ObjectType{}})
-    mut bufferType := self.items.last()
     self.items.push(Type.Type{name: "any", body: Type.ObjectType{}})
     mut anyType := self.items.last()
     self.items.push(Type.Type{name: "bool", body: Type.ObjectType{}})
@@ -67,19 +65,6 @@ export obj TypeMap {
     self.items.push(Type.Type{name: "void", body: Type.ObjectType{}})
     mut voidType := self.items.last()
 
-    bufferType.properties.push(Type.TypeProperty{name: "empty", t: self.get("bool"), mutable: false, builtin: true})
-    bufferType.properties.push(Type.TypeProperty{name: "len", t: self.get("int"), mutable: false, builtin: true})
-    bufferType.properties.push(Type.TypeProperty{name: "concat", t: self.createMethod(false, [
-      Type.TypeParameter{name: "other", t: self.get("Buffer"), mutable: false, required: true, variadic: false}
-    ], self.get("Buffer"), true, false, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
-    bufferType.properties.push(Type.TypeProperty{name: "merge", t: self.createMethod(false, [
-      Type.TypeParameter{name: "other", t: self.get("Buffer"), mutable: false, required: true, variadic: false}
-    ], self.createReference(self.get("Buffer")), true, true, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
-    bufferType.properties.push(Type.TypeProperty{name: "pop", t: self.createMethod(false, [], self.get("byte"), true, true, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
-    bufferType.properties.push(Type.TypeProperty{name: "push", t: self.createMethod(false, [
-      Type.TypeParameter{name: "elements", t: self.createArray(self.get("byte")), mutable: false, required: false, variadic: true}
-    ], self.get("void"), true, true, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
-    bufferType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("Buffer"))), mutable: false, builtin: true})
     anyType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("any"))), mutable: false, builtin: true})
     boolType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("bool"))), mutable: false, builtin: true})
     byteType.properties.push(Type.TypeProperty{name: "str", t: self.createMethod(false, [], self.get("str"), true, false, "self", self.createReference(self.get("byte"))), mutable: false, builtin: true})
@@ -150,7 +135,6 @@ export obj TypeMap {
     strType.properties.push(Type.TypeProperty{name: "split", t: self.createMethod(false, [
       Type.TypeParameter{name: "delimiter", t: self.get("str"), mutable: false, required: false, variadic: false}
     ], self.createArray(self.get("str")), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
-    strType.properties.push(Type.TypeProperty{name: "toBuffer", t: self.createMethod(false, [], self.get("Buffer"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
     strType.properties.push(Type.TypeProperty{name: "toFloat", t: self.createMethod(false, [], self.get("float"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
     strType.properties.push(Type.TypeProperty{name: "toF32", t: self.createMethod(false, [], self.get("f32"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
     strType.properties.push(Type.TypeProperty{name: "toF64", t: self.createMethod(false, [], self.get("f64"), true, false, "self", self.createReference(self.get("str"))), mutable: false, builtin: true})
@@ -261,12 +245,7 @@ export obj TypeMap {
     return result
   }
 
-  fn createFunction (
-    mut self: ref Self,
-    asynchronous: bool,
-    parameters: Type.TypeParameter[],
-    returnType: ref Type.Type
-  ) ref Type.Type {
+  fn createFunction (mut self: ref Self, asynchronous: bool, parameters: Type.TypeParameter[], returnType: ref Type.Type) ref Type.Type {
     self.items.push(Type.Type{
       body: Type.FunctionType{
         asynchronous: asynchronous,
@@ -328,7 +307,7 @@ export obj TypeMap {
     withSelf: bool,
     selfMutable: bool,
     selfName: str,
-    selfType: ref Type.Type
+    selfType: ref Type.Type,
   ) ref Type.Type {
     self.items.push(Type.Type{
       body: Type.MethodType{

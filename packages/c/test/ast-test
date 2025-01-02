@@ -9,6 +9,8 @@ export fn TEST_AST_type () {
   type1 := AST.createType("int")
   type2 := AST.createType("int *")
   type3 := AST.createType("int[]")
+  type5 := AST.createType("int", constant: true)
+  type6 := AST.createType("int *", constant: true)
 
   EXPECT_EQ(type1.stringify(declaration: true), "int ")
   EXPECT_EQ(type1.stringify(definition: true), "int")
@@ -16,6 +18,10 @@ export fn TEST_AST_type () {
   EXPECT_EQ(type2.stringify(definition: true), "int *")
   EXPECT_EQ(type3.stringify(declaration: true), "int[] ")
   EXPECT_EQ(type3.stringify(definition: true), "int[]")
+  EXPECT_EQ(type5.stringify(declaration: true), "const int ")
+  EXPECT_EQ(type5.stringify(definition: true), "const int")
+  EXPECT_EQ(type6.stringify(declaration: true), "const int *")
+  EXPECT_EQ(type6.stringify(definition: true), "const int *")
 
   EXPECT_THROW_WITH_MESSAGE(() -> void {
     type4 := AST.createType("int")
@@ -81,7 +87,17 @@ export fn TEST_AST_statementDefinition () {
 
 export fn TEST_AST_statementTerminated () {
   statement1 := AST.createExpressionStatement(AST.createMacroInvocation("TEST", []), terminated: false)
+
+  statement2 := AST.createVariableDeclaration(AST.createType("int"), "test", terminated: false)
+  statement3 := AST.createVariableDeclaration(AST.createType("int"), "test", AST.createLiteral("1"), terminated: false)
+
   EXPECT_EQ(statement1.stringify(), "TEST()" + os_EOL)
+  EXPECT_EQ(statement1.stringify(2), "  TEST()" + os_EOL)
+
+  EXPECT_EQ(statement2.stringify(), "int test" + os_EOL)
+  EXPECT_EQ(statement2.stringify(2), "  int test" + os_EOL)
+  EXPECT_EQ(statement3.stringify(), "int test = 1" + os_EOL)
+  EXPECT_EQ(statement3.stringify(2), "  int test = 1" + os_EOL)
 }
 
 export fn TEST_AST_identifier () {

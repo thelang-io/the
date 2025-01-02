@@ -497,6 +497,19 @@ Whether enum type has enumerator with specified name.
 result := type.hasEnumerator("Color")
 ```
 
+### `Type.hasSelfParam () bool`
+Checks whether current type is a method and has a leading self param.
+
+**Return value**
+
+Whether current type is a method and has a leading self param.
+
+**Examples**
+
+```the
+result := type.hasSelfParam()
+```
+
 ### `Type.hasType (search: ref Type) bool`
 Checks whether union type has specified subtype (should be used only on union type).
 
@@ -513,6 +526,19 @@ Whether union type has specified subtype.
 ```the
 mut tm := TypeMap{}
 result := type.hasType(tm.get("int))
+```
+
+### `Type.isCustomObject () bool`
+Checks whether current type is object and not primitive.
+
+**Return value**
+
+Whether current type is object and not primitive.
+
+**Examples**
+
+```the
+result := type.isCustomObject()
 ```
 
 ### `Type.isErrorLike () bool`
@@ -565,6 +591,19 @@ Whether type floating point or integer type.
 
 ```the
 result := type.isNumber()
+```
+
+### `Type.isPrimitive () bool`
+Checks whether current type is a primitive type.
+
+**Return value**
+
+Whether current type is a primitive type.
+
+**Examples**
+
+```the
+result := type.isPrimitive()
 ```
 
 ### `Type.isRequired () bool`

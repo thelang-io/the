@@ -10,6 +10,7 @@ import
   CallExpressionContextArgument,
   CallExpressionContextExtra,
   IsExpressionContextExtra,
+  ObjectDeclarationContext,
   VariableDeclarationContext,
   initial as contextInitial,
   set as contextSet,
@@ -60,6 +61,7 @@ export AsExpressionContextExtra
 export CallExpressionContextArgument
 export CallExpressionContextExtra
 export IsExpressionContextExtra
+export ObjectDeclarationContext
 export VariableDeclarationContext
 export contextInitial
 export contextSet

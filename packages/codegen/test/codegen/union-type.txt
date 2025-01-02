@@ -18,7 +18,7 @@ D4_UNION_DECLARE(runeUSstr, {
   wchar_t v3;
   d4_str_t v4;
 })
-D4_UNION_DECLARE(intUSfloat, {
+D4_UNION_DECLARE(floatUSint, {
   int32_t v1;
   double v2;
 })
@@ -37,7 +37,7 @@ D4_UNION_DEFINE(runeUSstr, {
   if (self.type == TYPE_rune) return d4_rune_str(self.data.v3);
   if (self.type == TYPE_str) return d4_str_copy(self.data.v4);
 })
-D4_UNION_DEFINE(intUSfloat, {
+D4_UNION_DEFINE(floatUSint, {
   if (self.type == TYPE_int) self.data.v1 = va_arg(args, int32_t);
   if (self.type == TYPE_float) self.data.v2 = va_arg(args, double);
 }, {
@@ -53,7 +53,7 @@ D4_UNION_DEFINE(intUSfloat, {
   if (self.type == TYPE_float) return d4_float_str(self.data.v2);
 })
 int main (void) {
-  d4_union_intUSfloatUE_t var1_0 = d4_union_intUSfloatUE_alloc(-1);
+  d4_union_floatUSintUE_t var1_0 = d4_union_floatUSintUE_alloc(-1);
   d4_union_runeUSstrUE_t var2_0 = d4_union_runeUSstrUE_alloc(-1);
   d4_union_runeUSstrUE_free(var2_0);
 }

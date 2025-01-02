@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import sortStrAsc from "./packages/codegen/src/utils"
+
 enum CParserTokenType {
   Id,
   Replacement,
