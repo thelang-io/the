@@ -114,9 +114,13 @@ export fn statementIsMacroInvocation (item: ref AST.CStatement) bool {
 }
 
 export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
+  return statementMacroInvocationCallee(item).find("DECLARE") != -1
+}
+
+export fn statementMacroInvocationCallee (item: ref AST.CStatement) str {
   expression := item.asExpressionStatement()
   macroInvocation := expression.expression.asMacroInvocation()
-  return macroInvocation.callee.find("DECLARE") != -1
+  return macroInvocation.callee
 }
 
 export fn typeIsSimple (it: ref Analyzer.Type) bool {

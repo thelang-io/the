@@ -16,6 +16,7 @@ import
   statementHasPrecedingNonVarDecl,
   statementIsMacroInvocation,
   statementIsMacroInvocationDeclare,
+  statementMacroInvocationCallee,
   typeIsSimple,
   typeParameterId,
   typeSafeForTernaryAlternate,
@@ -280,6 +281,7 @@ export obj Codegen {
 
     mut defineStatements: AST.CStatement[]
     mut macroInvocationDeclareStatements: AST.CStatement[]
+    mut anyMacroInvocationDeclareStatements: AST.CStatement[]
     mut macroInvocationDefineStatements: AST.CStatement[]
     mut statements: AST.CStatement[]
 
@@ -299,7 +301,9 @@ export obj Codegen {
         if item.isDefineDirective() {
           defineStatements.push(item)
         } elif statementIsMacroInvocation(item) {
-          if statementIsMacroInvocationDeclare(item) {
+          if statementMacroInvocationCallee(item) == "D4_ANY_DECLARE" {
+            anyMacroInvocationDeclareStatements.push(item)
+          } elif statementIsMacroInvocationDeclare(item) {
             macroInvocationDeclareStatements.push(item)
           } else {
             macroInvocationDefineStatements.push(item)
@@ -339,6 +343,7 @@ export obj Codegen {
 
     self.statements.merge(defineStatements)
     self.statements.merge(macroInvocationDeclareStatements.reverse())
+    self.statements.merge(anyMacroInvocationDeclareStatements.reverse())
     self.statements.merge(macroInvocationDefineStatements.reverse())
     self.statements.merge(statements)
 
@@ -1804,7 +1809,7 @@ export obj Codegen {
       }
     })
 
-    methods := ["alloc"]
+    methods := ["alloc", "copy", "eq", "free", "str"]
 
     entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
       self._(entity.context as str)
