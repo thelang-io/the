@@ -1,0 +1,59 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Analyzer from "the/analyzer"
+import * as Parser from "the/parser"
+import Codegen from "../src/codegen"
+import retrieveFileSections from "../test/utils"
+
+const CODE_DELIMITER := os_EOL + "===== code =====" + os_EOL
+const OUTPUT_DELIMITER := os_EOL + "===== output =====" + os_EOL
+const TESTS_DIR := "./test/codegen"
+
+main {
+  files := fs_scandirSync(TESTS_DIR)
+
+  loop i := 0; i < files.len; i++ {
+    name := files[i].slice(0, -4)
+    print("updating:", name)
+
+    filePath := TESTS_DIR + "/" + name + ".txt"
+    fileSections := retrieveFileSections(filePath)
+
+    mut analyzer := Analyzer.Analyzer{}
+
+    analyzer.files.push(Analyzer.AnalyzerFile{
+      cwd: process_cwd(),
+      analyzer: ref analyzer,
+      f: Parser.parse(fileSections.input),
+    })
+
+    mut file := analyzer.files.last()
+    Parser.interconnect(ref file.f)
+    file.reader = Parser.Reader_init(file.f.content)
+    file.init()
+    file.analyze(ref file.f.program.body)
+
+    if !analyzer.errors.empty {
+      print(analyzer.errors.join(os_EOL), to: "stderr")
+      continue
+    }
+
+    mut generator := Codegen{analyzer: ref analyzer}
+    generator.init()
+    generator.generate()
+
+    inputTrim := fileSections.input.trim()
+    outputTrim := fileSections.output.trim()
+    generatedCode := generator.stringify().trim()
+
+    newContent := inputTrim +
+      CODE_DELIMITER + generatedCode +
+      OUTPUT_DELIMITER + outputTrim +
+      (outputTrim.empty ? "" : os_EOL)
+
+    fs_writeFileSync(filePath, newContent.toBuffer())
+  }
+}
