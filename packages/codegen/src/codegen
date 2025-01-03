@@ -44,6 +44,7 @@ import sortStrAsc from "./utils"
 
 // TODO: implement Throw statement
 // TODO: implement Try statement
+// TODO: error object needs to move message and stack properties upfront
 
 // TODO: implement ImportDeclaration statement
 // TODO: implement ExportDeclaration statement
@@ -838,6 +839,7 @@ export obj Codegen {
       (result = self._generateElementAccessExpression(item)) != nil ||
       (result = self._generateIsExpression(item)) != nil ||
       (result = self._generateMapExpression(item)) != nil ||
+      (result = self._generateObjectExpression(item)) != nil ||
       (result = self._generatePropertyAccessExpression(item)) != nil ||
       (result = self._generateReferenceExpression(item)) != nil ||
       (result = self._generateUnaryExpression(item)) != nil
@@ -1219,6 +1221,44 @@ export obj Codegen {
     }
 
     return AST.createCallExpression(AST.createIdentifier(self._type(targetType, "_alloc")), arguments)
+  }
+
+  fn _generateObjectExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+    if !item.isObject() {
+      return nil
+    }
+
+    expression := item.asObject()
+    targetType := Analyzer.contextTarget(item)
+
+    mut fields: (AST.CExpression | AST.CType)[]
+
+    loop i := 0; i < targetType.properties.len; i++ {
+      property := targetType.properties[i]
+
+      if property.builtin || property.t.isMethod() {
+        continue
+      }
+
+      mut propertyValue: (ref Parser.Expression)?
+
+      loop j := 0; j < expression.properties.len; j++ {
+        expressionProperty := expression.properties[j]
+
+        if expressionProperty.name.name == property.name {
+          propertyValue = ref expressionProperty.value
+          break
+        }
+      }
+
+      fields.push(
+        propertyValue == nil
+          ? self._defaultInitializerExpression(property.t)
+          : self._generateExpression(propertyValue)
+      )
+    }
+
+    return AST.createCallExpression(AST.createIdentifier(self._type(targetType, "_alloc")), fields)
   }
 
   fn _generateParenthesizedExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
