@@ -54,11 +54,11 @@ main {
 #define TYPE_int 1
 #define TYPE_float 2
 #define TYPE_str 3
+D4_ANY_DECLARE(str, d4_str_t)
 D4_UNION_DECLARE(floatUSint, {
   int32_t v1;
   double v2;
 })
-D4_ANY_DECLARE(str, d4_str_t)
 D4_ANY_DECLARE(float, double)
 D4_ANY_DECLARE(int, int32_t)
 D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))

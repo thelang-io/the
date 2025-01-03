@@ -1,0 +1,91 @@
+type Alias = str
+obj Test1 {
+  a: Alias
+}
+obj Test2 {
+  a: any
+}
+obj Test3 {
+  a: int[]
+  b: str[]
+}
+obj Test4 {
+  a: int[str]
+  b: str[str]
+}
+obj Test5 {
+  mut a: Test1
+}
+obj Test6 {
+  a: int?
+}
+obj Test7 {
+  a: ref int
+}
+obj Test8 {
+  a: Self?
+}
+obj Test9 {
+  a: str
+}
+obj Test10 {
+  a: int | str
+}
+
+main {
+  i1 := 1
+  i2 := 2
+
+  t1 := Test1{a: ""}
+  mut t2 := t1
+  t2 = Test1{a: "test"}
+
+  t3 := Test2{a: 1}
+  mut t4 := t3
+  t4 = Test2{a: "test2"}
+
+  t5 := Test3{a: [1, 2, 3], b: ["string1", "string2"]}
+  mut t6 := t5
+  t6 = Test3{a: [4, 5], b: ["string3", "string4"]}
+
+  t7 := Test4{
+    a: { "key1": 1, "key2": 2, "key3": 3 },
+    b: { "key1": "string1", "key2": "string2" },
+  }
+
+  mut t8 := t7
+
+  t8 = Test4{
+    a: { "key1": 4, "key2": 5 },
+    b: { "key1": "string3", "key2": "string4" },
+  }
+
+  t9 := Test5{a: Test1{a: "string1"}}
+  mut t10 := t9
+  t10 = Test5{a: Test1{a: "string2"}}
+  t10.a = t9.a
+  t10.a = Test1{a: "string3"}
+
+  t11 := Test6{a: nil}
+  mut t12 := t11
+  t12 = Test6{a: 3}
+
+  t13 := Test7{a: ref i1}
+  mut t14 := t13
+  t14 = Test7{a: ref i2}
+
+  t15 := Test8{}
+  t16 := Test8{a: t15}
+  mut t17 := t16
+  t17 = Test8{a: t16}
+
+  t18 := Test9{a: "test1"}
+  mut t19 := t18
+  t19 = Test9{a: "test2"}
+
+  t20 := Test10{a: 1}
+  mut t21 := t20
+  t21 = Test10{a: "test"}
+}
+===== code =====
+===== output =====

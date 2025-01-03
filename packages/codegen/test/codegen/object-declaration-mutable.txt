@@ -1,0 +1,25 @@
+obj Animal {
+  name: str
+  mut age: int
+}
+obj Human {
+  name: str
+  mut pets: Animal[]
+}
+main {
+  mut person1 := Human{name: "Peter"}
+  mut person2 := Human{name: "Brian"}
+
+  person1.pets.push(Animal{name: "Cleo", age: 1})
+  person1.pets.push(Animal{name: "Bella", age: 1})
+
+  person1.pets[0].age++
+
+  person2.pets.push(Animal{name: "Luxor", age: 10})
+
+  person3 := person1
+  person1 = person2
+  person2 = person3
+}
+===== code =====
+===== output =====

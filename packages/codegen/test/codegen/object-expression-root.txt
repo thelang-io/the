@@ -1,0 +1,11 @@
+obj Test {
+  a: int
+  b: int
+}
+
+main {
+  Test{b: 1}
+  Test{a: 0, b: 1}
+}
+===== code =====
+===== output =====

@@ -1,0 +1,42 @@
+obj Test1 {
+  mut t1: Test2
+  t2: int
+}
+obj Test2 {
+  t1: Test3
+  t2: rune
+}
+obj Test3 {
+  t1: bool
+  t2: float
+  mut t3: int
+}
+main {
+  t1 := Test3{t1: false, t2: 3.14, t3: -1}
+  t2 := Test2{t1: t1, t2: 'a'}
+  t3 := Test1{t1: t2, t2: 10}
+
+  mut t4 := Test1{
+    t1: Test2{
+      t1: Test3{
+        t1: false,
+        t2: 3.14,
+        t3: -1,
+      },
+      t2: 'a',
+    },
+    t2: 2,
+  }
+
+  t4.t1 = Test2{
+    t1: Test3{t1: true, t2: 2.16, t3: 1},
+    t2: 100,
+  }
+
+  t4.t1.t1 = Test3{t1: false, t2: 1.23, t3: 5}
+  t4.t1.t1.t3 = 0
+
+  t5 := Test1{}
+}
+===== code =====
+===== output =====

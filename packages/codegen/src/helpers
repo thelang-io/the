@@ -117,6 +117,10 @@ export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
   return statementMacroInvocationCallee(item).find("DECLARE") != -1
 }
 
+export fn statementIsMacroInvocationForwardDeclare (item: ref AST.CStatement) bool {
+  return statementMacroInvocationCallee(item).find("FORWARD_DECLARE") != -1
+}
+
 export fn statementMacroInvocationCallee (item: ref AST.CStatement) str {
   expression := item.asExpressionStatement()
   macroInvocation := expression.expression.asMacroInvocation()
@@ -152,7 +156,8 @@ export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
     it.isArray() ||
     it.isFunction() ||
     it.isMap() ||
-    // TODO: it.isObject() ||
+    // TODO: test
+    it.isCustomObject() ||
     it.isOptional() ||
     it.isUnion()
   )
@@ -186,12 +191,13 @@ export fn typeShouldBeAllocated (self: ref Analyzer.Type) bool {
     return typeShouldBeAllocated(t.t)
   }
 
-  // TODO: object
   return (
     self.name == "any" ||
     self.name == "str" ||
     self.isArray() ||
     self.isMap() ||
+    // TODO: test
+    self.isCustomObject() ||
     self.isOptional() ||
     self.isUnion()
   )
@@ -215,11 +221,12 @@ export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
     return false
   }
 
-  // TODO: object
   return
     self.name == "any" ||
     self.name == "str" ||
     self.isArray() ||
+    // TODO: test
+    self.isCustomObject() ||
     self.isFunction() ||
     self.isMap() ||
     self.isOptional()

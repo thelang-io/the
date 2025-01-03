@@ -1,0 +1,22 @@
+obj Point {
+  mut x: float
+  mut y: float
+}
+obj Human {
+  mut name: str
+  age: int
+}
+main {
+  mut a1 := Point{x: 37.7681251, y: -122.5138329}
+  mut a2 := Point{y: -122.5138329, x: 37.7681251}
+
+  a1.x += 2
+  a2.y /= 0.2
+
+  tina := Human{name: "Tina", age: 45}
+  mut nina := Human{name: "Nina", age: 33}
+
+  nina.name += "Test"
+}
+===== code =====
+===== output =====

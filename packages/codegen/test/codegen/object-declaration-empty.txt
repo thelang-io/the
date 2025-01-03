@@ -1,0 +1,8 @@
+obj EmptyObject {
+}
+main {
+  o := EmptyObject{}
+  print(o)
+}
+===== code =====
+===== output =====

@@ -1,0 +1,16 @@
+obj Person {
+  name: str;
+}
+obj PersonWithAge {
+  name: str;
+  age: int;
+}
+main {
+  p1 := Person{name: "Jessica"}
+  p2 := PersonWithAge{name: "Leonard", age: 15}
+
+  print(p1.str())
+  print(p2.str())
+}
+===== code =====
+===== output =====

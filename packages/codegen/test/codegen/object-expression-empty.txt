@@ -1,0 +1,25 @@
+obj Point {
+  mut x: float
+  mut y: float
+}
+
+obj Test {
+  a: int
+}
+
+obj Human {
+  mut name: str
+  age: int
+}
+
+obj Empty {
+}
+
+main {
+  point := Point{}
+  test := Test{}
+  human := Human{}
+  empty := Empty{}
+}
+===== code =====
+===== output =====
