@@ -9,23 +9,7 @@ import * as Type from "../src/type"
 import TypeMap from "../src/type-map"
 import analyzerPrint from "../src/analyzer-print"
 import stringify as stringifyTC from "../src/type-cast"
-
-export obj TypeCastingFileResult {
-  in: str
-  out: str
-}
-
-export fn parseTestFile (path: str) TypeCastingFileResult {
-  content := fs_readFileSync(path).str()
-  outLoc := content.find("===== out =====")
-  inContent := outLoc == -1 ? content : content.slice(0, outLoc)
-  outContent := outLoc == -1 ? "" : content.slice(outLoc + 15 + os_EOL.len)
-
-  return TypeCastingFileResult{
-    in: inContent,
-    out: outContent,
-  }
-}
+import parseTestFile from "./utils"
 
 export fn TEST_TypeCasting () {
   files := fs_scandirSync("./test/type-casting")

@@ -6,16 +6,21 @@
 import * as Parser from "the/parser"
 import Analyzer, AnalyzerFile from "../src/analyzer"
 import analyzerPrint from "../src/analyzer-print"
-import parseTestFile from "./utils"
+import parseTestFile from "../test/utils"
 
-export fn TEST_Print () {
+const OUT_DELIMITER := os_EOL + "===== out =====" + os_EOL
+const TESTS_DIR := "./test/print/"
+
+main {
   files := fs_scandirSync("./test/print")
 
   loop i := 0; i < files.len; i++ {
-    filePath := files[i] as str
-    if filePath.slice(-4) != ".txt" { continue }
+    name := files[i] as str
+    if name.slice(-4) != ".txt" { continue }
+    filePath := TESTS_DIR + name
+    print("updating:", name)
 
-    result := parseTestFile("./test/print/" + filePath)
+    result := parseTestFile(filePath)
     mut f := Parser.parse(result.in)
     Parser.interconnect(ref f)
     mut analyzer := Analyzer{}
@@ -25,9 +30,18 @@ export fn TEST_Print () {
     file.init()
     file.analyze(ref file.f.program.body)
 
-    EXPECT_EQ(analyzer.errors.join(os_EOL), "")
+    if !analyzer.errors.empty {
+      print(analyzer.errors.join(os_EOL), to: "stderr")
+      continue
+    }
+
     out := analyzerPrint(ref file.f.program.body)
-    banner := filePath.slice(0, -4) + os_EOL
-    EXPECT_EQ(banner + result.out, banner + out)
+    outputTrim := out.trim()
+
+    newContent := result.in.trim() +
+      OUT_DELIMITER + outputTrim +
+      (outputTrim.empty ? "" : os_EOL)
+
+    fs_writeFileSync(filePath, newContent.toBuffer())
   }
 }
