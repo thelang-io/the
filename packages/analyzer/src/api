@@ -1,3 +1,8 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
 import * as Type from "./type"
 import TypeMap from "./type-map"
 import VarMap from "./var-map"
