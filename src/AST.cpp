@@ -37,6 +37,15 @@ bool isExprAccessLvalue (const ParserStmtExpr &stmtExpr) {
   return false;
 }
 
+bool isElementAccessExpression (const ParserStmtExpr &stmtExpr) {
+  if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
+    auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
+    return exprAccess.elem != std::nullopt;
+  }
+
+  return false;
+}
+
 std::string stringifyExprAccess (const ParserStmtExpr &stmtExpr) {
   if (std::holds_alternative<ParserExprAccess>(*stmtExpr.body)) {
     auto exprAccess = std::get<ParserExprAccess>(*stmtExpr.body);
@@ -1706,6 +1715,15 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
     auto leftType = this->_nodeExprType(exprAssign.left, nullptr);
     auto rightType = this->_nodeExprType(exprAssign.right, leftType);
 
+    if (
+      std::holds_alternative<ParserExprAccess>(*exprAssign.left.body) &&
+      isElementAccessExpression(exprAssign.left) &&
+      leftType->isRef() &&
+      rightType->isRef()
+    ) {
+      return this->_wrapNodeExprType(stmtExpr, targetType, Type::real(leftType));
+    }
+
     return this->_wrapNodeExprType(stmtExpr, targetType, leftType->isRef() && !rightType->isRef() ? Type::real(leftType) : leftType);
   } else if (std::holds_alternative<ParserExprAwait>(*stmtExpr.body)) {
     auto exprAwait = std::get<ParserExprAwait>(*stmtExpr.body);
@@ -1889,6 +1907,7 @@ Type *AST::_nodeExprType (const ParserStmtExpr &stmtExpr, Type *targetType) {
         targetType == nullptr ||
         (!this->typeMap.get("i64")->matchNice(targetType) && !this->typeMap.get("u64")->matchNice(targetType)) ||
         Type::actual(targetType)->isAny() ||
+        Type::actual(targetType)->isRef() ||
         Type::actual(targetType)->isUnion()
       ) {
         return this->_wrapNodeExprType(stmtExpr, targetType, this->typeMap.get("int"));

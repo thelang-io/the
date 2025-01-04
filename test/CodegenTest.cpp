@@ -999,6 +999,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
+  "expr-access-elem-assign",
   "expr-access-member",
   "expr-access-alias",
   "expr-access-any",

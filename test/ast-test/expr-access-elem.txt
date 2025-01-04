@@ -100,9 +100,7 @@ main {
   </NodeVarDecl>
   <NodeExpr>
     <NodeExprType>
-      <TypeRef name="ref_char">
-        <BuiltinType name="char" />
-      </TypeRef>
+      <BuiltinType name="char" />
     </NodeExprType>
     <NodeExprBody>
       <ExprAssign op="EQ">
