@@ -1,0 +1,9 @@
+obj Test {
+  c: str
+}
+main {
+  test := Test{c: "test"}
+  v := test.c
+}
+===== code =====
+===== output =====

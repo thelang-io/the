@@ -1,0 +1,9 @@
+obj Test {
+  a: int
+}
+main {
+  test := Test{a: 10}
+  v := test.str()
+}
+===== code =====
+===== output =====
