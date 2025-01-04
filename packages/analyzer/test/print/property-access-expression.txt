@@ -4,7 +4,7 @@ obj Test {
 const b := Test{a: 10}
 const c := b.a
 ===== out =====
-ObjectDeclaration(name=Test)
+ObjectDeclaration(name=Test context:selfType=Test)
   ObjectDeclarationProperty(name=a mutable=false constant=false type=int)
 VariableDeclaration(name=b mutable=false constant=true context:varType=Test)
   ObjectExpression(initial=Test id=Test)

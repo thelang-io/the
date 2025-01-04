@@ -8,7 +8,7 @@ main {
   b := Cond{a: a = true}.empty ? a : false
 }
 ===== out =====
-ObjectDeclaration(name=Cond)
+ObjectDeclaration(name=Cond context:selfType=Cond)
   ObjectDeclarationProperty(name=a mutable=false constant=false type=bool)
   ObjectDeclarationProperty(name=empty mutable=false constant=false type=bool)
 MainDeclaration()

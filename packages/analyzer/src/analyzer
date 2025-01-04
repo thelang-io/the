@@ -1702,6 +1702,8 @@ export obj AnalyzerFile {
       return true
     }
 
+    Context.setExtra(it, Context.ElementAccessExpressionContextExtra{selfType: expressionType})
+
     if targetType != nil {
       if Type.match(targetType, Context.initial(it)) {
         return true

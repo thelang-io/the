@@ -7,7 +7,7 @@ main {
   b := Cond{a: a = true}.a ? a : false
 }
 ===== out =====
-ObjectDeclaration(name=Cond)
+ObjectDeclaration(name=Cond context:selfType=Cond)
   ObjectDeclarationProperty(name=a mutable=false constant=false type=bool)
 MainDeclaration()
   VariableDeclaration(name=a mutable=true constant=false type=bool | int context:varType=bool | int)

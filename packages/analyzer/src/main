@@ -9,6 +9,7 @@ import
   AsExpressionContextExtra,
   CallExpressionContextArgument,
   CallExpressionContextExtra,
+  ElementAccessExpressionContextExtra,
   IsExpressionContextExtra,
   ObjectDeclarationContext,
   VariableDeclarationContext,
@@ -60,6 +61,7 @@ export Context
 export AsExpressionContextExtra
 export CallExpressionContextArgument
 export CallExpressionContextExtra
+export ElementAccessExpressionContextExtra
 export IsExpressionContextExtra
 export ObjectDeclarationContext
 export VariableDeclarationContext

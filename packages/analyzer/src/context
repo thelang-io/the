@@ -28,6 +28,10 @@ export obj CallExpressionContextExtra {
   mut returnType: ref Type.Type
 }
 
+export obj ElementAccessExpressionContextExtra {
+  mut selfType: ref Type.Type
+}
+
 export obj IsExpressionContextExtra {
   mut t: ref Type.Type
 }
