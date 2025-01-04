@@ -329,6 +329,25 @@ export obj TypeMap {
     return result
   }
 
+  fn convertMethod (mut self: ref Self, t: ref Type.Type) ref Type.Type {
+    method := t.asMethod()
+    mut parameters: Type.TypeParameter[]
+
+    if method.withSelf {
+      selfParameter := Type.TypeParameter{
+        name: method.selfName,
+        t: method.selfType,
+        mutable: method.selfMutable,
+        required: true,
+      }
+
+      parameters.push(selfParameter)
+    }
+
+    parameters.merge(method.parameters)
+    return self.createFunction(method.asynchronous, parameters, method.returnType)
+  }
+
   fn createNamespace (mut self: ref Self, name: str, members: Type.NamespaceMember[]) ref Type.Type {
     self.items.push(Type.Type{name: name, body: Type.NamespaceType{members: members}, scope: self.scope})
     return self.items.last()

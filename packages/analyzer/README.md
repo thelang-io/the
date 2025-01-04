@@ -802,6 +802,27 @@ tm.createMethod(false, [], tm.get("void"), false, false, "", selfType)
 tm.createMethod(false, [], tm.get("void"), true, true, "self", tm.createReference(selfType))
 ```
 
+### `TypeMap.convertMethod (t: ref Type) ref Type`
+Converts a method type into a function type.
+
+**Parameters**
+
+- `t` - method type to convert
+
+**Return value**
+
+Function type representation of the method type provided.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+mut selfType := tm.createObject("Animal")
+method := tm.createMethod(false, [], tm.get("void"), false, false, "", selfType)
+
+function := tm.convertMethod(method)
+```
+
 ### `TypeMap.createNamespace (name: str, members: NamespaceMember[]) ref Type`
 Creates namespace type and puts it inside type map.
 
