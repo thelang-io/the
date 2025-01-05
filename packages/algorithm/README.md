@@ -66,6 +66,23 @@ A byte array representing input string.
 byteArray.fromStr("Aaron")
 ```
 
+### `byteArray.toHexStr (in: byte[]) str`
+Converts a byte array into a hex string.
+
+**Parameters**
+
+- `in` - byte array to convert
+
+**Return value**
+
+A hex string representing input byte array.
+
+**Examples**
+
+```the
+byteArray.toHexStr([0x41, 0x61, 0x72, 0x6F, 0x6E])
+```
+
 ### `byteArray.toStr (in: byte[]) str`
 Converts a byte array into a string.
 
