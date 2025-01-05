@@ -49,6 +49,40 @@ A string in ASCII format containing decoded data from `data`.
 base64.decode("QWFyb24=")
 ```
 
+### `byteArray.fromStr (in: str) byte[]`
+Converts a string into a byte array.
+
+**Parameters**
+
+- `in` - string to convert
+
+**Return value**
+
+A byte array representing input string.
+
+**Examples**
+
+```the
+byteArray.fromStr("Aaron")
+```
+
+### `byteArray.toStr (in: byte[]) str`
+Converts a byte array into a string.
+
+**Parameters**
+
+- `in` - byte array to convert
+
+**Return value**
+
+A string representing input byte array.
+
+**Examples**
+
+```the
+byteArray.toStr([0x41, 0x61, 0x72, 0x6F, 0x6E])
+```
+
 ### `qrcode.QRCode (input: Buffer) IQRCode`
 Constructs `IQRCode` object.
 

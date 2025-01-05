@@ -1,0 +1,21 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export fn fromStr (in: str) byte[] {
+  mut result: byte[]
+  loop i := 0; i < in.len; i++ {
+    result.push(in[i].byte)
+  }
+  return result
+}
+
+export fn toStr (in: byte[]) str {
+  mut result := ""
+  loop i := 0; i < in.len; i++ {
+    ch: char = in[i] as byte
+    result += ch.str()
+  }
+  return result
+}
