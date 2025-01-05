@@ -1,0 +1,14 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export const LOREM_IPSUM :=
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas tortor quam, tincidunt id " +
+  "nisl ac, vulputate sagittis nibh. Pellentesque nec diam orci. Proin malesuada nisl aliquam " +
+  "lacus viverra, sit amet pharetra nulla blandit. Phasellus porttitor, elit at gravida " +
+  "efficitur, lacus leo accumsan tellus, nec ornare augue magna quis mauris. Aliquam commodo " +
+  "eleifend lorem quis rhoncus. Aliquam rutrum tempus malesuada. Morbi mollis massa sit amet " +
+  "condimentum lacinia. Duis eu maximus ipsum. Proin placerat, ligula vel elementum consequat, " +
+  "purus lectus tempor magna, quis commodo nulla nisl ut ante. Duis viverra finibus lacus, a " +
+  "sollicitudin justo elementum id. Quisque venenatis mattis placerat. Suspendisse potenti."

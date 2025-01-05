@@ -62,7 +62,7 @@ Constructed `IQRCode` object.
 
 **Exceptions**
 
-- `Base64Error` - thrown if string to be decoded is not correctly encoded
+- `QRCodeError` - thrown if string to be decoded is not correctly encoded
 
 **Examples**
 
