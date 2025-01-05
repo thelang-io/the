@@ -1349,9 +1349,14 @@ export obj Codegen {
     }
 
     expression := item.asElementAccess()
-    targetType := Analyzer.contextTarget(item)
 
-    return AST.createCallExpression(AST.createIdentifier(self._type(targetType, "_at")), [
+    if !(item.contextExtra is Analyzer.ElementAccessExpressionContextExtra) {
+      throw error_NewError("Expected ElementAccessExpression context extra")
+    }
+
+    contextExtra := item.contextExtra as Analyzer.ElementAccessExpressionContextExtra
+
+    return AST.createCallExpression(AST.createIdentifier(self._type(contextExtra.selfType, "_at")), [
       self._generateExpression(ref expression.expression),
       self._generateExpression(ref expression.argument),
     ])

@@ -20,6 +20,10 @@ main {
   person3 := person1
   person1 = person2
   person2 = person3
+
+  print(person1)
+  print(person2)
+  print(person3)
 }
 ===== code =====
 ===== output =====
