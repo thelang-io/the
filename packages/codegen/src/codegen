@@ -28,6 +28,7 @@ from "./helpers"
 import sortStrAsc from "./utils"
 
 // TODO: implement FunctionDeclaration statement
+// TODO: implement ObjectDeclarationMethod statement
 // TODO: implement Return statement
 // TODO: implement closure expression
 // TODO: test Function type
@@ -678,13 +679,20 @@ export obj Codegen {
     } elif it.name == "str" {
       return AST.createIdentifier(self._("d4_str_empty_val"))
     } elif it.isArray() || it.isMap() {
-      typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._type(it, "_alloc")), [
         AST.createLiteral("0"),
       ])
+    } elif it.isFunction() || it.isMethod() {
+      // TODO: test
+      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_alloc")), [
+        AST.createIdentifier(self._("d4_str_empty_val")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+        AST.createIdentifier(self._("NULL")),
+      ])
     } elif it.isCustomObject() {
       // TODO: test
-      typeName := self._typeName(it)
       mut args: (AST.CExpression | AST.CType)[]
       loop i := 0; i < it.properties.len; i++ {
         property := it.properties[i]
@@ -697,7 +705,6 @@ export obj Codegen {
     } elif it.isOptional() || it.isReference() {
       return AST.createIdentifier(self._("NULL"))
     } elif it.isUnion() {
-      typeName := self._typeName(it)
       return AST.createCallExpression(AST.createIdentifier(self._type(it, "_alloc")), [
         AST.createLiteral("-1"),
       ])
@@ -721,12 +728,13 @@ export obj Codegen {
       it.isFunction() ||
       it.isMap() ||
       // TODO: test
+      it.isMethod() ||
+      // TODO: test
       it.isCustomObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
-      typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_copy")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_copy")), [expression])
     }
 
     return expression
@@ -744,14 +752,17 @@ export obj Codegen {
       result = AST.createCallExpression(AST.createIdentifier(self._("d4_str_eq")), [left, right])
     } elif (
       it.isArray() ||
+      // TODO: test
+      it.isFunction() ||
       it.isMap() ||
+      // TODO: test
+      it.isMethod() ||
       // TODO: test
       it.isCustomObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
-      typeName := self._typeName(it)
-      result = AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_eq")), [left, right])
+      result = AST.createCallExpression(AST.createIdentifier(self._type(it, "_eq")), [left, right])
     } else {
       return result
     }
@@ -772,12 +783,13 @@ export obj Codegen {
       it.isFunction() ||
       it.isMap() ||
       // TODO: test
+      it.isMethod() ||
+      // TODO: test
       it.isCustomObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
-      typeName := self._typeName(it)
-      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_free")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_free")), [expression])
     }
 
     return AST.createCastExpression(AST.createType("void"), expression)
@@ -804,16 +816,16 @@ export obj Codegen {
       it.isFunction() ||
       it.isMap() ||
       // TODO: test
+      it.isMethod() ||
+      // TODO: test
       it.isCustomObject() ||
       it.isOptional() ||
       it.isUnion()
     ) {
-      typeName := self._typeName(it)
-
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_realloc")), [left, right]),
+        AST.createCallExpression(AST.createIdentifier(self._type(it, "_realloc")), [left, right]),
       )
     }
 
@@ -835,11 +847,33 @@ export obj Codegen {
     } elif it.isReference() {
       t := it.asReference()
       return self._functionStr(t.t, AST.createUnaryExpression("*", expression), quote: quote)
+    } elif (
+      it.name == "bool" ||
+      it.name == "byte" ||
+      it.name == "char" ||
+      it.name == "rune" ||
+      it.isNumber()
+    ) {
+      typeName := self._typeName(it)
+      return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_str")), [expression])
+    } elif (
+      it.isArray() ||
+      // TODO: test
+      it.isEnum() ||
+      // TODO: test
+      it.isFunction() ||
+      it.isMap() ||
+      // TODO: test
+      it.isMethod() ||
+      // TODO: test
+      it.isCustomObject() ||
+      it.isOptional() ||
+      it.isUnion()
+    ) {
+      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_str")), [expression])
     }
 
-    // TODO: test custom object
-    typeName := self._typeName(it)
-    return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_str")), [expression])
+    throw error_NewError("Tried stringifying unknown type '" + it.toString() + "'")
   }
 
   fn _generateBlock (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
@@ -1925,7 +1959,6 @@ export obj Codegen {
     }
 
     context := item.context as Analyzer.VariableDeclarationContext
-    typeName := self._typeName(context.varType)
     t := AST.createType(self._type(context.varType))
     shouldSplitDeclaration := statementHasPrecedingNonVarDecl(item)
 
@@ -2684,6 +2717,8 @@ export obj Codegen {
       it.isFunction() ||
       it.isMap() ||
       // TODO: test
+      it.isMethod() ||
+      // TODO: test
       it.isCustomObject() ||
       it.isOptional() ||
       it.isReference() ||
@@ -2698,6 +2733,10 @@ export obj Codegen {
         self._generateFunctionType(it)
       } elif it.isMap() {
         self._generateMapType(it)
+      } elif it.isMethod() {
+        // TODO: test
+        tm := self._tm()
+        self._generateFunctionType(tm.convertMethod(it))
       } elif it.isOptional() {
         self._generateOptionalType(it)
       } elif it.isReference() {
@@ -2824,19 +2863,9 @@ export obj Codegen {
       t := it.asMap()
       return "map_" + self._typeName(t.keyType) + "MS" + self._typeName(t.valueType) + "ME"
     } elif it.isMethod() {
-      t := it.asMethod()
-      mut name := "fn_" + (t.asynchronous ? "a" : "s")
-
-      if t.withSelf {
-        name += "FS" + self._typeName(t.selfType)
-      }
-
-      loop i := 0; i < t.parameters.len; i++ {
-        parameter := t.parameters[i]
-        name += typeParameterId(parameter) + self._typeName(parameter.t)
-      }
-
-      return name + "FR" + self._typeName(t.returnType) + "FE"
+      // TODO: test
+      tm := self._tm()
+      return self._typeName(tm.convertMethod(it))
     } elif it.isOptional() {
       t := it.asOptional()
       return "opt_" + self._typeName(t.t)
