@@ -164,3 +164,21 @@ mut qr := qrcode.QRCode("HELLO, WORLD!")
 qr.encode(ecc: .M, mask: 3)
 qrcode.toTerminal(qr)
 ```
+
+### `md5 (data: byte[]) byte[]`
+Encodes byte array with md5 algorithm.
+
+**Parameters**
+
+- `data` - byte array to encode
+
+**Return value**
+
+A byte array containing md5 representation of the `data`.
+
+**Examples**
+
+```the
+import byteArray, md5 from "the/algorithm"
+result := md5(byteArray.fromStr("Aaron"))
+```
