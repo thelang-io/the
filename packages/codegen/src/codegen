@@ -368,9 +368,6 @@ export obj Codegen {
   }
 
   fn _preDeclareStatement (mut self: ref Self, item: ref Parser.Statement) bool {
-    if item.isObjectDeclaration() {
-      self._preDeclareObject(item)
-    }
   }
 
   fn _declareStatement (mut self: ref Self, item: ref Parser.Statement) bool {
@@ -394,7 +391,7 @@ export obj Codegen {
     self.blockData.currentMerge(dataContextBlock.setup, dataContextBlock.teardown)
   }
 
-  fn _preDeclareObject (mut self: ref Codegen, item: ref Parser.Statement) void {
+  fn _declareObject (mut self: ref Codegen, item: ref Parser.Statement) void {
     statement := item.asObjectDeclaration()
 
     if !(item.context is Analyzer.ObjectDeclarationContext) {
@@ -402,243 +399,7 @@ export obj Codegen {
     }
 
     context := item.context as Analyzer.ObjectDeclarationContext
-    selfType := context.selfType
-
-    typeName := "d4_" + self._typeName(selfType)
-    name := typeName + "_t"
-
-    if self._hasEntity(name) {
-      throw error_NewError("Object entity with name '" + name + "' already exists")
-    }
-
-    self.entities.push(CodegenEntity{
-      name: name,
-      codeName: name,
-      context: selfType,
-      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
-        return AST.createEmptyStatement()
-      }
-    })
-
-    methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
-
-    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
-      self._(entity.context as str)
-      return AST.createEmptyStatement()
-    }
-
-    loop i := 0; i < methods.len; i++ {
-      methodName := methods[i] as str
-
-      self.entities.push(CodegenEntity{
-        name: typeName + "_" + methodName,
-        codeName: typeName + "_" + methodName,
-        context: name,
-        generate: entityCallee,
-      })
-    }
-  }
-
-  // TODO: rename params
-  fn _declareObject (mut self2: ref Codegen, item: ref Parser.Statement) void {
-    statement := item.asObjectDeclaration()
-
-    if !(item.context is Analyzer.ObjectDeclarationContext) {
-      throw error_NewError("Expected ObjectDeclaration context")
-    }
-
-    context := item.context as Analyzer.ObjectDeclarationContext
-    name := self2._generateObjectType(context.selfType)
-    mut entity := self2._getEntity(name)
-
-    entity.generate = (mut self: ref Codegen, entity2: ref CodegenEntity) -> GenerateReturnType {
-      it := entity2.context as ref Analyzer.Type
-
-      mut extraDeclarationArguments: (AST.CExpression | AST.CStatement | AST.CType)[]
-      mut structureBlock: AST.CStatement[]
-      mut allocBlock: AST.CStatement[]
-      mut copyBlock: AST.CStatement[]
-      mut eqExpression := AST.createIdentifier(self._("true"))
-      mut freeBlock: AST.CStatement[]
-      mut strBlock: AST.CStatement[]
-      mut propertyIdx := 0
-
-      loop i := 0; i < it.properties.len; i++ {
-        property := it.properties[i]
-
-        if property.builtin || property.t.isMethod() {
-          continue
-        }
-
-        cPropertyType := self._type(property.t)
-        cSelfProperty := AST.createPropertyAccessExpression(AST.createIdentifier("self"), property.name)
-
-        extraDeclarationArguments.push(
-          AST.createVariableDeclaration(
-            AST.createType(cPropertyType, constant: true),
-            property.name,
-            terminated: false,
-          )
-        )
-
-        structureBlock.push(
-          AST.createVariableDeclaration(AST.createType(cPropertyType), property.name)
-        )
-
-        allocBlock.push(
-          AST.createExpressionStatement(
-            AST.createAssignmentExpression(
-              cSelfProperty,
-              "=",
-              self._functionCopy(property.t, AST.createIdentifier(property.name)),
-            ),
-          ),
-        )
-
-        copyBlock.push(
-          AST.createExpressionStatement(
-            AST.createAssignmentExpression(
-              AST.createPropertyAccessExpression(AST.createIdentifier("result"), property.name),
-              "=",
-              self._functionCopy(property.t, cSelfProperty),
-            ),
-          ),
-        )
-
-        eqExpressionPiece := self._functionEq(
-          property.t,
-          cSelfProperty,
-          AST.createPropertyAccessExpression(AST.createIdentifier("rhs"), property.name),
-        )
-
-        eqExpression = propertyIdx == 0
-          ? eqExpressionPiece
-          : AST.createBinaryExpression(eqExpression, "&&", eqExpressionPiece)
-
-        if typeShouldBeFreed(property.t) {
-          freeBlock.push(
-            AST.createExpressionStatement(
-              self._functionFree(property.t, cSelfProperty),
-            ),
-          )
-        }
-
-        strBlock.push(
-          AST.createExpressionStatement(
-            AST.createAssignmentExpression(
-              AST.createIdentifier("result"),
-              "=",
-              AST.createCallExpression(AST.createIdentifier(self._("d4_obj_str_append")), [
-                AST.createIdentifier("result"),
-                AST.createCallExpression(AST.createIdentifier(self._("d4_str_alloc")), [
-                  AST.createLiteral("L\"" + property.name + "\""),
-                ]),
-                self._functionStr(property.t, cSelfProperty, quote: true),
-              ]),
-            ),
-          ),
-        )
-
-        propertyIdx++
-      }
-
-      if freeBlock.empty {
-        freeBlock.push(
-          AST.createExpressionStatement(
-            AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
-          ),
-        )
-      }
-
-      mut eqBlock: AST.CStatement[]
-
-      if propertyIdx == 0 {
-        extraDeclarationArguments.push(AST.createType("void"))
-
-        structureBlock.push(
-          AST.createVariableDeclaration(AST.createType(self._("bool")), "_")
-        )
-
-        allocBlock.push(
-          AST.createExpressionStatement(
-            AST.createAssignmentExpression(
-              AST.createPropertyAccessExpression(AST.createIdentifier("self"), "_"),
-              "=",
-              AST.createIdentifier(self._("false")),
-            ),
-          ),
-        )
-
-        copyBlock.push(
-          AST.createExpressionStatement(
-            AST.createAssignmentExpression(
-              AST.createPropertyAccessExpression(AST.createIdentifier("result"), "_"),
-              "=",
-              AST.createPropertyAccessExpression(AST.createIdentifier("self"), "_"),
-            ),
-          ),
-        )
-
-        eqBlock.push(
-          AST.createExpressionStatement(
-            AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
-          ),
-        )
-
-        eqBlock.push(
-          AST.createExpressionStatement(
-            AST.createCastExpression(AST.createType("void"), AST.createIdentifier("rhs")),
-          ),
-        )
-
-        strBlock.push(
-          AST.createExpressionStatement(
-            AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
-          ),
-        )
-      }
-
-      eqBlock.push(AST.createReturnStatement(eqExpression))
-
-      cNameIdentifier := AST.createIdentifier(it.name)
-
-      forwardDeclarationArguments: (AST.CExpression | AST.CStatement | AST.CType)[] = [
-        cNameIdentifier,
-      ]
-
-      mut declarationArguments: (AST.CExpression | AST.CStatement | AST.CType)[] = [
-        cNameIdentifier,
-        AST.createCompoundStatement(structureBlock),
-      ]
-
-      mut definitionArguments: (AST.CExpression | AST.CStatement | AST.CType)[] = [
-        cNameIdentifier,
-        cNameIdentifier,
-        AST.createCompoundStatement(allocBlock),
-        AST.createCompoundStatement(copyBlock),
-        AST.createCompoundStatement(eqBlock),
-        AST.createCompoundStatement(freeBlock),
-        AST.createCompoundStatement(strBlock),
-      ]
-
-      declarationArguments.merge(extraDeclarationArguments)
-      definitionArguments.merge(extraDeclarationArguments)
-
-      return [
-        AST.createExpressionStatement(
-          AST.createMacroInvocation(self._("D4_OBJECT_FORWARD_DECLARE"), forwardDeclarationArguments),
-          terminated: false,
-        ),
-        AST.createExpressionStatement(
-          AST.createMacroInvocation(self._("D4_OBJECT_DECLARE"), declarationArguments),
-          terminated: false,
-        ),
-        AST.createExpressionStatement(
-          AST.createMacroInvocation(self._("D4_OBJECT_DEFINE"), definitionArguments),
-          terminated: false,
-        ),
-      ]
-    }
+    self._generateObjectType(context.selfType)
   }
 
   fn _defaultInitializerExpression (mut self: ref Self, it: ref Analyzer.Type) AST.CExpression {
@@ -2337,10 +2098,233 @@ export obj Codegen {
   }
 
   fn _generateObjectType (mut self: ref Codegen, item: ref Analyzer.Type) str {
-    name := "d4_" + self._typeName(item) + "_t"
+    typeName := "d4_" + self._typeName(item)
+    name := typeName + "_t"
 
-    if !self._hasEntity(name) {
-      throw error_NewError("Object entity with name '" + name + "' doesn't exists")
+    if self._hasEntity(name) {
+      return name
+    }
+
+    loop i := 0; i < item.properties.len; i++ {
+      property := item.properties[i]
+
+      if property.builtin || property.t.isMethod() {
+        continue
+      }
+
+      self._typeGen(property.t)
+    }
+
+    self.entities.push(CodegenEntity{
+      name: name,
+      codeName: name,
+      context: item,
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+        it := entity.context as ref Analyzer.Type
+
+        mut extraDeclarationArguments: (AST.CExpression | AST.CStatement | AST.CType)[]
+        mut structureBlock: AST.CStatement[]
+        mut allocBlock: AST.CStatement[]
+        mut copyBlock: AST.CStatement[]
+        mut eqExpression := AST.createIdentifier(self._("true"))
+        mut freeBlock: AST.CStatement[]
+        mut strBlock: AST.CStatement[]
+        mut propertyIdx := 0
+
+        loop i := 0; i < it.properties.len; i++ {
+          property := it.properties[i]
+
+          if property.builtin || property.t.isMethod() {
+            continue
+          }
+
+          cPropertyType := self._type(property.t)
+          cSelfProperty := AST.createPropertyAccessExpression(AST.createIdentifier("self"), property.name)
+
+          extraDeclarationArguments.push(
+            AST.createVariableDeclaration(
+              AST.createType(cPropertyType, constant: true),
+              property.name,
+              terminated: false,
+            )
+          )
+
+          structureBlock.push(
+            AST.createVariableDeclaration(AST.createType(cPropertyType), property.name)
+          )
+
+          allocBlock.push(
+            AST.createExpressionStatement(
+              AST.createAssignmentExpression(
+                cSelfProperty,
+                "=",
+                self._functionCopy(property.t, AST.createIdentifier(property.name)),
+              ),
+            ),
+          )
+
+          copyBlock.push(
+            AST.createExpressionStatement(
+              AST.createAssignmentExpression(
+                AST.createPropertyAccessExpression(AST.createIdentifier("result"), property.name),
+                "=",
+                self._functionCopy(property.t, cSelfProperty),
+              ),
+            ),
+          )
+
+          eqExpressionPiece := self._functionEq(
+            property.t,
+            cSelfProperty,
+            AST.createPropertyAccessExpression(AST.createIdentifier("rhs"), property.name),
+          )
+
+          eqExpression = propertyIdx == 0
+            ? eqExpressionPiece
+            : AST.createBinaryExpression(eqExpression, "&&", eqExpressionPiece)
+
+          if typeShouldBeFreed(property.t) {
+            freeBlock.push(
+              AST.createExpressionStatement(
+                self._functionFree(property.t, cSelfProperty),
+              ),
+            )
+          }
+
+          strBlock.push(
+            AST.createExpressionStatement(
+              AST.createAssignmentExpression(
+                AST.createIdentifier("result"),
+                "=",
+                AST.createCallExpression(AST.createIdentifier(self._("d4_obj_str_append")), [
+                  AST.createIdentifier("result"),
+                  AST.createCallExpression(AST.createIdentifier(self._("d4_str_alloc")), [
+                    AST.createLiteral("L\"" + property.name + "\""),
+                  ]),
+                  self._functionStr(property.t, cSelfProperty, quote: true),
+                ]),
+              ),
+            ),
+          )
+
+          propertyIdx++
+        }
+
+        if freeBlock.empty {
+          freeBlock.push(
+            AST.createExpressionStatement(
+              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
+            ),
+          )
+        }
+
+        mut eqBlock: AST.CStatement[]
+
+        if propertyIdx == 0 {
+          extraDeclarationArguments.push(AST.createType("void"))
+
+          structureBlock.push(
+            AST.createVariableDeclaration(AST.createType(self._("bool")), "_")
+          )
+
+          allocBlock.push(
+            AST.createExpressionStatement(
+              AST.createAssignmentExpression(
+                AST.createPropertyAccessExpression(AST.createIdentifier("self"), "_"),
+                "=",
+                AST.createIdentifier(self._("false")),
+              ),
+            ),
+          )
+
+          copyBlock.push(
+            AST.createExpressionStatement(
+              AST.createAssignmentExpression(
+                AST.createPropertyAccessExpression(AST.createIdentifier("result"), "_"),
+                "=",
+                AST.createPropertyAccessExpression(AST.createIdentifier("self"), "_"),
+              ),
+            ),
+          )
+
+          eqBlock.push(
+            AST.createExpressionStatement(
+              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
+            ),
+          )
+
+          eqBlock.push(
+            AST.createExpressionStatement(
+              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("rhs")),
+            ),
+          )
+
+          strBlock.push(
+            AST.createExpressionStatement(
+              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
+            ),
+          )
+        }
+
+        eqBlock.push(AST.createReturnStatement(eqExpression))
+
+        cNameIdentifier := AST.createIdentifier(it.name)
+
+        forwardDeclarationArguments: (AST.CExpression | AST.CStatement | AST.CType)[] = [
+          cNameIdentifier,
+        ]
+
+        mut declarationArguments: (AST.CExpression | AST.CStatement | AST.CType)[] = [
+          cNameIdentifier,
+          AST.createCompoundStatement(structureBlock),
+        ]
+
+        mut definitionArguments: (AST.CExpression | AST.CStatement | AST.CType)[] = [
+          cNameIdentifier,
+          cNameIdentifier,
+          AST.createCompoundStatement(allocBlock),
+          AST.createCompoundStatement(copyBlock),
+          AST.createCompoundStatement(eqBlock),
+          AST.createCompoundStatement(freeBlock),
+          AST.createCompoundStatement(strBlock),
+        ]
+
+        declarationArguments.merge(extraDeclarationArguments)
+        definitionArguments.merge(extraDeclarationArguments)
+
+        return [
+          AST.createExpressionStatement(
+            AST.createMacroInvocation(self._("D4_OBJECT_FORWARD_DECLARE"), forwardDeclarationArguments),
+            terminated: false,
+          ),
+          AST.createExpressionStatement(
+            AST.createMacroInvocation(self._("D4_OBJECT_DECLARE"), declarationArguments),
+            terminated: false,
+          ),
+          AST.createExpressionStatement(
+            AST.createMacroInvocation(self._("D4_OBJECT_DEFINE"), definitionArguments),
+            terminated: false,
+          ),
+        ]
+      }
+    })
+
+    methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
+
+    entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+      self._(entity.context as str)
+      return AST.createEmptyStatement()
+    }
+
+    loop i := 0; i < methods.len; i++ {
+      methodName := methods[i] as str
+
+      self.entities.push(CodegenEntity{
+        name: typeName + "_" + methodName,
+        codeName: typeName + "_" + methodName,
+        context: name,
+        generate: entityCallee,
+      })
     }
 
     return name
