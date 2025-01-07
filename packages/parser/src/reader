@@ -40,12 +40,12 @@ export obj Reader {
     return self.content.slice(start, end)
   }
 
-  fn walk (mut self: ref Self, match: (char) -> bool) {
+  fn walk (mut self: ref Self, matcher: (char) -> bool) {
     loop !self.eof() {
       pos := self.pos
       ch := self.next()
 
-      if !match(ch) {
+      if !matcher(ch) {
         self.seek(pos)
         break
       }
@@ -79,7 +79,7 @@ export fn init (pathOrCode: str) Reader {
   return Reader{path: p, content: content, contentLen: content.len}
 }
 
-export fn error (mut reader: ref Reader, errorType: str, message: str, start: int, end: int) str {
+export fn error (reader: ref Reader, errorType: str, message: str, start: int, end: int) str {
   startLoc := locate(reader, start)
   endLoc := locate(reader, end)
   lines := reader.content.lines()
