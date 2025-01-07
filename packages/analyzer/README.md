@@ -440,6 +440,27 @@ mut tm := TypeMap{}
 tm.get("u8").canPromoteTo(tm.get("int"))
 ```
 
+### `Type.dependsOn (on: ref Type, stack: (ref Type)[] = []) bool`
+Checks whether current type depends on specified type (using strict matching).
+
+**Parameters**
+
+- `on` - type to check whether current type depends on
+- `stack` - stack of already visited types
+
+**Return value**
+
+Whether current type depends on specified type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+arr := tm.createArray(tm.get("int"))
+
+arr.dependsOn(tm.get("int"))
+```
+
 ### `Type.get (nameOrIndex: int | str) TypeProperty`
 Finds type's property with specified name or index.
 
