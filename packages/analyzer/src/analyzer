@@ -1922,6 +1922,7 @@ export obj AnalyzerFile {
       }
 
       Context.set(it, property.t)
+      Context.setExtra(it, Context.PropertyAccessExpressionContextExtra{property: property})
     } elif t.isEnum() {
       Context.set(it, t)
 

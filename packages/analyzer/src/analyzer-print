@@ -462,6 +462,18 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
     propertyAccess := expression.asPropertyAccess()
     name = "PropertyAccessExpression"
     attributes += " name=" + propertyAccess.name.name
+    expressionContextExtra := expression.contextExtra
+    if expression.contextExtra is Context.PropertyAccessExpressionContextExtra {
+      contextExtra := expressionContextExtra as Context.PropertyAccessExpressionContextExtra
+      attributes += " extra:propertyName=" + contextExtra.property.name
+      attributes += " extra:propertyType=" + contextExtra.property.t.toString()
+      if contextExtra.property.mutable {
+        attributes += " extra:propertyMutable"
+      }
+      if contextExtra.property.builtin {
+        attributes += " extra:propertyBuiltin"
+      }
+    }
     result += analyzerPrintExpression(ref propertyAccess.expression, indent + 2)
   } elif expression.isReference() {
     reference := expression.asReference()

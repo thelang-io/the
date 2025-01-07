@@ -40,6 +40,10 @@ export obj ObjectDeclarationContext {
   mut selfType: ref Type.Type
 }
 
+export obj PropertyAccessExpressionContextExtra {
+  mut property: Type.TypeProperty
+}
+
 export obj VariableDeclarationContext {
   mut varType: ref Type.Type
 }

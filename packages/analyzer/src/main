@@ -12,6 +12,7 @@ import
   ElementAccessExpressionContextExtra,
   IsExpressionContextExtra,
   ObjectDeclarationContext,
+  PropertyAccessExpressionContextExtra,
   VariableDeclarationContext,
   initial as contextInitial,
   set as contextSet,
@@ -64,6 +65,7 @@ export CallExpressionContextExtra
 export ElementAccessExpressionContextExtra
 export IsExpressionContextExtra
 export ObjectDeclarationContext
+export PropertyAccessExpressionContextExtra
 export VariableDeclarationContext
 export contextInitial
 export contextSet
