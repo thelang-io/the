@@ -9,6 +9,7 @@ import * as Parser from "the/parser"
 import BUILTIN_ENTITIES from "./builtin-entities"
 import BlockData, BlockDataContext from "./block-data"
 import
+  declarationByDependency,
   expressionIsBuiltinMethod,
   expressionResolve,
   expressionShouldBeAllocated,
@@ -345,9 +346,9 @@ export obj Codegen {
     if self.builtin.wchar { self.statements.push(AST.createIncludeDirective("wchar.h")) }
 
     self.statements.merge(defineStatements)
-    self.statements.merge(macroInvocationForwardDeclareStatements.reverse())
-    self.statements.merge(macroInvocationDeclareStatements.reverse())
-    self.statements.merge(macroInvocationDefineStatements.reverse())
+    self.statements.merge(macroInvocationForwardDeclareStatements)
+    self.statements.merge(macroInvocationDeclareStatements)
+    self.statements.merge(macroInvocationDefineStatements)
     self.statements.merge(statements)
 
     dataContextBlock := self.blockData.decrease()
@@ -652,29 +653,22 @@ export obj Codegen {
   fn _generateBlockBody (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
     mut result: AST.CStatement[]
     l := items.len
+    mut declarations: (ref Parser.Statement)[]
 
     loop i := 0; i < l; i++ {
       item := items[i]
 
       if item.isDeclaration() {
-        self._preDeclareStatement(item)
+        declarations.push(item)
       }
     }
 
-    loop i := 0; i < l; i++ {
-      item := items[i]
+    declarations.sort(declarationByDependency)
+    dl := declarations.len
 
-      if item.isDeclaration() {
-        self._declareStatement(item)
-      }
-    }
-
-    loop i := 0; i < l; i++ {
-      item := items[i]
-
-      if item.isDeclaration() {
-        self._postDeclareStatement(item)
-      }
+    loop i := 0; i < dl; i++ {
+      declaration := declarations[i] as ref Parser.Statement
+      self._declareStatement(declaration)
     }
 
     loop i := 0; i < l; i++ {
@@ -1763,6 +1757,8 @@ export obj Codegen {
       return name
     }
 
+    self._typeGen(item)
+
     self.entities.push(CodegenEntity{
       name: name,
       codeName: name,
@@ -1819,6 +1815,9 @@ export obj Codegen {
     if self._hasEntity(name) {
       return name
     }
+
+    itemType := item.asArray()
+    self._typeGen(itemType.elementType)
 
     self.entities.push(CodegenEntity{
       name: name,
@@ -1902,8 +1901,13 @@ export obj Codegen {
 
     itemType := item.asFunction()
     hasParams := !itemType.parameters.empty
+    self._typeGen(itemType.returnType)
 
     if hasParams {
+      loop i := 0; i < itemType.parameters.len; i++ {
+        self._typeGen(itemType.parameters[i].t)
+      }
+
       self.entities.push(CodegenEntity{
         name: name,
         codeName: name,
@@ -2338,6 +2342,9 @@ export obj Codegen {
       return name
     }
 
+    itemType := item.asOptional()
+    self._typeGen(itemType.t)
+
     self.entities.push(CodegenEntity{
       name: name,
       codeName: name,
@@ -2393,6 +2400,9 @@ export obj Codegen {
     if self._hasEntity(name) {
       return name
     }
+
+    itemType := item.asReference()
+    self._typeGen(itemType.t)
 
     self.entities.push(CodegenEntity{
       name: name,
@@ -2713,31 +2723,37 @@ export obj Codegen {
       it.isReference() ||
       it.isUnion()
     ) {
-      if it.isArray() {
-        self._generateArrayType(it)
-      } elif it.isCustomObject() {
-        // TODO: test
-        self._generateObjectType(it)
-      } elif it.isFunction() {
-        self._generateFunctionType(it)
-      } elif it.isMap() {
-        self._generateMapType(it)
-      } elif it.isMethod() {
-        // TODO: test
-        tm := self._tm()
-        self._generateFunctionType(tm.convertMethod(it))
-      } elif it.isOptional() {
-        self._generateOptionalType(it)
-      } elif it.isReference() {
-        self._generateReferenceType(it)
-      } elif it.isUnion() {
-        self._generateUnionType(it)
-      }
-
+      self._typeGen(it)
       return self._("d4_" + self._typeName(it) + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     }
 
     throw error_NewError("Failed to generate type for '" + it.toString() + "'")
+  }
+
+  fn _typeGen (mut self: ref Self, it: ref Analyzer.Type) {
+    if it.isAlias() {
+      t := it.asAlias()
+      self._typeGen(t.t)
+    } elif it.isArray() {
+      self._generateArrayType(it)
+    } elif it.isCustomObject() {
+      // TODO: test
+      self._generateObjectType(it)
+    } elif it.isFunction() {
+      self._generateFunctionType(it)
+    } elif it.isMap() {
+      self._generateMapType(it)
+    } elif it.isMethod() {
+      // TODO: test
+      tm := self._tm()
+      self._generateFunctionType(tm.convertMethod(it))
+    } elif it.isOptional() {
+      self._generateOptionalType(it)
+    } elif it.isReference() {
+      self._generateReferenceType(it)
+    } elif it.isUnion() {
+      self._generateUnionType(it)
+    }
   }
 
   fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, transform := false) AST.CExpression {

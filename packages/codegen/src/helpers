@@ -7,6 +7,44 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
+export fn declarationType (item: ref Parser.Statement) (ref Analyzer.Type)? {
+  itemContext := item.context
+
+  if item.context is Analyzer.ObjectDeclarationContext {
+    context := itemContext as Analyzer.ObjectDeclarationContext
+    return context.selfType
+  }
+
+  return nil
+}
+
+export fn declarationByDependency (a: ref Parser.Statement, b: ref Parser.Statement) int {
+  aType := declarationType(a)
+  bType := declarationType(b)
+
+  if aType == nil && bType == nil {
+    return 0
+  }
+
+  if aType == nil || bType == nil {
+    return aType == nil ? 1 : -1
+  }
+
+  aDefiniteType := aType as ref Analyzer.Type
+  bDefiniteType := bType as ref Analyzer.Type
+
+  aDependsOnB := aDefiniteType.dependsOn(bDefiniteType)
+  bDependsOnA := bDefiniteType.dependsOn(aDefiniteType)
+
+  if aDependsOnB && !bDependsOnA {
+    return 1
+  } elif bDependsOnA && !aDependsOnB {
+    return -1
+  }
+
+  return 0
+}
+
 export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
   if item.isPropertyAccess() {
     body := item.asPropertyAccess()
