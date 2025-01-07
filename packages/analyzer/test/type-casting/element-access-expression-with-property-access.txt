@@ -1,0 +1,21 @@
+obj Animal {
+  mut age: int
+}
+main {
+  mut pets := [Animal{age: 1}]
+  pets[0].age++
+}
+===== out =====
+ObjectDeclaration(name=Animal context:selfType=Animal)
+  ObjectDeclarationProperty(name=age mutable=true constant=false type=int)
+MainDeclaration()
+  VariableDeclaration(name=pets mutable=true constant=false context:varType=Animal[])
+    ArrayExpression(initial=Animal[])
+      ObjectExpression(initial=Animal id=Animal)
+        ObjectExpressionProperty(name=age)
+          IntegerLiteral(initial=int value=1)
+  UnaryExpression(initial=int operator=++ prefix=false)
+    PropertyAccessExpression(initial=int name=age extra:propertyName=age extra:propertyType=int extra:propertyMutable)
+      ElementAccessExpression(initial=ref Animal target=Animal extra:selfType=Animal[])
+        Identifier(initial=Animal[] name=pets)
+        IntegerLiteral(initial=int value=0)

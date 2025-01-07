@@ -1905,7 +1905,14 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asPropertyAccess()
-    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+    niceExpressionType := self.eNice(ref expression.expression)
+
+    expressionType := self.e(
+      ref expression.expression,
+      Type.opt(Type.unwrap(niceExpressionType)),
+      withMutable: withMutable || withMutableNext,
+    )
+
     t := Type.unwrap(expressionType)
 
     if t.has(expression.name.name) {
