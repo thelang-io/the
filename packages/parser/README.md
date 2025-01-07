@@ -135,6 +135,24 @@ Generated error string.
 error := Reader_error(ref reader, "TypeError", "Missing type", 1, 10)
 ```
 
+### `Reader_locate (reader: ref Reader, pos: int) Location`
+Converts file position into location object.
+
+**Parameters**
+
+- `reader` - reader instance to locate position from.
+- `pos` - position to locate.
+
+**Return value**
+
+File position converted into location object.
+
+**Examples**
+
+```the
+loc := Reader_locate(ref reader, 10)
+```
+
 ### `Expression_toText (self: Expression, indent := 0) str`
 Generates string representation of the expression.
 
