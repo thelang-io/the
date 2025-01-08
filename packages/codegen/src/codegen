@@ -1110,8 +1110,12 @@ export obj Codegen {
     }
 
     contextExtra := item.contextExtra as Analyzer.ElementAccessExpressionContextExtra
+    startLoc := Parser.Reader_locate(self._r(), item.start)
 
     return AST.createCallExpression(AST.createIdentifier(self._type(contextExtra.selfType, "_at")), [
+      AST.createUnaryExpression("&", AST.createIdentifier(self._("d4_err_state"))),
+      AST.createLiteral(startLoc.line.str()),
+      AST.createLiteral(startLoc.col.str()),
       self._generateExpression(ref expression.expression),
       self._generateExpression(ref expression.argument),
     ])
@@ -2656,6 +2660,11 @@ export obj Codegen {
     }
 
     return false
+  }
+
+  fn _r (mut self: ref Self) ref Parser.Reader {
+    mut file := self.analyzer.files.last()
+    return ref file.reader
   }
 
   fn _tm (mut self: ref Self) ref Analyzer.TypeMap {

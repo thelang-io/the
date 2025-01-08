@@ -47,8 +47,12 @@ export fn declarationByDependency (a: ref Parser.Statement, b: ref Parser.Statem
 
 export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
   if item.isPropertyAccess() {
-    body := item.asPropertyAccess()
-    return ["str"].contains(body.name.name)
+    contextExtra := item.contextExtra
+
+    if item.contextExtra is Analyzer.PropertyAccessExpressionContextExtra {
+      contextExtra := contextExtra as Analyzer.PropertyAccessExpressionContextExtra
+      return contextExtra.property.builtin
+    }
   }
 
   return false
