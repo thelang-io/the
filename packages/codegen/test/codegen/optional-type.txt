@@ -8,10 +8,10 @@ main {
 #include <d4/string.h>
 #include <stddef.h>
 #include <stdint.h>
-D4_OPTIONAL_DECLARE(str, d4_str_t)
 D4_OPTIONAL_DECLARE(int, int32_t)
-D4_OPTIONAL_DEFINE(str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
+D4_OPTIONAL_DECLARE(str, d4_str_t)
 D4_OPTIONAL_DEFINE(int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+D4_OPTIONAL_DEFINE(str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
 int main (void) {
   d4_opt_int_t var1_0 = NULL;
   d4_opt_str_t var2_0 = NULL;

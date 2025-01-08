@@ -134,7 +134,7 @@ export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
   if itUp.hasParent() {
     parent := itUp.parent()
 
-    if parent.isConditional() {
+    if parent.isConditional() || parent.isPropertyAccess() {
       return false
     }
   }

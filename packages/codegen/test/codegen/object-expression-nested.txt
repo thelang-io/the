@@ -3,7 +3,7 @@ obj Test1 {
   t2: int
 }
 obj Test2 {
-  t1: Test3
+  mut t1: Test3
   t2: rune
 }
 obj Test3 {
@@ -30,7 +30,7 @@ main {
 
   t4.t1 = Test2{
     t1: Test3{t1: true, t2: 2.16, t3: 1},
-    t2: 100,
+    t2: 'y',
   }
 
   t4.t1.t1 = Test3{t1: false, t2: 1.23, t3: 5}

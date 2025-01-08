@@ -369,18 +369,12 @@ export obj Codegen {
     )
   }
 
-  fn _preDeclareStatement (mut self: ref Self, item: ref Parser.Statement) bool {
-  }
-
   fn _declareStatement (mut self: ref Self, item: ref Parser.Statement) bool {
     if item.isMainDeclaration() {
       self._declareMain(item)
     } elif item.isObjectDeclaration() {
       self._declareObject(item)
     }
-  }
-
-  fn _postDeclareStatement (mut self: ref Self, item: ref Parser.Statement) bool {
   }
 
   fn _declareMain (mut self: ref Codegen, item: ref Parser.Statement) void {
@@ -439,6 +433,8 @@ export obj Codegen {
       return AST.createIdentifier(self._("false"))
     } elif it.name == "char" {
       return AST.createLiteral("'\\0'")
+    } elif it.name == "rune" {
+      return AST.createLiteral("L'\\0'")
     } elif it.name == "str" {
       return AST.createIdentifier(self._("d4_str_empty_val"))
     } elif it.isArray() || it.isMap() {
@@ -2021,6 +2017,10 @@ export obj Codegen {
       return name
     }
 
+    itemType := item.asMap()
+    self._typeGen(itemType.keyType)
+    self._typeGen(itemType.valueType)
+
     self.entities.push(CodegenEntity{
       name: name,
       codeName: name,
@@ -2435,6 +2435,14 @@ export obj Codegen {
       return name
     }
 
+    itemType := item.asUnion()
+    subtypesLen := itemType.types.len
+
+    loop i := 0; i < subtypesLen; i++ {
+      subtype := itemType.types[i] as ref Analyzer.Type
+      self._typeGen(subtype)
+    }
+
     self.entities.push(CodegenEntity{
       name: name,
       codeName: name,
@@ -2767,9 +2775,10 @@ export obj Codegen {
   }
 
   fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, transform := false) AST.CExpression {
+    shouldAllocate := typeShouldBeAllocated(t) && expressionShouldBeAllocated(item)
     shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
 
-    if transform && !shouldFree && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
+    if transform && !shouldFree && shouldAllocate {
       expression = self._allocateExpression(t, expression)
     }
 

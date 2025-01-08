@@ -13,4 +13,73 @@ main {
   print(p2.str())
 }
 ===== code =====
+#include <d4/any.h>
+#include <d4/globals.h>
+#include <d4/macro.h>
+#include <d4/number.h>
+#include <d4/object.h>
+#include <d4/safe.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#define TYPE_str 1
+D4_OBJECT_FORWARD_DECLARE(Person)
+D4_OBJECT_FORWARD_DECLARE(PersonWithAge)
+D4_OBJECT_DECLARE(Person, {
+  d4_str_t name;
+}, const d4_str_t name)
+D4_OBJECT_DECLARE(PersonWithAge, {
+  d4_str_t name;
+  int32_t age;
+}, const d4_str_t name, const int32_t age)
+D4_ANY_DECLARE(str, d4_str_t)
+D4_OBJECT_DEFINE(Person, Person, {
+  self.name = d4_str_copy(name);
+}, {
+  result.name = d4_str_copy(self.name);
+}, {
+  return d4_str_eq(self.name, rhs.name);
+}, {
+  d4_str_free(self.name);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"name"), d4_str_quoted_escape(self.name));
+}, const d4_str_t name)
+D4_OBJECT_DEFINE(PersonWithAge, PersonWithAge, {
+  self.name = d4_str_copy(name);
+  self.age = age;
+}, {
+  result.name = d4_str_copy(self.name);
+  result.age = self.age;
+}, {
+  return d4_str_eq(self.name, rhs.name) && self.age == rhs.age;
+}, {
+  d4_str_free(self.name);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"name"), d4_str_quoted_escape(self.name));
+  result = d4_obj_str_append(result, d4_str_alloc(L"age"), d4_int_str(self.age));
+}, const d4_str_t name, const int32_t age)
+D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
+int main (void) {
+  d4_str_t __THE_1 = d4_str_empty_val;
+  d4_str_t __THE_2 = d4_str_empty_val;
+  d4_str_t __THE_3 = d4_str_empty_val;
+  d4_any_t __THE_4 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_str_t __THE_5 = d4_str_empty_val;
+  d4_any_t __THE_6 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_obj_Person_t p1_0 = d4_obj_Person_alloc(__THE_1 = d4_str_alloc(L"Jessica"));
+  d4_obj_PersonWithAge_t p2_0 = d4_obj_PersonWithAge_alloc(__THE_2 = d4_str_alloc(L"Leonard"), 15);
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_4 = d4_any_str_alloc(__THE_3 = d4_obj_Person_str(p1_0))), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_6 = d4_any_str_alloc(__THE_5 = d4_obj_PersonWithAge_str(p2_0))), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_any_free(__THE_6);
+  d4_str_free(__THE_5);
+  d4_any_free(__THE_4);
+  d4_str_free(__THE_3);
+  d4_obj_PersonWithAge_free(p2_0);
+  d4_str_free(__THE_2);
+  d4_obj_Person_free(p1_0);
+  d4_str_free(__THE_1);
+}
 ===== output =====
+Person{name: "Jessica"}
+PersonWithAge{name: "Leonard", age: 15}

@@ -9,8 +9,8 @@ main {
 #include <d4/reference.h>
 #include <d4/string.h>
 #include <stdint.h>
-D4_REFERENCE_DECLARE(str, d4_str_t)
 D4_REFERENCE_DECLARE(int, int32_t)
+D4_REFERENCE_DECLARE(str, d4_str_t)
 int main (void) {
   int32_t a_0 = 0;
   d4_str_t b_0 = d4_str_alloc(L"name");

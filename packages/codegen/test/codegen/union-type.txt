@@ -14,28 +14,13 @@ main {
 #define TYPE_float 2
 #define TYPE_rune 3
 #define TYPE_str 4
-D4_UNION_DECLARE(runeUSstr, {
-  wchar_t v3;
-  d4_str_t v4;
-})
 D4_UNION_DECLARE(floatUSint, {
   int32_t v1;
   double v2;
 })
-D4_UNION_DEFINE(runeUSstr, {
-  if (self.type == TYPE_rune) self.data.v3 = va_arg(args, wchar_t);
-  if (self.type == TYPE_str) self.data.v4 = d4_str_copy(va_arg(args, d4_str_t));
-}, {
-  if (self.type == TYPE_rune) result.data.v3 = self.data.v3;
-  if (self.type == TYPE_str) result.data.v4 = d4_str_copy(self.data.v4);
-}, {
-  if (self.type == TYPE_rune) return self.data.v3 == rhs.data.v3;
-  if (self.type == TYPE_str) return d4_str_eq(self.data.v4, rhs.data.v4);
-}, {
-  if (self.type == TYPE_str) d4_str_free(self.data.v4);
-}, {
-  if (self.type == TYPE_rune) return d4_rune_str(self.data.v3);
-  if (self.type == TYPE_str) return d4_str_copy(self.data.v4);
+D4_UNION_DECLARE(runeUSstr, {
+  wchar_t v3;
+  d4_str_t v4;
 })
 D4_UNION_DEFINE(floatUSint, {
   if (self.type == TYPE_int) self.data.v1 = va_arg(args, int32_t);
@@ -51,6 +36,21 @@ D4_UNION_DEFINE(floatUSint, {
 }, {
   if (self.type == TYPE_int) return d4_int_str(self.data.v1);
   if (self.type == TYPE_float) return d4_float_str(self.data.v2);
+})
+D4_UNION_DEFINE(runeUSstr, {
+  if (self.type == TYPE_rune) self.data.v3 = va_arg(args, wchar_t);
+  if (self.type == TYPE_str) self.data.v4 = d4_str_copy(va_arg(args, d4_str_t));
+}, {
+  if (self.type == TYPE_rune) result.data.v3 = self.data.v3;
+  if (self.type == TYPE_str) result.data.v4 = d4_str_copy(self.data.v4);
+}, {
+  if (self.type == TYPE_rune) return self.data.v3 == rhs.data.v3;
+  if (self.type == TYPE_str) return d4_str_eq(self.data.v4, rhs.data.v4);
+}, {
+  if (self.type == TYPE_str) d4_str_free(self.data.v4);
+}, {
+  if (self.type == TYPE_rune) return d4_rune_str(self.data.v3);
+  if (self.type == TYPE_str) return d4_str_copy(self.data.v4);
 })
 int main (void) {
   d4_union_floatUSintUE_t var1_0 = d4_union_floatUSintUE_alloc(-1);
