@@ -7,6 +7,32 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
+export fn createASTPropertyAccess (expression: AST.CExpression, property: str) AST.CExpression {
+  if expression.isAssignmentExpression() {
+    return createASTPropertyAccessWithAssignment(expression, property)
+  } elif expression.isUnaryExpression() {
+    return createASTPropertyAccessWithUnary(expression, property)
+  }
+
+  return AST.createPropertyAccessExpression(expression, property)
+}
+
+export fn createASTPropertyAccessWithAssignment (expression: AST.CExpression, property: str) AST.CExpression {
+  wrappedExpression := expression.wrap()
+  return AST.createPropertyAccessExpression(wrappedExpression, property)
+}
+
+export fn createASTPropertyAccessWithUnary (expression: AST.CExpression, property: str) AST.CExpression {
+  cUnaryExpression := expression.asUnaryExpression()
+
+  if cUnaryExpression.postfix || cUnaryExpression.operator != "*" {
+    return AST.createPropertyAccessExpression(expression, property)
+  }
+
+  wrappedExpression := expression.wrap()
+  return AST.createPropertyAccessExpression(wrappedExpression, property)
+}
+
 export fn declarationType (item: ref Parser.Statement) (ref Analyzer.Type)? {
   itemContext := item.context
 

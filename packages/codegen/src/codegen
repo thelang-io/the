@@ -9,6 +9,7 @@ import * as Parser from "the/parser"
 import BUILTIN_ENTITIES from "./builtin-entities"
 import BlockData, BlockDataContext from "./block-data"
 import
+  createASTPropertyAccess,
   declarationByDependency,
   expressionIsBuiltinMethod,
   expressionResolve,
@@ -1058,7 +1059,7 @@ export obj Codegen {
     }
 
     mut args: (AST.CExpression | AST.CType)[] = [
-      AST.createPropertyAccessExpression(calleeExpression, "ctx")
+      createASTPropertyAccess(calleeExpression, "ctx")
     ]
 
     if !paramsArgs.empty {
@@ -1075,7 +1076,7 @@ export obj Codegen {
       ]))
     }
 
-    return AST.createCallExpression(AST.createPropertyAccessExpression(calleeExpression, "func"), args)
+    return AST.createCallExpression(createASTPropertyAccess(calleeExpression, "func"), args)
   }
 
   fn _generateConditionalExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -1142,7 +1143,7 @@ export obj Codegen {
       return result.wrap()
     }
 
-    left = AST.createPropertyAccessExpression(left, "type")
+    left = createASTPropertyAccess(left, "type")
     return AST.createBinaryExpression(left, "==", right)
   }
 
@@ -1219,7 +1220,7 @@ export obj Codegen {
 
     expression := item.asPropertyAccess()
 
-    return AST.createPropertyAccessExpression(
+    return createASTPropertyAccess(
       self._generateExpression(ref expression.expression),
       expression.name.name,
     )
@@ -2781,7 +2782,7 @@ export obj Codegen {
       // TODO: throw runtime error if not possible to cast
       innerExpression := AST.createCastExpression(
         AST.createType(self._(typeName)),
-        AST.createPropertyAccessExpression(expression, "ctx")
+        createASTPropertyAccess(expression, "ctx")
       )
 
       expression = AST.createUnaryExpression("*", innerExpression.wrap())
@@ -2801,7 +2802,7 @@ export obj Codegen {
 
       // TODO: throw runtime error if not possible to cast
       expression = AST.createPropertyAccessExpression(
-        AST.createPropertyAccessExpression(expression, "data"),
+        createASTPropertyAccess(expression, "data"),
         "v" + typeDefIdx.str(),
       )
     } elif !Analyzer.match(t, targetType) && (
