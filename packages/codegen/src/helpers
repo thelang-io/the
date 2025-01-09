@@ -120,45 +120,25 @@ export fn expressionResolve (item: ref Parser.Expression, up := false, down := f
 }
 
 export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
-  itUp := expressionResolve(item, up: true)
   itDown := expressionResolve(item, down: true)
 
-  if !itUp.hasParent() && itUp.hasParentNode() {
-    parentNode := itUp.parentNode()
-
-    if parentNode.isVariableDeclaration() {
-      return false
-    }
-  }
-
-  if itUp.hasParent() {
-    parent := itUp.parent()
-
-    if parent.isConditional() || parent.isPropertyAccess() {
-      return false
-    }
-  }
-
-  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
+  return !(
+    itDown.isIdentifier() ||
+    itDown.isNilLiteral() ||
+    itDown.isAssignment()
+  )
 }
 
 export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   itUp := expressionResolve(item, up: true)
   itDown := expressionResolve(item, down: true)
 
-  if itUp.hasParent() {
-    return false
-  }
-
-  if itUp.hasParentNode() {
-    parentNode := itUp.parentNode()
-
-    if parentNode.isVariableDeclaration() {
-      return false
-    }
-  }
-
-  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
+  return !(
+    itUp.hasParent() ||
+    itDown.isIdentifier() ||
+    itDown.isNilLiteral() ||
+    itDown.isAssignment()
+  )
 }
 
 export fn statementHasPrecedingNonVarDecl (item: ref Parser.Statement) bool {

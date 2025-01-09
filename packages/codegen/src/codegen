@@ -890,7 +890,7 @@ export obj Codegen {
     expression := item.asAssignment()
     leftType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.left), withReference: false)
     rightType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.right), withReference: false)
-    left := self._generateExpression(ref expression.left)
+    left := self._generateExpression(ref expression.left, transform: false)
     mut right := self._generateExpression(ref expression.right)
 
     if expression.operator.t == .OpPlusEq && (leftType.name == "str" || rightType.name == "str") {
@@ -1062,7 +1062,7 @@ export obj Codegen {
 
     expression := item.asConditional()
     alternateType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.alternate), withReference: false)
-    mut alternate := self._generateExpression(ref expression.alternate)
+    mut alternate := self._generateExpression(ref expression.alternate, transform: false)
 
     if alternate.isAssignmentExpression() && !typeSafeForTernaryAlternate(alternateType) {
       alternate = alternate.wrap()
@@ -1070,7 +1070,7 @@ export obj Codegen {
 
     return AST.createConditionalExpression(
       self._generateExpression(ref expression.condition),
-      self._generateExpression(ref expression.consequent),
+      self._generateExpression(ref expression.consequent, transform: false),
       alternate,
     )
   }
@@ -1705,7 +1705,7 @@ export obj Codegen {
 
     initializer := statement.initializer == nil
       ? self._defaultInitializerDeclaration(context.varType)
-      : self._generateExpression(ref statement.initializer)
+      : self._generateExpression(ref statement.initializer, transform: false)
 
     variableName := self.blockData.setVariable(statement.name.name)
 
