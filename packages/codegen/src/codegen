@@ -475,120 +475,100 @@ export obj Codegen {
   }
 
   fn _functionCopy (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
-    if it.isAlias() {
-      t := it.asAlias()
-      return self._functionCopy(t.t, expression)
-    } elif it.name == "any" {
-      return AST.createCallExpression(AST.createIdentifier(self._("d4_any_copy")), [expression])
-    } elif it.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_copy")), [expression])
-    } elif (
-      it.isArray() ||
-      it.isFunction() ||
-      it.isMap() ||
+    t := Analyzer.unwrap(it, withReference: false)
+
+    if (
+      t.name == "any" ||
+      t.name == "str" ||
+      t.isArray() ||
+      t.isFunction() ||
+      t.isMap() ||
       // TODO: test
-      it.isMethod() ||
+      t.isMethod() ||
       // TODO: test
-      it.isCustomObject() ||
-      it.isOptional() ||
-      it.isUnion()
+      t.isCustomObject() ||
+      t.isOptional() ||
+      t.isUnion()
     ) {
-      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_copy")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._type(t, "_copy")), [expression])
     }
 
     return expression
   }
 
   fn _functionEq (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression, reverse := false) AST.CExpression {
-    mut result := AST.createAssignmentExpression(left, reverse ? "!=" : "==", right)
+    t := Analyzer.unwrap(it, withReference: false)
 
-    if it.isAlias() {
-      t := it.asAlias()
-      result = self._functionEq(t.t, left, right, reverse)
-    } elif it.name == "any" {
-      result = AST.createCallExpression(AST.createIdentifier(self._("d4_any_eq")), [left, right])
-    } elif it.name == "str" {
-      result = AST.createCallExpression(AST.createIdentifier(self._("d4_str_eq")), [left, right])
-    } elif (
-      it.isArray() ||
+    if (
+      t.name == "any" ||
+      t.name == "str" ||
+      t.isArray() ||
       // TODO: test
-      it.isFunction() ||
-      it.isMap() ||
+      t.isFunction() ||
+      t.isMap() ||
       // TODO: test
-      it.isMethod() ||
+      t.isMethod() ||
       // TODO: test
-      it.isCustomObject() ||
-      it.isOptional() ||
-      it.isUnion()
+      t.isCustomObject() ||
+      t.isOptional() ||
+      t.isUnion()
     ) {
-      result = AST.createCallExpression(AST.createIdentifier(self._type(it, "_eq")), [left, right])
-    } else {
-      return result
+      result := AST.createCallExpression(AST.createIdentifier(self._type(t, "_eq")), [left, right])
+    return reverse ? AST.createUnaryExpression("!", result) : result
     }
 
-    return reverse ? AST.createUnaryExpression("!", result) : result
+    return AST.createAssignmentExpression(left, reverse ? "!=" : "==", right)
   }
 
   fn _functionFree (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
-    if it.isAlias() {
-      t := it.asAlias()
-      return self._functionFree(t.t, expression)
-    } elif it.name == "any" {
-      return AST.createCallExpression(AST.createIdentifier(self._("d4_any_free")), [expression])
-    } elif it.name == "str" {
-      return AST.createCallExpression(AST.createIdentifier(self._("d4_str_free")), [expression])
-    } elif (
-      it.isArray() ||
-      it.isFunction() ||
-      it.isMap() ||
+    t := Analyzer.unwrap(it, withReference: false)
+
+    if (
+      t.name == "any" ||
+      t.name == "str" ||
+      t.isArray() ||
+      t.isFunction() ||
+      t.isMap() ||
       // TODO: test
-      it.isMethod() ||
+      t.isMethod() ||
       // TODO: test
-      it.isCustomObject() ||
-      it.isOptional() ||
-      it.isUnion()
+      t.isCustomObject() ||
+      t.isOptional() ||
+      t.isUnion()
     ) {
-      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_free")), [expression])
+      return AST.createCallExpression(AST.createIdentifier(self._type(t, "_free")), [expression])
     }
 
     return AST.createCastExpression(AST.createType("void"), expression)
   }
 
   fn _functionRealloc (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression) AST.CExpression {
-    if it.isAlias() {
-      t := it.asAlias()
-      return self._functionRealloc(t.t, left, right)
-    } elif it.name == "any" {
-      return AST.createAssignmentExpression(
-        left,
-        "=",
-        AST.createCallExpression(AST.createIdentifier(self._("d4_any_realloc")), [left, right]),
-      )
-    } elif it.name == "str" {
-      return AST.createAssignmentExpression(
-        left,
-        "=",
-        AST.createCallExpression(AST.createIdentifier(self._("d4_str_realloc")), [left, right]),
-      )
-    } elif (
-      it.isArray() ||
-      it.isFunction() ||
-      it.isMap() ||
+    t := Analyzer.unwrap(it, withReference: false)
+
+    if (
+      t.name == "any" ||
+      t.name == "str" ||
+      t.isArray() ||
+      t.isFunction() ||
+      t.isMap() ||
       // TODO: test
-      it.isMethod() ||
+      t.isMethod() ||
       // TODO: test
-      it.isCustomObject() ||
-      it.isOptional() ||
-      it.isUnion()
+      t.isCustomObject() ||
+      t.isOptional() ||
+      t.isUnion()
     ) {
       return AST.createAssignmentExpression(
         left,
         "=",
-        AST.createCallExpression(AST.createIdentifier(self._type(it, "_realloc")), [left, right]),
+        AST.createCallExpression(
+          AST.createIdentifier(self._type(t, "_realloc")),
+          [left, right]
+        ),
       )
     }
 
-    throw error_NewError("Tried re-allocating unknown type '" + it.toString() + "'")
+    throw error_NewError("Tried re-allocating unknown type '" + t.toString() + "'")
   }
 
   fn _functionStr (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression, quote := false) AST.CExpression {
@@ -2695,7 +2675,7 @@ export obj Codegen {
       t := it.asAlias()
       return self._type(t.t)
     } elif it.name == "any" {
-      return self._("d4_any_t") + " "
+      return self._("d4_any" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     } elif it.name == "bool" {
       return self._("bool") + " "
     } elif it.name == "byte" {
