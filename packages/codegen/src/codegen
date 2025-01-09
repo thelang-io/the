@@ -2018,8 +2018,12 @@ export obj Codegen {
     }
 
     itemType := item.asMap()
+    tm := self._tm()
+
     self._typeGen(itemType.keyType)
     self._typeGen(itemType.valueType)
+    self._typeGen(tm.createArray(itemType.keyType))
+    self._typeGen(tm.createArray(itemType.valueType))
 
     self.entities.push(CodegenEntity{
       name: name,

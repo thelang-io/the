@@ -254,29 +254,25 @@ export fn typeSafeForVaArg (mut tm: ref Analyzer.TypeMap, it: ref Analyzer.Type)
 }
 
 export fn typeShouldBeAllocated (self: ref Analyzer.Type) bool {
-  if self.isAlias() {
-    t := self.asAlias()
-    return typeShouldBeAllocated(t.t)
-  }
+  t := Analyzer.unwrap(self, withReference: false)
 
   return (
-    self.name == "any" ||
-    self.name == "str" ||
-    self.isArray() ||
-    self.isMap() ||
+    t.name == "any" ||
+    t.name == "str" ||
+    t.isArray() ||
+    t.isMap() ||
     // TODO: test
-    self.isCustomObject() ||
-    self.isOptional() ||
-    self.isUnion()
+    t.isCustomObject() ||
+    t.isOptional() ||
+    t.isUnion()
   )
 }
 
 export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
-  if self.isAlias() {
-    t := self.asAlias()
-    return typeShouldBeFreed(t.t)
-  } elif self.isUnion() {
-    t := self.asUnion()
+  t := Analyzer.unwrap(self, withReference: false)
+
+  if t.isUnion() {
+    t := t.asUnion()
 
     loop i := 0; i < t.types.len; i++ {
       subType := t.types[i]
@@ -290,12 +286,12 @@ export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
   }
 
   return
-    self.name == "any" ||
-    self.name == "str" ||
-    self.isArray() ||
+    t.name == "any" ||
+    t.name == "str" ||
+    t.isArray() ||
     // TODO: test
-    self.isCustomObject() ||
-    self.isFunction() ||
-    self.isMap() ||
-    self.isOptional()
+    t.isCustomObject() ||
+    t.isFunction() ||
+    t.isMap() ||
+    t.isOptional()
 }

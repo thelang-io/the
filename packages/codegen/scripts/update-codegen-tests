@@ -56,4 +56,6 @@ main {
 
     fs_writeFileSync(filePath, newContent.toBuffer())
   }
+
+  print("run successful")
 }
