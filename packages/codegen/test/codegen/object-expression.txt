@@ -19,4 +19,71 @@ main {
   nina.name += "Test"
 }
 ===== code =====
+#include <d4/macro.h>
+#include <d4/number.h>
+#include <d4/object.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stdint.h>
+D4_OBJECT_FORWARD_DECLARE(Point)
+D4_OBJECT_FORWARD_DECLARE(Human)
+D4_OBJECT_DECLARE(Point, {
+  double x;
+  double y;
+}, const double x, const double y)
+D4_OBJECT_DECLARE(Human, {
+  d4_str_t name;
+  int32_t age;
+}, const d4_str_t name, const int32_t age)
+D4_OBJECT_DEFINE(Point, Point, {
+  self.x = x;
+  self.y = y;
+}, {
+  result.x = self.x;
+  result.y = self.y;
+}, {
+  return self.x == rhs.x && self.y == rhs.y;
+}, {
+  (void) self;
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"x"), d4_float_str(self.x));
+  result = d4_obj_str_append(result, d4_str_alloc(L"y"), d4_float_str(self.y));
+}, const double x, const double y)
+D4_OBJECT_DEFINE(Human, Human, {
+  self.name = d4_str_copy(name);
+  self.age = age;
+}, {
+  result.name = d4_str_copy(self.name);
+  result.age = self.age;
+}, {
+  return d4_str_eq(self.name, rhs.name) && self.age == rhs.age;
+}, {
+  d4_str_free(self.name);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"name"), d4_str_quoted_escape(self.name));
+  result = d4_obj_str_append(result, d4_str_alloc(L"age"), d4_int_str(self.age));
+}, const d4_str_t name, const int32_t age)
+int main (void) {
+  d4_str_t __THE_1 = d4_str_empty_val;
+  d4_obj_Human_t tina_0;
+  d4_str_t __THE_2 = d4_str_empty_val;
+  d4_obj_Human_t nina_0;
+  d4_str_t __THE_3 = d4_str_empty_val;
+  d4_str_t __THE_4 = d4_str_empty_val;
+  d4_obj_Point_t a1_0 = d4_obj_Point_alloc(37.7681251, -((bool) 122.5138329));
+  d4_obj_Point_t a2_0 = d4_obj_Point_alloc(37.7681251, -((bool) 122.5138329));
+  a1_0.x += 2;
+  a2_0.y /= 0.2;
+  tina_0 = d4_obj_Human_alloc(__THE_1 = d4_str_alloc(L"Tina"), 45);
+  nina_0 = d4_obj_Human_alloc(__THE_2 = d4_str_alloc(L"Nina"), 33);
+  nina_0.name = d4_str_realloc(nina_0.name, __THE_4 = d4_str_concat(nina_0.name, __THE_3 = d4_str_alloc(L"Test")));
+  d4_str_free(__THE_4);
+  d4_str_free(__THE_3);
+  d4_obj_Human_free(nina_0);
+  d4_str_free(__THE_2);
+  d4_obj_Human_free(tina_0);
+  d4_str_free(__THE_1);
+  d4_obj_Point_free(a2_0);
+  d4_obj_Point_free(a1_0);
+}
 ===== output =====

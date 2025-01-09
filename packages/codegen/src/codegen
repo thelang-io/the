@@ -14,6 +14,7 @@ import
   expressionIsBuiltinMethod,
   expressionResolve,
   expressionShouldBeAllocated,
+  expressionShouldBeCopied,
   expressionShouldBeFreed,
   statementHasPrecedingNonVarDecl,
   statementIsMacroInvocation,
@@ -514,7 +515,7 @@ export obj Codegen {
       t.isUnion()
     ) {
       result := AST.createCallExpression(AST.createIdentifier(self._type(t, "_eq")), [left, right])
-    return reverse ? AST.createUnaryExpression("!", result) : result
+      return reverse ? AST.createUnaryExpression("!", result) : result
     }
 
     return AST.createAssignmentExpression(left, reverse ? "!=" : "==", right)
@@ -1703,11 +1704,19 @@ export obj Codegen {
     t := AST.createType(self._type(context.varType))
     shouldSplitDeclaration := statementHasPrecedingNonVarDecl(item)
 
-    initializer := statement.initializer == nil
+    mut initializer := statement.initializer == nil
       ? self._defaultInitializerDeclaration(context.varType)
       : self._generateExpression(ref statement.initializer, transform: false)
 
     variableName := self.blockData.setVariable(statement.name.name)
+
+    if statement.initializer != nil {
+      statementInitializer := statement.initializer
+
+      if typeShouldBeAllocated(context.varType) && expressionShouldBeCopied(ref statementInitializer) {
+        initializer = self._functionCopy(context.varType, initializer)
+      }
+    }
 
     if typeShouldBeFreed(context.varType) {
       self.blockData.addTeardown(
@@ -2759,10 +2768,9 @@ export obj Codegen {
   }
 
   fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, transform := false) AST.CExpression {
-    shouldAllocate := typeShouldBeAllocated(t) && expressionShouldBeAllocated(item)
     shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
 
-    if transform && !shouldFree && shouldAllocate {
+    if transform && !shouldFree && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
       expression = self._allocateExpression(t, expression)
     }
 

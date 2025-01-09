@@ -125,7 +125,18 @@ export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
   return !(
     itDown.isIdentifier() ||
     itDown.isNilLiteral() ||
-    itDown.isAssignment()
+    itDown.isAssignment() ||
+    itDown.isPropertyAccess()
+  )
+}
+
+export fn expressionShouldBeCopied (item: ref Parser.Expression) bool {
+  itDown := expressionResolve(item, down: true)
+
+  return (
+    itDown.isIdentifier() ||
+    itDown.isAssignment() ||
+    itDown.isPropertyAccess()
   )
 }
 
@@ -137,7 +148,8 @@ export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
     itUp.hasParent() ||
     itDown.isIdentifier() ||
     itDown.isNilLiteral() ||
-    itDown.isAssignment()
+    itDown.isAssignment() ||
+    itDown.isPropertyAccess()
   )
 }
 

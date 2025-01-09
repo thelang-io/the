@@ -39,4 +39,99 @@ main {
   t5 := Test1{}
 }
 ===== code =====
+#include <d4/bool.h>
+#include <d4/number.h>
+#include <d4/object.h>
+#include <d4/rune.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <wchar.h>
+D4_OBJECT_FORWARD_DECLARE(Test3)
+D4_OBJECT_FORWARD_DECLARE(Test2)
+D4_OBJECT_FORWARD_DECLARE(Test1)
+D4_OBJECT_DECLARE(Test3, {
+  bool t1;
+  double t2;
+  int32_t t3;
+}, const bool t1, const double t2, const int32_t t3)
+D4_OBJECT_DECLARE(Test2, {
+  d4_obj_Test3_t t1;
+  wchar_t t2;
+}, const d4_obj_Test3_t t1, const wchar_t t2)
+D4_OBJECT_DECLARE(Test1, {
+  d4_obj_Test2_t t1;
+  int32_t t2;
+}, const d4_obj_Test2_t t1, const int32_t t2)
+D4_OBJECT_DEFINE(Test3, Test3, {
+  self.t1 = t1;
+  self.t2 = t2;
+  self.t3 = t3;
+}, {
+  result.t1 = self.t1;
+  result.t2 = self.t2;
+  result.t3 = self.t3;
+}, {
+  return self.t1 == rhs.t1 && self.t2 == rhs.t2 && self.t3 == rhs.t3;
+}, {
+  (void) self;
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"t1"), d4_bool_str(self.t1));
+  result = d4_obj_str_append(result, d4_str_alloc(L"t2"), d4_float_str(self.t2));
+  result = d4_obj_str_append(result, d4_str_alloc(L"t3"), d4_int_str(self.t3));
+}, const bool t1, const double t2, const int32_t t3)
+D4_OBJECT_DEFINE(Test2, Test2, {
+  self.t1 = d4_obj_Test3_copy(t1);
+  self.t2 = t2;
+}, {
+  result.t1 = d4_obj_Test3_copy(self.t1);
+  result.t2 = self.t2;
+}, {
+  return d4_obj_Test3_eq(self.t1, rhs.t1) && self.t2 == rhs.t2;
+}, {
+  d4_obj_Test3_free(self.t1);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"t1"), d4_obj_Test3_str(self.t1));
+  result = d4_obj_str_append(result, d4_str_alloc(L"t2"), d4_rune_str(self.t2));
+}, const d4_obj_Test3_t t1, const wchar_t t2)
+D4_OBJECT_DEFINE(Test1, Test1, {
+  self.t1 = d4_obj_Test2_copy(t1);
+  self.t2 = t2;
+}, {
+  result.t1 = d4_obj_Test2_copy(self.t1);
+  result.t2 = self.t2;
+}, {
+  return d4_obj_Test2_eq(self.t1, rhs.t1) && self.t2 == rhs.t2;
+}, {
+  d4_obj_Test2_free(self.t1);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"t1"), d4_obj_Test2_str(self.t1));
+  result = d4_obj_str_append(result, d4_str_alloc(L"t2"), d4_int_str(self.t2));
+}, const d4_obj_Test2_t t1, const int32_t t2)
+int main (void) {
+  d4_obj_Test3_t __THE_1 = d4_obj_Test3_alloc(false, 0, 0);
+  d4_obj_Test2_t __THE_2 = d4_obj_Test2_alloc(d4_obj_Test3_alloc(false, 0, 0), L'\0');
+  d4_obj_Test3_t __THE_3 = d4_obj_Test3_alloc(false, 0, 0);
+  d4_obj_Test2_t __THE_4 = d4_obj_Test2_alloc(d4_obj_Test3_alloc(false, 0, 0), L'\0');
+  d4_obj_Test3_t __THE_5 = d4_obj_Test3_alloc(false, 0, 0);
+  d4_obj_Test1_t t5_0;
+  d4_obj_Test3_t t1_0 = d4_obj_Test3_alloc(false, 3.14, -1);
+  d4_obj_Test2_t t2_0 = d4_obj_Test2_alloc(t1_0, L'a');
+  d4_obj_Test1_t t3_0 = d4_obj_Test1_alloc(t2_0, 10);
+  d4_obj_Test1_t t4_0 = d4_obj_Test1_alloc(__THE_2 = d4_obj_Test2_alloc(__THE_1 = d4_obj_Test3_alloc(false, 3.14, -1), L'a'), 2);
+  t4_0.t1 = d4_obj_Test2_realloc(t4_0.t1, __THE_4 = d4_obj_Test2_alloc(__THE_3 = d4_obj_Test3_alloc(true, 2.16, 1), L'y'));
+  t4_0.t1.t1 = d4_obj_Test3_realloc(t4_0.t1.t1, __THE_5 = d4_obj_Test3_alloc(false, 1.23, 5));
+  t4_0.t1.t1.t3 = 0;
+  t5_0 = d4_obj_Test1_alloc(d4_obj_Test2_alloc(d4_obj_Test3_alloc(false, 0, 0), L'\0'), 0);
+  d4_obj_Test1_free(t5_0);
+  d4_obj_Test3_free(__THE_5);
+  d4_obj_Test2_free(__THE_4);
+  d4_obj_Test3_free(__THE_3);
+  d4_obj_Test1_free(t4_0);
+  d4_obj_Test2_free(__THE_2);
+  d4_obj_Test3_free(__THE_1);
+  d4_obj_Test1_free(t3_0);
+  d4_obj_Test2_free(t2_0);
+  d4_obj_Test3_free(t1_0);
+}
 ===== output =====
