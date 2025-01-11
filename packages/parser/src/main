@@ -87,7 +87,12 @@ import
   init as Reader_init,
   locate as Reader_locate
 from "./reader"
-import toType as expressionToType, typeToExpression, validObjExprId from "./expression"
+import
+  getInner as getInnerExpressions,
+  toType as expressionToType,
+  typeToExpression,
+  validObjExprId
+from "./expression"
 import interconnect, parse, report from "./parser"
 import expression as stringifyExpression, statement as stringifyStatement, typeT as stringifyType from "./string"
 
@@ -170,6 +175,7 @@ export Reader_error
 export Reader_init
 export Reader_locate
 export expressionToType
+export getInnerExpressions
 export typeToExpression
 export validObjExprId
 export interconnect

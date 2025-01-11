@@ -826,6 +826,27 @@ expressionToType(expression)
 
 - `Error` - thrown if unable to transform
 
+### `getInnerExpressions (self: ref Expression) (ref Expression)[]`
+Get first level inner expressions of a specified expression.
+
+**Parameters**
+
+- `self` - expression to get inner expression from.
+
+**Return value**
+
+First level inner expressions.
+
+**Examples**
+
+```the
+result := getInnerExpression(ref expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to get inner expressions
+
 ### `stringifyExpression (expression: Expression) str`
 Converts expression to a code string.
 
