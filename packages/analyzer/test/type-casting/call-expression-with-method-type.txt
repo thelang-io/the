@@ -1,0 +1,60 @@
+obj Example {
+  mut a: int
+  fn test1 (self: Self) int { return self.a }
+  fn test2 (mut self: Self) int { return self.a }
+  fn test3 (self: ref Self) int { return self.a }
+  fn test4 (mut self: ref Self) int { return self.a }
+}
+
+main {
+  mut example := Example{a: 10}
+
+  b := example.test1()
+  c := example.test2()
+  d := example.test3()
+  e := example.test4()
+}
+===== out =====
+ObjectDeclaration(name=Example context:selfType=Example)
+  ObjectDeclarationProperty(name=a mutable=true constant=false type=int)
+  ObjectDeclarationMethod(asynchronous=false name=test1 return=int)
+    FunctionParameter(name=self type=Self mutable=false variadic=false)
+    ReturnStatement()
+      PropertyAccessExpression(initial=int name=a extra:propertyName=a extra:propertyType=int extra:propertyMutable)
+        Identifier(initial=Example name=self)
+  ObjectDeclarationMethod(asynchronous=false name=test2 return=int)
+    FunctionParameter(name=self type=Self mutable=true variadic=false)
+    ReturnStatement()
+      PropertyAccessExpression(initial=int name=a extra:propertyName=a extra:propertyType=int extra:propertyMutable)
+        Identifier(initial=Example name=self)
+  ObjectDeclarationMethod(asynchronous=false name=test3 return=int)
+    FunctionParameter(name=self type=ref Self mutable=false variadic=false)
+    ReturnStatement()
+      PropertyAccessExpression(initial=int name=a extra:propertyName=a extra:propertyType=int extra:propertyMutable)
+        Identifier(initial=ref Example target=Example name=self)
+  ObjectDeclarationMethod(asynchronous=false name=test4 return=int)
+    FunctionParameter(name=self type=ref Self mutable=true variadic=false)
+    ReturnStatement()
+      PropertyAccessExpression(initial=int name=a extra:propertyName=a extra:propertyType=int extra:propertyMutable)
+        Identifier(initial=ref Example target=Example name=self)
+MainDeclaration()
+  VariableDeclaration(name=example mutable=true constant=false context:varType=Example)
+    ObjectExpression(initial=Example id=Example)
+      ObjectExpressionProperty(name=a)
+        IntegerLiteral(initial=int value=10)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=int)
+    CallExpression(initial=int extra:asynchronous=false extra:returnType=int)
+      PropertyAccessExpression(initial=(self: Example) -> int name=test1 extra:propertyName=test1 extra:propertyType=(self: Example) -> int)
+        Identifier(initial=Example name=example)
+  VariableDeclaration(name=c mutable=false constant=false context:varType=int)
+    CallExpression(initial=int extra:asynchronous=false extra:returnType=int)
+      PropertyAccessExpression(initial=(mut self: Example) -> int name=test2 extra:propertyName=test2 extra:propertyType=(mut self: Example) -> int)
+        Identifier(initial=Example name=example)
+  VariableDeclaration(name=d mutable=false constant=false context:varType=int)
+    CallExpression(initial=int extra:asynchronous=false extra:returnType=int)
+      PropertyAccessExpression(initial=(self: ref Example) -> int name=test3 extra:propertyName=test3 extra:propertyType=(self: ref Example) -> int)
+        Identifier(initial=Example name=example)
+  VariableDeclaration(name=e mutable=false constant=false context:varType=int)
+    CallExpression(initial=int extra:asynchronous=false extra:returnType=int)
+      PropertyAccessExpression(initial=(mut self: ref Example) -> int name=test4 extra:propertyName=test4 extra:propertyType=(mut self: ref Example) -> int)
+        Identifier(initial=Example target=ref Example name=example)

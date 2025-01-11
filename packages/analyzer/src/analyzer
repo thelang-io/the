@@ -392,27 +392,26 @@ export obj AnalyzerFile {
     noTargetPromote := false,
     noTypeCast := false,
     withMutable := false,
-    withMutableNext := false,
   ) ref Type.Type {
     if (
       self._eIdentifier(it, targetType, noTypeCast, withMutable) ||
       self._eLiteral(it, targetType) ||
       self._eArray(it, targetType) ||
-      self._eAs(it, targetType, withMutable, withMutableNext) ||
+      self._eAs(it, targetType, withMutable) ||
       self._eAssignment(it, targetType) ||
       self._eAwait(it, targetType) ||
       self._eBinary(it, targetType) ||
       self._eCall(it, targetType) ||
       self._eClosure(it, targetType) ||
-      self._eConditional(it, targetType, withMutable, withMutableNext) ||
-      self._eElementAccess(it, targetType, noTypeCast, withMutable, withMutableNext) ||
-      self._eIs(it, targetType, withMutable, withMutableNext) ||
+      self._eConditional(it, targetType, withMutable) ||
+      self._eElementAccess(it, targetType, noTypeCast, withMutable) ||
+      self._eIs(it, targetType, withMutable) ||
       self._eMap(it, targetType) ||
       self._eMemberAccess(it, targetType) ||
       self._eObject(it, targetType) ||
-      self._eParenthesized(it, targetType, noTargetPromote, withMutable, withMutableNext) ||
-      self._ePropertyAccess(it, targetType, noTypeCast, withMutable, withMutableNext) ||
-      self._eReference(it, targetType, withMutable, withMutableNext) ||
+      self._eParenthesized(it, targetType, noTargetPromote, withMutable) ||
+      self._ePropertyAccess(it, targetType, noTypeCast, withMutable) ||
+      self._eReference(it, targetType, withMutable) ||
       self._eUnary(it, targetType)
     ) {
       if !noTargetPromote && targetType != nil {
@@ -1276,7 +1275,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eAs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
+  fn _eAs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
     if !it.isAs() {
       return false
     }
@@ -1288,7 +1287,7 @@ export obj AnalyzerFile {
       ref expression.expression,
       Type.opt(t),
       noTargetPromote: true,
-      withMutable: withMutable || withMutableNext,
+      withMutable: withMutable,
     )
 
     if !expressionType.canCastTo(t) {
@@ -1455,6 +1454,7 @@ export obj AnalyzerFile {
     initialErrorsLen := self.analyzer.errors.len
     mut expression := it.asCall()
     calleeType := Type.unwrap(self.e(ref expression.callee))
+    Context.setTarget(ref expression.callee, calleeType)
     mut asynchronous: bool
     mut parameters: Type.TypeParameter[]
     mut returnType := self.tm.get("void")
@@ -1472,7 +1472,18 @@ export obj AnalyzerFile {
 
       if t.withSelf && t.selfMutable && t.selfType.isReference() {
         self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
-        self.e(ref expression.callee, withMutableNext: true)
+
+        selfReferenceType := t.selfType.asReference()
+        innerExpressions := Parser.getInnerExpressions(ref expression.callee)
+
+        loop i := 0; i < innerExpressions.len; i++ {
+          innerExpression := innerExpressions[i] as ref Parser.Expression
+          innerExpressionType := self.e(innerExpression, withMutable: true)
+
+          if Type.match(selfReferenceType.t, innerExpressionType) {
+            Context.setTarget(innerExpression, t.selfType)
+          }
+        }
       }
     } else {
       Context.set(it, self.tm.get("void"))
@@ -1628,7 +1639,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eConditional (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
+  fn _eConditional (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
     if !it.isConditional() {
       return false
     }
@@ -1647,14 +1658,14 @@ export obj AnalyzerFile {
 
     guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
       self.tc.merge(typeCastResult.consequent)
-      result := self.e(ref expression.consequent, operandType, withMutable: withMutable || withMutableNext)
+      result := self.e(ref expression.consequent, operandType, withMutable: withMutable)
       consequentDiffTC = self.typeCastExclude(afterConditionTC)
       self.tc = afterConditionTC
 
       return result
     }, (operandType: (ref Type.Type)?) -> ref Type.Type {
       self.tc.merge(typeCastResult.alternate)
-      result := self.e(ref expression.alternate, operandType, withMutable: withMutable || withMutableNext)
+      result := self.e(ref expression.alternate, operandType, withMutable: withMutable)
       alternateDiffTC = self.typeCastExclude(afterConditionTC)
       self.tc = afterConditionTC
 
@@ -1678,22 +1689,14 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eElementAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool, withMutableNext: bool) bool {
+  fn _eElementAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool) bool {
     if !it.isElementAccess() {
       return false
     }
 
     mut expression := it.asElementAccess()
-    niceExpressionType := Type.unwrap(self.eNice(ref expression.expression))
-
-    expressionType := Type.unwrap(
-      self.e(
-        ref expression.expression,
-        Type.opt(niceExpressionType),
-        withMutable: withMutable || withMutableNext,
-      ),
-    )
-
+    expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable))
+    Context.setTarget(ref expression.expression, expressionType)
     argumentType := Type.unwrap(self.e(ref expression.argument))
 
     if !Type.similarTo(argumentType, self.tm.get("i32")) {
@@ -1732,13 +1735,13 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eIs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
+  fn _eIs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
     if !it.isIs() {
       return false
     }
 
     mut expression := it.asIs()
-    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+    expressionType := self.e(ref expression.expression, withMutable: withMutable)
     t := self.t(ref expression.t)
 
     if !expressionType.canCastTo(t) {
@@ -1888,7 +1891,7 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eParenthesized (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTargetPromote: bool, withMutable: bool, withMutableNext: bool) bool {
+  fn _eParenthesized (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTargetPromote: bool, withMutable: bool) bool {
     if !it.isParenthesized() {
       return false
     }
@@ -1899,7 +1902,7 @@ export obj AnalyzerFile {
       ref expression.expression,
       targetType,
       noTargetPromote: noTargetPromote,
-      withMutable: withMutable || withMutableNext,
+      withMutable: withMutable,
     )
 
     Context.set(it, Context.initial(ref expression.expression))
@@ -1908,30 +1911,23 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _ePropertyAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool, withMutableNext: bool) bool {
+  fn _ePropertyAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool) bool {
     if !it.isPropertyAccess() {
       return false
     }
 
     mut expression := it.asPropertyAccess()
-    niceExpressionType := self.eNice(ref expression.expression)
+    expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable))
+    Context.setTarget(ref expression.expression, expressionType)
 
-    expressionType := self.e(
-      ref expression.expression,
-      Type.opt(Type.unwrap(niceExpressionType)),
-      withMutable: withMutable || withMutableNext,
-    )
-
-    t := Type.unwrap(expressionType)
-
-    if t.has(expression.name.name) {
-      if !t.has(expression.name.name) {
+    if expressionType.has(expression.name.name) {
+      if !expressionType.has(expression.name.name) {
         Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
-        self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
+        self.raise(errors.E1002(expression.name.name, expressionType.toString()), expression.name.start, expression.name.end)
         return true
       }
 
-      property := t.get(expression.name.name)
+      property := expressionType.get(expression.name.name)
 
       if withMutable && !property.mutable {
         self.raise(errors.E1012(expression.name.name), it.start, it.end)
@@ -1939,16 +1935,16 @@ export obj AnalyzerFile {
 
       Context.set(it, property.t)
       Context.setExtra(it, Context.PropertyAccessExpressionContextExtra{property: property})
-    } elif t.isEnum() {
-      Context.set(it, t)
+    } elif expressionType.isEnum() {
+      Context.set(it, expressionType)
 
-      if !t.hasEnumerator(expression.name.name) {
+      if !expressionType.hasEnumerator(expression.name.name) {
         self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
       }
 
       return true
-    } elif t.isNamespace() {
-      namespaceType := t.asNamespace()
+    } elif expressionType.isNamespace() {
+      namespaceType := expressionType.asNamespace()
       mut maybeExportVar: Type.Var?
 
       if AnalyzerExport.has(ref namespaceType.members, expression.name.name) {
@@ -1980,7 +1976,7 @@ export obj AnalyzerFile {
       Context.set(it, exportVar.t)
     } else {
       Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
-      self.raise(errors.E1002(expression.name.name, t.toString()), expression.name.start, expression.name.end)
+      self.raise(errors.E1002(expression.name.name, expressionType.toString()), expression.name.start, expression.name.end)
       return true
     }
 
@@ -2003,13 +1999,13 @@ export obj AnalyzerFile {
     return true
   }
 
-  fn _eReference (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool, withMutableNext: bool) bool {
+  fn _eReference (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
     if !it.isReference() {
       return false
     }
 
     mut expression := it.asReference()
-    expressionType := self.e(ref expression.expression, withMutable: withMutable || withMutableNext)
+    expressionType := self.e(ref expression.expression, withMutable: withMutable)
     Context.set(it, self.tm.createReference(expressionType))
 
     return true
