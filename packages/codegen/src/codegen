@@ -975,39 +975,15 @@ export obj Codegen {
 
     contextExtra := item.contextExtra as Analyzer.CallExpressionContextExtra
     isBuiltinMethod := expressionIsBuiltinMethod(ref expression.callee)
-
-    if expressionIsBuiltinMethod(ref expression.callee) {
-      calleeBody := expression.callee.asPropertyAccess()
-
-      if calleeBody.name.name == "str" {
-        calleeTargetType := Analyzer.contextTarget(ref calleeBody.expression)
-        return self._functionStr(calleeTargetType, self._generateExpression(ref calleeBody.expression))
-      }
-    }
-
     calleeTargetType := Analyzer.contextTarget(ref expression.callee)
-    calleeExpression := self._generateExpression(ref expression.callee)
+    cCalleeExpression := self._generateExpression(ref expression.callee)
     mut paramsArgs: AST.CExpression[]
 
     if !isBuiltinMethod && calleeTargetType.hasSelfParam() {
-      paramsArgs.push(calleeExpression)
+      paramsArgs.push(cCalleeExpression)
     } elif calleeTargetType.hasSelfParam() {
-      methodType := calleeTargetType.asMethod()
       calleeBody := expression.callee.asPropertyAccess()
-      calleeBodyTargetType := Analyzer.contextTarget(ref calleeBody.expression)
-      cCalleeBodyExpression := self._generateExpression(ref calleeBody.expression)
-
-      cSelfExpression := methodType.selfType.isReference()
-        ? self._wrap(
-            cCalleeBodyExpression,
-            ref calleeBody.expression,
-            calleeBodyTargetType,
-            methodType.selfType,
-            transform: false,
-          )
-        : cCalleeBodyExpression
-
-      paramsArgs.push(cSelfExpression)
+      paramsArgs.push(self._generateExpression(ref calleeBody.expression))
     }
 
     loop i := 0; i < contextExtra.parameters.len; i++ {
@@ -1057,7 +1033,7 @@ export obj Codegen {
 
     if isBuiltinMethod {
       calleeBody := expression.callee.asPropertyAccess()
-      calleeBodyTargetType := Analyzer.contextTarget(ref calleeBody.expression)
+      calleeBodyTargetType := Analyzer.unwrap(Analyzer.contextTarget(ref calleeBody.expression))
 
       if !paramsArgs.empty {
         loop i := 0; i < paramsArgs.len; i++ {
@@ -1072,7 +1048,7 @@ export obj Codegen {
       )
     }
 
-    args.push(createASTPropertyAccess(calleeExpression, "ctx"))
+    args.push(createASTPropertyAccess(cCalleeExpression, "ctx"))
 
     if !paramsArgs.empty {
       paramsName := self._type(calleeTargetType, "_params_t")
@@ -1088,7 +1064,7 @@ export obj Codegen {
       ]))
     }
 
-    return AST.createCallExpression(createASTPropertyAccess(calleeExpression, "func"), args)
+    return AST.createCallExpression(createASTPropertyAccess(cCalleeExpression, "func"), args)
   }
 
   fn _generateConditionalExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
@@ -2722,31 +2698,31 @@ export obj Codegen {
       return self._("d4_any" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     } elif it.name == "bool" {
       if postfix == "_t" {
-      return self._("bool") + " "
+        return self._("bool") + " "
       } else {
         return self._("d4_bool" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "byte" {
       if postfix == "_t" {
-      return "unsigned char "
+        return "unsigned char "
       } else {
         return self._("d4_byte" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "char" {
       if postfix == "_t" {
-      return "char "
+        return "char "
       } else {
         return self._("d4_char" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "f32" {
       if postfix == "_t" {
-      return "float "
+        return "float "
       } else {
         return self._("d4_f32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "f64" {
       if postfix == "_t" {
-      return "double "
+        return "double "
       } else {
         return self._("d4_f64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
@@ -2758,19 +2734,19 @@ export obj Codegen {
       }
     } elif it.name == "i8" {
       if postfix == "_t" {
-      return self._("int8_t") + " "
+        return self._("int8_t") + " "
       } else {
         return self._("d4_i8" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "i16" {
       if postfix == "_t" {
-      return self._("int16_t") + " "
+        return self._("int16_t") + " "
       } else {
         return self._("d4_i16" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "i32" {
       if postfix == "_t" {
-      return self._("int32_t") + " "
+        return self._("int32_t") + " "
       } else {
         return self._("d4_i32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
@@ -2782,19 +2758,19 @@ export obj Codegen {
       }
     } elif it.name == "i64" {
       if postfix == "_t" {
-      return self._("int64_t") + " "
+        return self._("int64_t") + " "
       } else {
         return self._("d4_i64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "isize" {
       if postfix == "_t" {
-      return self._("ptrdiff_t") + " "
+        return self._("ptrdiff_t") + " "
       } else {
         return self._("d4_isize" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "rune" {
       if postfix == "_t" {
-      return self._("wchar_t") + " "
+        return self._("wchar_t") + " "
       } else {
         return self._("d4_rune" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
@@ -2802,31 +2778,31 @@ export obj Codegen {
       return self._("d4_str" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     } elif it.name == "u8" {
       if postfix == "_t" {
-      return self._("uint8_t") + " "
+        return self._("uint8_t") + " "
       } else {
         return self._("d4_u8" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "u16" {
       if postfix == "_t" {
-      return self._("uint16_t") + " "
+        return self._("uint16_t") + " "
       } else {
         return self._("d4_u16" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "u32" {
       if postfix == "_t" {
-      return self._("uint32_t") + " "
+        return self._("uint32_t") + " "
       } else {
         return self._("d4_u32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "u64" {
       if postfix == "_t" {
-      return self._("uint64_t") + " "
+        return self._("uint64_t") + " "
       } else {
         return self._("d4_u64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "usize" {
       if postfix == "_t" {
-      return self._("size_t") + " "
+        return self._("size_t") + " "
       } else {
         return self._("d4_usize" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
@@ -2876,72 +2852,6 @@ export obj Codegen {
     } elif it.isUnion() {
       self._generateUnionType(it)
     }
-  }
-
-  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, transform := false) AST.CExpression {
-    shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
-
-    if transform && !shouldFree && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
-      expression = self._allocateExpression(t, expression)
-    }
-
-    if targetType.name == "any" && t.name != "any" {
-      allocAnyType := self._generateAnyType(t).slice(0, -2) + "_alloc"
-      expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
-    } elif targetType.name != "any" && t.name == "any" {
-      typeName := self._generateAnyType(targetType)
-
-      // TODO: throw runtime error if not possible to cast
-      innerExpression := AST.createCastExpression(
-        AST.createType(self._(typeName)),
-        createASTPropertyAccess(expression, "ctx")
-      )
-
-      expression = AST.createUnaryExpression("*", innerExpression.wrap())
-    } elif !targetType.isReference() && t.isReference() {
-      expression = AST.createUnaryExpression("*", expression)
-    } elif targetType.isReference() && !t.isReference() {
-      expression = AST.createUnaryExpression("&", expression)
-    } elif targetType.isUnion() && !t.isUnion() {
-      allocTargetType := self._type(targetType, "_alloc")
-      typeDef := self._typeDef(t)
-
-      expression = AST.createCallExpression(AST.createIdentifier(allocTargetType), [
-        AST.createIdentifier(self._(typeDef)),
-        expression
-      ])
-    } elif !targetType.isUnion() && t.isUnion() {
-      typeName := self._typeDef(targetType)
-      typeDefIdx := self.typeDefs.get(typeName)
-
-      // TODO: throw runtime error if not possible to cast
-      expression = AST.createPropertyAccessExpression(
-        createASTPropertyAccess(expression, "data"),
-        "v" + typeDefIdx.str(),
-      )
-    } elif !Analyzer.match(t, targetType) && (
-      targetType.name == "bool" ||
-      targetType.name == "byte" ||
-      targetType.name == "char" ||
-      targetType.name == "rune" ||
-      targetType.isNumber()
-    ) {
-      expression = AST.createCastExpression(AST.createType(self._type(targetType)), expression)
-    }
-
-    if !transform {
-      return expression
-    }
-
-    typesMatch := Analyzer.match(t, targetType)
-
-    if shouldFree {
-      expression = self._functionFree(targetType, expression)
-    } elif !typesMatch && typeShouldBeAllocated(targetType) && expressionShouldBeAllocated(item) {
-      expression = self._allocateExpression(targetType, expression)
-    }
-
-    return expression
   }
 
   fn _typeDef (mut self: ref Self, it: ref Analyzer.Type) str {
@@ -3015,6 +2925,72 @@ export obj Codegen {
     }
 
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
+  }
+
+  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, transform := false) AST.CExpression {
+    shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
+
+    if transform && !shouldFree && typeShouldBeAllocated(t) && expressionShouldBeAllocated(item) {
+      expression = self._allocateExpression(t, expression)
+    }
+
+    if targetType.name == "any" && t.name != "any" {
+      allocAnyType := self._generateAnyType(t).slice(0, -2) + "_alloc"
+      expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
+    } elif targetType.name != "any" && t.name == "any" {
+      typeName := self._generateAnyType(targetType)
+
+      // TODO: throw runtime error if not possible to cast
+      innerExpression := AST.createCastExpression(
+        AST.createType(self._(typeName)),
+        createASTPropertyAccess(expression, "ctx")
+      )
+
+      expression = AST.createUnaryExpression("*", innerExpression.wrap())
+    } elif !targetType.isReference() && t.isReference() {
+      expression = AST.createUnaryExpression("*", expression)
+    } elif targetType.isReference() && !t.isReference() {
+      expression = AST.createUnaryExpression("&", expression)
+    } elif targetType.isUnion() && !t.isUnion() {
+      allocTargetType := self._type(targetType, "_alloc")
+      typeDef := self._typeDef(t)
+
+      expression = AST.createCallExpression(AST.createIdentifier(allocTargetType), [
+        AST.createIdentifier(self._(typeDef)),
+        expression
+      ])
+    } elif !targetType.isUnion() && t.isUnion() {
+      typeName := self._typeDef(targetType)
+      typeDefIdx := self.typeDefs.get(typeName)
+
+      // TODO: throw runtime error if not possible to cast
+      expression = AST.createPropertyAccessExpression(
+        createASTPropertyAccess(expression, "data"),
+        "v" + typeDefIdx.str(),
+      )
+    } elif !Analyzer.match(t, targetType) && (
+      targetType.name == "bool" ||
+      targetType.name == "byte" ||
+      targetType.name == "char" ||
+      targetType.name == "rune" ||
+      targetType.isNumber()
+    ) {
+      expression = AST.createCastExpression(AST.createType(self._type(targetType)), expression)
+    }
+
+    if !transform {
+      return expression
+    }
+
+    typesMatch := Analyzer.match(t, targetType)
+
+    if shouldFree {
+      expression = self._functionFree(targetType, expression)
+    } elif !typesMatch && typeShouldBeAllocated(targetType) && expressionShouldBeAllocated(item) {
+      expression = self._allocateExpression(targetType, expression)
+    }
+
+    return expression
   }
 }
 
