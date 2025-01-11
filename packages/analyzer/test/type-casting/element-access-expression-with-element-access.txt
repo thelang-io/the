@@ -1,0 +1,62 @@
+obj Human {
+  name: str
+  mut pets: Animal[]
+}
+obj Animal {
+  name: str
+  mut age: int
+}
+main {
+  mut people: Human[][]
+  people.push([])
+  people[0].push(Human{name: "Peter"})
+  people[0][0].pets.push(Animal{name: "Cleo", age: 1})
+  people[0][0].pets[0].age++
+}
+===== out =====
+ObjectDeclaration(name=Human context:selfType=Human)
+  ObjectDeclarationProperty(name=name mutable=false constant=false type=str)
+  ObjectDeclarationProperty(name=pets mutable=true constant=false type=Animal[])
+ObjectDeclaration(name=Animal context:selfType=Animal)
+  ObjectDeclarationProperty(name=name mutable=false constant=false type=str)
+  ObjectDeclarationProperty(name=age mutable=true constant=false type=int)
+MainDeclaration()
+  VariableDeclaration(name=people mutable=true constant=false type=Human[][] context:varType=Human[][])
+  CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+    PropertyAccessExpression(initial=(mut self: ref Human[][], elements: Human[]...) -> void name=push extra:propertyName=push extra:propertyType=(mut self: ref Human[][], elements: Human[]...) -> void extra:propertyBuiltin)
+      Identifier(initial=Human[][] name=people)
+    CallExpressionArgument(extra:parameterIdx=0)
+      ArrayExpression(initial=Human[])
+  CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+    PropertyAccessExpression(initial=(mut self: ref Human[], elements: Human...) -> void name=push extra:propertyName=push extra:propertyType=(mut self: ref Human[], elements: Human...) -> void extra:propertyBuiltin)
+      ElementAccessExpression(initial=ref Human[] target=Human[] extra:selfType=Human[][])
+        Identifier(initial=Human[][] name=people)
+        IntegerLiteral(initial=int value=0)
+    CallExpressionArgument(extra:parameterIdx=0)
+      ObjectExpression(initial=Human id=Human)
+        ObjectExpressionProperty(name=name)
+          StringLiteral(initial=str value=Peter)
+  CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+    PropertyAccessExpression(initial=(mut self: ref Animal[], elements: Animal...) -> void name=push extra:propertyName=push extra:propertyType=(mut self: ref Animal[], elements: Animal...) -> void extra:propertyBuiltin)
+      PropertyAccessExpression(initial=Animal[] name=pets extra:propertyName=pets extra:propertyType=Animal[] extra:propertyMutable)
+        ElementAccessExpression(initial=ref Human target=Human extra:selfType=Human[])
+          ElementAccessExpression(initial=ref Human[] target=Human[] extra:selfType=Human[][])
+            Identifier(initial=Human[][] name=people)
+            IntegerLiteral(initial=int value=0)
+          IntegerLiteral(initial=int value=0)
+    CallExpressionArgument(extra:parameterIdx=0)
+      ObjectExpression(initial=Animal id=Animal)
+        ObjectExpressionProperty(name=name)
+          StringLiteral(initial=str value=Cleo)
+        ObjectExpressionProperty(name=age)
+          IntegerLiteral(initial=int value=1)
+  UnaryExpression(initial=int operator=++ prefix=false)
+    PropertyAccessExpression(initial=int name=age extra:propertyName=age extra:propertyType=int extra:propertyMutable)
+      ElementAccessExpression(initial=ref Animal target=Animal extra:selfType=Animal[])
+        PropertyAccessExpression(initial=Animal[] name=pets extra:propertyName=pets extra:propertyType=Animal[] extra:propertyMutable)
+          ElementAccessExpression(initial=ref Human target=Human extra:selfType=Human[])
+            ElementAccessExpression(initial=ref Human[] target=Human[] extra:selfType=Human[][])
+              Identifier(initial=Human[][] name=people)
+              IntegerLiteral(initial=int value=0)
+            IntegerLiteral(initial=int value=0)
+        IntegerLiteral(initial=int value=0)

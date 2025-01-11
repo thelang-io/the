@@ -1684,7 +1684,16 @@ export obj AnalyzerFile {
     }
 
     mut expression := it.asElementAccess()
-    expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable || withMutableNext))
+    niceExpressionType := Type.unwrap(self.eNice(ref expression.expression))
+
+    expressionType := Type.unwrap(
+      self.e(
+        ref expression.expression,
+        Type.opt(niceExpressionType),
+        withMutable: withMutable || withMutableNext,
+      ),
+    )
+
     argumentType := Type.unwrap(self.e(ref expression.argument))
 
     if !Type.similarTo(argumentType, self.tm.get("i32")) {
