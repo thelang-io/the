@@ -1,0 +1,7 @@
+fn a () int {
+}
+===== err =====
+E1061-function-declaration.txt:1:9: AnalyzeError: E1061 - Function declaration whose return type is not `void` should return a value
+1 | fn a () int {
+  |         ~~~
+2 | }

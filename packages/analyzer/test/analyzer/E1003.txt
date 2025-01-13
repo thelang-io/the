@@ -1,0 +1,5 @@
+const a := test
+===== err =====
+E1003.txt:1:12: AnalyzeError: E1003 - Use of undeclared variable 'test'
+1 | const a := test
+  |            ~~~~

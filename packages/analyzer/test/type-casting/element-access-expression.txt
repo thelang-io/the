@@ -1,0 +1,18 @@
+main {
+  mut arr: bool[]
+  mut a: bool | int
+  b := arr[a = 10] ? a : 20
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=arr mutable=true constant=false type=bool[] context:varType=bool[])
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int context:varType=bool | int)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=int)
+    ConditionalExpression(initial=int)
+      ElementAccessExpression(initial=ref bool extra:selfType=bool[])
+        Identifier(initial=bool[] name=arr)
+        AssignmentExpression(initial=int operator==)
+          Identifier(initial=bool | int name=a)
+          IntegerLiteral(initial=int target=bool | int value=10)
+      Identifier(initial=bool | int target=int name=a)
+      IntegerLiteral(initial=int value=20)

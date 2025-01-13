@@ -1,0 +1,72 @@
+main {
+  { "key": true };
+  { "key": 'a' };
+  { "key": 4.12 };
+  { "key": 1 };
+  { "key1": true, "key2": false };
+  { "key1": 'a', "key2": 'z' };
+  { "key1": 4.12, "key2": 4.12 };
+  { "key1": 1, "key2": 1 };
+}
+===== code =====
+#include <d4/array.h>
+#include <d4/bool.h>
+#include <d4/macro.h>
+#include <d4/map.h>
+#include <d4/number.h>
+#include <d4/rune.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <wchar.h>
+D4_ARRAY_DECLARE(bool, bool)
+D4_MAP_DECLARE(str, d4_str_t, bool, bool)
+D4_ARRAY_DECLARE(rune, wchar_t)
+D4_MAP_DECLARE(str, d4_str_t, rune, wchar_t)
+D4_ARRAY_DECLARE(float, double)
+D4_MAP_DECLARE(str, d4_str_t, float, double)
+D4_ARRAY_DECLARE(int, int32_t)
+D4_MAP_DECLARE(str, d4_str_t, int, int32_t)
+D4_ARRAY_DEFINE(bool, bool, int32_t, element, lhs_element == rhs_element, (void) element, d4_bool_str(element))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), bool, bool, int32_t, val, lhs_val == rhs_val, (void) val, d4_bool_str(val))
+D4_ARRAY_DEFINE(rune, wchar_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_rune_str(element))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), rune, wchar_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_rune_str(val))
+D4_ARRAY_DEFINE(float, double, double, element, lhs_element == rhs_element, (void) element, d4_float_str(element))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), float, double, double, val, lhs_val == rhs_val, (void) val, d4_float_str(val))
+D4_ARRAY_DEFINE(int, int32_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_int_str(element))
+D4_MAP_DEFINE(str, d4_str_t, d4_str_t, d4_str_copy(key), d4_str_eq(lhs_key, rhs_key), d4_str_free(key), d4_str_copy(key), d4_str_quoted_escape(key), int, int32_t, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+int main (void) {
+  d4_str_t __THE_1 = d4_str_empty_val;
+  d4_str_t __THE_2 = d4_str_empty_val;
+  d4_str_t __THE_3 = d4_str_empty_val;
+  d4_str_t __THE_4 = d4_str_empty_val;
+  d4_str_t __THE_5 = d4_str_empty_val;
+  d4_str_t __THE_6 = d4_str_empty_val;
+  d4_str_t __THE_7 = d4_str_empty_val;
+  d4_str_t __THE_8 = d4_str_empty_val;
+  d4_str_t __THE_9 = d4_str_empty_val;
+  d4_str_t __THE_10 = d4_str_empty_val;
+  d4_str_t __THE_11 = d4_str_empty_val;
+  d4_str_t __THE_12 = d4_str_empty_val;
+  d4_map_strMSboolME_free(d4_map_strMSboolME_alloc(1, __THE_1 = d4_str_alloc(L"key"), true));
+  d4_map_strMSruneME_free(d4_map_strMSruneME_alloc(1, __THE_2 = d4_str_alloc(L"key"), L'a'));
+  d4_map_strMSfloatME_free(d4_map_strMSfloatME_alloc(1, __THE_3 = d4_str_alloc(L"key"), 4.12));
+  d4_map_strMSintME_free(d4_map_strMSintME_alloc(1, __THE_4 = d4_str_alloc(L"key"), 1));
+  d4_map_strMSboolME_free(d4_map_strMSboolME_alloc(2, __THE_5 = d4_str_alloc(L"key1"), true, __THE_6 = d4_str_alloc(L"key2"), false));
+  d4_map_strMSruneME_free(d4_map_strMSruneME_alloc(2, __THE_7 = d4_str_alloc(L"key1"), L'a', __THE_8 = d4_str_alloc(L"key2"), L'z'));
+  d4_map_strMSfloatME_free(d4_map_strMSfloatME_alloc(2, __THE_9 = d4_str_alloc(L"key1"), 4.12, __THE_10 = d4_str_alloc(L"key2"), 4.12));
+  d4_map_strMSintME_free(d4_map_strMSintME_alloc(2, __THE_11 = d4_str_alloc(L"key1"), 1, __THE_12 = d4_str_alloc(L"key2"), 1));
+  d4_str_free(__THE_12);
+  d4_str_free(__THE_11);
+  d4_str_free(__THE_10);
+  d4_str_free(__THE_9);
+  d4_str_free(__THE_8);
+  d4_str_free(__THE_7);
+  d4_str_free(__THE_6);
+  d4_str_free(__THE_5);
+  d4_str_free(__THE_4);
+  d4_str_free(__THE_3);
+  d4_str_free(__THE_2);
+  d4_str_free(__THE_1);
+}
+===== output =====

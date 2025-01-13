@@ -1,0 +1,5 @@
+const a: int = nil
+===== err =====
+E1006.txt:1:16: AnalyzeError: E1006 - Literal `nil` is not assignable to type `int`
+1 | const a: int = nil
+  |                ~~~

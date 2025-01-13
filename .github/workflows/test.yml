@@ -3,9 +3,9 @@ name: Test
 on:
   push:
     branches: ['main', 'release-*']
-    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/test.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', 'packages/**/*', '!.github/workflows/test.yml']
   pull_request:
-    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/test.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', 'packages/**/*', '!.github/workflows/test.yml']
 
 concurrency:
   cancel-in-progress: true
@@ -43,7 +43,6 @@ jobs:
             generator: Visual Studio 17 2022
     steps:
       - uses: actions/checkout@v4
-      - uses: thelang-io/setup-the@v1
       - if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -52,8 +51,6 @@ jobs:
         run: brew install ninja
       - if: runner.os != 'Windows'
         run: uname -a
-      - run: the -v
-      - run: the run scripts/pre-process-codegen
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz -o deps.tar.gz
       - run: tar -xzf deps.tar.gz the/native/${{ matrix.config.platform }}
       - if: runner.os == 'Linux'

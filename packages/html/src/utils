@@ -1,0 +1,18 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export fn escape (in: str) str {
+  return in
+    .replace("\r\n", "\\n")
+    .replace("\n", "\\n")
+    .replace("\t", "\\t")
+}
+
+export fn lower (mut in: str) str {
+  loop i := in.len - 1; i >= 0; i-- {
+    in[i] = in[i].lower
+  }
+  return in
+}

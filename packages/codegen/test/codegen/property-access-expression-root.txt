@@ -1,0 +1,37 @@
+obj Test {
+  c: str
+}
+main {
+  test := Test{c: "test"}
+  test.c
+  test.c
+}
+===== code =====
+#include <d4/macro.h>
+#include <d4/object.h>
+#include <d4/string.h>
+#include <stdbool.h>
+D4_OBJECT_FORWARD_DECLARE(Test)
+D4_OBJECT_DECLARE(Test, {
+  d4_str_t c;
+}, const d4_str_t c)
+D4_OBJECT_DEFINE(Test, Test, {
+  self.c = d4_str_copy(c);
+}, {
+  result.c = d4_str_copy(self.c);
+}, {
+  return d4_str_eq(self.c, rhs.c);
+}, {
+  d4_str_free(self.c);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"c"), d4_str_quoted_escape(self.c));
+}, const d4_str_t c)
+int main (void) {
+  d4_str_t __THE_1 = d4_str_empty_val;
+  d4_obj_Test_t test_0 = d4_obj_Test_alloc(__THE_1 = d4_str_alloc(L"test"));
+  test_0.c;
+  test_0.c;
+  d4_obj_Test_free(test_0);
+  d4_str_free(__THE_1);
+}
+===== output =====

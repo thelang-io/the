@@ -1,0 +1,71 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import MD5, md5 from "../src/md5"
+import * as byteArray from "../src/byte-array"
+import LOREM_IPSUM from "./utils"
+
+export fn TEST_md5 () {
+  EXPECT_EQ(
+    byteArray.toHexStr(md5(byteArray.fromStr(""))),
+    "d41d8cd98f00b204e9800998ecf8427e",
+  )
+
+  EXPECT_EQ(
+    byteArray.toHexStr(md5(byteArray.fromStr("0"))),
+    "cfcd208495d565ef66e7dff9f98764da",
+  )
+
+  EXPECT_EQ(
+    byteArray.toHexStr(md5(byteArray.fromStr("A"))),
+    "7fc56270e7a70fa81a5935b72eacbe29",
+  )
+
+  EXPECT_EQ(
+    byteArray.toHexStr(md5(byteArray.fromStr("HELLO WORLD"))),
+    "361fadf1c712e812d198c4cab5712a79",
+  )
+
+  EXPECT_EQ(
+    byteArray.toHexStr(md5(byteArray.fromStr("Hello, World!"))),
+    "65a8e27d8879283831b664bd8b7f0ad4",
+  )
+
+  EXPECT_EQ(
+    byteArray.toHexStr(md5(byteArray.fromStr(LOREM_IPSUM))),
+    "5ca7d2e24fb2a7658b2721a151433a8c",
+  )
+
+  veryLongStr := LOREM_IPSUM + "\n" + LOREM_IPSUM + "\n" + LOREM_IPSUM + "\n" + LOREM_IPSUM
+
+  EXPECT_EQ(
+    byteArray.toHexStr(md5(byteArray.fromStr(veryLongStr))),
+    "011ffe33420a2ff9d20232475188e3f7",
+  )
+
+  mut algorithm1 := MD5{}
+
+  algorithm1.init()
+  algorithm1.update(byteArray.fromStr(LOREM_IPSUM + "\n"))
+  algorithm1.update(byteArray.fromStr(LOREM_IPSUM + "\n"))
+
+  EXPECT_EQ(
+    byteArray.toHexStr(algorithm1.value()),
+    "a7396aa24ca986eb42265b24a726bc25",
+  )
+
+  mut algorithm2 := MD5{}
+
+  algorithm2.init()
+  algorithm2.update(byteArray.fromStr(LOREM_IPSUM + "\n"))
+  algorithm2.update(byteArray.fromStr(LOREM_IPSUM + "\n"))
+  algorithm2.update(byteArray.fromStr(LOREM_IPSUM + "\n"))
+  algorithm2.update(byteArray.fromStr("test"))
+
+  EXPECT_EQ(
+    byteArray.toHexStr(algorithm2.value()),
+    "d7fd595ebabcfdf5bb12b5f47f559491",
+  )
+}

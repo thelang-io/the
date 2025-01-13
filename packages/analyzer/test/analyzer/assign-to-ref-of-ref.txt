@@ -1,0 +1,7 @@
+main {
+  mut a := 10
+  mut aRef := ref a
+  mut aRefRef := ref aRef
+
+  aRefRef = 2
+}

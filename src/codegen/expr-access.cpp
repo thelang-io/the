@@ -177,7 +177,14 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       }
 
       auto nodeExprTypeRefAny = targetType->isAny() && !nodeExpr.type->isRefOf(targetType);
-      auto shouldCopyVar = !objType->isRef() || (!targetType->isRef() && !targetType->hasSubType(objType) && !nodeExprTypeRefAny);
+      auto nodeExprTypeRefOpt = targetType->isOpt() && !nodeExpr.type->isRefOf(targetType);
+
+      auto shouldCopyVar = !objType->isRef() || (
+        !targetType->isRef() &&
+        !targetType->hasSubType(objType) &&
+        !nodeExprTypeRefAny &&
+        !nodeExprTypeRefOpt
+      );
 
       if (!root && shouldCopyVar) {
         expr = this->_genCopyFn(Type::real(objType), expr);
@@ -281,16 +288,25 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprAccess (const ASTNodeExpr &nodeExp
       expr = CodegenASTExprUnary::create("*", expr);
     }
 
+    auto isTargetOptAndTypeNotOpt = targetType->isOpt() && !nodeExpr.type->isOpt() && nodeExpr.type->isRef() &&
+      std::get<TypeOptional>(targetType->body).type->matchStrict(nodeExpr.type);
+
     if (!nodeExpr.type->isRef() && targetType->isRef()) {
       expr = CodegenASTExprUnary::create("&", expr);
-    } else if (nodeExpr.type->isRef() && !targetType->isRef()) {
+    } else if (nodeExpr.type->isRef() && !targetType->isRef() && !isTargetOptAndTypeNotOpt) {
       expr = CodegenASTExprUnary::create("*", expr);
     }
 
     auto isEnumField = objTypeInfo.realType->isEnum() && exprAccess.prop != std::nullopt;
     auto isRef = nodeExpr.type->isRef() && targetType->isRef();
 
-    if (!root && !isEnumField && !isRef && !(fieldTypeHasCallInfo && !fieldType->isRef())) {
+    if (
+      !root &&
+      !isEnumField &&
+      !isRef &&
+      !(fieldTypeHasCallInfo && !fieldType->isRef()) &&
+      !isTargetOptAndTypeNotOpt
+    ) {
       expr = this->_genCopyFn(Type::real(nodeExpr.type), expr);
     }
 

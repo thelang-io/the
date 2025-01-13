@@ -1,0 +1,887 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TypeMap from "../src/type-map"
+import * as Type from "../src/type"
+
+export fn TEST_Type_getters () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createAlias("TestAlias", tm.get("int"))
+  t2 := tm.createArray(tm.get("int"))
+  t3 := tm.createEnum("TestEnum", [])
+  t4 := tm.createFunction(false, [], tm.get("int"))
+  t5 := tm.createMap(tm.get("int"), tm.get("int"))
+  t6 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  t7 := tm.createNamespace("TestNamespace", [])
+  t8 := tm.createObject("TestObject")
+  t9 := tm.createOptional(tm.get("int"))
+  t10 := tm.createReference(tm.get("int"))
+  t11 := tm.createUnion([tm.get("int"), tm.get("str")])
+
+  EXPECT_TRUE(t1.isAlias())
+  EXPECT_TRUE(t2.isArray())
+  EXPECT_TRUE(t3.isEnum())
+  EXPECT_TRUE(t4.isFunction())
+  EXPECT_TRUE(t5.isMap())
+  EXPECT_TRUE(t6.isMethod())
+  EXPECT_TRUE(t7.isNamespace())
+  EXPECT_TRUE(t8.isObject())
+  EXPECT_TRUE(t9.isOptional())
+  EXPECT_TRUE(t10.isReference())
+  EXPECT_TRUE(t11.isUnion())
+
+  EXPECT_FALSE(t2.isAlias())
+  EXPECT_FALSE(t1.isArray())
+  EXPECT_FALSE(t1.isEnum())
+  EXPECT_FALSE(t1.isFunction())
+  EXPECT_FALSE(t1.isMap())
+  EXPECT_FALSE(t1.isMethod())
+  EXPECT_FALSE(t1.isNamespace())
+  EXPECT_FALSE(t1.isObject())
+  EXPECT_FALSE(t1.isOptional())
+  EXPECT_FALSE(t1.isReference())
+  EXPECT_FALSE(t1.isUnion())
+
+  EXPECT_NO_THROW(() -> void {
+    refT1 := ref t1 // TODO: remove after v1
+    refT2 := ref t2 // TODO: remove after v1
+    refT3 := ref t3 // TODO: remove after v1
+    refT4 := ref t4 // TODO: remove after v1
+    refT5 := ref t5 // TODO: remove after v1
+    refT6 := ref t6 // TODO: remove after v1
+    refT7 := ref t7 // TODO: remove after v1
+    refT8 := ref t8 // TODO: remove after v1
+    refT9 := ref t9 // TODO: remove after v1
+    refT10 := ref t10 // TODO: remove after v1
+    refT11 := ref t11 // TODO: remove after v1
+
+    t1.asAlias()
+    t2.asArray()
+    t3.asEnum()
+    t4.asFunction()
+    t5.asMap()
+    t6.asMethod()
+    t7.asNamespace()
+    t8.asObject()
+    t9.asOptional()
+    t10.asReference()
+    t11.asUnion()
+  })
+}
+
+export fn TEST_Type_canCastTo () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createAlias("TestAlias", tm.get("int"))
+  t2 := tm.createArray(tm.get("int"))
+  t3 := tm.createEnum("TestEnum", [])
+  t4 := tm.createFunction(false, [], tm.get("int"))
+  t5 := tm.createMap(tm.get("int"), tm.get("int"))
+  t6 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  t7 := tm.createNamespace("TestNamespace", [])
+  t8 := tm.createObject("TestObject")
+  t9 := tm.createOptional(tm.get("int"))
+  t10 := tm.createReference(tm.get("str"))
+  t11 := tm.createUnion([tm.get("int"), tm.get("str")])
+  t12 := tm.get("int")
+  t13 := tm.get("any")
+  t14 := tm.get("bool")
+  t15 := tm.get("byte")
+  t16 := tm.get("char")
+  t17 := tm.get("rune")
+  t18 := tm.createFunction(false, [], tm.get("i64"))
+  t19 := tm.createReference(tm.get("int"))
+
+  EXPECT_TRUE(t1.canCastTo(t1))
+  EXPECT_TRUE(t2.canCastTo(t2))
+  EXPECT_TRUE(t3.canCastTo(t3))
+  EXPECT_TRUE(t4.canCastTo(t4))
+  EXPECT_TRUE(t5.canCastTo(t5))
+  EXPECT_TRUE(t6.canCastTo(t6))
+  EXPECT_TRUE(t7.canCastTo(t7))
+  EXPECT_TRUE(t8.canCastTo(t8))
+  EXPECT_TRUE(t9.canCastTo(t9))
+  EXPECT_TRUE(t10.canCastTo(t10))
+  EXPECT_TRUE(t11.canCastTo(t11))
+  EXPECT_TRUE(t12.canCastTo(t12))
+  EXPECT_TRUE(t13.canCastTo(t13))
+  EXPECT_TRUE(t14.canCastTo(t14))
+  EXPECT_TRUE(t15.canCastTo(t15))
+  EXPECT_TRUE(t16.canCastTo(t16))
+  EXPECT_TRUE(t17.canCastTo(t17))
+
+  EXPECT_FALSE(t2.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t4.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t5.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t6.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t7.canCastTo(tm.get("int")))
+  EXPECT_FALSE(t8.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t1.canCastTo(tm.get("int")))
+  EXPECT_TRUE(tm.get("int").canCastTo(t1))
+  EXPECT_FALSE(t3.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t9.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t10.canCastTo(tm.get("int")))
+  EXPECT_TRUE(t10.canCastTo(tm.get("str")))
+  EXPECT_TRUE(t11.canCastTo(tm.get("str")))
+  EXPECT_FALSE(t18.canCastTo(tm.get("str")))
+
+  EXPECT_FALSE(t12.canCastTo(t3))
+  EXPECT_TRUE(t12.canCastTo(t9))
+  EXPECT_FALSE(t12.canCastTo(t10))
+
+  EXPECT_TRUE(t1.canCastTo(t13))
+  EXPECT_TRUE(t2.canCastTo(t13))
+  EXPECT_TRUE(t3.canCastTo(t13))
+  EXPECT_TRUE(t4.canCastTo(t13))
+  EXPECT_TRUE(t5.canCastTo(t13))
+  EXPECT_TRUE(t6.canCastTo(t13))
+  EXPECT_TRUE(t7.canCastTo(t13))
+  EXPECT_TRUE(t8.canCastTo(t13))
+  EXPECT_TRUE(t9.canCastTo(t13))
+  EXPECT_TRUE(t10.canCastTo(t13))
+  EXPECT_TRUE(t11.canCastTo(t13))
+  EXPECT_TRUE(t12.canCastTo(t13))
+  EXPECT_FALSE(t18.canCastTo(t10))
+
+  EXPECT_TRUE(t13.canCastTo(t1))
+  EXPECT_TRUE(t13.canCastTo(t2))
+  EXPECT_TRUE(t13.canCastTo(t3))
+  EXPECT_TRUE(t13.canCastTo(t4))
+  EXPECT_TRUE(t13.canCastTo(t5))
+  EXPECT_TRUE(t13.canCastTo(t6))
+  EXPECT_TRUE(t13.canCastTo(t7))
+  EXPECT_TRUE(t13.canCastTo(t8))
+  EXPECT_TRUE(t13.canCastTo(t9))
+  EXPECT_TRUE(t13.canCastTo(t10))
+  EXPECT_TRUE(t13.canCastTo(t11))
+  EXPECT_TRUE(t13.canCastTo(t12))
+
+  EXPECT_TRUE(t14.canCastTo(t12))
+  EXPECT_FALSE(t12.canCastTo(t14))
+  EXPECT_TRUE(t12.canCastTo(t16))
+  EXPECT_TRUE(t15.canCastTo(t16))
+  EXPECT_TRUE(t15.canCastTo(t12))
+  EXPECT_TRUE(t16.canCastTo(t12))
+  EXPECT_TRUE(t16.canCastTo(t15))
+  EXPECT_TRUE(t12.canCastTo(t15))
+
+  EXPECT_TRUE(t17.canCastTo(t12))
+  EXPECT_TRUE(t12.canCastTo(t17))
+
+  EXPECT_TRUE(t4.canCastTo(t18))
+
+  t20 := tm.get("i8")
+  t21 := tm.get("i64")
+  t22 := tm.get("u8")
+  t23 := tm.get("u32")
+  t24 := tm.get("u64")
+  t25 := tm.get("f32")
+  t26 := tm.get("f64")
+
+  EXPECT_TRUE(t20.canCastTo(t21))
+  EXPECT_TRUE(t22.canCastTo(t23))
+  EXPECT_TRUE(t23.canCastTo(t24))
+  EXPECT_TRUE(t25.canCastTo(t26))
+  EXPECT_TRUE(t20.canCastTo(t25))
+  EXPECT_TRUE(t21.canCastTo(t26))
+  EXPECT_TRUE(t22.canCastTo(t21))
+  EXPECT_TRUE(t23.canCastTo(t21))
+
+  EXPECT_FALSE(t21.canCastTo(t20))
+  EXPECT_FALSE(t23.canCastTo(t22))
+  EXPECT_FALSE(t24.canCastTo(t23))
+  EXPECT_FALSE(t26.canCastTo(t25))
+  EXPECT_FALSE(t25.canCastTo(t20))
+  EXPECT_FALSE(t24.canCastTo(t26))
+}
+
+export fn TEST_Type_canPromoteTo () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createAlias("TestAlias", tm.get("int"))
+  t2 := tm.createArray(tm.get("int"))
+  t3 := tm.createEnum("TestEnum", [])
+  t4 := tm.createFunction(false, [], tm.get("int"))
+  t5 := tm.createMap(tm.get("int"), tm.get("int"))
+  t6 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  t7 := tm.createNamespace("TestNamespace", [])
+  t8 := tm.createObject("TestObject")
+  t9 := tm.createOptional(tm.get("int"))
+  t10 := tm.createReference(tm.get("str"))
+  t11 := tm.createUnion([tm.get("int"), tm.get("str")])
+  t12 := tm.get("int")
+  t13 := tm.get("any")
+  t14 := tm.get("bool")
+  t15 := tm.get("byte")
+  t16 := tm.get("char")
+  t17 := tm.get("rune")
+  t18 := tm.createFunction(false, [], tm.get("i64"))
+  t19 := tm.createReference(tm.get("int"))
+  t20 := tm.get("i8")
+  t21 := tm.get("i64")
+  t22 := tm.get("u8")
+  t23 := tm.get("u32")
+  t24 := tm.get("u64")
+  t25 := tm.get("f32")
+  t26 := tm.get("f64")
+
+  EXPECT_FALSE(t1.canPromoteTo(t1))
+  EXPECT_FALSE(t2.canPromoteTo(t2))
+  EXPECT_FALSE(t3.canPromoteTo(t3))
+  EXPECT_FALSE(t4.canPromoteTo(t4))
+  EXPECT_FALSE(t5.canPromoteTo(t5))
+  EXPECT_FALSE(t6.canPromoteTo(t6))
+  EXPECT_FALSE(t7.canPromoteTo(t7))
+  EXPECT_FALSE(t8.canPromoteTo(t8))
+  EXPECT_FALSE(t9.canPromoteTo(t9))
+  EXPECT_FALSE(t10.canPromoteTo(t10))
+  EXPECT_FALSE(t11.canPromoteTo(t11))
+  EXPECT_FALSE(t12.canPromoteTo(t12))
+  EXPECT_FALSE(t13.canPromoteTo(t13))
+  EXPECT_FALSE(t14.canPromoteTo(t14))
+  EXPECT_FALSE(t15.canPromoteTo(t15))
+  EXPECT_FALSE(t16.canPromoteTo(t16))
+  EXPECT_FALSE(t17.canPromoteTo(t17))
+
+  EXPECT_FALSE(t2.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(t4.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(t5.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(t6.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(t7.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(t8.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(t1.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(tm.get("int").canPromoteTo(t1))
+  EXPECT_FALSE(t3.canPromoteTo(tm.get("int")))
+  EXPECT_FALSE(t9.canPromoteTo(tm.get("int")))
+  EXPECT_TRUE(t10.canPromoteTo(tm.get("int")))
+  EXPECT_TRUE(t10.canPromoteTo(tm.get("str")))
+  EXPECT_FALSE(t11.canPromoteTo(tm.get("str")))
+  EXPECT_FALSE(t18.canPromoteTo(tm.get("str")))
+
+  EXPECT_FALSE(t12.canPromoteTo(t3))
+  EXPECT_TRUE(t12.canPromoteTo(t9))
+  EXPECT_FALSE(t12.canPromoteTo(t10))
+
+  EXPECT_TRUE(t1.canPromoteTo(t13))
+  EXPECT_TRUE(t2.canPromoteTo(t13))
+  EXPECT_TRUE(t3.canPromoteTo(t13))
+  EXPECT_TRUE(t4.canPromoteTo(t13))
+  EXPECT_TRUE(t5.canPromoteTo(t13))
+  EXPECT_TRUE(t6.canPromoteTo(t13))
+  EXPECT_TRUE(t7.canPromoteTo(t13))
+  EXPECT_TRUE(t8.canPromoteTo(t13))
+  EXPECT_TRUE(t9.canPromoteTo(t13))
+  EXPECT_TRUE(t10.canPromoteTo(t13))
+  EXPECT_TRUE(t11.canPromoteTo(t13))
+  EXPECT_TRUE(t12.canPromoteTo(t13))
+  EXPECT_FALSE(t18.canPromoteTo(t10))
+
+  EXPECT_FALSE(t13.canPromoteTo(t1))
+  EXPECT_FALSE(t13.canPromoteTo(t2))
+  EXPECT_FALSE(t13.canPromoteTo(t3))
+  EXPECT_FALSE(t13.canPromoteTo(t4))
+  EXPECT_FALSE(t13.canPromoteTo(t5))
+  EXPECT_FALSE(t13.canPromoteTo(t6))
+  EXPECT_FALSE(t13.canPromoteTo(t7))
+  EXPECT_FALSE(t13.canPromoteTo(t8))
+  EXPECT_FALSE(t13.canPromoteTo(t9))
+  EXPECT_FALSE(t13.canPromoteTo(t10))
+  EXPECT_FALSE(t13.canPromoteTo(t11))
+  EXPECT_FALSE(t13.canPromoteTo(t12))
+
+  EXPECT_TRUE(t14.canPromoteTo(t12))
+  EXPECT_FALSE(t12.canPromoteTo(t14))
+  EXPECT_FALSE(t12.canPromoteTo(t16))
+  EXPECT_TRUE(t15.canPromoteTo(t16))
+  EXPECT_TRUE(t15.canPromoteTo(t12))
+  EXPECT_TRUE(t16.canPromoteTo(t12))
+  EXPECT_TRUE(t16.canPromoteTo(t15))
+  EXPECT_FALSE(t12.canPromoteTo(t15))
+
+  EXPECT_TRUE(t17.canPromoteTo(t12))
+  EXPECT_FALSE(t12.canPromoteTo(t17))
+
+  EXPECT_FALSE(t4.canPromoteTo(t18))
+
+  EXPECT_TRUE(t20.canPromoteTo(t21))
+  EXPECT_TRUE(t22.canPromoteTo(t23))
+  EXPECT_TRUE(t23.canPromoteTo(t24))
+  EXPECT_TRUE(t25.canPromoteTo(t26))
+  EXPECT_TRUE(t20.canPromoteTo(t25))
+  EXPECT_TRUE(t21.canPromoteTo(t26))
+  EXPECT_TRUE(t22.canPromoteTo(t21))
+  EXPECT_TRUE(t23.canPromoteTo(t21))
+
+  EXPECT_FALSE(t21.canPromoteTo(t20))
+  EXPECT_FALSE(t23.canPromoteTo(t22))
+  EXPECT_FALSE(t24.canPromoteTo(t23))
+  EXPECT_FALSE(t26.canPromoteTo(t25))
+  EXPECT_FALSE(t25.canPromoteTo(t20))
+  EXPECT_FALSE(t24.canPromoteTo(t26))
+}
+
+export fn TEST_Type_dependsOn () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.get("any")
+  t2 := tm.get("bool")
+  t3 := tm.get("byte")
+  t4 := tm.get("char")
+  t5 := tm.get("float")
+  t6 := tm.get("f32")
+  t7 := tm.get("f64")
+  t8 := tm.get("int")
+  t9 := tm.get("i8")
+  t10 := tm.get("i16")
+  t11 := tm.get("i32")
+  t12 := tm.get("i64")
+  t13 := tm.get("isize")
+  t14 := tm.get("never")
+  t15 := tm.get("rune")
+  t16 := tm.get("u8")
+  t17 := tm.get("u16")
+  t18 := tm.get("u32")
+  t19 := tm.get("u64")
+  t20 := tm.get("usize")
+  t21 := tm.get("str")
+  t22 := tm.get("void")
+
+  t23 := tm.createObject("TestObject", [
+    Type.TypeProperty{name: "a", t: t3},
+  ])
+  t24 := tm.createAlias("TestAlias", t1)
+  t25 := tm.createAlias("TestAlias2", t23)
+  t26 := tm.createArray(t23)
+  t27 := tm.createEnum("TestEnum", [])
+  t28 := tm.createFunction(false, [], t15)
+  t29 := tm.createFunction(false, [
+    Type.TypeParameter{t: t23},
+  ], t15)
+  t30 := tm.createMap(t15, t23)
+  t31 := tm.createNamespace("TestNamespace", [
+    Type.NamespaceMember{name: "a"},
+    Type.NamespaceMember{name: "b", t: t23},
+  ])
+  t32 := tm.createMethod(false, [], t15, false, false, "", t23)
+  t33 := tm.createMethod(false, [
+    Type.TypeParameter{t: t20},
+  ], t15, true, false, "self", t23)
+  t34 := tm.createOptional(t23)
+  t35 := tm.createReference(t23)
+  t36 := tm.createReference(t23)
+  t37 := tm.createUnion([t3, t15])
+
+  t38 := tm.createObject("TestObject2")
+  t39 := tm.createObject("TestObject3")
+
+  t38.properties.push(Type.TypeProperty{name: "a", t: t39})
+  t38.properties.push(Type.TypeProperty{name: "b", t: t12})
+  t39.properties.push(Type.TypeProperty{name: "a", t: t38})
+  t39.properties.push(Type.TypeProperty{name: "b", t: t19})
+
+  EXPECT_FALSE(t1.dependsOn(t1))
+  EXPECT_FALSE(t2.dependsOn(t2))
+  EXPECT_FALSE(t3.dependsOn(t3))
+  EXPECT_FALSE(t4.dependsOn(t4))
+  EXPECT_FALSE(t5.dependsOn(t5))
+  EXPECT_FALSE(t6.dependsOn(t6))
+  EXPECT_FALSE(t7.dependsOn(t7))
+  EXPECT_FALSE(t8.dependsOn(t8))
+  EXPECT_FALSE(t9.dependsOn(t9))
+  EXPECT_FALSE(t10.dependsOn(t10))
+  EXPECT_FALSE(t11.dependsOn(t11))
+  EXPECT_FALSE(t12.dependsOn(t12))
+  EXPECT_FALSE(t13.dependsOn(t13))
+  EXPECT_FALSE(t14.dependsOn(t14))
+  EXPECT_FALSE(t15.dependsOn(t15))
+  EXPECT_FALSE(t16.dependsOn(t16))
+  EXPECT_FALSE(t17.dependsOn(t17))
+  EXPECT_FALSE(t18.dependsOn(t18))
+  EXPECT_FALSE(t19.dependsOn(t19))
+  EXPECT_FALSE(t20.dependsOn(t20))
+  EXPECT_FALSE(t21.dependsOn(t21))
+  EXPECT_FALSE(t22.dependsOn(t22))
+
+  EXPECT_TRUE(t23.dependsOn(t3))
+  EXPECT_FALSE(t23.dependsOn(t15))
+  EXPECT_FALSE(t24.dependsOn(t1))
+  EXPECT_TRUE(t25.dependsOn(t3))
+  EXPECT_FALSE(t25.dependsOn(t9))
+  EXPECT_TRUE(t26.dependsOn(t23))
+  EXPECT_FALSE(t26.dependsOn(t15))
+  EXPECT_FALSE(t27.dependsOn(t15))
+  EXPECT_TRUE(t28.dependsOn(t15))
+  EXPECT_FALSE(t28.dependsOn(t6))
+  EXPECT_TRUE(t29.dependsOn(t15))
+  EXPECT_TRUE(t29.dependsOn(t23))
+  EXPECT_FALSE(t29.dependsOn(t6))
+  EXPECT_TRUE(t30.dependsOn(t15))
+  EXPECT_TRUE(t30.dependsOn(t23))
+  EXPECT_FALSE(t30.dependsOn(t6))
+  EXPECT_TRUE(t31.dependsOn(t23))
+  EXPECT_FALSE(t31.dependsOn(t6))
+  EXPECT_TRUE(t32.dependsOn(t15))
+  EXPECT_FALSE(t32.dependsOn(t23))
+  EXPECT_FALSE(t32.dependsOn(t6))
+  EXPECT_TRUE(t33.dependsOn(t20))
+  EXPECT_TRUE(t33.dependsOn(t15))
+  EXPECT_TRUE(t33.dependsOn(t23))
+  EXPECT_FALSE(t33.dependsOn(t6))
+  EXPECT_TRUE(t34.dependsOn(t23))
+  EXPECT_FALSE(t34.dependsOn(t6))
+  EXPECT_TRUE(t35.dependsOn(t23))
+  EXPECT_FALSE(t35.dependsOn(t6))
+  EXPECT_TRUE(t36.dependsOn(t23))
+  EXPECT_FALSE(t36.dependsOn(t6))
+  EXPECT_TRUE(t37.dependsOn(t3))
+  EXPECT_TRUE(t37.dependsOn(t15))
+  EXPECT_FALSE(t37.dependsOn(t6))
+
+  EXPECT_TRUE(t38.dependsOn(t39))
+  EXPECT_TRUE(t38.dependsOn(t12))
+  EXPECT_FALSE(t38.dependsOn(t1))
+  EXPECT_TRUE(t39.dependsOn(t38))
+  EXPECT_TRUE(t39.dependsOn(t19))
+  EXPECT_FALSE(t39.dependsOn(t1))
+}
+
+export fn TEST_Type_get () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t := tm.createObject("Animal", [
+    Type.TypeProperty{name: "age", t: tm.get("int")},
+    Type.TypeProperty{name: "name", t: tm.get("str")},
+  ])
+
+  prop1 := t.get(0)
+  prop2 := t.get("age")
+  prop3 := t.get(1)
+  prop4 := t.get("name")
+  prop5 := t.get("str")
+
+  EXPECT_EQ(prop1.name, "age")
+  EXPECT_EQ(prop2.name, "age")
+  EXPECT_EQ(prop3.name, "name")
+  EXPECT_EQ(prop4.name, "name")
+  EXPECT_EQ(prop5.name, "str")
+}
+
+export fn TEST_Type_getThrows () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t := tm.createObject("Animal", [
+    Type.TypeProperty{name: "age", t: tm.get("int")},
+    Type.TypeProperty{name: "name", t: tm.get("str")},
+  ])
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    refT := ref t // TODO: remove after v1
+    t.get("test")
+  }, "Tried to get non-existing property 'test'")
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    refT := ref t // TODO: remove after v1
+    t.get(2)
+  }, "Tried to get non-existing property at position 2")
+}
+
+export fn TEST_Type_has () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t := tm.createObject("Animal", [
+    Type.TypeProperty{name: "age", t: tm.get("int")},
+    Type.TypeProperty{name: "name", t: tm.get("str")},
+  ])
+
+  EXPECT_TRUE(t.has(0))
+  EXPECT_TRUE(t.has("age"))
+  EXPECT_TRUE(t.has(1))
+  EXPECT_TRUE(t.has("name"))
+  EXPECT_TRUE(t.has("str"))
+  EXPECT_FALSE(t.has("test"))
+  EXPECT_FALSE(t.has(2))
+}
+
+export fn TEST_Type_hasEnumerator () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t := tm.createEnum("Color", ["Red", "Green", "Blue"])
+
+  EXPECT_TRUE(t.hasEnumerator("Red"))
+  EXPECT_TRUE(t.hasEnumerator("Green"))
+  EXPECT_FALSE(t.hasEnumerator("Purple"))
+}
+
+export fn TEST_Type_hasSelfParam () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createArray(tm.get("int"))
+  t2 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  t3 := tm.createMethod(false, [], tm.get("int"), true, false, "self", tm.get("int"))
+
+  EXPECT_FALSE(t1.hasSelfParam())
+  EXPECT_FALSE(t2.hasSelfParam())
+  EXPECT_TRUE(t3.hasSelfParam())
+}
+
+export fn TEST_Type_hasType () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  union1 := tm.createUnion([tm.get("int"), tm.get("str")])
+  union2 := tm.createUnion([tm.get("char"), tm.get("str")])
+  union3 := tm.createUnion([tm.get("int"), tm.get("char"), tm.get("str")])
+  union4 := tm.createUnion([tm.get("rune"), tm.get("str")])
+
+  EXPECT_TRUE(union1.hasType(tm.get("int")))
+  EXPECT_FALSE(union1.hasType(tm.get("char")))
+  EXPECT_FALSE(union2.hasType(tm.get("int")))
+  EXPECT_TRUE(union2.hasType(tm.get("char")))
+
+  EXPECT_TRUE(union3.hasType(union1))
+  EXPECT_TRUE(union3.hasType(union2))
+  EXPECT_FALSE(union3.hasType(union4))
+  EXPECT_TRUE(union3.hasType(tm.get("int")))
+  EXPECT_TRUE(union3.hasType(tm.get("char")))
+  EXPECT_TRUE(union3.hasType(tm.get("str")))
+  EXPECT_FALSE(union3.hasType(tm.get("rune")))
+}
+
+export fn TEST_Type_isCustomObject () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createAlias("TestAlias", tm.get("int"))
+  t2 := tm.createAlias("TestAlias", tm.createObject("AliasObject"))
+  t3 := tm.createArray(tm.get("int"))
+  t4 := tm.createEnum("TestEnum", [])
+  t5 := tm.createFunction(false, [], tm.get("int"))
+  t6 := tm.createFunction(false, [], tm.get("str"))
+  t7 := tm.createMap(tm.get("int"), tm.get("int"))
+  t8 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  t9 := tm.createNamespace("TestNamespace", [])
+  t10 := tm.createObject("TestObject")
+  t11 := tm.createOptional(tm.get("int"))
+  t12 := tm.createReference(tm.get("str"))
+  t13 := tm.createReference(tm.get("int"))
+  t14 := tm.createUnion([tm.get("int"), tm.get("str")])
+  t15 := tm.get("any")
+  t16 := tm.get("bool")
+  t17 := tm.get("byte")
+  t18 := tm.get("char")
+  t19 := tm.get("float")
+  t20 := tm.get("f32")
+  t21 := tm.get("f64")
+  t22 := tm.get("int")
+  t23 := tm.get("i8")
+  t24 := tm.get("i16")
+  t25 := tm.get("i32")
+  t26 := tm.get("i64")
+  t27 := tm.get("isize")
+  t28 := tm.get("never")
+  t29 := tm.get("rune")
+  t30 := tm.get("u8")
+  t31 := tm.get("u16")
+  t32 := tm.get("u32")
+  t33 := tm.get("u64")
+  t34 := tm.get("usize")
+  t35 := tm.get("str")
+  t36 := tm.get("void")
+
+  EXPECT_FALSE(t1.isCustomObject())
+  EXPECT_FALSE(t2.isCustomObject())
+  EXPECT_FALSE(t3.isCustomObject())
+  EXPECT_FALSE(t4.isCustomObject())
+  EXPECT_FALSE(t5.isCustomObject())
+  EXPECT_FALSE(t6.isCustomObject())
+  EXPECT_FALSE(t7.isCustomObject())
+  EXPECT_FALSE(t8.isCustomObject())
+  EXPECT_FALSE(t9.isCustomObject())
+  EXPECT_TRUE(t10.isCustomObject())
+  EXPECT_FALSE(t11.isCustomObject())
+  EXPECT_FALSE(t12.isCustomObject())
+  EXPECT_FALSE(t13.isCustomObject())
+  EXPECT_FALSE(t14.isCustomObject())
+  EXPECT_FALSE(t15.isCustomObject())
+  EXPECT_FALSE(t16.isCustomObject())
+  EXPECT_FALSE(t17.isCustomObject())
+  EXPECT_FALSE(t18.isCustomObject())
+  EXPECT_FALSE(t19.isCustomObject())
+  EXPECT_FALSE(t20.isCustomObject())
+  EXPECT_FALSE(t21.isCustomObject())
+  EXPECT_FALSE(t22.isCustomObject())
+  EXPECT_FALSE(t23.isCustomObject())
+  EXPECT_FALSE(t24.isCustomObject())
+  EXPECT_FALSE(t25.isCustomObject())
+  EXPECT_FALSE(t26.isCustomObject())
+  EXPECT_FALSE(t27.isCustomObject())
+  EXPECT_FALSE(t28.isCustomObject())
+  EXPECT_FALSE(t29.isCustomObject())
+  EXPECT_FALSE(t30.isCustomObject())
+  EXPECT_FALSE(t31.isCustomObject())
+  EXPECT_FALSE(t32.isCustomObject())
+  EXPECT_FALSE(t33.isCustomObject())
+  EXPECT_FALSE(t34.isCustomObject())
+  EXPECT_FALSE(t35.isCustomObject())
+  EXPECT_FALSE(t36.isCustomObject())
+}
+
+export fn TEST_Type_isErrorLike () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createObject("MyError", [
+    Type.TypeProperty{name: "message", t: tm.get("str")},
+    Type.TypeProperty{name: "stack", t: tm.get("str")},
+  ])
+
+  t2 := tm.createObject("MyError2", [
+    Type.TypeProperty{name: "message", t: tm.get("int")},
+    Type.TypeProperty{name: "stack", t: tm.get("int")},
+  ])
+
+  t3 := tm.createObject("MyError3", [])
+
+  EXPECT_TRUE(t1.isErrorLike())
+  EXPECT_FALSE(t2.isErrorLike())
+  EXPECT_FALSE(t3.isErrorLike())
+}
+
+export fn TEST_Type_isFloat () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  f1 := tm.get("float")
+  f2 := tm.get("f32")
+  f3 := tm.get("f64")
+  f4 := tm.get("int")
+
+  EXPECT_TRUE(f1.isFloat())
+  EXPECT_TRUE(f2.isFloat())
+  EXPECT_TRUE(f3.isFloat())
+  EXPECT_FALSE(f4.isFloat())
+}
+
+export fn TEST_Type_isInt () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  v1 := tm.get("i8")
+  v2 := tm.get("i16")
+  v3 := tm.get("i32")
+  v4 := tm.get("i64")
+  v5 := tm.get("u8")
+  v6 := tm.get("u16")
+  v7 := tm.get("u32")
+  v8 := tm.get("u64")
+  v9 := tm.get("str")
+
+  EXPECT_TRUE(v1.isInt())
+  EXPECT_TRUE(v2.isInt())
+  EXPECT_TRUE(v3.isInt())
+  EXPECT_TRUE(v4.isInt())
+  EXPECT_TRUE(v5.isInt())
+  EXPECT_TRUE(v6.isInt())
+  EXPECT_TRUE(v7.isInt())
+  EXPECT_TRUE(v8.isInt())
+  EXPECT_FALSE(v9.isInt())
+}
+
+export fn TEST_Type_isNumber () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  v1 := tm.get("i8")
+  v2 := tm.get("i16")
+  v3 := tm.get("i32")
+  v4 := tm.get("i64")
+  v5 := tm.get("u8")
+  v6 := tm.get("u16")
+  v7 := tm.get("u32")
+  v8 := tm.get("u64")
+  v9 := tm.get("f32")
+  v10 := tm.get("f64")
+  v11 := tm.get("str")
+
+  EXPECT_TRUE(v1.isNumber())
+  EXPECT_TRUE(v2.isNumber())
+  EXPECT_TRUE(v3.isNumber())
+  EXPECT_TRUE(v4.isNumber())
+  EXPECT_TRUE(v5.isNumber())
+  EXPECT_TRUE(v6.isNumber())
+  EXPECT_TRUE(v7.isNumber())
+  EXPECT_TRUE(v8.isNumber())
+  EXPECT_TRUE(v9.isNumber())
+  EXPECT_TRUE(v10.isNumber())
+  EXPECT_FALSE(v11.isNumber())
+}
+
+export fn TEST_Type_isPrimitive () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createAlias("TestAlias", tm.get("int"))
+  t2 := tm.createAlias("TestAlias", tm.createObject("AliasObject"))
+  t3 := tm.createArray(tm.get("int"))
+  t4 := tm.createEnum("TestEnum", [])
+  t5 := tm.createFunction(false, [], tm.get("int"))
+  t6 := tm.createFunction(false, [], tm.get("str"))
+  t7 := tm.createMap(tm.get("int"), tm.get("int"))
+  t8 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  t9 := tm.createNamespace("TestNamespace", [])
+  t10 := tm.createObject("TestObject")
+  t11 := tm.createOptional(tm.get("int"))
+  t12 := tm.createReference(tm.get("str"))
+  t13 := tm.createReference(tm.get("int"))
+  t14 := tm.createUnion([tm.get("int"), tm.get("str")])
+  t15 := tm.get("any")
+  t16 := tm.get("bool")
+  t17 := tm.get("byte")
+  t18 := tm.get("char")
+  t19 := tm.get("float")
+  t20 := tm.get("f32")
+  t21 := tm.get("f64")
+  t22 := tm.get("int")
+  t23 := tm.get("i8")
+  t24 := tm.get("i16")
+  t25 := tm.get("i32")
+  t26 := tm.get("i64")
+  t27 := tm.get("isize")
+  t28 := tm.get("never")
+  t29 := tm.get("rune")
+  t30 := tm.get("u8")
+  t31 := tm.get("u16")
+  t32 := tm.get("u32")
+  t33 := tm.get("u64")
+  t34 := tm.get("usize")
+  t35 := tm.get("str")
+  t36 := tm.get("void")
+
+  EXPECT_FALSE(t1.isPrimitive())
+  EXPECT_FALSE(t2.isPrimitive())
+  EXPECT_FALSE(t3.isPrimitive())
+  EXPECT_FALSE(t4.isPrimitive())
+  EXPECT_FALSE(t5.isPrimitive())
+  EXPECT_FALSE(t6.isPrimitive())
+  EXPECT_FALSE(t7.isPrimitive())
+  EXPECT_FALSE(t8.isPrimitive())
+  EXPECT_FALSE(t9.isPrimitive())
+  EXPECT_FALSE(t10.isPrimitive())
+  EXPECT_FALSE(t11.isPrimitive())
+  EXPECT_FALSE(t12.isPrimitive())
+  EXPECT_FALSE(t13.isPrimitive())
+  EXPECT_FALSE(t14.isPrimitive())
+  EXPECT_TRUE(t15.isPrimitive())
+  EXPECT_TRUE(t16.isPrimitive())
+  EXPECT_TRUE(t17.isPrimitive())
+  EXPECT_TRUE(t18.isPrimitive())
+  EXPECT_TRUE(t19.isPrimitive())
+  EXPECT_TRUE(t20.isPrimitive())
+  EXPECT_TRUE(t21.isPrimitive())
+  EXPECT_TRUE(t22.isPrimitive())
+  EXPECT_TRUE(t23.isPrimitive())
+  EXPECT_TRUE(t24.isPrimitive())
+  EXPECT_TRUE(t25.isPrimitive())
+  EXPECT_TRUE(t26.isPrimitive())
+  EXPECT_TRUE(t27.isPrimitive())
+  EXPECT_TRUE(t28.isPrimitive())
+  EXPECT_TRUE(t29.isPrimitive())
+  EXPECT_TRUE(t30.isPrimitive())
+  EXPECT_TRUE(t31.isPrimitive())
+  EXPECT_TRUE(t32.isPrimitive())
+  EXPECT_TRUE(t33.isPrimitive())
+  EXPECT_TRUE(t34.isPrimitive())
+  EXPECT_TRUE(t35.isPrimitive())
+  EXPECT_TRUE(t36.isPrimitive())
+}
+
+export fn TEST_Type_isRequired () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  v1 := tm.createAlias("TestAlias", tm.get("int"))
+  v2 := tm.createArray(tm.get("int"))
+  v3 := tm.createEnum("TestEnum", [])
+  v4 := tm.createFunction(false, [], tm.get("int"))
+  v5 := tm.createMap(tm.get("int"), tm.get("int"))
+  v6 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  v7 := tm.createNamespace("TestNamespace", [])
+  v8 := tm.createObject("TestObject")
+  v9 := tm.createOptional(tm.get("int"))
+  v10 := tm.createReference(tm.get("int"))
+  v11 := tm.createUnion([tm.get("int"), tm.get("str")])
+  v12 := tm.get("any")
+  v13 := tm.get("int")
+  v14 := tm.get("bool")
+  v15 := tm.get("byte")
+  v16 := tm.get("char")
+  v17 := tm.get("rune")
+  v18 := tm.createObject("TestObject2", [
+    Type.TypeProperty{name: "prop", t: v4}
+  ])
+
+  EXPECT_FALSE(v1.isRequired())
+  EXPECT_FALSE(v2.isRequired())
+  EXPECT_FALSE(v3.isRequired())
+  EXPECT_TRUE(v4.isRequired())
+  EXPECT_FALSE(v5.isRequired())
+  EXPECT_FALSE(v6.isRequired())
+  EXPECT_TRUE(v7.isRequired())
+  EXPECT_FALSE(v8.isRequired())
+  EXPECT_FALSE(v9.isRequired())
+  EXPECT_TRUE(v10.isRequired())
+  EXPECT_FALSE(v11.isRequired())
+  EXPECT_FALSE(v12.isRequired())
+  EXPECT_FALSE(v13.isRequired())
+  EXPECT_FALSE(v14.isRequired())
+  EXPECT_FALSE(v15.isRequired())
+  EXPECT_FALSE(v16.isRequired())
+  EXPECT_FALSE(v17.isRequired())
+  EXPECT_TRUE(v18.isRequired())
+}
+
+export fn TEST_Type_isSignedInt () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  v1 := tm.get("i8")
+  v2 := tm.get("i16")
+  v3 := tm.get("i32")
+  v4 := tm.get("i64")
+  v5 := tm.get("u8")
+
+  EXPECT_TRUE(v1.isSignedInt())
+  EXPECT_TRUE(v2.isSignedInt())
+  EXPECT_TRUE(v3.isSignedInt())
+  EXPECT_TRUE(v4.isSignedInt())
+  EXPECT_FALSE(v5.isSignedInt())
+}
+
+export fn TEST_Type_isUnsignedInt () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  v1 := tm.get("u8")
+  v2 := tm.get("u16")
+  v3 := tm.get("u32")
+  v4 := tm.get("u64")
+  v5 := tm.get("i8")
+
+  EXPECT_TRUE(v1.isUnsignedInt())
+  EXPECT_TRUE(v2.isUnsignedInt())
+  EXPECT_TRUE(v3.isUnsignedInt())
+  EXPECT_TRUE(v4.isUnsignedInt())
+  EXPECT_FALSE(v5.isUnsignedInt())
+}

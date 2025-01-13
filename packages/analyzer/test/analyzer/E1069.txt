@@ -1,0 +1,11 @@
+async fn customSleep () {}
+
+fn test () {
+  await customSleep()
+}
+===== err =====
+E1069.txt:4:3: AnalyzeError: E1069 - Await expression can only be used within async functions and main declaration
+3 | fn test () {
+4 |   await customSleep()
+  |   ~~~~~~~~~~~~~~~~~~~
+5 | }

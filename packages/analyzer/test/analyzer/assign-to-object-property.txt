@@ -1,0 +1,10 @@
+obj Animal {
+  name: str
+  mut age: int
+}
+
+main {
+  mut animal := Animal{name: "Brad", age: 10}
+  animal.age += 1
+  animal.age = 10
+}

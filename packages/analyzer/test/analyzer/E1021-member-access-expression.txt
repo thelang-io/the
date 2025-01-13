@@ -1,0 +1,11 @@
+enum Color { Red, Green, Blue }
+
+main {
+  a: Color = .Purple
+}
+===== err =====
+E1021-member-access-expression.txt:4:14: AnalyzeError: E1021 - Use of non-existing enumeration member 'Purple'
+3 | main {
+4 |   a: Color = .Purple
+  |              ~~~~~~~
+5 | }

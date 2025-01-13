@@ -1,0 +1,11 @@
+fn customSleep () {}
+
+main {
+  await customSleep()
+}
+===== err =====
+E1013-non-async-function.txt:4:9: AnalyzeError: E1013 - Awaited type expected to be asynchronous function
+3 | main {
+4 |   await customSleep()
+  |         ~~~~~~~~~~~~~
+5 | }

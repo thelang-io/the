@@ -1,0 +1,7 @@
+loop i := 0; i < 10; i++ {
+}
+===== err =====
+E1046.txt:1:1: AnalyzeError: E1046 - Loop statement cannot be used at the top level
+1 | loop i := 0; i < 10; i++ {
+  | ~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 | }

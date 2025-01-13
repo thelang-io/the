@@ -1,0 +1,2742 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as AnalyzerExport from "./analyzer-export"
+import * as Parser from "the/parser"
+import * as API from "./api"
+import * as Context from "./context"
+import * as TC from "./type-cast"
+import * as Type, Var from "./type"
+import * as TypeMap from "./type-map"
+import * as VarMap from "./var-map"
+import * as errors from "./errors"
+
+export type GuessTypeCallback = ((ref Type.Type)?) -> ref Type.Type
+
+export obj GuessTypeResult {
+  first: ref Type.Type
+  second: ref Type.Type
+}
+
+export obj TypeCastResult {
+  consequent: (ref Type.Type)[str]
+  alternate: (ref Type.Type)[str]
+}
+
+export obj Analyzer {
+  mut errors: str[]
+  mut files: AnalyzerFileArray
+  mut state: AnalyzerState
+}
+
+export obj AnalyzerState {
+  mut mainFound: bool
+}
+
+export obj AnalyzerFileState {
+  mut initialized: bool
+  mut loopInit: bool
+  mut returnType: (ref Type.Type)?
+  mut selfType: (ref Type.Type)?
+}
+
+export obj AnalyzerFileArray {
+  mut items: any[]
+  mut len: int
+
+  fn at (mut self: ref Self, index: int) ref AnalyzerFile {
+    return ref ((self.items[index] as any) as AnalyzerFile)
+  }
+
+  fn last (mut self: ref Self) ref AnalyzerFile {
+    return ref ((self.items.last as any) as AnalyzerFile)
+  }
+
+  fn push (mut self: ref Self, item: AnalyzerFile) {
+    self.items.push(item)
+    self.len++
+  }
+}
+
+export obj AnalyzerFile {
+  mut cwd: str
+  mut analyzer: ref Analyzer
+  mut exports: Type.NamespaceMember[]
+  mut f: Parser.File
+  mut reader: Parser.Reader
+  mut state: AnalyzerFileState
+  mut tc: (ref Type.Type)[str]
+  mut tm: TypeMap.TypeMap
+  mut vm: VarMap.VarMap
+
+  fn init (mut self: ref Self) {
+    if self.f.hasErrors {
+      self.analyzer.errors.merge(self.f.errors)
+    }
+
+    self.tm.init()
+    API.TypeMap_globals(ref self.tm)
+    API.VarMap_globals(ref self.vm, ref self.tm)
+  }
+
+  fn analyze (mut self: ref Self, mut items: ref Parser.Statement[]) {
+    len := items.len
+
+    loop i := 0; i < len; i++ {
+      if items[i].isDeclaration() {
+        loop j := i; j < len && items[j].isDeclaration(); j++ {
+          self.declare(items[j])
+        }
+
+        loop j := i; j < len && items[j].isDeclaration(); j++ {
+          self.define(items[j])
+        }
+
+        self.statement(items[i])
+
+        loop i + 1 < len && items[i + 1].isDeclaration() {
+          self.statement(items[++i])
+        }
+      } else {
+        self.statement(items[i])
+      }
+    }
+  }
+
+  fn declare (mut self: ref Self, mut it: ref Parser.Statement) {
+    if it.isEnumDeclaration() {
+      mut statement := it.asEnumDeclaration()
+
+      if self.entityExists(statement.name.name) {
+        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      membersLen := statement.members.len
+      mut members: str[]
+
+      loop i := 0; i < membersLen; i++ {
+        members.push(statement.members[i].name.name)
+      }
+
+      t := self.tm.createEnum(statement.name.name, members)
+      self.vm.add(statement.name.name, t, false)
+    } elif it.isExportDeclaration() {
+      mut statement := it.asExportDeclaration()
+      self.declare(ref statement.statement)
+    } elif it.isImportDeclaration() {
+      mut statement := it.asImportDeclaration()
+
+      if it.hasParent() {
+        self.raise(errors.E1043(), it.start, it.end)
+      }
+
+      sourceExpression := statement.source.asStringLiteral()
+      source := sourceExpression.value
+      mut relativePath := ""
+      mut astCwd := self.cwd
+
+      if [".", "/"].contains(source.slice(0, 1)) {
+        try {
+          if source.slice(0, 1) == "." {
+            relativePath = fs_realpathSync(path_dirname(self.reader.path) + path_SEP + source)
+          } elif source.slice(0, 1) == "/" {
+            relativePath = fs_realpathSync(source)
+          }
+        } catch err: error_Error {
+          self.raise(errors.E1071(source), statement.source.start, statement.source.end)
+          return
+        }
+      } elif source == "std" {
+        astCwd = ""
+        relativePath = "std"
+      } else {
+        pathDir := astCwd + path_SEP + ".packages" + path_SEP + source
+        mut possibleRelativePath: str?
+
+        try {
+          sourceFile := fs_readFileSync(fs_realpathSync(pathDir + path_SEP + "package.yml")).str()
+          sourceFileLines := sourceFile.lines()
+
+          loop i := 0; i < sourceFileLines.len; i++ {
+            line := sourceFileLines[i]
+            if line.slice(0, 5) == "main:" {
+              possibleRelativePath = fs_realpathSync(pathDir + path_SEP + line.slice(5).trim())
+            }
+          }
+        } catch err: error_Error {
+        }
+
+        if possibleRelativePath == nil {
+          self.raise(errors.E1074(source), statement.source.start, statement.source.end)
+          return
+        }
+
+        astCwd = pathDir
+        relativePath = possibleRelativePath as str
+      }
+
+      mut existingImport: (ref AnalyzerFile)?
+
+      loop i := 0; i < self.analyzer.files.len; i++ {
+        file := self.analyzer.files.at(i)
+        if file.reader.path == relativePath {
+          existingImport = file
+          break
+        }
+      }
+
+      if existingImport == nil {
+        if source == "std" {
+          self.analyzer.files.push(AnalyzerFile{
+            cwd: astCwd,
+            analyzer: self.analyzer,
+            f: Parser.parse("")
+          })
+
+          mut file := self.analyzer.files.last()
+          file.init()
+
+          API.TypeMap_std(ref file.tm)
+          API.VarMap_std(ref file.vm, ref file.tm)
+          API.AnalyzerFile_stdExports(ref file.exports, ref file.tm, ref file.vm)
+
+          file.state.initialized = true
+          existingImport = file
+        } else {
+          self.analyzer.files.push(AnalyzerFile{
+            cwd: astCwd,
+            analyzer: self.analyzer,
+            f: Parser.parse(relativePath)
+          })
+
+          mut file := self.analyzer.files.last()
+          Parser.interconnect(ref file.f)
+          file.reader = Parser.Reader_init(file.f.path == "anonymous" ? file.f.content : file.f.path)
+          file.init()
+          file.analyze(ref file.f.program.body)
+
+          file.state.initialized = true
+          existingImport = file
+        }
+      } elif !existingImport.state.initialized {
+        self.raise(errors.E1075(source), statement.source.start, statement.source.end)
+        return
+      } elif statement.specifiers.empty {
+        return
+      }
+
+      definiteImport := existingImport as ref AnalyzerFile
+
+      loop i := 0; i < statement.specifiers.len; i++ {
+        specifier := statement.specifiers[i] as Parser.ImportDeclarationSpecifier
+
+        if specifier is Parser.ImportNamespaceSpecifier {
+          namespaceSpecifier := specifier
+          t := self.tm.createNamespace(namespaceSpecifier.name.name, definiteImport.exports)
+          self.vm.add(namespaceSpecifier.name.name, t, true)
+          continue
+        }
+
+        namedSpecifier := specifier as Parser.ImportSpecifier
+
+        if !AnalyzerExport.has(ref definiteImport.exports, namedSpecifier.imported.name) {
+          self.raise(errors.E1072(), namedSpecifier.imported.start, namedSpecifier.imported.end)
+          continue
+        } elif self.entityExists(namedSpecifier.local.name) {
+          self.raise(errors.E1000(namedSpecifier.local.name), namedSpecifier.local.start, namedSpecifier.local.end)
+          continue
+        }
+
+        mut exportItem := AnalyzerExport.get(ref definiteImport.exports, namedSpecifier.imported.name)
+
+        if exportItem.var != nil {
+          self.vm.add(namedSpecifier.local.name, exportItem.var.t, exportItem.var.mutable)
+        }
+
+        if exportItem.t != nil && namedSpecifier.local.name != namedSpecifier.imported.name {
+          self.tm.createAlias(namedSpecifier.local.name, exportItem.t)
+        } elif exportItem.t != nil {
+          self.tm.insert(exportItem.t)
+        }
+      }
+    } elif it.isObjectDeclaration() {
+      mut statement := it.asObjectDeclaration()
+
+      if self.entityExists(statement.name.name) {
+        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      self.tm.createObject(statement.name.name)
+    }
+  }
+
+  fn define (mut self: ref Self, mut it: ref Parser.Statement) {
+    if it.isExportDeclaration() {
+      mut statement := it.asExportDeclaration()
+      self.define(ref statement.statement)
+    } elif it.isFunctionDeclaration() {
+      mut statement := it.asFunctionDeclaration()
+
+      if self.entityExists(statement.name.name) {
+        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      self.tm.increase()
+      self.vm.increase()
+      parameters := self.functionParametersLight(ref statement.parameters)
+      self.vm.decrease()
+      self.tm.decrease()
+      returnType := statement.returnType == nil ? self.tm.get("void") : self.t(ref statement.returnType)
+      t := self.tm.createFunction(statement.asynchronous, parameters, returnType)
+
+      self.vm.add(statement.name.name, t, false)
+    } elif it.isObjectDeclaration() {
+      mut statement := it.asObjectDeclaration()
+      initialTmSelf := self.tm.getSelf()
+      initialStateSelf := self.state.selfType
+
+      t := self.tm.get(statement.name.name)
+      len := statement.body.len
+
+      self.state.selfType = Type.opt(t)
+      self.tm.setSelf(Type.opt(t))
+
+      loop i := 0; i < len; i++ {
+        self.define(statement.body[i])
+      }
+
+      self.state.selfType = initialStateSelf
+      self.tm.setSelf(initialTmSelf)
+    } elif it.isObjectDeclarationMethod() {
+      mut statement := it.asObjectDeclarationMethod()
+      selfType := self.state.selfType as ref Type.Type
+
+      if selfType.has(statement.name.name) {
+        self.raise(errors.E1076(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      self.tm.increase()
+      self.vm.increase()
+      mut parameters := self.functionParametersLight(ref statement.parameters)
+      self.vm.decrease()
+      self.tm.decrease()
+
+      mut selfParameter: Type.TypeParameter?
+
+      if (
+        !parameters.empty &&
+        (Type.match(parameters[0].t, selfType) || Type.match(parameters[0].t, self.tm.createReference(selfType)))
+      ) {
+        selfParameter = parameters[0]
+        parameters.remove(0)
+      }
+
+      returnType := statement.returnType == nil ? self.tm.get("void") : self.t(ref statement.returnType)
+
+      t := self.tm.createMethod(
+        statement.asynchronous,
+        parameters,
+        returnType,
+        withSelf: selfParameter != nil,
+        selfMutable: selfParameter != nil ? selfParameter.mutable : false,
+        selfName: selfParameter != nil ? selfParameter.name != nil ? selfParameter.name : "" : "",
+        selfType: selfParameter != nil ? selfParameter.t : selfType
+      )
+
+      selfType.properties.push(Type.TypeProperty{
+        name: statement.name.name,
+        t: t,
+        mutable: false
+      })
+    } elif it.isObjectDeclarationProperty() {
+      mut statement := it.asObjectDeclarationProperty()
+      selfType := self.state.selfType as ref Type.Type
+
+      if selfType.has(statement.name.name) {
+        self.raise(errors.E1051(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      mut t := self.tm.get("any")
+
+      if statement.t != nil {
+        statementType := statement.t
+
+        self.guard(() -> void {
+          ref self.tc; // TODO: remove after v1
+          t = self.t(ref statementType)
+        })
+      }
+
+      selfType.properties.push(Type.TypeProperty{
+        name: statement.name.name,
+        t: t,
+        mutable: statement.mutable
+      })
+    } elif it.isTypeAliasDeclaration() {
+      mut statement := it.asTypeAliasDeclaration()
+
+      if self.entityExists(statement.name.name) {
+        self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+      }
+
+      self.tm.createAlias(statement.name.name, self.t(ref statement.t))
+    }
+  }
+
+  fn e (
+    mut self: ref Self,
+    mut it: ref Parser.Expression,
+    targetType: (ref Type.Type)? = nil,
+    noTargetPromote := false,
+    noTypeCast := false,
+    withMutable := false,
+  ) ref Type.Type {
+    if (
+      self._eIdentifier(it, targetType, noTypeCast, withMutable) ||
+      self._eLiteral(it, targetType) ||
+      self._eArray(it, targetType) ||
+      self._eAs(it, targetType, withMutable) ||
+      self._eAssignment(it, targetType) ||
+      self._eAwait(it, targetType) ||
+      self._eBinary(it, targetType) ||
+      self._eCall(it, targetType) ||
+      self._eClosure(it, targetType) ||
+      self._eConditional(it, targetType, withMutable) ||
+      self._eElementAccess(it, targetType, noTypeCast, withMutable) ||
+      self._eIs(it, targetType, withMutable) ||
+      self._eMap(it, targetType) ||
+      self._eMemberAccess(it, targetType) ||
+      self._eObject(it, targetType) ||
+      self._eParenthesized(it, targetType, noTargetPromote, withMutable) ||
+      self._ePropertyAccess(it, targetType, noTypeCast, withMutable) ||
+      self._eReference(it, targetType, withMutable) ||
+      self._eUnary(it, targetType)
+    ) {
+      if !noTargetPromote && targetType != nil {
+        Context.tryTarget(it, targetType)
+      }
+
+      return Context.target(it)
+    }
+
+    throw error_NewError("Tried analyzing unknown expression '" + Parser.stringifyExpression(it) + "'")
+  }
+
+  fn eNice (mut self: ref Self, mut it: ref Parser.Expression) ref Type.Type {
+    initialErrorsLen := self.analyzer.errors.len
+    result := self.e(it)
+
+    if self.analyzer.errors.len != initialErrorsLen {
+      self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
+    }
+
+    return result
+  }
+
+  fn entityExists (self: ref Self, name: str) bool {
+    return self.tm.has(name, global: false) || self.vm.has(name, global: false)
+  }
+
+  fn functionParameters (mut self: ref Self, mut parameters: ref Parser.FunctionParameter[]) Type.TypeParameter[] {
+    mut parameterNames: str[]
+    mut result: Type.TypeParameter[]
+    parametersLen := parameters.len
+
+    loop i := 0; i < parametersLen; i++ {
+      mut parameter := parameters[i]
+
+      if parameterNames.contains(parameter.name.name) {
+        self.raise(errors.E1054(parameter.name.name), parameter.name.start, parameter.name.end)
+      }
+
+      mut t := parameter.t == nil ? self.e(ref (parameter.initializer as Parser.Expression)) : self.t(ref parameter.t)
+
+      if Type.match(t, self.tm.get("void")) {
+        if parameter.t == nil {
+          initializer := parameter.initializer as Parser.Expression
+          self.raise(errors.E1017(), initializer.start, initializer.end)
+        } else {
+          self.raise(errors.E1017(), parameter.t.start, parameter.t.end)
+        }
+      }
+
+      if parameter.variadic {
+        t = self.tm.createArray(t)
+
+        if parameter.initializer != nil {
+          self.raise(errors.E1028(), parameter.initializer.start, parameter.initializer.end)
+        }
+      }
+
+      if parameter.t != nil && parameter.initializer != nil {
+        initializerType := self.e(ref parameter.initializer, Type.opt(t))
+
+        if !Type.similarTo(initializerType, t) {
+          self.raise(
+            errors.E1005(initializerType.toString(), t.toString()),
+            parameter.initializer.start,
+            parameter.initializer.end
+          )
+        }
+      }
+
+      parameterNames.push(parameter.name.name)
+      self.vm.add(parameter.name.name, t, parameter.mutable)
+
+      result.push(Type.TypeParameter{
+        name: parameter.name.name,
+        t: t,
+        mutable: parameter.mutable,
+        required: parameter.initializer == nil && !parameter.variadic,
+        variadic: parameter.variadic
+      })
+    }
+
+    return result
+  }
+
+  fn functionParametersLight (mut self: ref Self, mut parameters: ref Parser.FunctionParameter[]) Type.TypeParameter[] {
+    mut parameterNames: str[]
+    mut result: Type.TypeParameter[]
+    parametersLen := parameters.len
+
+    loop i := 0; i < parametersLen; i++ {
+      mut parameter := parameters[i]
+
+      mut t := parameter.t == nil
+        ? self.e(ref (parameter.initializer as Parser.Expression))
+        : self.t(ref parameter.t)
+
+      if parameter.variadic {
+        t = self.tm.createArray(t)
+      }
+
+      self.vm.add(parameter.name.name, t, parameter.mutable)
+
+      result.push(Type.TypeParameter{
+        name: parameter.name.name,
+        t: t,
+        mutable: parameter.mutable,
+        required: parameter.initializer == nil && !parameter.variadic,
+        variadic: parameter.variadic
+      })
+    }
+
+    return result
+  }
+
+  fn guard (mut self: ref Self, cb: () -> void) bool {
+    initialErrorsLen := self.analyzer.errors.len
+    cb()
+    failed := self.analyzer.errors.len != initialErrorsLen
+
+    if failed {
+      self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
+    }
+
+    return failed
+  }
+
+  fn guessType (mut self: ref Self, cb1: GuessTypeCallback, cb2: GuessTypeCallback) GuessTypeResult {
+    initialErrorsLen := self.analyzer.errors.len
+    firstType := cb1(nil)
+    firstTypeFailed := self.analyzer.errors.len != initialErrorsLen
+
+    if firstTypeFailed {
+      self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
+    }
+
+    mut result := GuessTypeResult{
+      first: firstType,
+      second: cb2(firstTypeFailed ? nil : Type.opt(firstType)),
+    }
+
+    if self.analyzer.errors.len != initialErrorsLen {
+      return result
+    }
+
+    result.first = cb1(Type.opt(result.second))
+    return result
+  }
+
+  fn operands (mut self: ref Self, op: Parser.TokenType, type1: ref Type.Type, type2: ref Type.Type) bool {
+    t1 := Type.unwrap(type1)
+    t2 := Type.unwrap(type2)
+
+    if Type.match(t1, self.tm.get("void")) || Type.match(t2, self.tm.get("void")) {
+      return false
+    }
+
+    if op == .OpGt || op == .OpGtEq || op == .OpLt || op == .OpLtEq {
+      if (
+        !(
+          t1.isNumber() ||
+          Type.match(t1, self.tm.get("byte")) ||
+          Type.match(t1, self.tm.get("char")) ||
+          Type.match(t1, self.tm.get("rune")) ||
+          Type.match(t1, self.tm.get("str"))
+        ) ||
+        !(
+          t2.isNumber() ||
+          Type.match(t2, self.tm.get("byte")) ||
+          Type.match(t2, self.tm.get("char")) ||
+          Type.match(t2, self.tm.get("rune")) ||
+          Type.match(t2, self.tm.get("str"))
+        ) ||
+        (!Type.similarTo(t1, t2) && !Type.similarTo(t2, t1))
+      ) {
+        return false
+      }
+    } elif op == .OpPlus || op == .OpPlusEq {
+      if (
+        !(t1.isNumber() || Type.match(t1, self.tm.get("byte")) || Type.match(t1, self.tm.get("str"))) ||
+        !(t2.isNumber() || Type.match(t2, self.tm.get("byte")) || Type.match(t2, self.tm.get("str"))) ||
+        (!Type.similarTo(t1, t2) && !Type.similarTo(t2, t1))
+      ) {
+        return false
+      }
+    } elif (
+      op == .OpMinus || op == .OpMinusEq ||
+      op == .OpPercent || op == .OpPercentEq ||
+      op == .OpSlash || op == .OpSlashEq ||
+      op == .OpStar || op == .OpStarEq
+    ) {
+      if (
+        !(t1.isNumber() || Type.match(t1, self.tm.get("byte"))) ||
+        !(t2.isNumber() || Type.match(t2, self.tm.get("byte")))
+      ) {
+        return false
+      }
+    } elif op == .OpAmpAmp || op == .OpAmpAmpEq || op == .OpPipePipe || op == .OpPipePipeEq {
+      if (
+        !(t1.isNumber() || Type.match(t1, self.tm.get("bool")) || Type.match(t1, self.tm.get("byte"))) ||
+        !(t2.isNumber() || Type.match(t2, self.tm.get("bool")) || Type.match(t2, self.tm.get("byte")))
+      ) {
+        return false
+      }
+    } elif (
+      op == .OpAmp || op == .OpAmpEq ||
+      op == .OpCaret || op == .OpCaretEq ||
+      op == .OpLShift || op == .OpLShiftEq ||
+      op == .OpPipe || op == .OpPipeEq ||
+      op == .OpRShift || op == .OpRShiftEq
+    ) {
+      if !t1.isInt() || !t2.isInt() {
+        return false
+      }
+    } elif op == .OpEq {
+      if !Type.match(t1, t2) && !t2.canPromoteTo(t1) {
+        return false
+      }
+    } elif op == .OpEqEq || op == .OpExclEq || op == .OpQn {
+      if !Type.match(t1, t2) && !Type.canPromote(t1, t2) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  fn raise (mut self: ref Self, message: str, start: int, end: int) {
+    error := Parser.Reader_error(ref self.reader, "AnalyzeError", message, start, end)
+    self.analyzer.errors.push(error)
+  }
+
+  fn statement (mut self: ref Self, mut it: ref Parser.Statement) {
+    if (
+      self._blockStatement(it) ||
+      self._breakStatement(it) ||
+      self._continueStatement(it) ||
+      self._emptyStatement(it) ||
+      self._enumDeclaration(it) ||
+      self._exportDeclaration(it) ||
+      self._exportNamedDeclaration(it) ||
+      self._expressionStatement(it) ||
+      self._functionDeclaration(it) ||
+      self._ifStatement(it) ||
+      self._importDeclaration(it) ||
+      self._loopStatement(it) ||
+      self._mainDeclaration(it) ||
+      self._objectDeclaration(it) ||
+      self._objectDeclarationMethod(it) ||
+      self._objectDeclarationProperty(it) ||
+      self._returnStatement(it) ||
+      self._throwStatement(it) ||
+      self._tryStatement(it) ||
+      self._typeAliasDeclaration(it) ||
+      self._variableDeclaration(it)
+    ) {
+      return
+    }
+
+    throw error_NewError("Tried analyzing unknown statement '" + Parser.stringifyStatement(it) + "'")
+  }
+
+  fn t (mut self: ref Self, mut it: Parser.Type) ref Type.Type {
+    if it.isArray() {
+      mut t := it.asArray()
+      elementType := self.t(ref t.elementType)
+
+      if Type.match(elementType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.elementType.start, t.elementType.end)
+      }
+
+      return self.tm.createArray(elementType)
+    } elif it.isFunction() {
+      mut t := it.asFunction()
+      mut parameterNames: str[]
+      mut parameters: Type.TypeParameter[]
+      parametersLen := t.parameters.len
+
+      loop i := 0; i < parametersLen; i++ {
+        mut parameter := t.parameters[i]
+
+        if parameter.name != nil {
+          if parameterNames.contains(parameter.name.name) {
+            self.raise(errors.E1054(parameter.name.name), parameter.name.start, parameter.name.end)
+          } else {
+            parameterNames.push(parameter.name.name)
+          }
+        }
+
+        mut t := self.t(ref parameter.t)
+
+        if Type.match(t, self.tm.get("void")) {
+          self.raise(errors.E1017(), parameter.t.start, parameter.t.end)
+        }
+
+        if parameter.variadic {
+          t = self.tm.createArray(t)
+        }
+
+        parameters.push(Type.TypeParameter{
+          name: parameter.name == nil ? nil : parameter.name.name,
+          t: t,
+          mutable: parameter.mutable,
+          required: !parameter.variadic,
+          variadic: parameter.variadic
+        })
+      }
+
+      return self.tm.createFunction(t.asynchronous, parameters, self.t(ref t.returnType))
+    } elif it.isIdentifier() {
+      mut t := it.asIdentifier()
+
+      if !self.tm.has(t.name.name) {
+        self.raise(errors.E1001(t.name.name), t.name.start, t.name.end)
+        return self.tm.get("any")
+      }
+
+      return self.tm.get(t.name.name)
+    } elif it.isMap() {
+      mut t := it.asMap()
+      keyType := self.t(ref t.keyType)
+      valueType := self.t(ref t.valueType)
+
+      if Type.match(keyType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.keyType.start, t.keyType.end)
+      }
+
+      if Type.match(valueType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.valueType.start, t.valueType.end)
+      }
+
+      return self.tm.createMap(keyType, valueType)
+    } elif it.isMember() {
+      mut t := it.asMember()
+      leftType := self.t(ref t.t)
+
+      if !leftType.isNamespace() {
+        self.raise(errors.E1022(leftType.toString()), t.t.start, t.t.end)
+        return self.tm.get("any")
+      }
+
+      leftNamespace := leftType.asNamespace()
+
+      if AnalyzerExport.has(ref leftNamespace.members, t.name.name) {
+        member := AnalyzerExport.get(ref leftNamespace.members, t.name.name)
+
+        if member.t != nil {
+          return member.t
+        }
+      }
+
+      self.raise(errors.E1023(leftType.toString(), t.name.name), t.name.start, t.name.end)
+      return self.tm.get("any")
+    } elif it.isOptional() {
+      mut t := it.asOptional()
+      underlyingType := self.t(ref t.t)
+
+      if Type.match(underlyingType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.t.start, t.t.end)
+      }
+
+      return self.tm.createOptional(underlyingType)
+    } elif it.isParenthesized() {
+      mut t := it.asParenthesized()
+      return self.t(ref t.t)
+    } elif it.isReference() {
+      mut t := it.asReference()
+      underlyingType := self.t(ref t.t)
+
+      if Type.match(underlyingType, self.tm.get("void")) {
+        self.raise(errors.E1063(), t.t.start, t.t.end)
+      }
+
+      return self.tm.createReference(underlyingType)
+    } elif it.isUnion() {
+      mut t := it.asUnion()
+      mut types: (ref Type.Type)[]
+      typesLen := t.types.len
+
+      loop i := 0; i < typesLen; i++ {
+        mut parserType := t.types[i] as Parser.Type
+        subType := self.t(ref parserType)
+
+        if Type.match(subType, self.tm.get("void")) {
+          self.raise(errors.E1063(), parserType.start, parserType.end)
+        }
+
+        types.push(subType)
+      }
+
+      return self.tm.createUnion(types)
+    }
+
+    throw error_NewError("Tried analyzing unknown type")
+  }
+
+  fn typeCast (mut self: ref Self, it: ref Parser.Expression, root := true) TypeCastResult {
+    initialTC := self.tc
+    mut consequent: (ref Type.Type)[str]
+    mut alternate: (ref Type.Type)[str]
+
+    if it.isArray() {
+      expression := it.asArray()
+
+      loop i := 0; i < expression.elements.len; i++ {
+        self.typeCast(expression.elements[i], false)
+      }
+    } elif it.isAs() {
+      expression := it.asAs()
+      self.typeCast(ref expression.expression, false)
+    } elif it.isAssignment() {
+      expression := it.asAssignment()
+      self.typeCast(ref expression.left, false)
+      rightTypeCastResult := self.typeCast(ref expression.right, false)
+
+      consequent.merge(rightTypeCastResult.consequent)
+      alternate.merge(rightTypeCastResult.alternate)
+
+      if expression.operator.t == .OpEq {
+        leftType := Type.unwrap(self.eNice(ref expression.left))
+        rightType := Type.unwrap(self.eNice(ref expression.right))
+        code := Parser.stringifyExpression(expression.left)
+
+        if Type.canNarrow(leftType, rightType) {
+          self.tc.set(code, rightType)
+        }
+      }
+    } elif it.isAwait() {
+      expression := it.asAwait()
+      self.typeCast(ref expression.expression, false)
+    } elif it.isBinary() {
+      expression := it.asBinary()
+
+      if expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
+        leftTypeCastResult := self.typeCast(ref expression.left, false)
+
+        if expression.operator.t == .OpAmpAmp {
+          self.tc.merge(leftTypeCastResult.consequent)
+        } else {
+          self.tc.merge(leftTypeCastResult.alternate)
+        }
+
+        rightTypeCastResult := self.typeCast(ref expression.right, false)
+
+        if expression.operator.t == .OpAmpAmp {
+          consequent.merge(leftTypeCastResult.consequent)
+          consequent.merge(rightTypeCastResult.consequent)
+          alternate.merge(leftTypeCastResult.alternate)
+          alternate.merge(rightTypeCastResult.alternate)
+
+          leftTCAlternateKeys := leftTypeCastResult.alternate.keys
+
+          loop i := 0; i < leftTCAlternateKeys.len; i++ {
+            name := leftTCAlternateKeys[i]
+
+            if !rightTypeCastResult.alternate.has(name) {
+              continue
+            }
+
+            t1 := leftTypeCastResult.alternate.get(name)
+            t2 := rightTypeCastResult.alternate.get(name)
+
+            if !Type.match(t1, t2) {
+              alternate.set(name, self.tm.unionAdd(t1, t2))
+            }
+          }
+        } else {
+          leftTCConsequentKeys := leftTypeCastResult.consequent.keys
+
+          loop i := 0; i < leftTCConsequentKeys.len; i++ {
+            name := leftTCConsequentKeys[i]
+
+            if !rightTypeCastResult.consequent.has(name) {
+              continue
+            }
+
+            t1 := leftTypeCastResult.consequent.get(name)
+            t2 := rightTypeCastResult.consequent.get(name)
+
+            if Type.match(t1, t2) {
+              consequent.set(name, t1)
+            } else {
+              consequent.set(name, self.tm.unionAdd(t1, t2))
+            }
+          }
+
+          alternate.merge(leftTypeCastResult.alternate)
+          alternate.merge(rightTypeCastResult.alternate)
+        }
+      } elif (expression.operator.t == .OpEqEq || expression.operator.t == .OpExclEq) && (
+        (expression.left.isAccess(withAssignment: true) && expression.right.isNilLiteral()) ||
+        (expression.right.isAccess(withAssignment: true) && expression.left.isNilLiteral())
+      ) {
+        accessExpression := expression.left.isNilLiteral() ? ref expression.right : ref expression.left
+        self.typeCast(accessExpression, false)
+        left := accessExpression.getAccess(withAssignment: true)
+        leftType := Type.unwrap(self.eNice(left))
+
+        if leftType.isOptional() {
+          code := Parser.stringifyExpression(left)
+          t := leftType.asOptional()
+
+          if expression.operator.t == .OpEqEq {
+            alternate.set(code, t.t)
+          } else {
+            consequent.set(code, t.t)
+          }
+        }
+      } else {
+        self.typeCast(ref expression.left, false)
+        self.typeCast(ref expression.right, false)
+      }
+    } elif it.isCall() {
+      expression := it.asCall()
+      self.typeCast(ref expression.callee, false)
+
+      loop i := 0; i < expression.arguments.len; i++ {
+        argument := expression.arguments[i]
+        self.typeCast(ref argument.expression, false)
+      }
+    } elif it.isConditional() {
+      expression := it.asConditional()
+
+      conditionTypeCastResult := self.typeCast(ref expression.condition, false)
+      afterConditionTC := self.tc
+
+      self.tc.merge(conditionTypeCastResult.consequent)
+      self.typeCast(ref expression.consequent, false)
+      consequentDiffTC := self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
+
+      self.tc.merge(conditionTypeCastResult.alternate)
+      self.typeCast(ref expression.alternate, false)
+      alternateDiffTC := self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
+
+      self.typeCastMergeIntersecting(consequentDiffTC, alternateDiffTC)
+    } elif it.isElementAccess() {
+      expression := it.asElementAccess()
+      self.typeCast(ref expression.expression, false)
+      self.typeCast(ref expression.argument, false)
+    } elif it.isIs() {
+      expression := it.asIs()
+      self.typeCast(ref expression.expression, false)
+
+      if expression.expression.isAccess(withAssignment: true) {
+        expressionType := Type.unwrap(self.eNice(ref expression.expression))
+        t := self.t(ref expression.t)
+        code := Parser.stringifyExpression(expression.expression.getAccess(withAssignment: true))
+
+        if consequent.has(code) || self.tc.has(code) {
+          existingType := consequent.has(code) ? consequent.get(code) : self.tc.get(code)
+
+          if Type.match(existingType, t) {
+            alternate.set(code, self.tm.get("never"))
+          } elif existingType.canCastTo(t) {
+            consequent.set(code, t)
+
+            if expressionType.isUnion() {
+              alternate.set(code, self.tm.unionSub(expressionType, t))
+            }
+          } else {
+            consequent.set(code, self.tm.get("never"))
+            alternate.set(code, existingType)
+          }
+        } else {
+          consequent.set(code, t)
+
+          if expressionType.isUnion() {
+            alternate.set(code, self.tm.unionSub(expressionType, t))
+          }
+        }
+      }
+    } elif it.isMap() {
+      expression := it.asMap()
+
+      loop i := 0; i < expression.elements.len; i++ {
+        element := expression.elements[i]
+        self.typeCast(ref element.key, false)
+        self.typeCast(ref element.value, false)
+      }
+    } elif it.isObject() {
+      expression := it.asObject()
+
+      loop i := 0; i < expression.properties.len; i++ {
+        property := expression.properties[i]
+        self.typeCast(ref property.value, false)
+      }
+    } elif it.isParenthesized() {
+      expression := it.asParenthesized()
+      typeCastResult := self.typeCast(ref expression.expression, false)
+
+      consequent.merge(typeCastResult.consequent)
+      alternate.merge(typeCastResult.alternate)
+    } elif it.isPropertyAccess() {
+      expression := it.asPropertyAccess()
+      self.typeCast(ref expression.expression, false)
+    } elif it.isReference() {
+      expression := it.asReference()
+      self.typeCast(ref expression.expression, false)
+    } elif it.isUnary() {
+      expression := it.asUnary()
+      typeCastResult := self.typeCast(ref expression.operand, false)
+
+      if expression.operator.t == .OpExcl {
+        consequent.merge(typeCastResult.alternate)
+        alternate.merge(typeCastResult.consequent)
+      }
+    }
+
+    if root {
+      self.tc = initialTC
+    }
+
+    return TypeCastResult{
+      consequent: consequent,
+      alternate: alternate,
+    }
+  }
+
+  fn typeCastExclude (mut self: ref Self, tc: (ref Type.Type)[str]) (ref Type.Type)[str] {
+    keys := self.tc.keys
+    mut result: (ref Type.Type)[str]
+
+    loop i := keys.len - 1; i >= 0; i-- {
+      key := keys[i]
+
+      if tc.has(key) {
+        value1 := self.tc.get(key)
+        value2 := tc.get(key)
+
+        if Type.match(value1, value2) {
+          continue
+        }
+      }
+
+      result.set(key, self.tc.get(key))
+    }
+
+    return result
+  }
+
+  fn typeCastMergeIntersecting (mut self: ref Self, result1: (ref Type.Type)[str], result2: (ref Type.Type)[str]) {
+    keys := result1.keys
+
+    loop i := keys.len - 1; i >= 0; i-- {
+      key := keys[i]
+
+      if !result2.has(key) {
+        continue
+      }
+
+      value1 := result1.get(key)
+      value2 := result2.get(key)
+
+      if !Type.match(value1, value2) {
+        continue
+      }
+
+      self.tc.set(key, value1)
+    }
+  }
+
+  fn _eIdentifier (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool) bool {
+    if !it.isIdentifier() {
+      return false
+    }
+
+    mut expression := it.asIdentifier()
+
+    if !self.vm.has(expression.name) {
+      Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
+      self.raise(errors.E1003(expression.name), it.start, it.end)
+      return true
+    }
+
+    var := self.vm.get(expression.name)
+
+    if withMutable && !var.mutable {
+      self.raise(errors.E1011(expression.name), it.start, it.end)
+    }
+
+    Context.set(it, var.t)
+
+    if targetType != nil {
+      if Type.match(targetType, var.t) {
+        return true
+      }
+    }
+
+    if noTypeCast {
+      return true
+    }
+
+    code := Parser.stringifyExpression(it)
+
+    if self.tc.has(code) {
+      Context.setTarget(it, self.tc.get(code))
+    }
+
+    return true
+  }
+
+  fn _eLiteral (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if it.isFloatingPointLiteral() {
+      expression := it.asFloatingPointLiteral()
+      possibleTargetType := Type.unwrap(targetType == nil ? self.tm.get("float") : targetType, withOptional: true)
+      definiteTargetType := Type.unwrap(possibleTargetType.isFloat() ? possibleTargetType : self.tm.get("float"))
+
+      try {
+        if Type.match(definiteTargetType, self.tm.get("f32")) {
+          expression.value.toF32()
+        } elif Type.match(definiteTargetType, self.tm.get("f64")) {
+          expression.value.toF64()
+        } else {
+          expression.value.toFloat()
+        }
+      } catch err: error_Error {
+        self.raise(errors.E1030(definiteTargetType.toString()), it.start, it.end)
+      }
+
+      Context.set(it, self.tm.get("float"))
+      Context.setTarget(it, definiteTargetType)
+
+      return true
+    }
+
+    if it.isIntegerLiteral() {
+      expression := it.asIntegerLiteral()
+      possibleTargetType := Type.unwrap(targetType == nil ? self.tm.get("int") : targetType, withOptional: true)
+      definiteTargetType := Type.unwrap(possibleTargetType.isNumber() ? possibleTargetType : self.tm.get("int"))
+      firstTwoDigits := expression.value.lower.slice(0, 2)
+
+      val := firstTwoDigits == "0b" || firstTwoDigits == "0o" || firstTwoDigits == "0x"
+        ? expression.value.slice(2)
+        : expression.value
+
+      base := firstTwoDigits == "0o"
+        ? 8
+        : firstTwoDigits == "0b"
+          ? 2
+          : firstTwoDigits == "0x"
+            ? 16
+            : 0
+
+      try {
+        if Type.match(definiteTargetType, self.tm.get("i8")) {
+          val.toI8(base)
+        } elif Type.match(definiteTargetType, self.tm.get("i16")) {
+          val.toI16(base)
+        } elif Type.match(definiteTargetType, self.tm.get("i32")) {
+          val.toI32(base)
+        } elif Type.match(definiteTargetType, self.tm.get("i64")) {
+          val.toI64(base)
+        } elif Type.match(definiteTargetType, self.tm.get("u8")) {
+          val.toU8(base)
+        } elif Type.match(definiteTargetType, self.tm.get("u16")) {
+          val.toU16(base)
+        } elif Type.match(definiteTargetType, self.tm.get("u32")) {
+          val.toU32(base)
+        } elif Type.match(definiteTargetType, self.tm.get("u64")) {
+          val.toU64(base)
+        } elif Type.match(definiteTargetType, self.tm.get("f32")) {
+          expression.value.toF32()
+        } elif Type.match(definiteTargetType, self.tm.get("f64")) {
+          expression.value.toF64()
+        } elif Type.match(definiteTargetType, self.tm.get("float")) {
+          expression.value.toFloat()
+        } else {
+          val.toInt(base)
+        }
+      } catch err: error_Error {
+        self.raise(errors.E1029(definiteTargetType.toString()), it.start, it.end)
+      }
+
+      Context.set(it, definiteTargetType.isFloat() ? self.tm.get("float") : self.tm.get("int"))
+      Context.setTarget(it, definiteTargetType)
+
+      return true
+    }
+
+    if it.isNilLiteral() {
+      if targetType == nil {
+        Context.set(it, self.tm.get("any"))
+        self.raise(errors.E1004(), it.start, it.end)
+        return true
+      }
+
+      definiteTargetType := Type.unwrap(targetType as ref Type.Type)
+      Context.set(it, definiteTargetType)
+
+      if !definiteTargetType.isOptional() {
+        self.raise(errors.E1006(definiteTargetType.toString()), it.start, it.end)
+      }
+
+      return true
+    }
+
+    mut initialTypeMaybe: (ref Type.Type)?
+
+    if it.isBooleanLiteral() {
+      initialTypeMaybe = self.tm.get("bool")
+    } elif it.isCharacterLiteral() {
+      initialTypeMaybe = self.tm.get("rune")
+    } elif it.isStringLiteral() {
+      initialTypeMaybe = self.tm.get("str")
+    }
+
+    if initialTypeMaybe == nil {
+      return false
+    }
+
+    Context.set(it, initialTypeMaybe as ref Type.Type)
+    return true
+  }
+
+  fn _eArray (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isArray() {
+      return false
+    }
+
+    mut expression := it.asArray()
+    mut elementType: (ref Type.Type)?
+
+    if targetType != nil {
+      maybeArrayType := Type.unwrap(targetType, withOptional: true)
+
+      if maybeArrayType.isArray() {
+        arrayType := maybeArrayType.asArray()
+        elementType = Type.opt(arrayType.elementType)
+      }
+    }
+
+    if expression.elements.empty {
+      if elementType == nil {
+        Context.set(it, self.tm.createArray(self.tm.get("any")))
+        self.raise(errors.E1007(), it.start, it.end)
+        return true
+      }
+    }
+
+    elementsLen := expression.elements.len
+    elementTypeForced := elementType != nil
+
+    loop i := 0; i < elementsLen; i++ {
+      mut element := expression.elements[i]
+      t := self.e(ref element, elementType)
+
+      if elementType == nil {
+        elementType = t
+      } elif !Type.similarTo(t, elementType) {
+        if elementTypeForced {
+          self.raise(errors.E1008(t.toString(), elementType.toString()), element.start, element.end)
+        } else {
+          elementType = self.tm.unionAdd(elementType, t)
+        }
+      }
+    }
+
+    Context.set(it, self.tm.createArray(elementType as ref Type.Type))
+    return true
+  }
+
+  fn _eAs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
+    if !it.isAs() {
+      return false
+    }
+
+    mut expression := it.asAs()
+    t := self.t(ref expression.t)
+
+    expressionType := self.e(
+      ref expression.expression,
+      Type.opt(t),
+      noTargetPromote: true,
+      withMutable: withMutable,
+    )
+
+    if !expressionType.canCastTo(t) {
+      self.raise(errors.E1009(expressionType.toString(), t.toString()), it.start, it.end)
+    }
+
+    Context.set(it, t)
+    Context.setExtra(it, Context.AsExpressionContextExtra{fromType: expressionType})
+
+    return true
+  }
+
+  fn _eAssignment (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isAssignment() {
+      return false
+    }
+
+    mut expression := it.asAssignment()
+
+    guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+      ref self.tc; // TODO: remove after v1
+      return self.e(ref expression.left, operandType, withMutable: true, noTypeCast: true)
+    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
+      ref self.tc; // TODO: remove after v1
+      return self.e(ref expression.right, operandType)
+    })
+
+    leftType := guessTypeResult.first
+    rightType := guessTypeResult.second
+
+    if !self.operands(expression.operator.t, leftType, rightType) {
+      self.raise(
+        errors.E1027(expression.operator.val, leftType.toString()),
+        expression.operator.start,
+        expression.operator.end,
+      )
+    }
+
+    if !expression.left.isAccess() {
+      self.raise(errors.E1010(), expression.left.start, expression.left.end)
+    }
+
+    initialRightType := Context.initial(ref expression.right)
+
+    if Type.canNarrow(leftType, initialRightType) {
+      code := Parser.stringifyExpression(expression.left)
+      self.tc.set(code, initialRightType)
+    }
+
+    Context.set(it, initialRightType)
+    return true
+  }
+
+  fn _eAwait (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isAwait() {
+      return false
+    }
+
+    mut expression := it.asAwait()
+    expressionType := Type.unwrap(self.e(ref expression.expression))
+    parentNode := it.parentNode()
+
+    if !parentNode.hasAsyncParent() {
+      self.raise(errors.E1069(), it.start, it.end)
+    }
+
+    if !expressionType.isFunction() {
+      Context.set(it, self.tm.get("any"))
+      self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
+      return true
+    }
+
+    t := expressionType.asFunction()
+
+    if !t.asynchronous {
+      self.raise(errors.E1013(), expression.expression.start, expression.expression.end)
+    }
+
+    Context.set(it, t.returnType)
+    return true
+  }
+
+  fn _eBinary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isBinary() {
+      return false
+    }
+
+    mut expression := it.asBinary()
+    mut guessTypeResult := GuessTypeResult{first: self.tm.get("int"), second: self.tm.get("int")}
+
+    guardFailed := self.guard(() -> void {
+      ref self.tc; // TODO: remove after v1
+      guessTypeResult = self._eBinaryGuess(it)
+    })
+
+    if guardFailed || !self.operands(expression.operator.t, guessTypeResult.first, guessTypeResult.second) {
+      guessTypeResult = self._eBinaryGuess(it, noTypeCast: true)
+    }
+
+    leftType := guessTypeResult.first
+    rightType := guessTypeResult.second
+
+    if !self.operands(expression.operator.t, leftType, rightType) {
+      self.raise(
+        errors.E1026(expression.operator.val, leftType.toString(), rightType.toString()),
+        expression.operator.start,
+        expression.operator.end,
+      )
+    }
+
+    if (
+      expression.operator.t == .OpEqEq ||
+      expression.operator.t == .OpExclEq ||
+      expression.operator.t == .OpGt ||
+      expression.operator.t == .OpGtEq ||
+      expression.operator.t == .OpLt ||
+      expression.operator.t == .OpLtEq
+    ) {
+      Context.set(it, self.tm.get("bool"))
+    } else {
+      Context.set(it, Type.promoteMaybe(leftType, rightType))
+    }
+
+    return true
+  }
+
+  fn _eBinaryGuess (mut self: ref Self, mut it: ref Parser.Expression, noTypeCast := false) GuessTypeResult {
+    mut expression := it.asBinary()
+    mut leftTypeCastResult: TypeCastResult?
+
+    return self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+      ref self.tc; // TODO: remove after v1
+
+      leftTypeCastResult = self.typeCast(ref expression.left)
+      result := self.e(ref expression.left, operandType, noTypeCast: noTypeCast)
+
+      return result
+    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
+      beforeMergeTC := self.tc
+
+      if expression.operator.t == .OpAmpAmp {
+        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.consequent)
+      } elif expression.operator.t == .OpPipePipe {
+        definiteLeftTypeCastResult := leftTypeCastResult as TypeCastResult
+        self.tc.merge(definiteLeftTypeCastResult.alternate)
+      }
+
+      afterMergeTC := self.tc
+      result := self.e(ref expression.right, operandType, noTypeCast: noTypeCast)
+      diffTC := self.typeCastExclude(afterMergeTC)
+      self.tc = beforeMergeTC
+      self.tc.merge(diffTC)
+
+      return result
+    })
+  }
+
+  fn _eCall (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isCall() {
+      return false
+    }
+
+    initialErrorsLen := self.analyzer.errors.len
+    mut expression := it.asCall()
+    calleeType := Type.unwrap(self.e(ref expression.callee))
+    Context.setTarget(ref expression.callee, calleeType)
+    mut asynchronous: bool
+    mut parameters: Type.TypeParameter[]
+    mut returnType := self.tm.get("void")
+
+    if calleeType.isFunction() {
+      t := calleeType.asFunction()
+      asynchronous = t.asynchronous
+      parameters = t.parameters
+      returnType = t.returnType
+    } elif calleeType.isMethod() {
+      t := calleeType.asMethod()
+      asynchronous = t.asynchronous
+      parameters = t.parameters
+      returnType = t.returnType
+
+      if t.withSelf && t.selfMutable && t.selfType.isReference() {
+        self.analyzer.errors = self.analyzer.errors.slice(0, initialErrorsLen)
+
+        selfReferenceType := t.selfType.asReference()
+        innerExpressions := Parser.getInnerExpressions(ref expression.callee)
+
+        loop i := 0; i < innerExpressions.len; i++ {
+          innerExpression := innerExpressions[i] as ref Parser.Expression
+          innerExpressionType := self.e(innerExpression, withMutable: true)
+
+          if Type.match(selfReferenceType.t, innerExpressionType) {
+            Context.setTarget(innerExpression, t.selfType)
+          }
+        }
+      }
+    } else {
+      Context.set(it, self.tm.get("void"))
+      self.raise(errors.E1031(calleeType.toString()), expression.callee.start, expression.callee.end)
+      return true
+    }
+
+    argumentsLen := expression.arguments.len
+    parametersLen := parameters.len
+    mut passedParameters: str[]
+    mut hasNamed := false
+    mut isVariadic := false
+    mut variadicParameter: Type.TypeParameter?
+    mut variadicParameterIdx := -1
+    mut parameterIdx := 0
+    mut contextArguments: Context.CallExpressionContextArgument[]
+
+    loop i := 0; i < argumentsLen; i++ {
+      mut argument := expression.arguments[i]
+      mut parameter: Type.TypeParameter?
+      mut foundParameterIdx := -1
+
+      if argument.name != nil {
+        if passedParameters.contains(argument.name.name) {
+          self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
+          break
+        }
+
+        loop j := 0; j < parametersLen; j++ {
+          typeParameter := parameters[j]
+
+          if typeParameter.name != nil {
+            if typeParameter.name == argument.name.name {
+              parameter = typeParameter as Type.TypeParameter
+              foundParameterIdx = j
+              break
+            }
+          }
+        }
+
+        if parameter == nil {
+          self.raise(errors.E1032(argument.name.name), argument.name.start, argument.name.end)
+          break
+        } elif parameter.variadic {
+          self.raise(errors.E1033(argument.name.name), argument.name.start, argument.name.end)
+          break
+        }
+
+        hasNamed = true
+        isVariadic = false
+        variadicParameter = nil
+        variadicParameterIdx = -1
+      } elif hasNamed {
+        self.raise(errors.E1034(), argument.expression.start, argument.expression.end)
+        break
+      } elif isVariadic {
+        parameter = variadicParameter
+        foundParameterIdx = variadicParameterIdx
+      } elif parameterIdx >= parametersLen {
+        self.raise(errors.E1032(), argument.expression.start, argument.expression.end)
+        break
+      } else {
+        parameter = parameters[parameterIdx]
+        foundParameterIdx = parameterIdx
+      }
+
+      definiteParameter := parameter as Type.TypeParameter
+
+      if !isVariadic && definiteParameter.variadic {
+        isVariadic = true
+        variadicParameter = definiteParameter
+        variadicParameterIdx = foundParameterIdx
+      }
+
+      mut parameterType := definiteParameter.t
+
+      if definiteParameter.variadic {
+        t := parameterType.asArray()
+        parameterType = t.elementType
+      }
+
+      t := Type.unwrap(self.e(ref argument.expression, Type.opt(parameterType)), withReference: false)
+
+      if !Type.similarTo(t, parameterType) {
+        self.raise(
+          errors.E1035(t.toString(), parameterType.toString()),
+          argument.expression.start,
+          argument.expression.end,
+        )
+      }
+
+      contextArguments.push(Context.CallExpressionContextArgument{
+        argument: argument,
+        parameterIdx: foundParameterIdx,
+        typeParameter: definiteParameter,
+      })
+
+      if !isVariadic {
+        if definiteParameter.name != nil {
+          passedParameters.push(definiteParameter.name)
+        }
+
+        parameterIdx++
+      }
+    }
+
+    loop ; parameterIdx < parametersLen; parameterIdx++ {
+      parameter := parameters[parameterIdx]
+
+      if parameter.required && parameter.name != nil {
+        self.raise(errors.E1036(parameter.name), it.start, it.end)
+      } elif parameter.required {
+        self.raise(errors.E1037(), it.start, it.end)
+      }
+    }
+
+    Context.set(it, asynchronous ? calleeType : returnType)
+
+    Context.setExtra(it, Context.CallExpressionContextExtra{
+      arguments: contextArguments,
+      asynchronous: asynchronous,
+      parameters: parameters,
+      returnType: returnType,
+    })
+
+    return true
+  }
+
+  fn _eClosure (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isClosure() {
+      return false
+    }
+
+    mut expression := it.asClosure()
+    initialStateReturnType := self.state.returnType
+
+    self.tm.increase()
+    self.vm.increase()
+    parameters := self.functionParameters(ref expression.parameters)
+    returnType := self.t(ref expression.returnType)
+    self.state.returnType = returnType
+
+    if !Type.match(returnType, self.tm.get("void")) && !expression.body.isDeadEnd() {
+      self.raise(errors.E1061(), expression.returnType.start, expression.returnType.end)
+    }
+
+    self.statement(ref expression.body)
+    self.state.returnType = initialStateReturnType
+    self.vm.decrease()
+    self.tm.decrease()
+
+    Context.set(it, self.tm.createFunction(expression.asynchronous, parameters, returnType))
+    return true
+  }
+
+  fn _eConditional (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
+    if !it.isConditional() {
+      return false
+    }
+
+    mut expression := it.asConditional()
+    typeCastResult := self.typeCast(ref expression.condition)
+    conditionType := Type.unwrap(self.e(ref expression.condition))
+
+    if !Type.match(conditionType, self.tm.get("bool")) && !conditionType.isNumber() {
+      self.raise(errors.E1018(conditionType.toString()), expression.condition.start, expression.condition.end)
+    }
+
+    afterConditionTC := self.tc
+    mut consequentDiffTC: (ref Type.Type)[str]
+    mut alternateDiffTC: (ref Type.Type)[str]
+
+    guessTypeResult := self.guessType((operandType: (ref Type.Type)?) -> ref Type.Type {
+      self.tc.merge(typeCastResult.consequent)
+      result := self.e(ref expression.consequent, operandType, withMutable: withMutable)
+      consequentDiffTC = self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
+
+      return result
+    }, (operandType: (ref Type.Type)?) -> ref Type.Type {
+      self.tc.merge(typeCastResult.alternate)
+      result := self.e(ref expression.alternate, operandType, withMutable: withMutable)
+      alternateDiffTC = self.typeCastExclude(afterConditionTC)
+      self.tc = afterConditionTC
+
+      return result
+    })
+
+    self.typeCastMergeIntersecting(consequentDiffTC, alternateDiffTC)
+
+    consequentType := guessTypeResult.first
+    alternateType := guessTypeResult.second
+
+    if !self.operands(.OpQn, consequentType, alternateType) {
+      self.raise(
+        errors.E1019(consequentType.toString(), alternateType.toString()),
+        expression.consequent.start,
+        expression.alternate.end,
+      )
+    }
+
+    Context.set(it, Type.promoteMaybe(consequentType, alternateType))
+    return true
+  }
+
+  fn _eElementAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool) bool {
+    if !it.isElementAccess() {
+      return false
+    }
+
+    mut expression := it.asElementAccess()
+    expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable))
+    Context.setTarget(ref expression.expression, expressionType)
+    argumentType := Type.unwrap(self.e(ref expression.argument))
+
+    if !Type.similarTo(argumentType, self.tm.get("i32")) {
+      self.raise(errors.E1014(argumentType.toString()), expression.argument.start, expression.argument.end)
+    }
+
+    if expressionType.isArray() {
+      arrayType := expressionType.asArray()
+      Context.set(it, self.tm.createReference(arrayType.elementType))
+    } elif Type.match(expressionType, self.tm.get("str")) {
+      Context.set(it, self.tm.createReference(self.tm.get("rune")))
+    } else {
+      Context.set(it, self.tm.createReference(self.tm.get("any")))
+      self.raise(errors.E1015(argumentType.toString()), expression.expression.start, expression.expression.end)
+      return true
+    }
+
+    Context.setExtra(it, Context.ElementAccessExpressionContextExtra{selfType: expressionType})
+
+    if targetType != nil {
+      if Type.match(targetType, Context.initial(it)) {
+        return true
+      }
+    }
+
+    if noTypeCast {
+      return true
+    }
+
+    code := Parser.stringifyExpression(it)
+
+    if self.tc.has(code) {
+      Context.setTarget(it, self.tc.get(code))
+    }
+
+    return true
+  }
+
+  fn _eIs (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
+    if !it.isIs() {
+      return false
+    }
+
+    mut expression := it.asIs()
+    expressionType := self.e(ref expression.expression, withMutable: withMutable)
+    t := self.t(ref expression.t)
+
+    if !expressionType.canCastTo(t) {
+      self.raise(errors.E1009(
+        expressionType.toString(), t.toString()),
+        expression.expression.start,
+        expression.expression.end,
+      )
+    }
+
+    Context.set(it, self.tm.get("bool"))
+    Context.setExtra(it, Context.IsExpressionContextExtra{t: t})
+
+    return true
+  }
+
+  fn _eMap (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isMap() {
+      return false
+    }
+
+    mut expression := it.asMap()
+    mut keyType: (ref Type.Type)?
+    mut valueType: (ref Type.Type)?
+
+    if targetType != nil {
+      maybeMapType := Type.unwrap(targetType, withOptional: true)
+
+      if maybeMapType.isMap() {
+        mapType := maybeMapType.asMap()
+        keyType = Type.opt(mapType.keyType)
+        valueType = Type.opt(mapType.valueType)
+      }
+    }
+
+    if expression.elements.empty && keyType == nil && valueType == nil {
+      Context.set(it, self.tm.createMap(self.tm.get("any"), self.tm.get("any")))
+      self.raise(errors.E1016(), it.start, it.end)
+      return true
+    }
+
+    keyTypeForced := keyType != nil
+    valueTypeForced := valueType != nil
+    elementsLen := expression.elements.len
+
+    loop i := 0; i < elementsLen; i++ {
+      mut element := expression.elements[i]
+      elementKeyType := self.e(ref element.key, keyType)
+      elementValueType := self.e(ref element.value, valueType)
+
+      if keyType == nil {
+        keyType = elementKeyType
+      } elif !Type.similarTo(elementKeyType, keyType) && keyTypeForced {
+        self.raise(errors.E1005(elementKeyType.toString(), keyType.toString()), element.key.start, element.key.end)
+      } elif !Type.similarTo(elementKeyType, keyType) {
+        keyType = self.tm.unionAdd(keyType, elementKeyType)
+      }
+
+      if valueType == nil {
+        valueType = elementValueType
+      } elif !Type.similarTo(elementValueType, valueType) && valueTypeForced {
+        self.raise(
+          errors.E1005(elementValueType.toString(), valueType.toString()),
+          element.value.start,
+          element.value.end
+        )
+      } elif !Type.similarTo(elementValueType, valueType) {
+        valueType = self.tm.unionAdd(valueType, elementValueType)
+      }
+    }
+
+    Context.set(it, self.tm.createMap(keyType as ref Type.Type, valueType as ref Type.Type))
+    return true
+  }
+
+  fn _eMemberAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isMemberAccess() {
+      return false
+    }
+
+    mut expression := it.asMemberAccess()
+    mut maybeEnumType: (ref Type.Type)?
+
+    if targetType != nil {
+      possibleEnumType := Type.unwrap(targetType)
+
+      if possibleEnumType.isEnum() {
+        maybeEnumType = Type.opt(possibleEnumType)
+      }
+    }
+
+    if maybeEnumType == nil {
+      Context.set(it, self.tm.get("any"))
+      self.raise(errors.E1020(), it.start, it.end)
+      return true
+    }
+
+    enumType := maybeEnumType as ref Type.Type
+    Context.set(it, enumType)
+
+    if !enumType.hasEnumerator(expression.name.name) {
+      self.raise(errors.E1021(expression.name.name), it.start, it.end)
+    }
+
+    return true
+  }
+
+  fn _eObject (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isObject() {
+      return false
+    }
+
+    mut expression := it.asObject()
+    objectType := self.t(ref expression.id)
+    propertiesLen := expression.properties.len
+    mut propertyNames: str[]
+
+    loop i := 0; i < propertiesLen; i++ {
+      mut property := expression.properties[i]
+
+      if !objectType.has(property.name.name) {
+        self.raise(errors.E1002(property.name.name, objectType.toString()), property.name.start, property.name.end)
+        self.e(ref property.value)
+      } else {
+        p := objectType.get(property.name.name)
+        propertyType := self.e(ref property.value, Type.opt(p.t))
+
+        if !Type.similarTo(propertyType, p.t) {
+          self.raise(errors.E1005(propertyType.toString(), p.t.toString()), property.value.start, property.value.end)
+        }
+
+        propertyNames.push(property.name.name)
+      }
+    }
+
+    typePropertiesLen := objectType.properties.len
+
+    loop i := 0; i < typePropertiesLen; i++ {
+      property := objectType.properties[i]
+
+      if !property.builtin && property.t.isRequired() && !propertyNames.contains(property.name) {
+        self.raise(errors.E1041(property.name, property.t.toString()), expression.id.start, expression.id.end)
+      }
+    }
+
+    Context.set(it, objectType)
+    return true
+  }
+
+  fn _eParenthesized (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTargetPromote: bool, withMutable: bool) bool {
+    if !it.isParenthesized() {
+      return false
+    }
+
+    mut expression := it.asParenthesized()
+
+    self.e(
+      ref expression.expression,
+      targetType,
+      noTargetPromote: noTargetPromote,
+      withMutable: withMutable,
+    )
+
+    Context.set(it, Context.initial(ref expression.expression))
+    Context.setTarget(it, Context.target(ref expression.expression))
+
+    return true
+  }
+
+  fn _ePropertyAccess (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, noTypeCast: bool, withMutable: bool) bool {
+    if !it.isPropertyAccess() {
+      return false
+    }
+
+    mut expression := it.asPropertyAccess()
+    expressionType := Type.unwrap(self.e(ref expression.expression, withMutable: withMutable))
+    Context.setTarget(ref expression.expression, expressionType)
+
+    if expressionType.has(expression.name.name) {
+      if !expressionType.has(expression.name.name) {
+        Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
+        self.raise(errors.E1002(expression.name.name, expressionType.toString()), expression.name.start, expression.name.end)
+        return true
+      }
+
+      property := expressionType.get(expression.name.name)
+
+      if withMutable && !property.mutable {
+        self.raise(errors.E1012(expression.name.name), it.start, it.end)
+      }
+
+      Context.set(it, property.t)
+      Context.setExtra(it, Context.PropertyAccessExpressionContextExtra{property: property})
+    } elif expressionType.isEnum() {
+      Context.set(it, expressionType)
+
+      if !expressionType.hasEnumerator(expression.name.name) {
+        self.raise(errors.E1021(expression.name.name), expression.name.start, expression.name.end)
+      }
+
+      return true
+    } elif expressionType.isNamespace() {
+      namespaceType := expressionType.asNamespace()
+      mut maybeExportVar: Type.Var?
+
+      if AnalyzerExport.has(ref namespaceType.members, expression.name.name) {
+        member := AnalyzerExport.get(ref namespaceType.members, expression.name.name)
+
+        if member.var != nil {
+          maybeExportVar = member.var
+        }
+      }
+
+      if maybeExportVar == nil {
+        Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
+
+        self.raise(
+          errors.E1073(Parser.stringifyExpression(expression.expression), expression.name.name),
+          expression.name.start,
+          expression.name.end,
+        )
+
+        return true
+      }
+
+      exportVar := maybeExportVar as Type.Var
+
+      if withMutable && !exportVar.mutable {
+        self.raise(errors.E1011(expression.name.name), it.start, it.end)
+      }
+
+      Context.set(it, exportVar.t)
+    } else {
+      Context.set(it, targetType == nil ? self.tm.get("any") : targetType)
+      self.raise(errors.E1002(expression.name.name, expressionType.toString()), expression.name.start, expression.name.end)
+      return true
+    }
+
+    if targetType != nil {
+      if Type.match(targetType, Context.initial(it)) {
+        return true
+      }
+    }
+
+    if noTypeCast {
+      return true
+    }
+
+    code := Parser.stringifyExpression(it)
+
+    if self.tc.has(code) {
+      Context.setTarget(it, self.tc.get(code))
+    }
+
+    return true
+  }
+
+  fn _eReference (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?, withMutable: bool) bool {
+    if !it.isReference() {
+      return false
+    }
+
+    mut expression := it.asReference()
+    expressionType := self.e(ref expression.expression, withMutable: withMutable)
+    Context.set(it, self.tm.createReference(expressionType))
+
+    return true
+  }
+
+  fn _eUnary (mut self: ref Self, mut it: ref Parser.Expression, targetType: (ref Type.Type)?) bool {
+    if !it.isUnary() {
+      return false
+    }
+
+    mut expression := it.asUnary()
+
+    expressionType := self.e(
+      ref expression.operand,
+      targetType,
+      noTargetPromote: true,
+      withMutable: expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus,
+    )
+
+    operandType := Type.unwrap(expressionType)
+    Context.set(it, operandType)
+
+    if expression.operator.t == .OpExcl {
+      if (
+        !Type.match(operandType, self.tm.get("bool")) &&
+        !Type.match(operandType, self.tm.get("byte")) &&
+        !operandType.isNumber()
+      ) {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end,
+        )
+      }
+
+      Context.set(it, self.tm.get("bool"))
+    } elif expression.operator.t == .OpMinusMinus || expression.operator.t == .OpPlusPlus {
+      if !expression.operand.isAccess() {
+        self.raise(errors.E1024(), expression.operator.start, expression.operator.end)
+      } elif !operandType.isNumber() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end,
+        )
+      }
+    } elif expression.operator.t == .OpMinus {
+      if !operandType.isSignedInt() && !operandType.isFloat() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end,
+        )
+      }
+    } elif expression.operator.t == .OpPlus {
+      if !operandType.isNumber() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end,
+        )
+      }
+    } elif expression.operator.t == .OpTilde {
+      if !operandType.isInt() {
+        self.raise(
+          errors.E1025(expression.operator.val, operandType.toString()),
+          expression.operator.start,
+          expression.operator.end,
+        )
+      }
+    }
+
+    return true
+  }
+
+  fn _blockStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isBlock() {
+      return false
+    }
+
+    mut statement := it.asBlock()
+
+    self.tm.increase()
+    self.vm.increase()
+    self.analyze(ref statement.body)
+    self.vm.decrease()
+    self.tm.decrease()
+
+    return true
+  }
+
+  fn _breakStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isBreak() {
+      return false
+    }
+
+    if !it.hasLoopParent() {
+      self.raise(errors.E1050("Break"), it.start, it.end)
+    }
+
+    return true
+  }
+
+  fn _continueStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isContinue() {
+      return false
+    }
+
+    if !it.hasLoopParent() {
+      self.raise(errors.E1050("Continue"), it.start, it.end)
+    }
+
+    return true
+  }
+
+  fn _emptyStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    return it.isEmpty()
+  }
+
+  fn _enumDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isEnumDeclaration() {
+      return false
+    }
+
+    mut statement := it.asEnumDeclaration()
+    membersLen := statement.members.len
+    mut members: str[]
+
+    loop i := 0; i < membersLen; i++ {
+      member := statement.members[i]
+
+      if members.contains(member.name.name) {
+        self.raise(errors.E1052(member.name.name), member.name.start, member.name.end)
+      } else {
+        members.push(member.name.name)
+      }
+
+      if member.initializer == nil {
+        continue
+      }
+
+      memberType := self.e(ref (member.initializer as Parser.Expression), Type.opt(self.tm.get("int")))
+
+      if !Type.match(memberType, self.tm.get("int")) {
+        initializer := member.initializer as Parser.Expression
+        self.raise(errors.E1053(memberType.toString()), initializer.start, initializer.end)
+      }
+    }
+
+    return true
+  }
+
+  fn _exportDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isExportDeclaration() {
+      return false
+    }
+
+    mut statement := it.asExportDeclaration()
+
+    if it.hasParent() {
+      self.raise(errors.E1044(), it.start, it.end)
+    }
+
+    self.statement(ref statement.statement)
+    mut exportIdentifier := Parser.Identifier{}
+
+    if statement.statement.isEnumDeclaration() {
+      innerStatement := statement.statement.asEnumDeclaration()
+      exportIdentifier = innerStatement.name
+    } elif statement.statement.isFunctionDeclaration() {
+      innerStatement := statement.statement.asFunctionDeclaration()
+      exportIdentifier = innerStatement.name
+    } elif statement.statement.isObjectDeclaration() {
+      innerStatement := statement.statement.asObjectDeclaration()
+      exportIdentifier = innerStatement.name
+    } elif statement.statement.isTypeAliasDeclaration() {
+      innerStatement := statement.statement.asTypeAliasDeclaration()
+      exportIdentifier = innerStatement.name
+    } elif statement.statement.isVariableDeclaration() {
+      innerStatement := statement.statement.asVariableDeclaration()
+      exportIdentifier = innerStatement.name
+    } else {
+      self.raise(errors.E1066(), it.start, it.end)
+      return true
+    }
+
+    if AnalyzerExport.has(ref self.exports, exportIdentifier.name) {
+      self.raise(errors.E1067(exportIdentifier.name), exportIdentifier.start, exportIdentifier.end)
+      return true
+    }
+
+    if !self.entityExists(exportIdentifier.name) {
+      return true
+    }
+
+    mut exportType: (ref Type.Type)?
+    mut exportVar: Var?
+
+    if self.tm.has(exportIdentifier.name) {
+      exportType = self.tm.get(exportIdentifier.name)
+    }
+
+    if self.vm.has(exportIdentifier.name) {
+      exportVar = self.vm.get(exportIdentifier.name)
+    }
+
+    self.exports.push(Type.NamespaceMember{name: exportIdentifier.name, t: exportType, var: exportVar})
+    return true
+  }
+
+  fn _exportNamedDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isExportNamedDeclaration() {
+      return false
+    }
+
+    mut statement := it.asExportNamedDeclaration()
+
+    if it.hasParent() {
+      self.raise(errors.E1044(), it.start, it.end)
+    }
+
+    if !Parser.validObjExprId(statement.expression) {
+      self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
+      return true
+    }
+
+    mut parserType := Parser.expressionToType(statement.expression)
+    mut exportName := ""
+
+    if statement.expression.isIdentifier() {
+      expression := statement.expression.asIdentifier()
+      exportName = expression.name
+    } elif statement.expression.isPropertyAccess() {
+      expression := statement.expression.asPropertyAccess()
+      exportName = expression.name.name
+    }
+
+    if AnalyzerExport.has(ref self.exports, exportName) {
+      self.raise(errors.E1067(exportName), statement.expression.start, statement.expression.end)
+      return true
+    }
+
+    mut exportType: (ref Type.Type)?
+    mut exportVar: Var?
+
+    guardFailed := self.guard(() -> void {
+      ref self.tc; // TODO: remove after v1
+      exportType = Type.opt(self.t(ref parserType))
+    })
+
+    if guardFailed && !statement.expression.isIdentifier() {
+      self.raise(errors.E1068(), statement.expression.start, statement.expression.end)
+    } elif guardFailed {
+      id := statement.expression.asIdentifier()
+      self.e(ref statement.expression)
+
+      if self.vm.has(id.name) {
+        exportVar = self.vm.get(id.name)
+      }
+    }
+
+    if exportType == nil && exportVar == nil {
+      return true
+    }
+
+    self.exports.push(Type.NamespaceMember{name: exportName, t: exportType, var: exportVar})
+    return true
+  }
+
+  fn _expressionStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isExpression() {
+      return false
+    }
+
+    mut statement := it.asExpression()
+    self.e(ref statement.expression)
+
+    if !it.hasParent() {
+      self.raise(errors.E1049(), it.start, it.end)
+    }
+
+    return true
+  }
+
+  fn _functionDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isFunctionDeclaration() {
+      return false
+    }
+
+    mut statement := it.asFunctionDeclaration()
+    initialStateReturnType := self.state.returnType
+    var := self.vm.get(statement.name.name)
+
+    if !var.t.isFunction() {
+      return true
+    }
+
+    t := var.t.asFunction()
+
+    self.tm.increase()
+    self.vm.increase()
+    self.functionParameters(ref statement.parameters)
+    self.state.returnType = Type.opt(t.returnType)
+
+    if statement.body != nil {
+      if (
+        !Type.match(t.returnType, self.tm.get("void")) &&
+        !statement.body.isDeadEnd() &&
+        statement.returnType != nil
+      ) {
+        returnType := statement.returnType
+        self.raise(errors.E1061(), returnType.start, returnType.end)
+      }
+
+      self.statement(ref statement.body)
+    }
+
+    self.state.returnType = initialStateReturnType
+    self.vm.decrease()
+    self.tm.decrease()
+
+    return true
+  }
+
+  fn _ifStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isIf() {
+      return false
+    }
+
+    initialTC := self.tc
+    mut statement := it.asIf()
+
+    if !it.hasParent() {
+      self.raise(errors.E1045(), it.start, it.end)
+    }
+
+    typeCastResult := self.typeCast(ref statement.condition)
+    conditionType := Type.unwrap(self.e(ref statement.condition, Type.opt(self.tm.get("bool"))))
+
+    if !Type.match(conditionType, self.tm.get("bool")) && !conditionType.isNumber() {
+      self.raise(errors.E1018(conditionType.toString()), statement.condition.start, statement.condition.end)
+    }
+
+    self.tc.merge(typeCastResult.consequent)
+    beforeConsequentTC := self.tc
+    self.statement(ref statement.consequent)
+    afterConsequentTC := self.tc
+    consequentDiffTC := self.typeCastExclude(beforeConsequentTC)
+    self.tc = initialTC
+
+    if statement.alternate == nil {
+      if statement.consequent.isDeadEnd() {
+        self.tc.merge(typeCastResult.alternate)
+      } else {
+        self.typeCastMergeIntersecting(typeCastResult.alternate, consequentDiffTC)
+      }
+
+      return true
+    }
+
+    alternate := ref (statement.alternate as Parser.Statement)
+
+    self.tc.merge(typeCastResult.alternate)
+    beforeAlternateTC := self.tc
+    self.statement(alternate)
+    afterAlternateTC := self.tc
+    alternateDiffTC := self.typeCastExclude(beforeAlternateTC)
+    self.tc = initialTC
+
+    if alternate.isDeadEnd() && !statement.consequent.isDeadEnd() {
+      self.tc = afterConsequentTC
+    } elif !alternate.isDeadEnd() && statement.consequent.isDeadEnd() {
+      self.tc = afterAlternateTC
+    } elif !alternate.isDeadEnd() && !statement.consequent.isDeadEnd() {
+      self.typeCastMergeIntersecting(consequentDiffTC, alternateDiffTC)
+    }
+
+    return true
+  }
+
+  fn _importDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    return it.isImportDeclaration()
+  }
+
+  fn _loopStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isLoop() {
+      return false
+    }
+
+    initialTC := self.tc
+    mut statement := it.asLoop()
+    initialLoopInit := self.state.loopInit
+
+    if !it.hasParent() {
+      self.raise(errors.E1046(), it.start, it.end)
+    }
+
+    self.tm.increase()
+    self.vm.increase()
+
+    if statement.initializer != nil {
+      initializer := statement.initializer
+
+      if initializer.isVariableDeclaration() {
+        initializerStatement := initializer.asVariableDeclaration()
+
+        if initializerStatement.mutable {
+          self.raise(errors.E1059(), initializerStatement.name.start, initializerStatement.name.end)
+        }
+      }
+
+      self.state.loopInit = true
+      self.statement(ref statement.initializer)
+      self.state.loopInit = initialLoopInit
+    }
+
+    if statement.condition != nil {
+      conditionType := Type.unwrap(self.e(ref statement.condition, Type.opt(self.tm.get("bool"))))
+
+      if !Type.match(self.tm.get("bool"), conditionType) {
+        self.raise(errors.E1060(conditionType.toString()), statement.condition.start, statement.condition.end)
+      }
+    }
+
+    self.statement(ref statement.body)
+
+    if statement.update != nil {
+      self.e(ref statement.update)
+    }
+
+    self.vm.decrease()
+    self.tm.decrease()
+    self.tc = initialTC
+
+    return true
+  }
+
+  fn _mainDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isMainDeclaration() {
+      return false
+    }
+
+    mut statement := it.asMainDeclaration()
+    initialReturnType := self.state.returnType
+
+    if it.hasParent() {
+      self.raise(errors.E1042(), it.start, it.end)
+    }
+
+    if self.analyzer.state.mainFound {
+      self.raise(errors.E1070(), it.start, it.end)
+    }
+
+    self.state.returnType = Type.opt(self.tm.get("void"))
+    self.statement(ref statement.body)
+    self.state.returnType = initialReturnType
+    self.analyzer.state.mainFound = true
+
+    return true
+  }
+
+  fn _objectDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isObjectDeclaration() {
+      return false
+    }
+
+    mut statement := it.asObjectDeclaration()
+    initialTmSelf := self.tm.getSelf()
+    initialStateSelf := self.state.selfType
+    t := self.tm.get(statement.name.name)
+
+    it.context = Context.ObjectDeclarationContext{
+      selfType: t,
+    }
+
+    self.state.selfType = Type.opt(t)
+    self.tm.setSelf(Type.opt(t))
+    self.analyze(ref statement.body)
+    self.state.selfType = initialStateSelf
+    self.tm.setSelf(initialTmSelf)
+
+    return true
+  }
+
+  fn _objectDeclarationMethod (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isObjectDeclarationMethod() {
+      return false
+    }
+
+    mut statement := it.asObjectDeclarationMethod()
+    initialStateReturnType := self.state.returnType
+    selfType := self.state.selfType as ref Type.Type
+    property := selfType.get(statement.name.name)
+
+    if !property.t.isMethod() {
+      return true
+    }
+
+    t := property.t.asMethod()
+
+    self.tm.increase()
+    self.vm.increase()
+    self.functionParameters(ref statement.parameters)
+    self.state.returnType = Type.opt(t.returnType)
+
+    if statement.body != nil {
+      if (
+        !Type.match(t.returnType, self.tm.get("void")) &&
+        !statement.body.isDeadEnd() &&
+        statement.returnType != nil
+      ) {
+        self.raise(errors.E1061(), statement.returnType.start, statement.returnType.end)
+      }
+
+      self.statement(ref statement.body)
+    }
+
+    self.state.returnType = initialStateReturnType
+    self.vm.decrease()
+    self.tm.decrease()
+
+    return true
+  }
+
+  fn _objectDeclarationProperty (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isObjectDeclarationProperty() {
+      return false
+    }
+
+    mut statement := it.asObjectDeclarationProperty()
+    selfType := self.state.selfType as ref Type.Type
+
+    propertyType := statement.t == nil
+      ? self.e(ref (statement.initializer as Parser.Expression), withMutable: statement.mutable)
+      : self.t(ref statement.t)
+
+    if Type.match(propertyType, self.tm.get("void")) {
+      if statement.t == nil {
+        initializer := statement.initializer as Parser.Expression
+        self.raise(errors.E1017(), initializer.start, initializer.end)
+      } else {
+        self.raise(errors.E1017(), statement.t.start, statement.t.end)
+      }
+    }
+
+    if statement.initializer != nil {
+      self.raise(errors.E1056(), statement.initializer.start, statement.initializer.end)
+    }
+
+    return true
+  }
+
+  fn _returnStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isReturn() {
+      return false
+    }
+
+    mut statement := it.asReturn()
+
+    if self.state.returnType == nil {
+      self.raise(errors.E1057(), it.start, it.end)
+    }
+
+    returnType := statement.expression == nil
+      ? self.tm.get("void")
+      : self.e(ref statement.expression, self.state.returnType)
+
+    if self.state.returnType != nil {
+      if !Type.similarTo(returnType, self.state.returnType) {
+        if statement.expression == nil {
+          self.raise(errors.E1005(returnType.toString(), self.state.returnType.toString()), it.start, it.end)
+        } else {
+          self.raise(errors.E1005(returnType.toString(), self.state.returnType.toString()), statement.expression.start, statement.expression.end)
+        }
+      }
+    }
+
+    return true
+  }
+
+  fn _throwStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isThrow() {
+      return false
+    }
+
+    mut statement := it.asThrow()
+
+    if !it.hasParent() {
+      self.raise(errors.E1047(), it.start, it.end)
+    }
+
+    t := self.e(ref statement.expression)
+
+    if !t.isErrorLike() {
+      self.raise(errors.E1062(), statement.expression.start, statement.expression.end)
+    }
+
+    return true
+  }
+
+  fn _tryStatement (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isTry() {
+      return false
+    }
+
+    mut statement := it.asTry()
+
+    if !it.hasParent() {
+      self.raise(errors.E1048(), it.start, it.end)
+    }
+
+    self.tm.increase()
+    self.vm.increase()
+    self.statement(ref statement.body)
+    self.vm.decrease()
+    self.tm.decrease()
+    handlersLen := statement.handlers.len
+
+    loop i := 0; i < handlersLen; i++ {
+      mut handler := statement.handlers[i]
+      self.tm.increase()
+      self.vm.increase()
+
+      parameterStatement := handler.parameter.asVariableDeclaration()
+
+      if parameterStatement.mutable {
+        self.raise(errors.E1055(), parameterStatement.name.start, parameterStatement.name.end)
+      }
+
+      self.statement(ref handler.parameter)
+      var := self.vm.get(parameterStatement.name.name)
+
+      if !var.t.isErrorLike() {
+        self.raise(errors.E1065(), parameterStatement.name.start, parameterStatement.name.end)
+      }
+
+      self.statement(ref handler.body)
+      self.vm.decrease()
+      self.tm.decrease()
+    }
+
+    return true
+  }
+
+  fn _typeAliasDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    return it.isTypeAliasDeclaration()
+  }
+
+  fn _variableDeclaration (mut self: ref Self, mut it: ref Parser.Statement) bool {
+    if !it.isVariableDeclaration() {
+      return false
+    }
+
+    mut statement := it.asVariableDeclaration()
+
+    if self.entityExists(statement.name.name) {
+      self.raise(errors.E1000(statement.name.name), statement.name.start, statement.name.end)
+    }
+
+    varType := statement.t == nil && statement.initializer != nil
+      ? self.e(ref statement.initializer, withMutable: statement.mutable && !statement.initializer.isAccess())
+      : self.t(ref statement.t)
+
+    it.context = Context.VariableDeclarationContext{
+      varType: varType,
+    }
+
+    if Type.match(varType, self.tm.get("void")) {
+      if statement.t == nil {
+        initializer := statement.initializer as Parser.Expression
+        self.raise(errors.E1017(), initializer.start, initializer.end)
+      } else {
+        self.raise(errors.E1017(), statement.t.start, statement.t.end)
+      }
+    }
+
+    if statement.t != nil && statement.initializer != nil {
+      initializerType := self.e(
+        ref statement.initializer,
+        Type.opt(varType),
+        withMutable: statement.mutable && !statement.initializer.isAccess(),
+      )
+
+      if !Type.similarTo(initializerType, varType) {
+        self.raise(
+          errors.E1005(initializerType.toString(), varType.toString()),
+          statement.initializer.start,
+          statement.initializer.end,
+        )
+      }
+
+      initialInitializerType := Context.initial(ref statement.initializer)
+
+      if Type.canNarrow(varType, initialInitializerType) && !Type.match(varType, initialInitializerType) {
+        self.tc.set(statement.name.name, initialInitializerType)
+      }
+    }
+
+    if statement.initializer == nil && varType.isRequired() {
+      self.raise(errors.E1040(statement.name.name, varType.toString()), statement.name.start, statement.name.end)
+    }
+
+    self.vm.add(statement.name.name, varType, statement.mutable || self.state.loopInit)
+
+    if statement.constant && it.hasParent() {
+      parent := it.parent()
+
+      if !parent.isExportDeclaration() {
+        self.raise(errors.E1038(), statement.name.start, statement.name.end)
+      }
+    } elif !statement.constant && !statement.mutable && !it.hasParent() {
+      self.raise(errors.E1039(), statement.name.start, statement.name.end)
+    } elif !statement.constant && !statement.mutable {
+      parent := it.parent()
+
+      if parent.isExportDeclaration() {
+        self.raise(errors.E1039(), statement.name.start, statement.name.end)
+      }
+    }
+
+    return true
+  }
+}
+
+export fn analyze (mut f: ref Parser.File) str[] {
+  mut analyzer := Analyzer{}
+  analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer, f: f})
+  mut file := analyzer.files.last()
+  file.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+  file.init()
+  file.analyze(ref file.f.program.body)
+
+  return analyzer.errors
+}

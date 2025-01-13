@@ -1,0 +1,14 @@
+obj Animal {
+  name: str
+}
+
+main {
+  mut animal := Animal{name: "Rick"}
+  animal.name = "Richie"
+}
+===== err =====
+E1012.txt:7:3: AnalyzeError: E1012 - Cannot assign to immutable property 'name'
+6 |   mut animal := Animal{name: "Rick"}
+7 |   animal.name = "Richie"
+  |   ~~~~~~~~~~~
+8 | }

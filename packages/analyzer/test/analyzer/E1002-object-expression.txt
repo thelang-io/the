@@ -1,0 +1,7 @@
+obj Animal { mut name: str }
+const a := Animal{name2: "test"}
+===== err =====
+E1002-object-expression.txt:2:19: AnalyzeError: E1002 - Property 'name2' does not exist on type `Animal`
+1 | obj Animal { mut name: str }
+2 | const a := Animal{name2: "test"}
+  |                   ~~~~~

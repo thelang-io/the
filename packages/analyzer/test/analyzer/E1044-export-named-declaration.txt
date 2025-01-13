@@ -1,0 +1,11 @@
+fn test () {}
+
+main {
+  export test
+}
+===== err =====
+E1044-export-named-declaration.txt:4:3: AnalyzeError: E1044 - Export declaration can only be used at the top level
+3 | main {
+4 |   export test
+  |   ~~~~~~~~~~~
+5 | }

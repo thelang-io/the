@@ -7,7 +7,7 @@ export mut TEST_FAILED := false
 
 export fn FAIL_TEST (message: str) {
   TEST_FAILED = true
-  print("Failure: " + message, to: "stderr")
+  print(getLocation() + ": Failure" + os_EOL + message, to: "stderr")
 }
 
 export fn MATCH_ANY (a: any, b: any) {
@@ -446,4 +446,17 @@ fn MATCH_REF_STR (a: ref str, b: ref str) {
       "  " + b
     )
   }
+}
+
+fn getLocation () str {
+  mut stack := ""
+
+  try {
+    throw error_NewError("")
+  } catch err: error_Error {
+    stack = err.stack
+  }
+
+  stackLines := stack.lines()
+  return stackLines[6].trim().slice(3)
 }

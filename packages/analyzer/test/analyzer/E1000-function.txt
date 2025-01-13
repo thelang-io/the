@@ -1,0 +1,7 @@
+fn speak (a: int) {}
+fn speak (a: int) {}
+===== err =====
+E1000-function.txt:2:4: AnalyzeError: E1000 - Redefinition of 'speak'
+1 | fn speak (a: int) {}
+2 | fn speak (a: int) {}
+  |    ~~~~~

@@ -2,4 +2,4 @@ name: the/json
 version: 0.3.0
 description: JSON parser
 license: MIT
-main: src/json
+main: src/main

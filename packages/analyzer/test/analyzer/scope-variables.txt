@@ -1,0 +1,26 @@
+const a := 1
+
+main {
+  a := 2
+  b := true
+
+  if b {
+    a := 3
+  }
+
+  fn test (a := 4) {
+    a := 5
+  }
+
+  obj Test {
+    mut a: int
+
+    fn test (mut self: ref Self) {
+      a := 6
+    }
+  }
+
+  it := (a := 7) -> void {
+    a := 8
+  }
+}

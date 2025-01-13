@@ -1,0 +1,22 @@
+obj Methods {
+  fn method1 () { return }
+  fn method2 (self: ref Self) { return }
+  fn method3 (mut self: ref Self) { return }
+  fn method4 (a: int) { return }
+  fn method5 (self: ref Self, b: int...) { return }
+  fn method6 (mut self: ref Self, c := 10) { return }
+}
+
+main {
+  mut v := Methods{}
+  v.method1()
+  v.method2()
+  v.method3()
+  v.method4(10)
+  v.method5()
+  v.method5(0)
+  v.method5(0, 1)
+  v.method5(0, 1, 2)
+  v.method6()
+  v.method6(20)
+}

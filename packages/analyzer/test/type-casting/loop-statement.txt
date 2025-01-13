@@ -1,0 +1,181 @@
+main {
+  loop i: int | str = 0; i != "test"; i = "test" {
+  }
+
+  mut a: int | str = 0
+  loop ; "test" != a; a = "test" {
+  }
+
+  mut b: int | str = 0
+  loop ; b != "test"; {
+    b = "test"
+  }
+
+  mut c: int | str = 0
+  loop {
+    if c == "test" {
+      break
+    }
+
+    c = "test"
+  }
+
+  loop d: int | str = 0; d != "test"; {
+    d = "test"
+  }
+
+  loop e: int | str = 0;; e = "test" {
+    if e == "test" {
+      break
+    }
+  }
+
+  loop i: int? = 0; i != nil; i = nil {
+  }
+
+  mut f: int? = 0
+  loop ; f != nil; f = nil {
+  }
+
+  mut g: int? = 0
+  loop ; g != nil; {
+    g = nil
+  }
+
+  mut h: int? = 0
+  loop {
+    if h == nil {
+      break
+    }
+
+    h = nil
+  }
+
+  loop m: int? = 0; m != nil; {
+    m = nil
+  }
+
+  loop n: int? = 0;; n = nil {
+    if n == nil {
+      break
+    }
+  }
+}
+===== out =====
+MainDeclaration()
+  LoopStatement(parenthesized=false)
+    VariableDeclaration(name=i mutable=false constant=false type=int | str context:varType=int | str)
+      IntegerLiteral(initial=int target=int | str value=0)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int | str name=i)
+      StringLiteral(initial=str target=int | str value=test)
+    AssignmentExpression(initial=str operator==)
+      Identifier(initial=int | str name=i)
+      StringLiteral(initial=str target=int | str value=test)
+  VariableDeclaration(name=a mutable=true constant=false type=int | str context:varType=int | str)
+    IntegerLiteral(initial=int target=int | str value=0)
+  LoopStatement(parenthesized=false)
+    BinaryExpression(initial=bool operator=!=)
+      StringLiteral(initial=str target=int | str value=test)
+      Identifier(initial=int | str name=a)
+    AssignmentExpression(initial=str operator==)
+      Identifier(initial=int | str name=a)
+      StringLiteral(initial=str target=int | str value=test)
+  VariableDeclaration(name=b mutable=true constant=false type=int | str context:varType=int | str)
+    IntegerLiteral(initial=int target=int | str value=0)
+  LoopStatement(parenthesized=false)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int | str name=b)
+      StringLiteral(initial=str target=int | str value=test)
+    AssignmentExpression(initial=str operator==)
+      Identifier(initial=int | str name=b)
+      StringLiteral(initial=str target=int | str value=test)
+  VariableDeclaration(name=c mutable=true constant=false type=int | str context:varType=int | str)
+    IntegerLiteral(initial=int target=int | str value=0)
+  LoopStatement(parenthesized=false)
+    IfStatement()
+      BinaryExpression(initial=bool operator===)
+        Identifier(initial=int | str name=c)
+        StringLiteral(initial=str target=int | str value=test)
+      BreakStatement()
+    AssignmentExpression(initial=str operator==)
+      Identifier(initial=int | str name=c)
+      StringLiteral(initial=str target=int | str value=test)
+  LoopStatement(parenthesized=false)
+    VariableDeclaration(name=d mutable=false constant=false type=int | str context:varType=int | str)
+      IntegerLiteral(initial=int target=int | str value=0)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int | str name=d)
+      StringLiteral(initial=str target=int | str value=test)
+    AssignmentExpression(initial=str operator==)
+      Identifier(initial=int | str name=d)
+      StringLiteral(initial=str target=int | str value=test)
+  LoopStatement(parenthesized=false)
+    VariableDeclaration(name=e mutable=false constant=false type=int | str context:varType=int | str)
+      IntegerLiteral(initial=int target=int | str value=0)
+    AssignmentExpression(initial=str operator==)
+      Identifier(initial=int | str name=e)
+      StringLiteral(initial=str target=int | str value=test)
+    IfStatement()
+      BinaryExpression(initial=bool operator===)
+        Identifier(initial=int | str name=e)
+        StringLiteral(initial=str target=int | str value=test)
+      BreakStatement()
+  LoopStatement(parenthesized=false)
+    VariableDeclaration(name=i mutable=false constant=false type=int? context:varType=int?)
+      IntegerLiteral(initial=int target=int? value=0)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int? name=i)
+      NilLiteral(initial=int?)
+    AssignmentExpression(initial=int? operator==)
+      Identifier(initial=int? name=i)
+      NilLiteral(initial=int?)
+  VariableDeclaration(name=f mutable=true constant=false type=int? context:varType=int?)
+    IntegerLiteral(initial=int target=int? value=0)
+  LoopStatement(parenthesized=false)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int? name=f)
+      NilLiteral(initial=int?)
+    AssignmentExpression(initial=int? operator==)
+      Identifier(initial=int? name=f)
+      NilLiteral(initial=int?)
+  VariableDeclaration(name=g mutable=true constant=false type=int? context:varType=int?)
+    IntegerLiteral(initial=int target=int? value=0)
+  LoopStatement(parenthesized=false)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int? name=g)
+      NilLiteral(initial=int?)
+    AssignmentExpression(initial=int? operator==)
+      Identifier(initial=int? name=g)
+      NilLiteral(initial=int?)
+  VariableDeclaration(name=h mutable=true constant=false type=int? context:varType=int?)
+    IntegerLiteral(initial=int target=int? value=0)
+  LoopStatement(parenthesized=false)
+    IfStatement()
+      BinaryExpression(initial=bool operator===)
+        Identifier(initial=int? name=h)
+        NilLiteral(initial=int?)
+      BreakStatement()
+    AssignmentExpression(initial=int? operator==)
+      Identifier(initial=int? name=h)
+      NilLiteral(initial=int?)
+  LoopStatement(parenthesized=false)
+    VariableDeclaration(name=m mutable=false constant=false type=int? context:varType=int?)
+      IntegerLiteral(initial=int target=int? value=0)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int? name=m)
+      NilLiteral(initial=int?)
+    AssignmentExpression(initial=int? operator==)
+      Identifier(initial=int? name=m)
+      NilLiteral(initial=int?)
+  LoopStatement(parenthesized=false)
+    VariableDeclaration(name=n mutable=false constant=false type=int? context:varType=int?)
+      IntegerLiteral(initial=int target=int? value=0)
+    AssignmentExpression(initial=int? operator==)
+      Identifier(initial=int? name=n)
+      NilLiteral(initial=int?)
+    IfStatement()
+      BinaryExpression(initial=bool operator===)
+        Identifier(initial=int? name=n)
+        NilLiteral(initial=int?)
+      BreakStatement()

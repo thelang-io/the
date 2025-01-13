@@ -1,0 +1,10 @@
+main {
+  mut a := 10
+  a += "test"
+}
+===== err =====
+E1027.txt:3:5: AnalyzeError: E1027 - Cannot apply binary assignment operator '+=' to type `int`
+2 |   mut a := 10
+3 |   a += "test"
+  |     ~~
+4 | }

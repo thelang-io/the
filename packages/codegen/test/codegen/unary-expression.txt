@@ -1,0 +1,357 @@
+main {
+  zBoolTrue := true     zBoolFalse := false
+  zByteEmpty: byte = 0  zByte: byte = 0xA
+  zFloatEmpty := 0.0    zFloatNeg := -3.14   zFloat := 3.14
+  zF32Empty: f32 = 0    zF32Neg: f32 = -3.14 zF32: f32 = 3.14
+  zF64Empty: f64 = 0    zF64Neg: f64 = -3.14 zF64: f64 = 3.14
+  zIntEmpty: int = 0    zIntNeg: int = -3    zInt: int = 3
+  zI8Empty: i8 = 0      zI8Neg: i8 = -3      zI8: i8 = 3
+  zI16Empty: i16 = 0    zI16Neg: i16 = -3    zI16: i16 = 3
+  zI32Empty: i32 = 0    zI32Neg: i32 = -3    zI32: i32 = 3
+  zI64Empty: i64 = 0    zI64Neg: i64 = -3    zI64: i64 = 3
+  zU8Empty: u8 = 0      zU8: u8 = 3
+  zU16Empty: u16 = 0    zU16: u16 = 3
+  zU32Empty: u32 = 0    zU32: u32 = 3
+  zU64Empty: u64 = 0    zU64: u64 = 3
+
+  a01 := !true          a02 := !false
+  a05 := !0             a06 := !3
+  a07 := !0x0           a08 := !0xF
+  a09 := !0o0           a00 := !0o7
+  a11 := !0b0           a12 := !0b1
+  a13 := !0.0           a14 := !3.14
+  a15 := !!true         a16 := !!false
+  a19 := !!0            a10 := !!3
+  a21 := !!0x0          a22 := !!0xF
+  a23 := !!0o0          a24 := !!0o7
+  a25 := !!0b0          a26 := !!0b1
+  a27 := !!0.0          a28 := !!3.14
+  a29 := ~0             a20 := ~3
+  a31 := ~0x0           a32 := ~0xF
+  a33 := ~0o0           a34 := ~0o7
+  a35 := ~0b0           a36 := ~0b1
+  a37 := -0             a38 := -3
+  a39 := -0x0           a30 := -0xF
+  a41 := -0o0           a42 := -0o7
+  a43 := -0b0           a44 := -0b1
+  a45 := -0.0           a46 := -3.14
+  a47 := +0             a48 := +3
+  a49 := +0x0           a40 := +0xF
+  a51 := +0o0           a52 := +0o7
+  a53 := +0b0           a54 := +0b1
+  a55 := +0.0           a56 := +3.14
+
+  mut i := 0
+  z0 := i++
+  z1 := i--
+  z2 := ++i
+  z3 := --i
+
+  a001 := !zBoolTrue    a002 := !zBoolFalse
+  a003 := !zByteEmpty   a004 := !zByte
+  a007 := !zFloatEmpty  a008 := !zFloatNeg   a009 := !zFloat
+  a010 := !zF32Empty    a011 := !zF32Neg     a012 := !zF32
+  a013 := !zF64Empty    a014 := !zF64Neg     a015 := !zF64
+  a016 := !zIntEmpty    a017 := !zIntNeg     a018 := !zInt
+  a019 := !zI8Empty     a020 := !zI8Neg      a021 := !zI8
+  a022 := !zI16Empty    a023 := !zI16Neg     a024 := !zI16
+  a025 := !zI32Empty    a026 := !zI32Neg     a027 := !zI32
+  a028 := !zI64Empty    a029 := !zI64Neg     a030 := !zI64
+  a031 := !zU8Empty     a032 := !zU8
+  a033 := !zU16Empty    a034 := !zU16
+  a035 := !zU32Empty    a036 := !zU32
+  a037 := !zU64Empty    a038 := !zU64
+  a039 := !!zBoolTrue   a040 := !!zBoolFalse
+  a041 := !!zByteEmpty  a042 := !!zByte
+  a045 := !!zFloatEmpty a046 := !!zFloatNeg  a047 := !!zFloat
+  a048 := !!zF32Empty   a049 := !!zF32Neg    a050 := !!zF32
+  a051 := !!zF64Empty   a052 := !!zF64Neg    a053 := !!zF64
+  a054 := !!zIntEmpty   a055 := !!zIntNeg    a056 := !!zInt
+  a057 := !!zI8Empty    a058 := !!zI8Neg     a059 := !!zI8
+  a060 := !!zI16Empty   a061 := !!zI16Neg    a062 := !!zI16
+  a063 := !!zI32Empty   a064 := !!zI32Neg    a065 := !!zI32
+  a066 := !!zI64Empty   a067 := !!zI64Neg    a068 := !!zI64
+  a069 := !!zU8Empty    a070 := !!zU8
+  a071 := !!zU16Empty   a072 := !!zU16
+  a073 := !!zU32Empty   a074 := !!zU32
+  a075 := !!zU64Empty   a076 := !!zU64
+  a077 := -zFloatEmpty  a078 := -zFloatNeg   a079 := -zFloat
+  a080 := -zF32Empty    a081 := -zF32Neg     a082 := -zF32
+  a083 := -zF64Empty    a084 := -zF64Neg     a085 := -zF64
+  a086 := -zIntEmpty    a087 := -zIntNeg     a088 := -zInt
+  a089 := -zI8Empty     a090 := -zI8Neg      a091 := -zI8
+  a092 := -zI16Empty    a093 := -zI16Neg     a094 := -zI16
+  a095 := -zI32Empty    a096 := -zI32Neg     a097 := -zI32
+  a098 := -zI64Empty    a099 := -zI64Neg     a100 := -zI64
+  a109 := +zFloatEmpty  a110 := +zFloatNeg   a111 := +zFloat
+  a112 := +zF32Empty    a113 := +zF32Neg     a114 := +zF32
+  a115 := +zF64Empty    a116 := +zF64Neg     a117 := +zF64
+  a118 := +zIntEmpty    a119 := +zIntNeg     a120 := +zInt
+  a121 := +zI8Empty     a122 := +zI8Neg      a123 := +zI8
+  a124 := +zI16Empty    a125 := +zI16Neg     a126 := +zI16
+  a127 := +zI32Empty    a128 := +zI32Neg     a129 := +zI32
+  a130 := +zI64Empty    a131 := +zI64Neg     a132 := +zI64
+  a133 := +zU8Empty     a134 := +zU8
+  a135 := +zU16Empty    a136 := +zU16
+  a137 := +zU32Empty    a138 := +zU32
+  a139 := +zU64Empty    a140 := +zU64
+  a150 := ~zIntEmpty    a151 := ~zIntNeg     a152 := ~zInt
+  a153 := ~zI8Empty     a154 := ~zI8Neg      a155 := ~zI8
+  a156 := ~zI16Empty    a157 := ~zI16Neg     a158 := ~zI16
+  a159 := ~zI32Empty    a160 := ~zI32Neg     a161 := ~zI32
+  a162 := ~zI64Empty    a163 := ~zI64Neg     a164 := ~zI64
+  a165 := ~zU8Empty     a166 := ~zU8
+  a167 := ~zU16Empty    a168 := ~zU16
+  a169 := ~zU32Empty    a170 := ~zU32
+  a171 := ~zU64Empty    a172 := ~zU64
+}
+===== code =====
+#include <stdbool.h>
+#include <stdint.h>
+int main (void) {
+  bool zBoolTrue_0 = true;
+  bool zBoolFalse_0 = false;
+  unsigned char zByteEmpty_0 = 0;
+  unsigned char zByte_0 = 0xA;
+  double zFloatEmpty_0 = 0.0;
+  double zFloatNeg_0 = -((bool) 3.14);
+  double zFloat_0 = 3.14;
+  float zF32Empty_0 = (float) 0;
+  float zF32Neg_0 = -((bool) (float) 3.14);
+  float zF32_0 = (float) 3.14;
+  double zF64Empty_0 = (double) 0;
+  double zF64Neg_0 = -((bool) (double) 3.14);
+  double zF64_0 = (double) 3.14;
+  int32_t zIntEmpty_0 = 0;
+  int32_t zIntNeg_0 = -3;
+  int32_t zInt_0 = 3;
+  int8_t zI8Empty_0 = (int8_t) 0;
+  int8_t zI8Neg_0 = -(int8_t) 3;
+  int8_t zI8_0 = (int8_t) 3;
+  int16_t zI16Empty_0 = (int16_t) 0;
+  int16_t zI16Neg_0 = -(int16_t) 3;
+  int16_t zI16_0 = (int16_t) 3;
+  int32_t zI32Empty_0 = (int32_t) 0;
+  int32_t zI32Neg_0 = -(int32_t) 3;
+  int32_t zI32_0 = (int32_t) 3;
+  int64_t zI64Empty_0 = (int64_t) 0;
+  int64_t zI64Neg_0 = -(int64_t) 3;
+  int64_t zI64_0 = (int64_t) 3;
+  uint8_t zU8Empty_0 = (uint8_t) 0;
+  uint8_t zU8_0 = (uint8_t) 3;
+  uint16_t zU16Empty_0 = (uint16_t) 0;
+  uint16_t zU16_0 = (uint16_t) 3;
+  uint32_t zU32Empty_0 = (uint32_t) 0;
+  uint32_t zU32_0 = (uint32_t) 3;
+  uint64_t zU64Empty_0 = (uint64_t) 0;
+  uint64_t zU64_0 = (uint64_t) 3;
+  bool a01_0 = !true;
+  bool a02_0 = !false;
+  bool a05_0 = !0;
+  bool a06_0 = !3;
+  bool a07_0 = !0x0;
+  bool a08_0 = !0xF;
+  bool a09_0 = !00;
+  bool a00_0 = !07;
+  bool a11_0 = !0b0;
+  bool a12_0 = !0b1;
+  bool a13_0 = !((bool) 0.0);
+  bool a14_0 = !((bool) 3.14);
+  bool a15_0 = !!true;
+  bool a16_0 = !!false;
+  bool a19_0 = !!0;
+  bool a10_0 = !!3;
+  bool a21_0 = !!0x0;
+  bool a22_0 = !!0xF;
+  bool a23_0 = !!00;
+  bool a24_0 = !!07;
+  bool a25_0 = !!0b0;
+  bool a26_0 = !!0b1;
+  bool a27_0 = !!((bool) 0.0);
+  bool a28_0 = !!((bool) 3.14);
+  int32_t a29_0 = ~0;
+  int32_t a20_0 = ~3;
+  int32_t a31_0 = ~0x0;
+  int32_t a32_0 = ~0xF;
+  int32_t a33_0 = ~00;
+  int32_t a34_0 = ~07;
+  int32_t a35_0 = ~0b0;
+  int32_t a36_0 = ~0b1;
+  int32_t a37_0 = -0;
+  int32_t a38_0 = -3;
+  int32_t a39_0 = -0x0;
+  int32_t a30_0 = -0xF;
+  int32_t a41_0 = -00;
+  int32_t a42_0 = -07;
+  int32_t a43_0 = -0b0;
+  int32_t a44_0 = -0b1;
+  double a45_0 = -((bool) 0.0);
+  double a46_0 = -((bool) 3.14);
+  int32_t a47_0 = +0;
+  int32_t a48_0 = +3;
+  int32_t a49_0 = +0x0;
+  int32_t a40_0 = +0xF;
+  int32_t a51_0 = +00;
+  int32_t a52_0 = +07;
+  int32_t a53_0 = +0b0;
+  int32_t a54_0 = +0b1;
+  double a55_0 = +((bool) 0.0);
+  double a56_0 = +((bool) 3.14);
+  int32_t i_0 = 0;
+  int32_t z0_0 = i_0++;
+  int32_t z1_0 = i_0--;
+  int32_t z2_0 = ++i_0;
+  int32_t z3_0 = --i_0;
+  bool a001_0 = !zBoolTrue_0;
+  bool a002_0 = !zBoolFalse_0;
+  bool a003_0 = !zByteEmpty_0;
+  bool a004_0 = !zByte_0;
+  bool a007_0 = !((bool) zFloatEmpty_0);
+  bool a008_0 = !((bool) zFloatNeg_0);
+  bool a009_0 = !((bool) zFloat_0);
+  bool a010_0 = !((bool) zF32Empty_0);
+  bool a011_0 = !((bool) zF32Neg_0);
+  bool a012_0 = !((bool) zF32_0);
+  bool a013_0 = !((bool) zF64Empty_0);
+  bool a014_0 = !((bool) zF64Neg_0);
+  bool a015_0 = !((bool) zF64_0);
+  bool a016_0 = !zIntEmpty_0;
+  bool a017_0 = !zIntNeg_0;
+  bool a018_0 = !zInt_0;
+  bool a019_0 = !zI8Empty_0;
+  bool a020_0 = !zI8Neg_0;
+  bool a021_0 = !zI8_0;
+  bool a022_0 = !zI16Empty_0;
+  bool a023_0 = !zI16Neg_0;
+  bool a024_0 = !zI16_0;
+  bool a025_0 = !zI32Empty_0;
+  bool a026_0 = !zI32Neg_0;
+  bool a027_0 = !zI32_0;
+  bool a028_0 = !zI64Empty_0;
+  bool a029_0 = !zI64Neg_0;
+  bool a030_0 = !zI64_0;
+  bool a031_0 = !zU8Empty_0;
+  bool a032_0 = !zU8_0;
+  bool a033_0 = !zU16Empty_0;
+  bool a034_0 = !zU16_0;
+  bool a035_0 = !zU32Empty_0;
+  bool a036_0 = !zU32_0;
+  bool a037_0 = !zU64Empty_0;
+  bool a038_0 = !zU64_0;
+  bool a039_0 = !!zBoolTrue_0;
+  bool a040_0 = !!zBoolFalse_0;
+  bool a041_0 = !!zByteEmpty_0;
+  bool a042_0 = !!zByte_0;
+  bool a045_0 = !!((bool) zFloatEmpty_0);
+  bool a046_0 = !!((bool) zFloatNeg_0);
+  bool a047_0 = !!((bool) zFloat_0);
+  bool a048_0 = !!((bool) zF32Empty_0);
+  bool a049_0 = !!((bool) zF32Neg_0);
+  bool a050_0 = !!((bool) zF32_0);
+  bool a051_0 = !!((bool) zF64Empty_0);
+  bool a052_0 = !!((bool) zF64Neg_0);
+  bool a053_0 = !!((bool) zF64_0);
+  bool a054_0 = !!zIntEmpty_0;
+  bool a055_0 = !!zIntNeg_0;
+  bool a056_0 = !!zInt_0;
+  bool a057_0 = !!zI8Empty_0;
+  bool a058_0 = !!zI8Neg_0;
+  bool a059_0 = !!zI8_0;
+  bool a060_0 = !!zI16Empty_0;
+  bool a061_0 = !!zI16Neg_0;
+  bool a062_0 = !!zI16_0;
+  bool a063_0 = !!zI32Empty_0;
+  bool a064_0 = !!zI32Neg_0;
+  bool a065_0 = !!zI32_0;
+  bool a066_0 = !!zI64Empty_0;
+  bool a067_0 = !!zI64Neg_0;
+  bool a068_0 = !!zI64_0;
+  bool a069_0 = !!zU8Empty_0;
+  bool a070_0 = !!zU8_0;
+  bool a071_0 = !!zU16Empty_0;
+  bool a072_0 = !!zU16_0;
+  bool a073_0 = !!zU32Empty_0;
+  bool a074_0 = !!zU32_0;
+  bool a075_0 = !!zU64Empty_0;
+  bool a076_0 = !!zU64_0;
+  double a077_0 = -((bool) zFloatEmpty_0);
+  double a078_0 = -((bool) zFloatNeg_0);
+  double a079_0 = -((bool) zFloat_0);
+  float a080_0 = -((bool) zF32Empty_0);
+  float a081_0 = -((bool) zF32Neg_0);
+  float a082_0 = -((bool) zF32_0);
+  double a083_0 = -((bool) zF64Empty_0);
+  double a084_0 = -((bool) zF64Neg_0);
+  double a085_0 = -((bool) zF64_0);
+  int32_t a086_0 = -zIntEmpty_0;
+  int32_t a087_0 = -zIntNeg_0;
+  int32_t a088_0 = -zInt_0;
+  int8_t a089_0 = -zI8Empty_0;
+  int8_t a090_0 = -zI8Neg_0;
+  int8_t a091_0 = -zI8_0;
+  int16_t a092_0 = -zI16Empty_0;
+  int16_t a093_0 = -zI16Neg_0;
+  int16_t a094_0 = -zI16_0;
+  int32_t a095_0 = -zI32Empty_0;
+  int32_t a096_0 = -zI32Neg_0;
+  int32_t a097_0 = -zI32_0;
+  int64_t a098_0 = -zI64Empty_0;
+  int64_t a099_0 = -zI64Neg_0;
+  int64_t a100_0 = -zI64_0;
+  double a109_0 = +((bool) zFloatEmpty_0);
+  double a110_0 = +((bool) zFloatNeg_0);
+  double a111_0 = +((bool) zFloat_0);
+  float a112_0 = +((bool) zF32Empty_0);
+  float a113_0 = +((bool) zF32Neg_0);
+  float a114_0 = +((bool) zF32_0);
+  double a115_0 = +((bool) zF64Empty_0);
+  double a116_0 = +((bool) zF64Neg_0);
+  double a117_0 = +((bool) zF64_0);
+  int32_t a118_0 = +zIntEmpty_0;
+  int32_t a119_0 = +zIntNeg_0;
+  int32_t a120_0 = +zInt_0;
+  int8_t a121_0 = +zI8Empty_0;
+  int8_t a122_0 = +zI8Neg_0;
+  int8_t a123_0 = +zI8_0;
+  int16_t a124_0 = +zI16Empty_0;
+  int16_t a125_0 = +zI16Neg_0;
+  int16_t a126_0 = +zI16_0;
+  int32_t a127_0 = +zI32Empty_0;
+  int32_t a128_0 = +zI32Neg_0;
+  int32_t a129_0 = +zI32_0;
+  int64_t a130_0 = +zI64Empty_0;
+  int64_t a131_0 = +zI64Neg_0;
+  int64_t a132_0 = +zI64_0;
+  uint8_t a133_0 = +zU8Empty_0;
+  uint8_t a134_0 = +zU8_0;
+  uint16_t a135_0 = +zU16Empty_0;
+  uint16_t a136_0 = +zU16_0;
+  uint32_t a137_0 = +zU32Empty_0;
+  uint32_t a138_0 = +zU32_0;
+  uint64_t a139_0 = +zU64Empty_0;
+  uint64_t a140_0 = +zU64_0;
+  int32_t a150_0 = ~zIntEmpty_0;
+  int32_t a151_0 = ~zIntNeg_0;
+  int32_t a152_0 = ~zInt_0;
+  int8_t a153_0 = ~zI8Empty_0;
+  int8_t a154_0 = ~zI8Neg_0;
+  int8_t a155_0 = ~zI8_0;
+  int16_t a156_0 = ~zI16Empty_0;
+  int16_t a157_0 = ~zI16Neg_0;
+  int16_t a158_0 = ~zI16_0;
+  int32_t a159_0 = ~zI32Empty_0;
+  int32_t a160_0 = ~zI32Neg_0;
+  int32_t a161_0 = ~zI32_0;
+  int64_t a162_0 = ~zI64Empty_0;
+  int64_t a163_0 = ~zI64Neg_0;
+  int64_t a164_0 = ~zI64_0;
+  uint8_t a165_0 = ~zU8Empty_0;
+  uint8_t a166_0 = ~zU8_0;
+  uint16_t a167_0 = ~zU16Empty_0;
+  uint16_t a168_0 = ~zU16_0;
+  uint32_t a169_0 = ~zU32Empty_0;
+  uint32_t a170_0 = ~zU32_0;
+  uint64_t a171_0 = ~zU64Empty_0;
+  uint64_t a172_0 = ~zU64_0;
+}
+===== output =====

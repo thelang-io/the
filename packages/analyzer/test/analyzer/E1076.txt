@@ -1,0 +1,12 @@
+obj Color {
+  fn set (red: int, green: int, blue: int) {
+  }
+  fn set (hex: int) {
+  }
+}
+===== err =====
+E1076.txt:4:6: AnalyzeError: E1076 - Duplicate declaration of method 'set'
+3 |   }
+4 |   fn set (hex: int) {
+  |      ~~~
+5 |   }

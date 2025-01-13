@@ -1,0 +1,20 @@
+import * as NS1 from "./test/fixtures/object-animal"
+import * as NS2 from "./test/fixtures/export-namespace"
+
+enum Color { Red, Green, Blue }
+fn test () {}
+obj Cat { mut name: str mut age: int }
+type Alias = str
+const ADMIN := true
+mut USER := false
+
+export Color
+export test
+export Cat
+export Alias
+export ADMIN
+export USER
+export NS1
+export NS2
+export NS2.NS
+export NS2.NS.Animal

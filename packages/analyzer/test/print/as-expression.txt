@@ -1,0 +1,5 @@
+const a := 10 as u64
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true context:varType=u64)
+  AsExpression(initial=u64 as=u64 extra:from=u64)
+    IntegerLiteral(initial=int target=u64 value=10)

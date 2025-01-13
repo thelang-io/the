@@ -1,0 +1,78 @@
+main {
+  a: int?
+  mut b: int?
+  c: int | str
+
+  v1 := "test" != c
+  v2 := c != "test"
+
+  v3 := a == nil ? 2 : a
+  v4 := a == nil ? a : a
+
+  v5 := a != nil ? a : a
+  v6 := a != nil ? a : 2
+
+  v7 := (b = a) != nil ? b : 2
+  v8 := (b = a) != nil ? a : b
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=false constant=false type=int? context:varType=int?)
+  VariableDeclaration(name=b mutable=true constant=false type=int? context:varType=int?)
+  VariableDeclaration(name=c mutable=false constant=false type=int | str context:varType=int | str)
+  VariableDeclaration(name=v1 mutable=false constant=false context:varType=bool)
+    BinaryExpression(initial=bool operator=!=)
+      StringLiteral(initial=str target=int | str value=test)
+      Identifier(initial=int | str name=c)
+  VariableDeclaration(name=v2 mutable=false constant=false context:varType=bool)
+    BinaryExpression(initial=bool operator=!=)
+      Identifier(initial=int | str name=c)
+      StringLiteral(initial=str target=int | str value=test)
+  VariableDeclaration(name=v3 mutable=false constant=false context:varType=int)
+    ConditionalExpression(initial=int)
+      BinaryExpression(initial=bool operator===)
+        Identifier(initial=int? name=a)
+        NilLiteral(initial=int?)
+      IntegerLiteral(initial=int value=2)
+      Identifier(initial=int? target=int name=a)
+  VariableDeclaration(name=v4 mutable=false constant=false context:varType=int?)
+    ConditionalExpression(initial=int?)
+      BinaryExpression(initial=bool operator===)
+        Identifier(initial=int? name=a)
+        NilLiteral(initial=int?)
+      Identifier(initial=int? name=a)
+      Identifier(initial=int? name=a)
+  VariableDeclaration(name=v5 mutable=false constant=false context:varType=int?)
+    ConditionalExpression(initial=int?)
+      BinaryExpression(initial=bool operator=!=)
+        Identifier(initial=int? name=a)
+        NilLiteral(initial=int?)
+      Identifier(initial=int? name=a)
+      Identifier(initial=int? name=a)
+  VariableDeclaration(name=v6 mutable=false constant=false context:varType=int)
+    ConditionalExpression(initial=int)
+      BinaryExpression(initial=bool operator=!=)
+        Identifier(initial=int? name=a)
+        NilLiteral(initial=int?)
+      Identifier(initial=int? target=int name=a)
+      IntegerLiteral(initial=int value=2)
+  VariableDeclaration(name=v7 mutable=false constant=false context:varType=int)
+    ConditionalExpression(initial=int)
+      BinaryExpression(initial=bool operator=!=)
+        ParenthesizedExpression(initial=int?)
+          AssignmentExpression(initial=int? operator==)
+            Identifier(initial=int? name=b)
+            Identifier(initial=int? name=a)
+        NilLiteral(initial=int?)
+      Identifier(initial=int? target=int name=b)
+      IntegerLiteral(initial=int value=2)
+  VariableDeclaration(name=v8 mutable=false constant=false context:varType=int?)
+    ConditionalExpression(initial=int?)
+      BinaryExpression(initial=bool operator=!=)
+        ParenthesizedExpression(initial=int?)
+          AssignmentExpression(initial=int? operator==)
+            Identifier(initial=int? name=b)
+            Identifier(initial=int? name=a)
+        NilLiteral(initial=int?)
+      Identifier(initial=int? name=a)
+      Identifier(initial=int? name=b)

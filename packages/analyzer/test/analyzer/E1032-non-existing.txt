@@ -1,0 +1,11 @@
+fn test (a: int) {}
+
+main {
+  test(a: 10, b: 20)
+}
+===== err =====
+E1032-non-existing.txt:4:15: AnalyzeError: E1032 - Extraneous argument 'b' passed
+3 | main {
+4 |   test(a: 10, b: 20)
+  |               ^
+5 | }

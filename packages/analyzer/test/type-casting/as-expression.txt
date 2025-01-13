@@ -1,0 +1,28 @@
+main {
+  mut a: bool | int | str
+  mut b: bool | int
+  c := ((a = b) as bool) ? a : false
+  d := [10] as u8[]
+  e := [] as u8[]?
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int | str context:varType=bool | int | str)
+  VariableDeclaration(name=b mutable=true constant=false type=bool | int context:varType=bool | int)
+  VariableDeclaration(name=c mutable=false constant=false context:varType=bool | int)
+    ConditionalExpression(initial=bool | int)
+      ParenthesizedExpression(initial=bool)
+        AsExpression(initial=bool as=bool extra:from=bool | int)
+          ParenthesizedExpression(initial=bool | int)
+            AssignmentExpression(initial=bool | int operator==)
+              Identifier(initial=bool | int | str name=a)
+              Identifier(initial=bool | int target=bool | int | str name=b)
+      Identifier(initial=bool | int | str target=bool | int name=a)
+      BooleanLiteral(initial=bool target=bool | int value=false)
+  VariableDeclaration(name=d mutable=false constant=false context:varType=u8[])
+    AsExpression(initial=u8[] as=u8[] extra:from=u8[])
+      ArrayExpression(initial=u8[])
+        IntegerLiteral(initial=int target=u8 value=10)
+  VariableDeclaration(name=e mutable=false constant=false context:varType=u8[]?)
+    AsExpression(initial=u8[]? as=u8[]? extra:from=u8[])
+      ArrayExpression(initial=u8[])

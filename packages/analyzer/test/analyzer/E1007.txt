@@ -1,0 +1,5 @@
+const a := []
+===== err =====
+E1007.txt:1:12: AnalyzeError: E1007 - Unable to deduce array literal type
+1 | const a := []
+  |            ~~

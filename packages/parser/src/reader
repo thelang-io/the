@@ -16,10 +16,7 @@ export obj Reader {
   }
 
   fn lookahead (mut self: ref Self, check: char) bool {
-    if check == '\n' && os_NAME == "Windows" && self.content.slice(self.pos, self.pos + 2) == "\r\n" {
-      self.pos += 2
-      return true
-    } elif self.pos < self.contentLen && self.content[self.pos] == check {
+    if self.pos < self.contentLen && self.content[self.pos] == check {
       self.pos += 1
       return true
     }
@@ -30,8 +27,6 @@ export obj Reader {
   fn next (mut self: ref Self) char {
     if self.eof() {
       throw error_NewError("Tried next on Reader eof")
-    } elif os_NAME == "Windows" && self.content.slice(self.pos, self.pos + 2) == "\r\n" {
-      self.pos++
     }
 
     return self.content[self.pos++]
@@ -45,12 +40,12 @@ export obj Reader {
     return self.content.slice(start, end)
   }
 
-  fn walk (mut self: ref Self, match: (char) -> bool) {
+  fn walk (mut self: ref Self, matcher: (char) -> bool) {
     loop !self.eof() {
       pos := self.pos
       ch := self.next()
 
-      if !match(ch) {
+      if !matcher(ch) {
         self.seek(pos)
         break
       }
@@ -64,7 +59,8 @@ export fn init (pathOrCode: str) Reader {
     !(pathOrCode.slice(0, 1) == "/" && pathOrCode.slice(0, 2) != "//" && pathOrCode.slice(0, 2) != "/*") &&
     pathOrCode.slice(1, 3) != ":\\"
   ) {
-    return Reader{path: "anonymous", content: pathOrCode, contentLen: pathOrCode.len}
+    actualContent := pathOrCode.replace("\r\n", "\n")
+    return Reader{path: "anonymous", content: actualContent, contentLen: actualContent.len}
   }
 
   mut p: str
@@ -79,8 +75,64 @@ export fn init (pathOrCode: str) Reader {
     throw t.ParserError{message: "Path `" + pathOrCode + "` is not a file"}
   }
 
-  content := fs_readFileSync(p).str()
+  content := fs_readFileSync(p).str().replace("\r\n", "\n")
   return Reader{path: p, content: content, contentLen: content.len}
+}
+
+export fn error (reader: ref Reader, errorType: str, message: str, start: int, end: int) str {
+  startLoc := locate(reader, start)
+  endLoc := locate(reader, end)
+  lines := reader.content.lines()
+
+  mut errorLines: str[]
+  mut errorLinesNumbers: int[]
+
+  if startLoc.line != 1 {
+    errorLines.push(lines[startLoc.line - 2])
+    errorLinesNumbers.push(startLoc.line - 1)
+  }
+
+  errorLines.push(lines[startLoc.line - 1])
+  errorLinesNumbers.push(startLoc.line)
+
+  if startLoc.line == endLoc.line && (startLoc.col == endLoc.col || startLoc.col + 1 == endLoc.col) {
+    errorLines.push(' '.repeat(startLoc.col - 1) + "^")
+  } elif startLoc.line == endLoc.line {
+    errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(endLoc.col - startLoc.col))
+  } else {
+    errorLine := lines[startLoc.line - 1]
+    errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col + 1))
+  }
+
+  errorLinesNumbers.push(startLoc.line)
+
+  if startLoc.line != lines.len && !lines[startLoc.line].empty {
+    errorLines.push(lines[startLoc.line])
+    errorLinesNumbers.push(startLoc.line + 1)
+  }
+
+  gutterLen := errorLinesNumbers[-1].str().len + 1
+
+  mut error := reader.path + ":" + startLoc.line.str() + ":" +
+    startLoc.col.str() + ": " + errorType + ": " + message + os_EOL
+
+  mut prevLineNum := 0
+
+  loop i := 0; i < errorLinesNumbers.len; i++ {
+    errorLineNum := errorLinesNumbers[i]
+
+    if prevLineNum == errorLineNum {
+      error += ' '.repeat(gutterLen)
+    } else {
+      errorLineNumLen := errorLineNum.str().len
+      error += errorLineNum.str() + ' '.repeat(gutterLen - errorLineNumLen)
+    }
+
+    error += "| " + errorLines[i] + os_EOL
+    prevLineNum = errorLineNum
+  }
+
+  return error
 }
 
 export fn locate (reader: ref Reader, pos: int) t.Location {

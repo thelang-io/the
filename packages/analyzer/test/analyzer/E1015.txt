@@ -1,0 +1,10 @@
+main {
+  mut a: int
+  a[0] = 2
+}
+===== err =====
+E1015.txt:3:3: AnalyzeError: E1015 - No index signature was found on type `int`
+2 |   mut a: int
+3 |   a[0] = 2
+  |   ^
+4 | }

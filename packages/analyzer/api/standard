@@ -1,0 +1,3005 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// <aio.h>
+
+export obj aiocb {
+  mut aio_fildes: int
+  mut aio_offset: off_t
+  mut aio_buf: ref any
+  mut aio_nbytes: usize
+  mut aio_reqprio: int
+  mut aio_sigevent: sigevent
+  mut aio_lio_opcode: int
+}
+
+// <dirent.h>
+
+export obj DIR {}
+
+export obj dirent {
+  mut d_ino: ino_t
+  mut d_name: char[]
+}
+
+// <fcntl.h>
+
+export obj flock {
+  mut l_type: i16
+  mut l_whence: i16
+  mut l_start: off_t
+  mut l_len: off_t
+  mut l_pid: pid_t
+}
+
+// <fenv.h>
+
+export obj fenv_t {}
+export obj fexcept_t {}
+
+// <glob.h>
+
+export obj glob_t {
+  mut gl_pathc: usize
+  mut gl_pathv: ref char[]
+  mut gl_offs: usize
+}
+
+// <grp.h>
+
+export obj group {
+  mut gr_name: char[]
+  mut gr_gid: gid_t
+  mut gr_mem: ref char[]
+}
+
+// <iconv.h>
+
+export type iconv_t = ref any
+
+// <inttypes.h>
+
+export obj imaxdiv_t {
+  mut quot: intmax_t
+  mut rem: intmax_t
+}
+
+// <locale.h>
+
+export obj locale_t {}
+
+export obj lconv {
+  mut currency_symbol: char[]
+  mut decimal_point: char[]
+  mut frac_digits: char
+  mut grouping: char[]
+  mut int_curr_symbol: char[]
+  mut int_frac_digits: char
+  mut int_n_cs_precedes: char
+  mut int_n_sep_by_space: char
+  mut int_n_sign_posn: char
+  mut int_p_cs_precedes: char
+  mut int_p_sep_by_space: char
+  mut int_p_sign_posn: char
+  mut mon_decimal_point: char[]
+  mut mon_grouping: char[]
+  mut mon_thousands_sep: char[]
+  mut negative_sign: char[]
+  mut n_cs_precedes: char
+  mut n_sep_by_space: char
+  mut n_sign_posn: char
+  mut positive_sign: char[]
+  mut p_cs_precedes: char
+  mut p_sep_by_space: char
+  mut p_sign_posn: char
+  mut thousands_sep: char[]
+}
+
+// <math.h>
+
+export obj float_t {}
+export obj double_t {}
+
+// <mqueue.h>
+
+export obj mqd_t {}
+
+export obj mq_attr {
+  mut mq_flags: i64
+  mut mq_maxmsg: i64
+  mut mq_msgsize: i64
+  mut mq_curmsgs: i64
+}
+
+// <ndbm.h>
+
+export obj DBM {}
+
+export obj datum {
+  mut dptr: ref any
+  mut dsize: usize
+}
+
+// <net/if.h>
+
+export obj if_nameindex_t {
+  mut if_index: u32
+  mut if_name: char[]
+}
+
+// <netdb.h>
+
+export obj hostent {
+  mut h_name: char[]
+  mut h_aliases: ref char[]
+  mut h_addrtype: int
+  mut h_length: int
+  mut h_addr_list: ref char[]
+}
+
+export obj netent {
+  mut n_name: char[]
+  mut n_aliases: ref char[]
+  mut n_addrtype: int
+  mut n_net: u32
+}
+
+export obj protoent {
+  mut p_name: char[]
+  mut p_aliases: ref char[]
+  mut p_proto: int
+}
+
+export obj servent {
+  mut s_name: char[]
+  mut s_aliases: ref char[]
+  mut s_port: int
+  mut s_proto: char[]
+}
+
+export obj addrinfo {
+  mut ai_flags: int
+  mut ai_family: int
+  mut ai_socktype: int
+  mut ai_protocol: int
+  mut ai_addrlen: socklen_t
+  mut ai_addr: ref sockaddr
+  mut ai_canonname: char[]
+  mut ai_next: ref addrinfo
+}
+
+// <netinet/in.h>
+
+export obj in_port_t {}
+export obj in_addr_t {}
+
+export obj in_addr {
+  mut s_addr: in_addr_t
+}
+
+export obj sockaddr_in {
+  mut sin_family: sa_family_t
+  mut sin_port: in_port_t
+  mut sin_addr: in_addr
+}
+
+export obj in6_addr {
+  mut s6_addr: u8[]
+}
+
+export obj sockaddr_in6 {
+  mut sin6_family: sa_family_t
+  mut sin6_port: in_port_t
+  mut sin6_flowinfo: u32
+  mut sin6_addr: in6_addr
+  mut sin6_scope_id: u32
+}
+
+export obj ipv6_mreq {
+  mut ipv6mr_multiaddr: in6_addr
+  mut ipv6mr_interface: u32
+}
+
+// <nl_types.h>
+
+export obj nl_catd {}
+export obj nl_item {}
+
+// <poll.h>
+
+export obj nfds_t {}
+
+export obj pollfd {
+  mut fd: int
+  mut events: i16
+  mut revents: i16
+}
+
+// <pwd.h>
+
+export obj passwd {
+  mut pw_name: char[]
+  mut pw_uid: uid_t
+  mut pw_gid: gid_t
+  mut pw_dir: char[]
+  mut pw_shell: char[]
+}
+
+// <regex.h>
+
+export obj regoff_t {}
+
+export obj regex_t {
+  mut re_nsub: usize
+}
+
+export obj regmatch_t {
+  mut rm_so: regoff_t
+  mut rm_eo: regoff_t
+}
+
+// <sched.h>
+
+export obj sched_param {
+  mut sched_priority: int
+}
+
+// <search.h>
+
+export obj ENTRY {
+  mut key: char[]
+  mut data: ref any
+}
+
+export enum ACTION {
+  FIND,
+  ENTER,
+}
+
+export enum VISIT {
+  preorder,
+  postorder,
+  endorder,
+  leaf,
+}
+
+// <semaphore.h>
+
+export obj sem_t {}
+
+// <setjmp.h>
+
+export obj jmp_buf {}
+export obj sigjmp_buf {}
+
+// <signal.h>
+
+export obj mcontext_t {}
+export obj sig_atomic_t {}
+export obj sigset_t {}
+
+export type sigval = int | ref any
+
+export obj sigevent {
+  mut sigev_notify: int
+  mut sigev_signo: int
+  mut sigev_value: sigval
+  mut sigev_notify_function: (sigval) -> void
+  mut sigev_notify_attributes: ref pthread_attr_t
+}
+
+export obj sigaction_t {
+  mut sa_handler: (int) -> void
+  mut sa_mask: sigset_t
+  mut sa_flags: int
+  mut sa_sigaction: (signum: int, mut info: ref siginfo_t, mut ctx: ref any) -> void
+}
+
+export obj ucontext_t {
+  mut uc_link: ref ucontext_t
+  mut uc_sigmask: sigset_t
+  mut uc_stack: stack_t
+  mut uc_mcontext: ref mcontext_t
+}
+
+export obj stack_t {
+  mut ss_sp: ref any
+  mut ss_size: usize
+  mut ss_flags: int
+}
+
+export obj siginfo_t {
+  mut si_signo: int
+  mut si_code: int
+  mut si_errno: int
+  mut si_pid: pid_t
+  mut si_uid: uid_t
+  mut si_addr: ref any
+  mut si_status: int
+  mut si_band: i64
+  mut si_value: sigval
+}
+
+// <spawn.h>
+
+export type spawnattr_t = ref any
+export type spawn_file_actions_t = ref any
+
+// <stddef.h>
+
+export obj ptrdiff_t {}
+
+// <stdint.h>
+
+export obj intmax_t {}
+export obj uintmax_t {}
+
+// <stdio.h>
+
+export obj FILE {}
+export obj fpos_t {}
+
+// <stdlib.h>
+
+export obj div_t {
+  mut quot: int
+  mut rem: int
+}
+
+export obj ldiv_t {
+  mut quot: i64
+  mut rem: i64
+}
+
+export obj lldiv_t {
+  mut quot: int
+  mut rem: int
+}
+
+// <sys/ipc.h>
+
+export obj ipc_perm {
+  mut uid: uid_t
+  mut gid: gid_t
+  mut cuid: uid_t
+  mut cgid: gid_t
+  mut mode: mode_t
+}
+
+// <sys/mman.h>
+
+export obj typed_mem_info {
+  mut tmi_length: usize
+}
+
+// <sys/msg.h>
+
+export obj msgqnum_t {}
+export obj msglen_t {}
+
+export obj msqid_ds {
+  mut msg_perm: ipc_perm
+  mut msg_qnum: msgqnum_t
+  mut msg_qbytes: msglen_t
+  mut msg_lspid: pid_t
+  mut msg_lrpid: pid_t
+  mut msg_stime: time_t
+  mut msg_rtime: time_t
+  mut msg_ctime: time_t
+}
+
+// <sys/resource.h>
+
+export obj rlim_t {}
+
+export obj rlimit {
+  mut rlim_cur: rlim_t
+  mut rlim_max: rlim_t
+}
+
+export obj rusage {
+  mut ru_utime: timeval
+  mut ru_stime: timeval
+}
+
+// <sys/select.h>
+
+export obj fd_set {}
+
+// <sys/sem.h>
+
+export type semun = int | ref semid_ds | ref u16
+
+export obj semid_ds {
+  mut sem_perm: ipc_perm
+  mut sem_nsems: u16
+  mut sem_otime: time_t
+  mut sem_ctime: time_t
+}
+
+export obj sem {
+  mut semval: u16
+  mut sempid: pid_t
+  mut semncnt: u16
+  mut semzcnt: u16
+}
+
+export obj sembuf {
+  mut sem_num: u16
+  mut sem_op: i16
+  mut sem_flg: i16
+}
+
+// <sys/shm.h>
+
+export obj shmatt_t {}
+
+export obj shmid_ds {
+  mut shm_perm: ipc_perm
+  mut shm_segsz: usize
+  mut shm_lpid: pid_t
+  mut shm_cpid: pid_t
+  mut shm_nattch: shmatt_t
+  mut shm_atime: time_t
+  mut shm_dtime: time_t
+  mut shm_ctime: time_t
+}
+
+// <sys/socket.h>
+
+export obj socklen_t {}
+export obj sa_family_t {}
+
+export obj sockaddr {
+  mut sa_family: sa_family_t
+  mut sa_data: char[]
+}
+
+export obj sockaddr_storage {
+  mut ss_family: sa_family_t
+}
+
+export obj msghdr {
+  mut msg_name: ref any
+  mut msg_namelen: socklen_t
+  mut msg_iov: ref iovec
+  mut msg_iovlen: int
+  mut msg_control: ref any
+  mut msg_controllen: socklen_t
+  mut msg_flags: int
+}
+
+export obj cmsghdr {
+  mut cmsg_len: socklen_t
+  mut cmsg_level: int
+  mut cmsg_type: int
+}
+
+export obj linger {
+  mut l_onoff: int
+  mut l_linger: int
+}
+
+// <sys/stat.h>
+
+export obj stat_t {
+  mut st_dev: dev_t
+  mut st_ino: ino_t
+  mut st_mode: mode_t
+  mut st_nlink: nlink_t
+  mut st_uid: uid_t
+  mut st_gid: gid_t
+  mut st_rdev: dev_t
+  mut st_size: off_t
+  mut st_atim: timespec
+  mut st_mtim: timespec
+  mut st_ctim: timespec
+  mut st_blksize: blksize_t
+  mut st_blocks: blkcnt_t
+}
+
+// <sys/statvfs.h>
+
+export obj statvfs_t {
+  mut f_bsize: u64
+  mut f_frsize: u64
+  mut f_blocks: fsblkcnt_t
+  mut f_bfree: fsblkcnt_t
+  mut f_bavail: fsblkcnt_t
+  mut f_files: fsfilcnt_t
+  mut f_ffree: fsfilcnt_t
+  mut f_favail: fsfilcnt_t
+  mut f_fsid: u64
+  mut f_flag: u64
+  mut f_namemax: u64
+}
+
+// <sys/time.h>
+
+export obj timeval {
+  mut tv_sec: time_t
+  mut tv_usec: suseconds_t
+}
+
+export obj itimerval {
+  mut it_interval: timeval
+  mut it_value: timeval
+}
+
+// <sys/time.h>
+
+export obj tms {
+  mut tms_utime: clock_t
+  mut tms_stime: clock_t
+  mut tms_cutime: clock_t
+  mut tms_cstime: clock_t
+}
+
+// <sys/types.h>
+
+export obj blkcnt_t {}
+export obj blksize_t {}
+export obj clock_t {}
+export obj clockid_t {}
+export obj dev_t {}
+export obj fsblkcnt_t {}
+export obj fsfilcnt_t {}
+export obj gid_t {}
+export obj id_t {}
+export obj ino_t {}
+export obj key_t {}
+export obj mode_t {}
+export obj nlink_t {}
+export obj off_t {}
+export obj pid_t {}
+export obj pthread_attr_t {}
+export obj pthread_barrier_t {}
+export obj pthread_barrierattr_t {}
+export obj pthread_cond_t {}
+export obj pthread_condattr_t {}
+export obj pthread_key_t {}
+export obj pthread_mutex_t {}
+export obj pthread_mutexattr_t {}
+export obj pthread_once_t {}
+export obj pthread_rwlock_t {}
+export obj pthread_rwlockattr_t {}
+export obj pthread_spinlock_t {}
+export obj pthread_t {}
+export obj suseconds_t {}
+export obj time_t {}
+export obj timer_t {}
+export obj trace_attr_t {}
+export obj trace_event_id_t {}
+export obj trace_event_set_t {}
+export obj trace_id_t {}
+export obj uid_t {}
+
+// <sys/uio.h>
+
+export obj iovec {
+  mut iov_base: ref any
+  mut iov_len: usize
+}
+
+// <sys/un.h>
+
+export obj sockaddr_un {
+  mut sun_family: sa_family_t
+  mut sun_path: char[]
+}
+
+// <sys/utsname.h>
+
+export obj utsname {
+  mut sysname: char[]
+  mut nodename: char[]
+  mut release: char[]
+  mut version: char[]
+  mut machine: char[]
+}
+
+// <sys/wait.h>
+
+export enum idtype_t {
+  P_ALL,
+  P_PGID,
+  P_PID
+}
+
+// <termios.h>
+
+export obj cc_t {}
+export obj speed_t {}
+export obj tcflag_t {}
+
+export obj termios {
+  mut c_iflag: tcflag_t
+  mut c_oflag: tcflag_t
+  mut c_cflag: tcflag_t
+  mut c_lflag: tcflag_t
+  mut c_cc: cc_t[]
+}
+
+// <time.h>
+
+export obj tm {
+  mut tm_sec: int
+  mut tm_min: int
+  mut tm_hour: int
+  mut tm_mday: int
+  mut tm_mon: int
+  mut tm_year: int
+  mut tm_wday: int
+  mut tm_yday: int
+  mut tm_isdst: int
+}
+
+export obj timespec {
+  mut tv_sec: time_t
+  mut tv_nsec: i64
+}
+
+export obj itimerspec {
+  mut it_interval: timespec
+  mut it_value: timespec
+}
+
+// <utmpx.h>
+
+export obj utmpx {
+  mut ut_user: char[]
+  mut ut_id: char[]
+  mut ut_line: char[]
+  mut ut_pid: pid_t
+  mut ut_type: i16
+  mut ut_tv: timeval
+}
+
+// <wchar.h>
+
+export obj mbstate_t {}
+export obj wctype_t {}
+export obj wint_t {}
+
+// <wctype.h>
+
+export obj wctrans_t {}
+
+// <wordexp.h>
+
+export obj wordexp_t {
+  mut we_wordc: usize
+  mut we_wordv: ref char[]
+  mut we_offs: usize
+}
+
+// <aio.h>
+export const AIO_ALLDONE: int
+export const AIO_CANCELED: int
+export const AIO_NOTCANCELED: int
+export const LIO_NOP: int
+export const LIO_NOWAIT: int
+export const LIO_READ: int
+export const LIO_WAIT: int
+export const LIO_WRITE: int
+
+// <cpio.h>
+export const C_IRUSR: int
+export const C_IWUSR: int
+export const C_IXUSR: int
+export const C_IRGRP: int
+export const C_IWGRP: int
+export const C_IXGRP: int
+export const C_IROTH: int
+export const C_IWOTH: int
+export const C_IXOTH: int
+export const C_ISUID: int
+export const C_ISGID: int
+export const C_ISVTX: int
+export const C_ISDIR: int
+export const C_ISFIFO: int
+export const C_ISREG: int
+export const C_ISBLK: int
+export const C_ISCHR: int
+export const C_ISCTG: int
+export const C_ISLNK: int
+export const C_ISSOCK: int
+export const MAGIC: char[]
+
+// <dlfcn.h>
+export const RTLD_LAZY: int
+export const RTLD_NOW: int
+export const RTLD_GLOBAL: int
+export const RTLD_LOCAL: int
+
+// <errno.h>
+export const E2BIG: int
+export const EACCES: int
+export const EADDRINUSE: int
+export const EADDRNOTAVAIL: int
+export const EAFNOSUPPORT: int
+export const EAGAIN: int
+export const EALREADY: int
+export const EBADF: int
+export const EBADMSG: int
+export const EBUSY: int
+export const ECANCELED: int
+export const ECHILD: int
+export const ECONNABORTED: int
+export const ECONNREFUSED: int
+export const ECONNRESET: int
+export const EDEADLK: int
+export const EDESTADDRREQ: int
+export const EDOM: int
+export const EDQUOT: int
+export const EEXIST: int
+export const EFAULT: int
+export const EFBIG: int
+export const EHOSTUNREACH: int
+export const EIDRM: int
+export const EILSEQ: int
+export const EINPROGRESS: int
+export const EINTR: int
+export const EINVAL: int
+export const EIO: int
+export const EISCONN: int
+export const EISDIR: int
+export const ELOOP: int
+export const EMFILE: int
+export const EMLINK: int
+export const EMSGSIZE: int
+export const EMULTIHOP: int
+export const ENAMETOOLONG: int
+export const ENETDOWN: int
+export const ENETRESET: int
+export const ENETUNREACH: int
+export const ENFILE: int
+export const ENOBUFS: int
+export const ENODATA: int
+export const ENODEV: int
+export const ENOENT: int
+export const ENOEXEC: int
+export const ENOLCK: int
+export const ENOLINK: int
+export const ENOMEM: int
+export const ENOMSG: int
+export const ENOPROTOOPT: int
+export const ENOSPC: int
+export const ENOSYS: int
+export const ENOTCONN: int
+export const ENOTDIR: int
+export const ENOTEMPTY: int
+export const ENOTRECOVERABLE: int
+export const ENOTSOCK: int
+export const ENOTSUP: int
+export const ENOTTY: int
+export const ENXIO: int
+export const EOPNOTSUPP: int
+export const EOVERFLOW: int
+export const EOWNERDEAD: int
+export const EPERM: int
+export const EPIPE: int
+export const EPROTO: int
+export const EPROTONOSUPPORT: int
+export const EPROTOTYPE: int
+export const ERANGE: int
+export const EROFS: int
+export const ESPIPE: int
+export const ESRCH: int
+export const ESTALE: int
+export const ETIMEDOUT: int
+export const ETXTBSY: int
+export const EWOULDBLOCK: int
+export const EXDEV: int
+
+// <fcntl.h>
+export const F_DUPFD: int
+export const F_DUPFD_CLOEXEC: int
+export const F_GETFD: int
+export const F_SETFD: int
+export const F_GETFL: int
+export const F_SETFL: int
+export const F_GETLK: int
+export const F_SETLK: int
+export const F_SETLKW: int
+export const F_GETOWN: int
+export const F_SETOWN: int
+export const FD_CLOEXEC: int
+export const F_RDLCK: int
+export const F_UNLCK: int
+export const F_WRLCK: int
+export const O_CLOEXEC: int
+export const O_CREAT: int
+export const O_DIRECTORY: int
+export const O_EXCL: int
+export const O_NOCTTY: int
+export const O_NOFOLLOW: int
+export const O_TRUNC: int
+export const O_TTY_INIT: int
+export const O_APPEND: int
+export const O_DSYNC: int
+export const O_NONBLOCK: int
+export const O_RSYNC: int
+export const O_SYNC: int
+export const O_ACCMODE: int
+export const O_EXEC: int
+export const O_RDONLY: int
+export const O_RDWR: int
+export const O_SEARCH: int
+export const O_WRONLY: int
+export const AT_FDCWD: int
+export const AT_EACCESS: int
+export const AT_SYMLINK_NOFOLLOW: int
+export const AT_SYMLINK_FOLLOW: int
+export const AT_REMOVEDIR: int
+
+// <fenv.h>
+export const FE_ALL_EXCEPT: int
+export const FE_DIVBYZERO: int
+export const FE_INEXACT: int
+export const FE_INVALID: int
+export const FE_OVERFLOW: int
+export const FE_UNDERFLOW: int
+export const FE_DOWNWARD: int
+export const FE_TONEAREST: int
+export const FE_TOWARDZERO: int
+export const FE_UPWARD: int
+export const FE_DFL_ENV: int
+
+// <float.h>
+export const FLT_ROUNDS: int
+export const FLT_RADIX: int
+export const FLT_EVAL_METHOD: int
+export const FLT_MANT_DIG: int
+export const DBL_MANT_DIG: int
+export const DECIMAL_DIG: int
+export const FLT_DIG: int
+export const DBL_DIG: int
+export const FLT_MIN_EXP: int
+export const DBL_MIN_EXP: int
+export const FLT_MIN_10_EXP: int
+export const DBL_MIN_10_EXP: int
+export const FLT_MAX_EXP: int
+export const DBL_MAX_EXP: int
+export const FLT_MAX_10_EXP: int
+export const DBL_MAX_10_EXP: int
+export const FLT_MAX: f32
+export const DBL_MAX: float
+export const FLT_EPSILON: f32
+export const DBL_EPSILON: float
+export const FLT_MIN: f32
+export const DBL_MIN: float
+
+// <fmtmsg.h>
+export const MM_HARD: int
+export const MM_SOFT: int
+export const MM_FIRM: int
+export const MM_APPL: int
+export const MM_UTIL: int
+export const MM_OPSYS: int
+export const MM_RECOVER: int
+export const MM_NRECOV: int
+export const MM_HALT: int
+export const MM_ERROR: int
+export const MM_WARNING: int
+export const MM_INFO: int
+export const MM_NOSEV: int
+export const MM_PRINT: int
+export const MM_CONSOLE: int
+export const MM_NULLLBL: char[]
+export const MM_NULLSEV: int
+export const MM_NULLMC: i64
+export const MM_NULLTXT: char[]
+export const MM_NULLACT: char[]
+export const MM_NULLTAG: char[]
+export const MM_OK: int
+export const MM_NOTOK: int
+export const MM_NOMSG: int
+export const MM_NOCON: int
+
+// <fnmatch.h>
+export const FNM_NOMATCH: int
+export const FNM_PATHNAME: int
+export const FNM_PERIOD: int
+export const FNM_NOESCAPE: int
+
+// <glob.h>
+export const GLOB_APPEND: int
+export const GLOB_DOOFFS: int
+export const GLOB_ERR: int
+export const GLOB_MARK: int
+export const GLOB_NOCHECK: int
+export const GLOB_NOESCAPE: int
+export const GLOB_NOSORT: int
+export const GLOB_ABORTED: int
+export const GLOB_NOMATCH: int
+export const GLOB_NOSPACE: int
+
+// <inttypes.h>
+export const PRId8: char[]
+export const PRId16: char[]
+export const PRId32: char[]
+export const PRId64: char[]
+export const PRIdLEAST8: char[]
+export const PRIdLEAST16: char[]
+export const PRIdLEAST32: char[]
+export const PRIdLEAST64: char[]
+export const PRIdFAST8: char[]
+export const PRIdFAST16: char[]
+export const PRIdFAST32: char[]
+export const PRIdFAST64: char[]
+export const PRIdMAX: char[]
+export const PRIdPTR: char[]
+export const PRIi8: char[]
+export const PRIi16: char[]
+export const PRIi32: char[]
+export const PRIi64: char[]
+export const PRIiLEAST8: char[]
+export const PRIiLEAST16: char[]
+export const PRIiLEAST32: char[]
+export const PRIiLEAST64: char[]
+export const PRIiFAST8: char[]
+export const PRIiFAST16: char[]
+export const PRIiFAST32: char[]
+export const PRIiFAST64: char[]
+export const PRIiMAX: char[]
+export const PRIiPTR: char[]
+export const PRIo8: char[]
+export const PRIo16: char[]
+export const PRIo32: char[]
+export const PRIo64: char[]
+export const PRIoLEAST8: char[]
+export const PRIoLEAST16: char[]
+export const PRIoLEAST32: char[]
+export const PRIoLEAST64: char[]
+export const PRIoFAST8: char[]
+export const PRIoFAST16: char[]
+export const PRIoFAST32: char[]
+export const PRIoFAST64: char[]
+export const PRIoMAX: char[]
+export const PRIoPTR: char[]
+export const PRIu8: char[]
+export const PRIu16: char[]
+export const PRIu32: char[]
+export const PRIu64: char[]
+export const PRIuLEAST8: char[]
+export const PRIuLEAST16: char[]
+export const PRIuLEAST32: char[]
+export const PRIuLEAST64: char[]
+export const PRIuFAST8: char[]
+export const PRIuFAST16: char[]
+export const PRIuFAST32: char[]
+export const PRIuFAST64: char[]
+export const PRIuMAX: char[]
+export const PRIuPTR: char[]
+export const PRIx8: char[]
+export const PRIx16: char[]
+export const PRIx32: char[]
+export const PRIx64: char[]
+export const PRIxLEAST8: char[]
+export const PRIxLEAST16: char[]
+export const PRIxLEAST32: char[]
+export const PRIxLEAST64: char[]
+export const PRIxFAST8: char[]
+export const PRIxFAST16: char[]
+export const PRIxFAST32: char[]
+export const PRIxFAST64: char[]
+export const PRIxMAX: char[]
+export const PRIxPTR: char[]
+export const PRIX8: char[]
+export const PRIX16: char[]
+export const PRIX32: char[]
+export const PRIX64: char[]
+export const PRIXLEAST8: char[]
+export const PRIXLEAST16: char[]
+export const PRIXLEAST32: char[]
+export const PRIXLEAST64: char[]
+export const PRIXFAST8: char[]
+export const PRIXFAST16: char[]
+export const PRIXFAST32: char[]
+export const PRIXFAST64: char[]
+export const PRIXMAX: char[]
+export const PRIXPTR: char[]
+export const SCNd8: char[]
+export const SCNd16: char[]
+export const SCNd32: char[]
+export const SCNd64: char[]
+export const SCNdLEAST8: char[]
+export const SCNdLEAST16: char[]
+export const SCNdLEAST32: char[]
+export const SCNdLEAST64: char[]
+export const SCNdFAST8: char[]
+export const SCNdFAST16: char[]
+export const SCNdFAST32: char[]
+export const SCNdFAST64: char[]
+export const SCNdMAX: char[]
+export const SCNdPTR: char[]
+export const SCNi8: char[]
+export const SCNi16: char[]
+export const SCNi32: char[]
+export const SCNi64: char[]
+export const SCNiLEAST8: char[]
+export const SCNiLEAST16: char[]
+export const SCNiLEAST32: char[]
+export const SCNiLEAST64: char[]
+export const SCNiFAST8: char[]
+export const SCNiFAST16: char[]
+export const SCNiFAST32: char[]
+export const SCNiFAST64: char[]
+export const SCNiMAX: char[]
+export const SCNiPTR: char[]
+export const SCNo8: char[]
+export const SCNo16: char[]
+export const SCNo32: char[]
+export const SCNo64: char[]
+export const SCNoLEAST8: char[]
+export const SCNoLEAST16: char[]
+export const SCNoLEAST32: char[]
+export const SCNoLEAST64: char[]
+export const SCNoFAST8: char[]
+export const SCNoFAST16: char[]
+export const SCNoFAST32: char[]
+export const SCNoFAST64: char[]
+export const SCNoMAX: char[]
+export const SCNoPTR: char[]
+export const SCNu8: char[]
+export const SCNu16: char[]
+export const SCNu32: char[]
+export const SCNu64: char[]
+export const SCNuLEAST8: char[]
+export const SCNuLEAST16: char[]
+export const SCNuLEAST32: char[]
+export const SCNuLEAST64: char[]
+export const SCNuFAST8: char[]
+export const SCNuFAST16: char[]
+export const SCNuFAST32: char[]
+export const SCNuFAST64: char[]
+export const SCNuMAX: char[]
+export const SCNuPTR: char[]
+export const SCNx8: char[]
+export const SCNx16: char[]
+export const SCNx32: char[]
+export const SCNx64: char[]
+export const SCNxLEAST8: char[]
+export const SCNxLEAST16: char[]
+export const SCNxLEAST32: char[]
+export const SCNxLEAST64: char[]
+export const SCNxFAST8: char[]
+export const SCNxFAST16: char[]
+export const SCNxFAST32: char[]
+export const SCNxFAST64: char[]
+export const SCNxMAX: char[]
+export const SCNxPTR: char[]
+
+// <langinfo.h>
+export const CODESET: int
+export const D_T_FMT: int
+export const D_FMT: int
+export const T_FMT: int
+export const T_FMT_AMPM: int
+export const AM_STR: int
+export const PM_STR: int
+export const DAY_1: int
+export const DAY_2: int
+export const DAY_3: int
+export const DAY_4: int
+export const DAY_5: int
+export const DAY_6: int
+export const DAY_7: int
+export const ABDAY_1: int
+export const ABDAY_2: int
+export const ABDAY_3: int
+export const ABDAY_4: int
+export const ABDAY_5: int
+export const ABDAY_6: int
+export const ABDAY_7: int
+export const MON_1: int
+export const MON_2: int
+export const MON_3: int
+export const MON_4: int
+export const MON_5: int
+export const MON_6: int
+export const MON_7: int
+export const MON_8: int
+export const MON_9: int
+export const MON_10: int
+export const MON_11: int
+export const MON_12: int
+export const ABMON_1: int
+export const ABMON_2: int
+export const ABMON_3: int
+export const ABMON_4: int
+export const ABMON_5: int
+export const ABMON_6: int
+export const ABMON_7: int
+export const ABMON_8: int
+export const ABMON_9: int
+export const ABMON_10: int
+export const ABMON_11: int
+export const ABMON_12: int
+export const ERA: int
+export const ERA_D_FMT: int
+export const ERA_D_T_FMT: int
+export const ERA_T_FMT: int
+export const ALT_DIGITS: int
+export const RADIXCHAR: int
+export const THOUSEP: int
+export const YESEXPR: int
+export const NOEXPR: int
+export const CRNCYSTR: int
+
+// <limits.h>
+export const CHAR_BIT: int
+export const CHAR_MAX: int
+export const CHAR_MIN: int
+export const INT_MAX: int
+export const INT_MIN: int
+export const LLONG_MAX: int
+export const LLONG_MIN: int
+export const LONG_BIT: int
+export const LONG_MAX: int
+export const LONG_MIN: int
+export const MB_LEN_MAX: int
+export const SCHAR_MAX: int
+export const SCHAR_MIN: int
+export const SHRT_MAX: int
+export const SHRT_MIN: int
+export const SSIZE_MAX: int
+export const UCHAR_MAX: int
+export const UINT_MAX: int
+export const ULLONG_MAX: int
+export const ULONG_MAX: int
+export const USHRT_MAX: int
+export const WORD_BIT: int
+
+// <locale.h>
+export const LC_ALL: int
+export const LC_COLLATE: int
+export const LC_CTYPE: int
+export const LC_MESSAGES: int
+export const LC_MONETARY: int
+export const LC_NUMERIC: int
+export const LC_TIME: int
+
+// <math.h>
+export const M_E: float
+export const M_LOG2E: float
+export const M_LOG10E: float
+export const M_LN2: float
+export const M_LN10: float
+export const M_PI: float
+export const M_PI_2: float
+export const M_PI_4: float
+export const M_1_PI: float
+export const M_2_PI: float
+export const M_2_SQRTPI: float
+export const M_SQRT2: float
+export const M_SQRT1_2: float
+export const HUGE_VAL: float
+export const HUGE_VALF: f32
+export const INFINITY: f32
+export const NAN: f32
+export const FP_INFINITE: int
+export const FP_NAN: int
+export const FP_NORMAL: int
+export const FP_SUBNORMAL: int
+export const FP_ZERO: int
+export const FP_FAST_FMA: int
+export const FP_FAST_FMAF: int
+export const FP_FAST_FMAL: int
+export const FP_ILOGB0: int
+export const FP_ILOGBNAN: int
+export const MATH_ERRNO: int
+export const MATH_ERREXCEPT: int
+export const MATH_ERRHANDLING: int
+
+// <ndbm.h>
+export const DBM_INSERT: int
+export const DBM_REPLACE: int
+
+// <net/if.h>
+export const IF_NAMESIZE: int
+
+// <netdb.h>
+export const IPPORT_RESERVED: int
+export const AI_PASSIVE: int
+export const AI_CANONNAME: int
+export const AI_NUMERICHOST: int
+export const AI_NUMERICSERV: int
+export const AI_V4MAPPED: int
+export const AI_ALL: int
+export const AI_ADDRCONFIG: int
+export const NI_NOFQDN: int
+export const NI_NUMERICHOST: int
+export const NI_NAMEREQD: int
+export const NI_NUMERICSERV: int
+export const NI_NUMERICSCOPE: int
+export const NI_DGRAM: int
+export const EAI_AGAIN: int
+export const EAI_BADFLAGS: int
+export const EAI_FAIL: int
+export const EAI_FAMILY: int
+export const EAI_MEMORY: int
+export const EAI_NONAME: int
+export const EAI_SERVICE: int
+export const EAI_SOCKTYPE: int
+export const EAI_SYSTEM: int
+export const EAI_OVERFLOW: int
+
+// <netinet/tcp.h>
+export const TCP_NODELAY: int
+
+// <netinet/in.h>
+export const IPPROTO_IP: int
+export const IPPROTO_IPV6: int
+export const IPPROTO_ICMP: int
+export const IPPROTO_RAW: int
+export const IPPROTO_TCP: int
+export const IPPROTO_UDP: int
+export const INADDR_ANY: int
+export const INADDR_BROADCAST: int
+export const INET_ADDRSTRLEN: int
+export const INET6_ADDRSTRLEN: int
+export const IPV6_JOIN_GROUP: int
+export const IPV6_LEAVE_GROUP: int
+export const IPV6_MULTICAST_HOPS: int
+export const IPV6_MULTICAST_IF: int
+export const IPV6_MULTICAST_LOOP: int
+export const IPV6_UNICAST_HOPS: int
+export const IPV6_V6ONLY: int
+
+// <nl_types.h>
+export const NL_SETD: int
+export const NL_CAT_LOCALE: int
+
+// <poll.h>
+export const POLLIN: int
+export const POLLRDNORM: int
+export const POLLRDBAND: int
+export const POLLPRI: int
+export const POLLOUT: int
+export const POLLWRNORM: int
+export const POLLWRBAND: int
+export const POLLERR: int
+export const POLLHUP: int
+export const POLLNVAL: int
+
+// <pthread.h>
+export const PTHREAD_BARRIER_SERIAL_THREAD: int
+export const PTHREAD_CANCEL_ASYNCHRONOUS: int
+export const PTHREAD_CANCEL_ENABLE: int
+export const PTHREAD_CANCEL_DEFERRED: int
+export const PTHREAD_CANCEL_DISABLE: int
+// export const PTHREAD_CANCELED: ref any
+export const PTHREAD_CREATE_DETACHED: int
+export const PTHREAD_CREATE_JOINABLE: int
+export const PTHREAD_EXPLICIT_SCHED: int
+export const PTHREAD_INHERIT_SCHED: int
+export const PTHREAD_MUTEX_DEFAULT: int
+export const PTHREAD_MUTEX_ERRORCHECK: int
+export const PTHREAD_MUTEX_NORMAL: int
+export const PTHREAD_MUTEX_RECURSIVE: int
+export const PTHREAD_MUTEX_ROBUST: int
+export const PTHREAD_MUTEX_STALLED: int
+export const PTHREAD_PRIO_INHERIT: int
+export const PTHREAD_PRIO_NONE: int
+export const PTHREAD_PRIO_PROTECT: int
+export const PTHREAD_PROCESS_SHARED: int
+export const PTHREAD_PROCESS_PRIVATE: int
+export const PTHREAD_SCOPE_PROCESS: int
+export const PTHREAD_SCOPE_SYSTEM: int
+
+// <regex.h>
+export const REG_EXTENDED: int
+export const REG_ICASE: int
+export const REG_NOSUB: int
+export const REG_NEWLINE: int
+export const REG_NOTBOL: int
+export const REG_NOTEOL: int
+export const REG_NOMATCH: int
+export const REG_BADPAT: int
+export const REG_ECOLLATE: int
+export const REG_ECTYPE: int
+export const REG_EESCAPE: int
+export const REG_ESUBREG: int
+export const REG_EBRACK: int
+export const REG_EPAREN: int
+export const REG_EBRACE: int
+export const REG_BADBR: int
+export const REG_ERANGE: int
+export const REG_ESPACE: int
+export const REG_BADRPT: int
+
+// <sched.h>
+export const SCHED_FIFO: int
+export const SCHED_RR: int
+export const SCHED_SPORADIC: int
+export const SCHED_OTHER: int
+
+// <semaphore.h>
+// export const SEM_FAILED: ref sem_t
+
+// <signal.h>
+export const SIGEV_NONE: int
+export const SIGEV_SIGNAL: int
+export const SIGEV_THREAD: int
+export const SIGRTMIN: int
+export const SIGRTMAX: int
+export const SIGABRT: int
+export const SIGALRM: int
+export const SIGBUS: int
+export const SIGCHLD: int
+export const SIGCONT: int
+export const SIGFPE: int
+export const SIGHUP: int
+export const SIGILL: int
+export const SIGINT: int
+export const SIGKILL: int
+export const SIGPIPE: int
+export const SIGQUIT: int
+export const SIGSEGV: int
+export const SIGSTOP: int
+export const SIGTERM: int
+export const SIGTSTP: int
+export const SIGTTIN: int
+export const SIGTTOU: int
+export const SIGUSR1: int
+export const SIGUSR2: int
+export const SIGPOLL: int
+export const SIGPROF: int
+export const SIGSYS: int
+export const SIGTRAP: int
+export const SIGURG: int
+export const SIGVTALRM: int
+export const SIGXCPU: int
+export const SIGXFSZ: int
+export const SIG_BLOCK: int
+export const SIG_UNBLOCK: int
+export const SIG_SETMASK: int
+export const SA_NOCLDSTOP: int
+export const SA_ONSTACK: int
+export const SA_RESETHAND: int
+export const SA_RESTART: int
+export const SA_SIGINFO: int
+export const SA_NOCLDWAIT: int
+export const SA_NODEFER: int
+export const SS_ONSTACK: int
+export const SS_DISABLE: int
+export const MINSIGSTKSZ: int
+export const SIGSTKSZ: int
+export const ILL_ILLOPC: int
+export const ILL_ILLOPN: int
+export const ILL_ILLADR: int
+export const ILL_ILLTRP: int
+export const ILL_PRVOPC: int
+export const ILL_PRVREG: int
+export const ILL_COPROC: int
+export const ILL_BADSTK: int
+export const FPE_INTDIV: int
+export const FPE_INTOVF: int
+export const FPE_FLTDIV: int
+export const FPE_FLTOVF: int
+export const FPE_FLTUND: int
+export const FPE_FLTRES: int
+export const FPE_FLTINV: int
+export const FPE_FLTSUB: int
+export const SEGV_MAPERR: int
+export const SEGV_ACCERR: int
+export const BUS_ADRALN: int
+export const BUS_ADRERR: int
+export const BUS_OBJERR: int
+export const TRAP_BRKPT: int
+export const TRAP_TRACE: int
+export const CLD_EXITED: int
+export const CLD_KILLED: int
+export const CLD_DUMPED: int
+export const CLD_TRAPPED: int
+export const CLD_STOPPED: int
+export const CLD_CONTINUED: int
+export const POLL_IN: int
+export const POLL_OUT: int
+export const POLL_MSG: int
+export const POLL_ERR: int
+export const POLL_PRI: int
+export const POLL_HUP: int
+export const SI_USER: int
+export const SI_QUEUE: int
+export const SI_TIMER: int
+export const SI_ASYNCIO: int
+export const SI_MESGQ: int
+
+// <spawn.h>
+export const SPAWN_RESETIDS: int
+export const SPAWN_SETPGROUP: int
+export const SPAWN_SETSCHEDPARAM: int
+export const SPAWN_SETSCHEDULER: int
+export const SPAWN_SETSIGDEF: int
+export const SPAWN_SETSIGMASK: int
+
+// <stddef.h>
+// export const NULL: ref any
+
+// <stdint.h>
+export const INT8_MIN: i8
+export const INT16_MIN: i16
+export const INT32_MIN: i32
+export const INT64_MIN: i64
+export const INT8_MAX: i8
+export const INT16_MAX: i16
+export const INT32_MAX: i32
+export const INT64_MAX: i64
+export const UINT8_MAX: u8
+export const UINT16_MAX: u16
+export const UINT32_MAX: u32
+export const UINT64_MAX: u64
+export const INT_LEAST8_MIN: i8
+export const INT_LEAST16_MIN: i16
+export const INT_LEAST32_MIN: i32
+export const INT_LEAST64_MIN: i64
+export const INT_LEAST8_MAX: i8
+export const INT_LEAST16_MAX: i16
+export const INT_LEAST32_MAX: i32
+export const INT_LEAST64_MAX: i64
+export const UINT_LEAST8_MAX: u8
+export const UINT_LEAST16_MAX: u16
+export const UINT_LEAST32_MAX: u32
+export const UINT_LEAST64_MAX: u64
+export const INT_FAST8_MIN: i8
+export const INT_FAST16_MIN: i16
+export const INT_FAST32_MIN: i32
+export const INT_FAST64_MIN: i64
+export const INT_FAST8_MAX: i8
+export const INT_FAST16_MAX: i16
+export const INT_FAST32_MAX: i32
+export const INT_FAST64_MAX: i64
+export const UINT_FAST8_MAX: u8
+export const UINT_FAST16_MAX: u16
+export const UINT_FAST32_MAX: u32
+export const UINT_FAST64_MAX: u64
+export const INTPTR_MIN: i64
+export const INTPTR_MAX: i64
+export const UINTPTR_MAX: u64
+export const INTMAX_MIN: i64
+export const INTMAX_MAX: i64
+export const UINTMAX_MAX: u64
+export const PTRDIFF_MIN: i64
+export const PTRDIFF_MAX: i64
+export const SIG_ATOMIC_MIN: i32
+export const SIG_ATOMIC_MAX: i32
+export const SIZE_MAX: u64
+export const WCHAR_MIN: i32
+export const WCHAR_MAX: i32
+export const WINT_MIN: i32
+export const WINT_MAX: i32
+
+// <stdio.h>
+export const BUFSIZ: int
+export const SEEK_CUR: int
+export const SEEK_END: int
+export const SEEK_SET: int
+export const FILENAME_MAX: int
+export const FOPEN_MAX: int
+export const TMP_MAX: int
+export const EOF: int
+
+// <stdlib.h>
+export const EXIT_FAILURE: int
+export const EXIT_SUCCESS: int
+export const RAND_MAX: int
+export const MB_CUR_MAX: int
+
+// <sys/ipc.h>
+export const IPC_CREAT: int
+export const IPC_EXCL: int
+export const IPC_NOWAIT: int
+export const IPC_PRIVATE: int
+export const IPC_RMID: int
+export const IPC_SET: int
+export const IPC_STAT: int
+
+// <sys/mman.h>
+export const PROT_EXEC: int
+export const PROT_NONE: int
+export const PROT_READ: int
+export const PROT_WRITE: int
+export const MAP_FIXED: int
+export const MAP_PRIVATE: int
+export const MAP_SHARED: int
+// export const MAP_FAILED: ref any
+export const MS_ASYNC: int
+export const MS_INVALIDATE: int
+export const MS_SYNC: int
+export const MCL_CURRENT: int
+export const MCL_FUTURE: int
+export const MADV_DONTNEED: int
+export const MADV_NORMAL: int
+export const MADV_RANDOM: int
+export const MADV_SEQUENTIAL: int
+export const MADV_WILLNEED: int
+export const TYPED_MEM_ALLOCATE: int
+export const TYPED_MEM_ALLOCATE_CONTIG: int
+export const TYPED_MEM_MAP_ALLOCATABLE: int
+
+// <sys/msg.h>
+export const MSG_NOERROR: int
+
+// <sys/resource.h>
+export const PRIO_PROCESS: int
+export const PRIO_PGRP: int
+export const PRIO_USER: int
+export const RLIM_INFINITY: u64
+export const RLIM_SAVED_MAX: u64
+export const RLIM_SAVED_CUR: u64
+export const RUSAGE_SELF: int
+export const RUSAGE_CHILDREN: int
+export const RLIMIT_CORE: int
+export const RLIMIT_CPU: int
+export const RLIMIT_DATA: int
+export const RLIMIT_FSIZE: int
+export const RLIMIT_NOFILE: int
+export const RLIMIT_STACK: int
+export const RLIMIT_AS: int
+
+// <sys/select.h>
+export const FD_SETSIZE: int
+
+// <sys/sem.h>
+export const SEM_UNDO: int
+export const GETNCNT: int
+export const GETPID: int
+export const GETVAL: int
+export const GETALL: int
+export const GETZCNT: int
+export const SETVAL: int
+export const SETALL: int
+
+// <sys/shm.h>
+export const SHM_RDONLY: int
+export const SHM_RND: int
+export const SHMLBA: int
+
+// <sys/socket.h>
+export const SCM_RIGHTS: int
+export const SOCK_DGRAM: int
+export const SOCK_RAW: int
+export const SOCK_SEQPACKET: int
+export const SOCK_STREAM: int
+export const SOL_SOCKET: int
+export const SO_ACCEPTCONN: int
+export const SO_BROADCAST: int
+export const SO_DEBUG: int
+export const SO_DONTROUTE: int
+export const SO_ERROR: int
+export const SO_KEEPALIVE: int
+export const SO_LINGER: int
+export const SO_OOBINLINE: int
+export const SO_RCVBUF: int
+export const SO_RCVLOWAT: int
+export const SO_RCVTIMEO: int
+export const SO_REUSEADDR: int
+export const SO_SNDBUF: int
+export const SO_SNDLOWAT: int
+export const SO_SNDTIMEO: int
+export const SO_TYPE: int
+export const SOMAXCONN: int
+export const MSG_CTRUNC: int
+export const MSG_DONTROUTE: int
+export const MSG_EOR: int
+export const MSG_OOB: int
+export const MSG_NOSIGNAL: int
+export const MSG_PEEK: int
+export const MSG_TRUNC: int
+export const MSG_WAITALL: int
+export const AF_INET: int
+export const AF_INET6: int
+export const AF_UNIX: int
+export const AF_UNSPEC: int
+export const SHUT_RD: int
+export const SHUT_RDWR: int
+export const SHUT_WR: int
+
+// <sys/stat.h>
+export const S_IFMT: int
+export const S_IFBLK: int
+export const S_IFCHR: int
+export const S_IFIFO: int
+export const S_IFREG: int
+export const S_IFDIR: int
+export const S_IFLNK: int
+export const S_IFSOCK: int
+export const S_IRWXU: int
+export const S_IRUSR: int
+export const S_IWUSR: int
+export const S_IXUSR: int
+export const S_IRWXG: int
+export const S_IRGRP: int
+export const S_IWGRP: int
+export const S_IXGRP: int
+export const S_IRWXO: int
+export const S_IROTH: int
+export const S_IWOTH: int
+export const S_IXOTH: int
+export const S_ISUID: int
+export const S_ISGID: int
+export const S_ISVTX: int
+export const UTIME_NOW: int
+export const UTIME_OMIT: int
+
+// <sys/statvfs.h>
+export const ST_RDONLY: int
+export const ST_NOSUID: int
+
+// <sys/time.h>
+export const ITIMER_REAL: int
+export const ITIMER_VIRTUAL: int
+export const ITIMER_PROF: int
+
+// <sys/wait.h>
+export const WCONTINUED: int
+export const WNOHANG: int
+export const WUNTRACED: int
+export const WEXITED: int
+export const WNOWAIT: int
+export const WSTOPPED: int
+
+// <syslog.h>
+export const LOG_PID: int
+export const LOG_CONS: int
+export const LOG_NDELAY: int
+export const LOG_ODELAY: int
+export const LOG_NOWAIT: int
+export const LOG_KERN: int
+export const LOG_USER: int
+export const LOG_MAIL: int
+export const LOG_NEWS: int
+export const LOG_UUCP: int
+export const LOG_DAEMON: int
+export const LOG_AUTH: int
+export const LOG_CRON: int
+export const LOG_LPR: int
+export const LOG_LOCAL0: int
+export const LOG_LOCAL1: int
+export const LOG_LOCAL2: int
+export const LOG_LOCAL3: int
+export const LOG_LOCAL4: int
+export const LOG_LOCAL5: int
+export const LOG_LOCAL6: int
+export const LOG_LOCAL7: int
+export const LOG_EMERG: int
+export const LOG_ALERT: int
+export const LOG_CRIT: int
+export const LOG_ERR: int
+export const LOG_WARNING: int
+export const LOG_NOTICE: int
+export const LOG_INFO: int
+export const LOG_DEBUG: int
+
+// <tar.h>
+export const TMAGIC: char[]
+export const TMAGLEN: int
+export const TVERSION: char[]
+export const TVERSLEN: int
+export const REGTYPE: char
+export const AREGTYPE: char
+export const LNKTYPE: char
+export const SYMTYPE: char
+export const CHRTYPE: char
+export const BLKTYPE: char
+export const DIRTYPE: char
+export const FIFOTYPE: char
+export const CONTTYPE: char
+export const TSUID: int
+export const TSGID: int
+export const TSVTX: int
+export const TUREAD: int
+export const TUWRITE: int
+export const TUEXEC: int
+export const TGREAD: int
+export const TGWRITE: int
+export const TGEXEC: int
+export const TOREAD: int
+export const TOWRITE: int
+export const TOEXEC: int
+
+// <termios.h>
+export const NCCS: int
+export const VEOF: int
+export const VEOL: int
+export const VERASE: int
+export const VINTR: int
+export const VKILL: int
+export const VMIN: int
+export const VQUIT: int
+export const VSTART: int
+export const VSTOP: int
+export const VSUSP: int
+export const VTIME: int
+export const BRKINT: int
+export const ICRNL: int
+export const IGNBRK: int
+export const IGNCR: int
+export const IGNPAR: int
+export const INLCR: int
+export const INPCK: int
+export const ISTRIP: int
+export const IXANY: int
+export const IXOFF: int
+export const IXON: int
+export const PARMRK: int
+export const OPOST: int
+export const ONLCR: int
+export const OCRNL: int
+export const ONOCR: int
+export const ONLRET: int
+export const OFDEL: int
+export const OFILL: int
+export const NLDLY: int
+export const CRDLY: int
+export const CR0: int
+export const CR1: int
+export const CR2: int
+export const CR3: int
+export const TABDLY: int
+export const TAB0: int
+export const TAB1: int
+export const TAB2: int
+export const TAB3: int
+export const BSDLY: int
+export const BS0: int
+export const BS1: int
+export const VTDLY: int
+export const VT0: int
+export const VT1: int
+export const FFDLY: int
+export const FF0: int
+export const FF1: int
+export const B0: int
+export const B50: int
+export const B75: int
+export const B110: int
+export const B134: int
+export const B150: int
+export const B200: int
+export const B300: int
+export const B600: int
+export const B1200: int
+export const B1800: int
+export const B2400: int
+export const B4800: int
+export const B9600: int
+export const B19200: int
+export const B38400: int
+export const CSIZE: int
+export const CS5: int
+export const CS6: int
+export const CS7: int
+export const CS8: int
+export const CSTOPB: int
+export const CREAD: int
+export const PARENB: int
+export const PARODD: int
+export const HUPCL: int
+export const CLOCAL: int
+export const ECHO: int
+export const ECHOE: int
+export const ECHOK: int
+export const ECHONL: int
+export const ICANON: int
+export const IEXTEN: int
+export const ISIG: int
+export const NOFLSH: int
+export const TOSTOP: int
+export const TCSANOW: int
+export const TCSADRAIN: int
+export const TCSAFLUSH: int
+export const TCIFLUSH: int
+export const TCIOFLUSH: int
+export const TCOFLUSH: int
+export const TCIOFF: int
+export const TCION: int
+export const TCOOFF: int
+export const TCOON: int
+
+// <time.h>
+export const CLOCKS_PER_SEC: clock_t
+export const CLOCK_MONOTONIC: int
+export const CLOCK_PROCESS_CPUTIME_ID: int
+export const CLOCK_REALTIME: int
+export const CLOCK_THREAD_CPUTIME_ID: int
+export const TIMER_ABSTIME: int
+
+// <unistd.h>
+export const F_OK: int
+export const R_OK: int
+export const W_OK: int
+export const X_OK: int
+export const F_LOCK: int
+export const F_TEST: int
+export const F_TLOCK: int
+export const F_ULOCK: int
+export const STDERR_FILENO: int
+export const STDIN_FILENO: int
+export const STDOUT_FILENO: int
+
+// <utmpx.h>
+export const EMPTY: int
+export const BOOT_TIME: int
+export const OLD_TIME: int
+export const NEW_TIME: int
+export const USER_PROCESS: int
+export const INIT_PROCESS: int
+export const LOGIN_PROCESS: int
+export const DEAD_PROCESS: int
+
+// <wchar.h>
+export const WEOF: wint_t
+
+// <wordexp.h>
+export const WRDE_APPEND: int
+export const WRDE_DOOFFS: int
+export const WRDE_NOCMD: int
+export const WRDE_REUSE: int
+export const WRDE_SHOWERR: int
+export const WRDE_UNDEF: int
+export const WRDE_BADCHAR: int
+export const WRDE_BADVAL: int
+export const WRDE_CMDSUB: int
+export const WRDE_NOSPACE: int
+export const WRDE_SYNTAX: int
+
+// <errno.h>
+export mut errno: int
+
+// <netinet/in.h>
+export const in6addr_any: in6_addr
+export const in6addr_loopback: in6_addr
+
+// <stdio.h>
+// export const stderr: ref FILE
+// export const stdin: ref FILE
+// export const stdout: ref FILE
+
+// <time.h>
+export const daylight: int
+export const getdate_err: int
+export const timezone: i64
+// export const tzname: ref char[]
+
+// <unistd.h>
+export const optarg: char[]
+export const opterr: int
+export const optind: int
+export const optopt: int
+
+// <aio.h>
+export fn aio_cancel (fd: int, mut cb: ref aiocb) int
+export fn aio_error (cb: ref aiocb) int
+export fn aio_fsync (op: int, mut cb: ref aiocb) int
+export fn aio_read (mut cb: ref aiocb) int
+export fn aio_return (mut cb: ref aiocb) isize
+export fn aio_suspend (list: (ref aiocb)[], length: int, timeout: ref timespec) int
+export fn aio_write (mut cb: ref aiocb) int
+export fn lio_listio (mode: int, list: (ref aiocb)[], length: int, mut sig: ref sigevent) int
+
+// <arpa/inet.h>
+export fn htonl (host: u32) u32
+export fn htons (host: u16) u16
+export fn ntohl (net: u32) u32
+export fn ntohs (net: u16) u16
+export fn inet_addr (cp: char[]) in_addr_t
+export fn inet_ntoa (in: in_addr) char[]
+export fn inet_ntop (af: int, src: ref any, mut dest: ref char, size: socklen_t) char[]
+export fn inet_pton (af: int, src: char[], mut dest: ref any) int
+
+// <assert.h>
+export fn assert (expression: any) void
+
+// <ctype.h>
+export fn isalnum (c: int) int
+export fn isalnum_l (c: int, locale: locale_t) int
+export fn isalpha (c: int) int
+export fn isalpha_l (c: int, locale: locale_t) int
+export fn isascii (c: int) int
+export fn isblank (c: int) int
+export fn isblank_l (c: int, locale: locale_t) int
+export fn iscntrl (c: int) int
+export fn iscntrl_l (c: int, locale: locale_t) int
+export fn isdigit (c: int) int
+export fn isdigit_l (c: int, locale: locale_t) int
+export fn isgraph (c: int) int
+export fn isgraph_l (c: int, locale: locale_t) int
+export fn islower (c: int) int
+export fn islower_l (c: int, locale: locale_t) int
+export fn isprint (c: int) int
+export fn isprint_l (c: int, locale: locale_t) int
+export fn ispunct (c: int) int
+export fn ispunct_l (c: int, locale: locale_t) int
+export fn isspace (c: int) int
+export fn isspace_l (c: int, locale: locale_t) int
+export fn isupper (c: int) int
+export fn isupper_l (c: int, locale: locale_t) int
+export fn isxdigit (c: int) int
+export fn isxdigit_l (c: int, locale: locale_t) int
+export fn toascii (c: int) int
+export fn tolower (c: int) int
+export fn tolower_l (c: int, locale: locale_t) int
+export fn toupper (c: int) int
+export fn toupper_l (c: int, locale: locale_t) int
+
+// <dirent.h>
+export fn alphasort (a: ref ref dirent, b: ref ref dirent) int
+export fn closedir (mut dir: ref DIR) int
+export fn dirfd (mut dir: ref DIR) int
+export fn fdopendir (fd: int) ref DIR
+export fn opendir (dirname: char[]) ref DIR
+export fn readdir (mut dir: ref DIR) ref dirent
+export fn readdir_r (mut dir: ref DIR, mut entry: ref dirent, mut result: ref ref dirent) int
+export fn rewinddir (mut dir: ref DIR) void
+export fn scandir (dirname: char[], mut list: ref (ref dirent)[], filter: (ref dirent) -> int, comparator: (ref ref dirent, ref ref dirent) -> int) int
+export fn seekdir (mut dir: ref DIR, loc: i64) void
+export fn telldir (mut dir: ref DIR) i64
+
+// <dlfcn.h>
+export fn dlclose (mut handle: ref any) int
+export fn dlerror () char[]
+export fn dlopen (filename: char[], mode: int) ref any
+export fn dlsym (mut handle: ref any, name: char[]) ref any
+
+// <fcntl.h>
+export fn creat (path: char[], mode: mode_t) int
+export fn fcntl (fd: int, cmd: int, arg: any) int
+export fn open (path: char[], flag: int, mode: mode_t? = nil) int
+export fn openat (fd: int, path: char[], flag: int, mode: mode_t? = nil) int
+
+// <fenv.h>
+export fn feclearexcept (excepts: int) int
+export fn fegetenv (mut env: ref fenv_t) int
+export fn fegetexceptflag (mut flag: ref fexcept_t, excepts: int) int
+export fn fegetround () int
+export fn feholdexcept (mut env: ref fenv_t) int
+export fn feraiseexcept (excepts: int) int
+export fn fesetenv (env: ref fenv_t) int
+export fn fesetexceptflag (flag: ref fexcept_t, excepts: int) int
+export fn fesetround (round: int) int
+export fn fetestexcept (excepts: int) int
+export fn feupdateenv (env: ref fenv_t) int
+
+// <fmtmsg.h>
+export fn fmtmsg (classification: i64, label: char[], severity: int, text: char[], action: char[], tag: char[]) int
+
+// <fnmatch.h>
+export fn fnmatch (pattern: char[], string: char[], flags: int) int
+
+// <glob.h>
+export fn glob (pattern: char[], flags: int, err: (char[], int) -> int, mut glob: ref glob_t) int
+export fn globfree (mut glob: ref glob_t) void
+
+// <grp.h>
+export fn endgrent () void
+export fn getgrent () ref group
+export fn getgrgid (gid: gid_t) ref group
+export fn getgrgid_r (gid: gid_t, mut grp: ref group, mut buf: ref char, length: usize, mut result: ref ref group) int
+export fn getgrnam (name: char[]) ref group
+export fn getgrnam_r (name: char[], mut grp: ref group, mut buf: ref char, length: usize, mut result: ref ref group) int
+export fn setgrent () void
+
+// <iconv.h>
+export fn iconv (mut cd: iconv_t, mut inbuf: ref char[], mut inBytesLeft: ref usize, mut outbuf: ref char[], mut outBytesLeft: ref usize) usize
+export fn iconv_close (mut cd: iconv_t) int
+export fn iconv_open (toCode: char[], fromCode: char[]) iconv_t
+
+// <inttypes.h>
+export fn imaxabs (j: intmax_t) intmax_t
+export fn imaxdiv (numer: intmax_t, denom: intmax_t) imaxdiv_t
+export fn strtoimax (string: char[], mut end: ref char[], base: int) intmax_t
+export fn strtoumax (string: char[], mut end: ref char[], base: int) uintmax_t
+export fn wcstoimax (string: rune[], mut end: ref rune[], base: int) intmax_t
+export fn wcstoumax (string: rune[], mut end: ref rune[], base: int) uintmax_t
+
+// <langinfo.h>
+export fn nl_langinfo (item: nl_item) char[]
+export fn nl_langinfo_l (item: nl_item, locale: locale_t) char[]
+
+// <libgen.h>
+export fn basename (path: char[]) char[]
+export fn dirname (path: char[]) char[]
+
+// <locale.h>
+export fn duplocale (locale: locale_t) locale_t
+export fn freelocale (locale: locale_t) void
+export fn localeconv () ref lconv
+export fn newlocale (mask: int, locale: char[], base: locale_t) locale_t
+export fn setlocale (category: int, locale: char[]) char[]
+export fn uselocale (locale: locale_t) locale_t
+
+// <math.h>
+export fn fpclassify (x: float) int
+export fn isfinite (x: float) int
+export fn isgreater (x: float, y: float) int
+export fn isgreaterequal (x: float, y: float) int
+export fn isinf (x: float) int
+export fn isless (x: float, y: float) int
+export fn islessequal (x: float, y: float) int
+export fn islessgreater (x: float, y: float) int
+export fn isnan (x: float) int
+export fn isnormal (x: float) int
+export fn isunordered (x: float, y: float) int
+export fn signbit (x: float) int
+export fn acos (x: float) float
+export fn acosf (x: f32) f32
+export fn acosh (x: float) float
+export fn acoshf (x: f32) f32
+export fn asin (x: float) float
+export fn asinf (x: f32) f32
+export fn asinh (x: float) float
+export fn asinhf (x: f32) f32
+export fn atan (x: float) float
+export fn atan2 (y: float, x: float) float
+export fn atan2f (y: f32, x: f32) f32
+export fn atanf (x: f32) f32
+export fn atanh (x: float) float
+export fn atanhf (x: f32) f32
+export fn cbrt (x: float) float
+export fn cbrtf (x: f32) f32
+export fn ceil (x: float) float
+export fn ceilf (x: f32) f32
+export fn copysign (x: float, y: float) float
+export fn copysignf (x: f32, y: f32) f32
+export fn cos (x: float) float
+export fn cosf (x: f32) f32
+export fn cosh (x: float) float
+export fn coshf (x: f32) f32
+export fn erf (x: float) float
+export fn erfc (x: float) float
+export fn erfcf (x: f32) f32
+export fn erff (x: f32) f32
+export fn exp (x: float) float
+export fn exp2 (x: float) float
+export fn exp2f (x: f32) f32
+export fn expf (x: f32) f32
+export fn expm1 (x: float) float
+export fn expm1f (x: f32) f32
+export fn fabs (x: float) float
+export fn fabsf (x: f32) f32
+export fn fdim (x: float, y: float) float
+export fn fdimf (x: f32, y: f32) f32
+export fn floor (x: float) float
+export fn floorf (x: f32) f32
+export fn fma (x: float, y: float, z: float) float
+export fn fmaf (x: f32, y: f32, z: f32) f32
+export fn fmax (x: float, y: float) float
+export fn fmaxf (x: f32, y: f32) f32
+export fn fmin (x: float, y: float) float
+export fn fminf (x: f32, y: f32) f32
+export fn fmod (x: float, y: float) float
+export fn fmodf (x: f32, y: f32) f32
+export fn frexp (num: float, mut exp: ref int) float
+export fn frexpf (num: f32, mut exp: ref int) f32
+export fn hypot (x: float, y: float) float
+export fn hypotf (x: f32, y: f32) f32
+export fn ilogb (x: float) int
+export fn ilogbf (x: f32) int
+export fn j0 (x: float) float
+export fn j1 (x: float) float
+export fn jn (n: int, x: float) float
+export fn ldexp (x: float, exp: int) float
+export fn ldexpf (x: f32, exp: int) f32
+export fn lgamma (x: float) float
+export fn lgammaf (x: f32) f32
+export fn llrint (x: float) i64
+export fn llrintf (x: f32) i64
+export fn llround (x: float) i64
+export fn llroundf (x: f32) i64
+export fn log (x: float) float
+export fn log10 (x: float) float
+export fn log10f (x: f32) f32
+export fn log1p (x: float) float
+export fn log1pf (x: f32) f32
+export fn log2 (x: float) float
+export fn log2f (x: f32) f32
+export fn logb (x: float) float
+export fn logbf (x: f32) f32
+export fn logf (x: f32) f32
+export fn lrint (x: float) i64
+export fn lrintf (x: f32) i64
+export fn lround (x: float) i64
+export fn lroundf (x: f32) i64
+export fn modf (x: float, mut i: ref float) float
+export fn modff (x: f32, mut i: ref f32) f32
+export fn nan (tag: char[]) float
+export fn nanf (tag: char[]) f32
+export fn nearbyint (x: float) float
+export fn nearbyintf (x: f32) f32
+export fn nextafter (x: float, y: float) float
+export fn nextafterf (x: f32, y: f32) f32
+export fn pow (x: float, y: float) float
+export fn powf (x: f32, y: f32) f32
+export fn remainder (x: float, y: float) float
+export fn remainderf (x: f32, y: f32) f32
+export fn remquo (x: float, y: float, mut quo: ref int) float
+export fn remquof (x: f32, y: f32, mut quo: ref int) f32
+export fn rint (x: float) float
+export fn rintf (x: f32) f32
+export fn round (x: float) float
+export fn roundf (x: f32) f32
+export fn scalbln (x: float, n: i64) float
+export fn scalblnf (x: f32, n: i64) f32
+export fn scalbn (x: float, n: int) float
+export fn scalbnf (x: f32, n: int) f32
+export fn sin (x: float) float
+export fn sinf (x: f32) f32
+export fn sinh (x: float) float
+export fn sinhf (x: f32) f32
+export fn sqrt (x: float) float
+export fn sqrtf (x: f32) f32
+export fn tan (x: float) float
+export fn tanf (x: f32) f32
+export fn tanh (x: float) float
+export fn tanhf (x: f32) f32
+export fn tgamma (x: float) float
+export fn tgammaf (x: f32) f32
+export fn trunc (x: float) float
+export fn truncf (x: f32) f32
+export fn y0 (x: float) float
+export fn y1 (x: float) float
+export fn yn (n: int, x: float) float
+
+// <monetary.h>
+export fn strfmon (mut s: ref char, max: usize, format: char[], args: any...) isize
+export fn strfmon_l (mut s: ref char, max: usize, locale: locale_t, format: char[], args: any...) isize
+
+// <mqueue.h>
+export fn mq_close (mqdes: mqd_t) int
+export fn mq_getattr (mqdes: mqd_t, mut attr: ref mq_attr) int
+export fn mq_notify (mqdes: mqd_t, notification: ref sigevent) int
+export fn mq_open (name: char[], flag: int, mode: mode_t? = nil, mut attr: (ref mq_attr)? = nil) mqd_t
+export fn mq_receive (mqdes: mqd_t, mut msg: ref char, length: usize, priority: ref u32) isize
+export fn mq_send (mqdes: mqd_t, msg: char[], length: usize, priority: u32) int
+export fn mq_setattr (mqdes: mqd_t, newattr: ref mq_attr, mut oldattr: ref mq_attr) int
+export fn mq_timedreceive (mqdes: mqd_t, mut msg: ref char, length: usize, priority: ref u32, timeout: ref timespec) isize
+export fn mq_timedsend (mqdes: mqd_t, msg: char[], length: usize, priority: u32, timeout: ref timespec) int
+export fn mq_unlink (name: char[]) int
+
+// <ndbm.h>
+export fn dbm_clearerr (mut db: ref DBM) int
+export fn dbm_close (mut db: ref DBM) void
+export fn dbm_delete (mut db: ref DBM, key: datum) int
+export fn dbm_error (mut db: ref DBM) int
+export fn dbm_fetch (mut db: ref DBM, key: datum) datum
+export fn dbm_firstkey (mut db: ref DBM) datum
+export fn dbm_nextkey (mut db: ref DBM) datum
+export fn dbm_open (file: char[], flags: int, mode: mode_t) ref DBM
+export fn dbm_store (mut db: ref DBM, key: datum, content: datum, mode: int) int
+
+// <net/if.h>
+export fn if_freenameindex (mut ptr: ref if_nameindex_t) void
+export fn if_indextoname (index: u32, mut name: ref char) char[]
+export fn if_nameindex () ref if_nameindex_t
+export fn if_nametoindex (name: char[]) u32
+
+// <netdb.h>
+export fn endhostent () void
+export fn endnetent () void
+export fn endprotoent () void
+export fn endservent () void
+export fn freeaddrinfo (mut ai: ref addrinfo) void
+export fn gai_strerror (code: int) char[]
+export fn getaddrinfo (nodename: char[], servname: char[], hints: ref addrinfo, mut result: ref ref addrinfo) int
+export fn gethostent () ref hostent
+export fn getnameinfo (sa: ref sockaddr, salen: socklen_t, mut host: ref char, hostlen: socklen_t, mut serv: ref char, servlen: socklen_t, flags: int) int
+export fn getnetbyaddr (net: u32, type: int) ref netent
+export fn getnetbyname (name: char[]) ref netent
+export fn getnetent () ref netent
+export fn getprotobyname (name: char[]) ref protoent
+export fn getprotobynumber (proto: int) ref protoent
+export fn getprotoent () ref protoent
+export fn getservbyname (name: char[], proto: char[]) ref servent
+export fn getservbyport (port: int, proto: char[]) ref servent
+export fn getservent () ref servent
+export fn sethostent (stayopen: int) void
+export fn setnetent (stayopen: int) void
+export fn setprotoent (stayopen: int) void
+export fn setservent (stayopen: int) void
+
+// <netinet/in.h>
+export fn IN6_IS_ADDR_UNSPECIFIED (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_LOOPBACK (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_MULTICAST (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_LINKLOCAL (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_SITELOCAL (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_V4MAPPED (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_V4COMPAT (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_MC_NODELOCAL (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_MC_LINKLOCAL (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_MC_SITELOCAL (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_MC_ORGLOCAL (addr: ref in6_addr) int
+export fn IN6_IS_ADDR_MC_GLOBAL (addr: ref in6_addr) int
+
+// <nl_types.h>
+export fn catclose (catalog: nl_catd) int
+export fn catgets (catalog: nl_catd, set_id: int, msg_id: int, message: char[]) char[]
+export fn catopen (name: char[], flag: int) nl_catd
+
+// <poll.h>
+export fn poll (mut fds: ref pollfd, nfds: nfds_t, timeout: int) int
+
+// <pthread.h>
+export fn pthread_atfork (prepare: () -> void, parent: () -> void, child: () -> void) int
+export fn pthread_attr_destroy (mut attr: ref pthread_attr_t) int
+export fn pthread_attr_getdetachstate (attr: ref pthread_attr_t, mut detachstate: ref int) int
+export fn pthread_attr_getguardsize (attr: ref pthread_attr_t, mut guardsize: ref usize) int
+export fn pthread_attr_getinheritsched (attr: ref pthread_attr_t, mut inheritsched: ref int) int
+export fn pthread_attr_getschedparam (attr: ref pthread_attr_t, mut param: ref sched_param) int
+export fn pthread_attr_getschedpolicy (attr: ref pthread_attr_t, mut policy: ref int) int
+export fn pthread_attr_getscope (attr: ref pthread_attr_t, mut scope: ref int) int
+export fn pthread_attr_getstack (attr: ref pthread_attr_t, mut stack: ref ref any, mut length: ref usize) int
+export fn pthread_attr_getstacksize (attr: ref pthread_attr_t, mut size: ref usize) int
+export fn pthread_attr_init (mut attr: ref pthread_attr_t) int
+export fn pthread_attr_setdetachstate (mut attr: ref pthread_attr_t, detachstate: int) int
+export fn pthread_attr_setguardsize (mut attr: ref pthread_attr_t, guardsize: usize) int
+export fn pthread_attr_setinheritsched (mut attr: ref pthread_attr_t, inheritsched: int) int
+export fn pthread_attr_setschedparam (mut attr: ref pthread_attr_t, param: ref sched_param) int
+export fn pthread_attr_setschedpolicy (mut attr: ref pthread_attr_t, policy: int) int
+export fn pthread_attr_setscope (mut attr: ref pthread_attr_t, scope: int) int
+export fn pthread_attr_setstack (mut attr: ref pthread_attr_t, stack: ref any, length: usize) int
+export fn pthread_attr_setstacksize (mut attr: ref pthread_attr_t, size: usize) int
+export fn pthread_barrier_destroy (mut barrier: ref pthread_barrier_t) int
+export fn pthread_barrier_init (mut barrier: ref pthread_barrier_t, attr: ref pthread_barrierattr_t, count: u32) int
+export fn pthread_barrier_wait (mut barrier: ref pthread_barrier_t) int
+export fn pthread_barrierattr_destroy (mut attr: ref pthread_barrierattr_t) int
+export fn pthread_barrierattr_getpshared (attr: ref pthread_barrierattr_t, mut pshared: ref int) int
+export fn pthread_barrierattr_init (mut attr: ref pthread_barrierattr_t) int
+export fn pthread_barrierattr_setpshared (mut attr: ref pthread_barrierattr_t, pshared: int) int
+export fn pthread_cancel (thread: pthread_t) int
+export fn pthread_cond_broadcast (mut cond: ref pthread_cond_t) int
+export fn pthread_cond_destroy (mut cond: ref pthread_cond_t) int
+export fn pthread_cond_init (mut cond: ref pthread_cond_t, attr: ref pthread_condattr_t) int
+export fn pthread_cond_signal (mut cond: ref pthread_cond_t) int
+export fn pthread_cond_timedwait (mut cond: ref pthread_cond_t, mut mutex: ref pthread_mutex_t, timeout: ref timespec) int
+export fn pthread_cond_wait (mut cond: ref pthread_cond_t, mut mutex: ref pthread_mutex_t) int
+export fn pthread_condattr_destroy (mut attr: ref pthread_condattr_t) int
+export fn pthread_condattr_getclock (attr: ref pthread_condattr_t, mut clock: ref clockid_t) int
+export fn pthread_condattr_getpshared (atrr: ref pthread_condattr_t, mut pshared: ref int) int
+export fn pthread_condattr_init (mut attr: ref pthread_condattr_t) int
+export fn pthread_condattr_setclock (mut attr: ref pthread_condattr_t, clock: clockid_t) int
+export fn pthread_condattr_setpshared (mut attr: ref pthread_condattr_t, pshared: int) int
+export fn pthread_create (mut thread: ref pthread_t, attr: ref pthread_attr_t, routine: (ref any) -> ref any, arg: ref any) int
+export fn pthread_detach (thread: pthread_t) int
+export fn pthread_equal (a: pthread_t, b: pthread_t) int
+export fn pthread_exit (mut value: ref any) void
+export fn pthread_getconcurrency () int
+export fn pthread_getcpuclockid (thread: pthread_t, mut clock: ref clockid_t) int
+export fn pthread_getschedparam (thread: pthread_t, mut policy: ref int, mut param: ref sched_param) int
+export fn pthread_getspecific (key: pthread_key_t) ref any
+export fn pthread_join (thread: pthread_t, mut value: ref ref any) int
+export fn pthread_key_create (mut key: ref pthread_key_t, destructor: (ref any) -> void) int
+export fn pthread_key_delete (key: pthread_key_t) int
+export fn pthread_mutex_consistent (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_destroy (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_getprioceiling (mutex: ref pthread_mutex_t, mut prioceiling: ref int) int
+export fn pthread_mutex_init (mut mutex: ref pthread_mutex_t, attr: ref pthread_mutexattr_t) int
+export fn pthread_mutex_lock (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_setprioceiling (mut mutex: ref pthread_mutex_t, prioceiling: int, mut old_ceiling: ref int) int
+export fn pthread_mutex_timedlock (mut mutex: ref pthread_mutex_t, timeout: ref timespec) int
+export fn pthread_mutex_trylock (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutex_unlock (mut mutex: ref pthread_mutex_t) int
+export fn pthread_mutexattr_destroy (mut attr: ref pthread_mutexattr_t) int
+export fn pthread_mutexattr_getprioceiling (attr: ref pthread_mutexattr_t, mut prioceiling: ref int) int
+export fn pthread_mutexattr_getprotocol (attr: ref pthread_mutexattr_t, mut protocol: ref int) int
+export fn pthread_mutexattr_getpshared (attr: ref pthread_mutexattr_t, mut pshared: ref int) int
+export fn pthread_mutexattr_getrobust (attr: ref pthread_mutexattr_t, mut robust: ref int) int
+export fn pthread_mutexattr_gettype (attr: ref pthread_mutexattr_t, mut type: ref int) int
+export fn pthread_mutexattr_init (mut attr: ref pthread_mutexattr_t) int
+export fn pthread_mutexattr_setprioceiling (mut attr: ref pthread_mutexattr_t, prioceiling: int) int
+export fn pthread_mutexattr_setprotocol (mut attr: ref pthread_mutexattr_t, protocol: int) int
+export fn pthread_mutexattr_setpshared (mut attr: ref pthread_mutexattr_t, pshared: int) int
+export fn pthread_mutexattr_setrobust (mut attr: ref pthread_mutexattr_t, robust: int) int
+export fn pthread_mutexattr_settype (mut attr: ref pthread_mutexattr_t, type: int) int
+export fn pthread_once (mut once: ref pthread_once_t, routine: () -> void) int
+export fn pthread_rwlock_destroy (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_init (mut rwlock: ref pthread_rwlock_t, attr: ref pthread_rwlockattr_t) int
+export fn pthread_rwlock_rdlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_timedrdlock (mut rwlock: ref pthread_rwlock_t, timeout: ref timespec) int
+export fn pthread_rwlock_timedwrlock (mut rwlock: ref pthread_rwlock_t, timeout: ref timespec) int
+export fn pthread_rwlock_tryrdlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_trywrlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_unlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlock_wrlock (mut rwlock: ref pthread_rwlock_t) int
+export fn pthread_rwlockattr_destroy (mut attr: ref pthread_rwlockattr_t) int
+export fn pthread_rwlockattr_getpshared (attr: ref pthread_rwlockattr_t, mut pshared: ref int) int
+export fn pthread_rwlockattr_init (mut attr: ref pthread_rwlockattr_t) int
+export fn pthread_rwlockattr_setpshared (mut attr: ref pthread_rwlockattr_t, pshared: int) int
+export fn pthread_self () pthread_t
+export fn pthread_setcancelstate (state: int, mut oldstate: ref int) int
+export fn pthread_setcanceltype (type: int, mut oldtype: ref int) int
+export fn pthread_setconcurrency (level: int) int
+export fn pthread_setschedparam (thread: pthread_t, policy: int, param: ref sched_param) int
+export fn pthread_setschedprio (thread: pthread_t, priority: int) int
+export fn pthread_setspecific (key: pthread_key_t, value: ref any) int
+export fn pthread_spin_destroy (mut lock: ref pthread_spinlock_t) int
+export fn pthread_spin_init (mut lock: ref pthread_spinlock_t, pshared: int) int
+export fn pthread_spin_lock (mut lock: ref pthread_spinlock_t) int
+export fn pthread_spin_trylock (mut lock: ref pthread_spinlock_t) int
+export fn pthread_spin_unlock (mut lock: ref pthread_spinlock_t) int
+export fn pthread_testcancel () void
+export fn pthread_cleanup_pop (execute: int) void
+export fn pthread_cleanup_push (routine: (ref any) -> void, arg: ref any) void
+
+// <pwd.h>
+export fn endpwent () void
+export fn getpwent () ref passwd
+export fn getpwnam (name: char[]) ref passwd
+export fn getpwnam_r (name: char[], mut pwd: ref passwd, mut buf: ref char, length: usize, mut result: ref ref passwd) int
+export fn getpwuid (uid: uid_t) ref passwd
+export fn getpwuid_r (uid: uid_t, mut pwd: ref passwd, mut buf: ref char, length: usize, mut result: ref ref passwd) int
+export fn setpwent () void
+
+// <regex.h>
+export fn regcomp (mut preg: ref regex_t, pattern: char[], flags: int) int
+export fn regerror (code: int, preg: ref regex_t, mut buf: ref char, length: usize) usize
+export fn regexec (preg: ref regex_t, string: char[], matches: usize, mut match: ref regmatch_t, flags: int) int
+export fn regfree (mut preg: ref regex_t) void
+
+// <sched.h>
+export fn sched_get_priority_max (policy: int) int
+export fn sched_get_priority_min (policy: int) int
+export fn sched_getparam (pid: pid_t, mut param: ref sched_param) int
+export fn sched_getscheduler (pid: pid_t) int
+export fn sched_rr_get_interval (pid: pid_t, mut interval: ref timespec) int
+export fn sched_setparam (pid: pid_t, param: ref sched_param) int
+export fn sched_setscheduler (pid: pid_t, policy: int, param: ref sched_param) int
+export fn sched_yield () int
+
+// <search.h>
+export fn hcreate (nel: usize) int
+export fn hdestroy () void
+export fn hsearch (item: ENTRY, action: ACTION) ref ENTRY
+export fn insque (mut element: ref any, mut pred: ref any) void
+export fn lfind (key: ref any, base: ref any, mut nel: ref usize, width: usize, comparator: (ref any, ref any) -> int) ref any
+export fn lsearch (key: ref any, mut base: ref any, mut nel: ref usize, width: usize, comparator: (ref any, ref any) -> int) ref any
+export fn remque (mut element: ref any) void
+export fn tdelete (key: ref any, mut root: ref ref any, comparator: (ref any, ref any) -> int) ref any
+export fn tfind (key: ref any, root: ref ref any, comparator: (ref any, ref any) -> int) ref any
+export fn tsearch (key: ref any, mut root: ref ref any, comparator: (ref any, ref any) -> int) ref any
+export fn twalk (root: ref any, action: (ref any, VISIT, int) -> void) void
+
+// <semaphore.h>
+export fn sem_close (sem: ref sem_t) int
+export fn sem_destroy (sem: ref sem_t) int
+export fn sem_getvalue (sem: ref sem_t, mut val: ref int) int
+export fn sem_init (sem: ref sem_t, pshared: int, value: u32) int
+export fn sem_open (name: char[], flag: int, mode: mode_t? = nil, value: u32? = nil) ref sem_t
+export fn sem_post (sem: ref sem_t) int
+export fn sem_timedwait (sem: ref sem_t, timeout: ref timespec) int
+export fn sem_trywait (sem: ref sem_t) int
+export fn sem_unlink (name: char[]) int
+export fn sem_wait (sem: ref sem_t) int
+
+// <setjmp.h>
+export fn longjmp (env: jmp_buf, val: int) void
+export fn siglongjmp (env: sigjmp_buf, val: int) void
+export fn setjmp (env: jmp_buf) int
+export fn sigsetjmp (env: sigjmp_buf, mask: int) int
+
+// <signal.h>
+export fn SIG_DFL (sig: int) void
+export fn SIG_ERR (sig: int) void
+export fn SIG_HOLD (sig: int) void
+export fn SIG_IGN (sig: int) void
+export fn kill (pid: pid_t, sig: int) int
+export fn killpg (pgrp: pid_t, sig: int) int
+export fn psiginfo (info: ref siginfo_t, message: char[]) void
+export fn psignal (signum: int, message: char[]) void
+export fn pthread_kill (thread: pthread_t, sig: int) int
+export fn pthread_sigmask (how: int, set: ref sigset_t, mut oldset: ref sigset_t) int
+export fn raise (sig: int) int
+export fn sigaction (sig: int, action: ref sigaction_t, mut oldaction: ref sigaction_t) int
+export fn sigaddset (mut set: ref sigset_t, signum: int) int
+export fn sigaltstack (stack: ref stack_t, mut oldstack: ref stack_t) int
+export fn sigdelset (mut set: ref sigset_t, signum: int) int
+export fn sigemptyset (mut set: ref sigset_t) int
+export fn sigfillset (mut set: ref sigset_t) int
+export fn sighold (sig: int) int
+export fn sigignore (sig: int) int
+export fn siginterrupt (sig: int, flag: int) int
+export fn sigismember (set: ref sigset_t, signum: int) int
+export fn sigpause (mask: int) int
+export fn sigpending (mut set: ref sigset_t) int
+export fn sigprocmask (how: int, set: ref sigset_t, mut oldset: ref sigset_t) int
+export fn sigqueue (pid: pid_t, signum: int, value: sigval) int
+export fn sigrelse (sig: int) int
+export fn sigsuspend (sigmask: ref sigset_t) int
+export fn sigtimedwait (set: ref sigset_t, mut info: ref siginfo_t, timeout: ref timespec) int
+export fn sigwait (set: ref sigset_t, mut sig: ref int) int
+export fn sigwaitinfo (set: ref sigset_t, mut info: ref siginfo_t) int
+export fn signal (sig: int, func: (int) -> void) void
+export fn sigset (sig: int, disp: (int) -> void) void
+
+// <spawn.h>
+export fn spawn (mut pid: ref pid_t, path: char[], file_actions: ref spawn_file_actions_t, attr: ref spawnattr_t, args: ref char[], env: ref char[]) int
+export fn spawn_file_actions_addclose (mut file_actions: ref spawn_file_actions_t, fd: int) int
+export fn spawn_file_actions_adddup2 (mut file_actions: ref spawn_file_actions_t, fd: int, newfd: int) int
+export fn spawn_file_actions_addopen (mut file_actions: ref spawn_file_actions_t, fd: int, path: char[], flag: int, mode: mode_t) int
+export fn spawn_file_actions_destroy (mut file_actions: ref spawn_file_actions_t) int
+export fn spawn_file_actions_init (mut file_actions: ref spawn_file_actions_t) int
+export fn spawnattr_destroy (mut attr: ref spawnattr_t) int
+export fn spawnattr_getflags (attr: ref spawnattr_t, mut flags: ref i16) int
+export fn spawnattr_getpgroup (attr: ref spawnattr_t, mut pgroup: ref pid_t) int
+export fn spawnattr_getschedparam (attr: ref spawnattr_t, mut schedparam: ref sched_param) int
+export fn spawnattr_getschedpolicy (attr: ref spawnattr_t, mut schedpolicy: ref int) int
+export fn spawnattr_getsigdefault (attr: ref spawnattr_t, mut sigdefault: ref sigset_t) int
+export fn spawnattr_getsigmask (attr: ref spawnattr_t, mut sigmask: ref sigset_t) int
+export fn spawnattr_init (mut attr: ref spawnattr_t) int
+export fn spawnattr_setflags (mut attr: ref spawnattr_t, flags: i16) int
+export fn spawnattr_setpgroup (mut attr: ref spawnattr_t, pgroup: pid_t) int
+export fn spawnattr_setschedparam (mut attr: ref spawnattr_t, schedparam: ref sched_param) int
+export fn spawnattr_setschedpolicy (mut attr: ref spawnattr_t, schedpolicy: int) int
+export fn spawnattr_setsigdefault (mut attr: ref spawnattr_t, sigdefault: ref sigset_t) int
+export fn spawnattr_setsigmask (mut attr: ref spawnattr_t, sigmask: ref sigset_t) int
+export fn spawnp (mut pid: ref pid_t, path: char[], file_actions: ref spawn_file_actions_t, attr: ref spawnattr_t, args: ref char[], env: ref char[]) int
+
+// <stdio.h>
+export fn clearerr (mut stream: ref FILE) void
+export fn ctermid (mut s: ref char) char[]
+export fn dprintf (fd: int, format: char[], values: any...) int
+export fn fclose (mut stream: ref FILE) int
+export fn fdopen (fd: int, mode: char[]) ref FILE
+export fn feof (mut stream: ref FILE) int
+export fn ferror (mut stream: ref FILE) int
+export fn fflush (mut stream: ref FILE) int
+export fn fgetc (mut stream: ref FILE) int
+export fn fgetpos (mut stream: ref FILE, mut pos: ref fpos_t) int
+export fn fgets (mut buf: ref char, length: int, mut stream: ref FILE) char[]
+export fn fileno (mut stream: ref FILE) int
+export fn flockfile (mut file: ref FILE) void
+export fn fmemopen (mut buf: ref any, length: usize, mode: char[]) ref FILE
+export fn fopen (pathname: char[], mode: char[]) ref FILE
+export fn fprintf (mut stream: ref FILE, format: char[], values: any...) int
+export fn fputc (c: int, mut stream: ref FILE) int
+export fn fputs (s: char[], mut stream: ref FILE) int
+export fn fread (mut buf: ref any, length: usize, nitems: usize, mut stream: ref FILE) usize
+export fn freopen (pathname: char[], mode: char[], mut stream: ref FILE) ref FILE
+export fn fscanf (mut stream: ref FILE, format: char[], values: any...) int
+export fn fseek (mut stream: ref FILE, offset: i64, whence: int) int
+export fn fseeko (mut stream: ref FILE, offset: off_t, whence: int) int
+export fn fsetpos (mut stream: ref FILE, pos: ref fpos_t) int
+export fn ftell (mut stream: ref FILE) i64
+export fn ftello (mut stream: ref FILE) off_t
+export fn ftrylockfile (mut stream: ref FILE) int
+export fn funlockfile (mut stream: ref FILE) void
+export fn fwrite (buf: ref any, length: usize, nitems: usize, mut stream: ref FILE) usize
+export fn getc (mut stream: ref FILE) int
+export fn getchar () int
+export fn getc_unlocked (mut stream: ref FILE) int
+export fn getchar_unlocked () int
+export fn getdelim (mut buf: ref char[], mut length: ref usize, delimiter: int, mut stream: ref FILE) isize
+export fn getline (mut buf: ref char[], mut length: ref usize, mut stream: ref FILE) isize
+export fn gets (mut s: ref char) char[]
+export fn open_memstream (mut buf: ref char[], mut length: ref usize) ref FILE
+export fn pclose (mut stream: ref FILE) int
+export fn perror (s: char[]) void
+export fn popen (command: char[], mode: char[]) ref FILE
+export fn printf (format: char[], values: any...) int
+export fn putc (c: int, mut stream: ref FILE) int
+export fn putchar (c: int) int
+export fn putc_unlocked (c: int, mut stream: ref FILE) int
+export fn putchar_unlocked (c: int) int
+export fn puts (s: char[]) int
+export fn remove (path: char[]) int
+export fn rename (old: char[], new: char[]) int
+export fn renameat (oldfd: int, oldpath: char[], newfd: int, newpath: char[]) int
+export fn rewind (mut stream: ref FILE) void
+export fn scanf (format: char[], values: any...) int
+export fn setbuf (mut stream: ref FILE, mut buf: ref char) void
+export fn setvbuf (mut stream: ref FILE, mut buf: ref char, type: int, length: usize) int
+export fn snprintf (mut buf: ref char, length: usize, format: char[], values: any...) int
+export fn sprintf (mut buf: ref char, format: char[], values: any...) int
+export fn sscanf (s: char[], format: char[], values: any...) int
+export fn tempnam (dir: char[], prefix: char[]) char[]
+export fn tmpfile () ref FILE
+export fn tmpnam (mut s: ref char) char[]
+export fn ungetc (c: int, mut stream: ref FILE) int
+
+// <stdlib.h>
+export fn a64l (s: char[]) i64
+export fn abort () void
+export fn abs (i: int) int
+export fn atexit (func: () -> void) int
+export fn atof (s: char[]) float
+export fn atoi (s: char[]) int
+export fn atol (s: char[]) i64
+export fn atoll (s: char[]) i64
+export fn bsearch (key: ref any, ptr: ref any, count: usize, size: usize, comparator: (ref any, ref any) -> int) ref any
+export fn calloc (count: usize, size: usize) ref any
+export fn div (numer: int, denom: int) div_t
+export fn drand48 () float
+export fn erand48 (xsubi: u16[]) float
+export fn exit (status: int) void
+export fn free (ptr: ref any) void
+export fn getenv (name: char[]) char[]
+export fn getsubopt (mut option: ref char[], keys: ref char[], mut value: ref char[]) int
+export fn grantpt (fd: int) int
+export fn initstate (seed: u32, mut state: ref char, size: usize) char[]
+export fn jrand48 (xsubi: u16[]) i64
+export fn l64a (value: i64) char[]
+export fn labs (i: i64) i64
+export fn lcong48 (param: u16[]) void
+export fn ldiv (numer: i64, denom: i64) ldiv_t
+export fn llabs (i: i64) i64
+export fn lldiv (numer: i64, denom: i64) lldiv_t
+export fn lrand48 () i64
+export fn malloc (size: usize) ref any
+export fn mblen (s: char[], n: usize) int
+export fn mbstowcs (mut wcs: ref rune, s: char[], n: usize) usize
+export fn mbtowc (mut wc: ref rune, s: char[], n: usize) int
+export fn mkdtemp (mut template: ref char) char[]
+export fn mkstemp (mut template: ref char) int
+export fn mrand48 () i64
+export fn nrand48 (xsubi: u16[]) i64
+export fn memalign (memptr: ref ref any, alignment: usize, size: usize) int
+export fn openpt (flag: int) int
+export fn ptsname (fd: int) char[]
+export fn putenv (mut string: ref char) int
+export fn qsort (ptr: ref any, count: usize, size: usize, comparator: (ref any, ref any) -> int) void
+export fn rand () int
+export fn random () i64
+export fn realloc (ptr: ref any, size: usize) ref any
+export fn realpath (path: char[], mut resolved_path: ref char) char[]
+export fn seed48 (seed16v: u16[]) ref u16
+export fn setenv (name: char[], value: char[], overwrite: int) int
+export fn setkey (key: char[]) void
+export fn setstate (mut state: ref char) char[]
+export fn srand (seed: u32) void
+export fn srand48 (seedval: i64) void
+export fn srandom (seed: u32) void
+export fn strtod (n: char[], mut end: ref char[]) float
+export fn strtof (n: char[], mut end: ref char[]) f32
+export fn strtol (n: char[], mut end: ref char[], base: int) i64
+export fn strtoll (n: char[], mut end: ref char[], base: int) i64
+export fn strtoul (n: char[], mut end: ref char[], base: int) u64
+export fn strtoull (n: char[], mut end: ref char[], base: int) u64
+export fn system (command: char[]) int
+export fn unlockpt (fd: int) int
+export fn unsetenv (name: char[]) int
+export fn wcstombs (mut dest: ref char, src: rune[], max: usize) usize
+export fn wctomb (mut s: ref char, wc: rune) int
+
+// <string.h>
+export fn memccpy (mut s1: ref any, s2: ref any, c: int, n: usize) ref any
+export fn memchr (s: ref any, c: int, n: usize) ref any
+export fn memcmp (s1: ref any, s2: ref any, n: usize) int
+export fn memcpy (mut s1: ref any, s2: ref any, n: usize) ref any
+export fn memmove (mut s1: ref any, s2: ref any, n: usize) ref any
+export fn memset (mut s: ref any, c: int, n: usize) ref any
+export fn stpcpy (mut s1: ref char, s2: char[]) char[]
+export fn stpncpy (mut s1: ref char, s2: char[], n: usize) char[]
+export fn strcat (mut s1: ref char, s2: char[]) char[]
+export fn strchr (s: char[], c: int) char[]
+export fn strcmp (s1: char[], s2: char[]) int
+export fn strcoll (s1: char[], s2: char[]) int
+export fn strcoll_l (s1: char[], s2: char[], locale: locale_t) int
+export fn strcpy (mut s1: ref char, s2: char[]) char[]
+export fn strcspn (s1: char[], s2: char[]) usize
+export fn strdup (s: char[]) char[]
+export fn strerror (errnum: int) char[]
+export fn strerror_l (errnum: int, locale: locale_t) char[]
+export fn strerror_r (errnum: int, mut buf: ref char, length: usize) int
+export fn strlen (s: char[]) usize
+export fn strncat (mut s1: ref char, s2: char[], count: usize) char[]
+export fn strncmp (s1: char[], s2: char[], count: usize) int
+export fn strncpy (mut s1: ref char, s2: char[], count: usize) char[]
+export fn strndup (s: char[], count: usize) char[]
+export fn strnlen (s: char[], count: usize) usize
+export fn strpbrk (s1: char[], s2: char[]) char[]
+export fn strrchr (s: char[], c: int) char[]
+export fn strsignal (signum: int) char[]
+export fn strspn (s1: char[], s2: char[]) usize
+export fn strstr (s1: char[], s2: char[]) char[]
+export fn strtok (mut s: ref char, sep: char[]) char[]
+export fn strtok_r (mut s: ref char, sep: char[], mut state: ref char[]) char[]
+export fn strxfrm (mut s1: ref char, s2: char[], n: usize) usize
+export fn strxfrm_l (mut s1: ref char, s2: char[], n: usize, locale: locale_t) usize
+
+// <strings.h>
+export fn ffs (i: int) int
+export fn strcasecmp (s1: char[], s2: char[]) int
+export fn strcasecmp_l (s1: char[], s2: char[], locale: locale_t) int
+export fn strncasecmp (s1: char[], s2: char[], n: usize) int
+export fn strncasecmp_l (s1: char[], s2: char[], n: usize, locale: locale_t) int
+
+// <sys/ipc.h>
+export fn ftok (path: char[], id: int) key_t
+
+// <sys/mman.h>
+export fn mlock (addr: ref any, length: usize) int
+export fn mlockall (flags: int) int
+export fn mmap (mut addr: ref any, length: usize, protection: int, flags: int, fd: int, offset: off_t) ref any
+export fn mprotect (mut addr: ref any, length: usize, protection: int) int
+export fn msync (mut addr: ref any, length: usize, flags: int) int
+export fn munlock (addr: ref any, length: usize) int
+export fn munlockall () int
+export fn munmap (mut addr: ref any, length: usize) int
+export fn madvise (mut addr: ref any, length: usize, advice: int) int
+export fn mem_offset (addr: ref any, length: usize, mut offset: ref off_t, mut config_length: ref usize, mut fd: ref int) int
+export fn typed_mem_get_info (fd: int, mut info: ref typed_mem_info) int
+export fn typed_mem_open (name: char[], oflag: int, tflag: int) int
+export fn shm_open (name: char[], flag: int, mode: mode_t) int
+export fn shm_unlink (name: char[]) int
+
+// <sys/msg.h>
+export fn msgctl (msqid: int, cmd: int, mut buf: ref msqid_ds) int
+export fn msgget (key: key_t, flag: int) int
+export fn msgrcv (msqid: int, mut buf: ref any, length: usize, type: i64, flag: int) isize
+export fn msgsnd (msqid: int, buf: ref any, length: usize, flag: int) int
+
+// <sys/resource.h>
+export fn getpriority (which: int, who: id_t) int
+export fn getrlimit (resource: int, mut rl: ref rlimit) int
+export fn getrusage (whoe: int, mut ru: ref rusage) int
+export fn setpriority (which: int, who: id_t, value: int) int
+export fn setrlimit (resource: int, rl: ref rlimit) int
+
+// <sys/select.h>
+export fn FD_CLR (fd: int, mut fdset: ref fd_set) void
+export fn FD_ISSET (fd: int, mut fdset: ref fd_set) int
+export fn FD_SET (fd: int, mut fdset: ref fd_set) void
+export fn FD_ZERO (mut fdset: ref fd_set) void
+export fn pselect (fd: int, mut readfds: ref fd_set, mut writefds: ref fd_set, mut errorfds: ref fd_set, timeout: ref timespec, mask: ref sigset_t) int
+export fn select (fd: int, mut readfds: ref fd_set, mut writefds: ref fd_set, mut errorfds: ref fd_set, mut timeout: ref timeval) int
+
+// <sys/sem.h>
+export fn semctl (semid: int, semnum: int, cmd: int, arg: semun? = nil) int
+export fn semget (key: key_t, count: int, flag: int) int
+export fn semop (semid: int, mut operations: ref sembuf, count: usize) int
+
+// <sys/shm.h>
+export fn shmat (shmid: int, addr: ref any, flag: int) ref any
+export fn shmctl (shmid: int, cmd: int, mut buf: ref shmid_ds) int
+export fn shmdt (addr: ref any) int
+export fn shmget (key: key_t, size: usize, flag: int) int
+
+// <sys/socket.h>
+export fn CMSG_DATA (mut cmsg: ref cmsghdr) ref any
+export fn CMSG_NXTHDR (mut mhdr: ref msghdr, mut cmsg: ref cmsghdr) ref cmsghdr
+export fn CMSG_FIRSTHDR (mut mhdr: ref msghdr) ref cmsghdr
+export fn accept (socket: int, mut address: ref sockaddr, mut length: ref socklen_t) int
+export fn bind (socket: int, address: ref sockaddr, length: socklen_t) int
+export fn connect (socket: int, address: ref sockaddr, length: socklen_t) int
+export fn getpeername (socket: int, mut address: ref sockaddr, mut length: ref socklen_t) int
+export fn getsockname (socket: int, mut address: ref sockaddr, mut length: ref socklen_t) int
+export fn getsockopt (socket: int, level: int, option: int, mut value: ref any, mut length: ref socklen_t) int
+export fn listen (socket: int, backlog: int) int
+export fn recv (socket: int, mut buf: ref any, length: usize, flags: int) isize
+export fn recvfrom (socket: int, mut buf: ref any, length: usize, flags: int, mut address: ref sockaddr, mut address_len: ref socklen_t) isize
+export fn recvmsg (socket: int, mut message: ref msghdr, flags: int) isize
+export fn send (socket: int, buf: ref any, length: usize, flags: int) isize
+export fn sendmsg (socket: int, message: ref msghdr, flags: int) isize
+export fn sendto (socket: int, message: ref any, length: usize, flags: int, address: ref sockaddr, address_len: socklen_t) isize
+export fn setsockopt (socket: int, level: int, option: int, value: ref any, length: socklen_t) int
+export fn shutdown (socket: int, how: int) int
+export fn sockatmark (s: int) int
+export fn socket (domain: int, type: int, protocol: int) int
+export fn socketpair (domain: int, type: int, protocol: int, mut socket: ref int) int
+
+// <sys/stat.h>
+export fn S_ISBLK (m: mode_t) bool
+export fn S_ISCHR (m: mode_t) bool
+export fn S_ISDIR (m: mode_t) bool
+export fn S_ISFIFO (m: mode_t) bool
+export fn S_ISREG (m: mode_t) bool
+export fn S_ISLNK (m: mode_t) bool
+export fn S_ISSOCK (m: mode_t) bool
+export fn S_TYPEISMQ (buf: ref stat_t) bool
+export fn S_TYPEISSEM (buf: ref stat_t) bool
+export fn S_TYPEISSHM (buf: ref stat_t) bool
+export fn S_TYPEISTMO (buf: ref stat_t) bool
+export fn chmod (path: char[], mode: mode_t) int
+export fn fchmod (fd: int, mode: mode_t) int
+export fn fchmodat (fd: int, path: char[], mode: mode_t, flag: int) int
+export fn fstat (fd: int, mut buf: ref stat_t) int
+export fn fstatat (fd: int, path: char[], mut buf: ref stat_t, flag: int) int
+export fn futimens (fd: int, times: timespec[]) int
+export fn lstat (path: char[], mut buf: ref stat_t) int
+export fn mkdir (path: char[], mode: mode_t) int
+export fn mkdirat (fd: int, path: char[], mode: mode_t) int
+export fn mkfifo (path: char[], mode: mode_t) int
+export fn mkfifoat (fd: int, path: char[], mode: mode_t) int
+export fn mknod (path: char[], mode: mode_t, dev: dev_t) int
+export fn mknodat (fd: int, path: char[], mode: mode_t, dev: dev_t) int
+export fn stat (path: char[], mut buf: ref stat_t) int
+export fn umask (mask: mode_t) mode_t
+export fn utimensat (fd: int, path: char[], times: timespec[], flag: int) int
+
+// <sys/statvfs.h>
+export fn fstatvfs (fd: int, mut buf: ref statvfs_t) int
+export fn statvfs (path: char[], mut buf: ref statvfs_t) int
+
+// <sys/time.h>
+export fn getitimer (which: int, mut value: ref itimerval) int
+export fn gettimeofday (mut tv: ref timeval, mut tz: ref any) int
+export fn setitimer (which: int, value: ref itimerval, mut old_value: ref itimerval) int
+export fn utimes (path: char[], times: timeval[]) int
+
+// <sys/times.h>
+export fn times (mut buf: ref tms) clock_t
+
+// <sys/uio.h>
+export fn readv (fd: int, iov: ref iovec, count: int) isize
+export fn writev (fd: int, iov: ref iovec, count: int) isize
+
+// <sys/wait.h>
+export fn WEXITSTATUS (status: int) int
+export fn WIFCONTINUED (status: int) int
+export fn WIFEXITED (status: int) int
+export fn WIFSIGNALED (status: int) int
+export fn WIFSTOPPED (status: int) int
+export fn WSTOPSIG (status: int) int
+export fn WTERMSIG (status: int) int
+export fn wait (mut loc: ref int) pid_t
+export fn waitid (idtype: idtype_t, id: id_t, mut info: ref siginfo_t, options: int) int
+export fn waitpid (pid: pid_t, mut loc: ref int, options: int) pid_t
+
+// <syslog.h>
+export fn LOG_MASK (pri: int) int
+export fn closelog () void
+export fn openlog (ident: char[], option: int, facility: int) void
+export fn setlogmask (mask: int) int
+export fn syslog (priority: int, format: char[], values: any...) void
+
+// <termios.h>
+export fn cfgetispeed (termios: ref termios) speed_t
+export fn cfgetospeed (termios: ref termios) speed_t
+export fn cfsetispeed (mut termios: ref termios, speed: speed_t) int
+export fn cfsetospeed (mut termios: ref termios, speed: speed_t) int
+export fn tcdrain (fd: int) int
+export fn tcflow (fd: int, action: int) int
+export fn tcflush (fd: int, queue_selector: int) int
+export fn tcgetattr (fd: int, mut termios: ref termios) int
+export fn tcgetsid (fd: int) pid_t
+export fn tcsendbreak (fd: int, duration: int) int
+export fn tcsetattr (fd: int, actions: int, termios: ref termios) int
+
+// <time.h>
+export fn asctime (time: ref tm) char[]
+export fn asctime_r (time: ref tm, mut buf: ref char) char[]
+export fn clock () clock_t
+export fn clock_getcpuclockid (pid: pid_t, mut clock: ref clockid_t) int
+export fn clock_getres (clock: clockid_t, mut result: ref timespec) int
+export fn clock_gettime (clock: clockid_t, mut result: ref timespec) int
+export fn clock_nanosleep (clock: clockid_t, flags: int, req: ref timespec, mut rem: ref timespec) int
+export fn clock_settime (clock: clockid_t, result: ref timespec) int
+export fn ctime (clock: ref time_t) char[]
+export fn ctime_r (clock: ref time_t, mut buf: ref char) char[]
+export fn difftime (t1: time_t, t2: time_t) float
+export fn getdate (string: char[]) ref tm
+export fn gmtime (timer: ref time_t) ref tm
+export fn gmtime_r (timer: ref time_t, mut result: ref tm) ref tm
+export fn localtime (timer: ref time_t) ref tm
+export fn localtime_r (timer: ref time_t, mut result: ref tm) ref tm
+export fn mktime (mut time: ref tm) time_t
+export fn nanosleep (req: ref timespec, mut rem: ref timespec) int
+export fn strftime (mut string: ref char, count: usize, format: char[], time: ref tm) usize
+export fn strftime_l (mut string: ref char, count: usize, format: char[], time: ref tm, locale: locale_t) usize
+export fn strptime (buf: char[], format: char[], mut time: ref tm) char[]
+export fn time (mut clock: ref time_t) time_t
+export fn timer_create (clock: clockid_t, mut sig: ref sigevent, mut timer: ref timer_t) int
+export fn timer_delete (timer: timer_t) int
+export fn timer_getoverrun (timer: timer_t) int
+export fn timer_gettime (timer: timer_t, mut value: ref itimerspec) int
+export fn timer_settime (timer: timer_t, flags: int, value: ref itimerspec, mut oldvalue: ref itimerspec) int
+export fn tzset () void
+
+// <unistd.h>
+export fn access (path: char[], mode: int) int
+export fn alarm (seconds: u32) u32
+export fn chdir (path: char[]) int
+export fn chown (path: char[], owner: uid_t, group: gid_t) int
+export fn close (fd: int) int
+export fn confstr (name: int, mut buf: ref char, length: usize) usize
+export fn crypt (key: char[], salt: char[]) char[]
+export fn dup (fd: int) int
+export fn dup2 (fd1: int, fd2: int) int
+export fn encrypt (mut block: char[], flag: int) void
+export fn execl (path: char[], arg0: char[], values: any...) int
+export fn execle (path: char[], arg0: char[], values: any..., env: ref char[]) int
+export fn execlp (file: char[], arg0: char[], value: any...) int
+export fn execv (path: char[], args: ref char[]) int
+export fn execve (path: char[], args: ref char[], env: ref char[]) int
+export fn execvp (file: char[], args: ref char[]) int
+export fn faccessat (fd: int, path: char[], mode: int, flag: int) int
+export fn fchdir (fd: int) int
+export fn fchown (fd: int, owner: uid_t, group: gid_t) int
+export fn fchownat (fd: int, path: char[], owner: uid_t, group: gid_t, flag: int) int
+export fn fdatasync (fd: int) int
+export fn fexecve (fd: int, args: ref char[], env: ref char[]) int
+export fn fork () pid_t
+export fn fpathconf (fd: int, name: int) i64
+export fn fsync (fd: int) int
+export fn ftruncate (fd: int, length: off_t) int
+export fn getcwd (mut buf: ref char, length: usize) char[]
+export fn getegid () gid_t
+export fn geteuid () uid_t
+export fn getgid () gid_t
+export fn getgroups (length: int, mut groups: ref gid_t) int
+export fn gethostid () i64
+export fn gethostname (mut buf: ref char, length: usize) int
+export fn getlogin () char[]
+export fn getlogin_r (mut buf: ref char, length: usize) int
+export fn getopt (argc: int, argv: ref char[], option: char[]) int
+export fn getpgid (pid: pid_t) pid_t
+export fn getpgrp () pid_t
+export fn getpid () pid_t
+export fn getppid () pid_t
+export fn getsid (pid: pid_t) pid_t
+export fn getuid () uid_t
+export fn isatty (fd: int) int
+export fn lchown (path: char[], owner: uid_t, group: gid_t) int
+export fn link (target: char[], path: char[]) int
+export fn linkat (fd1: int, target: char[], fd2: int, path: char[], flag: int) int
+export fn lockf (fd: int, function: int, size: off_t) int
+export fn lseek (fd: int, offset: off_t, whence: int) off_t
+export fn nice (increment: int) int
+export fn pathconf (path: char[], name: int) i64
+export fn pause () int
+export fn pipe (mut fd: int[]) int
+export fn pread (fd: int, mut buf: ref any, length: usize, offset: off_t) isize
+export fn pwrite (fd: int, buf: ref any, length: usize, offset: off_t) isize
+export fn read (fd: int, mut buf: ref any, length: usize) isize
+export fn readlink (path: char[], mut buf: ref char, length: usize) isize
+export fn readlinkat (fd: int, path: char[], mut buf: ref char, length: usize) isize
+export fn rmdir (path: char[]) int
+export fn setegid (group: gid_t) int
+export fn seteuid (user: uid_t) int
+export fn setgid (group: gid_t) int
+export fn setpgid (pid: pid_t, pgid: pid_t) int
+export fn setpgrp () pid_t
+export fn setregid (rgid: gid_t, egid: gid_t) int
+export fn setreuid (ruid: uid_t, euid: uid_t) int
+export fn setsid () pid_t
+export fn setuid (user: uid_t) int
+export fn sleep (seconds: u32) u32
+export fn swab (src: ref any, mut dest: ref any, length: isize) void
+export fn symlink (target: char[], path: char[]) int
+export fn symlinkat (target: char[], fd: int, path: char[]) int
+export fn sync () void
+export fn sysconf (name: int) i64
+export fn tcgetpgrp (fd: int) pid_t
+export fn tcsetpgrp (fd: int, group: pid_t) int
+export fn truncate (path: char[], length: off_t) int
+export fn ttyname (fd: int) char[]
+export fn ttyname_r (fd: int, mut buf: ref char, length: usize) int
+export fn unlink (path: char[]) int
+export fn unlinkat (fd: int, path: char[], flag: int) int
+export fn write (fd: int, buf: ref any, length: usize) isize
+
+// <utmpx.h>
+export fn endutxent () void
+export fn getutxent () ref utmpx
+export fn getutxid (id: ref utmpx) ref utmpx
+export fn getutxline (line: ref utmpx) ref utmpx
+export fn pututxline (line: ref utmpx) ref utmpx
+export fn setutxent () void
+
+// <wchar.h>
+export fn btowc (c: int) wint_t
+export fn fgetwc (mut stream: ref FILE) wint_t
+export fn fgetws (mut ws: ref rune, n: int, mut stream: ref FILE) rune[]
+export fn fputwc (wc: rune, mut stream: ref FILE) wint_t
+export fn fputws (ws: rune[], mut stream: ref FILE) int
+export fn fwide (mut stream: ref FILE, mode: int) int
+export fn fwprintf (mut stream: ref FILE, format: rune[], values: any...) int
+export fn fwscanf (mut stream: ref FILE, format: rune[], values: any...) int
+export fn getwc (mut stream: ref FILE) wint_t
+export fn getwchar () wint_t
+export fn mbrlen (buf: char[], length: usize, mut state: ref mbstate_t) usize
+export fn mbrtowc (mut ws: ref rune, buf: char[], length: usize, mut state: ref mbstate_t) usize
+export fn mbsinit (state: ref mbstate_t) int
+export fn mbsnrtowcs (mut dest: ref rune, src: ref char[], nmc: usize, length: usize, mut state: ref mbstate_t) usize
+export fn mbsrtowcs (mut dest: ref rune, src: ref char[], length: usize, mut state: ref mbstate_t) usize
+export fn open_wmemstream (mut buf: ref rune[], mut length: ref usize) ref FILE
+export fn putwc (wc: rune, mut stream: ref FILE) wint_t
+export fn putwchar (wc: rune) wint_t
+export fn swprintf (mut ws: ref rune, n: usize, format: rune[], values: any...) int
+export fn swscanf (ws: rune[], format: rune[], values: any...) int
+export fn ungetwc (wc: wint_t, mut stream: ref FILE) wint_t
+export fn wcpcpy (mut dest: ref rune, src: rune[]) rune[]
+export fn wcpncpy (mut dest: ref rune, src: rune[], count: usize) rune[]
+export fn wcrtomb (mut string: ref char, wc: rune, mut state: ref mbstate_t) usize
+export fn wcscasecmp (ws1: rune[], ws2: rune[]) int
+export fn wcscasecmp_l (ws1: rune[], ws2: rune[], locale: locale_t) int
+export fn wcscat (mut dest: ref rune, src: rune[]) rune[]
+export fn wcschr (ws: rune[], wc: rune) rune[]
+export fn wcscmp (ws1: rune[], ws2: rune[]) int
+export fn wcscoll (ws1: rune[], ws2: rune[]) int
+export fn wcscoll_l (ws1: rune[], ws2: rune[], locale: locale_t) int
+export fn wcscpy (mut dest: ref rune, src: rune[]) rune[]
+export fn wcscspn (ws1: rune[], ws2: rune[]) usize
+export fn wcsdup (ws: rune[]) rune[]
+export fn wcsftime (mut ws: ref rune, length: usize, format: rune[], time: ref tm) usize
+export fn wcslen (ws: rune[]) usize
+export fn wcsncasecmp (ws1: rune[], ws2: rune[], length: usize) int
+export fn wcsncasecmp_l (ws1: rune[], ws2: rune[], length: usize, locale: locale_t) int
+export fn wcsncat (mut dest: ref rune, src: rune[], length: usize) rune[]
+export fn wcsncmp (ws1: rune[], ws2: rune[], length: usize) int
+export fn wcsncpy (mut dest: ref rune, src: rune[], length: usize) rune[]
+export fn wcsnlen (ws: rune[], length: usize) usize
+export fn wcsnrtombs (mut dest: ref char, src: ref rune[], nwc: usize, length: usize, mut state: ref mbstate_t) usize
+export fn wcspbrk (ws1: rune[], ws2: rune[]) rune[]
+export fn wcsrchr (ws: rune[], wc: rune) rune[]
+export fn wcsrtombs (mut dest: ref char, src: ref rune[], nwc: usize, mut state: ref mbstate_t) usize
+export fn wcsspn (ws1: rune[], ws2: rune[]) usize
+export fn wcsstr (ws1: rune[], ws2: rune[]) rune[]
+export fn wcstod (ws: rune[], mut end: ref rune[]) float
+export fn wcstof (ws: rune[], mut end: ref rune[]) f32
+export fn wcstok (mut ws: ref rune, delimiter: rune[], mut ptr: ref rune[]) rune[]
+export fn wcstol (ws: rune[], mut end: ref rune[], base: int) i64
+export fn wcstoll (ws: rune[], mut end: ref rune[], base: int) i64
+export fn wcstoul (ws: rune[], mut end: ref rune[], base: int) u64
+export fn wcstoull (ws: rune[], mut end: ref rune[], base: int) u64
+export fn wcswidth (ws: rune[], n: usize) int
+export fn wcsxfrm (mut dest: ref rune, src: rune[], count: usize) usize
+export fn wcsxfrm_l (mut dest: ref rune, src: rune[], count: usize, locale: locale_t) usize
+export fn wctob (c: wint_t) int
+export fn wcwidth (wc: rune) int
+export fn wmemchr (ws: rune[], wc: rune, count: usize) rune[]
+export fn wmemcmp (ws1: rune[], ws2: rune[], count: usize) int
+export fn wmemcpy (mut dest: ref rune, src: rune[], count: usize) rune[]
+export fn wmemmove (mut dest: ref rune, src: rune[], count: usize) rune[]
+export fn wmemset (mut ws: ref rune, wc: rune, count: usize) rune[]
+export fn wprintf (format: rune[], values: any...) int
+export fn wscanf (format: rune[], values: any...) int
+
+// <wctype.h>
+export fn iswalnum (wc: wint_t) int
+export fn iswalnum_l (wc: wint_t, locale: locale_t) int
+export fn iswalpha (wc: wint_t) int
+export fn iswalpha_l (wc: wint_t, locale: locale_t) int
+export fn iswblank (wc: wint_t) int
+export fn iswblank_l (wc: wint_t, locale: locale_t) int
+export fn iswcntrl (wc: wint_t) int
+export fn iswcntrl_l (wc: wint_t, locale: locale_t) int
+export fn iswctype (wc: wint_t, charclass: wctype_t) int
+export fn iswctype_l (wc: wint_t, charclass: wctype_t, locale: locale_t) int
+export fn iswdigit (wc: wint_t) int
+export fn iswdigit_l (wc: wint_t, locale: locale_t) int
+export fn iswgraph (wc: wint_t) int
+export fn iswgraph_l (wc: wint_t, locale: locale_t) int
+export fn iswlower (wc: wint_t) int
+export fn iswlower_l (wc: wint_t, locale: locale_t) int
+export fn iswprint (wc: wint_t) int
+export fn iswprint_l (wc: wint_t, locale: locale_t) int
+export fn iswpunct (wc: wint_t) int
+export fn iswpunct_l (wc: wint_t, locale: locale_t) int
+export fn iswspace (wc: wint_t) int
+export fn iswspace_l (wc: wint_t, locale: locale_t) int
+export fn iswupper (wc: wint_t) int
+export fn iswupper_l (wc: wint_t, locale: locale_t) int
+export fn iswxdigit (wc: wint_t) int
+export fn iswxdigit_l (wc: wint_t, locale: locale_t) int
+export fn towctrans (wc: wint_t, desc: wctrans_t) wint_t
+export fn towctrans_l (wc: wint_t, desc: wctrans_t, locale: locale_t) wint_t
+export fn towlower (wc: wint_t) wint_t
+export fn towlower_l (wc: wint_t, locale: locale_t) wint_t
+export fn towupper (wc: wint_t) wint_t
+export fn towupper_l (wc: wint_t, locale: locale_t) wint_t
+export fn wctrans (charclass: char[]) wctrans_t
+export fn wctrans_l (charclass: char[], locale: locale_t) wctrans_t
+export fn wctype (property: char[]) wctype_t
+export fn wctype_l (property: char[], locale: locale_t) wctype_t
+
+// <wordexp.h>
+export fn wordexp (words: char[], mut wordexp: ref wordexp_t, flags: int) int
+export fn wordfree (mut wordexp: ref wordexp_t) void

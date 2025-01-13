@@ -1,0 +1,5 @@
+const a: u32 = 5000000000
+===== err =====
+E1029-u32.txt:1:16: AnalyzeError: E1029 - Integer literal is out of range for type `u32`
+1 | const a: u32 = 5000000000
+  |                ~~~~~~~~~~

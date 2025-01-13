@@ -1,0 +1,54 @@
+main {
+  mut i := 0
+
+  loop ; i < 10; i++ {
+  }
+  loop i := 0; i < 10; i++ {}
+
+  loop ;; i++ {
+    if i > 10 {
+      break
+    }
+  }
+
+  loop ; i < 10; {
+    i++
+  }
+
+  loop i := 0; i < 10; {
+    i++
+  }
+
+  loop ;; {
+    if i > 10 {
+      break
+    }
+
+    i++
+  }
+}
+===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t i_0 = 0;
+  for (; i_0 < 10; i_0++) {}
+  for (int32_t i_1 = 0; i_1 < 10; i_1++) {}
+  for (;; i_0++) {
+    if (i_0 > 10) {
+      break;
+    }
+  }
+  while (i_0 < 10) {
+    i_0++;
+  }
+  for (int32_t i_1 = 0; i_1 < 10;) {
+    i_1++;
+  }
+  while (1) {
+    if (i_0 > 10) {
+      break;
+    }
+    i_0++;
+  }
+}
+===== output =====

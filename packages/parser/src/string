@@ -369,7 +369,7 @@ export fn typeT (self: t.Type) str {
     return body.name.name
   } elif self.isMap() {
     body := self.asMap()
-    return typeT(body.keyType) + "[" + typeT(body.valueType) + "]"
+    return typeT(body.valueType) + "[" + typeT(body.keyType) + "]"
   } elif self.isMember() {
     body := self.asMember()
     return typeT(body.t) + "." + body.name.name

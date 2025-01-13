@@ -1,0 +1,10 @@
+main {
+  a := 10
+  a = 2
+}
+===== err =====
+E1011-assignment-expression.txt:3:3: AnalyzeError: E1011 - Cannot assign to immutable variable 'a'
+2 |   a := 10
+3 |   a = 2
+  |   ^
+4 | }

@@ -1,0 +1,9 @@
+main {
+  "" = "test"
+}
+===== err =====
+E1010.txt:2:3: AnalyzeError: E1010 - Left-hand side of assignment expression should be a variable, property access or element access
+1 | main {
+2 |   "" = "test"
+  |   ~~
+3 | }

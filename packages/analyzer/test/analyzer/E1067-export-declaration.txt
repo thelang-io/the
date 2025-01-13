@@ -1,0 +1,12 @@
+export fn Test () {}
+export obj Test { mut a: int }
+===== err =====
+E1067-export-declaration.txt:1:11: AnalyzeError: E1000 - Redefinition of 'Test'
+1 | export fn Test () {}
+  |           ~~~~
+2 | export obj Test { mut a: int }
+
+E1067-export-declaration.txt:2:12: AnalyzeError: E1067 - Duplicate export of 'Test'
+1 | export fn Test () {}
+2 | export obj Test { mut a: int }
+  |            ~~~~

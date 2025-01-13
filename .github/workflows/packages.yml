@@ -3,9 +3,9 @@ name: Packages
 on:
   push:
     branches: ['main', 'release-*']
-    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/packages.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', 'src/**/*', 'test/**/*', '!.github/workflows/packages.yml']
   pull_request:
-    paths-ignore: ['**/*.md', '**/*.yml', '!.github/workflows/packages.yml']
+    paths-ignore: ['**/*.md', '**/*.yml', 'src/**/*', 'test/**/*', '!.github/workflows/packages.yml']
 
 concurrency:
   cancel-in-progress: true
@@ -18,16 +18,15 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - os: macos-11
-          - os: macos-12
           - os: macos-13
           - os: macos-13-xlarge
           - os: ubuntu-20.04
           - os: ubuntu-22.04
-          - os: windows-2019
           - os: windows-2022
     steps:
       - uses: actions/checkout@v4
       - uses: thelang-io/setup-the@v1
+      - run: the -v
       - run: (cd packages/algorithm && the test test)
+      - run: (cd packages/analyzer && the test test)
       - run: (cd packages/parser && the test test)

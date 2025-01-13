@@ -1,0 +1,40 @@
+obj EmptyObject {
+}
+main {
+  o := EmptyObject{}
+  print(o)
+}
+===== code =====
+#include <d4/any.h>
+#include <d4/globals.h>
+#include <d4/object.h>
+#include <d4/safe.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#define TYPE_obj_EmptyObject 1
+D4_OBJECT_FORWARD_DECLARE(EmptyObject)
+D4_OBJECT_DECLARE(EmptyObject, {
+  bool _;
+}, void)
+D4_ANY_DECLARE(obj_EmptyObject, d4_obj_EmptyObject_t)
+D4_OBJECT_DEFINE(EmptyObject, EmptyObject, {
+  self._ = false;
+}, {
+  result._ = self._;
+}, {
+  (void) self;
+  (void) rhs;
+  return true;
+}, {
+  (void) self;
+}, {
+  (void) self;
+}, void)
+D4_ANY_DEFINE(TYPE_obj_EmptyObject, obj_EmptyObject, d4_obj_EmptyObject_t, d4_obj_EmptyObject_copy(val), d4_obj_EmptyObject_eq(lhs_val, rhs_val), d4_obj_EmptyObject_free(val), d4_obj_EmptyObject_str(val))
+int main (void) {
+  d4_obj_EmptyObject_t o_0 = d4_obj_EmptyObject_alloc();
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, d4_any_obj_EmptyObject_alloc(o_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_obj_EmptyObject_free(o_0);
+}
+===== output =====
+EmptyObject{}

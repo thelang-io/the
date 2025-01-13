@@ -3,7 +3,7 @@
  * Licensed under the MIT License
  */
 
-import MATCH_ANY from "./matchers"
+import FAIL_TEST, MATCH_ANY from "./matchers"
 
 export fn EXPECT_EQ (a: any, b: any) {
   MATCH_ANY(a, b)

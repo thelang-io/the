@@ -1,0 +1,51 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import analyze from "../src/analyzer"
+
+export obj ParseTestFileResult {
+  in: str
+  err: str
+}
+
+export fn parseTestFile (path: str) ParseTestFileResult {
+  content := fs_readFileSync(path).str()
+  errLoc := content.find("===== err =====")
+  inContent := errLoc == -1 ? content : content.slice(0, errLoc)
+  errContent := errLoc == -1 ? "" : content.slice(errLoc + 15 + os_EOL.len)
+
+  return ParseTestFileResult{
+    in: inContent,
+    err: errContent,
+  }
+}
+
+export fn TEST_Analyzer_analyze () {
+  files := fs_scandirSync("./test/analyzer")
+
+  loop i := 0; i < files.len; i++ {
+    file := files[i] as str
+    if file.slice(-4) != ".txt" { continue }
+
+    result := parseTestFile("./test/analyzer/" + file)
+    mut f := Parser.parse(result.in)
+    Parser.interconnect(ref f)
+    errors := analyze(ref f)
+    mut errorsWithPath: str[]
+
+    loop i := 0; i < errors.len; i++ {
+      errorText := errors[i]
+        .replace("anonymous:", file + ":")
+        .replace(process_cwd(), ".")
+
+      errorsWithPath.push(errorText)
+    }
+
+    if !result.err.empty || errorsWithPath.len != 0 {
+      EXPECT_EQ(result.err, errorsWithPath.join(os_EOL))
+    }
+  }
+}

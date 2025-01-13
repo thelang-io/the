@@ -4,7 +4,11 @@
  */
 
 import * as base64 from "./base64"
+import * as byteArray from "./byte-array"
 import * as qrcode from "./qrcode"
+import md5 from "./md5"
 
 export base64
+export byteArray
 export qrcode
+export md5

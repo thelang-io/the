@@ -3,7 +3,6 @@
  * Licensed under the MIT License
  */
 
-import EXPECT_FALSE, EXPECT_THROW_WITH_MESSAGE, EXPECT_TRUE from "./utils"
 import * as Reader from "../src/reader"
 import * as Token from "../src/token"
 import * as t from "../src/types"
@@ -25,13 +24,13 @@ export fn TEST_Reader_initWithCode () {
 export fn TEST_Reader_initWithPath () {
   reader := Reader.init("./test/fixtures/test-reader.txt")
   EXPECT_EQ(reader.path, process_cwd() + path_SEP + "test" + path_SEP + "fixtures" + path_SEP + "test-reader.txt")
-  EXPECT_EQ(reader.content, "Hello, World!" + os_EOL)
+  EXPECT_EQ(reader.content, "Hello, World!\n")
 }
 
 export fn TEST_Reader_initWithFullPath () {
   reader := Reader.init(fs_realpathSync("./test/fixtures/test-reader.txt"))
   EXPECT_EQ(reader.path, process_cwd() + path_SEP + "test" + path_SEP + "fixtures" + path_SEP + "test-reader.txt")
-  EXPECT_EQ(reader.content, "Hello, World!" + os_EOL)
+  EXPECT_EQ(reader.content, "Hello, World!\n")
 }
 
 export fn TEST_Reader_initThrows () {

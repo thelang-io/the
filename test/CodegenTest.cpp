@@ -62,15 +62,15 @@ TEST(CodegenTest, StringifyFlags) {
 TEST(CodegenTest, ThrowsOnObjExprDefaultFieldInvalidType) {
   EXPECT_THROW_WITH_MESSAGE({
     codegenTestGen("obj Test { a: (int) -> void } main { a: Test }");
-  }, "tried object expression default field on invalid type");
+  }, "tried object expression default on field \"a\" on invalid type \"fn_sFP3intFRvoidFE\"");
 
   EXPECT_THROW_WITH_MESSAGE({
     codegenTestGen("obj Test { a: ref int } main { a: Test }");
-  }, "tried object expression default field on invalid type");
+  }, "tried object expression default on field \"a\" on invalid type \"ref_int\"");
 
   EXPECT_THROW_WITH_MESSAGE({
     codegenTestGen("obj Test { a: int | str } main { a: Test }");
-  }, "tried object expression default field on invalid type");
+  }, "tried object expression default on field \"a\" on invalid type \"union_intUSstrUE\"");
 }
 
 TEST(CodegenTest, ThrowsOnVarDeclInitInvalidType) {
@@ -402,6 +402,9 @@ INSTANTIATE_TEST_SUITE_P(BuiltinAny, CodegenPassTest, testing::Values(
   "builtin-any-alloc-ref",
   "builtin-any-alloc-str",
   "builtin-any-alloc-union",
+  "builtin-any-eq",
+  "builtin-any-eq-ref",
+  "builtin-any-eq-root",
   "builtin-any-str",
   "builtin-any-str-ref",
   "builtin-any-str-root"
@@ -757,6 +760,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
   "builtin-opt-alloc-fn-async",
   "builtin-opt-alloc-map",
   "builtin-opt-alloc-obj",
+  "builtin-opt-alloc-obj-prop",
   "builtin-opt-alloc-opt",
   "builtin-opt-alloc-ref",
   "builtin-opt-alloc-str",
@@ -764,6 +768,7 @@ INSTANTIATE_TEST_SUITE_P(BuiltinOpt, CodegenPassTest, testing::Values(
   "builtin-opt-eq",
   "builtin-opt-eq-ref",
   "builtin-opt-eq-root",
+  "builtin-opt-ref",
   "builtin-opt-str",
   "builtin-opt-str-ref",
   "builtin-opt-str-root"
@@ -994,6 +999,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
+  "expr-access-elem-assign",
   "expr-access-member",
   "expr-access-alias",
   "expr-access-any",
@@ -1004,6 +1010,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access-map",
   "expr-access-obj",
   "expr-access-opt",
+  "expr-access-opt-ref",
   "expr-access-ref",
   "expr-access-str",
   "expr-access-union"
@@ -1148,7 +1155,8 @@ INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenPassTest, testing::Values(
   "expr-lit-int-oct",
   "expr-lit-nil",
   "expr-lit-str",
-  "expr-lit-str-esc"
+  "expr-lit-str-esc",
+  "expr-lit-str-nl"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprMap, CodegenPassTest, testing::Values(
@@ -1178,6 +1186,7 @@ INSTANTIATE_TEST_SUITE_P(ExprRef, CodegenPassTest, testing::Values(
   "expr-ref-alias",
   "expr-ref-any",
   "expr-ref-array",
+  "expr-ref-as",
   "expr-ref-enum",
   "expr-ref-fn",
   "expr-ref-fn-async",

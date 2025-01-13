@@ -1,0 +1,11 @@
+obj Test {
+  mut a: int?
+}
+
+main {
+  mut v := Test{}
+
+  if v.a != nil {
+    a: int = v.a
+  }
+}

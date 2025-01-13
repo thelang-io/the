@@ -1,0 +1,106 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import Type, TypeParameter, TypeProperty from "../src/type"
+
+export fn stringifyTypeParameter (it: ref TypeParameter, indent: int, selfName: str) str {
+  return "Type.TypeParameter{name: " + (it.name == nil ? "nil" : "\"" + it.name + "\"") + ", " +
+    "t: " + stringifyType(it.t, indent, selfName: selfName) + ", " +
+    "mutable: " + it.mutable.str() + ", " +
+    "required: " + it.required.str() + ", " +
+    "variadic: " + it.variadic.str() + "}"
+}
+
+export fn stringifyTypeProperty (it: ref TypeProperty, indent: int, selfName: str) str {
+  return "Type.TypeProperty{name: \"" + it.name + "\", " +
+    "t: " + stringifyType(it.t, indent, selfName: selfName) + ", " +
+    "mutable: " + it.mutable.str() + "}"
+}
+
+export fn stringifyTypeParameters (parameters: ref TypeParameter[], indent: int, selfName: str) str {
+  mut result := ""
+
+  loop i := 0; i < parameters.len; i++ {
+    item := parameters[i]
+    result += ' '.repeat(indent + 2) + stringifyTypeParameter(item, indent + 2, selfName) + os_EOL
+  }
+
+  return result.empty ? "[]" : "[" + os_EOL + result + ' '.repeat(indent) + "]"
+}
+
+export fn stringifyTypeProperties (properties: ref TypeProperty[], indent: int, selfName: str) str {
+  mut result := ""
+
+  loop i := 0; i < properties.len; i++ {
+    item := properties[i]
+    if item.builtin { continue }
+    result += ' '.repeat(indent + 2) + stringifyTypeProperty(item, indent + 2, selfName) + os_EOL
+  }
+
+  return result.empty ? "[]" : "[" + os_EOL + result + ' '.repeat(indent) + "]"
+}
+
+export fn stringifyType (it: ref Type, indent: int, build := false, selfName := "tm") str {
+  if !build && (it.isAlias() || it.isEnum() || it.isNamespace() || it.isObject()) {
+    return selfName + ".get(\"" + it.name + "\")"
+  }
+
+  if it.isAlias() {
+    t := it.asAlias()
+    return selfName + ".createAlias(\"" + it.name + "\", " + stringifyType(t.t, indent, selfName: selfName) + ")"
+  } elif it.isArray() {
+    t := it.asArray()
+    return selfName + ".createArray(" + stringifyType(t.elementType, indent, selfName: selfName) + ")"
+  } elif it.isEnum() {
+    t := it.asEnum()
+    mut content := ""
+    loop i := 0; i < t.members.len; i++ {
+      content += i == 0 ? "" : ", "
+      content += "\"" + t.members[i] + "\""
+    }
+    return selfName + ".createEnum(\"" + it.name + "\", [" + content + "])"
+  } elif it.isFunction() {
+    t := it.asFunction()
+    return selfName + ".createFunction(" + t.asynchronous.str() + ", " +
+      stringifyTypeParameters(ref t.parameters, indent, selfName) + ", " +
+      stringifyType(t.returnType, indent, selfName: selfName) + ")"
+  } elif it.isMap() {
+    t := it.asMap()
+    return selfName + ".createMap(" + stringifyType(t.keyType, indent, selfName: selfName) + ", " +
+      stringifyType(t.valueType, indent, selfName: selfName) + ")"
+  } elif it.isMethod() {
+    t := it.asMethod()
+    return selfName + ".createMethod(" + t.asynchronous.str() + ", " +
+      stringifyTypeParameters(ref t.parameters, indent, selfName) + ", " +
+      stringifyType(t.returnType, indent, selfName: selfName) + ", " +
+      t.withSelf.str() + ", " +
+      t.selfMutable.str() + ", " +
+      "\"" + t.selfName + "\", " +
+      stringifyType(t.selfType, indent, selfName: selfName) + ")"
+  } elif it.isNamespace() {
+    t := it.asNamespace()
+    return selfName + ".createNamespace(\"" + it.name + "\", " +
+      stringifyTypeProperties(ref it.properties, indent, selfName) + ")"
+  } elif it.isObject() {
+    t := it.asObject()
+    return selfName + ".createObject(\"" + it.name + "\", " +
+      stringifyTypeProperties(ref it.properties, indent, selfName) + ")"
+  } elif it.isOptional() {
+    t := it.asOptional()
+    return selfName + ".createOptional(" + stringifyType(t.t, indent, selfName: selfName) + ")"
+  } elif it.isReference() {
+    t := it.asReference()
+    return selfName + ".createReference(" + stringifyType(t.t, indent, selfName: selfName) + ")"
+  } else {
+    t := it.asUnion()
+    mut content := ""
+    loop i := 0; i < t.types.len; i++ {
+      item := t.types[i]
+      content += i == 0 ? "" : ", "
+      content += stringifyType(item, indent, selfName: selfName)
+    }
+    return selfName + ".createUnion([" + content + "])"
+  }
+}

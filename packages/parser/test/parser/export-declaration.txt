@@ -16,7 +16,7 @@ Program
         EnumDeclarationMember
           Identifier(start=24 end=27) Two
   ExportDeclaration(start=30, end=50)
-    FunctionDeclaration(start=36, end=50)
+    FunctionDeclaration(start=37, end=50)
       name
         Identifier(start=40 end=44) test
       body

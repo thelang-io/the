@@ -1,0 +1,9 @@
+main {
+  a := 10 + "test"
+}
+===== err =====
+E1026.txt:2:11: AnalyzeError: E1026 - Cannot apply binary operator '+' to operands of type `int` and `str`
+1 | main {
+2 |   a := 10 + "test"
+  |           ^
+3 | }

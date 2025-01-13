@@ -1,0 +1,13 @@
+async fn test () int { return 10 }
+main {
+  a := await test()
+}
+===== out =====
+FunctionDeclaration(asynchronous=true name=test return=int)
+  ReturnStatement()
+    IntegerLiteral(initial=int value=10)
+MainDeclaration()
+  VariableDeclaration(name=a mutable=false constant=false context:varType=int)
+    AwaitExpression(initial=int)
+      CallExpression(initial=async () -> int extra:asynchronous=true extra:returnType=int)
+        Identifier(initial=async () -> int name=test)

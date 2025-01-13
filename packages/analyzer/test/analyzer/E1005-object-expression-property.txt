@@ -1,0 +1,7 @@
+obj Animal { mut name: str }
+const a := Animal{name: 1}
+===== err =====
+E1005-object-expression-property.txt:2:25: AnalyzeError: E1005 - Type `int` is not assignable to type `str`
+1 | obj Animal { mut name: str }
+2 | const a := Animal{name: 1}
+  |                         ^

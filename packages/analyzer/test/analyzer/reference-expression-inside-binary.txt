@@ -1,0 +1,6 @@
+main {
+  mut a := 1
+  mut b := 2
+  mut ref1 := ref a
+  v := ref1 > b
+}

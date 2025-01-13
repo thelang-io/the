@@ -1,0 +1,10 @@
+main {
+  a := () -> int {
+  }
+}
+===== err =====
+E1061-closure-expression.txt:2:14: AnalyzeError: E1061 - Function declaration whose return type is not `void` should return a value
+1 | main {
+2 |   a := () -> int {
+  |              ~~~
+3 |   }

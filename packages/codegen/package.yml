@@ -1,0 +1,14 @@
+name: the/codegen
+version: 0.0.1
+description: The programming language code generator
+license: MIT
+main: src/main
+
+packages:
+  the/analyzer: 0.1.0
+  the/c: 0.1.0
+  the/parser: 0.4.16
+  the/testing: 0.4.0
+
+scripts:
+  update-codegen-tests: the run scripts/update-codegen-tests

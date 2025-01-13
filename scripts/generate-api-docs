@@ -16,7 +16,7 @@
 
 const ARGS := process_args
 const SCRIPT_DIR := path_dirname(fs_isAbsoluteSync(ARGS[0]) ? ARGS[0] : process_cwd() + path_SEP + ARGS[0])
-const ROOT_DIR := fs_realpathSync(SCRIPT_DIR + path_SEP + "..")
+const ROOT_DIR := fs_realpathSync(SCRIPT_DIR)
 const API_PATH := ROOT_DIR + path_SEP + "src" + path_SEP + "api"
 
 fn removeDirectorySync (path: str) {

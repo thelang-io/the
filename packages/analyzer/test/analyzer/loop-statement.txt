@@ -1,0 +1,16 @@
+main {
+  mut a := 0
+
+  loop {}
+  loop a < 10 {}
+  loop i := 0; i < 10; i++ {}
+  loop i := 0; i < 10; {}
+  loop i := 0;; i++ {}
+  loop ; a < 10; a++ {}
+  loop i := 0;; {}
+  loop ; a < 10; {}
+  loop ;; a++ {}
+  loop a = 0; a < 10; a++ {}
+  loop (a < 10) break
+  loop (i := 0; i < 10; i++) print(i)
+}

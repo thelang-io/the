@@ -1,0 +1,66 @@
+obj MyError {
+  mut message: str
+  mut stack: str
+}
+
+fn parse () {
+  throw MyError{message: "Don't do this"}
+}
+
+main {
+  try {} catch err: Error {}
+
+  try {
+    parse()
+  } catch err: Error {
+    print(err.message)
+  }
+
+  try {
+    parse()
+  } catch err: Error {
+    print(err.message)
+  } catch err: MyError {
+    print(err.message)
+  }
+}
+===== out =====
+ObjectDeclaration(name=MyError context:selfType=MyError)
+  ObjectDeclarationProperty(name=message mutable=true constant=false type=str)
+  ObjectDeclarationProperty(name=stack mutable=true constant=false type=str)
+FunctionDeclaration(asynchronous=false name=parse)
+  ThrowStatement()
+    ObjectExpression(initial=MyError id=MyError)
+      ObjectExpressionProperty(name=message)
+        StringLiteral(initial=str value=Don't do this)
+MainDeclaration()
+  TryStatement()
+    TryStatementHandler()
+      VariableDeclaration(name=err mutable=false constant=false type=Error context:varType=Error)
+  TryStatement()
+    CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+      Identifier(initial=() -> void name=parse)
+    TryStatementHandler()
+      VariableDeclaration(name=err mutable=false constant=false type=Error context:varType=Error)
+      CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+        Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+        CallExpressionArgument(extra:parameterIdx=0)
+          PropertyAccessExpression(initial=str target=any name=message extra:propertyName=message extra:propertyType=str)
+            Identifier(initial=Error name=err)
+  TryStatement()
+    CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+      Identifier(initial=() -> void name=parse)
+    TryStatementHandler()
+      VariableDeclaration(name=err mutable=false constant=false type=Error context:varType=Error)
+      CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+        Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+        CallExpressionArgument(extra:parameterIdx=0)
+          PropertyAccessExpression(initial=str target=any name=message extra:propertyName=message extra:propertyType=str)
+            Identifier(initial=Error name=err)
+    TryStatementHandler()
+      VariableDeclaration(name=err mutable=false constant=false type=MyError context:varType=MyError)
+      CallExpression(initial=void extra:asynchronous=false extra:returnType=void)
+        Identifier(initial=(items: any..., separator: str, terminator: str, to: str) -> void name=print)
+        CallExpressionArgument(extra:parameterIdx=0)
+          PropertyAccessExpression(initial=str target=any name=message extra:propertyName=message extra:propertyType=str extra:propertyMutable)
+            Identifier(initial=MyError name=err)

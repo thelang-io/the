@@ -1,0 +1,9 @@
+import Animal from "./test/fixtures/object-animal"
+
+mut test := Animal{}
+export test.name
+===== err =====
+E1068-variable-property.txt:4:8: AnalyzeError: E1068 - Named export allows exporting only identifiers and properties
+3 | mut test := Animal{}
+4 | export test.name
+  |        ~~~~~~~~~

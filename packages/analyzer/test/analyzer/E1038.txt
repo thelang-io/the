@@ -1,0 +1,9 @@
+main {
+  const a := 10
+}
+===== err =====
+E1038.txt:2:9: AnalyzeError: E1038 - Constant declaration can only be used at the top level
+1 | main {
+2 |   const a := 10
+  |         ^
+3 | }

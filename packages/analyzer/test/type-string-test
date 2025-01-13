@@ -1,0 +1,87 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TypeMap from "../src/type-map"
+import * as Type from "../src/type"
+
+export fn TEST_Type_toString () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  t1 := tm.createAlias("TestAlias", tm.get("int"))
+  t2 := tm.createArray(tm.get("int"))
+  t3 := tm.createEnum("TestEnum", [])
+  t4 := tm.createFunction(false, [], tm.get("int"))
+  t5 := tm.createMap(tm.get("int"), tm.get("str"))
+  t6 := tm.createMethod(false, [], tm.get("int"), false, false, "", tm.get("int"))
+  t7 := tm.createNamespace("TestNamespace", [])
+  t8 := tm.createObject("TestObject")
+  t9 := tm.createOptional(tm.get("int"))
+  t10 := tm.createReference(tm.get("int"))
+  t11 := tm.createUnion([tm.get("int"), tm.get("str")])
+  t12 := tm.createOptional(t4)
+  t13 := tm.createOptional(t6)
+  t14 := tm.createOptional(t10)
+  t15 := tm.createOptional(t11)
+
+  t16 := tm.createFunction(true, [], tm.get("int"))
+  t17 := tm.createFunction(false, [
+    Type.TypeParameter{t: tm.get("int")},
+  ], tm.get("int"))
+  t18 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), mutable: true},
+    Type.TypeParameter{name: "b", t: tm.createArray(tm.get("int")), variadic: true},
+  ], tm.get("int"))
+
+  t19 := tm.createMethod(true, [], tm.get("int"), true, false, "self1", tm.createReference(tm.get("int")))
+  t20 := tm.createMethod(false, [
+    Type.TypeParameter{t: tm.get("int")},
+  ], tm.get("int"), true, true, "self2", tm.get("int"))
+  t21 := tm.createMethod(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), mutable: true},
+    Type.TypeParameter{name: "b", t: tm.createArray(tm.get("int")), variadic: true},
+  ], tm.get("int"), true, false, "self3", tm.get("int"))
+
+  t22 := tm.createMethod(true, [], tm.get("int"), false, false, "", tm.get("int"))
+  t23 := tm.createMethod(false, [
+    Type.TypeParameter{t: tm.get("int")},
+  ], tm.get("int"), false, false, "", tm.get("int"))
+  t24 := tm.createMethod(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), mutable: true},
+    Type.TypeParameter{name: "b", t: tm.createArray(tm.get("int")), variadic: true},
+  ], tm.get("int"), false, false, "", tm.get("int"))
+
+  EXPECT_EQ(t1.toString(), "TestAlias")
+  EXPECT_EQ(t2.toString(), "int[]")
+  EXPECT_EQ(t3.toString(), "TestEnum")
+  EXPECT_EQ(t4.toString(), "() -> int")
+  EXPECT_EQ(t5.toString(), "str[int]")
+  EXPECT_EQ(t6.toString(), "() -> int")
+  EXPECT_EQ(t7.toString(), "TestNamespace")
+  EXPECT_EQ(t8.toString(), "TestObject")
+  EXPECT_EQ(t9.toString(), "int?")
+  EXPECT_EQ(t10.toString(), "ref int")
+  EXPECT_EQ(t11.toString(), "int | str")
+  EXPECT_EQ(t12.toString(), "(() -> int)?")
+  EXPECT_EQ(t13.toString(), "(() -> int)?")
+  EXPECT_EQ(t14.toString(), "(ref int)?")
+  EXPECT_EQ(t15.toString(), "(int | str)?")
+  EXPECT_EQ(t16.toString(), "async () -> int")
+  EXPECT_EQ(t17.toString(), "(int) -> int")
+  EXPECT_EQ(t18.toString(), "(mut a: int, b: int...) -> int")
+  EXPECT_EQ(t19.toString(), "async (self1: ref int) -> int")
+  EXPECT_EQ(t20.toString(), "(mut self2: int, int) -> int")
+  EXPECT_EQ(t21.toString(), "(self3: int, mut a: int, b: int...) -> int")
+  EXPECT_EQ(t22.toString(), "async () -> int")
+  EXPECT_EQ(t23.toString(), "(int) -> int")
+  EXPECT_EQ(t24.toString(), "(mut a: int, b: int...) -> int")
+}
+
+export fn TEST_Type_toStringThrows () {
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    t := Type.Type{name: "TheType", body: Type.EmptyType{}}
+    t.toString()
+  }, "Tried stringify on unknown type")
+}

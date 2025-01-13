@@ -1,0 +1,13 @@
+fn testA (a: int?) {}
+fn testB (b: int) {}
+
+main {
+  mut a: int?
+  a = 2
+  testA(a)
+  a = 2
+  testA(a)
+  testB(a)
+  a = nil
+  testA(a)
+}

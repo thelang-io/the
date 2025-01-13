@@ -1,0 +1,7 @@
+main {
+  arr: int[]
+  item1: int = arr[0]
+
+  s := ""
+  item2: rune = s[0]
+}

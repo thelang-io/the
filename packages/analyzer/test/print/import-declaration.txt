@@ -1,0 +1,15 @@
+import TestEnum from "./test/fixtures/export-enum"
+import TestObj, TestObjWithMethods from "./test/fixtures/export-obj"
+import * as Vars, TestConstVar as ConstVar from "./test/fixtures/export-var"
+===== out =====
+ImportDeclaration()
+  ImportSpecifier(imported=TestEnum local=TestEnum)
+  StringLiteral(value=./test/fixtures/export-enum)
+ImportDeclaration()
+  ImportSpecifier(imported=TestObj local=TestObj)
+  ImportSpecifier(imported=TestObjWithMethods local=TestObjWithMethods)
+  StringLiteral(value=./test/fixtures/export-obj)
+ImportDeclaration()
+  ImportNamespaceSpecifier(name=Vars)
+  ImportSpecifier(imported=TestConstVar local=ConstVar)
+  StringLiteral(value=./test/fixtures/export-var)

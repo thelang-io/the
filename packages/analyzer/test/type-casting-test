@@ -1,0 +1,49 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import Analyzer, AnalyzerFile from "../src/analyzer"
+import * as Type from "../src/type"
+import TypeMap from "../src/type-map"
+import analyzerPrint from "../src/analyzer-print"
+import stringify as stringifyTC from "../src/type-cast"
+import parseTestFile from "./utils"
+
+export fn TEST_TypeCasting () {
+  files := fs_scandirSync("./test/type-casting")
+
+  loop i := 0; i < files.len; i++ {
+    filePath := files[i] as str
+    if filePath.slice(-4) != ".txt" { continue }
+
+    result := parseTestFile("./test/type-casting/" + filePath)
+    mut f := Parser.parse(result.in)
+    Parser.interconnect(ref f)
+    mut analyzer := Analyzer{}
+    analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer, f: f})
+    mut file := analyzer.files.last()
+    file.reader = Parser.Reader_init(file.f.content)
+    file.init()
+    file.analyze(ref file.f.program.body)
+
+    EXPECT_EQ(analyzer.errors.join(os_EOL), "")
+    out := analyzerPrint(ref file.f.program.body)
+    banner := filePath.slice(0, -4) + os_EOL
+    EXPECT_EQ(banner + result.out, banner + out)
+  }
+}
+
+export fn TEST_TypeCasting_stringify () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  tc1: (ref Type.Type)[str] = {}
+  tc2 := { "var": tm.get("int") }
+  tc3 := { "var1": tm.get("int"), "var2": tm.createUnion([tm.get("u32"), tm.get("u64")]) }
+
+  EXPECT_EQ(stringifyTC(tc1), "{}")
+  EXPECT_EQ(stringifyTC(tc2), "{var: int}")
+  EXPECT_EQ(stringifyTC(tc3), "{var1: int, var2: u32 | u64}")
+}

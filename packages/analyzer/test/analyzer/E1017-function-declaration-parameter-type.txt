@@ -1,0 +1,7 @@
+fn test (a: void) {
+}
+===== err =====
+E1017-function-declaration-parameter-type.txt:1:13: AnalyzeError: E1017 - Type `void` can only be used as function return type
+1 | fn test (a: void) {
+  |             ~~~~
+2 | }

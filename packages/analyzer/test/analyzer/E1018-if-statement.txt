@@ -1,0 +1,14 @@
+main {
+  mut a := 1
+  if "string" {
+    a = 2
+  } else {
+    a = 3
+  }
+}
+===== err =====
+E1018-if-statement.txt:3:6: AnalyzeError: E1018 - Unexpected `str` type in conditional. The condition should always be of `bool` type
+2 |   mut a := 1
+3 |   if "string" {
+  |      ~~~~~~~~
+4 |     a = 2

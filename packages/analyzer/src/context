@@ -1,0 +1,103 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import * as Type from "./type"
+
+export obj Context {
+  mut initialType: ref Type.Type
+  mut targetType: (ref Type.Type)?
+}
+
+export obj AsExpressionContextExtra {
+  mut fromType: ref Type.Type
+}
+
+export obj CallExpressionContextArgument {
+  mut argument: Parser.CallExpressionArgument
+  mut parameterIdx: int
+  mut typeParameter: Type.TypeParameter
+}
+
+export obj CallExpressionContextExtra {
+  mut arguments: CallExpressionContextArgument[]
+  mut asynchronous: bool
+  mut parameters: Type.TypeParameter[]
+  mut returnType: ref Type.Type
+}
+
+export obj ElementAccessExpressionContextExtra {
+  mut selfType: ref Type.Type
+}
+
+export obj IsExpressionContextExtra {
+  mut t: ref Type.Type
+}
+
+export obj ObjectDeclarationContext {
+  mut selfType: ref Type.Type
+}
+
+export obj PropertyAccessExpressionContextExtra {
+  mut property: Type.TypeProperty
+}
+
+export obj VariableDeclarationContext {
+  mut varType: ref Type.Type
+}
+
+export fn initial (it: ref Parser.Expression) ref Type.Type {
+  if !(it.context is Context) {
+    throw error_NewError("Tried getting initial for expression '" + Parser.stringifyExpression(it) + "' that has no context")
+  }
+
+  context := it.context as Context
+  return context.initialType
+}
+
+export fn set (mut it: ref Parser.Expression, initialType: ref Type.Type) {
+  it.context = Context{initialType: initialType}
+}
+
+export fn setExtra (mut it: ref Parser.Expression, extra: any) {
+  if !(it.context is Context) {
+    throw error_NewError("Tried setting extra for expression '" + Parser.stringifyExpression(it) + "' that has no context")
+  }
+
+  it.contextExtra = extra
+}
+
+export fn setTarget (mut it: ref Parser.Expression, targetType: ref Type.Type) {
+  if !(it.context is Context) {
+    throw error_NewError("Tried setting target for expression '" + Parser.stringifyExpression(it) + "' that has no context")
+  }
+
+  mut context := ref (it.context as Context)
+
+  if !Type.match(context.initialType, targetType) {
+    context.targetType = Type.opt(targetType)
+  }
+}
+
+export fn target (it: ref Parser.Expression) ref Type.Type {
+  if !(it.context is Context) {
+    throw error_NewError("Tried getting target for expression '" + Parser.stringifyExpression(it) + "' that has no context")
+  }
+
+  context := it.context as Context
+  return context.targetType == nil ? context.initialType : context.targetType
+}
+
+export fn tryTarget (mut it: ref Parser.Expression, targetType: ref Type.Type) {
+  if !(it.context is Context) {
+    throw error_NewError("Tried setting possible target for expression '" + Parser.stringifyExpression(it) + "' that has no context")
+  }
+
+  context := it.context as Context
+
+  if context.initialType.canPromoteTo(targetType) {
+    setTarget(it, targetType)
+  }
+}

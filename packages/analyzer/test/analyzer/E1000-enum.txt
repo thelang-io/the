@@ -1,0 +1,7 @@
+enum Color { Red, Green }
+enum Color { Green, Blue }
+===== err =====
+E1000-enum.txt:2:6: AnalyzeError: E1000 - Redefinition of 'Color'
+1 | enum Color { Red, Green }
+2 | enum Color { Green, Blue }
+  |      ~~~~~

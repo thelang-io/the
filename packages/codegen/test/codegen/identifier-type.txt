@@ -1,0 +1,13 @@
+main {
+  var1: int
+  var2: str
+}
+===== code =====
+#include <d4/string.h>
+#include <stdint.h>
+int main (void) {
+  int32_t var1_0 = 0;
+  d4_str_t var2_0 = d4_str_empty_val;
+  d4_str_free(var2_0);
+}
+===== output =====

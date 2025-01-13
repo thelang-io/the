@@ -1,0 +1,9 @@
+main {
+  a := !'a'
+}
+===== err =====
+E1025-excl.txt:2:8: AnalyzeError: E1025 - Cannot apply unary operator '!' to type `rune`
+1 | main {
+2 |   a := !'a'
+  |        ^
+3 | }

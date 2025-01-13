@@ -1,0 +1,28 @@
+async fn cond (n: int) bool {
+  return n > 10
+}
+
+main {
+  mut a: bool | int
+  b := await cond(a = 10) ? a : 20
+}
+===== out =====
+FunctionDeclaration(asynchronous=true name=cond return=bool)
+  FunctionParameter(name=n type=int mutable=false variadic=false)
+  ReturnStatement()
+    BinaryExpression(initial=bool operator=>)
+      Identifier(initial=int name=n)
+      IntegerLiteral(initial=int value=10)
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int context:varType=bool | int)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=int)
+    ConditionalExpression(initial=int)
+      AwaitExpression(initial=bool)
+        CallExpression(initial=async (n: int) -> bool extra:asynchronous=true extra:returnType=bool)
+          Identifier(initial=async (n: int) -> bool name=cond)
+          CallExpressionArgument(extra:parameterIdx=0)
+            AssignmentExpression(initial=int operator==)
+              Identifier(initial=bool | int name=a)
+              IntegerLiteral(initial=int target=bool | int value=10)
+      Identifier(initial=bool | int target=int name=a)
+      IntegerLiteral(initial=int value=20)

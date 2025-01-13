@@ -49,6 +49,57 @@ A string in ASCII format containing decoded data from `data`.
 base64.decode("QWFyb24=")
 ```
 
+### `byteArray.fromStr (in: str) byte[]`
+Converts a string into a byte array.
+
+**Parameters**
+
+- `in` - string to convert
+
+**Return value**
+
+A byte array representing input string.
+
+**Examples**
+
+```the
+byteArray.fromStr("Aaron")
+```
+
+### `byteArray.toHexStr (in: byte[]) str`
+Converts a byte array into a hex string.
+
+**Parameters**
+
+- `in` - byte array to convert
+
+**Return value**
+
+A hex string representing input byte array.
+
+**Examples**
+
+```the
+byteArray.toHexStr([0x41, 0x61, 0x72, 0x6F, 0x6E])
+```
+
+### `byteArray.toStr (in: byte[]) str`
+Converts a byte array into a string.
+
+**Parameters**
+
+- `in` - byte array to convert
+
+**Return value**
+
+A string representing input byte array.
+
+**Examples**
+
+```the
+byteArray.toStr([0x41, 0x61, 0x72, 0x6F, 0x6E])
+```
+
 ### `qrcode.QRCode (input: Buffer) IQRCode`
 Constructs `IQRCode` object.
 
@@ -62,7 +113,7 @@ Constructed `IQRCode` object.
 
 **Exceptions**
 
-- `Base64Error` - thrown if string to be decoded is not correctly encoded
+- `QRCodeError` - thrown if string to be decoded is not correctly encoded
 
 **Examples**
 
@@ -112,4 +163,22 @@ none
 mut qr := qrcode.QRCode("HELLO, WORLD!")
 qr.encode(ecc: .M, mask: 3)
 qrcode.toTerminal(qr)
+```
+
+### `md5 (data: byte[]) byte[]`
+Encodes byte array with md5 algorithm.
+
+**Parameters**
+
+- `data` - byte array to encode
+
+**Return value**
+
+A byte array containing md5 representation of the `data`.
+
+**Examples**
+
+```the
+import byteArray, md5 from "the/algorithm"
+result := md5(byteArray.fromStr("Aaron"))
 ```

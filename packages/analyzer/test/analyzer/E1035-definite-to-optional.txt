@@ -1,0 +1,11 @@
+fn test (a: int) {}
+main {
+  a: int?
+  test(a)
+}
+===== err =====
+E1035-definite-to-optional.txt:4:8: AnalyzeError: E1035 - Argument of type `int?` is not assignable to parameter of type `int`
+3 |   a: int?
+4 |   test(a)
+  |        ^
+5 | }

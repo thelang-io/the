@@ -1,0 +1,11 @@
+enum Test {
+  Member1,
+  Member2 = 10,
+  Member3,
+}
+===== out =====
+EnumDeclaration(name=Test)
+  EnumDeclarationMember(name=Member1)
+  EnumDeclarationMember(name=Member2)
+    IntegerLiteral(initial=int value=10)
+  EnumDeclarationMember(name=Member3)

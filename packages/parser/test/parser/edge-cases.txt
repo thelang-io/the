@@ -32,8 +32,8 @@ Program
         right
           ParenthesizedExpression(start=22, end=25)
             IntegerLiteral(start=23, end=24 type=Decimal) 1
-  ExpressionStatement(start=26, end=47)
-    ClosureExpression(start=26, end=46 async)
+  ExpressionStatement(start=27, end=47)
+    ClosureExpression(start=27, end=46 async)
       returnType
         IdentifierType(start=39 end=43)
           Identifier(start=39 end=43) void
@@ -54,7 +54,7 @@ Program
     name
       Identifier(start=66 end=67) d
     type
-      ParenthesizedType(start=68 end=78)
+      ParenthesizedType(start=69 end=78)
         ReferenceType(start=70 end=77)
           IdentifierType(start=74 end=77)
             Identifier(start=74 end=77) int

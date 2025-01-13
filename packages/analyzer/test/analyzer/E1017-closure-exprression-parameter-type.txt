@@ -1,0 +1,10 @@
+main {
+  test := (a: void) -> void {
+  }
+}
+===== err =====
+E1017-closure-exprression-parameter-type.txt:2:15: AnalyzeError: E1017 - Type `void` can only be used as function return type
+1 | main {
+2 |   test := (a: void) -> void {
+  |               ~~~~
+3 |   }

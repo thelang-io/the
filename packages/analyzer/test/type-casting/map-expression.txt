@@ -1,0 +1,18 @@
+main {
+  mut a: bool | int
+  b := { "key": a = true }.empty ? a : false
+}
+===== out =====
+MainDeclaration()
+  VariableDeclaration(name=a mutable=true constant=false type=bool | int context:varType=bool | int)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=bool)
+    ConditionalExpression(initial=bool)
+      PropertyAccessExpression(initial=bool name=empty extra:propertyName=empty extra:propertyType=bool extra:propertyBuiltin)
+        MapExpression(initial=bool[str])
+          MapExpressionElement()
+            StringLiteral(initial=str value=key)
+            AssignmentExpression(initial=bool operator==)
+              Identifier(initial=bool | int name=a)
+              BooleanLiteral(initial=bool target=bool | int value=true)
+      Identifier(initial=bool | int target=bool name=a)
+      BooleanLiteral(initial=bool value=false)

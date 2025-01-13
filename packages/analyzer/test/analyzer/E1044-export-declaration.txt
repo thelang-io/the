@@ -1,0 +1,9 @@
+main {
+  export fn test () {}
+}
+===== err =====
+E1044-export-declaration.txt:2:3: AnalyzeError: E1044 - Export declaration can only be used at the top level
+1 | main {
+2 |   export fn test () {}
+  |   ~~~~~~~~~~~~~~~~~~~~
+3 | }

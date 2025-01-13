@@ -1,0 +1,15 @@
+obj Test {
+  a: int
+}
+const b := Test{a: 10}
+const c := b.a
+===== out =====
+ObjectDeclaration(name=Test context:selfType=Test)
+  ObjectDeclarationProperty(name=a mutable=false constant=false type=int)
+VariableDeclaration(name=b mutable=false constant=true context:varType=Test)
+  ObjectExpression(initial=Test id=Test)
+    ObjectExpressionProperty(name=a)
+      IntegerLiteral(initial=int value=10)
+VariableDeclaration(name=c mutable=false constant=true context:varType=int)
+  PropertyAccessExpression(initial=int name=a extra:propertyName=a extra:propertyType=int)
+    Identifier(initial=Test name=b)

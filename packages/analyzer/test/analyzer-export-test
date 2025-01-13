@@ -1,0 +1,43 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TypeMap from "../src/type-map"
+import * as AnalyzerExport from "../src/analyzer-export"
+import * as Type from "../src/type"
+
+export fn TEST_AnalyzerExport_get () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  mut exports := [
+    Type.NamespaceMember{name: "test1", t: tm.get("int")},
+    Type.NamespaceMember{name: "test2", t: tm.get("str")},
+    Type.NamespaceMember{name: "test3", t: tm.get("char")},
+  ]
+
+  EXPECT_NO_THROW(() -> void {
+    exportItem := AnalyzerExport.get(ref exports, "test1")
+    EXPECT_EQ(exportItem.name, "test1")
+  })
+
+  EXPECT_THROW_WITH_MESSAGE(() -> void {
+    AnalyzerExport.get(ref exports, "test4")
+  }, "Export you are looking for doesn't exist")
+}
+
+export fn TEST_AnalyzerExport_has () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  exports := [
+    Type.NamespaceMember{name: "test1", t: tm.get("int")},
+    Type.NamespaceMember{name: "test2", t: tm.get("str")},
+    Type.NamespaceMember{name: "test3", t: tm.get("char")},
+  ]
+
+  EXPECT_TRUE(AnalyzerExport.has(ref exports, "test1"))
+  EXPECT_TRUE(AnalyzerExport.has(ref exports, "test2"))
+  EXPECT_FALSE(AnalyzerExport.has(ref exports, "test4"))
+}

@@ -1,0 +1,9 @@
+obj Invoice {
+  pay: (a: void) -> void
+}
+===== err =====
+E1017-function-type.txt:2:12: AnalyzeError: E1017 - Type `void` can only be used as function return type
+1 | obj Invoice {
+2 |   pay: (a: void) -> void
+  |            ~~~~
+3 | }

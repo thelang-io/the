@@ -1,0 +1,217 @@
+main {
+  a: i8 = 10
+  print(a as i16)
+  print(a as i32)
+  print(a as int)
+  print(a as i64)
+  print(a as float)
+  print(a as f32)
+  print(a as f64)
+
+  b: u8 = 10
+  print(b as u16)
+  print(b as u32)
+  print(b as u64)
+  print(b as float)
+  print(b as f32)
+  print(b as f64)
+
+  c := 10
+  print(c as i32)
+  print(c as i64)
+  print(c as float)
+  print(c as f32)
+  print(c as f64)
+
+  d: byte = 65
+  print(d as u8)
+  print(d as char)
+  print(d as int)
+  print(d as float)
+
+  e := 'a'
+  print(e as int)
+  print(e as float)
+
+  f := true
+  print(f as i8)
+  print(f as u8)
+  print(f as int)
+  print(f as float)
+}
+===== code =====
+#include <d4/any.h>
+#include <d4/char.h>
+#include <d4/globals.h>
+#include <d4/number.h>
+#include <d4/safe.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <wchar.h>
+#define TYPE_i16 1
+#define TYPE_i32 2
+#define TYPE_int 3
+#define TYPE_i64 4
+#define TYPE_float 5
+#define TYPE_f32 6
+#define TYPE_f64 7
+#define TYPE_u16 8
+#define TYPE_u32 9
+#define TYPE_u64 10
+#define TYPE_u8 11
+#define TYPE_char 12
+#define TYPE_i8 13
+D4_ANY_DECLARE(i16, int16_t)
+D4_ANY_DECLARE(i32, int32_t)
+D4_ANY_DECLARE(int, int32_t)
+D4_ANY_DECLARE(i64, int64_t)
+D4_ANY_DECLARE(float, double)
+D4_ANY_DECLARE(f32, float)
+D4_ANY_DECLARE(f64, double)
+D4_ANY_DECLARE(u16, uint16_t)
+D4_ANY_DECLARE(u32, uint32_t)
+D4_ANY_DECLARE(u64, uint64_t)
+D4_ANY_DECLARE(u8, uint8_t)
+D4_ANY_DECLARE(char, char)
+D4_ANY_DECLARE(i8, int8_t)
+D4_ANY_DEFINE(TYPE_i16, i16, int16_t, val, lhs_val == rhs_val, (void) val, d4_i16_str(val))
+D4_ANY_DEFINE(TYPE_i32, i32, int32_t, val, lhs_val == rhs_val, (void) val, d4_i32_str(val))
+D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+D4_ANY_DEFINE(TYPE_i64, i64, int64_t, val, lhs_val == rhs_val, (void) val, d4_i64_str(val))
+D4_ANY_DEFINE(TYPE_float, float, double, val, lhs_val == rhs_val, (void) val, d4_float_str(val))
+D4_ANY_DEFINE(TYPE_f32, f32, float, val, lhs_val == rhs_val, (void) val, d4_f32_str(val))
+D4_ANY_DEFINE(TYPE_f64, f64, double, val, lhs_val == rhs_val, (void) val, d4_f64_str(val))
+D4_ANY_DEFINE(TYPE_u16, u16, uint16_t, val, lhs_val == rhs_val, (void) val, d4_u16_str(val))
+D4_ANY_DEFINE(TYPE_u32, u32, uint32_t, val, lhs_val == rhs_val, (void) val, d4_u32_str(val))
+D4_ANY_DEFINE(TYPE_u64, u64, uint64_t, val, lhs_val == rhs_val, (void) val, d4_u64_str(val))
+D4_ANY_DEFINE(TYPE_u8, u8, uint8_t, val, lhs_val == rhs_val, (void) val, d4_u8_str(val))
+D4_ANY_DEFINE(TYPE_char, char, char, val, lhs_val == rhs_val, (void) val, d4_char_str(val))
+D4_ANY_DEFINE(TYPE_i8, i8, int8_t, val, lhs_val == rhs_val, (void) val, d4_i8_str(val))
+int main (void) {
+  d4_any_t __THE_1 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_2 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_3 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_4 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_5 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_6 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_7 = {-1, NULL, NULL, NULL, NULL, NULL};
+  uint8_t b_0;
+  d4_any_t __THE_8 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_9 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_10 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_11 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_12 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_13 = {-1, NULL, NULL, NULL, NULL, NULL};
+  int32_t c_0;
+  d4_any_t __THE_14 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_15 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_16 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_17 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_18 = {-1, NULL, NULL, NULL, NULL, NULL};
+  unsigned char d_0;
+  d4_any_t __THE_19 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_20 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_21 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_22 = {-1, NULL, NULL, NULL, NULL, NULL};
+  wchar_t e_0;
+  d4_any_t __THE_23 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_24 = {-1, NULL, NULL, NULL, NULL, NULL};
+  bool f_0;
+  d4_any_t __THE_25 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_26 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_27 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_28 = {-1, NULL, NULL, NULL, NULL, NULL};
+  int8_t a_0 = (int8_t) 10;
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_1 = d4_any_i16_alloc((int16_t) a_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_2 = d4_any_i32_alloc((int32_t) a_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_3 = d4_any_int_alloc((int32_t) a_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_4 = d4_any_i64_alloc((int64_t) a_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_5 = d4_any_float_alloc((double) a_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_6 = d4_any_f32_alloc((float) a_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_7 = d4_any_f64_alloc((double) a_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  b_0 = (uint8_t) 10;
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_8 = d4_any_u16_alloc((uint16_t) b_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_9 = d4_any_u32_alloc((uint32_t) b_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_10 = d4_any_u64_alloc((uint64_t) b_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_11 = d4_any_float_alloc((double) b_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_12 = d4_any_f32_alloc((float) b_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_13 = d4_any_f64_alloc((double) b_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  c_0 = 10;
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_14 = d4_any_i32_alloc((int32_t) c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_15 = d4_any_i64_alloc((int64_t) c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_16 = d4_any_float_alloc((double) c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_17 = d4_any_f32_alloc((float) c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_18 = d4_any_f64_alloc((double) c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d_0 = 65;
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_19 = d4_any_u8_alloc((uint8_t) d_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_20 = d4_any_char_alloc((char) d_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_21 = d4_any_int_alloc((int32_t) d_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_22 = d4_any_float_alloc((double) d_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  e_0 = L'a';
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_23 = d4_any_int_alloc((int32_t) e_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_24 = d4_any_float_alloc((double) e_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  f_0 = true;
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_25 = d4_any_i8_alloc((int8_t) f_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_26 = d4_any_u8_alloc((uint8_t) f_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_27 = d4_any_int_alloc((int32_t) f_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_print.func(d4_print.ctx, d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {d4_arr_any_alloc(1, __THE_28 = d4_any_float_alloc((double) f_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_any_free(__THE_28);
+  d4_any_free(__THE_27);
+  d4_any_free(__THE_26);
+  d4_any_free(__THE_25);
+  d4_any_free(__THE_24);
+  d4_any_free(__THE_23);
+  d4_any_free(__THE_22);
+  d4_any_free(__THE_21);
+  d4_any_free(__THE_20);
+  d4_any_free(__THE_19);
+  d4_any_free(__THE_18);
+  d4_any_free(__THE_17);
+  d4_any_free(__THE_16);
+  d4_any_free(__THE_15);
+  d4_any_free(__THE_14);
+  d4_any_free(__THE_13);
+  d4_any_free(__THE_12);
+  d4_any_free(__THE_11);
+  d4_any_free(__THE_10);
+  d4_any_free(__THE_9);
+  d4_any_free(__THE_8);
+  d4_any_free(__THE_7);
+  d4_any_free(__THE_6);
+  d4_any_free(__THE_5);
+  d4_any_free(__THE_4);
+  d4_any_free(__THE_3);
+  d4_any_free(__THE_2);
+  d4_any_free(__THE_1);
+}
+===== output =====
+10
+10
+10
+10
+10.0
+10.0
+10.0
+10
+10
+10
+10.0
+10.0
+10.0
+10
+10
+10.0
+10.0
+10.0
+65
+A
+65
+65.0
+97
+97.0
+1
+1
+1
+1.0

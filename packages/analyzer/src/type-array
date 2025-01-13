@@ -1,0 +1,30 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Type from "./type"
+
+// TODO: remove after reference problem fixed in v1
+export obj TypeArray {
+  mut items: any[]
+  mut len: int
+
+  fn at (mut self: ref Self, index: int) ref Type.Type {
+    return ref ((self.items[index] as any) as Type.Type)
+  }
+
+  fn last (mut self: ref Self) ref Type.Type {
+    return ref ((self.items.last as any) as Type.Type)
+  }
+
+  fn push (mut self: ref Self, item: Type.Type) {
+    self.items.push(item)
+    self.len++
+  }
+
+  fn remove (mut self: ref Self, index: int) {
+    self.items.remove(index)
+    self.len--
+  }
+}

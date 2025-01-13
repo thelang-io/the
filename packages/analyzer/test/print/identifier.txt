@@ -1,0 +1,8 @@
+const a := 10
+const b := a as int | str
+===== out =====
+VariableDeclaration(name=a mutable=false constant=true context:varType=int)
+  IntegerLiteral(initial=int value=10)
+VariableDeclaration(name=b mutable=false constant=true context:varType=int | str)
+  AsExpression(initial=int | str as=int | str extra:from=int)
+    Identifier(initial=int name=a)

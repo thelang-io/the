@@ -1,0 +1,6 @@
+export enum Color { Red, Green, Blue }
+export fn test () {}
+export obj Cat { mut name: str mut age: int }
+export type Alias = str
+export const ADMIN := true
+export mut USER := true

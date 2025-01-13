@@ -1,0 +1,7 @@
+import PriorityEnum from "./test/fixtures/export-priority"
+import PriorityFunction from "./test/fixtures/import-priority"
+
+main {
+  a1 := PriorityEnum.One
+  PriorityFunction(a1)
+}

@@ -1,0 +1,7 @@
+import Animal from "./test/fixtures/object-animal"
+import Animal from "./test/fixtures/object-animal"
+===== err =====
+E1000-import-specifier-type.txt:2:8: AnalyzeError: E1000 - Redefinition of 'Animal'
+1 | import Animal from "./test/fixtures/object-animal"
+2 | import Animal from "./test/fixtures/object-animal"
+  |        ~~~~~~

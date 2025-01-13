@@ -1,0 +1,19 @@
+fn example () int {
+  return 1
+}
+
+main {
+  d := ref example
+  b := d()
+}
+===== out =====
+FunctionDeclaration(asynchronous=false name=example return=int)
+  ReturnStatement()
+    IntegerLiteral(initial=int value=1)
+MainDeclaration()
+  VariableDeclaration(name=d mutable=false constant=false context:varType=ref () -> int)
+    ReferenceExpression(initial=ref () -> int)
+      Identifier(initial=() -> int name=example)
+  VariableDeclaration(name=b mutable=false constant=false context:varType=int)
+    CallExpression(initial=int extra:asynchronous=false extra:returnType=int)
+      Identifier(initial=ref () -> int target=() -> int name=d)

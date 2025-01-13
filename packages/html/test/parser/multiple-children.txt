@@ -1,0 +1,33 @@
+<div>
+  Some content1
+  <span></span>
+  Some content2
+  <span></span><span></span>
+</div>
+===== out =====
+{
+  "nodeType": "ELEMENT_NODE",
+  "tagName": "div",
+  "childNodes": [
+    {
+      "nodeType": "TEXT_NODE",
+      "nodeValue": "\n  Some content1\n  ",
+    },
+    {
+      "nodeType": "ELEMENT_NODE",
+      "tagName": "span",
+    },
+    {
+      "nodeType": "TEXT_NODE",
+      "nodeValue": "\n  Some content2\n  ",
+    },
+    {
+      "nodeType": "ELEMENT_NODE",
+      "tagName": "span",
+    },
+    {
+      "nodeType": "ELEMENT_NODE",
+      "tagName": "span",
+    },
+  ],
+}

@@ -1,0 +1,67 @@
+main {
+  mut v1: byte = 10
+  mut v2: rune = 'a'
+  mut v3: rune = "a"[0]
+  mut v4: str = "test"
+  mut v5: i8 = -10
+  mut v6: i16 = -10
+  mut v7: i32 = -10
+  mut v8: i64 = -10
+  mut v9: u8 = 10
+  mut v10: u16 = 10
+  mut v11: u32 = 10
+  mut v12: u64 = 10
+  mut v13: f32 = 1.23
+  mut v14: f64 = 1.23
+
+  print(v1 > v1)
+  print(v2 < v2)
+  print(v3 >= v3)
+  print(v4 <= v4)
+  print(10 > 5)
+
+  print("test" + v4)
+  print(v1 + v1)
+  print(10 - v5)
+  print(v5 / 10)
+  print(v6 % 10)
+  print(v7 * 10)
+  print(v8 + 10)
+  print(v9 + 10)
+  print(v10 + 10)
+  print(v11 + 10)
+  print(v12 + 10)
+  print(v13 + 10)
+  print(v14 + 10)
+  print(10 + v14)
+
+  print(v1 || v5 || 10)
+  print(v6 && v7 && v13 && v14)
+  print(v5 ^ v6)
+  print(v7 | v8)
+  print(v9 & v10)
+  print(v11 >> v12)
+  print(0 << 1)
+
+  v4 += "test"
+  v1 += v1
+  v5 -= 10
+  v5 /= 10
+  v6 %= 10
+  v7 *= 10
+  v8 += 10
+  v9 += 10
+  v10 += 10
+  v11 += 10
+  v12 += 10
+  v13 += 10
+  v14 += 10
+
+  v1 ||= v5
+  v6 &&= v7
+  v5 ^= v6
+  v7 |= v8
+  v9 &= v10
+  v11 >>= v12
+  v5 <<= 1
+}

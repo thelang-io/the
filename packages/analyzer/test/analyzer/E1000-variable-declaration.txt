@@ -1,0 +1,10 @@
+main {
+  a := 10
+  a := 20
+}
+===== err =====
+E1000-variable-declaration.txt:3:3: AnalyzeError: E1000 - Redefinition of 'a'
+2 |   a := 10
+3 |   a := 20
+  |   ^
+4 | }

@@ -1,0 +1,7 @@
+obj Color { mut val: int }
+obj Color { mut val2: int }
+===== err =====
+E1000-object.txt:2:5: AnalyzeError: E1000 - Redefinition of 'Color'
+1 | obj Color { mut val: int }
+2 | obj Color { mut val2: int }
+  |     ~~~~~

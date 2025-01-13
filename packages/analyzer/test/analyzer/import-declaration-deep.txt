@@ -1,0 +1,11 @@
+import TestObjWithMethods from "./test/fixtures/import-deep"
+
+fn test () {
+  t := TestObjWithMethods{}
+  t.test1()
+  t.test2()
+}
+
+main {
+  test()
+}

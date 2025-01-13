@@ -1,0 +1,10 @@
+main {
+  pay := (amount: int, amount: str) -> void {
+  }
+}
+===== err =====
+E1054-closure-expression.txt:2:24: AnalyzeError: E1054 - Duplicate declaration of parameter 'amount'
+1 | main {
+2 |   pay := (amount: int, amount: str) -> void {
+  |                        ~~~~~~
+3 |   }

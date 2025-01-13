@@ -1,0 +1,68 @@
+main {
+  mut testInt1 := 1
+  mut testInt2 := 2
+  loop i := ref testInt1; i != ref testInt2; i = (ref testInt2) {
+  }
+
+  mut a := ref testInt1
+  loop ; a != ref testInt2; a = (ref testInt2) {
+  }
+
+  mut b := ref testInt1
+  loop ; b != ref testInt2; {
+    b = ref testInt2
+  }
+
+  mut c := ref testInt1
+  loop {
+    if c == (ref testInt2) {
+      break
+    }
+
+    c = ref testInt2
+  }
+
+  loop d := ref testInt1; d != ref testInt2; {
+    d = ref testInt2
+  }
+
+  loop e := ref testInt1;; e = (ref testInt2) {
+    if e == (ref testInt2) {
+      break
+    }
+  }
+}
+===== code =====
+#include <d4/reference.h>
+#include <stdint.h>
+D4_REFERENCE_DECLARE(int, int32_t)
+int main (void) {
+  d4_ref_int_t a_0;
+  d4_ref_int_t b_0;
+  d4_ref_int_t c_0;
+  int32_t testInt1_0 = 1;
+  int32_t testInt2_0 = 2;
+  for (d4_ref_int_t i_0 = &testInt1_0; i_0 != &testInt2_0; i_0 = (&testInt2_0)) {}
+  a_0 = &testInt1_0;
+  for (; a_0 != &testInt2_0; a_0 = (&testInt2_0)) {}
+  b_0 = &testInt1_0;
+  while (b_0 != &testInt2_0) {
+    b_0 = &testInt2_0;
+  }
+  c_0 = &testInt1_0;
+  while (1) {
+    if (c_0 == (&testInt2_0)) {
+      break;
+    }
+    c_0 = &testInt2_0;
+  }
+  for (d4_ref_int_t d_0 = &testInt1_0; d_0 != &testInt2_0;) {
+    d_0 = &testInt2_0;
+  }
+  for (d4_ref_int_t e_0 = &testInt1_0;; e_0 = (&testInt2_0)) {
+    if (e_0 == (&testInt2_0)) {
+      break;
+    }
+  }
+}
+===== output =====

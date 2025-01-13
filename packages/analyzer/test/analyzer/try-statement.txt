@@ -1,0 +1,24 @@
+obj MyError {
+  mut message: str
+  mut stack: str
+}
+
+fn parse () {
+  throw MyError{message: "Don't do this"}
+}
+
+main {
+  try {
+    parse()
+  } catch err: Error {
+    print(err.message)
+  }
+
+  try {
+    parse()
+  } catch err: Error {
+    print(err.message)
+  } catch err: MyError {
+    print(err.message)
+  }
+}

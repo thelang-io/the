@@ -1,0 +1,50 @@
+import Animal from "./test/fixtures/object-animal"
+async fn test () {}
+
+main {
+  mut a := 10
+  mut b := ref a
+  mut c := ref b
+  mut d: int?
+  mut e := ref d
+  mut f := ref e
+  g := ref test
+  h := ref g
+  mut m := true
+  mut n := ref m
+  mut o := ref n
+
+  v1: int?[] = [b, c, e, f]
+
+  // v2 := e as int
+  // v3 := f as int
+
+  b += 2
+  c -= 3
+  f = nil
+
+  await g()
+  await h()
+
+  v4 := b + c
+  v5 := e == f
+  v6 := n ? a : b
+  v7 := o ? b : c
+  v8 := v1[b]
+  v9 := v1[c]
+
+  // v10 := e is int
+  // v11 := f is int
+
+  v12: int?[str] = { "key1": b, "key2": c, "key3": e, "key4": f }
+
+  v13 := Animal{age: b}
+  v14 := Animal{age: c}
+
+  v15 := !b
+  v16 := ~b
+  v17 := b++
+  v18 := !c
+  v19 := ~c
+  v20 := c++
+}

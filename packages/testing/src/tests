@@ -1,0 +1,117 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import TEST_FAILED from "./matchers"
+import Test from "./test"
+
+export obj Tests {
+  mut _tests: Test[]
+
+  fn register (mut self: ref Self, name: str, body: () -> void) ref Self {
+    self._tests.push(Test{name: name, body: body})
+    return self
+  }
+
+  fn run (mut self: ref Self, args: str[]) ref Self {
+    mut filters: str[]
+
+    loop i := 0; i < args.len; i++ {
+      arg := args[i]
+
+      if arg.slice(0, 9) == "--filter=" {
+        filters = arg.slice(9).split(",")
+      }
+    }
+
+    mut filtersAreInclusive := false
+
+    loop i := filters.len - 1; i >= 0; i-- {
+      mut filter := filters[i]
+      filter = filter.trim()
+
+      if filter.empty {
+        filters.remove(i)
+      } elif filter[0] != '!' {
+        filtersAreInclusive = true
+      }
+    }
+
+    mut allTests: (ref Test)[]
+
+    loop i := 0; i < self._tests.len; i++ {
+      mut test := self._tests[i]
+      mut shouldInclude := false
+
+      loop j := 0; j < filters.len; j++ {
+        exclude := filters[j][0] == '!'
+        filterValue := exclude ? filters[j].slice(1) : filters[j]
+
+        if filtersAreInclusive {
+          if !exclude && test.name == filterValue {
+            shouldInclude = true
+            break
+          }
+        } elif !(exclude && test.name == filterValue) {
+          shouldInclude = true
+          break
+        }
+      }
+
+      if shouldInclude || filters.len == 0 {
+        allTests.push(test)
+      }
+    }
+
+    mut totalTime := 0
+    mut failedTests: str[]
+
+    print("[==========] Running", allTests.len, self._word(allTests.len), to: "stderr")
+
+    loop i := 0; i < allTests.len; i++ {
+      test := allTests[i]
+
+      print("[ RUN      ]", test.name, to: "stderr")
+      timeStart := date_now()
+      test.body()
+      timeDelta := date_now() - timeStart
+      testStatus := TEST_FAILED ? "[  FAILED  ]" : "[       OK ]"
+      print(testStatus, test.name, "(" + timeDelta.str() + " ms)", to: "stderr")
+
+      if TEST_FAILED {
+        failedTests.push(test.name)
+      }
+
+      totalTime += timeDelta
+      TEST_FAILED = false
+    }
+
+    print(
+      "[==========]",
+      allTests.len,
+      self._word(allTests.len) + " ran (" + totalTime.str() + " ms total)",
+      to: "stderr"
+    )
+
+    passedTestsNum := allTests.len - failedTests.len
+    print("[  PASSED  ]", passedTestsNum, self._word(passedTestsNum), to: "stderr")
+
+    if !failedTests.empty {
+      print("[  FAILED  ]", failedTests.len, self._word(failedTests.len) + ", listed below:", to: "stderr")
+
+      loop i := 0; i < failedTests.len; i++ {
+        failedTest: str = failedTests[i]
+        print("[  FAILED  ]", failedTest, to: "stderr")
+      }
+
+      print(to: "stderr")
+      print(" " + failedTests.len.str() + " FAILED", self._word(failedTests.len).upper, to: "stderr")
+      process_exit(1)
+    }
+  }
+
+  fn _word (n: int) str {
+    return n == 1 ? "test" : "tests"
+  }
+}

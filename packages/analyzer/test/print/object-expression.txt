@@ -1,0 +1,23 @@
+obj Test {
+  a: int
+  b: str
+}
+const a := Test{}
+const b := Test{a: 10}
+const c := Test{a: 10, b: "str"}
+===== out =====
+ObjectDeclaration(name=Test context:selfType=Test)
+  ObjectDeclarationProperty(name=a mutable=false constant=false type=int)
+  ObjectDeclarationProperty(name=b mutable=false constant=false type=str)
+VariableDeclaration(name=a mutable=false constant=true context:varType=Test)
+  ObjectExpression(initial=Test id=Test)
+VariableDeclaration(name=b mutable=false constant=true context:varType=Test)
+  ObjectExpression(initial=Test id=Test)
+    ObjectExpressionProperty(name=a)
+      IntegerLiteral(initial=int value=10)
+VariableDeclaration(name=c mutable=false constant=true context:varType=Test)
+  ObjectExpression(initial=Test id=Test)
+    ObjectExpressionProperty(name=a)
+      IntegerLiteral(initial=int value=10)
+    ObjectExpressionProperty(name=b)
+      StringLiteral(initial=str value=str)

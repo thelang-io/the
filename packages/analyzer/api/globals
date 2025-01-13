@@ -1,0 +1,40 @@
+/*!
+ * Copyright (c) 2018 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* Used as base for error handling. */
+export obj Error {
+  /* Message of the error. */
+  message: str
+  /* Stack trace of the error. */
+  stack: str
+}
+
+/**
+ * Constructs Error object with specified message and returns it.
+ *
+ * @param message - Message of the error.
+ */
+export fn NewError (message: str) Error
+
+/**
+ * Writes the textual representations of the given items into the given output stream.
+ *
+ * @param items - Items to print.
+ * @param separator - String separating items. The default is empty string.
+ * @param terminator - String terminating items. The default is `os_EOL`.
+ * @param to - Output where to write items. Can be `stdout` or `stderr`. The default is `stdout`.
+ */
+export fn print (items: any..., separator := " ", terminator := "\n", to := "stdout") void

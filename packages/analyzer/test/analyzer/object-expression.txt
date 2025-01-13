@@ -1,0 +1,11 @@
+obj Animal {
+  name: str
+  age: int
+}
+
+main {
+  a := Animal{}
+  b := Animal{name: "Dave"}
+  c := Animal{age: 100}
+  d := Animal{name: "Karl", age: 12}
+}

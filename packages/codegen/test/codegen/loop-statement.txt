@@ -1,0 +1,113 @@
+main {
+  mut i := 0
+  mut j := 0
+  mut k := 0
+
+  loop i = 0; i < 3; i++ {
+    i *= 2
+  }
+
+  loop i := 0; i < 10; i++ {
+    j += i
+
+    if j > 10 {
+      break
+    }
+  }
+
+  loop i := 0; i < 10; i++ {
+    if (j / 2) * 2 != j {
+      continue
+    }
+
+    j += i
+  }
+
+  loop i := 0; i < 10; {
+    i++
+
+    if i % 2 {
+      continue
+    }
+
+    j += i
+  }
+
+  loop i := 0; i < 3; i++ {
+    j++
+  }
+
+  loop i := 100; i > 0; i-- {
+    i := 0
+    j := j * 2 + i
+  }
+
+  loop i = 0; i < 10; i++ {
+    k := i
+
+    loop i := k; i < 10; i++ {
+      j++
+    }
+  }
+
+  loop i := 0; i < 10; i++ {
+    loop j := 0; j < 10; j++ {
+      if (i / 2) * 2 == i {
+        break
+      }
+
+      k += i
+    }
+  }
+}
+===== code =====
+#include <stdint.h>
+int main (void) {
+  int32_t i_0 = 0;
+  int32_t j_0 = 0;
+  int32_t k_0 = 0;
+  for (i_0 = 0; i_0 < 3; i_0++) {
+    i_0 *= 2;
+  }
+  for (int32_t i_1 = 0; i_1 < 10; i_1++) {
+    j_0 += i_1;
+    if (j_0 > 10) {
+      break;
+    }
+  }
+  for (int32_t i_1 = 0; i_1 < 10; i_1++) {
+    if ((j_0 / 2) * 2 != j_0) {
+      continue;
+    }
+    j_0 += i_1;
+  }
+  for (int32_t i_1 = 0; i_1 < 10;) {
+    i_1++;
+    if (i_1 % 2) {
+      continue;
+    }
+    j_0 += i_1;
+  }
+  for (int32_t i_1 = 0; i_1 < 3; i_1++) {
+    j_0++;
+  }
+  for (int32_t i_1 = 100; i_1 > 0; i_1--) {
+    int32_t i_2 = 0;
+    int32_t j_1 = j_0 * 2 + i_2;
+  }
+  for (i_0 = 0; i_0 < 10; i_0++) {
+    int32_t k_1 = i_0;
+    for (int32_t i_1 = k_1; i_1 < 10; i_1++) {
+      j_0++;
+    }
+  }
+  for (int32_t i_1 = 0; i_1 < 10; i_1++) {
+    for (int32_t j_1 = 0; j_1 < 10; j_1++) {
+      if ((i_1 / 2) * 2 == i_1) {
+        break;
+      }
+      k_0 += i_1;
+    }
+  }
+}
+===== output =====

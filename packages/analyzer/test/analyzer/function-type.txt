@@ -1,0 +1,33 @@
+fn testA () {}
+fn testB (a: int) {}
+fn testC (a: str, b: int...) str { return "string" }
+fn testD (mut a: str, mut b: int...) str { return "string" }
+
+obj Test {
+  fn testA () {}
+  fn testB (a: int) {}
+  fn testC (a: str, b: int...) str { return "string" }
+  fn testD (mut a: str, mut b: int...) str { return "string" }
+  fn testE (self: ref Self) {}
+}
+
+main {
+  a: () -> void = testA
+  b1: (a: int) -> void = testB
+  b2: (int) -> void = testB
+  c1: (str, int...) -> str = testC
+  c2: (a: str, int...) -> str = testC
+  c3: (a: str, b: int...) -> str = testC
+  d: (mut a: str, mut b: int...) -> str = testD
+
+  test := Test{}
+
+  vA: () -> void = test.testA
+  vB1: (a: int) -> void = test.testB
+  vB2: (int) -> void = test.testB
+  vC1: (str, int...) -> str = test.testC
+  vC2: (a: str, int...) -> str = test.testC
+  vC3: (a: str, b: int...) -> str = test.testC
+  vD: (mut a: str, mut b: int...) -> str = test.testD
+  vE: (self: ref Test) -> void = test.testE
+}

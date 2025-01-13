@@ -1,0 +1,83 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import Analyzer, AnalyzerFile from "../src/analyzer"
+import Type, TypeParameter, TypeProperty from "../src/type"
+import stringifyType from "./stringify-type"
+
+const CONSTRUCTORS := ["Array", "Enum", "Function", "Map", "Object", "Optional", "Reference", "Union"]
+const IGNORED := ["ArrayElement", "MapKey", "MapValue"]
+
+fn lcfirst (s: str) str {
+  return s.slice(0, 1).lower + s.slice(1)
+}
+
+main {
+  mut f := Parser.parse("./api/builtin")
+  Parser.interconnect(ref f)
+
+  mut analyzer := Analyzer{}
+  analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer})
+
+  mut file := analyzer.files.last()
+  file.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+  file.analyze(ref f.program.body)
+
+  if !analyzer.errors.empty {
+    loop i := 0; i < analyzer.errors.len; i++ {
+      print((i == 0 ? "" : os_EOL) + (analyzer.errors[i] as str), to: "stderr")
+    }
+
+    process_exit(1)
+  }
+
+  mut declarations := ""
+  mut definitions := ""
+
+  loop i := 0; i < file.tm.items.len; i++ {
+    item := file.tm.items.at(i)
+    if !item.isAlias() && !item.isEnum() && !item.isObject() { continue }
+    if IGNORED.contains(item.name) || CONSTRUCTORS.contains(item.name) { continue }
+    declarations += "self.items.push(Type.Type{name: \"" + item.name + "\", body: Type.ObjectType{}})" + os_EOL
+    declarations += "mut " + lcfirst(item.name) + "Type := self.items.last()" + os_EOL
+
+    loop j := 0; j < item.properties.len; j++ {
+      property := item.properties[j]
+      definitions += lcfirst(item.name) + "Type.properties.push(Type.TypeProperty{" +
+        "name: \"" + property.name + "\", t: " + stringifyType(property.t, 0, selfName: "self") + ", " +
+        "mutable: " + property.mutable.str() + ", builtin: true})" + os_EOL
+    }
+  }
+
+  print(declarations)
+  print(definitions)
+
+  loop i := 0; i < file.tm.items.len; i++ {
+    item := file.tm.items.at(i)
+    if !item.isAlias() && !item.isEnum() && !item.isObject() { continue }
+    if IGNORED.contains(item.name) || !CONSTRUCTORS.contains(item.name) || item.properties.empty { continue }
+    print(item.name + ":")
+
+    loop j := 0; j < item.properties.len; j++ {
+      property := item.properties[j]
+
+      t := stringifyType(property.t, 4, selfName: "self")
+        .replace("self.get(\"" + item.name + "\")", "result")
+        .replace("self.createReference(result)", "resultRef")
+        .replace("self.get(\"ArrayElement\")", "elementType")
+        .replace("self.createReference(elementType)", "elementTypeRef")
+        .replace("self.get(\"MapKey\")", "keyType")
+        .replace("self.get(\"MapValue\")", "valueType")
+        .replace("self.createArray(elementType)", "result")
+
+      print(
+        "    result.properties.push(Type.TypeProperty{" +
+        "name: \"" + property.name + "\", t: " + t + ", " +
+        "mutable: " + property.mutable.str() + ", builtin: true})"
+      )
+    }
+  }
+}

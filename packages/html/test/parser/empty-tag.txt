@@ -1,0 +1,13 @@
+<>
+  <span></span>
+</>
+===== out =====
+{
+  "nodeType": "ELEMENT_NODE",
+  "childNodes": [
+    {
+      "nodeType": "ELEMENT_NODE",
+      "tagName": "span",
+    },
+  ],
+}

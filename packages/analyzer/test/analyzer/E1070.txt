@@ -1,0 +1,12 @@
+main {
+  a := 1
+}
+main {
+  a := 2
+}
+===== err =====
+E1070.txt:4:1: AnalyzeError: E1070 - Only one declaration of main is allowed per project
+3 | }
+4 | main {
+  | ~~~~~~
+5 |   a := 2

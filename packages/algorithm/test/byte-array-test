@@ -1,0 +1,36 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as byteArray from "../src/byte-array"
+
+const S1: byte[] = []
+const S2: byte[] = [0x30]
+const S3: byte[] = [0x41]
+const S4: byte[] = [0x48, 0x45, 0x4C, 0x4C, 0x4F, 0x20, 0x57, 0x4F, 0x52, 0x4C, 0x44]
+const S5: byte[] = [0x48, 0x65, 0x6C, 0x6C, 0x6F, 0x2C, 0x20, 0x57, 0x6F, 0x72, 0x6C, 0x64, 0x21]
+
+export fn TEST_byteArray_fromStr () {
+  EXPECT_EQ(byteArray.fromStr(""), S1)
+  EXPECT_EQ(byteArray.fromStr("0"), S2)
+  EXPECT_EQ(byteArray.fromStr("A"), S3)
+  EXPECT_EQ(byteArray.fromStr("HELLO WORLD"), S4)
+  EXPECT_EQ(byteArray.fromStr("Hello, World!"), S5)
+}
+
+export fn TEST_byteArray_toHexStr () {
+  EXPECT_EQ(byteArray.toHexStr(S1), "")
+  EXPECT_EQ(byteArray.toHexStr(S2), "30")
+  EXPECT_EQ(byteArray.toHexStr(S3), "41")
+  EXPECT_EQ(byteArray.toHexStr(S4), "48454c4c4f20574f524c44")
+  EXPECT_EQ(byteArray.toHexStr(S5), "48656c6c6f2c20576f726c6421")
+}
+
+export fn TEST_byteArray_toStr () {
+  EXPECT_EQ(byteArray.toStr(S1), "")
+  EXPECT_EQ(byteArray.toStr(S2), "0")
+  EXPECT_EQ(byteArray.toStr(S3), "A")
+  EXPECT_EQ(byteArray.toStr(S4), "HELLO WORLD")
+  EXPECT_EQ(byteArray.toStr(S5), "Hello, World!")
+}

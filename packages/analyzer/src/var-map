@@ -1,0 +1,61 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Type, Var from "./type"
+import * as TypeMap from "./type-map"
+
+export obj VarMap {
+  mut items: Var[]
+  mut scope: int
+
+  fn add (mut self: ref Self, name: str, t: ref Type.Type, mutable: bool) {
+    self.items.push(Var{
+      name: name,
+      t: t,
+      mutable: mutable,
+      scope: self.scope
+    })
+  }
+
+  fn decrease (mut self: ref Self) {
+    len := self.items.len
+
+    loop i := len - 1; i >= 0; i-- {
+      if self.items[i].scope == self.scope {
+        self.items.remove(i)
+      }
+    }
+
+    self.scope--
+  }
+
+  fn get (mut self: ref Self, name: str) Var {
+    loop i := self.items.len - 1; i >= 0; i-- {
+      item := self.items[i]
+
+      if item.name == name {
+        return item
+      }
+    }
+
+    throw error_NewError("Variable with name '" + name + "' doesn't exists")
+  }
+
+  fn has (mut self: ref Self, name: str, global := true) bool {
+    loop i := self.items.len - 1; i >= 0; i-- {
+      item := self.items[i]
+
+      if item.name == name && (global || (!global && item.scope == self.scope)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  fn increase (mut self: ref Self) {
+    self.scope++
+  }
+}

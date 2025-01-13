@@ -1,0 +1,8 @@
+fn Test () {}
+export Test
+export Test
+===== err =====
+E1067-export-named-declaration.txt:3:8: AnalyzeError: E1067 - Duplicate export of 'Test'
+2 | export Test
+3 | export Test
+  |        ~~~~

@@ -1,0 +1,13 @@
+obj Invoice {
+  mut total: float
+}
+
+main {
+  a: Invoice.total
+}
+===== err =====
+E1022.txt:6:6: AnalyzeError: E1022 - 'Invoice' refers to a type, but is being used as a namespace
+5 | main {
+6 |   a: Invoice.total
+  |      ~~~~~~~
+7 | }

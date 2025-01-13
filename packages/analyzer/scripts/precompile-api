@@ -1,0 +1,117 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import Analyzer, AnalyzerFile from "../src/analyzer"
+import Type, TypeParameter, TypeProperty from "../src/type"
+import stringifyType, stringifyTypeProperty from "./stringify-type"
+
+main {
+  mut analyzer := Analyzer{}
+
+  analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer})
+  mut file := analyzer.files.last()
+
+  mut f := Parser.parse("./api/globals")
+  Parser.interconnect(ref f)
+  file.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+  file.tm.init()
+  file.vm.init(ref file.tm)
+  mut initialTypeMapLen := file.tm.items.len
+  file.analyze(ref f.program.body)
+
+  mut globalsTM := ""
+  mut globalsVM := ""
+
+  loop i := initialTypeMapLen; i < file.tm.items.len; i++ {
+    item := file.tm.items.at(i)
+    if !item.isAlias() && !item.isEnum() && !item.isObject() { continue }
+    globalsTM += "  " + stringifyType(item, 2, build: true) + os_EOL
+  }
+
+  loop i := 0; i < file.vm.items.len; i++ {
+    item := file.vm.items[i]
+    globalsVM += "  vm.add(\"" + item.name + "\", " + stringifyType(item.t, 2)
+    globalsVM += ", " + item.mutable.str() + ")" + os_EOL
+  }
+
+  analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer})
+  file = analyzer.files.last()
+
+  f = Parser.parse("./api/standard")
+  Parser.interconnect(ref f)
+  file.reader = Parser.Reader_init(f.path == "anonymous" ? f.content : f.path)
+  file.tm.init()
+  file.vm.init(ref file.tm)
+  initialTypeMapLen = file.tm.items.len
+  file.analyze(ref f.program.body)
+
+  mut stdTMDeclaration := ""
+  mut stdTMDefinition := ""
+  mut stdVM := ""
+  mut stdExports := ""
+
+  loop i := initialTypeMapLen; i < file.tm.items.len; i++ {
+    item := file.tm.items.at(i)
+    if !item.isAlias() && !item.isEnum() && !item.isObject() { continue }
+    nameEscaped := "\"" + item.name + "\""
+
+    if item.isObject() && item.properties.empty {
+      stdTMDeclaration += "  tm.createObject(" + nameEscaped + ")" + os_EOL
+    } elif item.isObject() {
+      typeName := "type" + i.str()
+      stdTMDeclaration += "  mut " + typeName + " := tm.createObject(" + nameEscaped + ")" + os_EOL
+
+      loop j := 0; j < item.properties.len; j++ {
+        property := item.properties[j]
+        stdTMDefinition += "  " + typeName + ".properties.push(" +
+          stringifyTypeProperty(property, 2, "tm") + ")" + os_EOL
+      }
+    } else {
+      stdTMDeclaration += "  " + stringifyType(item, 2, build: true) + os_EOL
+    }
+
+    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped +
+      ", t: tm.get(" + nameEscaped + ")})" + os_EOL
+  }
+
+  loop i := 0; i < file.vm.items.len; i++ {
+    item := file.vm.items[i]
+    nameEscaped := "\"" + item.name + "\""
+
+    stdVM += "  vm.add(\"" + item.name + "\", " + stringifyType(item.t, 2) + ", " + item.mutable.str() + ")" + os_EOL
+    stdExports += "  exports.push(Type.NamespaceMember{name: " + nameEscaped +
+      ", var: vm.get(" + nameEscaped + ")})" + os_EOL
+  }
+
+  mut content := "import * as Type from \"./type\"" + os_EOL
+  content += "import TypeMap from \"./type-map\"" + os_EOL
+  content += "import VarMap from \"./var-map\"" + os_EOL
+  content += os_EOL
+  content += "export fn TypeMap_globals (mut tm: ref TypeMap) {" + os_EOL
+  content += globalsTM
+  content += "}" + os_EOL
+  content += os_EOL
+  content += "export fn VarMap_globals (mut vm: ref VarMap, mut tm: ref TypeMap) {" + os_EOL
+  content += globalsVM
+  content += "}" + os_EOL
+  content += os_EOL
+  content += "export fn TypeMap_std (mut tm: ref TypeMap) {" + os_EOL
+  content += stdTMDeclaration
+  content += stdTMDefinition
+  content += "}" + os_EOL
+  content += os_EOL
+  content += "export fn VarMap_std (mut vm: ref VarMap, mut tm: ref TypeMap) {" + os_EOL
+  content += stdVM
+  content += "}" + os_EOL
+  content += os_EOL
+  content += "export fn AnalyzerFile_stdExports (mut exports: ref Type.NamespaceMember[], " +
+    "mut tm: ref TypeMap, mut vm: ref VarMap) {" + os_EOL
+  content += stdExports
+  content += "}" + os_EOL
+
+  fs_writeFileSync("src/api", content.toBuffer())
+  print("Completed")
+}

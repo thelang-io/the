@@ -1,0 +1,11 @@
+obj Animal { mut name: str }
+main {
+  mut a := Animal{name: "test"}
+  a.name2 = "test"
+}
+===== err =====
+E1002-property-access-expression.txt:4:5: AnalyzeError: E1002 - Property 'name2' does not exist on type `Animal`
+3 |   mut a := Animal{name: "test"}
+4 |   a.name2 = "test"
+  |     ~~~~~
+5 | }

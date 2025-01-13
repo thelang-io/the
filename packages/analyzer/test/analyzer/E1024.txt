@@ -1,0 +1,9 @@
+main {
+  a := 1++
+}
+===== err =====
+E1024.txt:2:9: AnalyzeError: E1024 - Operand of an increment/decrement operator should be a variable, property access or element access
+1 | main {
+2 |   a := 1++
+  |         ~~
+3 | }

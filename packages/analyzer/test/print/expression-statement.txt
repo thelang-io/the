@@ -1,0 +1,8 @@
+main {
+  1 + 2;
+}
+===== out =====
+MainDeclaration()
+  BinaryExpression(initial=int operator=+)
+    IntegerLiteral(initial=int value=1)
+    IntegerLiteral(initial=int value=2)

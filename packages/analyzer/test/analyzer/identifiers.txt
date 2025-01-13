@@ -1,0 +1,9 @@
+const a := 10
+const b := a
+const c := ref b
+
+fn test () {
+  d: str?
+  if d == nil { return }
+  e: str = d
+}

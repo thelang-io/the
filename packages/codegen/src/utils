@@ -1,0 +1,22 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export fn sortStrAsc (a: str, b: str) int {
+  if a.len == 0 && b.len == 0 {
+    return 0
+  } elif a.len == 0 || b.len == 0 {
+    return a.len == 0 ? -1 : 1
+  }
+
+  len := a.len > b.len ? b.len : a.len
+
+  loop i := 0; i < len; i++ {
+    if a[i] != b[i] {
+      return a[i].byte > b[i].byte ? 1 : -1
+    }
+  }
+
+  return a.len == b.len ? 0 : a.len > b.len ? 1 : -1
+}

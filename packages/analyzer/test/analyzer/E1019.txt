@@ -1,0 +1,9 @@
+main {
+  a := true ? 2 : "test"
+}
+===== err =====
+E1019.txt:2:15: AnalyzeError: E1019 - Incompatible consequent `int` and alternate `str` types
+1 | main {
+2 |   a := true ? 2 : "test"
+  |               ~~~~~~~~~~
+3 | }

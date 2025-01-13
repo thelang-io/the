@@ -1,0 +1,47 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+import * as Parser from "the/parser"
+import Analyzer, AnalyzerFile from "../src/analyzer"
+import analyzerPrint from "../src/analyzer-print"
+import parseTestFile from "../test/utils"
+
+const OUT_DELIMITER := os_EOL + "===== out =====" + os_EOL
+const TESTS_DIR := "./test/print/"
+
+main {
+  files := fs_scandirSync("./test/print")
+
+  loop i := 0; i < files.len; i++ {
+    name := files[i] as str
+    if name.slice(-4) != ".txt" { continue }
+    filePath := TESTS_DIR + name
+    print("updating:", name)
+
+    result := parseTestFile(filePath)
+    mut f := Parser.parse(result.in)
+    Parser.interconnect(ref f)
+    mut analyzer := Analyzer{}
+    analyzer.files.push(AnalyzerFile{cwd: process_cwd(), analyzer: ref analyzer, f: f})
+    mut file := analyzer.files.last()
+    file.reader = Parser.Reader_init(file.f.content)
+    file.init()
+    file.analyze(ref file.f.program.body)
+
+    if !analyzer.errors.empty {
+      print(analyzer.errors.join(os_EOL), to: "stderr")
+      continue
+    }
+
+    out := analyzerPrint(ref file.f.program.body)
+    outputTrim := out.trim()
+
+    newContent := result.in.trim() +
+      OUT_DELIMITER + outputTrim +
+      (outputTrim.empty ? "" : os_EOL)
+
+    fs_writeFileSync(filePath, newContent.toBuffer())
+  }
+}

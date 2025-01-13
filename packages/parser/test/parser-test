@@ -3,7 +3,7 @@
  * Licensed under the MIT License
  */
 
-import parse, textify from "../src/parser"
+import interconnect, parse, textify from "../src/parser"
 import parseTestFile from "./utils"
 import * as t from "../src/types"
 
@@ -19,4 +19,84 @@ export fn TEST_Parser_parse () {
     actualStdoutCode := textify(ref f)
     EXPECT_EQ(result.out, actualStdoutCode)
   }
+}
+
+export fn TEST_Parser_interconnect () {
+  mut f1 := parse("const a := 0")
+  mut f2 := parse("const a := 0 const b := 1 const c := 2")
+  mut f3 := parse("main { a := 0 }")
+  mut f4 := parse("main { a := 0 b := 1 c := 2 }")
+
+  interconnect(ref f1)
+  interconnect(ref f2)
+  interconnect(ref f3)
+  interconnect(ref f4)
+
+  f3Main := f3.program.body[0].asMainDeclaration()
+  f3MainBlock := f3Main.body.asBlock()
+  f4Main := f4.program.body[0].asMainDeclaration()
+  f4MainBlock := f4Main.body.asBlock()
+
+  EXPECT_FALSE(f1.program.body[0].hasNext())
+  EXPECT_FALSE(f1.program.body[0].hasPrev())
+
+  EXPECT_FALSE(f1.program.body[0].hasParent())
+  EXPECT_FALSE(f2.program.body[0].hasParent())
+  EXPECT_FALSE(f3.program.body[0].hasParent())
+  EXPECT_FALSE(f4.program.body[0].hasParent())
+  EXPECT_TRUE(f3Main.body.hasParent())
+  EXPECT_TRUE(f4Main.body.hasParent())
+
+  EXPECT_TRUE(f2.program.body[0].hasNext())
+  EXPECT_TRUE(f2.program.body[1].hasNext())
+  EXPECT_FALSE(f2.program.body[2].hasNext())
+  EXPECT_FALSE(f2.program.body[0].hasPrev())
+  EXPECT_TRUE(f2.program.body[1].hasPrev())
+  EXPECT_TRUE(f2.program.body[2].hasPrev())
+
+  EXPECT_FALSE(f3MainBlock.body[0].hasNext())
+  EXPECT_FALSE(f3MainBlock.body[0].hasPrev())
+
+  EXPECT_TRUE(f4MainBlock.body[0].hasNext())
+  EXPECT_TRUE(f4MainBlock.body[1].hasNext())
+  EXPECT_FALSE(f4MainBlock.body[2].hasNext())
+  EXPECT_FALSE(f4MainBlock.body[0].hasPrev())
+  EXPECT_TRUE(f4MainBlock.body[1].hasPrev())
+  EXPECT_TRUE(f4MainBlock.body[2].hasPrev())
+
+  f4MainBlockFirstNext := f4MainBlock.body[0].next()
+  f4MainBlockFirstParent := f4MainBlock.body[0].parent()
+  f4MainBlockSecondPrev := f4MainBlock.body[1].prev()
+
+  EXPECT_TRUE(f4MainBlockFirstNext.isVariableDeclaration())
+  EXPECT_TRUE(f4MainBlockFirstParent.isBlock())
+  EXPECT_TRUE(f4MainBlockSecondPrev.isVariableDeclaration())
+
+  f4MainParentMaybe := f4.program.body[0].parentMaybe()
+  f4MainBlockParentMaybe := f4Main.body.parentMaybe()
+
+  EXPECT_TRUE(f4MainParentMaybe == nil)
+  EXPECT_FALSE(f4MainBlockParentMaybe == nil)
+}
+
+export fn TEST_Parser_interconnectExpression () {
+  mut f := parse("main { [0, 1, 2]; }")
+  interconnect(ref f)
+  mainDeclaration := f.program.body[0].asMainDeclaration()
+  mainBody := mainDeclaration.body.asBlock()
+  expr := mainBody.body[0].asExpression()
+
+  EXPECT_FALSE(expr.expression.hasParent())
+  EXPECT_TRUE(expr.expression.hasParentNode())
+
+  exprBody := expr.expression.asArray()
+
+  EXPECT_TRUE(exprBody.elements[0].hasParent())
+  EXPECT_TRUE(exprBody.elements[0].hasParentNode())
+
+  firstParent := exprBody.elements[0].parent()
+  firstParentNode := exprBody.elements[0].parentNode()
+
+  EXPECT_TRUE(firstParent.isArray())
+  EXPECT_TRUE(firstParentNode.isExpression())
 }

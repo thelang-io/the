@@ -1,0 +1,12 @@
+fn test (a: int) {}
+
+main {
+  test2 := test as (int) -> void
+  test2()
+}
+===== err =====
+E1037.txt:5:3: AnalyzeError: E1037 - Missing argument for required parameter
+4 |   test2 := test as (int) -> void
+5 |   test2()
+  |   ~~~~~~~
+6 | }

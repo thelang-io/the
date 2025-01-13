@@ -1,0 +1,11 @@
+enum Color {
+  Red = "red",
+  Green,
+  Blue,
+}
+===== err =====
+E1053.txt:2:9: AnalyzeError: E1053 - Enumerator type expected to be of type `int`, got `str` type
+1 | enum Color {
+2 |   Red = "red",
+  |         ~~~~~
+3 |   Green,

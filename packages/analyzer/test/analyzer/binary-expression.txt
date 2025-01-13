@@ -1,0 +1,9 @@
+main {
+  n: int?
+  a := nil == n
+  a2 := n == nil
+  b := 1 + 2
+  c: i8 = 2
+  d := c + b
+  e := b + c
+}
