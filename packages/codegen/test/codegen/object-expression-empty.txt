@@ -1,0 +1,110 @@
+obj Point {
+  mut x: float
+  mut y: float
+}
+
+obj Test {
+  a: int
+}
+
+obj Human {
+  mut name: str
+  age: int
+}
+
+obj Empty {
+}
+
+main {
+  point := Point{}
+  test := Test{}
+  human := Human{}
+  empty := Empty{}
+}
+===== code =====
+#include <d4/number.h>
+#include <d4/object.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stdint.h>
+D4_OBJECT_FORWARD_DECLARE(Point)
+D4_OBJECT_FORWARD_DECLARE(Test)
+D4_OBJECT_FORWARD_DECLARE(Human)
+D4_OBJECT_FORWARD_DECLARE(Empty)
+D4_OBJECT_DECLARE(Point, {
+  double x;
+  double y;
+}, const double x, const double y)
+D4_OBJECT_DECLARE(Test, {
+  int32_t a;
+}, const int32_t a)
+D4_OBJECT_DECLARE(Human, {
+  d4_str_t name;
+  int32_t age;
+}, const d4_str_t name, const int32_t age)
+D4_OBJECT_DECLARE(Empty, {
+  bool _;
+}, void)
+D4_OBJECT_DEFINE(Point, Point, {
+  self.x = x;
+  self.y = y;
+}, {
+  result.x = self.x;
+  result.y = self.y;
+}, {
+  return self.x == rhs.x && self.y == rhs.y;
+}, {
+  (void) self;
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"x"), d4_float_str(self.x));
+  result = d4_obj_str_append(result, d4_str_alloc(L"y"), d4_float_str(self.y));
+}, const double x, const double y)
+D4_OBJECT_DEFINE(Test, Test, {
+  self.a = a;
+}, {
+  result.a = self.a;
+}, {
+  return self.a == rhs.a;
+}, {
+  (void) self;
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"a"), d4_int_str(self.a));
+}, const int32_t a)
+D4_OBJECT_DEFINE(Human, Human, {
+  self.name = d4_str_copy(name);
+  self.age = age;
+}, {
+  result.name = d4_str_copy(self.name);
+  result.age = self.age;
+}, {
+  return d4_str_eq(self.name, rhs.name) && self.age == rhs.age;
+}, {
+  d4_str_free(self.name);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"name"), d4_str_quoted_escape(self.name));
+  result = d4_obj_str_append(result, d4_str_alloc(L"age"), d4_int_str(self.age));
+}, const d4_str_t name, const int32_t age)
+D4_OBJECT_DEFINE(Empty, Empty, {
+  self._ = false;
+}, {
+  result._ = self._;
+}, {
+  (void) self;
+  (void) rhs;
+  return true;
+}, {
+  (void) self;
+}, {
+  (void) self;
+}, void)
+int main (void) {
+  d4_obj_Point_t point_0 = d4_obj_Point_alloc(0, 0);
+  d4_obj_Test_t test_0 = d4_obj_Test_alloc(0);
+  d4_obj_Human_t human_0 = d4_obj_Human_alloc(d4_str_empty_val, 0);
+  d4_obj_Empty_t empty_0 = d4_obj_Empty_alloc();
+  d4_obj_Empty_free(empty_0);
+  d4_obj_Human_free(human_0);
+  d4_obj_Test_free(test_0);
+  d4_obj_Point_free(point_0);
+}
+===== output =====

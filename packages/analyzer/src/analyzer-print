@@ -187,7 +187,16 @@ export fn analyzerPrintStatement(statement: ref Parser.Statement, indent: int) s
     result += analyzerPrintStatement(ref mainDeclaration.body, indent + 2)
   } elif statement.isObjectDeclaration() {
     objectDeclaration := statement.asObjectDeclaration()
-    result += ' '.repeat(indent) + "ObjectDeclaration(name=" + objectDeclaration.name.name + ")\n"
+    mut attributes := "name=" + objectDeclaration.name.name
+
+    statementContext := statement.context
+
+    if statement.context is Context.ObjectDeclarationContext {
+      context := statementContext as Context.ObjectDeclarationContext
+      attributes += " context:selfType=" + context.selfType.toString()
+    }
+
+    result += ' '.repeat(indent) + "ObjectDeclaration(" + attributes + ")\n"
 
     loop i := 0; i < objectDeclaration.body.len; i++ {
       bodyStatement := objectDeclaration.body[i]
@@ -363,6 +372,12 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
   } elif expression.isCall() {
     call := expression.asCall()
     name = "CallExpression"
+    expressionContextExtra := expression.contextExtra
+    if expression.contextExtra is Context.CallExpressionContextExtra {
+      contextExtra := expressionContextExtra as Context.CallExpressionContextExtra
+      attributes += " extra:asynchronous=" + contextExtra.asynchronous.str()
+      attributes += " extra:returnType=" + contextExtra.returnType.toString()
+    }
     result += analyzerPrintExpression(ref call.callee, indent + 2)
     loop i := 0; i < call.arguments.len; i++ {
       argument := call.arguments[i]
@@ -371,6 +386,16 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
       if argument.name != nil {
         argumentName := argument.name
         argumentAttributes += "name=" + argumentName.name
+      }
+
+      if expression.contextExtra is Context.CallExpressionContextExtra {
+        contextExtra := expressionContextExtra as Context.CallExpressionContextExtra
+
+        if contextExtra.arguments.len > i {
+          contextExtraArgument := contextExtra.arguments[i]
+          argumentAttributes += argumentAttributes.empty ? "" : " "
+          argumentAttributes += "extra:parameterIdx=" + contextExtraArgument.parameterIdx.str()
+        }
       }
 
       result += ' '.repeat(indent + 2) + "CallExpressionArgument(" + argumentAttributes + ")\n"
@@ -390,6 +415,11 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
   } elif expression.isElementAccess() {
     elementAccess := expression.asElementAccess()
     name = "ElementAccessExpression"
+    expressionContextExtra := expression.contextExtra
+    if expression.contextExtra is Context.ElementAccessExpressionContextExtra {
+      contextExtra := expressionContextExtra as Context.ElementAccessExpressionContextExtra
+      attributes += " extra:selfType=" + contextExtra.selfType.toString()
+    }
     result += analyzerPrintExpression(ref elementAccess.expression, indent + 2)
     result += analyzerPrintExpression(ref elementAccess.argument, indent + 2)
   } elif expression.isIs() {
@@ -432,6 +462,18 @@ export fn analyzerPrintExpression(expression: ref Parser.Expression, indent: int
     propertyAccess := expression.asPropertyAccess()
     name = "PropertyAccessExpression"
     attributes += " name=" + propertyAccess.name.name
+    expressionContextExtra := expression.contextExtra
+    if expression.contextExtra is Context.PropertyAccessExpressionContextExtra {
+      contextExtra := expressionContextExtra as Context.PropertyAccessExpressionContextExtra
+      attributes += " extra:propertyName=" + contextExtra.property.name
+      attributes += " extra:propertyType=" + contextExtra.property.t.toString()
+      if contextExtra.property.mutable {
+        attributes += " extra:propertyMutable"
+      }
+      if contextExtra.property.builtin {
+        attributes += " extra:propertyBuiltin"
+      }
+    }
     result += analyzerPrintExpression(ref propertyAccess.expression, indent + 2)
   } elif expression.isReference() {
     reference := expression.asReference()

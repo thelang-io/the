@@ -21,14 +21,14 @@ By participating in this project you agree to abide by its terms.
 ### On Unix
 
 ```shell
-curl -fsSL https://cdn.thelang.io/cli | bash
+curl -fsSL sh.thelang.io | bash
 the run scripts/pre-process-codegen -o scripts/a.out
 ```
 
 ### On Windows
 
 ```powershell
-(New-Object System.Net.WebClient).DownloadString('https://cdn.thelang.io/cli-win') | iex
+irm ps1.thelang.io | iex
 the run pre-process-codegen -o scripts/a.exe
 ```
 

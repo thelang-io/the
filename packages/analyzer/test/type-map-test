@@ -6,6 +6,60 @@
 import * as Type from "../src/type"
 import TypeMap from "../src/type-map"
 
+export fn TEST_TypeMap_convertMethod () {
+  mut tm := TypeMap{}
+  tm.init()
+
+  m1 := tm.createMethod(true, [], tm.get("int"), false, false, "", tm.get("int"))
+  m2 := tm.createMethod(false, [
+    Type.TypeParameter{t: tm.get("int")},
+  ], tm.get("int"), false, false, "", tm.get("int"))
+  m3 := tm.createMethod(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), mutable: true},
+    Type.TypeParameter{name: "b", t: tm.createArray(tm.get("int")), variadic: true},
+  ], tm.get("int"), false, false, "", tm.get("int"))
+
+  m4 := tm.createMethod(true, [], tm.get("int"), true, false, "self1", tm.createReference(tm.get("int")))
+  m5 := tm.createMethod(false, [
+    Type.TypeParameter{t: tm.get("int")},
+  ], tm.get("int"), true, true, "self2", tm.get("int"))
+  m6 := tm.createMethod(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), mutable: true},
+    Type.TypeParameter{name: "b", t: tm.createArray(tm.get("int")), variadic: true},
+  ], tm.get("int"), true, false, "self3", tm.get("int"))
+
+  f1 := tm.createFunction(true, [], tm.get("int"))
+  f2 := tm.createFunction(false, [
+    Type.TypeParameter{t: tm.get("int")},
+  ], tm.get("int"))
+  f3 := tm.createFunction(false, [
+    Type.TypeParameter{name: "a", t: tm.get("int"), mutable: true},
+    Type.TypeParameter{name: "b", t: tm.createArray(tm.get("int")), variadic: true},
+  ], tm.get("int"))
+
+  f4 := tm.createFunction(true, [
+    Type.TypeParameter{name: "self1", t: tm.createReference(tm.get("int")), mutable: false, required: true},
+  ], tm.get("int"))
+
+  f5 := tm.createFunction(false, [
+    Type.TypeParameter{name: "self2", t: tm.get("int"), mutable: true, required: true},
+    Type.TypeParameter{t: tm.get("int")},
+  ], tm.get("int"))
+
+  f6 := tm.createFunction(false, [
+    Type.TypeParameter{name: "self3", t: tm.get("int"), mutable: false, required: true},
+    Type.TypeParameter{name: "a", t: tm.get("int"), mutable: true},
+    Type.TypeParameter{name: "b", t: tm.createArray(tm.get("int")), variadic: true},
+  ], tm.get("int"))
+
+  EXPECT_TRUE(Type.match(tm.convertMethod(m1), f1))
+  EXPECT_TRUE(Type.match(tm.convertMethod(m2), f2))
+  EXPECT_TRUE(Type.match(tm.convertMethod(m3), f3))
+  EXPECT_TRUE(Type.match(tm.convertMethod(m4), f4))
+  EXPECT_TRUE(Type.match(tm.convertMethod(m5), f5))
+  EXPECT_TRUE(Type.match(tm.convertMethod(m6), f6))
+}
+
 export fn TEST_TypeMap_unionAdd () {
   mut tm := TypeMap{}
   tm.init()

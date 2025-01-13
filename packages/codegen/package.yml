@@ -9,3 +9,6 @@ packages:
   the/c: 0.1.0
   the/parser: 0.4.16
   the/testing: 0.4.0
+
+scripts:
+  update-codegen-tests: the run scripts/update-codegen-tests

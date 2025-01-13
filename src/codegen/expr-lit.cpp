@@ -37,7 +37,9 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprLit (const ASTNodeExpr &nodeExpr, 
   } else if (exprLit.type == AST_EXPR_LIT_NIL) {
     expr = CodegenASTExprAccess::create(this->_("NULL"));
   } else if (!root && exprLit.type == AST_EXPR_LIT_STR) {
-    expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_alloc")), {expr});
+    expr = CodegenASTExprCall::create(CodegenASTExprAccess::create(this->_("str_alloc")), {
+      CodegenASTExprLiteral::create(Token::escape(exprLit.body))
+    });
   }
 
   return this->_wrapNodeExpr(nodeExpr, targetType, root, expr);

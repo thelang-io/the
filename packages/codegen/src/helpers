@@ -7,10 +7,78 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 
+export fn createASTPropertyAccess (expression: AST.CExpression, property: str) AST.CExpression {
+  if expression.isAssignmentExpression() {
+    return createASTPropertyAccessWithAssignment(expression, property)
+  } elif expression.isUnaryExpression() {
+    return createASTPropertyAccessWithUnary(expression, property)
+  }
+
+  return AST.createPropertyAccessExpression(expression, property)
+}
+
+export fn createASTPropertyAccessWithAssignment (expression: AST.CExpression, property: str) AST.CExpression {
+  wrappedExpression := expression.wrap()
+  return AST.createPropertyAccessExpression(wrappedExpression, property)
+}
+
+export fn createASTPropertyAccessWithUnary (expression: AST.CExpression, property: str) AST.CExpression {
+  cUnaryExpression := expression.asUnaryExpression()
+
+  if cUnaryExpression.postfix || cUnaryExpression.operator != "*" {
+    return AST.createPropertyAccessExpression(expression, property)
+  }
+
+  wrappedExpression := expression.wrap()
+  return AST.createPropertyAccessExpression(wrappedExpression, property)
+}
+
+export fn declarationType (item: ref Parser.Statement) (ref Analyzer.Type)? {
+  itemContext := item.context
+
+  if item.context is Analyzer.ObjectDeclarationContext {
+    context := itemContext as Analyzer.ObjectDeclarationContext
+    return context.selfType
+  }
+
+  return nil
+}
+
+export fn declarationByDependency (a: ref Parser.Statement, b: ref Parser.Statement) int {
+  aType := declarationType(a)
+  bType := declarationType(b)
+
+  if aType == nil && bType == nil {
+    return 0
+  }
+
+  if aType == nil || bType == nil {
+    return aType == nil ? 1 : -1
+  }
+
+  aDefiniteType := aType as ref Analyzer.Type
+  bDefiniteType := bType as ref Analyzer.Type
+
+  aDependsOnB := aDefiniteType.dependsOn(bDefiniteType)
+  bDependsOnA := bDefiniteType.dependsOn(aDefiniteType)
+
+  if aDependsOnB && !bDependsOnA {
+    return 1
+  } elif bDependsOnA && !aDependsOnB {
+    return -1
+  }
+
+  return 0
+}
+
 export fn expressionIsBuiltinMethod (item: ref Parser.Expression) bool {
   if item.isPropertyAccess() {
-    body := item.asPropertyAccess()
-    return ["str"].contains(body.name.name)
+    contextExtra := item.contextExtra
+
+    if item.contextExtra is Analyzer.PropertyAccessExpressionContextExtra {
+      contextExtra := contextExtra as Analyzer.PropertyAccessExpressionContextExtra
+      return contextExtra.property.builtin
+    }
   }
 
   return false
@@ -52,45 +120,43 @@ export fn expressionResolve (item: ref Parser.Expression, up := false, down := f
 }
 
 export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
-  itUp := expressionResolve(item, up: true)
   itDown := expressionResolve(item, down: true)
 
-  if !itUp.hasParent() && itUp.hasParentNode() {
-    parentNode := itUp.parentNode()
+  return !(
+    itDown.isIdentifier() ||
+    itDown.isNilLiteral() ||
+    itDown.isAssignment() ||
+    itDown.isElementAccess() ||
+    itDown.isMemberAccess() ||
+    itDown.isPropertyAccess()
+  )
+}
 
-    if parentNode.isVariableDeclaration() {
-      return false
-    }
-  }
+export fn expressionShouldBeCopied (item: ref Parser.Expression) bool {
+  itDown := expressionResolve(item, down: true)
 
-  if itUp.hasParent() {
-    parent := itUp.parent()
-
-    if parent.isConditional() {
-      return false
-    }
-  }
-
-  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
+  return (
+    itDown.isIdentifier() ||
+    itDown.isAssignment() ||
+    itDown.isElementAccess() ||
+    itDown.isMemberAccess() ||
+    itDown.isPropertyAccess()
+  )
 }
 
 export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   itUp := expressionResolve(item, up: true)
   itDown := expressionResolve(item, down: true)
 
-  if itUp.hasParent() {
-    return false
-  }
-
-  if itUp.hasParentNode() {
-    parentNode := itUp.parentNode()
-
-    if parentNode.isVariableDeclaration() {
-      return false
-    }
-  }
-
-  return !itDown.isIdentifier() && !itDown.isNilLiteral() && !itDown.isAssignment()
+  return !(
+    itUp.hasParent() ||
+    itDown.isIdentifier() ||
+    itDown.isNilLiteral() ||
+    itDown.isAssignment() ||
+    itDown.isElementAccess() ||
+    itDown.isMemberAccess() ||
+    itDown.isPropertyAccess()
+  )
 }
 
 export fn statementHasPrecedingNonVarDecl (item: ref Parser.Statement) bool {
@@ -114,19 +180,30 @@ export fn statementIsMacroInvocation (item: ref AST.CStatement) bool {
 }
 
 export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
-  expression := item.asExpressionStatement()
-  macroInvocation := expression.expression.asMacroInvocation()
-  return macroInvocation.callee.find("DECLARE") != -1
+  return statementMacroInvocationCallee(item).find("DECLARE") != -1
 }
 
-// TODO: move to analyzer
-export fn typeHasSelfParam (it: ref Analyzer.Type) bool {
-  if it.isMethod() {
-    t := it.asMethod()
-    return t.withSelf
-  }
+export fn statementIsMacroInvocationForwardDeclare (item: ref AST.CStatement) bool {
+  return statementMacroInvocationCallee(item).find("FORWARD_DECLARE") != -1
+}
 
-  return false
+export fn statementMacroInvocationCallee (item: ref AST.CStatement) str {
+  expression := item.asExpressionStatement()
+  macroInvocation := expression.expression.asMacroInvocation()
+  return macroInvocation.callee
+}
+
+export fn typeIsSimple (it: ref Analyzer.Type) bool {
+  return !(
+    it.name == "any" ||
+    it.name == "str" ||
+    it.isArray() ||
+    it.isFunction() ||
+    it.isMap() ||
+    it.isCustomObject() ||
+    it.isOptional() ||
+    it.isUnion()
+  )
 }
 
 export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
@@ -138,20 +215,6 @@ export fn typeParameterId (parameter: ref Analyzer.TypeParameter) str {
   else { return "FP1" }
 }
 
-// TODO: move to analyzer
-export fn typePrimitive (it: ref Analyzer.Type) bool {
-  return !(
-    it.name == "any" ||
-    it.name == "str" ||
-    it.isArray() ||
-    it.isFunction() ||
-    it.isMap() ||
-    // TODO: it.isObject() ||
-    it.isOptional() ||
-    it.isUnion()
-  )
-}
-
 export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
   return !(
     it.name == "any" ||
@@ -159,7 +222,8 @@ export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
     it.isArray() ||
     it.isFunction() ||
     it.isMap() ||
-    // TODO: it.isObject() ||
+    // TODO: test
+    it.isCustomObject() ||
     it.isOptional() ||
     it.isUnion()
   )
@@ -188,28 +252,25 @@ export fn typeSafeForVaArg (mut tm: ref Analyzer.TypeMap, it: ref Analyzer.Type)
 }
 
 export fn typeShouldBeAllocated (self: ref Analyzer.Type) bool {
-  if self.isAlias() {
-    t := self.asAlias()
-    return typeShouldBeAllocated(t.t)
-  }
+  t := Analyzer.unwrap(self, withReference: false)
 
-  // TODO: object
   return (
-    self.name == "any" ||
-    self.name == "str" ||
-    self.isArray() ||
-    self.isMap() ||
-    self.isOptional() ||
-    self.isUnion()
+    t.name == "any" ||
+    t.name == "str" ||
+    t.isArray() ||
+    t.isMap() ||
+    // TODO: test
+    t.isCustomObject() ||
+    t.isOptional() ||
+    t.isUnion()
   )
 }
 
 export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
-  if self.isAlias() {
-    t := self.asAlias()
-    return typeShouldBeFreed(t.t)
-  } elif self.isUnion() {
-    t := self.asUnion()
+  t := Analyzer.unwrap(self, withReference: false)
+
+  if t.isUnion() {
+    t := t.asUnion()
 
     loop i := 0; i < t.types.len; i++ {
       subType := t.types[i]
@@ -222,12 +283,13 @@ export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
     return false
   }
 
-  // TODO: object
   return
-    self.name == "any" ||
-    self.name == "str" ||
-    self.isArray() ||
-    self.isFunction() ||
-    self.isMap() ||
-    self.isOptional()
+    t.name == "any" ||
+    t.name == "str" ||
+    t.isArray() ||
+    // TODO: test
+    t.isCustomObject() ||
+    t.isFunction() ||
+    t.isMap() ||
+    t.isOptional()
 }

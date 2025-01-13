@@ -3,6 +3,7 @@
  * Licensed under the MIT License
  */
 
+import * as string from "./string"
 import * as t from "./types"
 
 export fn create (body: t.ExpressionBody, start: int, end: int) t.Expression {
@@ -70,6 +71,33 @@ export fn extractLastObjExpr (self: t.Expression) t.ObjectExpression {
   }
 
   throw error_NewError("Unable to extract last object expression")
+}
+
+export fn getInner (self: ref t.Expression) (ref t.Expression)[] {
+  if self.isAs() {
+    mut body := self.asAs()
+    return [ref body.expression]
+  } elif self.isConditional() {
+    mut body := self.asConditional()
+    return [ref body.consequent, ref body.alternate]
+  } elif self.isElementAccess() {
+    mut body := self.asElementAccess()
+    return [ref body.expression]
+  } elif self.isIs() {
+    mut body := self.asIs()
+    return [ref body.expression]
+  } elif self.isParenthesized() {
+    mut body := self.asParenthesized()
+    return getInner(ref body.expression)
+  } elif self.isPropertyAccess() {
+    mut body := self.asPropertyAccess()
+    return [ref body.expression]
+  } elif self.isReference() {
+    mut body := self.asReference()
+    return [ref body.expression]
+  }
+
+  throw error_NewError("Unable to get inner expressions of '" + string.expression(self) + "'")
 }
 
 export fn subtractLastObjExpr (self: t.Expression) t.Expression {

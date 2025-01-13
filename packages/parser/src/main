@@ -70,6 +70,7 @@ import
   TokenType,
   Type,
   File,
+  Location,
   Program
 from "./types"
 import
@@ -80,8 +81,18 @@ import
   Type_toText
 from "./text"
 import Program_traverse from "./program"
-import Reader, error as Reader_error, init as Reader_init from "./reader"
-import toType as expressionToType, typeToExpression, validObjExprId from "./expression"
+import
+  Reader,
+  error as Reader_error,
+  init as Reader_init,
+  locate as Reader_locate
+from "./reader"
+import
+  getInner as getInnerExpressions,
+  toType as expressionToType,
+  typeToExpression,
+  validObjExprId
+from "./expression"
 import interconnect, parse, report from "./parser"
 import expression as stringifyExpression, statement as stringifyStatement, typeT as stringifyType from "./string"
 
@@ -151,6 +162,7 @@ export Token
 export TokenType
 export Type
 export File
+export Location
 export Program
 export Expression_toText
 export FunctionParameter_toText
@@ -161,7 +173,9 @@ export Program_traverse
 export Reader
 export Reader_error
 export Reader_init
+export Reader_locate
 export expressionToType
+export getInnerExpressions
 export typeToExpression
 export validObjExprId
 export interconnect

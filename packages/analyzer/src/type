@@ -137,6 +137,101 @@ export obj Type {
       (a.isNumber() && b.isNumber() && numberMatch(b.name, a.name))
   }
 
+  fn dependsOn (self: ref Self, on: ref Type, stack: (ref Type)[] = []) bool {
+    a := unwrap(self, withReference: false)
+    b := unwrap(on, withReference: false)
+
+    if stack.contains(a) {
+      return false
+    }
+
+    stack.push(a)
+
+    if a.isArray() {
+      t := a.asArray()
+      return t.elementType.dependsOn(b, stack)
+    } elif a.isFunction() {
+      t := a.asFunction()
+
+      if t.returnType.dependsOn(b, stack) {
+        return true
+      }
+
+      l := t.parameters.len
+
+      loop i := 0; i < l; i++ {
+        parameter := t.parameters[i]
+
+        if parameter.t.dependsOn(b, stack) {
+          return true
+        }
+      }
+    } elif a.isMap() {
+      t := a.asMap()
+      return t.keyType.dependsOn(b, stack) || t.valueType.dependsOn(b, stack)
+    } elif a.isMethod() {
+      t := a.asMethod()
+
+      if t.returnType.dependsOn(b, stack) || (t.withSelf && t.selfType.dependsOn(b, stack)) {
+        return true
+      }
+
+      l := t.parameters.len
+
+      loop i := 0; i < l; i++ {
+        parameter := t.parameters[i]
+
+        if parameter.t.dependsOn(b, stack) {
+          return true
+        }
+      }
+    } elif a.isNamespace() {
+      t := a.asNamespace()
+      l := t.members.len
+
+      loop i := 0; i < l; i++ {
+        member := t.members[i]
+
+        if member.t != nil {
+          memberType := member.t
+
+          if memberType.dependsOn(b, stack) {
+            return true
+          }
+        }
+      }
+    } elif a.isCustomObject() {
+      l := a.properties.len
+
+      loop i := 0; i < l; i++ {
+        property := a.properties[i]
+
+        if property.t.dependsOn(b, stack) {
+          return true
+        }
+      }
+    } elif a.isOptional() {
+      t := a.asOptional()
+      return t.t.dependsOn(b, stack)
+    } elif a.isReference() {
+      t := a.asReference()
+      return t.t.dependsOn(b, stack)
+    } elif a.isUnion() {
+      t := a.asUnion()
+      l := t.types.len
+
+      loop i := 0; i < l; i++ {
+        subtype := t.types[i] as ref Type
+
+        if subtype.dependsOn(b, stack) {
+          return true
+        }
+      }
+    }
+
+    return stack.len > 1 && match(a, b)
+  }
+
   fn get (self: ref Self, nameOrIndex: int | str) TypeProperty {
     t := unwrap(self)
     propertiesLen := t.properties.len
@@ -198,6 +293,15 @@ export obj Type {
     return t.members.contains(name)
   }
 
+  fn hasSelfParam (self: ref Self) bool {
+    if self.isMethod() {
+      t := self.asMethod()
+      return t.withSelf
+    }
+
+    return false
+  }
+
   fn hasType (self: ref Self, search: ref Type) bool {
     if search.isUnion() {
       searchUnion := search.asUnion()
@@ -220,6 +324,10 @@ export obj Type {
     }
 
     return false
+  }
+
+  fn isCustomObject (self: ref Self) bool {
+    return self.isObject() && !self.isPrimitive()
   }
 
   fn isErrorLike (self: ref Self) bool {
@@ -250,6 +358,19 @@ export obj Type {
 
   fn isNumber (self: ref Self) bool {
     return self.isInt() || self.isFloat()
+  }
+
+  fn isPrimitive (self: ref Self) bool {
+    return self.isNumber() || [
+      "any",
+      "bool",
+      "byte",
+      "char",
+      "never",
+      "rune",
+      "str",
+      "void",
+    ].contains(self.name)
   }
 
   fn isRequired (self: ref Self) bool {

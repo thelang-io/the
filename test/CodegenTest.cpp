@@ -999,6 +999,7 @@ INSTANTIATE_TEST_SUITE_P(ExprAccess, CodegenPassTest, testing::Values(
   "expr-access",
   "expr-access-prop",
   "expr-access-elem",
+  "expr-access-elem-assign",
   "expr-access-member",
   "expr-access-alias",
   "expr-access-any",
@@ -1154,7 +1155,8 @@ INSTANTIATE_TEST_SUITE_P(ExprLit, CodegenPassTest, testing::Values(
   "expr-lit-int-oct",
   "expr-lit-nil",
   "expr-lit-str",
-  "expr-lit-str-esc"
+  "expr-lit-str-esc",
+  "expr-lit-str-nl"
 ));
 
 INSTANTIATE_TEST_SUITE_P(ExprMap, CodegenPassTest, testing::Values(

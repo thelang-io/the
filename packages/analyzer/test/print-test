@@ -6,20 +6,7 @@
 import * as Parser from "the/parser"
 import Analyzer, AnalyzerFile from "../src/analyzer"
 import analyzerPrint from "../src/analyzer-print"
-
-export obj PrintTestFileResult {
-  in: str
-  out: str
-}
-
-export fn parseTestFile (path: str) PrintTestFileResult {
-  content := fs_readFileSync(path).str()
-  outLoc := content.find("===== out =====")
-  inContent := outLoc == -1 ? content : content.slice(0, outLoc)
-  outContent := outLoc == -1 ? "" : content.slice(outLoc + 15 + os_EOL.len)
-
-  return PrintTestFileResult{in: inContent, out: outContent}
-}
+import parseTestFile from "./utils"
 
 export fn TEST_Print () {
   files := fs_scandirSync("./test/print")

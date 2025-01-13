@@ -42,17 +42,17 @@ int main (void) {
   d4_opt_int_t b_0;
   d4_opt_int_t c_0;
   {
-    d4_opt_int_t i_0 = 0;
+    d4_opt_int_t i_0 = d4_opt_int_alloc(0);
     for (; !d4_opt_int_eq(i_0, NULL); i_0 = d4_opt_int_realloc(i_0, NULL)) {}
     d4_opt_int_free(i_0);
   }
-  a_0 = 0;
+  a_0 = d4_opt_int_alloc(0);
   for (; !d4_opt_int_eq(a_0, NULL); a_0 = d4_opt_int_realloc(a_0, NULL)) {}
-  b_0 = 0;
+  b_0 = d4_opt_int_alloc(0);
   while (!d4_opt_int_eq(b_0, NULL)) {
     b_0 = d4_opt_int_realloc(b_0, NULL);
   }
-  c_0 = 0;
+  c_0 = d4_opt_int_alloc(0);
   while (1) {
     if (d4_opt_int_eq(c_0, NULL)) {
       break;
@@ -60,14 +60,14 @@ int main (void) {
     c_0 = d4_opt_int_realloc(c_0, NULL);
   }
   {
-    d4_opt_int_t d_0 = 0;
+    d4_opt_int_t d_0 = d4_opt_int_alloc(0);
     while (!d4_opt_int_eq(d_0, NULL)) {
       d_0 = d4_opt_int_realloc(d_0, NULL);
     }
     d4_opt_int_free(d_0);
   }
   {
-    d4_opt_int_t e_0 = 0;
+    d4_opt_int_t e_0 = d4_opt_int_alloc(0);
     for (;; e_0 = d4_opt_int_realloc(e_0, NULL)) {
       if (d4_opt_int_eq(e_0, NULL)) {
         break;

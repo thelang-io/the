@@ -42,16 +42,21 @@ export type CStatementBody =
   CWhileStatement
 
 export obj CType {
+  mut constant: bool
   mut value: str
 
   fn stringify (self: ref Self, declaration := false, definition := false) str {
+    if !declaration && !definition {
+      throw error_NewError("Unable to stringify specified type")
+    }
+
+    prefix := self.constant ? "const " : ""
+
     if declaration {
       lastChar := self.value.slice(-1)
-      return self.value + (lastChar == " " || lastChar == "*" ? "" : " ")
-    } elif definition {
-      return self.value.trimEnd()
+      return prefix + self.value + (lastChar == " " || lastChar == "*" ? "" : " ")
     } else {
-      throw error_NewError("Unable to stringify specified type")
+      return prefix + self.value.trimEnd()
     }
   }
 }
@@ -271,7 +276,7 @@ export obj CStatement {
       result = statement.stringify()
     } elif self.isVariableDeclaration() {
       statement := self.asVariableDeclaration()
-      result = statement.stringify()
+      result = statement.stringify(terminated: self.terminated)
     } elif self.isWhileStatement() {
       statement := self.asWhileStatement()
       result = statement.stringify(indent)
@@ -682,12 +687,12 @@ export obj CVariableDeclaration {
   mut name: str
   mut initializer: CExpression?
 
-  fn stringify (self: ref Self) str {
+  fn stringify (self: ref Self, terminated: bool) str {
     mut result := self.t.stringify(declaration: true) + self.name
     if self.initializer != nil {
       result += " = " + self.initializer.stringify()
     }
-    return result + ";"
+    return result + (terminated ? ";" : "")
   }
 }
 
@@ -853,8 +858,8 @@ export fn createTypedefDeclaration (t: CType, name: str) CStatement {
   return createStatement(CTypedefDeclaration{t: t, name: name})
 }
 
-export fn createVariableDeclaration (t: CType, name: str, initializer: CExpression? = nil) CStatement {
-  return createStatement(CVariableDeclaration{t: t, name: name, initializer: initializer})
+export fn createVariableDeclaration (t: CType, name: str, initializer: CExpression? = nil, terminated := true) CStatement {
+  return createStatement(CVariableDeclaration{t: t, name: name, initializer: initializer}, terminated: terminated)
 }
 
 export fn createWhileStatement (condition: CExpression, body: CStatement) CStatement {
@@ -869,6 +874,6 @@ export fn createStatement (body: CStatementBody, terminated := true) CStatement 
   return CStatement{body: body, terminated: terminated}
 }
 
-export fn createType (value: str) CType {
-  return CType{value: value}
+export fn createType (value: str, constant := false) CType {
+  return CType{constant: constant, value: value}
 }

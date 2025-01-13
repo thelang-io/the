@@ -173,7 +173,13 @@ export const BUILTIN_ENTITIES := {
     "d4_usize_str",
   ],
 
-  "d4Object": ["D4_OBJECT_DECLARE", "D4_OBJECT_DEFINE", "d4_obj_str_append"],
+  "d4Object": [
+    "D4_OBJECT_FORWARD_DECLARE",
+    "D4_OBJECT_DECLARE",
+    "D4_OBJECT_DEFINE",
+    "d4_obj_str_append",
+  ],
+
   "d4Optional": ["D4_OPTIONAL_DECLARE", "D4_OPTIONAL_DEFINE"],
   "d4Reference": ["D4_REFERENCE_DECLARE"],
 

@@ -1,0 +1,34 @@
+obj Test {
+  a: int
+}
+main {
+  test := Test{a: 10}
+  test.str()
+}
+===== code =====
+#include <d4/number.h>
+#include <d4/object.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stdint.h>
+D4_OBJECT_FORWARD_DECLARE(Test)
+D4_OBJECT_DECLARE(Test, {
+  int32_t a;
+}, const int32_t a)
+D4_OBJECT_DEFINE(Test, Test, {
+  self.a = a;
+}, {
+  result.a = self.a;
+}, {
+  return self.a == rhs.a;
+}, {
+  (void) self;
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"a"), d4_int_str(self.a));
+}, const int32_t a)
+int main (void) {
+  d4_obj_Test_t test_0 = d4_obj_Test_alloc(10);
+  d4_str_free(d4_obj_Test_str(test_0));
+  d4_obj_Test_free(test_0);
+}
+===== output =====

@@ -1,0 +1,84 @@
+obj Test1 { t3: Test3 }
+obj Test2 { a: int }
+obj Test3 { t4: Test4 }
+obj Test4 { t2: Test2 }
+main {
+  t := Test1{t3: Test3{t4: Test4{t2: Test2{a: 1}}}}
+}
+===== code =====
+#include <d4/number.h>
+#include <d4/object.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stdint.h>
+D4_OBJECT_FORWARD_DECLARE(Test2)
+D4_OBJECT_FORWARD_DECLARE(Test4)
+D4_OBJECT_FORWARD_DECLARE(Test3)
+D4_OBJECT_FORWARD_DECLARE(Test1)
+D4_OBJECT_DECLARE(Test2, {
+  int32_t a;
+}, const int32_t a)
+D4_OBJECT_DECLARE(Test4, {
+  d4_obj_Test2_t t2;
+}, const d4_obj_Test2_t t2)
+D4_OBJECT_DECLARE(Test3, {
+  d4_obj_Test4_t t4;
+}, const d4_obj_Test4_t t4)
+D4_OBJECT_DECLARE(Test1, {
+  d4_obj_Test3_t t3;
+}, const d4_obj_Test3_t t3)
+D4_OBJECT_DEFINE(Test2, Test2, {
+  self.a = a;
+}, {
+  result.a = self.a;
+}, {
+  return self.a == rhs.a;
+}, {
+  (void) self;
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"a"), d4_int_str(self.a));
+}, const int32_t a)
+D4_OBJECT_DEFINE(Test4, Test4, {
+  self.t2 = d4_obj_Test2_copy(t2);
+}, {
+  result.t2 = d4_obj_Test2_copy(self.t2);
+}, {
+  return d4_obj_Test2_eq(self.t2, rhs.t2);
+}, {
+  d4_obj_Test2_free(self.t2);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"t2"), d4_obj_Test2_str(self.t2));
+}, const d4_obj_Test2_t t2)
+D4_OBJECT_DEFINE(Test3, Test3, {
+  self.t4 = d4_obj_Test4_copy(t4);
+}, {
+  result.t4 = d4_obj_Test4_copy(self.t4);
+}, {
+  return d4_obj_Test4_eq(self.t4, rhs.t4);
+}, {
+  d4_obj_Test4_free(self.t4);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"t4"), d4_obj_Test4_str(self.t4));
+}, const d4_obj_Test4_t t4)
+D4_OBJECT_DEFINE(Test1, Test1, {
+  self.t3 = d4_obj_Test3_copy(t3);
+}, {
+  result.t3 = d4_obj_Test3_copy(self.t3);
+}, {
+  return d4_obj_Test3_eq(self.t3, rhs.t3);
+}, {
+  d4_obj_Test3_free(self.t3);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"t3"), d4_obj_Test3_str(self.t3));
+}, const d4_obj_Test3_t t3)
+int main (void) {
+  d4_obj_Test2_t __THE_1 = d4_obj_Test2_alloc(0);
+  d4_obj_Test4_t __THE_2 = d4_obj_Test4_alloc(d4_obj_Test2_alloc(0));
+  d4_obj_Test3_t __THE_3 = d4_obj_Test3_alloc(d4_obj_Test4_alloc(d4_obj_Test2_alloc(0)));
+  d4_obj_Test1_t t_0 = d4_obj_Test1_alloc(__THE_3 = d4_obj_Test3_alloc(__THE_2 = d4_obj_Test4_alloc(__THE_1 = d4_obj_Test2_alloc(1))));
+  d4_obj_Test1_free(t_0);
+  d4_obj_Test3_free(__THE_3);
+  d4_obj_Test4_free(__THE_2);
+  d4_obj_Test2_free(__THE_1);
+}
+===== output =====

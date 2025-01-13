@@ -6,7 +6,7 @@ const a := Test{}
 const b := Test{a: 10}
 const c := Test{a: 10, b: "str"}
 ===== out =====
-ObjectDeclaration(name=Test)
+ObjectDeclaration(name=Test context:selfType=Test)
   ObjectDeclarationProperty(name=a mutable=false constant=false type=int)
   ObjectDeclarationProperty(name=b mutable=false constant=false type=str)
 VariableDeclaration(name=a mutable=false constant=true context:varType=Test)

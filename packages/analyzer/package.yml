@@ -10,5 +10,7 @@ packages:
   the/testing: 0.4.0
 
 scripts:
-  update-parser-tests: the run scripts/precompile-api
-  update-tokenizer-tests: the run scripts/precompile-builtin
+  precompile-api: the run scripts/precompile-api
+  precompile-builtin: the run scripts/precompile-builtin
+  update-print-tests: the run scripts/update-print-tests
+  update-type-casting-tests: the run scripts/update-type-casting-tests

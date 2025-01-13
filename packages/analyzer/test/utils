@@ -1,0 +1,18 @@
+/*!
+ * Copyright (c) Aaron Delasy
+ * Licensed under the MIT License
+ */
+
+export obj TestFileResult {
+  in: str
+  out: str
+}
+
+export fn parseTestFile (path: str) TestFileResult {
+  content := fs_readFileSync(path).str()
+  outLoc := content.find("===== out =====")
+  inContent := outLoc == -1 ? content : content.slice(0, outLoc)
+  outContent := outLoc == -1 ? "" : content.slice(outLoc + 15 + os_EOL.len)
+
+  return TestFileResult{in: inContent, out: outContent}
+}

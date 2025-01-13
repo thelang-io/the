@@ -9,7 +9,10 @@ import
   AsExpressionContextExtra,
   CallExpressionContextArgument,
   CallExpressionContextExtra,
+  ElementAccessExpressionContextExtra,
   IsExpressionContextExtra,
+  ObjectDeclarationContext,
+  PropertyAccessExpressionContextExtra,
   VariableDeclarationContext,
   initial as contextInitial,
   set as contextSet,
@@ -59,7 +62,10 @@ export Context
 export AsExpressionContextExtra
 export CallExpressionContextArgument
 export CallExpressionContextExtra
+export ElementAccessExpressionContextExtra
 export IsExpressionContextExtra
+export ObjectDeclarationContext
+export PropertyAccessExpressionContextExtra
 export VariableDeclarationContext
 export contextInitial
 export contextSet

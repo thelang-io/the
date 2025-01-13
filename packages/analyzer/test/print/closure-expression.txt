@@ -23,7 +23,7 @@ VariableDeclaration(name=c mutable=false constant=true context:varType=async (mu
     VariableDeclaration(name=k mutable=false constant=false context:varType=int)
       BinaryExpression(initial=int operator=-)
         Identifier(initial=int name=i)
-        ElementAccessExpression(initial=ref int target=int)
+        ElementAccessExpression(initial=ref int target=int extra:selfType=int[])
           Identifier(initial=int[] name=j)
           IntegerLiteral(initial=int value=0)
     ReturnStatement()

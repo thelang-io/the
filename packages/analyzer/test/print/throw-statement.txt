@@ -4,7 +4,7 @@ main {
 ===== out =====
 MainDeclaration()
   ThrowStatement()
-    CallExpression(initial=Error)
+    CallExpression(initial=Error extra:asynchronous=false extra:returnType=Error)
       Identifier(initial=(message: str) -> Error name=NewError)
-      CallExpressionArgument()
+      CallExpressionArgument(extra:parameterIdx=0)
         StringLiteral(initial=str value=Test)

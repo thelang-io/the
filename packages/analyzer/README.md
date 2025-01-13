@@ -440,6 +440,27 @@ mut tm := TypeMap{}
 tm.get("u8").canPromoteTo(tm.get("int"))
 ```
 
+### `Type.dependsOn (on: ref Type, stack: (ref Type)[] = []) bool`
+Checks whether current type depends on specified type (using strict matching).
+
+**Parameters**
+
+- `on` - type to check whether current type depends on
+- `stack` - stack of already visited types
+
+**Return value**
+
+Whether current type depends on specified type.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+arr := tm.createArray(tm.get("int"))
+
+arr.dependsOn(tm.get("int"))
+```
+
 ### `Type.get (nameOrIndex: int | str) TypeProperty`
 Finds type's property with specified name or index.
 
@@ -497,6 +518,19 @@ Whether enum type has enumerator with specified name.
 result := type.hasEnumerator("Color")
 ```
 
+### `Type.hasSelfParam () bool`
+Checks whether current type is a method and has a leading self param.
+
+**Return value**
+
+Whether current type is a method and has a leading self param.
+
+**Examples**
+
+```the
+result := type.hasSelfParam()
+```
+
 ### `Type.hasType (search: ref Type) bool`
 Checks whether union type has specified subtype (should be used only on union type).
 
@@ -513,6 +547,19 @@ Whether union type has specified subtype.
 ```the
 mut tm := TypeMap{}
 result := type.hasType(tm.get("int))
+```
+
+### `Type.isCustomObject () bool`
+Checks whether current type is object and not primitive.
+
+**Return value**
+
+Whether current type is object and not primitive.
+
+**Examples**
+
+```the
+result := type.isCustomObject()
 ```
 
 ### `Type.isErrorLike () bool`
@@ -565,6 +612,19 @@ Whether type floating point or integer type.
 
 ```the
 result := type.isNumber()
+```
+
+### `Type.isPrimitive () bool`
+Checks whether current type is a primitive type.
+
+**Return value**
+
+Whether current type is a primitive type.
+
+**Examples**
+
+```the
+result := type.isPrimitive()
 ```
 
 ### `Type.isRequired () bool`
@@ -761,6 +821,27 @@ mut selfType := tm.createObject("Animal")
 
 tm.createMethod(false, [], tm.get("void"), false, false, "", selfType)
 tm.createMethod(false, [], tm.get("void"), true, true, "self", tm.createReference(selfType))
+```
+
+### `TypeMap.convertMethod (t: ref Type) ref Type`
+Converts a method type into a function type.
+
+**Parameters**
+
+- `t` - method type to convert
+
+**Return value**
+
+Function type representation of the method type provided.
+
+**Examples**
+
+```the
+mut tm := TypeMap{}
+mut selfType := tm.createObject("Animal")
+method := tm.createMethod(false, [], tm.get("void"), false, false, "", selfType)
+
+function := tm.convertMethod(method)
 ```
 
 ### `TypeMap.createNamespace (name: str, members: NamespaceMember[]) ref Type`

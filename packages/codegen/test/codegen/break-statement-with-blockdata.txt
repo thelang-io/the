@@ -82,10 +82,10 @@ main {
 #include <stdint.h>
 #define TYPE_str 1
 #define TYPE_int 2
-D4_ANY_DECLARE(int, int32_t)
 D4_ANY_DECLARE(str, d4_str_t)
-D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+D4_ANY_DECLARE(int, int32_t)
 D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
+D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
 int main (void) {
   d4_str_t v1_0 = d4_str_alloc(L"test1");
   for (int32_t i_0 = 0; i_0 < 10; i_0++) {

@@ -8,10 +8,10 @@ main {
 #include <d4/byte.h>
 #include <d4/number.h>
 #include <stdint.h>
-D4_ARRAY_DECLARE(byte, unsigned char)
 D4_ARRAY_DECLARE(int, int32_t)
-D4_ARRAY_DEFINE(byte, unsigned char, int32_t, element, lhs_element == rhs_element, (void) element, d4_byte_str(element))
+D4_ARRAY_DECLARE(byte, unsigned char)
 D4_ARRAY_DEFINE(int, int32_t, int32_t, element, lhs_element == rhs_element, (void) element, d4_int_str(element))
+D4_ARRAY_DEFINE(byte, unsigned char, int32_t, element, lhs_element == rhs_element, (void) element, d4_byte_str(element))
 int main (void) {
   d4_arr_int_t a_0 = d4_arr_int_alloc(3, 1, 2, 3);
   d4_arr_byte_t b_0 = d4_arr_byte_alloc(3, 1, 2, 3);

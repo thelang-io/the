@@ -91,6 +91,68 @@ Program_traverse(ref f.program, (it: Statement) -> void {
 })
 ```
 
+### `Reader_init (pathOrCode: str) Reader`
+Initializes reader instance with either path or code provided.
+
+**Parameters**
+
+- `pathOrCode` - path or code to initialize reader with.
+
+**Return value**
+
+A new reader instance.
+
+**Examples**
+
+```the
+reader := Reader_init("/path/to/file")
+reader := Reader_init("const PI := 3.14159")
+```
+
+**Exceptions**
+
+- `ParserError` - thrown if path doesn't exists
+- `ParserError` - thrown if path is not a file
+
+### `Reader_error (reader: ref Reader, errorType: str, message: str, start: int, end: int) str`
+Generates an error of specified type with specified message at specified position range.
+
+**Parameters**
+
+- `reader` - reader instance to retrieve lines information from.
+- `errorType` - error type that goes before message.
+- `message` - error message that is present on the first line.
+- `start` - beginning of error location range.
+- `end` - ending of error location range.
+
+**Return value**
+
+Generated error string.
+
+**Examples**
+
+```the
+error := Reader_error(ref reader, "TypeError", "Missing type", 1, 10)
+```
+
+### `Reader_locate (reader: ref Reader, pos: int) Location`
+Converts file position into location object.
+
+**Parameters**
+
+- `reader` - reader instance to locate position from.
+- `pos` - position to locate.
+
+**Return value**
+
+File position converted into location object.
+
+**Examples**
+
+```the
+loc := Reader_locate(ref reader, 10)
+```
+
 ### `Expression_toText (self: Expression, indent := 0) str`
 Generates string representation of the expression.
 
@@ -184,6 +246,109 @@ String representation of the type.
 ```the
 Type_toText(type)
 Type_toText(type, indent: 2)
+```
+
+### `Reader.eof () bool`
+Checks whether reader reached end of file.
+
+**Return value**
+
+Whether reader reached end of file.
+
+**Examples**
+
+```the
+reader.eof()
+```
+
+### `Reader.lookahead (check: char) bool`
+Increases position if the next character in the stream matches specified character.
+
+**Parameters**
+
+- `check` - character to check for.
+
+**Return value**
+
+Whether next character in the stream matches specified character.
+
+**Examples**
+
+```the
+reader.lookahead('a')
+```
+
+### `Reader.next () char`
+Increase position and returns next character from the stream.
+
+**Return value**
+
+Next character from the stream.
+
+**Examples**
+
+```the
+ch := reader.next()
+```
+
+**Exceptions**
+
+- `Error` - thrown when tried reading on end of file
+
+### `Reader.seek (pos: int) void`
+Change reader position.
+
+**Parameters**
+
+- `pos` - new reader position.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+reader.seek(100)
+```
+
+### `Reader.slice (start: int, end: int) str`
+Create a slice of the reader content and return it.
+
+**Parameters**
+
+- `start` - slice starting position.
+- `end` - slice ending position.
+
+**Return value**
+
+Slice of the reader content.
+
+**Examples**
+
+```the
+slice := reader.slice(1, 5)
+```
+
+### `Reader.walk (matcher: (char) -> bool) void`
+Iterate over reader content with matcher function.
+
+**Parameters**
+
+- `matcher` - matcher function to iterate with.
+
+**Return value**
+
+none
+
+**Examples**
+
+```the
+fn whitespaceWalker (ch: char) bool {
+  return ch.isWhitespace
+}
+
+slice := reader.walk(whitespaceWalker)
 ```
 
 ### `Expression.asIdentifier () ref Identifier`
@@ -640,12 +805,12 @@ Checks whether type's body contains corresponding type.
 type.isArray()
 ```
 
-### `expressionToType (expression: Expression) Type`
+### `expressionToType (self: Expression) Type`
 Converts expression to type.
 
 **Parameters**
 
-- `expression` - expression to convert to type.
+- `self` - expression to convert to type.
 
 **Return value**
 
@@ -660,6 +825,90 @@ expressionToType(expression)
 **Exceptions**
 
 - `Error` - thrown if unable to transform
+
+### `getInnerExpressions (self: ref Expression) (ref Expression)[]`
+Get first level inner expressions of a specified expression.
+
+**Parameters**
+
+- `self` - expression to get inner expression from.
+
+**Return value**
+
+First level inner expressions.
+
+**Examples**
+
+```the
+result := getInnerExpression(ref expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to get inner expressions
+
+### `stringifyExpression (expression: Expression) str`
+Converts expression to a code string.
+
+**Parameters**
+
+- `expression` - expression to convert to code string.
+
+**Return value**
+
+Code string representation of the expression.
+
+**Examples**
+
+```the
+stringifyExpression(expression)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to convert to a code string
+
+### `stringifyStatement (self: Statement) str`
+Converts statement to a code string.
+
+**Parameters**
+
+- `self` - statement to convert to code string.
+
+**Return value**
+
+Code string representation of the statement.
+
+**Examples**
+
+```the
+stringifyStatement(statement)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to convert to a code string
+
+### `stringifyType (self: Type) str`
+Converts type to a code string.
+
+**Parameters**
+
+- `self` - type to convert to code string.
+
+**Return value**
+
+Code string representation of the type.
+
+**Examples**
+
+```the
+stringifyType(type)
+```
+
+**Exceptions**
+
+- `Error` - thrown if unable to convert to a code string
 
 ### `validObjExprId (expression: Expression) bool`
 Checks whether expression is valid `ObjectExpression` identifier.
