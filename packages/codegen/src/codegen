@@ -38,12 +38,11 @@ import sortStrAsc from "./utils"
 // TODO: test MainDeclaration statement
 // TODO: test call expression
 
-// TODO: test VariableDeclaration statement
-// TODO: test expressions with types other than primitive
-
 // TODO: implement EnumDeclaration statement
 // TODO: implement TypeAliasDeclaration statement
 
+// TODO: test VariableDeclaration statement
+// TODO: test expressions with types other than primitive
 // TODO: test If statement
 // TODO: add more tests for Loop statement with other types
 
@@ -59,6 +58,7 @@ import sortStrAsc from "./utils"
 // TODO: implement async functions
 // TODO: implement await expression
 
+// TODO: automatic reference counter and object reference cycles
 // TODO: check whether all tests are transferred from old codegen
 
 export obj CodegenAPIBuiltin {
