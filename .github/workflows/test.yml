@@ -18,13 +18,13 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - os: macos-11
-            platform: macos
-            generator: Ninja
-          - os: macos-12
-            platform: macos
-            generator: Ninja
           - os: macos-13
+            platform: macos
+            generator: Ninja
+          - os: macos-14
+            platform: macos
+            generator: Ninja
+          - os: macos-15
             platform: macos
             generator: Ninja
           - os: ubuntu-20.04
@@ -35,7 +35,17 @@ jobs:
             platform: linux
             generator: Ninja
             memcheck: memcheck
+          - os: ubuntu-24.04
+            platform: linux
+            generator: Ninja
+            memcheck: memcheck
+          - os: windows-2019
+            platform: windows
+            generator: Visual Studio 16 2019
           - os: windows-2022
+            platform: windows
+            generator: Visual Studio 17 2022
+          - os: windows-2025
             platform: windows
             generator: Visual Studio 17 2022
     steps:
