@@ -1057,7 +1057,9 @@ export obj Codegen {
 
     args.push(createASTPropertyAccess(cCalleeExpression, "ctx"))
 
-    if !paramsArgs.empty {
+    if paramsArgs.empty {
+      args.push(AST.createIdentifier(self._("NULL")))
+    } else {
       paramsName := self._type(calleeTargetType, "_params_t")
 
       args.push(AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
@@ -1971,14 +1973,17 @@ export obj Codegen {
           it := entity.context as ref Analyzer.Type
           t := it.asFunction()
           returnType := self._type(t.returnType)
+          returnTypeName := self._typeName(t.returnType)
 
           return [
             AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DECLARE"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
+              AST.createIdentifier(returnTypeName),
               AST.createType(returnType),
             ]), terminated: false),
             AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_FUNCTION_DEFINE"), [
               AST.createIdentifier(t.asynchronous ? "a" : "s"),
+              AST.createIdentifier(returnTypeName),
               AST.createType(returnType),
             ]), terminated: false),
           ]
