@@ -631,12 +631,15 @@ export obj Codegen {
   fn _generateBlockBody (mut self: ref Self, items: ref Parser.Statement[]) AST.CStatement[] {
     mut result: AST.CStatement[]
     l := items.len
+    mut mainDeclaration: (ref Parser.Statement)?
     mut declarations: (ref Parser.Statement)[]
 
     loop i := 0; i < l; i++ {
       item := items[i]
 
-      if item.isDeclaration() {
+      if item.isMainDeclaration() {
+        mainDeclaration = item
+      } elif item.isDeclaration() {
         declarations.push(item)
       }
     }
@@ -668,6 +671,10 @@ export obj Codegen {
       // loop ; i + 1 < l && items[i + 1].isDeclaration(); i++ {
       //   result.push(self._generateStatement(items[i + 1], .Init))
       // }
+    }
+
+    if mainDeclaration != nil {
+      self._declareStatement(mainDeclaration)
     }
 
     return result

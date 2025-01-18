@@ -1,0 +1,6 @@
+main {
+  b := example() + "2"
+}
+fn example () str { return "1" }
+===== code =====
+===== output =====
