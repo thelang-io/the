@@ -1,0 +1,7 @@
+fn example () {
+}
+main {
+  example()
+}
+===== code =====
+===== output =====

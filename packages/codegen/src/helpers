@@ -159,13 +159,13 @@ export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   )
 }
 
-export fn statementHasPrecedingNonVarDecl (item: ref Parser.Statement) bool {
+export fn statementHasPrecedingNonDeclaration (item: ref Parser.Statement) bool {
   mut it := item
 
   loop it.hasPrev() {
     it = it.prev()
 
-    if !it.isVariableDeclaration() {
+    if !it.isDeclaration() && !it.isVariableDeclaration() {
       return true
     }
   }
