@@ -485,6 +485,82 @@ export obj Codegen {
     throw error_NewError("Tried default initializer variable declaration on unknown type '" + it.toString() + "'")
   }
 
+  fn _defineFunction (
+    mut self: ref Codegen,
+    name: Parser.Identifier,
+    parameters: Parser.FunctionParameter[],
+    body: Parser.Statement,
+    t: ref Analyzer.Type,
+  ) AST.CStatement {
+    variableName := self.blockData.getVariable(name.name)
+    cType := AST.createType(self._type(t))
+
+    self.globalStatements.push(AST.createVariableDeclaration(cType, variableName))
+
+    self.blockData.addTeardown(
+      AST.createExpressionStatement(
+        self._functionFree(t, AST.createIdentifier(variableName)),
+      ),
+    )
+
+    allocTypeName := self._type(t, "_alloc")
+
+    return AST.createExpressionStatement(
+      AST.createAssignmentExpression(
+        AST.createIdentifier(variableName),
+        "=",
+        AST.createCallExpression(AST.createIdentifier(allocTypeName), [
+          self._str(name.name),
+          AST.createIdentifier(self._("NULL")), // ctx
+          AST.createIdentifier(self._("NULL")), // ctx copy
+          AST.createIdentifier(self._("NULL")), // ctx free
+          AST.createIdentifier(self._("NULL")), // fn
+        ]),
+      ),
+    )
+
+    // auto initialStateCleanUp = this->state.cleanUp;
+    // auto initialStateReturnType = this->state.returnType;
+    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
+    // this->_apiEntity(typeName, CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
+    //   this->varMap.save();
+    //   if (hasParams) {
+    //     body += Params *p = pp;
+    //     cleanUp += free(pp);
+    //   }
+    //   if (hasSelfParam) {
+    //     body += mut? selfName: SelfType = p->self;
+    //   }
+    //   if (!params.empty()) {
+    //     for (param, paramIdx) : params {
+    //       body += mut? ParamName: ParamType = init == nil
+    //         ? p->[n + paramIdx]
+    //         : p->[o + paramIdx] == 1
+    //           ? p->[n + paramIdxStr]
+    //           : init
+    //       cleanUp += free(ParamName);
+    //     }
+    //   }
+    //   if (hasSelfParam && fnType.callInfo.selfType->shouldBeFreed()) {
+    //     cleanUp += free(selfName);
+    //   }
+    //   this->state.returnType = fnType.returnType;
+    //   this->_block(&cBody, *body, false);
+    //   this->varMap.restore();
+    //   if (!fnType.returnType->isVoid() && this->state.cleanUp.valueVarUsed) {
+    //     body >>= ReturnType v;
+    //   }
+    //   if (!fnType.returnType->isVoid() this->state.cleanUp.valueVarUsed) {
+    //     body += return v;
+    //   }
+    //   decl += "void *);";
+    //   def += "void *px) " + body->str(0, false);
+    //   return 0;
+    // });
+    // this->state.cleanUp = initialStateCleanUp;
+    // this->state.returnType = initialStateReturnType;
+  }
+
   fn _functionCopy (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
     t := Analyzer.unwrap(it, withReference: false)
 
@@ -1354,31 +1430,16 @@ export obj Codegen {
     }
 
     context := item.context as Analyzer.FunctionDeclarationContext
-    variableName := self.blockData.getVariable(statement.name.name)
-    cType := AST.createType(self._type(context.selfType))
 
-    self.globalStatements.push(AST.createVariableDeclaration(cType, variableName))
+    if statement.body == nil {
+      return nil
+    }
 
-    self.blockData.addTeardown(
-      AST.createExpressionStatement(
-        self._functionFree(context.selfType, AST.createIdentifier(variableName)),
-      ),
-    )
-
-    allocTypeName := self._type(context.selfType, "_alloc")
-
-    return AST.createExpressionStatement(
-      AST.createAssignmentExpression(
-        AST.createIdentifier(variableName),
-        "=",
-        AST.createCallExpression(AST.createIdentifier(allocTypeName), [
-          self._str(statement.name.name),
-          AST.createIdentifier(self._("NULL")), // ctx
-          AST.createIdentifier(self._("NULL")), // ctx copy
-          AST.createIdentifier(self._("NULL")), // ctx free
-          AST.createIdentifier(self._("NULL")), // fn
-        ]),
-      ),
+    return self._defineFunction(
+      statement.name,
+      statement.parameters,
+      statement.body as Parser.Statement,
+      context.selfType,
     )
   }
 
