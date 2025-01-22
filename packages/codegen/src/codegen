@@ -31,11 +31,13 @@ from "./helpers"
 import sortStrAsc from "./utils"
 
 // TODO: implement EnumDeclaration statement
+// TODO: implement MemberAccess expression
 // TODO: implement TypeAliasDeclaration statement
 
 // TODO: test VariableDeclaration statement
 // TODO: test expressions with types other than primitive
 // TODO: test If statement
+// TODO: test Loop statement
 // TODO: add more tests for Loop statement with other types
 
 // TODO: implement Throw statement
@@ -45,7 +47,7 @@ import sortStrAsc from "./utils"
 // TODO: implement ImportDeclaration statement
 // TODO: implement ExportDeclaration statement
 // TODO: implement ExportNamedDeclaration statement
-// TODO: implement Member type
+// TODO: implement NamespaceMember type
 
 // TODO: implement async functions
 // TODO: implement await expression
@@ -97,7 +99,6 @@ export obj Codegen {
   mut blockData: BlockData
   mut entities: CodegenEntity[]
   mut flags: str[]
-  mut insideLoopHeader: bool
   mut lastTypeId: int
   mut lastVarId: int
   mut mainStatements: AST.CStatement[]
@@ -154,6 +155,7 @@ export obj Codegen {
       "-Wno-gnu-binary-literal",
       "-Wno-strict-prototypes",
       "-Wno-unused-but-set-variable",
+      "-Wno-unused-parameter",
       "-Wno-unused-value",
       "-Wno-unused-variable",
     ].concat(extraFlags).join(" ")
@@ -2379,14 +2381,6 @@ export obj Codegen {
           propertyIdx++
         }
 
-        if freeBlock.empty {
-          freeBlock.push(
-            AST.createExpressionStatement(
-              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
-            ),
-          )
-        }
-
         mut eqBlock: AST.CStatement[]
 
         if propertyIdx == 0 {
@@ -2413,24 +2407,6 @@ export obj Codegen {
                 "=",
                 AST.createPropertyAccessExpression(AST.createIdentifier("self"), "_"),
               ),
-            ),
-          )
-
-          eqBlock.push(
-            AST.createExpressionStatement(
-              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
-            ),
-          )
-
-          eqBlock.push(
-            AST.createExpressionStatement(
-              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("rhs")),
-            ),
-          )
-
-          strBlock.push(
-            AST.createExpressionStatement(
-              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
             ),
           )
         }
@@ -2745,14 +2721,6 @@ export obj Codegen {
                   ),
                 ),
               ),
-            ),
-          )
-        }
-
-        if freeBlock.empty {
-          freeBlock.push(
-            AST.createExpressionStatement(
-              AST.createCastExpression(AST.createType("void"), AST.createIdentifier("self")),
             ),
           )
         }

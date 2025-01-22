@@ -22,14 +22,8 @@ D4_OBJECT_DEFINE(EmptyObject, EmptyObject, {
 }, {
   result._ = self._;
 }, {
-  (void) self;
-  (void) rhs;
   return true;
-}, {
-  (void) self;
-}, {
-  (void) self;
-}, void)
+}, {}, {}, void)
 D4_ANY_DEFINE(TYPE_obj_EmptyObject, obj_EmptyObject, d4_obj_EmptyObject_t, d4_obj_EmptyObject_copy(val), d4_obj_EmptyObject_eq(lhs_val, rhs_val), d4_obj_EmptyObject_free(val), d4_obj_EmptyObject_str(val))
 int main (void) {
   void *__THE_1;
