@@ -1257,9 +1257,10 @@ export obj Codegen {
 
     expression := item.asMap()
     targetType := Analyzer.contextTarget(item)
-    mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(expression.elements.len.str())]
+    len := expression.elements.len
+    mut arguments: (AST.CExpression | AST.CType)[] = [AST.createLiteral(len.str())]
 
-    loop i := 0; i < expression.elements.len; i++ {
+    loop i := 0; i < len; i++ {
       element := expression.elements[i]
       arguments.push(self._generateExpression(ref element.key))
       arguments.push(self._generateExpression(ref element.value))
@@ -1559,6 +1560,7 @@ export obj Codegen {
 
     body.merge(self._generateBlockBody(ref bodyItems))
     self.blockData.decreaseVariableIndexes()
+
     blockDataLoop := self.blockData.decrease()
     optItem: (ref Parser.Statement)? = item // TODO: delete after v1
     body = self._generateBlockTail(body, optItem, ref blockDataLoop)
