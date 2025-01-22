@@ -93,6 +93,12 @@ export obj CodegenEntity {
   mut generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType
 }
 
+export obj CodegenFunctionContext {
+  parameters: Parser.FunctionParameter[]
+  body: Parser.Statement
+  t: ref Analyzer.Type
+}
+
 export obj Codegen {
   mut analyzer: ref Analyzer.Analyzer
   mut builtin: CodegenAPIBuiltin
@@ -487,13 +493,7 @@ export obj Codegen {
     throw error_NewError("Tried default initializer variable declaration on unknown type '" + it.toString() + "'")
   }
 
-  fn _defineFunction (
-    mut self: ref Codegen,
-    name: Parser.Identifier,
-    parameters: Parser.FunctionParameter[],
-    body: Parser.Statement,
-    t: ref Analyzer.Type,
-  ) AST.CStatement {
+  fn _defineFunction (mut self: ref Codegen, name: Parser.Identifier, parameters: Parser.FunctionParameter[], body: Parser.Statement, t: ref Analyzer.Type) AST.CStatement {
     variableName := self.blockData.getVariable(name.name)
     cType := AST.createType(self._type(t))
 
@@ -505,7 +505,136 @@ export obj Codegen {
       ),
     )
 
+    entityContext := CodegenFunctionContext{parameters: parameters, body: body, t: t}
+    functorTypeName := name.name + "_func"
+
+    self.entities.push(CodegenEntity{
+      name: functorTypeName,
+      codeName: functorTypeName,
+      context: entityContext,
+      generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+        ctx := entity.context as CodegenFunctionContext
+        statementBody := ctx.body.asBlock()
+        returnType := ctx.t.getReturnType()
+
+        initialLastVarId := self.lastVarId
+        initialReturnType := self.returnType
+
+        self.blockData.increase(.Fn)
+
+        self.lastVarId = 0
+        self.returnType = returnType
+
+        cParameters := AST.createIdentifier("params")
+        mut parameters: AST.CFunctionParameter[]
+
+        parameters.push(AST.createFunctionParameter(AST.createType("void *"), "ctx"))
+
+        if ctx.t.hasParameters() || ctx.t.hasSelfParam() {
+          cParametersType := AST.createType(self._type(ctx.t, "_params_t"), reference: true)
+
+          parameters.push(
+            AST.createFunctionParameter(cParametersType, "params"),
+          )
+        } else {
+          parameters.push(AST.createFunctionParameter(AST.createType("void *"), "params"))
+        }
+
+        if ctx.t.hasSelfParam() {
+          methodType := ctx.t.asMethod()
+          selfCodeName := self.blockData.setVariable(methodType.selfName)
+
+          self.blockData.addSetup(
+            AST.createVariableDeclaration(
+              AST.createType(self._type(methodType.selfType), constant: !methodType.selfMutable),
+              selfCodeName,
+              AST.createPropertyAccessExpression(cParameters, "self"),
+            ),
+          )
+        }
+
+        if ctx.t.hasParameters() {
+          typeParameters := ctx.t.getParameters()
+
+          loop i := 0; i < ctx.parameters.len; i++ {
+            parameter := ctx.parameters[i]
+            typeParameter := typeParameters[i]
+            parameterType := self._type(typeParameter.t)
+            parameterCodeName := self.blockData.setVariable(parameter.name.name)
+
+            mut initializer := AST.createPropertyAccessExpression(cParameters, "n" + i.str(), true)
+
+            if parameter.initializer != nil {
+              parameterInitializer := parameter.initializer
+
+              initializer = AST.createConditionalExpression(
+                AST.createBinaryExpression(
+                  AST.createPropertyAccessExpression(cParameters, "o" + i.str(), true),
+                  "==",
+                  AST.createLiteral("1"),
+                ),
+                initializer,
+                self._generateExpression(parameterInitializer),
+              )
+            }
+
+            self.blockData.addSetup(
+              AST.createVariableDeclaration(
+                AST.createType(parameterType, constant: !parameter.mutable),
+                parameterCodeName,
+                initializer,
+              ),
+            )
+          }
+        }
+
+        statements := self._generateBlockBody(ref statementBody.body)
+
+        if returnType.name != "void" && self.blockData.usedValueVariable() {
+          valueName := self.blockData.getValueVariable()
+          self.blockData.addSetup(AST.createVariableDeclaration(AST.createType(self._type(returnType)), valueName))
+        }
+
+        if self.blockData.usedReturnVariable() {
+          returnName := self.blockData.getReturnVariable()
+
+          self.blockData.addSetup(
+            AST.createVariableDeclaration(
+              AST.createType("unsigned char"),
+              returnName,
+              AST.createLiteral("0"),
+            ),
+          )
+        }
+
+        self.returnType = initialReturnType
+        self.lastVarId = initialLastVarId
+
+        mut cBody: AST.CStatement[]
+        cReturnType := AST.createType(self._type(returnType))
+        dataContextBlock := self.blockData.decrease()
+
+        cBody.merge(dataContextBlock.setup)
+        cBody.merge(statements)
+        cBody.merge(dataContextBlock.teardown)
+
+        if returnType.name != "void" && dataContextBlock.usedValueVariable {
+          valueName := dataContextBlock.valueVariable()
+          cBody.push(AST.createReturnStatement(AST.createIdentifier(valueName)))
+        }
+
+        return AST.createFunctionDeclaration(
+          cReturnType,
+          entity.codeName,
+          parameters,
+          AST.createCompoundStatement(cBody),
+        )
+      }
+    })
+
     allocTypeName := self._type(t, "_alloc")
+    returnType := t.getReturnType()
+    cReturnType := AST.createType(self._type(returnType))
 
     return AST.createExpressionStatement(
       AST.createAssignmentExpression(
@@ -516,51 +645,13 @@ export obj Codegen {
           AST.createIdentifier(self._("NULL")), // ctx
           AST.createIdentifier(self._("NULL")), // ctx copy
           AST.createIdentifier(self._("NULL")), // ctx free
-          AST.createIdentifier(self._("NULL")), // fn
+          AST.createCastExpression(
+            AST.createType(cReturnType.stringify(declaration: true) + "(*) (void *, void *)"),
+            AST.createIdentifier(self._(functorTypeName)),
+          ),
         ]),
       ),
     )
-
-    // auto initialStateCleanUp = this->state.cleanUp;
-    // auto initialStateReturnType = this->state.returnType;
-    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_FN, &initialStateCleanUp);
-    // this->_apiEntity(typeName, CODEGEN_ENTITY_FN, [&] (auto &decl, auto &def) {
-    //   this->varMap.save();
-    //   if (hasParams) {
-    //     body += Params *p = pp;
-    //     cleanUp += free(pp);
-    //   }
-    //   if (hasSelfParam) {
-    //     body += mut? selfName: SelfType = p->self;
-    //   }
-    //   if (!params.empty()) {
-    //     for (param, paramIdx) : params {
-    //       body += mut? ParamName: ParamType = init == nil
-    //         ? p->[n + paramIdx]
-    //         : p->[o + paramIdx] == 1
-    //           ? p->[n + paramIdxStr]
-    //           : init
-    //       cleanUp += free(ParamName);
-    //     }
-    //   }
-    //   if (hasSelfParam && fnType.callInfo.selfType->shouldBeFreed()) {
-    //     cleanUp += free(selfName);
-    //   }
-    //   this->state.returnType = fnType.returnType;
-    //   this->_block(&cBody, *body, false);
-    //   this->varMap.restore();
-    //   if (!fnType.returnType->isVoid() && this->state.cleanUp.valueVarUsed) {
-    //     body >>= ReturnType v;
-    //   }
-    //   if (!fnType.returnType->isVoid() this->state.cleanUp.valueVarUsed) {
-    //     body += return v;
-    //   }
-    //   decl += "void *);";
-    //   def += "void *px) " + body->str(0, false);
-    //   return 0;
-    // });
-    // this->state.cleanUp = initialStateCleanUp;
-    // this->state.returnType = initialStateReturnType;
   }
 
   fn _functionCopy (mut self: ref Self, it: ref Analyzer.Type, expression: AST.CExpression) AST.CExpression {
@@ -1163,13 +1254,13 @@ export obj Codegen {
           cTmpVar,
           "=",
           AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
-        AST.createUnaryExpression("&", AST.createCastExpression(
-          AST.createType(paramsName),
-          AST.createInitializerListExpression(paramsArgs),
-        )),
-        AST.createCallExpression(AST.createIdentifier("sizeof"), [
-          AST.createType(paramsName),
-        ]),
+            AST.createUnaryExpression("&", AST.createCastExpression(
+              AST.createType(paramsName),
+              AST.createInitializerListExpression(paramsArgs),
+            )),
+            AST.createCallExpression(AST.createIdentifier("sizeof"), [
+              AST.createType(paramsName),
+            ]),
           ]),
         ),
       )
