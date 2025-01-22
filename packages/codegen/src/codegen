@@ -1148,9 +1148,19 @@ export obj Codegen {
     if paramsArgs.empty {
       args.push(AST.createIdentifier(self._("NULL")))
     } else {
+      tmpVar := self._tmpVar()
+      cTmpVar := AST.createIdentifier(tmpVar)
       paramsName := self._type(calleeTargetType, "_params_t")
 
-      args.push(AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
+      self.blockData.addSetup(
+        AST.createVariableDeclaration(AST.createType("void *"), tmpVar),
+      )
+
+      args.push(
+        AST.createAssignmentExpression(
+          cTmpVar,
+          "=",
+          AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
         AST.createUnaryExpression("&", AST.createCastExpression(
           AST.createType(paramsName),
           AST.createInitializerListExpression(paramsArgs),
@@ -1158,7 +1168,15 @@ export obj Codegen {
         AST.createCallExpression(AST.createIdentifier("sizeof"), [
           AST.createType(paramsName),
         ]),
-      ]))
+          ]),
+        ),
+      )
+
+      self.blockData.addTeardown(
+        AST.createExpressionStatement(
+          AST.createCallExpression(AST.createIdentifier(self._("d4_safe_free")), [cTmpVar]),
+        ),
+      )
     }
 
     return AST.createCallExpression(createASTPropertyAccess(cCalleeExpression, "func"), args)
