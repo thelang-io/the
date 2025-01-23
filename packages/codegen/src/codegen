@@ -574,7 +574,7 @@ export obj Codegen {
                   AST.createLiteral("1"),
                 ),
                 initializer,
-                self._generateExpression(parameterInitializer),
+                self._generateExpression(ref parameterInitializer),
               )
             }
 
