@@ -549,7 +549,7 @@ export obj Codegen {
 
           self.blockData.addSetup(
             AST.createVariableDeclaration(
-              AST.createType(self._type(methodType.selfType), constant: !methodType.selfMutable),
+              AST.createType(self._type(methodType.selfType)),
               selfCodeName,
               AST.createPropertyAccessExpression(cParameters, "self"),
             ),
@@ -583,7 +583,7 @@ export obj Codegen {
 
             self.blockData.addSetup(
               AST.createVariableDeclaration(
-                AST.createType(parameterType, constant: !parameter.mutable),
+                AST.createType(parameterType),
                 parameterCodeName,
                 initializer,
               ),
@@ -841,19 +841,6 @@ export obj Codegen {
       if !(item.isDeclaration() && !declarationAsStatement) {
         result.push(self._generateStatement(item))
       }
-
-      // if !hasNextItem || !items[i + 1].isDeclaration() {
-      //   self._generateStatement(item, .Alloc)
-      //   result.push(self._generateStatement(item, .Init))
-      //   continue
-      // }
-      // loop j := i; j < l && items[j].isDeclaration(); j++ {
-      //   self._generateStatement(items[j], .Alloc)
-      // }
-      // result.push(self._generateStatement(item, .Init))
-      // loop ; i + 1 < l && items[i + 1].isDeclaration(); i++ {
-      //   result.push(self._generateStatement(items[i + 1], .Init))
-      // }
     }
 
     if mainDeclaration != nil {
@@ -3201,7 +3188,8 @@ export obj Codegen {
     }
 
     if targetType.name == "any" && t.name != "any" {
-      allocAnyType := self._generateAnyType(t).slice(0, -2) + "_alloc"
+      typeName := self._generateAnyType(t)
+      allocAnyType := typeName.slice(0, -2) + "_alloc"
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
     } elif targetType.name != "any" && t.name == "any" {
       typeName := self._generateAnyType(targetType)
