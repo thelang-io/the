@@ -514,6 +514,9 @@ export obj Codegen {
       context: entityContext,
       generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
         ctx := entity.context as CodegenFunctionContext
+        // TODO: remove after v1
+        // Codegen entities are reallocated in the process, reference to entity becomes invalid
+        entityCodeName := entity.codeName
         statementBody := ctx.body.asBlock()
         returnType := ctx.t.getReturnType()
 
@@ -625,7 +628,7 @@ export obj Codegen {
 
         return AST.createFunctionDeclaration(
           cReturnType,
-          entity.codeName,
+          entityCodeName,
           parameters,
           AST.createCompoundStatement(cBody),
         )
