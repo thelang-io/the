@@ -3,6 +3,6 @@
  * Licensed under the MIT License
  */
 
-import format from "./codegen"
+import format from "./date"
 
 export format
