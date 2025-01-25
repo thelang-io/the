@@ -105,11 +105,13 @@ export obj Codegen {
   mut blockData: BlockData
   mut entities: CodegenEntity[]
   mut flags: str[]
+  mut globalStatements: AST.CStatement[]
   mut lastTypeId: int
   mut lastVarId: int
   mut mainStatements: AST.CStatement[]
-  mut globalStatements: AST.CStatement[]
+  mut release: bool
   mut returnType: (ref Analyzer.Type)?
+  mut sanitize: bool
   mut statements: AST.CStatement[]
   mut typeDefs: int[str]
 
@@ -152,13 +154,23 @@ export obj Codegen {
       extraFlags.push("-ld4")
     }
 
+    if !self.release && self.sanitize && os_NAME == "Windows" {
+      extraFlags.push("/f" + "sanitize=address")
+    } elif !self.release && self.sanitize {
+      extraFlags.push("-f" + "sanitize=address")
+    }
+
+    if self.release {
+      extraFlags.push("-O2")
+    } else {
+      extraFlags.push("-O0")
+    }
+
     result := [
-      "-O0",
       "-W" + "all",
       "-W" + "error",
       "-W" + "extra",
       "-pedantic-errors",
-      "-Wno-gnu-binary-literal",
       "-Wno-strict-prototypes",
       "-Wno-unused-but-set-variable",
       "-Wno-unused-parameter",
@@ -167,6 +179,28 @@ export obj Codegen {
     ].concat(extraFlags).join(" ")
 
     return result.empty ? "" : (" " + result)
+  }
+
+  fn getSanitizeFlags () str {
+    return [
+      "abort_on_error=1",
+      "alloc_dealloc_mismatch=1",
+      "detect_container_overflow=1",
+      "detect_invalid_pointer_pairs=2",
+      "detect_leaks=1",
+      "detect_odr_violation=2",
+      "detect_stack_use_after_return=1",
+      "check_initialization_order=1",
+      "fast_unwind_on_malloc=1",
+      "halt_on_error=1",
+      "intercept_tls_get_addr=1",
+      "leak_check_at_exit=1",
+      "strict_init_order=1",
+      "strict_memcmp=1",
+      "strict_string_checks=1",
+      "symbolize=1",
+      "track_origins=1",
+    ].join(":")
   }
 
   fn stringify (self: ref Self) str {
@@ -3251,14 +3285,24 @@ export obj Codegen {
   }
 }
 
-export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str) {
-  mut generator := Codegen{analyzer: analyzer}
-  generator.init()
-  generator.generate()
-
+export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str, release := false, sanitize := false) {
+  mut generator := Codegen{analyzer: analyzer, release: release, sanitize: sanitize}
   codePath := executablePath + ".c"
+  mut caughtError: error_Error?
 
-  fs_writeFileSync(codePath, generator.stringify().toBuffer())
-  process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
+  try {
+    generator.init()
+    generator.generate()
+
+    fs_writeFileSync(codePath, generator.stringify().toBuffer())
+    process_runSync("clang '" + codePath + "' -o '" + executablePath + "' " + generator.getFlags())
+  } catch err: error_Error {
+    caughtError = err
+  }
+
   fs_rmSync(codePath)
+
+  if caughtError != nil {
+    throw caughtError
+  }
 }

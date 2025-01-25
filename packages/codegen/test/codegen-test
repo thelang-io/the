@@ -67,7 +67,7 @@ export fn TEST_Codegen () {
       continue
     }
 
-    mut generator := Codegen{analyzer: ref analyzer}
+    mut generator := Codegen{analyzer: ref analyzer, sanitize: true}
     generator.init()
 
     mut generationError := ""
@@ -109,7 +109,13 @@ export fn TEST_Codegen () {
     mut actualOutput := ""
 
     try {
-      actualOutput = process_runSync(executablePath).str()
+      sanitizeFlags := generator.getSanitizeFlags()
+
+      sanitizeEnv := os_NAME == "Windows"
+        ? "set ASAN_OPTIONS=" + sanitizeFlags + " &&"
+        : "ASAN_OPTIONS=" + sanitizeFlags
+
+      actualOutput = process_runSync(sanitizeEnv + " " + executablePath).str()
     } catch err: error_Error {
       actualOutput = err.message
     }
