@@ -1029,14 +1029,36 @@ export obj Codegen {
       return AST.createLiteral(expression.value)
     } elif item.isIntegerLiteral() {
       expression := item.asIntegerLiteral()
-      rawValue := expression.value.replace("O", "").replace("o", "")
+      mut numValue: u64
 
-      if !rawValue.contains("b") && !rawValue.contains("B") && !rawValue.contains("x") && !rawValue.contains("X") {
-        numValue := rawValue.toU64()
-        return AST.createLiteral(rawValue + (numValue > 9223372036854775807 ? "U" : ""))
+      if expression.value.lower.slice(0, 2) == "0b" {
+        binary := expression.value.lower.slice(2)
+        binaryLen := binary.len
+
+        loop i := 0; i < binaryLen; i++ {
+          numValue = numValue * 2 + (binary[i] == '1' ? 1 : 0)
+        }
+      } elif expression.value.lower.slice(0, 2) == "0x" {
+        hex := expression.value.lower.slice(2)
+        hexLen := hex.len
+
+        loop i := 0; i < hexLen; i++ {
+          code := hex[i].lower.byte
+          start := code >= 97 && code <= 102 ? 87 : 48
+          numValue = numValue * 16 + (code - start)
+        }
+      } elif expression.value.lower.slice(0, 2) == "0o" {
+        octal := expression.value.lower.slice(2)
+        octalLen := octal.len
+
+        loop i := 0; i < octalLen; i++ {
+          numValue = numValue * 8 + (octal[i].byte - 48)
+        }
+      } else {
+        numValue = expression.value.toU64()
       }
 
-      return AST.createLiteral(rawValue)
+      return AST.createLiteral(numValue.str() + (numValue > 9223372036854775807 ? "U" : ""))
     } elif item.isNilLiteral() {
       expression := item.asNilLiteral()
       return AST.createIdentifier(self._("NULL"))
