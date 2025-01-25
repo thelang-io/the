@@ -1,5 +1,5 @@
 # the/date
-The programming language date library
+Date library
 
 ## Installation
 
