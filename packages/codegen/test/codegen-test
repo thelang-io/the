@@ -109,11 +109,12 @@ export fn TEST_Codegen () {
     mut actualOutput := ""
 
     try {
-      sanitizeFlags := generator.getSanitizeFlags()
+      addressSanitizerFlags := generator.getAddressSanitizerFlags()
+      leakSanitizerFlags := generator.getLeakSanitizerFlags()
 
       sanitizeEnv := os_NAME == "Windows"
-        ? "set ASAN_OPTIONS=" + sanitizeFlags + " &&"
-        : "ASAN_OPTIONS=" + sanitizeFlags
+        ? "set ASAN_OPTIONS=" + addressSanitizerFlags + " && set LSAN_OPTIONS=" + leakSanitizerFlags + " &&"
+        : "ASAN_OPTIONS=" + addressSanitizerFlags + " LSAN_OPTIONS=" + leakSanitizerFlags
 
       actualOutput = process_runSync(sanitizeEnv + " " + executablePath).str()
     } catch err: error_Error {

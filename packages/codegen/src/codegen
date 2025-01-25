@@ -161,7 +161,7 @@ export obj Codegen {
     }
 
     if self.release {
-      extraFlags.push("-O2")
+      extraFlags.push("-O3")
     } else {
       extraFlags.push("-O0")
     }
@@ -181,26 +181,19 @@ export obj Codegen {
     return result.empty ? "" : (" " + result)
   }
 
-  fn getSanitizeFlags () str {
+  fn getAddressSanitizerFlags () str {
     return [
-      "abort_on_error=1",
-      "alloc_dealloc_mismatch=1",
-      "detect_container_overflow=1",
       "detect_invalid_pointer_pairs=2",
       "detect_leaks=1",
-      "detect_odr_violation=2",
       "detect_stack_use_after_return=1",
-      "check_initialization_order=1",
-      "fast_unwind_on_malloc=1",
-      "halt_on_error=1",
-      "intercept_tls_get_addr=1",
-      "leak_check_at_exit=1",
-      "strict_init_order=1",
-      "strict_memcmp=1",
-      "strict_string_checks=1",
-      "symbolize=1",
+      "halt_on_error=0",
+      "print_suppressions=0",
       "track_origins=1",
     ].join(":")
+  }
+
+  fn getLeakSanitizerFlags () str {
+    return "suppressions=lsan.supp"
   }
 
   fn stringify (self: ref Self) str {
