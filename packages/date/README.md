@@ -10,7 +10,7 @@ the install the/date
 ## Example usage
 
 ```the
-import * as date from "the/date"
+import * as Date from "the/date"
 ```
 
 ## API
@@ -29,5 +29,5 @@ A formatted string representing the date and time in "YYYY-MM-DD HH:mm:ss" forma
 **Examples**
 
 ```the
-formattedDate := date.format(1709251200)
+formattedDate := Date.format(1709251200)
 ```
