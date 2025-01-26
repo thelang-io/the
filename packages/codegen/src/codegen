@@ -163,7 +163,7 @@ export obj Codegen {
     if self.release {
       extraFlags.push("-O3")
     } else {
-      extraFlags.push("-O0")
+      extraFlags.push("-O0 -g")
     }
 
     result := [
@@ -186,7 +186,6 @@ export obj Codegen {
       "detect_invalid_pointer_pairs=2",
       "detect_leaks=1",
       "detect_stack_use_after_return=1",
-      "halt_on_error=0",
       "print_suppressions=0",
       "track_origins=1",
     ].join(":")
@@ -1221,8 +1220,14 @@ export obj Codegen {
 
         loop j := 0; j < contextExtra.arguments.len; j++ {
           arg := contextExtra.arguments[j]
-          if arg.parameterIdx != i { continue }
-          variadicArgs.push(self._generateExpression(ref arg.argument.expression))
+
+          if arg.parameterIdx != i {
+            continue
+          }
+
+          variadicArgs.push(
+            self._generateExpression(ref arg.argument.expression),
+          )
         }
 
         mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len.str())]
