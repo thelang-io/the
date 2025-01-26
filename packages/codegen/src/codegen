@@ -482,36 +482,51 @@ export obj Codegen {
       return AST.createLiteral("L'\\0'")
     } elif it.name == "str" {
       return AST.createIdentifier(self._("d4_str_empty_val"))
-    } elif it.isArray() || it.isMap() {
-      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_alloc")), [
+    } elif it.isArray() {
+      return AST.createCastExpression(AST.createType(self._type(it)), AST.createInitializerListExpression([
+        AST.createIdentifier(self._("NULL")),
         AST.createLiteral("0"),
-      ])
+      ]))
     } elif it.isFunction() || it.isMethod() {
       // TODO: test
-      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_alloc")), [
+      return AST.createCastExpression(AST.createType(self._type(it)), AST.createInitializerListExpression([
         AST.createIdentifier(self._("d4_str_empty_val")),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
         AST.createIdentifier(self._("NULL")),
-      ])
+      ]))
+    } elif it.isMap() {
+      return AST.createCastExpression(AST.createType(self._type(it)), AST.createInitializerListExpression([
+        AST.createIdentifier(self._("NULL")),
+        AST.createLiteral("0"),
+        AST.createLiteral("0"),
+      ]))
     } elif it.isCustomObject() {
       // TODO: test
-      mut args: (AST.CExpression | AST.CType)[]
+      mut args: AST.CExpression[]
+
       loop i := 0; i < it.properties.len; i++ {
         property := it.properties[i]
+
         if property.builtin || property.t.isMethod() {
           continue
         }
+
         args.push(self._defaultInitializerDeclaration(property.t))
       }
-      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_alloc")), args)
+
+      return AST.createCastExpression(AST.createType(self._type(it)), AST.createInitializerListExpression(args))
     } elif it.isOptional() || it.isReference() {
       return AST.createIdentifier(self._("NULL"))
     } elif it.isUnion() {
-      return AST.createCallExpression(AST.createIdentifier(self._type(it, "_alloc")), [
+      return AST.createCastExpression(AST.createType(self._type(it)), AST.createInitializerListExpression([
         AST.createLiteral("-1"),
-      ])
+        AST.createInitializerListExpression([
+          // TODO: test
+          AST.createLiteral("0"),
+        ]),
+      ]))
     } elif it.isNumber() {
       return AST.createLiteral("0")
     }
@@ -1233,7 +1248,13 @@ export obj Codegen {
         mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len.str())]
         variadicAllocArgs.merge(variadicArgs)
         variadicAllocType := self._type(param.t, "_alloc")
-        paramsArgs.push(AST.createCallExpression(AST.createIdentifier(variadicAllocType), variadicAllocArgs))
+
+        paramsArgs.push(
+          self._allocateExpression(
+            param.t,
+            AST.createCallExpression(AST.createIdentifier(variadicAllocType), variadicAllocArgs),
+          ),
+        )
 
         continue
       }
@@ -3241,10 +3262,13 @@ export obj Codegen {
       expression = self._allocateExpression(t, expression)
     }
 
+    mut shouldAllocateTarget := false
+
     if targetType.name == "any" && t.name != "any" {
       typeName := self._generateAnyType(t)
       allocAnyType := typeName.slice(0, -2) + "_alloc"
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
+      shouldAllocateTarget = true
     } elif targetType.name != "any" && t.name == "any" {
       typeName := self._generateAnyType(targetType)
 
@@ -3255,9 +3279,11 @@ export obj Codegen {
       )
 
       expression = AST.createUnaryExpression("*", innerExpression.wrap())
+      shouldAllocateTarget = true
     } elif targetType.isOptional() && !t.isOptional() {
       allocOptionalType := self._generateOptionalType(targetType).slice(0, -2) + "_alloc"
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocOptionalType)), [expression])
+      shouldAllocateTarget = true
     } elif !targetType.isReference() && t.isReference() {
       expression = AST.createUnaryExpression("*", expression)
     } elif targetType.isReference() && !t.isReference() {
@@ -3270,6 +3296,8 @@ export obj Codegen {
         AST.createIdentifier(self._(typeDef)),
         expression,
       ])
+
+      shouldAllocateTarget = true
     } elif !targetType.isUnion() && t.isUnion() {
       typeName := self._typeDef(targetType)
       typeDefIdx := self.typeDefs.get(typeName)
@@ -3297,7 +3325,7 @@ export obj Codegen {
 
     if shouldFree {
       expression = self._functionFree(targetType, expression)
-    } elif !typesMatch && typeShouldBeAllocated(targetType) && expressionShouldBeAllocated(item) {
+    } elif !typesMatch && typeShouldBeAllocated(targetType) && shouldAllocateTarget {
       expression = self._allocateExpression(targetType, expression)
     }
 

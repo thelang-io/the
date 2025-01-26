@@ -121,3 +121,31 @@ main {
 }
 ===== code =====
 ===== output =====
+test1: return 3
+test1: return 2
+test1: return 2
+test1: return 1
+test1: return 1
+test1: return 1
+test1: return 1
+test2: return 3
+test2: return 3
+test2: return 3
+test2: loop1: return 2
+test2: loop1: return 1
+test2: loop1: return 2
+test2: loop1: return 1
+test3: return 4
+test3: return 2
+test3: return 2
+test3: return 1
+test3: return 1
+test3: return 1
+test3: return 1
+test4: return 4
+test4: return 4
+test4: return 4
+test4: loop1: return 2
+test4: loop1: return 1
+test4: loop1: return 2
+test4: loop1: return 1
