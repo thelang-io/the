@@ -16,19 +16,22 @@
 
 FROM ubuntu:24.04
 
-ARG DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update -y && \
-    apt-get install -y build-essential clang curl cmake git ninja-build valgrind && \
-    apt-get autoclean && \
-    apt-get autoremove && \
-    apt-get clean && \
-    rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
-
-RUN curl -fsSL https://cdn.thelang.io/deps.tar.gz | tar -xz
-ENV DEPS_DIR="$PWD/the/native/linux"
+RUN apt-get update -y
+RUN apt-get install -y build-essential
+RUN apt-get install -y clang
+RUN apt-get install -y curl
+RUN apt-get install -y cmake
+RUN apt-get install -y git
+RUN apt-get install -y ninja-build
+RUN apt-get install -y valgrind
+RUN rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
 WORKDIR /app
+
+RUN curl -fsSL https://cdn.thelang.io/deps.tar.gz | tar -xz
+RUN mv the deps
+ENV DEPS_DIR="/app/deps/native/linux"
+
 COPY . .
 RUN cmake . -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON
 RUN cmake --build .
