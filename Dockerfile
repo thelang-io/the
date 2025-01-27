@@ -14,12 +14,12 @@
 # limitations under the License.
 #
 
-FROM ubuntu
+FROM ubuntu:24.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get install build-essential clang cmake git ninja-build valgrind && \
+RUN apt-get update -y && \
+    apt-get install -y build-essential clang curl cmake git ninja-build valgrind && \
     apt-get autoclean && \
     apt-get autoremove && \
     apt-get clean && \
