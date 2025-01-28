@@ -28,8 +28,8 @@ export obj Args {
     alias := "",
     default := "",
     hasValue := true,
-    synopsis: str, // TODO: Make use of it
-    examples: str[], // TODO: Make use of it
+    synopsis := "", // TODO: Make use of it
+    examples: str[] = [], // TODO: Make use of it
   ) ref Self {
     self._config.push(ConfigItem{
       t: .Command,
