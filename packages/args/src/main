@@ -27,7 +27,9 @@ export obj Args {
     description: str,
     alias := "",
     default := "",
-    hasValue := true
+    hasValue := true,
+    synopsis: str, // TODO: Make use of it
+    examples: str[], // TODO: Make use of it
   ) ref Self {
     self._config.push(ConfigItem{
       t: .Command,
@@ -46,7 +48,8 @@ export obj Args {
     return self
   }
 
-  fn help (mut self: ref Self) str {
+  // TODO: Make use of `command` parameter
+  fn help (mut self: ref Self, command: str? = nil) str {
     self._state = State{}
     self._helpInit()
 
