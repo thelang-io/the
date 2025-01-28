@@ -30,7 +30,7 @@ WORKDIR /app
 
 RUN curl -fsSL https://cdn.thelang.io/deps.tar.gz | tar -xz
 RUN mv the deps
-ENV DEPS_DIR="/app/deps/native/linux"
+ENV THE_DEPS_DIR="/app/deps/native/linux"
 
 COPY . .
 RUN cmake . -G Ninja -D BUILD_TESTS=ON -D TEST_CODEGEN_MEMCHECK=ON

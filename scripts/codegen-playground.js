@@ -25,7 +25,7 @@ const http = require('http')
 const path = require('path')
 
 const appBinaryPath = 'build/the'
-const appDepsDir = process.env.DEPS_DIR
+const appDepsDir = process.env.THE_DEPS_DIR
 const buildTime = Date.now()
 
 async function exec (command, options) {
@@ -952,7 +952,7 @@ server.listen(8080, 'localhost', () => {
         try {
           const { stderr, stdout } = await exec(`${appBinaryPath} codegen ${filePath}`, {
             env: {
-              DEPS_DIR: appDepsDir,
+              THE_DEPS_DIR: appDepsDir,
               PATH: process.env.PATH
             },
             timeout: 3e4
@@ -974,7 +974,7 @@ server.listen(8080, 'localhost', () => {
         try {
           const { stderr: stderrCompile } = await exec(`${appBinaryPath} ${filePath} --output=${outputPath}`, {
             env: {
-              DEPS_DIR: appDepsDir,
+              THE_DEPS_DIR: appDepsDir,
               PATH: process.env.PATH
             },
             timeout: 3e4
