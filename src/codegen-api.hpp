@@ -761,7 +761,7 @@ extern inline const std::map<std::string, CodegenAPIItem> codegenAPI = {
     "fs_copyDirectorySync",
     "void fs_copyDirectorySync (err_state_t *, int, int, struct str, struct str);" EOL,
     R"(void fs_copyDirectorySync (err_state_t *fn_err_state, int line, int col, struct str n1, struct str n2) {)" EOL
-    R"(  if (setjmp(error_buf_increase(fn_err_state)) != 0) goto fs_copyDirectorySync_cleanup1;)" EOL
+    R"(  if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto fs_copyDirectorySync_cleanup1;)" EOL
     R"(  if (fs_existsSync(str_copy(n2))) {)" EOL
     R"(    if (fs_isDirectorySync(str_copy(n2))) {)" EOL
     R"(      fs_rmdirSync(fn_err_state, line, col, str_copy(n2));)" EOL

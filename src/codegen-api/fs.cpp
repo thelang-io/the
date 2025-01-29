@@ -86,7 +86,7 @@ const std::vector<std::string> codegenFs = {
   R"(})" EOL,
 
   R"(void fs_copyDirectorySync (_{err_state_t} *fn_err_state, int line, int col, _{struct str} n1, _{struct str} n2) {)" EOL
-  R"(  if (_{setjmp}(_{error_buf_increase}(fn_err_state)) != 0) goto fs_copyDirectorySync_cleanup1;)" EOL
+  R"(  if (_{setjmp}(_{error_buf_increase}(fn_err_state)->buf) != 0) goto fs_copyDirectorySync_cleanup1;)" EOL
   R"(  if (_{fs_existsSync}(_{str_copy}(n2))) {)" EOL
   R"(    if (_{fs_isDirectorySync}(_{str_copy}(n2))) {)" EOL
   R"(      _{fs_rmdirSync}(fn_err_state, line, col, _{str_copy}(n2));)" EOL

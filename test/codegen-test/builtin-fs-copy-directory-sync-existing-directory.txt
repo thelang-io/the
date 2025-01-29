@@ -257,7 +257,7 @@ void error_stack_str (err_state_t *fn_err_state) {
   }
 }
 void fs_copyDirectorySync (err_state_t *fn_err_state, int line, int col, struct str n1, struct str n2) {
-  if (setjmp(error_buf_increase(fn_err_state)) != 0) goto fs_copyDirectorySync_cleanup1;
+  if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto fs_copyDirectorySync_cleanup1;
   if (fs_existsSync(str_copy(n2))) {
     if (fs_isDirectorySync(str_copy(n2))) {
       fs_rmdirSync(fn_err_state, line, col, str_copy(n2));
