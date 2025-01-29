@@ -1,4 +1,16 @@
 ======= stdin =======
+const IGNORED_HEADERS := ["alt-svc", "nel", "report-to", "server-timing"]
+
+fn ignoredHeadersIncludes (it: str) bool {
+  loop i := 0; i < IGNORED_HEADERS.len; i++ {
+    if IGNORED_HEADERS[i] == it || it.slice(0, 3) == "cf-" {
+      return true
+    }
+  }
+
+  return false
+}
+
 main {
   mut req := request_open("GET", "https://ci.thelang.io/echo?ip")
   res := req.read()
@@ -8,7 +20,11 @@ main {
   print()
 
   loop i := 0; i < res.headers.len; i++ {
-    print(res.headers[i].str())
+    header := res.headers[i]
+
+    if !ignoredHeadersIncludes(header.name) {
+      print(header.str())
+    }
   }
 
   print()
@@ -98,6 +114,10 @@ struct request_Request;
 struct __THE_1_array_request_Header;
 struct request_Response;
 struct url_URL;
+struct __THE_1_array_str;
+struct __THE_1_fn_sFP3strFRboolFE;
+struct __THE_1_fn_sFP3strFRboolFEP;
+struct __THE_1_test_ignoredHeadersIncludes_0X;
 
 struct error_Error {
   const struct str __THE_0_message;
@@ -130,6 +150,24 @@ struct url_URL {
   const struct str __THE_0_search;
   const struct str __THE_0_hash;
 };
+struct __THE_1_array_str {
+  struct str *d;
+  size_t l;
+};
+struct __THE_1_fn_sFP3strFRboolFE {
+  bool (*f) (void *, void *);
+  void *x;
+  size_t l;
+};
+struct __THE_1_fn_sFP3strFRboolFEP {
+  err_state_t *err_state;
+  int line;
+  int col;
+  struct str n0;
+};
+struct __THE_1_test_ignoredHeadersIncludes_0X {
+  const struct __THE_1_array_str *__THE_0_IGNORED_HEADERS_0;
+};
 
 err_state_t err_state = {-1, NULL, NULL, NULL, NULL, NULL, NULL};
 bool lib_openssl_init = false;
@@ -158,9 +196,13 @@ struct str str_concat_cstr (struct str, const char *);
 struct str str_concat_str (struct str, struct str);
 struct str str_copy (const struct str);
 char *str_cstr (const struct str);
+bool str_eq_cstr (struct str, const char *);
+bool str_eq_str (struct str, struct str);
 struct str str_escape (const struct str);
 void str_free (struct str);
+struct str str_slice (struct str, unsigned char, int32_t, unsigned char, int32_t);
 struct url_URL *url_parse (err_state_t *, int, int, struct str);
+void *xalloc (void *, size_t);
 struct error_Error *error_Error_alloc (struct str, struct str);
 void error_Error_free (struct error_Error *);
 struct request_Header *request_Header_alloc (struct str, struct str);
@@ -176,6 +218,14 @@ struct request_Response *request_Response_alloc (struct buffer, int32_t, struct 
 void request_Response_free (struct request_Response *);
 struct url_URL *url_URL_alloc (struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str, struct str);
 void url_URL_free (struct url_URL *);
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t, ...);
+struct str *__THE_1_array_str_at (err_state_t *, int, int, struct __THE_1_array_str, int32_t);
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str);
+void __THE_1_array_str_free (struct __THE_1_array_str);
+void __THE_1_fn_sFP3strFRboolFE_free (struct __THE_1_fn_sFP3strFRboolFE);
+size_t __THE_1_array_str_len (struct __THE_1_array_str);
+bool __THE_1_test_ignoredHeadersIncludes_0 (void *, void *);
+void __THE_1_test_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn_sFP3strFRboolFE *, struct __THE_1_test_ignoredHeadersIncludes_0X);
 
 void *alloc (size_t n1) {
   void *r = malloc(n1);
@@ -750,6 +800,17 @@ char *str_cstr (const struct str s) {
   d[s.l] = '\0';
   return d;
 }
+bool str_eq_cstr (struct str s, const char *r) {
+  bool d = s.l == strlen(r) && memcmp(s.d, r, s.l) == 0;
+  free(s.d);
+  return d;
+}
+bool str_eq_str (struct str s1, struct str s2) {
+  bool r = s1.l == s2.l && memcmp(s1.d, s2.d, s1.l) == 0;
+  free(s1.d);
+  free(s2.d);
+  return r;
+}
 struct str str_escape (const struct str s) {
   char *d = alloc(s.l);
   size_t l = 0;
@@ -773,6 +834,19 @@ struct str str_escape (const struct str s) {
 }
 void str_free (struct str s) {
   free(s.d);
+}
+struct str str_slice (struct str s, unsigned char o1, int32_t n1, unsigned char o2, int32_t n2) {
+  int32_t i1 = o1 == 0 ? 0 : (int32_t) (n1 < 0 ? (n1 < -((int32_t) s.l) ? 0 : n1 + s.l) : (n1 > s.l ? s.l : n1));
+  int32_t i2 = o2 == 0 ? (int32_t) s.l : (int32_t) (n2 < 0 ? (n2 < -((int32_t) s.l) ? 0 : n2 + s.l) : (n2 > s.l ? s.l : n2));
+  if (i1 >= i2 || i1 >= s.l) {
+    free(s.d);
+    return str_alloc("");
+  }
+  size_t l = i2 - i1;
+  char *d = alloc(l);
+  for (size_t i = 0; i1 < i2; i1++) d[i++] = s.d[i1];
+  free(s.d);
+  return (struct str) {d, l};
 }
 struct url_URL *url_parse (err_state_t *fn_err_state, int line, int col, struct str s) {
   if (s.l == 0) {
@@ -920,6 +994,12 @@ struct url_URL *url_parse (err_state_t *fn_err_state, int line, int col, struct 
   str_free(s);
   return url_URL_alloc(origin, protocol, host, hostname, port, path, pathname, search, hash);
 }
+void *xalloc (void *n1, size_t n2) {
+  void *r = malloc(n2);
+  if (r == NULL) error_alloc(&err_state, n2);
+  memcpy(r, n1, n2);
+  return r;
+}
 struct error_Error *error_Error_alloc (struct str __THE_0_message, struct str __THE_0_stack) {
   struct error_Error *r = alloc(sizeof(struct error_Error));
   struct error_Error s = {__THE_0_message, __THE_0_stack};
@@ -1018,36 +1098,118 @@ void url_URL_free (struct url_URL *n) {
   str_free((struct str) n->__THE_0_hash);
   free(n);
 }
+struct __THE_1_array_str __THE_1_array_str_alloc (size_t x, ...) {
+  if (x == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(x * sizeof(struct str));
+  va_list args;
+  va_start(args, x);
+  for (size_t i = 0; i < x; i++) d[i] = va_arg(args, struct str);
+  va_end(args);
+  return (struct __THE_1_array_str) {d, x};
+}
+struct str *__THE_1_array_str_at (err_state_t *fn_err_state, int line, int col, struct __THE_1_array_str n, int32_t i) {
+  if ((i >= 0 && i >= n.l) || (i < 0 && i < -((int32_t) n.l))) {
+    const char *fmt = "index %" PRId32 " out of array bounds";
+    size_t z = snprintf(NULL, 0, fmt, i);
+    char *d = alloc(z + 1);
+    sprintf(d, fmt, i);
+    error_assign(fn_err_state, TYPE_error_Error, (void *) error_Error_alloc((struct str) {d, z}, (struct str) {NULL, 0}), (void (*) (void *)) &error_Error_free, line, col);
+    longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+  }
+  return i < 0 ? &n.d[n.l + i] : &n.d[i];
+}
+struct __THE_1_array_str __THE_1_array_str_copy (const struct __THE_1_array_str n) {
+  if (n.l == 0) return (struct __THE_1_array_str) {NULL, 0};
+  struct str *d = alloc(n.l * sizeof(struct str));
+  for (size_t i = 0; i < n.l; i++) d[i] = str_copy(n.d[i]);
+  return (struct __THE_1_array_str) {d, n.l};
+}
+void __THE_1_array_str_free (struct __THE_1_array_str n) {
+  for (size_t i = 0; i < n.l; i++) str_free((struct str) n.d[i]);
+  free(n.d);
+}
+void __THE_1_fn_sFP3strFRboolFE_free (struct __THE_1_fn_sFP3strFRboolFE n) {
+  if (n.x != NULL) free(n.x);
+}
+size_t __THE_1_array_str_len (struct __THE_1_array_str n) {
+  size_t l = n.l;
+  __THE_1_array_str_free((struct __THE_1_array_str) n);
+  return l;
+}
+bool __THE_1_test_ignoredHeadersIncludes_0 (void *px, void *pp) {
+  unsigned char r = 0;
+  bool v;
+  struct __THE_1_fn_sFP3strFRboolFEP *p = pp;
+  err_state_t *fn_err_state = p->err_state;
+  error_stack_push(fn_err_state, "/test", "ignoredHeadersIncludes", p->line, p->col);
+  struct __THE_1_test_ignoredHeadersIncludes_0X *x = px;
+  const struct __THE_1_array_str *__THE_0_IGNORED_HEADERS_0 = x->__THE_0_IGNORED_HEADERS_0;
+  const struct str __THE_0_it_0 = p->n0;
+  for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_str_len(__THE_1_array_str_copy(*__THE_0_IGNORED_HEADERS_0)); __THE_0_i_0++) {
+    if (str_eq_str(str_copy(*__THE_1_array_str_at(fn_err_state, 5, 8, *__THE_0_IGNORED_HEADERS_0, __THE_0_i_0)), str_copy(__THE_0_it_0)) || str_eq_cstr(str_slice(str_copy(__THE_0_it_0), 1, 0, 1, 3), "cf-")) {
+      r = 1;
+      v = true;
+      goto L1;
+    }
+  }
+  v = false;
+L1:
+  str_free((struct str) __THE_0_it_0);
+  free(pp);
+  error_stack_pop(fn_err_state);
+  if (fn_err_state->id != -1) longjmp(fn_err_state->buf_last->buf, fn_err_state->id);
+  return v;
+}
+void __THE_1_test_ignoredHeadersIncludes_0_alloc (struct __THE_1_fn_sFP3strFRboolFE *n, struct __THE_1_test_ignoredHeadersIncludes_0X x) {
+  size_t l = sizeof(struct __THE_1_test_ignoredHeadersIncludes_0X);
+  struct __THE_1_test_ignoredHeadersIncludes_0X *r = alloc(l);
+  memcpy(r, &x, l);
+  n->f = &__THE_1_test_ignoredHeadersIncludes_0;
+  n->x = r;
+  n->l = l;
+}
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L1;
-  struct request_Request *__THE_0_req_0 = request_open(&err_state, 2, 14, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {});
-  if (setjmp(err_state.buf_last->buf) != 0) goto L2;
-  const struct request_Response *__THE_0_res_0 = request_read(&err_state, 3, 10, &__THE_0_req_0);
+  const struct __THE_1_array_str __THE_0_IGNORED_HEADERS_0 = __THE_1_array_str_alloc(4, str_alloc("alt-svc"), str_alloc("nel"), str_alloc("report-to"), str_alloc("server-timing"));
+  const struct __THE_1_fn_sFP3strFRboolFE __THE_0_test_ignoredHeadersIncludes_0;
+  __THE_1_test_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn_sFP3strFRboolFE *) &__THE_0_test_ignoredHeadersIncludes_0, (struct __THE_1_test_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
+  if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L2;
+  struct request_Request *__THE_0_req_0 = request_open(&err_state, 14, 14, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?ip"), 0, (struct buffer) {}, 0, (struct __THE_1_array_request_Header) {});
   if (setjmp(err_state.buf_last->buf) != 0) goto L3;
+  const struct request_Response *__THE_0_res_0 = request_read(&err_state, 15, 10, &__THE_0_req_0);
+  if (setjmp(err_state.buf_last->buf) != 0) goto L4;
   request_close(&__THE_0_req_0);
-  if (setjmp(err_state.buf_last->buf) != 0) goto L3;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L4;
   print(stdout, "zzzziz", "GET", " ", "https://ci.thelang.io/echo?ip", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
-  if (setjmp(err_state.buf_last->buf) != 0) goto L3;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L4;
   print(stdout, "z", THE_EOL);
   for (int32_t __THE_0_i_0 = 0; __THE_0_i_0 < __THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_res_0->__THE_0_headers)); __THE_0_i_0++) {
-    if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L4;
-    print(stdout, "sz", request_Header_str(request_Header_copy(*__THE_1_array_request_Header_at(&err_state, 10, 11, __THE_0_res_0->__THE_0_headers, __THE_0_i_0))), THE_EOL);
-L4:
+    if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L5;
+    const struct request_Header **__THE_0_header_0 = __THE_1_array_request_Header_at(&err_state, 22, 15, __THE_0_res_0->__THE_0_headers, __THE_0_i_0);
+    if (!__THE_0_test_ignoredHeadersIncludes_0.f(__THE_0_test_ignoredHeadersIncludes_0.x, xalloc(&(struct __THE_1_fn_sFP3strFRboolFEP) {&err_state, 24, 9, str_copy((*__THE_0_header_0)->__THE_0_name)}, sizeof(struct __THE_1_fn_sFP3strFRboolFEP)))) {
+      if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L6;
+      print(stdout, "sz", request_Header_str(request_Header_copy(*__THE_0_header_0)), THE_EOL);
+L6:
+      error_buf_decrease(&err_state);
+      if (err_state.id != -1) goto L5;
+    }
+L5:
     error_buf_decrease(&err_state);
-    if (err_state.id != -1) goto L3;
+    if (err_state.id != -1) goto L4;
   }
-  if (setjmp(err_state.buf_last->buf) != 0) goto L3;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L4;
   print(stdout, "z", THE_EOL);
-  if (setjmp(err_state.buf_last->buf) != 0) goto L3;
+  if (setjmp(err_state.buf_last->buf) != 0) goto L4;
   print(stdout, "sz", buffer_to_str(buffer_copy(__THE_0_res_0->__THE_0_data)), THE_EOL);
-L3:
+L4:
   request_Response_free((struct request_Response *) __THE_0_res_0);
-L2:
+L3:
   request_Request_free((struct request_Request *) __THE_0_req_0);
-L1:
+L2:
   error_buf_decrease(&err_state);
+  __THE_1_fn_sFP3strFRboolFE_free((struct __THE_1_fn_sFP3strFRboolFE) __THE_0_test_ignoredHeadersIncludes_0);
+  __THE_1_array_str_free((struct __THE_1_array_str) __THE_0_IGNORED_HEADERS_0);
   error_stack_pop(&err_state);
   if (err_state.id != -1) {
     struct error_Error *err = err_state.ctx;
@@ -1064,6 +1226,6 @@ GET https://ci.thelang.io/echo?ip 200
 request_Header{name: "connection", value: "keep-alive"}
 request_Header{name: "content-length", value: "{{ \d+ }}"}
 request_Header{name: "date", value: "{{ [^"]+ }}"}
-request_Header{name: "server", value: "nginx"}
+request_Header{name: "server", value: "cloudflare"}
 
 {{ \d{1,3} }}.{{ \d{1,3} }}.{{ \d{1,3} }}.{{ \d{1,3} }}
