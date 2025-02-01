@@ -8,8 +8,6 @@ import * as Parser from "the/parser"
 import Codegen from "../src/codegen"
 import applyRegexTemplate, matchRegex, retrieveFileSections from "./utils"
 
-import Tests, EXPECT_EQ from "the/testing" // TODO: delete when done testing
-
 fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
   EXPECT_EQ(test + os_EOL + a, test + os_EOL + b)
 }
@@ -108,10 +106,4 @@ export fn TEST_Codegen () {
       TEST_EXPECT_REGEX(name, actualOutput, fileSections.output)
     }
   }
-}
-
-main {
-  mut tests := Tests{}
-  tests.register("Codegen", TEST_Codegen)
-  tests.run(process_args)
 }
