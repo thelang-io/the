@@ -15,7 +15,7 @@
 #
 
 cmake_minimum_required(VERSION 3.14)
-project(the VERSION 0.14.12)
+project(the VERSION 0.14.14)
 
 option(BUILD_COVERAGE "Build coverage" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
@@ -121,6 +121,7 @@ function (the_target_add_flags target)
     target_compile_options(${target} PRIVATE -Wconversion)
     target_compile_options(${target} PRIVATE -Werror)
     target_compile_options(${target} PRIVATE -Wextra)
+    target_compile_options(${target} PRIVATE -Wno-uninitialized)
     target_compile_options(${target} PRIVATE -Wold-style-cast)
     target_compile_options(${target} PRIVATE -Wparentheses)
     target_compile_options(${target} PRIVATE -Wshadow)

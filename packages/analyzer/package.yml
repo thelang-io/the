@@ -1,12 +1,12 @@
 name: the/analyzer
-version: 0.1.0
+version: 0.2.0
 description: The programming language analyzer
 license: MIT
 main: src/main
 
 packages:
   the/example: 1.0.1
-  the/parser: 0.4.16
+  the/parser: 0.5.0
   the/testing: 0.4.0
 
 scripts:

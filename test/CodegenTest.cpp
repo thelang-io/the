@@ -247,8 +247,24 @@ TEST_P(CodegenPassTest, Passes) {
   auto expectedCode = sections["code"];
   auto expectedOutput = sections["stdout"];
   std::get<0>(result) = prepareTestOutputFrom(std::get<0>(result));
+  auto actualCode = std::get<0>(result).substr(148 + std::string(EOL).size() * 7);
 
-  ASSERT_EQ(expectedCode, std::get<0>(result).substr(148 + std::string(EOL).size() * 7));
+  while (expectedCode.find("{{ ") != std::string::npos) {
+    auto placeholderStart = expectedCode.find("{{ ");
+    auto placeholderEnd = expectedCode.find(" }}") + 3;
+    auto placeholderLen = placeholderEnd - placeholderStart;
+    auto placeholderRegexPattern = expectedCode.substr(placeholderStart + 3, placeholderLen - 6);
+    auto placeholderRegex = std::regex(placeholderRegexPattern);
+
+    const auto actualStdoutSlice = actualCode.substr(placeholderStart);
+    auto match = std::smatch();
+    std::regex_search(actualStdoutSlice, match, placeholderRegex);
+
+    auto placeholderValue = actualCode.substr(placeholderStart, static_cast<std::size_t>(match[0].length()));
+    expectedCode.replace(placeholderStart, placeholderLen, placeholderValue);
+  }
+
+  ASSERT_EQ(expectedCode, actualCode);
   ASSERT_EQ(sections["flags"], Codegen::stringifyFlags(std::get<1>(result)));
 
   if (!this->testCompile_) {

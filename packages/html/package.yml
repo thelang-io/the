@@ -1,5 +1,5 @@
 name: the/html
-version: 0.1.0
+version: 0.2.0
 description: HTML parser
 license: MIT
 main: src/main

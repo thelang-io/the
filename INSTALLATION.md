@@ -1,9 +1,5 @@
 # How To Install
-Updated: Oct 10, 2024
-
-> [!important]
-> I tested it only on macOS. Windows commands is what I remember of how it should work.
-> If you have suggestions feel free to tell me on Discord or create a PR.
+Updated: Jan 28, 2025
 
 ## CLI
 First you need CLI to orchestrate the compiler.
@@ -21,11 +17,6 @@ For Windows:
 irm ps1.thelang.io | iex
 ```
 
-If that doesn't work, try this one:
-```powershell
-(New-Object System.Net.WebClient).DownloadString('https://ps1.thelang.io/') | iex
-```
-
 In case you are curious what it does,
 you can check here: https://github.com/thelang-io/cli/blob/main/install.ps1
 
@@ -40,43 +31,19 @@ If that doesn't work you probably need to re-login into your terminal.
 ## Before Downloading Compiler
 Before, everything was compiled on cloud servers.
 After Oct 2024, I disabled cloud servers (I paid $600 for the last year and nobody used it).
-To compile you will need a compiler now :)
+If you think I should enabled it back, let me know. But for now you will need an offline compiler.
 
 Before you will get a compiler you will need to have CMake installed: https://cmake.org/download/
 
-Next thing you need to download prebuilt dev version of OpenSSL
-from: https://cdn.thelang.io/deps.tar.gz and unpack the file.
-It will contain folder "native" with your platform inside of it.
-This is needed by compiler itself when you are compiling programs that require SSL support.
-
-After that you need to create system environment variable or add it to your `~/.profile`:
-```
-DEPS_DIR="path/to/native/$platform"
-```
-
-## Building Compiler
-This is how to build a compiler from source on Unix:
+Next thing you need to run this command:
 ```sh
-git clone --depth=1 -b feat-new-codegen --single-branch https://github.com/thelang-io/the.git
-cmake the -B the/build -D CMAKE_BUILD_TYPE=Release
-cmake --build the/build
-cp the/build/the ~/.the/bin/thex
-rm -rf the
+the offline
 ```
 
-And this is how to build a compiler from source on Windows:
-```powershell
-git clone --depth=1 -b feat-new-codegen --single-branch https://github.com/thelang-io/the.git
-cmake the -B the/build -D CMAKE_BUILD_TYPE=Release
-cmake --build the/build
-Copy-Item "the/build/Debug/the.exe" -Destination "$env:UserProfile/The/bin/thex.exe"
-Remove-Item -Recurse -Force the
-```
-
-That should be it!
+This should be it!
 
 ## Test Installation
-Create a file, eg "main.the":
+Create a file, eg "main":
 
 ```the
 main {
@@ -87,17 +54,17 @@ main {
 And run it like this:
 
 ```sh
-the run main.the --compiler=thex
+the run main
 ```
 
 > [!important]
-> If you don't add `--compiler=thex` it will try to run on cloud server, and you will get an error.
+> Under the hood CLI will recognize that you have offline compiler installed and will use it.
 
 ## Further Reading
 Remember, this is old version that is built using C++.
 This version is slow, and I'm aware of that.
 The new version, where it's much faster and self-compiles, is still in development.
-Expected to be released by the end of 2024.
+Expected to be released somewhere in 2025.
 
 1. [Comments](https://docs.thelang.io/guides/comments.html)
 2. [Operations](https://docs.thelang.io/guides/operations.html)

@@ -88,7 +88,7 @@ void str_free (struct str s) {
 }
 
 int main () {
-  const struct str __THE_0_a_0 = str_alloc("\nfirst line\nsecond line\n");
+  const struct str __THE_0_a_0 = str_alloc("{{ (\\r)? }}\nfirst line{{ (\\r)? }}\nsecond line{{ (\\r)? }}\n");
   str_free((struct str) __THE_0_a_0);
 }
 ======= flags =======

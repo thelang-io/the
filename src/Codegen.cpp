@@ -71,7 +71,12 @@ void Codegen::compile (
   f << std::get<0>(result);
   f.close();
 
-  auto depsDir = Codegen::getEnvVar("DEPS_DIR");
+  auto depsDir = Codegen::getEnvVar("THE_DEPS_DIR");
+
+  if (depsDir.empty()) {
+    depsDir = Codegen::getEnvVar("DEPS_DIR");
+  }
+
   auto flagsStr = std::string();
 
   if (!depsDir.empty()) {

@@ -25,7 +25,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: thelang-io/setup-the@v1
       - run: the -v
+      - run: (cd packages/algorithm && the install && the test test)
+      - run: (cd packages/analyzer && the install && the test test)
+      - run: (cd packages/c && the install && the test test)
+      - run: (cd packages/codegen && the install && the test test)
       - run: (cd packages/date && && the install && the test test)
-      - run: (cd packages/algorithm && the test test)
-      - run: (cd packages/analyzer && the test test)
-      - run: (cd packages/parser && the test test)
+      - run: (cd packages/html && the install && the test test)
+      - run: (cd packages/parser && the install && the test test)
