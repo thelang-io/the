@@ -35,6 +35,10 @@ fn requestWithPrint (
   print(method, url)
   print("status:", res.status)
 
+  if res.status != 200 {
+    return
+  }
+
   if actualHeaders.len > 0 {
     print("headers:", actualHeaders)
   }
@@ -1300,6 +1304,7 @@ void __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE_fre
   if (n.x != NULL) free(n.x);
 }
 void __THE_1_test_requestWithPrint_0 (void *px, void *pp) {
+  unsigned char r = 0;
   struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP *p = pp;
   err_state_t *fn_err_state = p->err_state;
   error_stack_push(fn_err_state, "/test", "requestWithPrint", p->line, p->col);
@@ -1336,6 +1341,10 @@ L6:
   print(stdout, "szsz", str_copy(__THE_0_method_0), " ", str_copy(__THE_0_url_0), THE_EOL);
   if (setjmp(fn_err_state->buf_last->buf) != 0) goto L5;
   print(stdout, "zziz", "status:", " ", __THE_0_res_0->__THE_0_status, THE_EOL);
+  if (__THE_0_res_0->__THE_0_status != 200) {
+    r = 1;
+    goto L5;
+  }
   if (__THE_1_array_request_Header_len(__THE_1_array_request_Header_copy(__THE_0_actualHeaders_0)) > 0) {
     if (setjmp(error_buf_increase(fn_err_state)->buf) != 0) goto L8;
     print(stdout, "zzsz", "headers:", " ", __THE_1_array_request_Header_str(__THE_1_array_request_Header_copy(__THE_0_actualHeaders_0)), THE_EOL);
@@ -1384,27 +1393,27 @@ int main () {
   __THE_1_test_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn_sFP3strFRboolFE *) &__THE_0_test_ignoredHeadersIncludes_0, (struct __THE_1_test_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
   __THE_1_test_requestWithPrint_0_alloc((struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE *) &__THE_0_test_requestWithPrint_0, (struct __THE_1_test_requestWithPrint_0X) {&__THE_0_test_ignoredHeadersIncludes_0});
   if (setjmp(error_buf_increase(&err_state)->buf) != 0) goto L10;
-  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 47, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
+  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 51, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=200"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 55, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
+  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 59, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=400"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 63, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
+  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 67, 3, str_alloc("GET"), str_alloc("https://ci.thelang.io/echo?status=500"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 71, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
+  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 75, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 79, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
+  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 83, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test")), 0, (struct __THE_1_array_request_Header) {}}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
   print(stdout, "z", THE_EOL);
   if (setjmp(err_state.buf_last->buf) != 0) goto L10;
-  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 87, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
+  __THE_0_test_requestWithPrint_0.f(__THE_0_test_requestWithPrint_0.x, xalloc(&(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP) {&err_state, 91, 3, str_alloc("POST"), str_alloc("https://ci.thelang.io/echo"), str_toBuffer(str_alloc("test1=value1&test2=value2")), 1, __THE_1_array_request_Header_alloc(2, request_Header_alloc(str_alloc("content-type"), str_alloc("application/x-www-form-urlencoded")), request_Header_alloc(str_alloc("custom-header"), str_alloc("custom-value")))}, sizeof(struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFEP)));
 L10:
   error_buf_decrease(&err_state);
   __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE_free((struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE) __THE_0_test_requestWithPrint_0);
