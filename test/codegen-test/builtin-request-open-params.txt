@@ -1,5 +1,5 @@
 ======= stdin =======
-const IGNORED_HEADERS := ["alt-svc", "date", "connection", "content-length", "keep-alive", "content-length", "nel", "report-to", "server", "server-timing"]
+const IGNORED_HEADERS := ["alt-svc", "date", "connection", "content-length", "keep-alive", "content-length", "nel", "report-to", "server", "server-timing", "transfer-encoding"]
 
 fn ignoredHeadersIncludes (it: str) bool {
   loop i := 0; i < IGNORED_HEADERS.len; i++ {
@@ -1378,7 +1378,7 @@ void __THE_1_test_requestWithPrint_0_alloc (struct __THE_1_fn_sFP3strFP3strFP3bu
 
 int main () {
   error_stack_push(&err_state, "/test", "main", 0, 0);
-  const struct __THE_1_array_str __THE_0_IGNORED_HEADERS_0 = __THE_1_array_str_alloc(10, str_alloc("alt-svc"), str_alloc("date"), str_alloc("connection"), str_alloc("content-length"), str_alloc("keep-alive"), str_alloc("content-length"), str_alloc("nel"), str_alloc("report-to"), str_alloc("server"), str_alloc("server-timing"));
+  const struct __THE_1_array_str __THE_0_IGNORED_HEADERS_0 = __THE_1_array_str_alloc(11, str_alloc("alt-svc"), str_alloc("date"), str_alloc("connection"), str_alloc("content-length"), str_alloc("keep-alive"), str_alloc("content-length"), str_alloc("nel"), str_alloc("report-to"), str_alloc("server"), str_alloc("server-timing"), str_alloc("transfer-encoding"));
   const struct __THE_1_fn_sFP3strFRboolFE __THE_0_test_ignoredHeadersIncludes_0;
   const struct __THE_1_fn_sFP3strFP3strFP3buffer_BufferFP1array_request_HeaderFRvoidFE __THE_0_test_requestWithPrint_0;
   __THE_1_test_ignoredHeadersIncludes_0_alloc((struct __THE_1_fn_sFP3strFRboolFE *) &__THE_0_test_ignoredHeadersIncludes_0, (struct __THE_1_test_ignoredHeadersIncludes_0X) {&__THE_0_IGNORED_HEADERS_0});
