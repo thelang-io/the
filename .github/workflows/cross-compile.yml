@@ -42,7 +42,7 @@ jobs:
       - run: sudo apt-get install mingw-w64 ninja-build
       - run: curl -fsSL https://cdn.thelang.io/deps.tar.gz | sudo tar -C /usr/local -xz
       - if: matrix.config.platform == 'macos'
-        run: echo "THE_DEPS_DIR=/usr/local/the/cross-compile/${{ matrix.config.platform }}/x86_64" >> $GITHUB_ENV
+        run: echo "THE_DEPS_DIR=/usr/local/the/cross-compile/${{ matrix.config.platform }}/$(uname -m)" >> $GITHUB_ENV
       - if: matrix.config.platform != 'macos'
         run: echo "THE_DEPS_DIR=/usr/local/the/cross-compile/${{ matrix.config.platform }}" >> $GITHUB_ENV
       - run: echo "/usr/local/the/osxcross/bin" >> $GITHUB_PATH
