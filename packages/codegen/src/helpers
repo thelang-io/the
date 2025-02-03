@@ -167,6 +167,19 @@ export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   )
 }
 
+export fn normalizeBlock (statement: ref Parser.Statement) Parser.Statement[] {
+  mut result: Parser.Statement[]
+
+  if statement.isBlock() {
+    block := statement.asBlock()
+    result.merge(block.body)
+  } else {
+    result.push(statement)
+  }
+
+  return result
+}
+
 export fn statementHasPrecedingNonDeclaration (item: ref Parser.Statement) bool {
   mut it := item
 

@@ -16,6 +16,7 @@ import
   expressionShouldBeAllocated,
   expressionShouldBeCopied,
   expressionShouldBeFreed,
+  normalizeBlock,
   statementHasPrecedingNonDeclaration,
   statementIsMacroInvocation,
   statementIsMacroInvocationDeclare,
@@ -171,6 +172,7 @@ export obj Codegen {
       "-W" + "error",
       "-W" + "extra",
       "-pedantic-errors",
+      "-Wno-parentheses-equality",
       "-Wno-strict-prototypes",
       "-Wno-unused-but-set-variable",
       "-Wno-unused-parameter",
@@ -933,19 +935,19 @@ export obj Codegen {
       )
     }
 
-    if blockData.usedReturnVariable { // TODO: !this->state.cleanUp.empty()
-      //(*c)->append(
-      //  CodegenASTStmtIf::create(
-      //    CodegenASTExprBinary::create(
-      //      CodegenASTExprAccess::create("r"),
-      //      "==",
-      //      CodegenASTExprLiteral::create("1")
-      //    ),
-      //    initialStateCleanUp.hasCleanUp(CODEGEN_CLEANUP_FN)
-      //      ? CodegenASTStmtGoto::create(initialStateCleanUp.currentLabel())
-      //      : CodegenASTStmtReturn::create()
-      //  )
-      //);
+    if blockData.usedReturnVariable && !blockData.empty() {
+      finalResult.push(
+        AST.createIfStatement(
+          AST.createBinaryExpression(
+            AST.createIdentifier(blockData.returnVariable()),
+            "==",
+            AST.createLiteral("1"),
+          ),
+          self.blockData.hasTeardownUntil(.Fn)
+            ? AST.createGotoStatement(self.blockData.getLabel())
+            : AST.createReturnStatement(),
+        ),
+      )
     }
 
     return finalResult
@@ -1627,7 +1629,8 @@ export obj Codegen {
 
     statement := item.asIf()
     condition := self._generateExpression(ref statement.condition)
-    consequent := self._generateStatement(ref statement.consequent)
+    items := normalizeBlock(ref statement.consequent)
+    consequent := AST.createCompoundStatement(self._generateBlock(ref items))
     mut alternate: AST.CStatement?
 
     if statement.alternate != nil {
@@ -1707,15 +1710,7 @@ export obj Codegen {
       }
     }
 
-    mut bodyItems: Parser.Statement[]
-
-    if bodyIsBlock {
-      blockStatement := statement.body.asBlock()
-      bodyItems.merge(blockStatement.body)
-    } else {
-      bodyItems.push(statement.body)
-    }
-
+    mut bodyItems := normalizeBlock(ref statement.body)
     body.merge(self._generateBlockBody(ref bodyItems))
     self.blockData.decreaseVariableIndexes()
 
@@ -1832,7 +1827,12 @@ export obj Codegen {
         )
       }
 
-      if self.blockData.currentHasTeardown() {
+      atRoot := item.parent().isDeclaration()
+
+      if (
+        item.hasNext() ||
+        (!atRoot && self.blockData.hasTeardownUntil(.Fn))
+      ) {
         result.push(AST.createGotoStatement(self.blockData.getLabel()))
       }
     } elif cExpression != nil {
@@ -1840,6 +1840,7 @@ export obj Codegen {
     } else {
       parent := item.parent()
 
+      // TODO: better handling of deep nested main declaration
       if parent.isMainDeclaration() {
         result.push(AST.createReturnStatement(AST.createLiteral("0")))
       } else {
