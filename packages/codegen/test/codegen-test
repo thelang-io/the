@@ -6,13 +6,17 @@
 import * as Analyzer from "the/analyzer"
 import * as Parser from "the/parser"
 import Codegen from "../src/codegen"
-import applyRegexTemplate, matchRegex, retrieveFileSections from "./utils"
+import
+  applyRegexTemplate,
+  matchRegex,
+  retrieveFileSections
+from "./utils"
 
-fn TEST_EXPECT_EQ (test: str, a: str, b: str) {
+fn Codegen_EXPECT_EQ (test: str, a: str, b: str) {
   EXPECT_EQ(test + os_EOL + a, test + os_EOL + b)
 }
 
-fn TEST_EXPECT_REGEX (test: str, a: str, b: str) {
+fn Codegen_EXPECT_REGEX (test: str, a: str, b: str) {
   EXPECT_EQ(test + os_EOL + a, test + os_EOL + applyRegexTemplate(b, a))
 }
 
@@ -44,7 +48,7 @@ export fn TEST_Codegen () {
     fileSections := retrieveFileSections("./test/codegen/" + name + ".txt")
     executablePath := "./build/" + name + ".out"
     codePath := "./build/" + name + ".c"
-    print(name)
+    print(name, to: "stderr")
 
     mut analyzer := Analyzer.Analyzer{}
 
@@ -61,7 +65,7 @@ export fn TEST_Codegen () {
     file.analyze(ref file.f.program.body)
 
     if !analyzer.errors.empty {
-      TEST_EXPECT_EQ(name, analyzer.errors.join(os_EOL), "")
+      Codegen_EXPECT_EQ(name, analyzer.errors.join(os_EOL), "")
       continue
     }
 
@@ -77,14 +81,14 @@ export fn TEST_Codegen () {
     }
 
     if !generationError.empty {
-      TEST_EXPECT_EQ(name, generationError, "")
+      Codegen_EXPECT_EQ(name, generationError, "")
       continue
     }
 
     generatedCode := generator.stringify()
 
     if fileSections.code != generatedCode {
-      TEST_EXPECT_EQ(name, fileSections.code, generatedCode)
+      Codegen_EXPECT_EQ(name, fileSections.code, generatedCode)
       continue
     }
 
@@ -100,7 +104,7 @@ export fn TEST_Codegen () {
     fs_rmSync(codePath)
 
     if !errorMessage.empty {
-      TEST_EXPECT_EQ(name, errorMessage, "")
+      Codegen_EXPECT_EQ(name, errorMessage, "")
       continue
     }
 
@@ -122,7 +126,7 @@ export fn TEST_Codegen () {
     fs_rmSync(executablePath)
 
     if actualOutput != fileSections.output {
-      TEST_EXPECT_REGEX(name, actualOutput, fileSections.output)
+      Codegen_EXPECT_REGEX(name, actualOutput, fileSections.output)
     }
   }
 }
