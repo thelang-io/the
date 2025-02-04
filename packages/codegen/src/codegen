@@ -185,6 +185,8 @@ export obj Codegen {
 
   fn getAddressSanitizerFlags () str {
     return [
+      "abort_on_error=0",
+      "exitcode=255",
       "detect_invalid_pointer_pairs=2",
       "detect_leaks=1",
       "detect_stack_use_after_return=1",

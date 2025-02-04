@@ -109,6 +109,7 @@ export fn TEST_Codegen () {
     }
 
     mut actualOutput := ""
+    mut failed := false
 
     try {
       addressSanitizerFlags := generator.getAddressSanitizerFlags()
@@ -121,11 +122,14 @@ export fn TEST_Codegen () {
       actualOutput = process_runSync(sanitizeEnv + " " + executablePath).str()
     } catch err: error_Error {
       actualOutput = err.message
+      failed = true
     }
 
     fs_rmSync(executablePath)
 
-    if actualOutput != fileSections.output {
+    if failed {
+      Codegen_EXPECT_EQ(name, actualOutput, "")
+    } elif actualOutput != fileSections.output {
       Codegen_EXPECT_REGEX(name, actualOutput, fileSections.output)
     }
   }
