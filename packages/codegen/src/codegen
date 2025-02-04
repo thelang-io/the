@@ -414,11 +414,36 @@ export obj Codegen {
   fn _declareMain (mut self: ref Codegen, item: ref Parser.Statement) void {
     statement := item.asMainDeclaration()
     statementBody := statement.body.asBlock()
+    tm := self._tm()
 
     self.blockData.increase()
+    self.returnType = tm.get("int")
     self.mainStatements = self._generateBlockBody(ref statementBody.body)
+    self.returnType = nil
     dataContextBlock := self.blockData.decrease()
     self.blockData.currentMerge(dataContextBlock.setup, dataContextBlock.teardown)
+
+    if self.blockData.usedValueVariable() {
+      valueName := self.blockData.getValueVariable()
+      self.blockData.addSetup(AST.createVariableDeclaration(AST.createType("int"), valueName, AST.createLiteral("0")))
+    }
+
+    if self.blockData.usedReturnVariable() {
+      returnName := self.blockData.getReturnVariable()
+
+      self.blockData.addSetup(
+        AST.createVariableDeclaration(
+          AST.createType("unsigned char"),
+          returnName,
+          AST.createLiteral("0"),
+        ),
+      )
+    }
+
+    if dataContextBlock.usedValueVariable {
+      valueName := dataContextBlock.valueVariable()
+      self.mainStatements.push(AST.createReturnStatement(AST.createIdentifier(valueName)))
+    }
   }
 
   fn _declareFunction (mut self: ref Codegen, item: ref Parser.Statement) void {
@@ -936,6 +961,8 @@ export obj Codegen {
     }
 
     if blockData.usedReturnVariable && !blockData.empty() {
+      returnTypeName := self.returnType == nil ? "" : self.returnType.name
+
       finalResult.push(
         AST.createIfStatement(
           AST.createBinaryExpression(
@@ -943,9 +970,11 @@ export obj Codegen {
             "==",
             AST.createLiteral("1"),
           ),
-          self.blockData.hasTeardownUntil(.Fn)
+          self.blockData.hasUntil(.Fn)
             ? AST.createGotoStatement(self.blockData.getLabel())
-            : AST.createReturnStatement(),
+            : returnTypeName == "void"
+              ? AST.createReturnStatement()
+              : AST.createReturnStatement(AST.createIdentifier(self.blockData.getValueVariable())),
         ),
       )
     }
@@ -1827,7 +1856,8 @@ export obj Codegen {
         )
       }
 
-      atRoot := item.parent().isDeclaration()
+      p := item.parent()
+      atRoot := p.isDeclaration()
 
       if (
         item.hasNext() ||
@@ -1837,15 +1867,10 @@ export obj Codegen {
       }
     } elif cExpression != nil {
       result.push(AST.createReturnStatement(cExpression))
+    } elif item.hasMainParent() {
+      result.push(AST.createReturnStatement(AST.createLiteral("0")))
     } else {
-      parent := item.parent()
-
-      // TODO: better handling of deep nested main declaration
-      if parent.isMainDeclaration() {
-        result.push(AST.createReturnStatement(AST.createLiteral("0")))
-      } else {
-        result.push(AST.createReturnStatement())
-      }
+      result.push(AST.createReturnStatement())
     }
 
     if result.len == 1 {
