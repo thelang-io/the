@@ -151,7 +151,7 @@ export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   if itUp.hasParentNode() {
     parentNode := itUp.parentNode()
 
-    if parentNode.isReturn() {
+    if parentNode.isReturn() || parentNode.isVariableDeclaration() {
       return false
     }
   }
