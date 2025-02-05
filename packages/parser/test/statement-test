@@ -159,6 +159,40 @@ export fn TEST_Statement_hasLoopParent () {
   EXPECT_FALSE(mainClosure6.body[0].hasLoopParent())
 }
 
+export fn TEST_Statement_hasMainParent () {
+  mut f1 := parse("main { return }")
+  interconnect(ref f1)
+  mainDeclaration1 := f1.program.body[0].asMainDeclaration()
+  mainDeclarationBody1 := mainDeclaration1.body.asBlock()
+  EXPECT_TRUE(mainDeclarationBody1.body[0].hasMainParent())
+
+  mut f2 := parse("fn test () { return }")
+  interconnect(ref f2)
+  functionDeclaration2 := f2.program.body[0].asFunctionDeclaration()
+  if functionDeclaration2.body != nil {
+    functionDeclarationBody2 := functionDeclaration2.body.asBlock()
+    EXPECT_FALSE(functionDeclarationBody2.body[0].hasMainParent())
+  }
+
+  mut f3 := parse("obj Test { fn test () { return } }")
+  interconnect(ref f3)
+  objectDeclaration3 := f3.program.body[0].asObjectDeclaration()
+  methodDeclaration3 := objectDeclaration3.body[0].asObjectDeclarationMethod()
+  if methodDeclaration3.body != nil {
+    methodDeclarationBody3 := methodDeclaration3.body.asBlock()
+    EXPECT_FALSE(methodDeclarationBody3.body[0].hasMainParent())
+  }
+
+  mut f4 := parse("main { () -> void { return } }")
+  interconnect(ref f4)
+  mainDeclaration4 := f4.program.body[0].asMainDeclaration()
+  mainDeclarationBody4 := mainDeclaration4.body.asBlock()
+  mainExpression4 := mainDeclarationBody4.body[0].asExpression()
+  mainExpressionBody4 := mainExpression4.expression.asClosure()
+  mainClosure4 := mainExpressionBody4.body.asBlock()
+  EXPECT_FALSE(mainClosure4.body[0].hasMainParent())
+}
+
 export fn TEST_Statement_isDeclaration () {
   statement1 := Statement.create(t.EnumDeclaration{name: Expression.dummyIdentifier()}, 0, 0)
   statement2 := Statement.create(t.ExportDeclaration{statement: Statement.dummy()}, 0, 0)
