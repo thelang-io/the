@@ -12,8 +12,8 @@ import
   createASTPropertyAccess,
   declarationByDependency,
   expressionIsBuiltinMethod,
-  expressionResolve,
-  expressionShouldBeAllocated,
+  expressionShouldBeAllocatedAfter,
+  expressionShouldBeAllocatedBefore,
   expressionShouldBeCopied,
   expressionShouldBeFreed,
   normalizeBlock,
@@ -984,7 +984,7 @@ export obj Codegen {
     return finalResult
   }
 
-  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression, transform := true) AST.CExpression {
+  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
     mut result: AST.CExpression?
 
     if (
@@ -1008,7 +1008,7 @@ export obj Codegen {
       initialType := Analyzer.contextInitial(item)
       targetType := Analyzer.contextTarget(item)
 
-      return self._wrap(result, item, initialType, targetType, transform: transform)
+      return self._wrap(result, item, initialType, targetType)
     }
 
     throw error_NewError("Tried code generation for unknown expression '" + Parser.stringifyExpression(item) + "'")
@@ -1165,7 +1165,7 @@ export obj Codegen {
     expression := item.asAssignment()
     leftType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.left), withReference: false)
     rightType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.right), withReference: false)
-    left := self._generateExpression(ref expression.left, transform: false)
+    left := self._generateExpression(ref expression.left)
     mut right := self._generateExpression(ref expression.right)
 
     if expression.operator.t == .OpPlusEq && (leftType.name == "str" || rightType.name == "str") {
@@ -1380,7 +1380,7 @@ export obj Codegen {
 
     expression := item.asConditional()
     alternateType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.alternate), withReference: false)
-    mut alternate := self._generateExpression(ref expression.alternate, transform: false)
+    mut alternate := self._generateExpression(ref expression.alternate)
 
     if alternate.isAssignmentExpression() && !typeSafeForTernaryAlternate(alternateType) {
       alternate = alternate.wrap()
@@ -1388,7 +1388,7 @@ export obj Codegen {
 
     return AST.createConditionalExpression(
       self._generateExpression(ref expression.condition),
-      self._generateExpression(ref expression.consequent, transform: false),
+      self._generateExpression(ref expression.consequent),
       alternate,
     )
   }
@@ -1702,7 +1702,7 @@ export obj Codegen {
 
     if statement.condition != nil {
       self.blockData.increase()
-      conditionExpression := self._generateExpression(ref statement.condition, transform: false)
+      conditionExpression := self._generateExpression(ref statement.condition)
       blockData := self.blockData.decrease()
 
       if !blockData.empty() {
@@ -1730,7 +1730,7 @@ export obj Codegen {
 
     if statement.update != nil {
       self.blockData.increase()
-      updateExpression := self._generateExpression(ref statement.update, transform: false)
+      updateExpression := self._generateExpression(ref statement.update)
       blockData := self.blockData.decrease()
 
       if !blockData.empty() {
@@ -2065,7 +2065,7 @@ export obj Codegen {
 
     mut initializer := statement.initializer == nil
       ? self._defaultInitializerDeclaration(context.varType)
-      : self._generateExpression(ref statement.initializer, transform: false)
+      : self._generateExpression(ref statement.initializer)
 
     variableName := self.blockData.setVariable(statement.name.name)
 
@@ -3283,11 +3283,11 @@ export obj Codegen {
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
   }
 
-  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, transform := false) AST.CExpression {
-    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocated(item)
+  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type) AST.CExpression {
+    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocatedBefore(item)
     shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
 
-    if transform && !shouldFree && shouldAllocateBefore {
+    if !shouldFree && shouldAllocateBefore {
       expression = self._allocateExpression(t, expression)
     }
 
@@ -3296,10 +3296,6 @@ export obj Codegen {
     if targetType.name == "any" && t.name != "any" {
       typeName := self._generateAnyType(t)
       allocAnyType := typeName.slice(0, -2) + "_alloc"
-
-      if !transform && !shouldFree && shouldAllocateBefore {
-        expression = self._allocateExpression(t, expression)
-      }
 
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
       shouldAllocateAfter = true
@@ -3316,10 +3312,6 @@ export obj Codegen {
     } elif targetType.isOptional() && !t.isOptional() {
       allocOptionalType := self._generateOptionalType(targetType).slice(0, -2) + "_alloc"
 
-      if !transform && !shouldFree && shouldAllocateBefore {
-        expression = self._allocateExpression(t, expression)
-      }
-
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocOptionalType)), [expression])
       shouldAllocateAfter = true
     } elif !targetType.isReference() && t.isReference() {
@@ -3330,10 +3322,6 @@ export obj Codegen {
       allocTargetType := self._type(targetType, "_alloc")
       typeDef := self._typeDef(t)
       cTypeDef := AST.createIdentifier(self._(typeDef))
-
-      if !transform && !shouldFree && shouldAllocateBefore {
-        expression = self._allocateExpression(t, expression)
-      }
 
       expression = AST.createCallExpression(AST.createIdentifier(allocTargetType), [cTypeDef, expression])
       shouldAllocateAfter = true
@@ -3356,15 +3344,9 @@ export obj Codegen {
       expression = AST.createCastExpression(AST.createType(self._type(targetType)), expression)
     }
 
-    if !transform {
-      return expression
-    }
-
-    typesMatch := Analyzer.match(t, targetType)
-
     if shouldFree {
       expression = self._functionFree(targetType, expression)
-    } elif shouldAllocateAfter {
+    } elif shouldAllocateAfter && expressionShouldBeAllocatedAfter(item) {
       expression = self._allocateExpression(targetType, expression)
     }
 

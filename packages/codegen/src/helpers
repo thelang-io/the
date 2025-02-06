@@ -119,8 +119,30 @@ export fn expressionResolve (item: ref Parser.Expression, up := false, down := f
   return item
 }
 
-export fn expressionShouldBeAllocated (item: ref Parser.Expression) bool {
+export fn expressionShouldBeAllocatedAfter (item: ref Parser.Expression) bool {
+  itUp := expressionResolve(item, up: true)
+  return itUp.hasParent()
+}
+
+export fn expressionShouldBeAllocatedBefore (item: ref Parser.Expression) bool {
+  itUp := expressionResolve(item, up: true)
   itDown := expressionResolve(item, down: true)
+
+  if itUp.hasParent() {
+    p := itUp.parent()
+
+    if p.isConditional() {
+      return false
+    }
+  }
+
+  if !itUp.hasParent() && itUp.hasParentNode() {
+    parentNode := itUp.parentNode()
+
+    if parentNode.isVariableDeclaration() {
+      return false
+    }
+  }
 
   return !(
     itDown.isIdentifier() ||
