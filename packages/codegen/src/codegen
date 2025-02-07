@@ -3284,21 +3284,24 @@ export obj Codegen {
   }
 
   fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type) AST.CExpression {
-    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocatedBefore(item)
     shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
+
+    shouldAllocateAfter := expressionShouldBeAllocatedAfter(item) && (
+      (targetType.name == "any" && t.name != "any") ||
+      (targetType.isOptional() && !t.isOptional()) ||
+      (targetType.isUnion() && !t.isUnion())
+    )
+
+    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocatedBefore(item, shouldAllocateAfter)
 
     if !shouldFree && shouldAllocateBefore {
       expression = self._allocateExpression(t, expression)
     }
 
-    mut shouldAllocateAfter := false
-
     if targetType.name == "any" && t.name != "any" {
       typeName := self._generateAnyType(t)
       allocAnyType := typeName.slice(0, -2) + "_alloc"
-
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
-      shouldAllocateAfter = true
     } elif targetType.name != "any" && t.name == "any" {
       typeName := self._generateAnyType(targetType)
 
@@ -3311,9 +3314,7 @@ export obj Codegen {
       expression = AST.createUnaryExpression("*", innerExpression.wrap())
     } elif targetType.isOptional() && !t.isOptional() {
       allocOptionalType := self._generateOptionalType(targetType).slice(0, -2) + "_alloc"
-
       expression = AST.createCallExpression(AST.createIdentifier(self._(allocOptionalType)), [expression])
-      shouldAllocateAfter = true
     } elif !targetType.isReference() && t.isReference() {
       expression = AST.createUnaryExpression("*", expression)
     } elif targetType.isReference() && !t.isReference() {
@@ -3322,9 +3323,7 @@ export obj Codegen {
       allocTargetType := self._type(targetType, "_alloc")
       typeDef := self._typeDef(t)
       cTypeDef := AST.createIdentifier(self._(typeDef))
-
       expression = AST.createCallExpression(AST.createIdentifier(allocTargetType), [cTypeDef, expression])
-      shouldAllocateAfter = true
     } elif !targetType.isUnion() && t.isUnion() {
       typeName := self._typeDef(targetType)
       typeDefIdx := self.typeDefs.get(typeName)
@@ -3346,7 +3345,7 @@ export obj Codegen {
 
     if shouldFree {
       expression = self._functionFree(targetType, expression)
-    } elif shouldAllocateAfter && expressionShouldBeAllocatedAfter(item) {
+    } elif shouldAllocateAfter {
       expression = self._allocateExpression(targetType, expression)
     }
 
