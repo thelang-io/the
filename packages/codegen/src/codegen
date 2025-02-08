@@ -92,6 +92,7 @@ export obj CodegenEntity {
   mut codeName: str
   mut context: any
   mut generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType
+  mut result: GenerateReturnType?
 }
 
 export obj CodegenFunctionContext {
@@ -294,27 +295,23 @@ export obj Codegen {
   }
 
   fn _assemble (mut self: ref Self) {
-    mut prevActive := 0
-
     loop {
-      mut currentActive := 0
+      mut activated := 0
 
       loop i := 0; i < self.entities.len; i++ {
-        entity := self.entities[i]
+        mut entity := self.entities[i]
 
-        if !entity.active {
+        if !entity.active || entity.result != nil {
           continue
         }
 
-        entity.generate(self, entity)
-        currentActive++
+        entity.result = entity.generate(self, entity)
+        activated++
       }
 
-      if prevActive == currentActive {
+      if activated == 0 {
         break
       }
-
-      prevActive = currentActive
     }
 
     mut defineStatements: AST.CStatement[]
@@ -326,11 +323,11 @@ export obj Codegen {
     loop i := 0; i < self.entities.len; i++ {
       entity := self.entities[i]
 
-      if !entity.active {
+      if !entity.active || entity.result == nil {
         continue
       }
 
-      result := entity.generate(self, entity)
+      result := entity.result as GenerateReturnType
       resultStatements := (result is AST.CStatement) ? [result] : result
 
       loop j := 0; j < resultStatements.len; j++ {
