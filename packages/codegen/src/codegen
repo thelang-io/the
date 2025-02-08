@@ -88,6 +88,7 @@ export type GenerateReturnType = AST.CStatement | AST.CStatement[]
 
 export obj CodegenEntity {
   mut active: bool
+  mut activated: bool
   mut name: str
   mut codeName: str
   mut context: any
@@ -296,16 +297,22 @@ export obj Codegen {
 
   fn _assemble (mut self: ref Self) {
     loop {
+      len := self.entities.len
       mut activated := 0
 
-      loop i := 0; i < self.entities.len; i++ {
-        mut entity := self.entities[i]
+      loop i := 0; i < len; i++ {
+        // TODO: remove after v1
+        oldEntity := self.entities[i]
 
-        if !entity.active || entity.result != nil {
+        if !oldEntity.active || oldEntity.activated {
           continue
         }
 
-        entity.result = entity.generate(self, entity)
+        result := oldEntity.generate(self, oldEntity)
+
+        mut entity := self.entities[i]
+        entity.result = result
+        entity.activated = true
         activated++
       }
 
