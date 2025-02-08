@@ -1830,7 +1830,6 @@ export obj Codegen {
       statementExpression := statement.expression
       expressionTargetType := Analyzer.contextTarget(ref statementExpression)
 
-      // TODO: Shouldn't copy if allocated
       cExpression = self._functionCopy(
         expressionTargetType,
         self._generateExpression(ref statementExpression, allocate: true, deallocate: false),
@@ -3291,19 +3290,18 @@ export obj Codegen {
 
   fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, allocate := false, deallocate := false) AST.CExpression {
     shouldFree := deallocate && typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
+    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocatedBefore(item)
 
-    shouldAllocateAfter := (
+    shouldAllocateAfter :=
       (targetType.name == "any" && t.name != "any") ||
       (targetType.isOptional() && !t.isOptional()) ||
       (targetType.isUnion() && !t.isUnion())
-    )
 
-    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocatedBefore(item)
-
-    if (
+    shouldPreAllocate :=
       (allocate && !shouldFree && shouldAllocateBefore) ||
       (!allocate && !shouldFree && shouldAllocateBefore && shouldAllocateAfter)
-    ) {
+
+    if shouldPreAllocate {
       expression = self._allocateExpression(t, expression)
     }
 
