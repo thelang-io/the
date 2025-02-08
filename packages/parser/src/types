@@ -703,7 +703,7 @@ export obj FunctionDeclaration {
   name: Identifier
   parameters: FunctionParameter[]
   returnType: Type?
-  body: Statement?
+  body: Statement
   asynchronous: bool
 }
 
@@ -750,7 +750,7 @@ export obj ObjectDeclarationMethod {
   name: Identifier
   parameters: FunctionParameter[]
   returnType: Type?
-  body: Statement?
+  body: Statement
   asynchronous: bool
 }
 
