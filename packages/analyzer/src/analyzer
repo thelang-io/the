@@ -2311,19 +2311,16 @@ export obj AnalyzerFile {
     self.functionParameters(ref statement.parameters)
     self.state.returnType = Type.opt(t.returnType)
 
-    if statement.body != nil {
-      if (
-        !Type.match(t.returnType, self.tm.get("void")) &&
-        !statement.body.isDeadEnd() &&
-        statement.returnType != nil
-      ) {
-        returnType := statement.returnType
-        self.raise(errors.E1061(), returnType.start, returnType.end)
-      }
-
-      self.statement(ref statement.body)
+    if (
+      !Type.match(t.returnType, self.tm.get("void")) &&
+      !statement.body.isDeadEnd() &&
+      statement.returnType != nil
+    ) {
+      returnType := statement.returnType
+      self.raise(errors.E1061(), returnType.start, returnType.end)
     }
 
+    self.statement(ref statement.body)
     self.state.returnType = initialStateReturnType
     self.vm.decrease()
     self.tm.decrease()
@@ -2509,18 +2506,15 @@ export obj AnalyzerFile {
     self.functionParameters(ref statement.parameters)
     self.state.returnType = Type.opt(t.returnType)
 
-    if statement.body != nil {
-      if (
-        !Type.match(t.returnType, self.tm.get("void")) &&
-        !statement.body.isDeadEnd() &&
-        statement.returnType != nil
-      ) {
-        self.raise(errors.E1061(), statement.returnType.start, statement.returnType.end)
-      }
-
-      self.statement(ref statement.body)
+    if (
+      !Type.match(t.returnType, self.tm.get("void")) &&
+      !statement.body.isDeadEnd() &&
+      statement.returnType != nil
+    ) {
+      self.raise(errors.E1061(), statement.returnType.start, statement.returnType.end)
     }
 
+    self.statement(ref statement.body)
     self.state.returnType = initialStateReturnType
     self.vm.decrease()
     self.tm.decrease()
