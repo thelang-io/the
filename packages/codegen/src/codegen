@@ -1646,14 +1646,10 @@ export obj Codegen {
 
     context := item.context as Analyzer.FunctionDeclarationContext
 
-    if statement.body == nil {
-      return nil
-    }
-
     return self._defineFunction(
       statement.name,
       statement.parameters,
-      statement.body as Parser.Statement,
+      statement.body,
       context.selfType,
     )
   }
@@ -3381,5 +3377,3 @@ export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str, release
     throw caughtError
   }
 }
-
-// print(Parser.stringifyExpression(item), t.toString(), targetType.toString(), allocate, deallocate, shouldAllocateBefore, shouldAllocateAfter, shouldFree, to: "stderr")
