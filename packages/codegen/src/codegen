@@ -988,7 +988,7 @@ export obj Codegen {
     return finalResult
   }
 
-  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression) AST.CExpression {
+  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression, allocate := true, deallocate := true) AST.CExpression {
     mut result: AST.CExpression?
 
     if (
@@ -1012,7 +1012,7 @@ export obj Codegen {
       initialType := Analyzer.contextInitial(item)
       targetType := Analyzer.contextTarget(item)
 
-      return self._wrap(result, item, initialType, targetType)
+      return self._wrap(result, item, initialType, targetType, allocate: allocate, deallocate: deallocate)
     }
 
     throw error_NewError("Tried code generation for unknown expression '" + Parser.stringifyExpression(item) + "'")
@@ -1384,7 +1384,7 @@ export obj Codegen {
 
     expression := item.asConditional()
     alternateType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.alternate), withReference: false)
-    mut alternate := self._generateExpression(ref expression.alternate)
+    mut alternate := self._generateExpression(ref expression.alternate, allocate: false)
 
     if alternate.isAssignmentExpression() && !typeSafeForTernaryAlternate(alternateType) {
       alternate = alternate.wrap()
@@ -1392,7 +1392,7 @@ export obj Codegen {
 
     return AST.createConditionalExpression(
       self._generateExpression(ref expression.condition),
-      self._generateExpression(ref expression.consequent),
+      self._generateExpression(ref expression.consequent, allocate: false),
       alternate,
     )
   }
@@ -1434,7 +1434,8 @@ export obj Codegen {
     contextExtra := item.contextExtra as Analyzer.IsExpressionContextExtra
     mut left := self._generateExpression(ref expression.expression)
     leftType := Analyzer.contextTarget(ref expression.expression)
-    right := AST.createIdentifier(self._typeDef(contextExtra.t))
+    typeDef := self._typeDef(contextExtra.t)
+    right := AST.createIdentifier(self._(typeDef))
 
     if Analyzer.match(contextExtra.t, leftType) {
       result := AST.createCommaExpression(left, AST.createIdentifier(self._("true")))
@@ -1829,9 +1830,10 @@ export obj Codegen {
       statementExpression := statement.expression
       expressionTargetType := Analyzer.contextTarget(ref statementExpression)
 
+      // TODO: Shouldn't copy if allocated
       cExpression = self._functionCopy(
         expressionTargetType,
-        self._generateExpression(ref statementExpression),
+        self._generateExpression(ref statementExpression, allocate: true, deallocate: false),
       )
     }
 
@@ -2069,7 +2071,7 @@ export obj Codegen {
 
     mut initializer := statement.initializer == nil
       ? self._defaultInitializerDeclaration(context.varType)
-      : self._generateExpression(ref statement.initializer)
+      : self._generateExpression(ref statement.initializer, allocate: false, deallocate: false)
 
     variableName := self.blockData.setVariable(statement.name.name)
 
@@ -3287,18 +3289,21 @@ export obj Codegen {
     throw error_NewError("Failed to generate type name for '" + it.name + "'")
   }
 
-  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type) AST.CExpression {
-    shouldFree := typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
+  fn _wrap (mut self: ref Self, mut expression: AST.CExpression, item: ref Parser.Expression, t: ref Analyzer.Type, targetType: ref Analyzer.Type, allocate := false, deallocate := false) AST.CExpression {
+    shouldFree := deallocate && typeShouldBeFreed(targetType) && expressionShouldBeFreed(item)
 
-    shouldAllocateAfter := expressionShouldBeAllocatedAfter(item) && (
+    shouldAllocateAfter := (
       (targetType.name == "any" && t.name != "any") ||
       (targetType.isOptional() && !t.isOptional()) ||
       (targetType.isUnion() && !t.isUnion())
     )
 
-    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocatedBefore(item, shouldAllocateAfter)
+    shouldAllocateBefore := typeShouldBeAllocated(t) && expressionShouldBeAllocatedBefore(item)
 
-    if !shouldFree && shouldAllocateBefore {
+    if (
+      (allocate && !shouldFree && shouldAllocateBefore) ||
+      (!allocate && !shouldFree && shouldAllocateBefore && shouldAllocateAfter)
+    ) {
       expression = self._allocateExpression(t, expression)
     }
 
@@ -3329,8 +3334,8 @@ export obj Codegen {
       cTypeDef := AST.createIdentifier(self._(typeDef))
       expression = AST.createCallExpression(AST.createIdentifier(allocTargetType), [cTypeDef, expression])
     } elif !targetType.isUnion() && t.isUnion() {
-      typeName := self._typeDef(targetType)
-      typeDefIdx := self.typeDefs.get(typeName)
+      typeDef := self._typeDef(targetType)
+      typeDefIdx := self.typeDefs.get(typeDef)
 
       // TODO: throw runtime error if not possible to access
       expression = AST.createPropertyAccessExpression(
@@ -3347,9 +3352,9 @@ export obj Codegen {
       expression = AST.createCastExpression(AST.createType(self._type(targetType)), expression)
     }
 
-    if shouldFree {
+    if deallocate && shouldFree {
       expression = self._functionFree(targetType, expression)
-    } elif shouldAllocateAfter {
+    } elif allocate && expressionShouldBeAllocatedAfter(item) && shouldAllocateAfter {
       expression = self._allocateExpression(targetType, expression)
     }
 
@@ -3378,3 +3383,5 @@ export fn compile (analyzer: ref Analyzer.Analyzer, executablePath: str, release
     throw caughtError
   }
 }
+
+// print(Parser.stringifyExpression(item), t.toString(), targetType.toString(), allocate, deallocate, shouldAllocateBefore, shouldAllocateAfter, shouldFree, to: "stderr")

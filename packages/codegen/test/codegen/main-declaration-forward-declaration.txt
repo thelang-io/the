@@ -17,9 +17,9 @@ d4_str_t example_func (void *ctx, void *params) {
   {
     r = 1;
     v = d4_str_copy(__THE_1 = d4_str_alloc(L"1"));
-    goto L3;
+    goto L1;
   }
-L3:
+L1:
   d4_str_free(__THE_1);
   return v;
 }

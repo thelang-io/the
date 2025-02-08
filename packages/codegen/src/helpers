@@ -125,24 +125,7 @@ export fn expressionShouldBeAllocatedAfter (item: ref Parser.Expression) bool {
 }
 
 export fn expressionShouldBeAllocatedBefore (item: ref Parser.Expression) bool {
-  itUp := expressionResolve(item, up: true)
   itDown := expressionResolve(item, down: true)
-
-  if itUp.hasParent() {
-    p := itUp.parent()
-
-    if p.isConditional() {
-      return false
-    }
-  }
-
-  if !itUp.hasParent() && itUp.hasParentNode() {
-    parentNode := itUp.parentNode()
-
-    if parentNode.isVariableDeclaration() {
-      return false
-    }
-  }
 
   return !(
     itDown.isIdentifier() ||
@@ -169,14 +152,6 @@ export fn expressionShouldBeCopied (item: ref Parser.Expression) bool {
 export fn expressionShouldBeFreed (item: ref Parser.Expression) bool {
   itUp := expressionResolve(item, up: true)
   itDown := expressionResolve(item, down: true)
-
-  if itUp.hasParentNode() {
-    parentNode := itUp.parentNode()
-
-    if parentNode.isReturn() || parentNode.isVariableDeclaration() {
-      return false
-    }
-  }
 
   return !(
     itUp.hasParent() ||
@@ -227,7 +202,8 @@ export fn statementIsMacroInvocationDeclare (item: ref AST.CStatement) bool {
 }
 
 export fn statementIsMacroInvocationForwardDeclare (item: ref AST.CStatement) bool {
-  return statementMacroInvocationCallee(item).find("FORWARD_DECLARE") != -1
+  callee := statementMacroInvocationCallee(item)
+  return callee.find("FORWARD_DECLARE") != -1
 }
 
 export fn statementMacroInvocationCallee (item: ref AST.CStatement) str {

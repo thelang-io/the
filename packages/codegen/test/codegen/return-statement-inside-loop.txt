@@ -63,10 +63,10 @@ void test1_func (void *ctx, void *params) {
     if (i_0 == 5) {
       {
         r = 1;
-        goto L19;
+        goto L1;
       }
-L19:
-      if (r == 1) goto L20;
+L1:
+      if (r == 1) goto L2;
     }
     d4_print.func(d4_print.ctx, __THE_10 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_9 = d4_arr_any_alloc(2, __THE_7 = d4_any_str_alloc(__THE_6 = d4_str_alloc(L"1 end")), __THE_8 = d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     d4_safe_free(__THE_10);
@@ -74,7 +74,7 @@ L19:
     d4_any_free(__THE_8);
     d4_any_free(__THE_7);
     d4_str_free(__THE_6);
-L20:
+L2:
     d4_safe_free(__THE_5);
     d4_arr_any_free(__THE_4);
     d4_any_free(__THE_3);
@@ -100,10 +100,10 @@ void test2_func (void *ctx, void *params) {
     if ((j_0 == 5)) {
       {
         r = 1;
-        goto L21;
+        goto L3;
       }
-L21:
-      if (r == 1) goto L22;
+L3:
+      if (r == 1) goto L4;
     }
     d4_print.func(d4_print.ctx, __THE_10 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_9 = d4_arr_any_alloc(2, __THE_7 = d4_any_str_alloc(__THE_6 = d4_str_alloc(L"2 end")), __THE_8 = d4_any_int_alloc(j_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     d4_safe_free(__THE_10);
@@ -111,7 +111,7 @@ L21:
     d4_any_free(__THE_8);
     d4_any_free(__THE_7);
     d4_str_free(__THE_6);
-L22:
+L4:
     d4_safe_free(__THE_5);
     d4_arr_any_free(__THE_4);
     d4_any_free(__THE_3);
@@ -137,10 +137,10 @@ void test3_func (void *ctx, void *params) {
     if (k_0 == 5) {
       {
         r = 1;
-        goto L23;
+        goto L5;
       }
-L23:
-      if (r == 1) goto L24;
+L5:
+      if (r == 1) goto L6;
     }
     d4_print.func(d4_print.ctx, __THE_10 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_9 = d4_arr_any_alloc(2, __THE_7 = d4_any_str_alloc(__THE_6 = d4_str_alloc(L"3 end")), __THE_8 = d4_any_int_alloc(k_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     d4_safe_free(__THE_10);
@@ -148,7 +148,7 @@ L23:
     d4_any_free(__THE_8);
     d4_any_free(__THE_7);
     d4_str_free(__THE_6);
-L24:
+L6:
     d4_safe_free(__THE_5);
     d4_arr_any_free(__THE_4);
     d4_any_free(__THE_3);
