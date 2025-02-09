@@ -387,8 +387,8 @@ export obj Codegen {
     self.statements.merge(macroInvocationForwardDeclareStatements)
     self.statements.merge(macroInvocationDeclareStatements)
     self.statements.merge(macroInvocationDefineStatements)
-    self.statements.merge(statements)
     self.statements.merge(self.globalStatements)
+    self.statements.merge(statements)
 
     dataContextBlock := self.blockData.decrease()
     mut finalMainStatements: AST.CStatement[]
@@ -462,7 +462,7 @@ export obj Codegen {
     context := item.context as Analyzer.FunctionDeclarationContext
     self._generateFunctionType(context.selfType)
 
-    self.blockData.setVariable(statement.name.name)
+    self.blockData.setFunction(statement.name.name)
   }
 
   fn _declareObject (mut self: ref Codegen, item: ref Parser.Statement) void {
@@ -580,7 +580,7 @@ export obj Codegen {
     )
 
     entityContext := CodegenFunctionContext{parameters: parameters, body: body, t: t}
-    functorTypeName := name.name + "_func"
+    functorTypeName := variableName + "_func"
 
     self.entities.push(CodegenEntity{
       name: functorTypeName,
@@ -1348,7 +1348,7 @@ export obj Codegen {
       paramsName := self._type(calleeTargetType, "_params_t")
 
       self.blockData.addSetup(
-        AST.createVariableDeclaration(AST.createType("void *"), tmpVar),
+        AST.createVariableDeclaration(AST.createType("void *"), tmpVar, AST.createIdentifier(self._("NULL"))),
       )
 
       args.push(

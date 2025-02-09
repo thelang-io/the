@@ -65,6 +65,7 @@ export obj BlockDataContext {
 
 export obj BlockData {
   mut blocks: BlockDataContext[]
+  mut functions: BlockDataVariable[]
   mut lastBreakVariable: int
   mut lastContinueVariable: int
   mut lastLabel: int
@@ -225,6 +226,24 @@ export obj BlockData {
         break
       }
     }
+  }
+
+  fn setFunction (mut self: ref Self, name: str) str {
+    mut id := 0
+
+    loop i := self.functions.len - 1; i >= 0; i-- {
+      function := self.functions[i]
+
+      if function.name == name {
+        id = function.id + 1
+        break
+      }
+    }
+
+    self.functions.push(BlockDataVariable{name: name, id: id})
+    self.blocks.last.variables.push(BlockDataVariable{name: name, id: id})
+
+    return self.functions.last.fullName()
   }
 
   fn setVariable (mut self: ref Self, name: str) str {

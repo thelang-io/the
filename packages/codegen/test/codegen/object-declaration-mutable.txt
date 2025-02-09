@@ -97,13 +97,13 @@ int main (void) {
   d4_obj_Human_t person3_0;
   d4_any_t __THE_12 = {-1, NULL, NULL, NULL, NULL, NULL};
   d4_arr_any_t __THE_13 = (d4_arr_any_t) {NULL, 0};
-  void *__THE_14;
+  void *__THE_14 = NULL;
   d4_any_t __THE_15 = {-1, NULL, NULL, NULL, NULL, NULL};
   d4_arr_any_t __THE_16 = (d4_arr_any_t) {NULL, 0};
-  void *__THE_17;
+  void *__THE_17 = NULL;
   d4_any_t __THE_18 = {-1, NULL, NULL, NULL, NULL, NULL};
   d4_arr_any_t __THE_19 = (d4_arr_any_t) {NULL, 0};
-  void *__THE_20;
+  void *__THE_20 = NULL;
   d4_obj_Human_t person1_0 = d4_obj_Human_alloc(__THE_1 = d4_str_alloc(L"Peter"), (d4_arr_obj_Animal_t) {NULL, 0});
   d4_obj_Human_t person2_0 = d4_obj_Human_alloc(__THE_2 = d4_str_alloc(L"Brian"), (d4_arr_obj_Animal_t) {NULL, 0});
   d4_arr_obj_Animal_push(&person1_0.pets, __THE_5 = d4_arr_obj_Animal_alloc(1, __THE_4 = d4_obj_Animal_alloc(__THE_3 = d4_str_alloc(L"Cleo"), 1)));

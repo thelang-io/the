@@ -40,12 +40,12 @@ int main (void) {
     d4_any_t __THE_2 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_3 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_4 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_5;
+    void *__THE_5 = NULL;
     d4_str_t __THE_6 = d4_str_empty_val;
     d4_any_t __THE_7 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_8 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_9 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_10;
+    void *__THE_10 = NULL;
     d4_print.func(d4_print.ctx, __THE_5 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_4 = d4_arr_any_alloc(2, __THE_2 = d4_any_str_alloc(__THE_1 = d4_str_alloc(L"1 start")), __THE_3 = d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     if (i_0 == 5) {
       {
@@ -74,12 +74,12 @@ L2:
     d4_any_t __THE_12 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_13 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_14 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_15;
+    void *__THE_15 = NULL;
     d4_str_t __THE_16 = d4_str_empty_val;
     d4_any_t __THE_17 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_18 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_19 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_20;
+    void *__THE_20 = NULL;
     d4_print.func(d4_print.ctx, __THE_15 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_14 = d4_arr_any_alloc(2, __THE_12 = d4_any_str_alloc(__THE_11 = d4_str_alloc(L"2 start")), __THE_13 = d4_any_int_alloc(j_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     if (j_0 == 5) {
       {
@@ -108,12 +108,12 @@ L4:
     d4_any_t __THE_22 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_23 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_24 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_25;
+    void *__THE_25 = NULL;
     d4_str_t __THE_26 = d4_str_empty_val;
     d4_any_t __THE_27 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_28 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_29 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_30;
+    void *__THE_30 = NULL;
     d4_print.func(d4_print.ctx, __THE_25 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_24 = d4_arr_any_alloc(2, __THE_22 = d4_any_str_alloc(__THE_21 = d4_str_alloc(L"3 start")), __THE_23 = d4_any_int_alloc(k_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     if (k_0 == 5) {
       {

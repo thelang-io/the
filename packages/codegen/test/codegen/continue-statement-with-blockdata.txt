@@ -96,14 +96,14 @@ int main (void) {
     d4_any_t __THE_2 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_3 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_4 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_5;
+    void *__THE_5 = NULL;
     d4_str_t v4_0;
     d4_str_t v6_0;
     d4_str_t __THE_6 = d4_str_empty_val;
     d4_any_t __THE_7 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_8 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_9 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_10;
+    void *__THE_10 = NULL;
     d4_str_t v7_0;
     d4_str_t v2_0 = d4_str_alloc(L"test2");
     d4_print.func(d4_print.ctx, __THE_5 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_4 = d4_arr_any_alloc(2, __THE_2 = d4_any_str_alloc(__THE_1 = d4_str_alloc(L"1 start")), __THE_3 = d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
@@ -139,12 +139,12 @@ L1:
     d4_any_t __THE_12 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_13 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_14 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_15;
+    void *__THE_15 = NULL;
     d4_str_t __THE_16 = d4_str_empty_val;
     d4_any_t __THE_17 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_18 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_19 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_20;
+    void *__THE_20 = NULL;
     d4_print.func(d4_print.ctx, __THE_15 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_14 = d4_arr_any_alloc(2, __THE_12 = d4_any_str_alloc(__THE_11 = d4_str_alloc(L"2 start")), __THE_13 = d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     if (i_0 == 5) {
       d4_str_t v2_0 = d4_str_alloc(L"test1");
@@ -171,12 +171,12 @@ L2:
     d4_any_t __THE_22 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_23 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_24 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_25;
+    void *__THE_25 = NULL;
     d4_str_t __THE_26 = d4_str_empty_val;
     d4_any_t __THE_27 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_28 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_29 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_30;
+    void *__THE_30 = NULL;
     d4_str_t v2_0 = d4_str_alloc(L"test1");
     d4_print.func(d4_print.ctx, __THE_25 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_24 = d4_arr_any_alloc(2, __THE_22 = d4_any_str_alloc(__THE_21 = d4_str_alloc(L"3 start")), __THE_23 = d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     if (i_0 == 5) {
@@ -203,12 +203,12 @@ L3:
     d4_any_t __THE_32 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_33 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_34 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_35;
+    void *__THE_35 = NULL;
     d4_str_t __THE_36 = d4_str_empty_val;
     d4_any_t __THE_37 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_any_t __THE_38 = {-1, NULL, NULL, NULL, NULL, NULL};
     d4_arr_any_t __THE_39 = (d4_arr_any_t) {NULL, 0};
-    void *__THE_40;
+    void *__THE_40 = NULL;
     d4_print.func(d4_print.ctx, __THE_35 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_34 = d4_arr_any_alloc(2, __THE_32 = d4_any_str_alloc(__THE_31 = d4_str_alloc(L"4 start")), __THE_33 = d4_any_int_alloc(i_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
     if (i_0 == 5) {
       c1 = 1;
@@ -259,7 +259,7 @@ L5:
       d4_any_t __THE_48 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_49 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_50 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_51;
+      void *__THE_51 = NULL;
       d4_str_t v4_0;
       d4_str_t __THE_52 = d4_str_empty_val;
       d4_str_t v6_0;
@@ -267,7 +267,7 @@ L5:
       d4_any_t __THE_54 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_55 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_56 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_57;
+      void *__THE_57 = NULL;
       d4_str_t v7_0;
       if (!(!d4_str_eq(j_0, __THE_44 = d4_str_alloc(L"iiiiiiiiii")))) {
         b1 = 1;
@@ -323,13 +323,13 @@ L6:
       d4_any_t __THE_62 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_63 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_64 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_65;
+      void *__THE_65 = NULL;
       d4_str_t __THE_66 = d4_str_empty_val;
       d4_str_t __THE_67 = d4_str_empty_val;
       d4_any_t __THE_68 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_69 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_70 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_71;
+      void *__THE_71 = NULL;
       if (!(!d4_str_eq(j_0, __THE_58 = d4_str_alloc(L"iiiiiiiiii")))) {
         b1 = 1;
         goto L8;
@@ -376,13 +376,13 @@ L8:
       d4_any_t __THE_76 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_77 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_78 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_79;
+      void *__THE_79 = NULL;
       d4_str_t __THE_80 = d4_str_empty_val;
       d4_str_t __THE_81 = d4_str_empty_val;
       d4_any_t __THE_82 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_83 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_84 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_85;
+      void *__THE_85 = NULL;
       if (!(!d4_str_eq(j_0, __THE_72 = d4_str_alloc(L"iiiiiiiiii")))) {
         b1 = 1;
         goto L10;
@@ -429,13 +429,13 @@ L10:
       d4_any_t __THE_90 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_91 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_92 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_93;
+      void *__THE_93 = NULL;
       d4_str_t __THE_94 = d4_str_empty_val;
       d4_str_t __THE_95 = d4_str_empty_val;
       d4_any_t __THE_96 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_any_t __THE_97 = {-1, NULL, NULL, NULL, NULL, NULL};
       d4_arr_any_t __THE_98 = (d4_arr_any_t) {NULL, 0};
-      void *__THE_99;
+      void *__THE_99 = NULL;
       if (!(!d4_str_eq(j_0, __THE_86 = d4_str_alloc(L"iiiiiiiiii")))) {
         b1 = 1;
         goto L12;
