@@ -748,7 +748,7 @@ export fn createCommaExpression (left: CExpression, right: CExpression) CExpress
 export fn createConditionalExpression (
   condition: CExpression,
   consequent: CExpression,
-  alternate: CExpression
+  alternate: CExpression,
 ) CExpression {
   return createExpression(CConditionalExpression{condition: condition, consequent: consequent, alternate: alternate})
 }
@@ -811,7 +811,7 @@ export fn createForStatement (
   initializer: CStatement?,
   condition: CExpression?,
   update: CExpression?,
-  body: CStatement
+  body: CStatement,
 ) CStatement {
   return createStatement(CForStatement{initializer: initializer, condition: condition, update: update, body: body})
 }
@@ -820,13 +820,13 @@ export fn createFunctionDeclaration (
   returnType: CType,
   name: str,
   parameters: CFunctionParameter[],
-  body: CStatement
+  body: CStatement,
 ) CStatement {
   return createStatement(CFunctionDeclaration{
     returnType: returnType,
     name: name,
     parameters: parameters,
-    body: body
+    body: body,
   })
 }
 
