@@ -74,7 +74,14 @@ export obj Tests {
 
       print("[ RUN      ]", test.name, to: "stderr")
       timeStart := date_now()
-      test.body()
+
+      try {
+        test.body()
+      } catch err: error_Error {
+        print(err.stack.replace(process_cwd(), "."), to: "stderr")
+        TEST_FAILED = true
+      }
+
       timeDelta := date_now() - timeStart
       testStatus := TEST_FAILED ? "[  FAILED  ]" : "[       OK ]"
       print(testStatus, test.name, "(" + timeDelta.str() + " ms)", to: "stderr")
