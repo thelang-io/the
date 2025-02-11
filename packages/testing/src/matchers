@@ -458,5 +458,7 @@ fn getLocation () str {
   }
 
   stackLines := stack.lines()
-  return stackLines[6].trim().slice(3)
+  result := stackLines[6].trim().slice(3)
+
+  return result.replace(process_cwd(), ".")
 }
