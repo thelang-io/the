@@ -3,6 +3,7 @@
  * Licensed under the MIT License
  */
 
+export mut TEST_CWD := process_cwd()
 export mut TEST_FAILED := false
 
 export fn FAIL_TEST (message: str) {
@@ -460,5 +461,5 @@ fn getLocation () str {
   stackLines := stack.lines()
   result := stackLines[6].trim().slice(3)
 
-  return result.replace(process_cwd(), ".")
+  return result.replace(TEST_CWD, ".")
 }
