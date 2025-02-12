@@ -27,6 +27,7 @@ export obj Var {
   t: ref Type
   mutable: bool
   scope: int
+  mut referenced: bool
 }
 
 export obj Type {
@@ -535,7 +536,7 @@ export obj TypeParameter {
 export obj NamespaceMember {
   name: str
   t: (ref Type)?
-  var: Var?
+  var: (ref Var)?
 }
 
 export obj AliasType {

@@ -33,7 +33,8 @@ export obj ElementAccessExpressionContextExtra {
 }
 
 export obj FunctionDeclarationContext {
-  mut selfType: ref Type.Type
+  mut var: ref Type.Var
+  mut context: (ref Type.Var)[]
 }
 
 export obj IsExpressionContextExtra {
@@ -49,7 +50,7 @@ export obj PropertyAccessExpressionContextExtra {
 }
 
 export obj VariableDeclarationContext {
-  mut varType: ref Type.Type
+  mut var: ref Type.Var
 }
 
 export fn initial (it: ref Parser.Expression) ref Type.Type {
