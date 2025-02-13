@@ -7,7 +7,7 @@ import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
 import BUILTIN_ENTITIES from "./builtin-entities"
-import BlockData, BlockDataContext from "./block-data"
+import BlockData, BlockDataContext, BlockDataVariable from "./block-data"
 import
   createASTPropertyAccess,
   declarationByDependency,
@@ -97,9 +97,12 @@ export obj CodegenEntity {
 }
 
 export obj CodegenFunctionContext {
+  contextTypeName: str
+  functorTypeName: str
   parameters: Parser.FunctionParameter[]
   body: Parser.Statement
   t: ref Analyzer.Type
+  variables: BlockDataVariable[]
 }
 
 export obj Codegen {
@@ -460,9 +463,9 @@ export obj Codegen {
     }
 
     context := item.context as Analyzer.FunctionDeclarationContext
-    self._generateFunctionType(context.selfType)
 
-    self.blockData.setFunction(statement.name.name)
+    self._generateFunctionType(context.var.t)
+    self.blockData.setFunction(statement.name.name, context.var.t)
   }
 
   fn _declareObject (mut self: ref Codegen, item: ref Parser.Statement) void {
@@ -567,7 +570,7 @@ export obj Codegen {
     throw error_NewError("Tried default initializer variable declaration on unknown type '" + it.toString() + "'")
   }
 
-  fn _defineFunction (mut self: ref Codegen, name: Parser.Identifier, parameters: Parser.FunctionParameter[], body: Parser.Statement, t: ref Analyzer.Type) AST.CStatement {
+  fn _defineFunction (mut self: ref Codegen, name: Parser.Identifier, parameters: Parser.FunctionParameter[], body: Parser.Statement, t: ref Analyzer.Type, context: (ref Analyzer.Var)[]) AST.CStatement {
     variableName := self.blockData.getVariable(name.name)
     cType := AST.createType(self._type(t))
 
@@ -579,12 +582,46 @@ export obj Codegen {
       ),
     )
 
-    entityContext := CodegenFunctionContext{parameters: parameters, body: body, t: t}
-    functorTypeName := variableName + "_func"
+    entityContext := CodegenFunctionContext{
+      contextTypeName: variableName + "_ctx_t",
+      functorTypeName: variableName + "_func",
+      parameters: parameters,
+      body: body,
+      t: t,
+      variables: self.blockData.getVariables(context),
+    }
+
+    if !entityContext.variables.empty {
+      self.entities.push(CodegenEntity{
+        name: entityContext.contextTypeName,
+        codeName: entityContext.contextTypeName,
+        context: entityContext,
+        generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+          ctx := entity.context as CodegenFunctionContext
+          mut members: AST.CStatement[]
+
+          loop i := 0; i < ctx.variables.len; i++ {
+            contextVariable := ctx.variables[i]
+
+            members.push(
+              AST.createStructureMemberDeclaration(
+                AST.createType(self._type(contextVariable.t)),
+                contextVariable.name,
+              ),
+            )
+          }
+
+          return AST.createTypedefDeclaration(
+            AST.createStructureDeclaration(nil, AST.createCompoundStatement(members), terminated: false),
+            entity.codeName,
+          )
+        }
+      })
+    }
 
     self.entities.push(CodegenEntity{
-      name: functorTypeName,
-      codeName: functorTypeName,
+      name: entityContext.functorTypeName,
+      codeName: entityContext.functorTypeName,
       context: entityContext,
       generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
         ctx := entity.context as CodegenFunctionContext
@@ -598,6 +635,7 @@ export obj Codegen {
         initialReturnType := self.returnType
 
         self.blockData.increase(.Fn)
+        self.blockData.currentMergeVariables(ctx.variables)
 
         self.lastVarId = 0
         self.returnType = returnType
@@ -605,7 +643,15 @@ export obj Codegen {
         cParameters := AST.createIdentifier("params")
         mut parameters: AST.CFunctionParameter[]
 
-        parameters.push(AST.createFunctionParameter(AST.createType("void *"), "ctx"))
+        if !ctx.variables.empty {
+          cContextType := AST.createType(self._(ctx.contextTypeName), reference: true)
+
+          parameters.push(
+            AST.createFunctionParameter(cContextType, "ctx"),
+          )
+        } else {
+          parameters.push(AST.createFunctionParameter(AST.createType("void", reference: true), "ctx"))
+        }
 
         if ctx.t.hasParameters() || ctx.t.hasSelfParam() {
           cParametersType := AST.createType(self._type(ctx.t, "_params_t"), reference: true)
@@ -614,12 +660,24 @@ export obj Codegen {
             AST.createFunctionParameter(cParametersType, "params"),
           )
         } else {
-          parameters.push(AST.createFunctionParameter(AST.createType("void *"), "params"))
+          parameters.push(AST.createFunctionParameter(AST.createType("void", reference: true), "params"))
+        }
+
+        loop i := 0; i < ctx.variables.len; i++ {
+          contextVariable := ctx.variables[i]
+
+          self.blockData.addSetup(
+            AST.createVariableDeclaration(
+              AST.createType(self._type(contextVariable.t)),
+              contextVariable.fullName(),
+              AST.createPropertyAccessExpression(AST.createIdentifier("ctx"), contextVariable.name, pointed: true),
+            ),
+          )
         }
 
         if ctx.t.hasSelfParam() {
           methodType := ctx.t.asMethod()
-          selfCodeName := self.blockData.setVariable(methodType.selfName)
+          selfCodeName := self.blockData.setVariable(methodType.selfName, methodType.selfType)
 
           self.blockData.addSetup(
             AST.createVariableDeclaration(
@@ -637,7 +695,7 @@ export obj Codegen {
             parameter := ctx.parameters[i]
             typeParameter := typeParameters[i]
             parameterType := self._type(typeParameter.t)
-            parameterCodeName := self.blockData.setVariable(parameter.name.name)
+            parameterCodeName := self.blockData.setVariable(parameter.name.name, typeParameter.t)
 
             mut initializer := AST.createPropertyAccessExpression(cParameters, "n" + i.str(), true)
 
@@ -713,18 +771,56 @@ export obj Codegen {
     returnType := t.getReturnType()
     cReturnType := AST.createType(self._type(returnType))
 
+    mut cContext := AST.createIdentifier(self._("NULL"))
+
+    if !entityContext.variables.empty {
+      mut contextInitializerList: AST.CExpression[]
+
+      loop i := 0; i < entityContext.variables.len; i++ {
+        contextVariable := entityContext.variables[i]
+        contextInitializerList.push(AST.createIdentifier(contextVariable.fullName()))
+      }
+
+      tmpVar := self._tmpVar()
+      cTmpVar := AST.createIdentifier(tmpVar)
+
+      self.blockData.addSetup(
+        AST.createVariableDeclaration(AST.createType("void", reference: true), tmpVar, AST.createIdentifier(self._("NULL"))),
+      )
+
+      cContext = AST.createAssignmentExpression(
+        cTmpVar,
+        "=",
+        AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
+          AST.createUnaryExpression("&", AST.createCastExpression(
+            AST.createType(self._(entityContext.contextTypeName)),
+            AST.createInitializerListExpression(contextInitializerList),
+          )),
+          AST.createCallExpression(AST.createIdentifier("sizeof"), [
+            AST.createType(self._(entityContext.contextTypeName)),
+          ]),
+        ]),
+      )
+
+      self.blockData.addTeardown(
+        AST.createExpressionStatement(
+          AST.createCallExpression(AST.createIdentifier(self._("d4_safe_free")), [cTmpVar]),
+        ),
+      )
+    }
+
     return AST.createExpressionStatement(
       AST.createAssignmentExpression(
         AST.createIdentifier(variableName),
         "=",
         AST.createCallExpression(AST.createIdentifier(allocTypeName), [
           self._str(name.name),
-          AST.createIdentifier(self._("NULL")), // ctx
-          AST.createIdentifier(self._("NULL")), // ctx copy
-          AST.createIdentifier(self._("NULL")), // ctx free
+          cContext,
+          AST.createIdentifier(self._("NULL")), // TODO: ctx copy
+          AST.createIdentifier(self._("NULL")), // TODO: ctx free
           AST.createCastExpression(
             AST.createType(cReturnType.stringify(declaration: true) + "(*) (void *, void *)"),
-            AST.createIdentifier(self._(functorTypeName)),
+            AST.createIdentifier(self._(entityContext.functorTypeName)),
           ),
         ]),
       ),
@@ -1348,7 +1444,7 @@ export obj Codegen {
       paramsName := self._type(calleeTargetType, "_params_t")
 
       self.blockData.addSetup(
-        AST.createVariableDeclaration(AST.createType("void *"), tmpVar, AST.createIdentifier(self._("NULL"))),
+        AST.createVariableDeclaration(AST.createType("void", reference: true), tmpVar, AST.createIdentifier(self._("NULL"))),
       )
 
       args.push(
@@ -1650,7 +1746,8 @@ export obj Codegen {
       statement.name,
       statement.parameters,
       statement.body,
-      context.selfType,
+      context.var.t,
+      context.context,
     )
   }
 
@@ -1902,7 +1999,7 @@ export obj Codegen {
     //     {
     //       this->_genErrState(ASTChecker(node).insideMain(), false),
     //       CodegenASTExprAccess::create(this->_(argNodeExprDef)),
-    //       CodegenASTExprCast::create(CodegenASTType::create("void *"), cArg),
+    //       CodegenASTExprCast::create(CodegenASTType::create("void", reference: true), cArg),
     //       CodegenASTExprCast::create(
     //         CodegenASTType::create("void (*) (void *)"),
     //         CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_(argTypeInfo.typeName + "_free")))
@@ -2065,28 +2162,28 @@ export obj Codegen {
     context := item.context as Analyzer.VariableDeclarationContext
 
     mut initializer := statement.initializer == nil
-      ? self._defaultInitializerDeclaration(context.varType)
+      ? self._defaultInitializerDeclaration(context.var.t)
       : self._generateExpression(ref statement.initializer, allocate: false, deallocate: false)
 
-    variableName := self.blockData.setVariable(statement.name.name)
+    variableName := self.blockData.setVariable(statement.name.name, context.var.t)
 
     if statement.initializer != nil {
       statementInitializer := statement.initializer
 
-      if typeShouldBeAllocated(context.varType) && expressionShouldBeCopied(ref statementInitializer) {
-        initializer = self._functionCopy(context.varType, initializer)
+      if typeShouldBeAllocated(context.var.t) && expressionShouldBeCopied(ref statementInitializer) {
+        initializer = self._functionCopy(context.var.t, initializer)
       }
     }
 
-    if typeShouldBeFreed(context.varType) {
+    if typeShouldBeFreed(context.var.t) {
       self.blockData.addTeardown(
         AST.createExpressionStatement(
-          self._functionFree(context.varType, AST.createIdentifier(variableName)),
+          self._functionFree(context.var.t, AST.createIdentifier(variableName)),
         ),
       )
     }
 
-    cType := AST.createType(self._type(context.varType))
+    cType := AST.createType(self._type(context.var.t))
 
     if statementHasPrecedingNonDeclaration(item) {
       self.blockData.addSetup(
@@ -2129,7 +2226,7 @@ export obj Codegen {
           AST.createExpressionStatement(AST.createMacroInvocation(self._("D4_ANY_DEFINE"), [
             AST.createIdentifier(self._(typeDef)),
             AST.createIdentifier(typeName),
-            AST.createType(self._type(it)),
+            AST.createType(t),
             self._functionCopy(it, AST.createIdentifier("val")),
             self._functionEq(it, AST.createIdentifier("lhs_val"), AST.createIdentifier("rhs_val")),
             self._functionFree(it, AST.createIdentifier("val")),
@@ -3048,123 +3145,125 @@ export obj Codegen {
   }
 
   fn _type (mut self: ref Self, it: ref Analyzer.Type, postfix := "_t") str {
+    mut result := ""
+
     if it.isAlias() {
       t := it.asAlias()
-      return self._type(t.t)
+      result = self._type(t.t)
     } elif it.name == "any" {
-      return self._("d4_any" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+      result = self._("d4_any" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     } elif it.name == "bool" {
       if postfix == "_t" {
-        return self._("bool") + " "
+        result = self._("bool") + " "
       } else {
-        return self._("d4_bool" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_bool" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "byte" {
       if postfix == "_t" {
-        return "unsigned char "
+        result = "unsigned char "
       } else {
-        return self._("d4_byte" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_byte" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "char" {
       if postfix == "_t" {
-        return "char "
+        result = "char "
       } else {
-        return self._("d4_char" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_char" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "f32" {
       if postfix == "_t" {
-        return "float "
+        result = "float "
       } else {
-        return self._("d4_f32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_f32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "f64" {
       if postfix == "_t" {
-        return "double "
+        result = "double "
       } else {
-        return self._("d4_f64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_f64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "float" {
       if postfix == "_t" {
-        return "double "
+        result = "double "
       } else {
-        return self._("d4_float" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_float" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "i8" {
       if postfix == "_t" {
-        return self._("int8_t") + " "
+        result = self._("int8_t") + " "
       } else {
-        return self._("d4_i8" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_i8" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "i16" {
       if postfix == "_t" {
-        return self._("int16_t") + " "
+        result = self._("int16_t") + " "
       } else {
-        return self._("d4_i16" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_i16" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "i32" {
       if postfix == "_t" {
-        return self._("int32_t") + " "
+        result = self._("int32_t") + " "
       } else {
-        return self._("d4_i32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_i32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "int" {
       if postfix == "_t" {
-        return self._("int32_t") + " "
+        result = self._("int32_t") + " "
       } else {
-        return self._("d4_int" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_int" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "i64" {
       if postfix == "_t" {
-        return self._("int64_t") + " "
+        result = self._("int64_t") + " "
       } else {
-        return self._("d4_i64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_i64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "isize" {
       if postfix == "_t" {
-        return self._("ptrdiff_t") + " "
+        result = self._("ptrdiff_t") + " "
       } else {
-        return self._("d4_isize" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_isize" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "rune" {
       if postfix == "_t" {
-        return self._("wchar_t") + " "
+        result = self._("wchar_t") + " "
       } else {
-        return self._("d4_rune" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_rune" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "str" {
-      return self._("d4_str" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+      result = self._("d4_str" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     } elif it.name == "u8" {
       if postfix == "_t" {
-        return self._("uint8_t") + " "
+        result = self._("uint8_t") + " "
       } else {
-        return self._("d4_u8" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_u8" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "u16" {
       if postfix == "_t" {
-        return self._("uint16_t") + " "
+        result = self._("uint16_t") + " "
       } else {
-        return self._("d4_u16" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_u16" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "u32" {
       if postfix == "_t" {
-        return self._("uint32_t") + " "
+        result = self._("uint32_t") + " "
       } else {
-        return self._("d4_u32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_u32" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "u64" {
       if postfix == "_t" {
-        return self._("uint64_t") + " "
+        result = self._("uint64_t") + " "
       } else {
-        return self._("d4_u64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_u64" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "usize" {
       if postfix == "_t" {
-        return self._("size_t") + " "
+        result = self._("size_t") + " "
       } else {
-        return self._("d4_usize" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+        result = self._("d4_usize" + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
       }
     } elif it.name == "void" {
-      return "void "
+      result = "void "
     } elif (
       it.isArray() ||
       it.isEnum() ||
@@ -3179,10 +3278,14 @@ export obj Codegen {
       it.isUnion()
     ) {
       self._typeGen(it)
-      return self._("d4_" + self._typeName(it) + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
+      result = self._("d4_" + self._typeName(it) + postfix) + (postfix.slice(-3) == "_t" ? " " : "")
     }
 
-    throw error_NewError("Failed to generate type for '" + it.toString() + "'")
+    if result.empty {
+      throw error_NewError("Failed to generate type for '" + it.toString() + "'")
+    }
+
+    return result
   }
 
   fn _typeGen (mut self: ref Self, it: ref Analyzer.Type) {

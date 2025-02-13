@@ -1,11 +1,14 @@
 main {
   mut a := 2
 
-  fn test (newA: int) {
+  fn test (newA: int) int {
     a = newA
+    return a
   }
 
-  test(1)
+  b := test(1)
+  print(a, b)
 }
 ===== code =====
 ===== output =====
+1 1
