@@ -272,7 +272,7 @@ export obj CStatement {
       result = statement.stringify()
     } elif self.isStructureDeclaration() {
       statement := self.asStructureDeclaration()
-      result = statement.stringify()
+      result = statement.stringify(terminated: self.terminated)
     } elif self.isStructureMemberDeclaration() {
       statement := self.asStructureMemberDeclaration()
       result = statement.stringify()
@@ -651,15 +651,21 @@ export obj CReturnStatement {
 }
 
 export obj CStructureDeclaration {
-  mut name: str
+  mut name: str?
   mut body: CStatement
 
   fn definition (self: ref Self) str {
-    return "struct " + self.name + ";" + os_EOL
+    if self.name == nil {
+      throw error_NewError("Structure name is required for definition")
+    }
+
+    structureName := self.name as str
+    return "struct " + structureName + ";" + os_EOL
   }
 
-  fn stringify (self: ref Self) str {
-    return "struct " + self.name + " " + self.body.stringify(root: false) + ";"
+  fn stringify (self: ref Self, terminated: bool) str {
+    structureName := self.name == nil ? "" : self.name + " "
+    return "struct " + structureName + self.body.stringify(root: false) + (terminated ? ";" : "")
   }
 }
 
@@ -682,11 +688,22 @@ export obj CSwitchStatement {
 }
 
 export obj CTypedefDeclaration {
-  mut t: CType
+  mut specifier: CType | CStatement
   mut name: str
 
   fn stringify (self: ref Self) str {
-    return "typedef " + self.t.stringify(declaration: true) + self.name + ";"
+    mut specifierCode := ""
+    selfSpecifier := self.specifier
+
+    if self.specifier is CStatement {
+      selfSpecifier := selfSpecifier as CStatement
+      specifierCode = selfSpecifier.stringify(root: false) + " "
+    } else {
+      selfSpecifier := selfSpecifier as CType
+      specifierCode = selfSpecifier.stringify(declaration: true)
+    }
+
+    return "typedef " + specifierCode + self.name + ";"
   }
 }
 
@@ -850,8 +867,8 @@ export fn createReturnStatement (argument: CExpression? = nil) CStatement {
   return createStatement(CReturnStatement{argument: argument})
 }
 
-export fn createStructureDeclaration (name: str, body: CStatement) CStatement {
-  return createStatement(CStructureDeclaration{name: name, body: body})
+export fn createStructureDeclaration (name: str?, body: CStatement, terminated := true) CStatement {
+  return createStatement(CStructureDeclaration{name: name, body: body}, terminated: terminated)
 }
 
 export fn createStructureMemberDeclaration (t: CType, name: str) CStatement {
@@ -862,8 +879,8 @@ export fn createSwitchStatement (discriminant: CExpression, body: CStatement) CS
   return createStatement(CSwitchStatement{discriminant: discriminant, body: body})
 }
 
-export fn createTypedefDeclaration (t: CType, name: str) CStatement {
-  return createStatement(CTypedefDeclaration{t: t, name: name})
+export fn createTypedefDeclaration (specifier: CType | CStatement, name: str) CStatement {
+  return createStatement(CTypedefDeclaration{specifier: specifier, name: name})
 }
 
 export fn createVariableDeclaration (t: CType, name: str, initializer: CExpression? = nil, terminated := true) CStatement {
