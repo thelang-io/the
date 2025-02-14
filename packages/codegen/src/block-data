@@ -17,6 +17,7 @@ export obj BlockDataVariable {
   id: int
   t: ref Analyzer.Type
   function: bool
+  referenced: bool
 
   fn fullName (self: ref Self) str {
     return self.name + "_" + self.id.str()
@@ -284,7 +285,7 @@ export obj BlockData {
     return self.functions.last.fullName()
   }
 
-  fn setVariable (mut self: ref Self, name: str, t: ref Analyzer.Type) str {
+  fn setVariable (mut self: ref Self, name: str, t: ref Analyzer.Type, referenced := false) str {
     mut id := 0
 
     loop i := self.blocks.len - 1; i >= 0; i-- {
@@ -308,6 +309,7 @@ export obj BlockData {
       name: name,
       id: id,
       t: t,
+      referenced: referenced,
     })
 
     return self.blocks.last.variables.last.fullName()
