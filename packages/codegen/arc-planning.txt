@@ -1,0 +1,70 @@
+Planning Board
+
+=====
+
+```the
+const a := "text"
+fn test () str { return a }
+main {
+  b := test()
+}
+```
+
+```c
+arc_str_t a = arc_str_alloc(__1 = str_alloc(L"text"));
+str_t test () {
+  return str_copy(arc_str_deref(a));
+}
+int main () {
+  str_t b = test();
+  str_free(b);
+}
+```
+
+=====
+
+```the
+obj Test {
+  mut counter: int
+  fn makeCounter (mut self: ref Self) Counter {
+    return () -> int {
+      return self.counter++
+    }
+  }
+}
+main {
+  mut count := () -> int { return 0 }
+  if true {
+    mut t := Test{}
+    count = t.makeCounter()
+  }
+  count()
+  count()
+}
+```
+
+```c
+typedef struct {
+  int_t counter;
+} Test_t;
+typedef struct {
+  arc_Test_t self;
+} Test_makeCounter_p;
+int_t $2 ($2_c *ctx) {
+  return arc_access(ctx->self, counter)++;
+}
+fn_P_R_int_t Test_makeCounter (Test_makeCounter_p params) {
+  return $2_alloc(arc_Test_copy(params.self))
+}
+int_t $1 () {
+  return 0;
+}
+int main () {
+  fn_P_R_int_t count = $1_alloc();
+  if (true) {
+    arc_Test_t t = art_Test_alloc(__1 = Test_alloc(0));
+    count = Test_makeCounter((Test_makeCounter_p) {t});
+  }
+  count(count->ctx)
+}
+```
