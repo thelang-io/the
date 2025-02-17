@@ -16,7 +16,7 @@ main {
 obj Test {}
 fn createTest () ref Test {
   t := Test{}
-  return ref t // For every `ref` create ARC
+  return ref t // For every `ref` mark variable as ARC
   // For every return of ARC, create a copy
 }
 main {
@@ -40,5 +40,37 @@ main {
     count = t.count
   }
   count() // How to pass here reference to self of `t` from above scope?
+
+  // 1. Storing copy of method on instance with a self param bound to it
+  // 2. Creating a closure that references self prop `count = () -> void { return t.count() }
+  // 3. Disable method to function assignment, only if function exactly matches
+}
+```
+
+=====
+
+```the
+main {
+  mut arr := [0, 1, 2]
+  mut opt := ref arr[0] // arc_arc_int
+
+  // what if every ref will just be converted to arc?
+}
+```
+
+=====
+
+```the
+obj Test { count: int }
+main {
+  a := 0
+  mut refInt := ref a
+  loop {
+    mut t := Test{}
+    refInt = ref t.count // All references should be mutable
+    // Referencing a field of variable should mark variable as referenced
+    break
+  }
+  refInt++
 }
 ```
