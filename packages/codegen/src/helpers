@@ -241,7 +241,6 @@ export fn typeSafeForTernaryAlternate (it: ref Analyzer.Type) bool {
     it.isArray() ||
     it.isFunction() ||
     it.isMap() ||
-    // TODO: test
     it.isCustomObject() ||
     it.isOptional() ||
     it.isUnion()
@@ -278,7 +277,6 @@ export fn typeShouldBeAllocated (self: ref Analyzer.Type) bool {
     t.name == "str" ||
     t.isArray() ||
     t.isMap() ||
-    // TODO: test
     t.isCustomObject() ||
     t.isOptional() ||
     t.isUnion()
@@ -306,7 +304,6 @@ export fn typeShouldBeFreed (self: ref Analyzer.Type) bool {
     t.name == "any" ||
     t.name == "str" ||
     t.isArray() ||
-    // TODO: test
     t.isCustomObject() ||
     t.isFunction() ||
     t.isMap() ||

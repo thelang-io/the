@@ -3,9 +3,6 @@
  * Licensed under the MIT License
  */
 
-// TODO: Arc needs to reside within the type
-// Check todo comments that self and parameters needs to know whether variable is referenced
-
 import * as Analyzer from "the/analyzer"
 import * as AST from "the/c"
 import * as Parser from "the/parser"
@@ -537,7 +534,6 @@ export obj Codegen {
         AST.createLiteral("0"),
       ]))
     } elif it.isFunction() || it.isMethod() {
-      // TODO: test
       return AST.createCastExpression(AST.createType(self._type(it)), AST.createInitializerListExpression([
         AST.createIdentifier(self._("d4_str_empty_val")),
         AST.createIdentifier(self._("NULL")),
@@ -552,7 +548,6 @@ export obj Codegen {
         AST.createLiteral("0"),
       ]))
     } elif it.isCustomObject() {
-      // TODO: test
       mut args: AST.CExpression[]
 
       loop i := 0; i < it.properties.len; i++ {
@@ -572,7 +567,6 @@ export obj Codegen {
       return AST.createCastExpression(AST.createType(self._type(it)), AST.createInitializerListExpression([
         AST.createLiteral("-1"),
         AST.createInitializerListExpression([
-          // TODO: test
           AST.createLiteral("0"),
         ]),
       ]))
@@ -694,7 +688,6 @@ export obj Codegen {
 
           self.blockData.addSetup(
             AST.createVariableDeclaration(
-              // TODO: Need to know whether referenced or not
               AST.createType(self._type(methodType.selfType)),
               selfCodeName,
               AST.createPropertyAccessExpression(cParameters, "self"),
@@ -708,7 +701,6 @@ export obj Codegen {
           loop i := 0; i < ctx.parameters.len; i++ {
             parameter := ctx.parameters[i]
             typeParameter := typeParameters[i]
-            // TODO: Need to know whether referenced or not
             parameterType := self._type(typeParameter.t)
             parameterCodeName := self.blockData.setVariable(parameter.name.name, typeParameter.t)
 
@@ -851,9 +843,7 @@ export obj Codegen {
       t.isArray() ||
       t.isFunction() ||
       t.isMap() ||
-      // TODO: test
       t.isMethod() ||
-      // TODO: test
       t.isCustomObject() ||
       t.isOptional() ||
       t.isUnion()
@@ -871,12 +861,9 @@ export obj Codegen {
       t.name == "any" ||
       t.name == "str" ||
       t.isArray() ||
-      // TODO: test
       t.isFunction() ||
       t.isMap() ||
-      // TODO: test
       t.isMethod() ||
-      // TODO: test
       t.isCustomObject() ||
       t.isOptional() ||
       t.isUnion()
@@ -897,9 +884,7 @@ export obj Codegen {
       t.isArray() ||
       t.isFunction() ||
       t.isMap() ||
-      // TODO: test
       t.isMethod() ||
-      // TODO: test
       t.isCustomObject() ||
       t.isOptional() ||
       t.isUnion()
@@ -919,9 +904,7 @@ export obj Codegen {
       t.isArray() ||
       t.isFunction() ||
       t.isMap() ||
-      // TODO: test
       t.isMethod() ||
-      // TODO: test
       t.isCustomObject() ||
       t.isOptional() ||
       t.isUnion()
@@ -965,14 +948,10 @@ export obj Codegen {
       return AST.createCallExpression(AST.createIdentifier(self._("d4_" + typeName + "_str")), [expression])
     } elif (
       it.isArray() ||
-      // TODO: test
       it.isEnum() ||
-      // TODO: test
       it.isFunction() ||
       it.isMap() ||
-      // TODO: test
       it.isMethod() ||
-      // TODO: test
       it.isCustomObject() ||
       it.isOptional() ||
       it.isUnion()
@@ -1141,8 +1120,6 @@ export obj Codegen {
       (result = self._generateIfStatement(item)) != nil ||
       (result = self._generateLoopStatement(item)) != nil ||
       (result = self._generateReturnStatement(item)) != nil ||
-      (result = self._generateThrowStatement(item)) != nil ||
-      (result = self._generateTryStatement(item)) != nil ||
       (result = self._generateVariableDeclaration(item)) != nil
     ) {
       return result
@@ -1397,7 +1374,6 @@ export obj Codegen {
 
         mut variadicAllocArgs: (AST.CExpression | AST.CType)[] = [AST.createLiteral(variadicArgs.len.str())]
         variadicAllocArgs.merge(variadicArgs)
-        // TODO: Need to know whether referenced or not
         variadicAllocType := self._type(param.t, "_alloc")
 
         paramsArgs.push(
@@ -1525,7 +1501,6 @@ export obj Codegen {
     contextExtra := item.contextExtra as Analyzer.ElementAccessExpressionContextExtra
     startLoc := Parser.Reader_locate(self._r(), item.start)
 
-    // TODO: Need to know whether referenced or not
     return AST.createCallExpression(AST.createIdentifier(self._type(contextExtra.selfType, "_at")), [
       AST.createUnaryExpression("&", AST.createIdentifier(self._("d4_err_state"))),
       AST.createLiteral(startLoc.line.str()),
@@ -1809,7 +1784,6 @@ export obj Codegen {
       if !self.blockData.currentEmpty() {
         self.blockData.addSetup(initializerStatement)
       } else {
-        // TODO: problem on this line or when accessing initializer
         initializer = initializerStatement
       }
     }
@@ -1863,7 +1837,7 @@ export obj Codegen {
     self.blockData.decreaseVariableIndexes()
 
     blockDataLoop := self.blockData.decrease()
-    optItem: (ref Parser.Statement)? = item // TODO: delete after v1
+    optItem: (ref Parser.Statement)? = item // TODO: remove after v1
     body = self._generateBlockTail(body, optItem, ref blockDataLoop)
 
     if blockDataLoop.usedContinueVariable {
@@ -1997,172 +1971,6 @@ export obj Codegen {
     } elif result.len > 1 {
       return AST.createCompoundStatement(result)
     }
-
-    return nil
-  }
-
-  fn _generateThrowStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
-    if !item.isThrow() {
-      return nil
-    }
-
-    statement := item.asThrow()
-
-    // TODO: implement
-    // auto argTypeInfo = this->_typeInfo(nodeThrow.arg.type);
-    // auto cArg = this->_nodeExpr(nodeThrow.arg, argTypeInfo.type, node, c);
-    // auto argNodeExprDef = this->_typeDef(argTypeInfo.type);
-    // (*c)->append(
-    //   CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("error_assign")),
-    //     {
-    //       this->_genErrState(ASTChecker(node).insideMain(), false),
-    //       CodegenASTExprAccess::create(this->_(argNodeExprDef)),
-    //       CodegenASTExprCast::create(CodegenASTType::create("void", reference: true), cArg),
-    //       CodegenASTExprCast::create(
-    //         CodegenASTType::create("void (*) (void *)"),
-    //         CodegenASTExprUnary::create("&", CodegenASTExprAccess::create(this->_(argTypeInfo.typeName + "_free")))
-    //       ),
-    //       CodegenASTExprLiteral::create(std::to_string(node.start.line)),
-    //       CodegenASTExprLiteral::create(std::to_string(node.start.col + 1))
-    //     }
-    //   )->stmt()
-    // );
-    // (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-
-    return nil
-  }
-
-  fn _generateTryStatement (mut self: ref Codegen, item: ref Parser.Statement) AST.CStatement? {
-    if !item.isTry() {
-      return nil
-    }
-
-    statement := item.asTry()
-
-    // TODO: implement
-    // auto nodeTry = std::get<ASTNodeTry>(*node.body);
-    // auto initialStateCleanUp = this->state.cleanUp;
-    // this->state.cleanUp = CodegenCleanUp(CODEGEN_CLEANUP_BLOCK, &initialStateCleanUp);
-
-    // *c = (*c)->append(
-    //   CodegenASTStmtSwitch::create(
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("setjmp")),
-    //       {
-    //         CodegenASTExprAccess::create(
-    //           CodegenASTExprCall::create(
-    //             CodegenASTExprAccess::create(this->_("error_buf_increase")),
-    //             {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //           ),
-    //           "buf",
-    //           true
-    //         )
-    //       }
-    //     )
-    //   )
-    // );
-
-    // *c = (*c)->append(
-    //   CodegenASTStmtCase::create(CodegenASTExprLiteral::create("0"), CodegenASTStmtCompound::create())
-    // );
-
-    // this->varMap.save();
-
-    // auto blockCleanUp = CodegenASTStmtCompound::create({
-    //   CodegenASTStmtIf::create(
-    //     CodegenASTExprBinary::create(
-    //       this->_genErrState(ASTChecker(node).insideMain(), false, "id"),
-    //       "!=",
-    //       CodegenASTExprLiteral::create("-1")
-    //     ),
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("longjmp")),
-    //       {
-    //         CodegenASTExprAccess::create(
-    //           this->_genErrState(ASTChecker(node).insideMain(), false, "buf_last"),
-    //           "buf",
-    //           true
-    //         ),
-    //         this->_genErrState(ASTChecker(node).insideMain(), false, "id")
-    //       }
-    //     )->stmt()
-    //   ),
-    //   CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("error_buf_decrease")),
-    //     {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //   )->stmt()
-    // });
-
-    // this->_block(c, nodeTry.body, true, blockCleanUp, true);
-    // (*c)->append(CodegenASTStmtBreak::create());
-    // *c = (*c)->exit()->exit();
-    // this->varMap.restore();
-    // this->state.cleanUp = initialStateCleanUp;
-
-    // for (const auto &handler : nodeTry.handlers) {
-    //   auto handlerVarDecl = std::get<ASTNodeVarDecl>(*handler.param.body);
-    //   auto handlerTypeInfo = this->_typeInfo(handlerVarDecl.var->type);
-    //   auto handlerDef = this->_typeDef(handlerVarDecl.var->type);
-    //   auto handleCodeName = Codegen::name(handlerVarDecl.var->codeName);
-
-    //   *c = (*c)->append(
-    //     CodegenASTStmtCase::create(
-    //       CodegenASTExprAccess::create(this->_(handlerDef)),
-    //       CodegenASTStmtCompound::create()
-    //     )
-    //   );
-
-    //   (*c)->append(
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("error_buf_decrease")),
-    //       {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //     )->stmt()
-    //   );
-
-    //   (*c)->append(
-    //     CodegenASTExprCall::create(
-    //       CodegenASTExprAccess::create(this->_("error_unset")),
-    //       {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //     )->stmt()
-    //   );
-
-    //   (*c)->append(
-    //     CodegenASTStmtVarDecl::create(
-    //       CodegenASTType::create(handlerTypeInfo.typeCodeConst),
-    //       CodegenASTExprAccess::create(handleCodeName),
-    //       CodegenASTExprCast::create(
-    //         CodegenASTType::create(handlerTypeInfo.typeCodeTrimmed),
-    //         this->_genErrState(ASTChecker(node).insideMain(), false, "ctx")
-    //       )
-    //     )
-    //   );
-
-    //   this->varMap.save();
-
-    //   this->_block(
-    //     c,
-    //     handler.body,
-    //     true,
-    //     this->_genFreeFn(handlerTypeInfo.type, CodegenASTExprAccess::create(handleCodeName))->stmt()
-    //   );
-
-    //   (*c)->append(CodegenASTStmtBreak::create());
-    //   *c = (*c)->exit()->exit();
-    //   this->varMap.restore();
-    // }
-
-    // *c = (*c)->append(CodegenASTStmtCase::create(nullptr, CodegenASTStmtCompound::create()));
-
-    // (*c)->append(
-    //   CodegenASTExprCall::create(
-    //     CodegenASTExprAccess::create(this->_("error_buf_decrease")),
-    //     {this->_genErrState(ASTChecker(node).insideMain(), false)}
-    //   )->stmt()
-    // );
-
-    // (*c)->append(CodegenASTStmtGoto::create(this->state.cleanUp.currentLabel()));
-    // *c = (*c)->exit()->exit()->exit();
 
     return nil
   }
@@ -3352,9 +3160,7 @@ export obj Codegen {
       it.isEnum() ||
       it.isFunction() ||
       it.isMap() ||
-      // TODO: test
       it.isMethod() ||
-      // TODO: test
       it.isCustomObject() ||
       it.isOptional() ||
       it.isReference() ||
@@ -3380,14 +3186,12 @@ export obj Codegen {
     } elif it.isArray() {
       self._generateArrayType(it)
     } elif it.isCustomObject() {
-      // TODO: test
       self._generateObjectType(it)
     } elif it.isFunction() {
       self._generateFunctionType(it)
     } elif it.isMap() {
       self._generateMapType(it)
     } elif it.isMethod() {
-      // TODO: test
       tm := self._tm()
       self._generateFunctionType(tm.convertMethod(it))
     } elif it.isOptional() {
@@ -3449,7 +3253,6 @@ export obj Codegen {
       t := it.asMap()
       return "map_" + self._typeName(t.keyType) + "MS" + self._typeName(t.valueType) + "ME"
     } elif it.isMethod() {
-      // TODO: test
       tm := self._tm()
       return self._typeName(tm.convertMethod(it))
     } elif it.isOptional() {

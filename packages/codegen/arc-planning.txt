@@ -53,6 +53,7 @@ main {
 main {
   mut arr := [0, 1, 2]
   mut opt := ref arr[0] // arc_arc_int
+  mut opt2 := arr[0] // arc_int_copy
 
   // what if every ref will just be converted to arc?
 }
@@ -74,3 +75,9 @@ main {
   refInt++
 }
 ```
+
+// Problem if all refs are ARC, then how's that different from referenced variables?
+// There's no difference for a user but codegen need to be able to differentiate between ref and ARC variables
+// How codegen will know that certain type is actually referenced
+// Should there be an ARC to an ARC?
+// Refuse ability to have non-ref copies of self, should be treated as a param instead
