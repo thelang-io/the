@@ -12,6 +12,7 @@ import
   createASTPropertyAccess,
   declarationByDependency,
   expressionIsBuiltinMethod,
+  expressionResolve,
   expressionShouldBeAllocatedAfter,
   expressionShouldBeAllocatedBefore,
   expressionShouldBeCopied,
@@ -30,6 +31,12 @@ import
   typeShouldBeFreed
 from "./helpers"
 import sortStrAsc from "./utils"
+
+// TODO: implement ObjectDeclarationMethod, disallow assigning of methods to functions
+// TODO: implement ClosureExpression
+// TODO: test FunctionType
+// TODO: test MainDeclaration
+// TODO: test CallExpression
 
 // TODO: implement EnumDeclaration statement
 // TODO: implement MemberAccess expression
@@ -578,7 +585,7 @@ export obj Codegen {
   }
 
   fn _defineFunction (mut self: ref Codegen, name: Parser.Identifier, parameters: Parser.FunctionParameter[], body: Parser.Statement, t: ref Analyzer.Type, context: (ref Analyzer.Var)[]) AST.CStatement {
-    variableName := self.blockData.getVariable(name.name)
+    variableName := self.blockData.getVariableName(name.name)
     cType := AST.createType(self._type(t))
 
     self.globalStatements.push(AST.createVariableDeclaration(cType, variableName))
@@ -678,6 +685,16 @@ export obj Codegen {
               AST.createType(self._type(contextVariable.t, arc: contextVariable.referenced)),
               contextVariable.fullName(),
               AST.createPropertyAccessExpression(AST.createIdentifier("ctx"), contextVariable.name, pointed: true),
+            ),
+          )
+
+          self.blockData.addTeardown(
+            AST.createExpressionStatement(
+              self._functionFree(
+                contextVariable.t,
+                AST.createIdentifier(contextVariable.fullName()),
+                arc: contextVariable.referenced,
+              ),
             ),
           )
         }
@@ -785,7 +802,13 @@ export obj Codegen {
 
       loop i := 0; i < entityContext.variables.len; i++ {
         contextVariable := entityContext.variables[i]
-        contextInitializerList.push(AST.createIdentifier(contextVariable.fullName()))
+
+        contextInitializerList.push(
+          AST.createCallExpression(
+            AST.createIdentifier(self._type(contextVariable.t, "_copy", arc: contextVariable.referenced)),
+            [AST.createIdentifier(contextVariable.fullName())],
+          ),
+        )
       }
 
       tmpVar := self._tmpVar()
@@ -898,7 +921,14 @@ export obj Codegen {
   fn _functionRealloc (mut self: ref Self, it: ref Analyzer.Type, left: AST.CExpression, right: AST.CExpression, arc := false) AST.CExpression {
     t := Analyzer.unwrap(it, withReference: false)
 
-    if (
+    cReallocCall := AST.createCallExpression(
+      AST.createIdentifier(self._type(t, "_realloc", arc: arc)),
+      [left, right],
+    )
+
+    if arc {
+      return cReallocCall
+    } elif (
       t.name == "any" ||
       t.name == "str" ||
       t.isArray() ||
@@ -909,14 +939,7 @@ export obj Codegen {
       t.isOptional() ||
       t.isUnion()
     ) {
-      return AST.createAssignmentExpression(
-        left,
-        "=",
-        AST.createCallExpression(
-          AST.createIdentifier(self._type(t, "_realloc", arc: arc)),
-          [left, right]
-        ),
-      )
+      return AST.createAssignmentExpression(left, "=", cReallocCall)
     }
 
     throw error_NewError("Tried re-allocating unknown type '" + t.toString() + "'")
@@ -1078,14 +1101,14 @@ export obj Codegen {
     return finalResult
   }
 
-  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression, allocate := true, deallocate := true, arc := false) AST.CExpression {
+  fn _generateExpression (mut self: ref Self, item: ref Parser.Expression, allocate := true, deallocate := true, arc := false, lvalue := false) AST.CExpression {
     mut result: AST.CExpression?
 
     if (
-      (result = self._generateIdentifier(item)) != nil ||
+      (result = self._generateIdentifier(item, lvalue: lvalue)) != nil ||
       (result = self._generateCallExpression(item)) != nil ||
       (result = self._generateLiteral(item)) != nil ||
-      (result = self._generateParenthesizedExpression(item)) != nil ||
+      (result = self._generateParenthesizedExpression(item, lvalue: lvalue)) != nil ||
       (result = self._generateArrayExpression(item)) != nil ||
       (result = self._generateAsExpression(item)) != nil ||
       (result = self._generateAssignmentExpression(item)) != nil ||
@@ -1128,7 +1151,7 @@ export obj Codegen {
     throw error_NewError("Tried code generation for unknown statement '" + Parser.stringifyStatement(item) + "'")
   }
 
-  fn _generateIdentifier (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+  fn _generateIdentifier (mut self: ref Codegen, item: ref Parser.Expression, lvalue := false) AST.CExpression? {
     if !item.isIdentifier() {
       return nil
     }
@@ -1141,10 +1164,18 @@ export obj Codegen {
     } elif self._hasEntity(name) {
       name = self._(name)
     } else {
-      name = self.blockData.getVariable(name)
-    }
+      blockDataVariable := self.blockData.getVariable(name)
+      name = blockDataVariable.fullName()
 
-    // TODO arc implementation
+      if blockDataVariable.referenced && !lvalue {
+        return AST.createCallExpression(
+          AST.createIdentifier(
+            self._type(blockDataVariable.t, "_get", arc: blockDataVariable.referenced),
+          ),
+          [AST.createIdentifier(name)],
+        )
+      }
+    }
 
     return AST.createIdentifier(name)
   }
@@ -1259,20 +1290,23 @@ export obj Codegen {
     expression := item.asAssignment()
     leftType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.left), withReference: false)
     rightType := Analyzer.unwrap(Analyzer.contextTarget(ref expression.right), withReference: false)
-    left := self._generateExpression(ref expression.left)
+    isLeftArc := self._isArc(ref expression.left)
+    left := self._generateExpression(ref expression.left, lvalue: true)
     mut right := self._generateExpression(ref expression.right)
 
     if expression.operator.t == .OpPlusEq && (leftType.name == "str" || rightType.name == "str") {
+      cConcatLeft := self._generateExpression(ref expression.left)
       return self._functionRealloc(
         leftType,
         left,
         self._allocateExpression(
           leftType,
-          AST.createCallExpression(AST.createIdentifier(self._("d4_str_concat")), [left, right]),
+          AST.createCallExpression(AST.createIdentifier(self._("d4_str_concat")), [cConcatLeft, right]),
         ),
+        arc: isLeftArc
       )
     } elif !typeIsSimple(leftType) || !typeIsSimple(rightType) {
-      return self._functionRealloc(leftType, left, right)
+      return self._functionRealloc(leftType, left, right, arc: isLeftArc)
     } elif expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
       right = AST.createBinaryExpression(left, expression.operator.val, right)
       return AST.createAssignmentExpression(left, "=", right)
@@ -1593,13 +1627,13 @@ export obj Codegen {
     return AST.createCallExpression(AST.createIdentifier(self._type(targetType, "_alloc")), fields)
   }
 
-  fn _generateParenthesizedExpression (mut self: ref Codegen, item: ref Parser.Expression) AST.CExpression? {
+  fn _generateParenthesizedExpression (mut self: ref Codegen, item: ref Parser.Expression, lvalue := false) AST.CExpression? {
     if !item.isParenthesized() {
       return nil
     }
 
     expression := item.asParenthesized()
-    result := self._generateExpression(ref expression.expression)
+    result := self._generateExpression(ref expression.expression, lvalue: lvalue)
     return result.wrap()
   }
 
@@ -2124,7 +2158,7 @@ export obj Codegen {
       }
     })
 
-    methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
+    methods := ["alloc", "copy", "eq", "free", "get", "realloc", "str"]
 
     entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
       self._(entity.context as str)
@@ -2991,6 +3025,23 @@ export obj Codegen {
     return false
   }
 
+  fn _isArc (self: ref Self, item: ref Parser.Expression) bool {
+    itemDown := expressionResolve(item, down: true)
+
+    if !itemDown.isIdentifier() {
+      return false
+    }
+
+    expression := itemDown.asIdentifier()
+
+    if !self.blockData.hasVariable(expression.name) {
+      return false
+    }
+
+    blockDataVariable := self.blockData.getVariable(expression.name)
+    return blockDataVariable.referenced
+  }
+
   fn _r (mut self: ref Self) ref Parser.Reader {
     mut file := self.analyzer.files.last()
     return ref file.reader
@@ -3340,11 +3391,11 @@ export obj Codegen {
       expression = AST.createCastExpression(AST.createType(self._type(targetType)), expression)
     }
 
-    // if arc {
-    //   typeName := self._generateArcType(t)
-    //   allocAnyType := typeName.slice(0, -2) + "_alloc"
-    //   expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
-    // }
+    if arc {
+      typeName := self._generateArcType(t)
+      allocAnyType := typeName.slice(0, -2) + "_alloc"
+      expression = AST.createCallExpression(AST.createIdentifier(self._(allocAnyType)), [expression])
+    }
 
     if deallocate && shouldFree {
       expression = self._functionFree(targetType, expression)

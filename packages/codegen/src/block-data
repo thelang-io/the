@@ -159,7 +159,7 @@ export obj BlockData {
     return self.blocks.last.valueVariable()
   }
 
-  fn getVariable (mut self: ref Self, name: str) str {
+  fn getVariable (self: ref Self, name: str) BlockDataVariable {
     loop i := self.blocks.len - 1; i >= 0; i-- {
       block := self.blocks[i]
 
@@ -167,12 +167,17 @@ export obj BlockData {
         variable := block.variables[j]
 
         if variable.name == name {
-          return variable.fullName()
+          return variable
         }
       }
     }
 
     throw error_NewError("Variable with name '" + name + "' was not found")
+  }
+
+  fn getVariableName (self: ref Self, name: str) str {
+    blockDataVariable := self.getVariable(name)
+    return blockDataVariable.fullName()
   }
 
   fn getVariables (mut self: ref Self, variables: (ref Analyzer.Var)[]) BlockDataVariable[] {
@@ -200,6 +205,22 @@ export obj BlockData {
     return result
   }
 
+  fn hasTeardownUntil (self: ref Self, t := BlockDataType.Block) bool {
+    loop i := self.blocks.len - 1; i >= 0; i-- {
+      block := self.blocks[i]
+
+      if block.hasTeardown() {
+        return true
+      }
+
+      if block.t == t {
+        break
+      }
+    }
+
+    return false
+  }
+
   fn hasUntil (self: ref Self, t := BlockDataType.Block) bool {
     loop i := self.blocks.len - 1; i >= 0; i-- {
       block := self.blocks[i]
@@ -216,16 +237,16 @@ export obj BlockData {
     return false
   }
 
-  fn hasTeardownUntil (self: ref Self, t := BlockDataType.Block) bool {
+  fn hasVariable (self: ref Self, name: str) bool {
     loop i := self.blocks.len - 1; i >= 0; i-- {
       block := self.blocks[i]
 
-      if block.hasTeardown() {
-        return true
-      }
+      loop j := block.variables.len - 1; j >= 0; j-- {
+        variable := block.variables[j]
 
-      if block.t == t {
-        break
+        if variable.name == name {
+          return true
+        }
       }
     }
 

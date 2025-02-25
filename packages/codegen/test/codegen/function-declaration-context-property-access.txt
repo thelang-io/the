@@ -1,0 +1,18 @@
+obj Test {
+  mut a: int
+}
+main {
+  mut test := Test{a: 2}
+
+  fn test2 (newA: int) int {
+    test.a = newA
+    return test.a
+  }
+
+  b := test2(1)
+  c := test.a
+  print(test.a, b, c)
+}
+===== code =====
+===== output =====
+1 1

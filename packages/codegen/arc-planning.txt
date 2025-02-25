@@ -76,6 +76,20 @@ main {
 }
 ```
 
+=====
+
+```the
+obj Test { count: int }
+main {
+  a := 0
+  test := () -> int {
+    return a
+    // Should create a copy of arc when returning it from a procedure
+  }
+  test()
+}
+```
+
 // Problem if all refs are ARC, then how's that different from referenced variables?
 // There's no difference for a user but codegen need to be able to differentiate between ref and ARC variables
 // How codegen will know that certain type is actually referenced
