@@ -861,6 +861,7 @@ export obj Codegen {
     t := Analyzer.unwrap(it, withReference: false)
 
     if (
+      arc ||
       t.name == "any" ||
       t.name == "str" ||
       t.isArray() ||
@@ -902,6 +903,7 @@ export obj Codegen {
     t := Analyzer.unwrap(it, withReference: false)
 
     if (
+      arc ||
       t.name == "any" ||
       t.name == "str" ||
       t.isArray() ||
@@ -1305,7 +1307,7 @@ export obj Codegen {
         ),
         arc: isLeftArc
       )
-    } elif !typeIsSimple(leftType) || !typeIsSimple(rightType) {
+    } elif isLeftArc || !typeIsSimple(leftType) || !typeIsSimple(rightType) {
       return self._functionRealloc(leftType, left, right, arc: isLeftArc)
     } elif expression.operator.t == .OpAmpAmp || expression.operator.t == .OpPipePipe {
       right = AST.createBinaryExpression(left, expression.operator.val, right)
@@ -2036,7 +2038,7 @@ export obj Codegen {
       }
     }
 
-    if typeShouldBeFreed(context.var.t) {
+    if context.var.referenced || typeShouldBeFreed(context.var.t) {
       self.blockData.addTeardown(
         AST.createExpressionStatement(
           self._functionFree(context.var.t, AST.createIdentifier(variableName), arc: context.var.referenced),
