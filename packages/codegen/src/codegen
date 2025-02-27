@@ -1170,11 +1170,10 @@ export obj Codegen {
       name = blockDataVariable.fullName()
 
       if blockDataVariable.referenced && !lvalue {
-        return AST.createCallExpression(
-          AST.createIdentifier(
-            self._type(blockDataVariable.t, "_get", arc: blockDataVariable.referenced),
-          ),
-          [AST.createIdentifier(name)],
+        return AST.createPropertyAccessExpression(
+          AST.createIdentifier(name),
+          "ref",
+          pointed: true,
         )
       }
     }
@@ -2160,7 +2159,7 @@ export obj Codegen {
       }
     })
 
-    methods := ["alloc", "copy", "eq", "free", "get", "realloc", "str"]
+    methods := ["alloc", "copy", "eq", "free", "realloc", "str"]
 
     entityCallee := (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
       self._(entity.context as str)
