@@ -52,41 +52,39 @@ d4_fn_sFP3intFRintFE_t test2_0;
 typedef struct {
   d4_arc_obj_Test_t test;
 } test2_0_ctx_t;
+void *test2_0_ctx_copy (const test2_0_ctx_t *ctx) {
+  test2_0_ctx_t *result = d4_safe_alloc(sizeof(test2_0_ctx_t));
+  result->test = d4_arc_obj_Test_copy(ctx->test);
+  return result;
+}
+void test2_0_ctx_free (test2_0_ctx_t *ctx) {
+  d4_arc_obj_Test_free(ctx->test);
+  d4_safe_free(ctx);
+}
 int32_t test2_0_func (test2_0_ctx_t *ctx, d4_fn_sFP3intFRintFE_params_t *params) {
   d4_arc_obj_Test_t test_0 = ctx->test;
   int32_t newA_0 = params->n0;
-  int32_t v;
-  unsigned char r = 0;
   test_0->ref.a = newA_0;
-  {
-    r = 1;
-    v = test_0->ref.a;
-    goto L1;
-  }
-L1:
-  d4_arc_obj_Test_free(test_0);
-  return v;
+  return test_0->ref.a;
 }
 int main (void) {
   d4_obj_Test_t __THE_1 = (d4_obj_Test_t) {0};
   void *__THE_2 = NULL;
-  void *__THE_3 = NULL;
+  d4_any_t __THE_3 = {-1, NULL, NULL, NULL, NULL, NULL};
   d4_any_t __THE_4 = {-1, NULL, NULL, NULL, NULL, NULL};
   d4_any_t __THE_5 = {-1, NULL, NULL, NULL, NULL, NULL};
-  d4_any_t __THE_6 = {-1, NULL, NULL, NULL, NULL, NULL};
-  d4_arr_any_t __THE_7 = (d4_arr_any_t) {NULL, 0};
-  void *__THE_8 = NULL;
+  d4_arr_any_t __THE_6 = (d4_arr_any_t) {NULL, 0};
+  void *__THE_7 = NULL;
   d4_arc_obj_Test_t test_0 = d4_arc_obj_Test_alloc(__THE_1 = d4_obj_Test_alloc(2));
-  test2_0 = d4_fn_sFP3intFRintFE_alloc((d4_str_t) {L"test2", 5, true}, __THE_2 = d4_safe_calloc(&(test2_0_ctx_t) {d4_arc_obj_Test_copy(test_0)}, sizeof(test2_0_ctx_t)), NULL, NULL, (int32_t (*) (void *, void *)) test2_0_func);
-  int32_t b_0 = test2_0.func(test2_0.ctx, __THE_3 = d4_safe_calloc(&(d4_fn_sFP3intFRintFE_params_t) {1}, sizeof(d4_fn_sFP3intFRintFE_params_t)));
+  test2_0 = d4_fn_sFP3intFRintFE_alloc((d4_str_t) {L"test2", 5, true}, d4_safe_calloc(&(test2_0_ctx_t) {d4_arc_obj_Test_copy(test_0)}, sizeof(test2_0_ctx_t)), (void *(*) (const void *)) test2_0_ctx_copy, (void (*) (void *)) test2_0_ctx_free, (int32_t (*) (void *, void *)) test2_0_func);
+  int32_t b_0 = test2_0.func(test2_0.ctx, __THE_2 = d4_safe_calloc(&(d4_fn_sFP3intFRintFE_params_t) {1}, sizeof(d4_fn_sFP3intFRintFE_params_t)));
   int32_t c_0 = test_0->ref.a;
-  d4_print.func(d4_print.ctx, __THE_8 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_7 = d4_arr_any_alloc(3, __THE_4 = d4_any_int_alloc(test_0->ref.a), __THE_5 = d4_any_int_alloc(b_0), __THE_6 = d4_any_int_alloc(c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
-  d4_safe_free(__THE_8);
-  d4_arr_any_free(__THE_7);
-  d4_any_free(__THE_6);
+  d4_print.func(d4_print.ctx, __THE_7 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_6 = d4_arr_any_alloc(3, __THE_3 = d4_any_int_alloc(test_0->ref.a), __THE_4 = d4_any_int_alloc(b_0), __THE_5 = d4_any_int_alloc(c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_safe_free(__THE_7);
+  d4_arr_any_free(__THE_6);
   d4_any_free(__THE_5);
   d4_any_free(__THE_4);
-  d4_safe_free(__THE_3);
+  d4_any_free(__THE_3);
   d4_safe_free(__THE_2);
   d4_fn_sFP3intFRintFE_free(test2_0);
   d4_arc_obj_Test_free(test_0);

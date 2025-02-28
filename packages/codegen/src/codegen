@@ -106,6 +106,8 @@ export obj CodegenEntity {
 
 export obj CodegenFunctionContext {
   contextTypeName: str
+  contextCopyName: str
+  contextFreeName: str
   functorTypeName: str
   parameters: Parser.FunctionParameter[]
   body: Parser.Statement
@@ -598,6 +600,8 @@ export obj Codegen {
 
     entityContext := CodegenFunctionContext{
       contextTypeName: variableName + "_ctx_t",
+      contextCopyName: variableName + "_ctx_copy",
+      contextFreeName: variableName + "_ctx_free",
       functorTypeName: variableName + "_func",
       parameters: parameters,
       body: body,
@@ -628,6 +632,116 @@ export obj Codegen {
           return AST.createTypedefDeclaration(
             AST.createStructureDeclaration(nil, AST.createCompoundStatement(members), terminated: false),
             entity.codeName,
+          )
+        }
+      })
+
+      self.entities.push(CodegenEntity{
+        name: entityContext.contextCopyName,
+        codeName: entityContext.contextCopyName,
+        context: entityContext,
+        generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+          ctx := entity.context as CodegenFunctionContext
+          mut cBody := [
+            AST.createVariableDeclaration(
+              AST.createType(self._(ctx.contextTypeName), reference: true),
+              "result",
+              AST.createCallExpression(AST.createIdentifier(self._("d4_safe_alloc")), [
+                AST.createCallExpression(AST.createIdentifier("sizeof"), [
+                  AST.createType(self._(ctx.contextTypeName)),
+                ]),
+              ]),
+            )
+          ]
+
+          cResult := AST.createIdentifier("result")
+
+          loop i := 0; i < ctx.variables.len; i++ {
+            contextVariable := ctx.variables[i]
+
+            cBody.push(
+              AST.createExpressionStatement(
+                AST.createAssignmentExpression(
+                  AST.createPropertyAccessExpression(
+                    cResult,
+                    contextVariable.name,
+                    pointed: true,
+                  ),
+                  "=",
+                  self._functionCopy(
+                    contextVariable.t,
+                    AST.createPropertyAccessExpression(
+                      AST.createIdentifier("ctx"),
+                      contextVariable.name,
+                      pointed: true,
+                    ),
+                    arc: contextVariable.referenced,
+                  ),
+                )
+              ),
+            )
+          }
+
+          cBody.push(AST.createReturnStatement(cResult))
+
+          return AST.createFunctionDeclaration(
+            AST.createType("void", reference: true),
+            entity.codeName,
+            [
+              AST.createFunctionParameter(
+                AST.createType(self._(ctx.contextTypeName), constant: true, reference: true),
+                "ctx",
+              ),
+            ],
+            AST.createCompoundStatement(cBody),
+          )
+        }
+      })
+
+      self.entities.push(CodegenEntity{
+        name: entityContext.contextFreeName,
+        codeName: entityContext.contextFreeName,
+        context: entityContext,
+        generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType {
+          ctx := entity.context as CodegenFunctionContext
+          mut cBody: AST.CStatement[]
+
+          loop i := 0; i < ctx.variables.len; i++ {
+            contextVariable := ctx.variables[i]
+
+            cBody.push(
+              AST.createExpressionStatement(
+                self._functionFree(
+                  contextVariable.t,
+                  AST.createPropertyAccessExpression(
+                    AST.createIdentifier("ctx"),
+                    contextVariable.name,
+                    pointed: true,
+                  ),
+                  arc: contextVariable.referenced,
+                ),
+              ),
+            )
+          }
+
+          cBody.push(
+            AST.createExpressionStatement(
+              AST.createCallExpression(AST.createIdentifier(self._("d4_safe_free")), [
+                AST.createIdentifier("ctx"),
+              ]),
+            ),
+          )
+
+          return AST.createFunctionDeclaration(
+            AST.createType("void"),
+            entity.codeName,
+            [
+              AST.createFunctionParameter(
+                AST.createType(self._(ctx.contextTypeName), reference: true),
+                "ctx",
+              ),
+            ],
+            AST.createCompoundStatement(cBody),
           )
         }
       })
@@ -685,16 +799,6 @@ export obj Codegen {
               AST.createType(self._type(contextVariable.t, arc: contextVariable.referenced)),
               contextVariable.fullName(),
               AST.createPropertyAccessExpression(AST.createIdentifier("ctx"), contextVariable.name, pointed: true),
-            ),
-          )
-
-          self.blockData.addTeardown(
-            AST.createExpressionStatement(
-              self._functionFree(
-                contextVariable.t,
-                AST.createIdentifier(contextVariable.fullName()),
-                arc: contextVariable.referenced,
-              ),
             ),
           )
         }
@@ -796,6 +900,8 @@ export obj Codegen {
     cReturnType := AST.createType(self._type(returnType))
 
     mut cContext := AST.createIdentifier(self._("NULL"))
+    mut cContextCopy := AST.createIdentifier(self._("NULL"))
+    mut cContextFree := AST.createIdentifier(self._("NULL"))
 
     if !entityContext.variables.empty {
       mut contextInitializerList: AST.CExpression[]
@@ -811,31 +917,24 @@ export obj Codegen {
         )
       }
 
-      tmpVar := self._tmpVar()
-      cTmpVar := AST.createIdentifier(tmpVar)
-
-      self.blockData.addSetup(
-        AST.createVariableDeclaration(AST.createType("void", reference: true), tmpVar, AST.createIdentifier(self._("NULL"))),
-      )
-
-      cContext = AST.createAssignmentExpression(
-        cTmpVar,
-        "=",
-        AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
-          AST.createUnaryExpression("&", AST.createCastExpression(
-            AST.createType(self._(entityContext.contextTypeName)),
-            AST.createInitializerListExpression(contextInitializerList),
-          )),
-          AST.createCallExpression(AST.createIdentifier("sizeof"), [
-            AST.createType(self._(entityContext.contextTypeName)),
-          ]),
+      cContext = AST.createCallExpression(AST.createIdentifier(self._("d4_safe_calloc")), [
+        AST.createUnaryExpression("&", AST.createCastExpression(
+          AST.createType(self._(entityContext.contextTypeName)),
+          AST.createInitializerListExpression(contextInitializerList),
+        )),
+        AST.createCallExpression(AST.createIdentifier("sizeof"), [
+          AST.createType(self._(entityContext.contextTypeName)),
         ]),
+      ])
+
+      cContextCopy = AST.createCastExpression(
+        AST.createType("void *(*) (const void *)"),
+        AST.createIdentifier(self._(entityContext.contextCopyName)),
       )
 
-      self.blockData.addTeardown(
-        AST.createExpressionStatement(
-          AST.createCallExpression(AST.createIdentifier(self._("d4_safe_free")), [cTmpVar]),
-        ),
+      cContextFree = AST.createCastExpression(
+        AST.createType("void (*) (void *)"),
+        AST.createIdentifier(self._(entityContext.contextFreeName)),
       )
     }
 
@@ -846,8 +945,8 @@ export obj Codegen {
         AST.createCallExpression(AST.createIdentifier(allocTypeName), [
           self._str(name.name),
           cContext,
-          AST.createIdentifier(self._("NULL")), // TODO: ctx copy
-          AST.createIdentifier(self._("NULL")), // TODO: ctx free
+          cContextCopy,
+          cContextFree,
           AST.createCastExpression(
             AST.createType(cReturnType.stringify(declaration: true) + "(*) (void *, void *)"),
             AST.createIdentifier(self._(entityContext.functorTypeName)),
