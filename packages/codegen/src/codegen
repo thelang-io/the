@@ -62,6 +62,12 @@ import sortStrAsc from "./utils"
 
 // TODO: automatic reference counter and object reference cycles
 // TODO: check whether all tests are transferred from old codegen
+// TODO: for every `ref` mark variable as ARC
+// TODO: disallow assigning methods to functions if first param doesn't match
+// TODO: referencing a field of variable should mark variable as referenced `ref a.b`
+// TODO: should create a copy of arc when returning arc/ref from a procedure
+// TODO: arguments of ReferenceExpression should be mutable `myRef := ref a.b`
+// TODO: non-ref Self as first param of method should be treated as param instead
 
 export obj CodegenAPIBuiltin {
   mut d4Any: bool
