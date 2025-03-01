@@ -59,16 +59,13 @@ main {
 #define TYPE_int 1
 #define TYPE_float 2
 #define TYPE_str 3
-D4_ANY_DECLARE(int, int32_t)
-D4_ANY_DECLARE(str, d4_str_t)
-D4_ANY_DECLARE(float, double)
 D4_UNION_DECLARE(floatUSint, {
   int32_t v1;
   double v2;
 })
-D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
-D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
-D4_ANY_DEFINE(TYPE_float, float, double, val, lhs_val == rhs_val, (void) val, d4_float_str(val))
+D4_ANY_DECLARE(int, int32_t)
+D4_ANY_DECLARE(str, d4_str_t)
+D4_ANY_DECLARE(float, double)
 D4_UNION_DEFINE(floatUSint, {
   if (self.type == TYPE_int) self.data.v1 = va_arg(args, int32_t);
   if (self.type == TYPE_float) self.data.v2 = va_arg(args, double);
@@ -82,6 +79,9 @@ D4_UNION_DEFINE(floatUSint, {
   if (self.type == TYPE_int) return d4_int_str(self.data.v1);
   if (self.type == TYPE_float) return d4_float_str(self.data.v2);
 })
+D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
+D4_ANY_DEFINE(TYPE_float, float, double, val, lhs_val == rhs_val, (void) val, d4_float_str(val))
 int main (void) {
   d4_any_t b_0;
   d4_union_floatUSintUE_t c_0;

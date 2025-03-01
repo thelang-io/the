@@ -111,9 +111,9 @@ D4_OBJECT_FORWARD_DECLARE(Test4)
 D4_OBJECT_FORWARD_DECLARE(Test5)
 D4_OBJECT_FORWARD_DECLARE(Test6)
 D4_OBJECT_FORWARD_DECLARE(Test7)
-D4_OBJECT_FORWARD_DECLARE(Test8)
 D4_OBJECT_FORWARD_DECLARE(Test9)
 D4_OBJECT_FORWARD_DECLARE(Test10)
+D4_OBJECT_FORWARD_DECLARE(Test8)
 D4_OBJECT_DECLARE(Test1, {
   d4_str_t a;
 }, const d4_str_t a)
@@ -142,10 +142,6 @@ D4_REFERENCE_DECLARE(int, int32_t)
 D4_OBJECT_DECLARE(Test7, {
   d4_ref_int_t a;
 }, const d4_ref_int_t a)
-D4_OPTIONAL_DECLARE(obj_Test8, d4_obj_Test8_t)
-D4_OBJECT_DECLARE(Test8, {
-  d4_opt_obj_Test8_t a;
-}, const d4_opt_obj_Test8_t a)
 D4_OBJECT_DECLARE(Test9, {
   d4_str_t a;
 }, const d4_str_t a)
@@ -158,6 +154,10 @@ D4_OBJECT_DECLARE(Test10, {
 }, const d4_union_intUSstrUE_t a)
 D4_ANY_DECLARE(int, int32_t)
 D4_ANY_DECLARE(str, d4_str_t)
+D4_OPTIONAL_DECLARE(obj_Test8, d4_obj_Test8_t)
+D4_OBJECT_DECLARE(Test8, {
+  d4_opt_obj_Test8_t a;
+}, const d4_opt_obj_Test8_t a)
 D4_OBJECT_DEFINE(Test1, Test1, {
   self.a = d4_str_copy(a);
 }, {
@@ -245,18 +245,6 @@ D4_OBJECT_DEFINE(Test7, Test7, {
 }, {}, {
   result = d4_obj_str_append(result, d4_str_alloc(L"a"), d4_int_str(*self.a));
 }, const d4_ref_int_t a)
-D4_OPTIONAL_DEFINE(obj_Test8, d4_obj_Test8_t, d4_obj_Test8_copy(val), d4_obj_Test8_eq(lhs_val, rhs_val), d4_obj_Test8_free(val), d4_obj_Test8_str(val))
-D4_OBJECT_DEFINE(Test8, Test8, {
-  self.a = d4_opt_obj_Test8_copy(a);
-}, {
-  result.a = d4_opt_obj_Test8_copy(self.a);
-}, {
-  return d4_opt_obj_Test8_eq(self.a, rhs.a);
-}, {
-  d4_opt_obj_Test8_free(self.a);
-}, {
-  result = d4_obj_str_append(result, d4_str_alloc(L"a"), d4_opt_obj_Test8_str(self.a));
-}, const d4_opt_obj_Test8_t a)
 D4_OBJECT_DEFINE(Test9, Test9, {
   self.a = d4_str_copy(a);
 }, {
@@ -296,6 +284,18 @@ D4_OBJECT_DEFINE(Test10, Test10, {
 }, const d4_union_intUSstrUE_t a)
 D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
 D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
+D4_OPTIONAL_DEFINE(obj_Test8, d4_obj_Test8_t, d4_obj_Test8_copy(val), d4_obj_Test8_eq(lhs_val, rhs_val), d4_obj_Test8_free(val), d4_obj_Test8_str(val))
+D4_OBJECT_DEFINE(Test8, Test8, {
+  self.a = d4_opt_obj_Test8_copy(a);
+}, {
+  result.a = d4_opt_obj_Test8_copy(self.a);
+}, {
+  return d4_opt_obj_Test8_eq(self.a, rhs.a);
+}, {
+  d4_opt_obj_Test8_free(self.a);
+}, {
+  result = d4_obj_str_append(result, d4_str_alloc(L"a"), d4_opt_obj_Test8_str(self.a));
+}, const d4_opt_obj_Test8_t a)
 int main (void) {
   d4_str_t __THE_1 = d4_str_empty_val;
   d4_str_t __THE_2 = d4_str_empty_val;

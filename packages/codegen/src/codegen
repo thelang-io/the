@@ -97,11 +97,13 @@ export type GenerateReturnType = AST.CStatement | AST.CStatement[]
 export obj CodegenEntity {
   mut active: bool
   mut activated: bool
+  mut assembled: bool
   mut name: str
   mut codeName: str
   mut context: any
   mut generate: (mut self: ref Codegen, entity: ref CodegenEntity) -> GenerateReturnType
-  mut result: GenerateReturnType?
+  mut dependencies: (ref CodegenEntity)[]
+  mut result: AST.CStatement[]
 }
 
 export obj CodegenFunctionContext {
@@ -115,11 +117,32 @@ export obj CodegenFunctionContext {
   variables: BlockDataVariable[]
 }
 
+// TODO: remove after reference problem fixed in v1
+export obj CodegenEntityArray {
+  mut items: any[]
+  mut len: int
+
+  fn at (mut self: ref Self, index: int) ref CodegenEntity {
+    return ref ((self.items[index] as any) as CodegenEntity)
+  }
+
+  fn push (mut self: ref Self, item: CodegenEntity) {
+    self.items.push(item)
+    self.len++
+  }
+
+  fn remove (mut self: ref Self, index: int) {
+    self.items.remove(index)
+    self.len--
+  }
+}
+
 export obj Codegen {
   mut analyzer: ref Analyzer.Analyzer
   mut builtin: CodegenAPIBuiltin
   mut blockData: BlockData
-  mut entities: CodegenEntity[]
+  mut entities: CodegenEntityArray
+  mut entityDependencies: (ref CodegenEntity)[]
   mut flags: str[]
   mut globalStatements: AST.CStatement[]
   mut lastTypeId: int
@@ -234,6 +257,7 @@ export obj Codegen {
         item.active = true
       }
 
+      self.entityDependencies.push(item)
       return item.codeName
     } elif BUILTIN_ENTITIES.get("stdarg").contains(name) {
       self.builtin.stdarg = true
@@ -312,23 +336,32 @@ export obj Codegen {
   }
 
   fn _assemble (mut self: ref Self) {
+    initialDependencies := self.entityDependencies
+
     loop {
-      len := self.entities.len
       mut activated := 0
 
-      loop i := 0; i < len; i++ {
-        // TODO: remove after v1
-        oldEntity := self.entities[i]
+      loop i := 0; i < self.entities.len; i++ {
+        mut entity := self.entities.at(i)
 
-        if !oldEntity.active || oldEntity.activated {
+        if !entity.active || entity.activated {
           continue
         }
 
-        result := oldEntity.generate(self, oldEntity)
+        self.entityDependencies = []
+        result := entity.generate(self, entity)
 
-        mut entity := self.entities[i]
-        entity.result = result
         entity.activated = true
+        entity.dependencies = self.entityDependencies
+
+        mut dependencyNames: str[]
+
+        loop j := 0; j < entity.dependencies.len; j++ {
+          dependency := entity.dependencies[j]
+          dependencyNames.push(dependency.name)
+        }
+
+        entity.result = (result is AST.CStatement) ? [result] : result
         activated++
       }
 
@@ -337,39 +370,70 @@ export obj Codegen {
       }
     }
 
+    self.entityDependencies = initialDependencies
     mut defineStatements: AST.CStatement[]
     mut macroInvocationDeclareStatements: AST.CStatement[]
     mut macroInvocationForwardDeclareStatements: AST.CStatement[]
     mut macroInvocationDefineStatements: AST.CStatement[]
     mut statements: AST.CStatement[]
+    mut previouslyAssembled := -1
 
-    loop i := 0; i < self.entities.len; i++ {
-      entity := self.entities[i]
+    loop {
+      mut assembled := 0
+      mut hasRemainingEntities := false
 
-      if !entity.active || entity.result == nil {
-        continue
-      }
+      loop i := 0; i < self.entities.len; i++ {
+        mut entity := self.entities.at(i)
 
-      result := entity.result as GenerateReturnType
-      resultStatements := (result is AST.CStatement) ? [result] : result
-
-      loop j := 0; j < resultStatements.len; j++ {
-        item := resultStatements[j]
-
-        if item.isDefineDirective() {
-          defineStatements.push(item)
-        } elif statementIsMacroInvocation(item) {
-          if statementIsMacroInvocationForwardDeclare(item) {
-            macroInvocationForwardDeclareStatements.push(item)
-          } elif statementIsMacroInvocationDeclare(item) {
-            macroInvocationDeclareStatements.push(item)
-          } else {
-            macroInvocationDefineStatements.push(item)
-          }
-        } else {
-          statements.push(item)
+        if !entity.active || !entity.activated || entity.assembled {
+          continue
         }
+
+        hasRemainingEntities = true
+        mut assembledAllDependencies := true
+
+        loop j := 0; j < entity.dependencies.len; j++ {
+          dependency := entity.dependencies[j]
+
+          if !dependency.assembled {
+            assembledAllDependencies = false
+            break
+          }
+        }
+
+        shouldForceAssemble := previouslyAssembled == 0 && assembled == 0
+
+        if !assembledAllDependencies && !shouldForceAssemble {
+          continue
+        }
+
+        loop j := 0; j < entity.result.len; j++ {
+          item := entity.result[j]
+
+          if item.isDefineDirective() {
+            defineStatements.push(item)
+          } elif statementIsMacroInvocation(item) {
+            if statementIsMacroInvocationForwardDeclare(item) {
+              macroInvocationForwardDeclareStatements.push(item)
+            } elif statementIsMacroInvocationDeclare(item) {
+              macroInvocationDeclareStatements.push(item)
+            } else {
+              macroInvocationDefineStatements.push(item)
+            }
+          } else {
+            statements.push(item)
+          }
+        }
+
+        entity.assembled = true
+        assembled++
       }
+
+      if assembled == 0 && !hasRemainingEntities {
+        break
+      }
+
+      previouslyAssembled = assembled
     }
 
     if self.builtin.d4Any { self.statements.push(AST.createIncludeDirective("d4/any.h")) }
@@ -2376,7 +2440,8 @@ export obj Codegen {
 
     if hasParams {
       loop i := 0; i < itemType.parameters.len; i++ {
-        self._typeGen(itemType.parameters[i].t)
+        parameter := itemType.parameters[i]
+        self._typeGen(parameter.t)
       }
 
       self.entities.push(CodegenEntity{
@@ -3091,7 +3156,7 @@ export obj Codegen {
 
   fn _getEntity (self: ref Self, name: str) ref CodegenEntity {
     loop i := self.entities.len - 1; i >= 0; i-- {
-      entity := self.entities[i]
+      entity := self.entities.at(i)
 
       if entity.name == name {
         return entity
@@ -3103,7 +3168,7 @@ export obj Codegen {
 
   fn _hasEntity (self: ref Self, name: str, withBuiltin := true) bool {
     loop i := self.entities.len - 1; i >= 0; i-- {
-      entity := self.entities[i]
+      entity := self.entities.at(i)
 
       if entity.name == name {
         return true
@@ -3149,7 +3214,7 @@ export obj Codegen {
 
   fn _removeEntity (mut self: ref Self, name: str) void {
     loop i := self.entities.len - 1; i >= 0; i-- {
-      entity := self.entities[i]
+      entity := self.entities.at(i)
 
       if entity.name == name {
         self.entities.remove(i)

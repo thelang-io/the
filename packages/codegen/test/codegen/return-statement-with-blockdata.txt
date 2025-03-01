@@ -136,8 +136,8 @@ main {
 D4_FUNCTION_DECLARE_WITH_PARAMS(s, void, void, FP3arr_str, {
   d4_arr_str_t n0;
 })
-D4_ANY_DECLARE(str, d4_str_t)
 D4_REFERENCE_DECLARE(str, d4_str_t)
+D4_ANY_DECLARE(str, d4_str_t)
 D4_FUNCTION_DEFINE_WITH_PARAMS(s, void, void, FP3arr_str)
 D4_ANY_DEFINE(TYPE_str, str, d4_str_t, d4_str_copy(val), d4_str_eq(lhs_val, rhs_val), d4_str_free(val), d4_str_copy(val))
 d4_fn_sFP3arr_strFRvoidFE_t test1_0;
