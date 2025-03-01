@@ -1,0 +1,75 @@
+main {
+  mut a := 2
+
+  fn test (newA: int) int {
+    a = newA
+    return a
+  }
+
+  b := test(1)
+  c := a
+  print(a, b, c)
+}
+===== code =====
+#include <d4/any.h>
+#include <d4/arc.h>
+#include <d4/fn.h>
+#include <d4/globals.h>
+#include <d4/number.h>
+#include <d4/safe.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#define TYPE_int 1
+D4_ARC_FORWARD_DECLARE(int)
+D4_FUNCTION_DECLARE_WITH_PARAMS(s, int, int32_t, FP3int, {
+  int32_t n0;
+})
+D4_ARC_DECLARE(int, int32_t)
+D4_ANY_DECLARE(int, int32_t)
+D4_FUNCTION_DEFINE_WITH_PARAMS(s, int, int32_t, FP3int)
+D4_ARC_DEFINE(int, int32_t, ref, lhs_ref == rhs_ref, (void) ref, d4_int_str(ref))
+D4_ANY_DEFINE(TYPE_int, int, int32_t, val, lhs_val == rhs_val, (void) val, d4_int_str(val))
+d4_fn_sFP3intFRintFE_t test_0;
+typedef struct {
+  d4_arc_int_t a;
+} test_0_ctx_t;
+void *test_0_ctx_copy (const test_0_ctx_t *ctx) {
+  test_0_ctx_t *result = d4_safe_alloc(sizeof(test_0_ctx_t));
+  result->a = d4_arc_int_copy(ctx->a);
+  return result;
+}
+void test_0_ctx_free (test_0_ctx_t *ctx) {
+  d4_arc_int_free(ctx->a);
+  d4_safe_free(ctx);
+}
+int32_t test_0_func (test_0_ctx_t *ctx, d4_fn_sFP3intFRintFE_params_t *params) {
+  d4_arc_int_t a_0 = ctx->a;
+  int32_t newA_0 = params->n0;
+  d4_arc_int_realloc(a_0, newA_0);
+  return a_0->ref;
+}
+int main (void) {
+  void *__THE_1 = NULL;
+  d4_any_t __THE_2 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_3 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_any_t __THE_4 = {-1, NULL, NULL, NULL, NULL, NULL};
+  d4_arr_any_t __THE_5 = (d4_arr_any_t) {NULL, 0};
+  void *__THE_6 = NULL;
+  d4_arc_int_t a_0 = d4_arc_int_alloc(2);
+  test_0 = d4_fn_sFP3intFRintFE_alloc((d4_str_t) {L"test", 4, true}, d4_safe_calloc(&(test_0_ctx_t) {d4_arc_int_copy(a_0)}, sizeof(test_0_ctx_t)), (void *(*) (const void *)) test_0_ctx_copy, (void (*) (void *)) test_0_ctx_free, (int32_t (*) (void *, void *)) test_0_func);
+  int32_t b_0 = test_0.func(test_0.ctx, __THE_1 = d4_safe_calloc(&(d4_fn_sFP3intFRintFE_params_t) {1}, sizeof(d4_fn_sFP3intFRintFE_params_t)));
+  int32_t c_0 = a_0->ref;
+  d4_print.func(d4_print.ctx, __THE_6 = d4_safe_calloc(&(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t) {__THE_5 = d4_arr_any_alloc(3, __THE_2 = d4_any_int_alloc(a_0->ref), __THE_3 = d4_any_int_alloc(b_0), __THE_4 = d4_any_int_alloc(c_0)), 0, d4_str_empty_val, 0, d4_str_empty_val, 0, d4_str_empty_val}, sizeof(d4_fn_sFP4arr_anyFP1strFP1strFP1strFRvoidFE_params_t)));
+  d4_safe_free(__THE_6);
+  d4_arr_any_free(__THE_5);
+  d4_any_free(__THE_4);
+  d4_any_free(__THE_3);
+  d4_any_free(__THE_2);
+  d4_safe_free(__THE_1);
+  d4_fn_sFP3intFRintFE_free(test_0);
+  d4_arc_int_free(a_0);
+}
+===== output =====
+1 1 1

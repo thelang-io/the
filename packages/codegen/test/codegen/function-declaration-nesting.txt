@@ -1,0 +1,156 @@
+fn test1 () int {
+  fn test2 () int {
+    fn test3 () int {
+      return 1
+    }
+
+    return test3()
+  }
+
+  return test2()
+}
+
+main {
+  a := test1()
+
+  fn test4 () int {
+    fn test5 () int {
+      fn test6 () int {
+        return a
+      }
+
+      return test6()
+    }
+
+    return test5()
+  }
+
+  b := test4()
+}
+===== code =====
+#include <d4/arc.h>
+#include <d4/fn.h>
+#include <d4/number.h>
+#include <d4/safe.h>
+#include <d4/string.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+D4_ARC_FORWARD_DECLARE(int)
+D4_FUNCTION_DECLARE(s, int, int32_t)
+D4_ARC_DECLARE(int, int32_t)
+D4_FUNCTION_DEFINE(s, int, int32_t)
+D4_ARC_DEFINE(int, int32_t, ref, lhs_ref == rhs_ref, (void) ref, d4_int_str(ref))
+d4_fn_sFRintFE_t test1_0;
+d4_fn_sFRintFE_t test4_0;
+d4_fn_sFRintFE_t test2_0;
+d4_fn_sFRintFE_t test5_0;
+d4_fn_sFRintFE_t test3_0;
+d4_fn_sFRintFE_t test6_0;
+typedef struct {
+  d4_arc_int_t a;
+} test4_0_ctx_t;
+void *test4_0_ctx_copy (const test4_0_ctx_t *ctx) {
+  test4_0_ctx_t *result = d4_safe_alloc(sizeof(test4_0_ctx_t));
+  result->a = d4_arc_int_copy(ctx->a);
+  return result;
+}
+void test4_0_ctx_free (test4_0_ctx_t *ctx) {
+  d4_arc_int_free(ctx->a);
+  d4_safe_free(ctx);
+}
+typedef struct {
+  d4_arc_int_t a;
+} test5_0_ctx_t;
+void *test5_0_ctx_copy (const test5_0_ctx_t *ctx) {
+  test5_0_ctx_t *result = d4_safe_alloc(sizeof(test5_0_ctx_t));
+  result->a = d4_arc_int_copy(ctx->a);
+  return result;
+}
+void test5_0_ctx_free (test5_0_ctx_t *ctx) {
+  d4_arc_int_free(ctx->a);
+  d4_safe_free(ctx);
+}
+int32_t test3_0_func (void *ctx, void *params) {
+  return 1;
+}
+typedef struct {
+  d4_arc_int_t a;
+} test6_0_ctx_t;
+void *test6_0_ctx_copy (const test6_0_ctx_t *ctx) {
+  test6_0_ctx_t *result = d4_safe_alloc(sizeof(test6_0_ctx_t));
+  result->a = d4_arc_int_copy(ctx->a);
+  return result;
+}
+void test6_0_ctx_free (test6_0_ctx_t *ctx) {
+  d4_arc_int_free(ctx->a);
+  d4_safe_free(ctx);
+}
+int32_t test6_0_func (test6_0_ctx_t *ctx, void *params) {
+  d4_arc_int_t a_0 = ctx->a;
+  return a_0->ref;
+}
+int32_t test2_0_func (void *ctx, void *params) {
+  int32_t v;
+  unsigned char r = 0;
+  test3_0 = d4_fn_sFRintFE_alloc((d4_str_t) {L"test3", 5, true}, NULL, NULL, NULL, (int32_t (*) (void *, void *)) test3_0_func);
+  {
+    r = 1;
+    v = test3_0.func(test3_0.ctx, NULL);
+    goto L3;
+  }
+L3:
+  d4_fn_sFRintFE_free(test3_0);
+  return v;
+}
+int32_t test5_0_func (test5_0_ctx_t *ctx, void *params) {
+  d4_arc_int_t a_0 = ctx->a;
+  int32_t v;
+  unsigned char r = 0;
+  test6_0 = d4_fn_sFRintFE_alloc((d4_str_t) {L"test6", 5, true}, d4_safe_calloc(&(test6_0_ctx_t) {d4_arc_int_copy(a_0)}, sizeof(test6_0_ctx_t)), (void *(*) (const void *)) test6_0_ctx_copy, (void (*) (void *)) test6_0_ctx_free, (int32_t (*) (void *, void *)) test6_0_func);
+  {
+    r = 1;
+    v = test6_0.func(test6_0.ctx, NULL);
+    goto L4;
+  }
+L4:
+  d4_fn_sFRintFE_free(test6_0);
+  return v;
+}
+int32_t test1_0_func (void *ctx, void *params) {
+  int32_t v;
+  unsigned char r = 0;
+  test2_0 = d4_fn_sFRintFE_alloc((d4_str_t) {L"test2", 5, true}, NULL, NULL, NULL, (int32_t (*) (void *, void *)) test2_0_func);
+  {
+    r = 1;
+    v = test2_0.func(test2_0.ctx, NULL);
+    goto L1;
+  }
+L1:
+  d4_fn_sFRintFE_free(test2_0);
+  return v;
+}
+int32_t test4_0_func (test4_0_ctx_t *ctx, void *params) {
+  d4_arc_int_t a_0 = ctx->a;
+  int32_t v;
+  unsigned char r = 0;
+  test5_0 = d4_fn_sFRintFE_alloc((d4_str_t) {L"test5", 5, true}, d4_safe_calloc(&(test5_0_ctx_t) {d4_arc_int_copy(a_0)}, sizeof(test5_0_ctx_t)), (void *(*) (const void *)) test5_0_ctx_copy, (void (*) (void *)) test5_0_ctx_free, (int32_t (*) (void *, void *)) test5_0_func);
+  {
+    r = 1;
+    v = test5_0.func(test5_0.ctx, NULL);
+    goto L2;
+  }
+L2:
+  d4_fn_sFRintFE_free(test5_0);
+  return v;
+}
+int main (void) {
+  test1_0 = d4_fn_sFRintFE_alloc((d4_str_t) {L"test1", 5, true}, NULL, NULL, NULL, (int32_t (*) (void *, void *)) test1_0_func);
+  d4_arc_int_t a_0 = d4_arc_int_alloc(test1_0.func(test1_0.ctx, NULL));
+  test4_0 = d4_fn_sFRintFE_alloc((d4_str_t) {L"test4", 5, true}, d4_safe_calloc(&(test4_0_ctx_t) {d4_arc_int_copy(a_0)}, sizeof(test4_0_ctx_t)), (void *(*) (const void *)) test4_0_ctx_copy, (void (*) (void *)) test4_0_ctx_free, (int32_t (*) (void *, void *)) test4_0_func);
+  int32_t b_0 = test4_0.func(test4_0.ctx, NULL);
+  d4_fn_sFRintFE_free(test4_0);
+  d4_arc_int_free(a_0);
+  d4_fn_sFRintFE_free(test1_0);
+}
+===== output =====
