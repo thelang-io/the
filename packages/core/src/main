@@ -1,0 +1,1526 @@
+/**
+ * Copyright 2025 Aaron Delasy
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+fn E0000 (unexpected: char, expected := '\0') str {
+  return "E0000 - Unexpected character `" + unexpected.str() + "`" +
+    (expected == '\0' ? "" : ", expected `" + expected.str() + "`")
+}
+
+fn E0001 () str {
+  return "E0001 - Unterminated comment"
+}
+
+fn E0002 () str {
+  return "E0002 - Unterminated character literal"
+}
+
+fn E0003 () str {
+  return "E0003 - Unterminated string literal"
+}
+
+// fn E0004 () str {
+//   return "E0004 - Empty character literal"
+// }
+
+fn E0005 () str {
+  return "E0005 - Illegal character escape sequence"
+}
+
+fn E0006 () str {
+  return "E0006 - Illegal string escape sequence"
+}
+
+fn E0007 () str {
+  return "E0007 - Too many characters in character literal"
+}
+
+fn E0008 () str {
+  return "E0008 - Leading zero integer literals are not allowed"
+}
+
+fn E0009 (base: str) str {
+  return "E0009 - Invalid " + base + " integer literal"
+}
+
+fn E0010 () str {
+  return "E0010 - Invalid float literal"
+}
+
+fn E0011 () str {
+  return "E0011 - Invalid float literal exponent"
+}
+
+fn E0012 (base: str) str {
+  return "E0012 - " + base.upperFirst + " float literals are not allowed"
+}
+
+fn E0100 (kw: str) str {
+  return "E0100 - Expected opening brace after `" + kw + "` keyword"
+}
+
+fn E0101 () str {
+  return "E0101 - Expected block statement closing brace"
+}
+
+fn E0102 (after: str) str {
+  return "E0102 - Expected opening brace after " + after
+}
+
+fn E0103 (after: str) str {
+  return "E0103 - Expected closing parenthesis after " + after
+}
+
+fn E0104 (unexpected: str) str {
+  return "E0104 - Unexpected token `" + unexpected + "`"
+}
+
+fn E0105 () str {
+  return "E0105 - Expected call expression argument"
+}
+
+fn E0106 (after: str) str {
+  return "E0106 - Expected comma after " + after
+}
+
+fn E0107 (after: str) str {
+  return "E0107 - Expected expression after " + after
+}
+
+fn E0108 (in: str) str {
+  return "E0108 - Expected expression in " + in
+}
+
+fn E0109 (kw: str) str {
+  return "E0109 - Expected expression after `" + kw + "` keyword"
+}
+
+fn E0110 () str {
+  return "E0110 - Expected conditional expression alternate after colon"
+}
+
+fn E0111 (op: str) str {
+  return "E0111 - Expected right-hand expression after `" + op + "` operator"
+}
+
+fn E0112 () str {
+  return "E0112 - Expected conditional expression consequent after question mark"
+}
+
+fn E0113 (after: str) str {
+  return "E0113 - Expected colon after " + after
+}
+
+fn E0114 () str {
+  return "E0114 - Expected element access expression argument after opening bracket"
+}
+
+fn E0115 (after: str) str {
+  return "E0115 - Expected closing bracket after " + after
+}
+
+fn E0116 (in: str) str {
+  return "E0116 - Expected closing bracket in " + in
+}
+
+fn E0117 (in: str) str {
+  return "E0117 - Expected closing brace in " + in
+}
+
+fn E0118 () str {
+  return "E0118 - Expected map expression key"
+}
+
+fn E0119 () str {
+  return "E0119 - Expected map expression value after colon"
+}
+
+fn E0120 () str {
+  return "E0120 - Expected object expression property name"
+}
+
+fn E0121 () str {
+  return "E0121 - Expected object expression property value after colon"
+}
+
+fn E0122 () str {
+  return "E0122 - Expected unary expression operand after operator"
+}
+
+fn E0123 (kw: str) str {
+  return "E0123 - Expected type after `" + kw + "` keyword"
+}
+
+// fn E0124 () str {
+//   return "E0124 - Expected closure expression closing parenthesis"
+// }
+
+fn E0125 () str {
+  return "E0125 - Expected closure expression parameter name"
+}
+
+fn E0126 () str {
+  return "E0126 - Expected closure expression parameter type or initializer after parameter name"
+}
+
+fn E0127 () str {
+  return "E0127 - Expected closure expression parameter type after colon"
+}
+
+fn E0128 (after: str) str {
+  return "E0128 - Expected closure expression parameter initializer after " + after
+}
+
+fn E0129 () str {
+  return "E0129 - Expected arrow after closure expression parameters"
+}
+
+fn E0130 () str {
+  return "E0130 - Expected closure expression return type after arrow"
+}
+
+fn E0131 (kw: str) str {
+  return "E0131 - Expected variable declaration name after `" + kw + "` keyword"
+}
+
+fn E0132 () str {
+  return "E0132 - Expected variable declaration type or initializer after name"
+}
+
+fn E0133 () str {
+  return "E0133 - Expected variable declaration type after name"
+}
+
+fn E0134 (after: str) str {
+  return "E0134 - Expected variable declaration initializer after " + after
+}
+
+fn E0135 () str {
+  return "E0135 - Expected member type identifier after dot"
+}
+
+fn E0136 () str {
+  return "E0136 - Expected map type value type after opening bracket"
+}
+
+fn E0137 () str {
+  return "E0137 - Expected union subtype after pipe operator"
+}
+
+fn E0138 (after: str) str {
+  return "E0138 - Expected type after " + after
+}
+
+fn E0139 (after: str) str {
+  return "E0139 - Expected identifier after " + after
+}
+
+fn E0140 () str {
+  return "E0140 - Expected function type parameter type"
+}
+
+// fn E0141 () str {
+//   return "E0141 - Expected function type parameter type after parameter name"
+// }
+
+fn E0142 () str {
+  return "E0142 - Expected function type parameter type after colon"
+}
+
+fn E0143 () str {
+  return "E0143 - Expected arrow after function type parameters"
+}
+
+fn E0144 () str {
+  return "E0144 - Expected function type return type after arrow"
+}
+
+fn E0145 () str {
+  return "E0145 - Expected enumeration declaration name after `enum` keyword"
+}
+
+fn E0146 (after: str) str {
+  return "E0146 - Expected closing brace after " + after
+}
+
+fn E0147 () str {
+  return "E0147 - Expected enumeration declaration member name"
+}
+
+fn E0148 () str {
+  return "E0148 - Expected enumeration declaration member initializer after colon"
+}
+
+fn E0149 (kw: str) str {
+  return "E0149 - Expected identifier after `" + kw + "` keyword"
+}
+
+// fn E0150 () str {
+//   return "E0150 - Expected closure expression body"
+// }
+
+fn E0151 () str {
+  return "E0151 - Expected if statement consequent statement"
+}
+
+fn E0152 () str {
+  return "E0152 - Expected if statement alternate statement"
+}
+
+// fn E0153 () str {
+//   return "E0153 - Expected main declaration body"
+// }
+
+fn E0154 () str {
+  return "E0154 - Expected equals sign after type alias declaration name"
+}
+
+fn E0155 () str {
+  return "E0155 - Expected loop statement closing parenthesis"
+}
+
+fn E0156 () str {
+  return "E0156 - Expected semicolon after loop statement initializer"
+}
+
+fn E0157 () str {
+  return "E0157 - Expected semicolon after loop statement condition"
+}
+
+fn E0158 () str {
+  return "E0158 - Expected loop statement body"
+}
+
+fn E0159 () str {
+  return "E0159 - Expected try statement body"
+}
+
+fn E0160 () str {
+  return "E0160 - Expected `catch` keyword after try statement body"
+}
+
+fn E0161 () str {
+  return "E0161 - Expected try statement handler parameter declaration after `catch` keyword"
+}
+
+fn E0162 () str {
+  return "E0162 - Expected try statement handler body after handler parameter declaration"
+}
+
+fn E0163 (after: str) str {
+  return "E0163 - Expected opening parenthesis after " + after
+}
+
+fn E0164 () str {
+  return "E0164 - Expected function declaration parameter name"
+}
+
+fn E0165 () str {
+  return "E0165 - Expected function declaration parameter type or initializer after parameter name"
+}
+
+fn E0166 () str {
+  return "E0166 - Expected function declaration parameter type after colon"
+}
+
+fn E0167 (after: str) str {
+  return "E0167 - Expected function declaration parameter initializer after " + after
+}
+
+fn E0168 () str {
+  return "E0168 - Expected function definition"
+}
+
+// fn E0169 () str {
+//   return "E0169 - Expected function declaration return type"
+// }
+
+fn E0170 () str {
+  return "E0170 - Expected object declaration body property or method"
+}
+
+fn E0171 () str {
+  return "E0171 - Expected object declaration body closing brace"
+}
+
+fn E0172 () str {
+  return "E0172 - Expected declaration or expression after `export` keyword"
+}
+
+fn E0173 () str {
+  return "E0173 - Expected `from` keyword after import declaration specifiers"
+}
+
+fn E0174 () str {
+  return "E0174 - Expected `as` keyword after import declaration namespace specifier"
+}
+
+fn E0175 () str {
+  return "E0175 - Expected import declaration namespace specifier name after `as` keyword"
+}
+
+fn E0176 () str {
+  return "E0176 - Expected import declaration specifier local name after `as` keyword"
+}
+
+fn E0177 () str {
+  return "E0177 - Expected import declaration source after `from` keyword"
+}
+
+obj Location {
+  line: int
+  col: int
+}
+
+enum TokenAssociativity {
+  None,
+  Left,
+  Right,
+}
+
+enum TokenType {
+  Unknown,
+  Eof,
+  BlockComment,
+  LineComment,
+  Identifier,
+  Whitespace,
+
+  CharacterLiteral,
+  FloatingPointLiteral,
+  DecimalLiteral,
+  StringLiteral,
+
+  KwAs,
+  KwBreak,
+  KwCatch,
+  KwConst,
+  KwContinue,
+  KwElse,
+  KwEnum,
+  KwFn,
+  KwIf,
+  KwIs,
+  KwLoop,
+  KwMain,
+  KwMut,
+  KwObj,
+  KwRef,
+  KwReturn,
+  KwThrow,
+  KwTry,
+  KwType,
+
+  SymAmpersand,
+  SymAsterisk,
+  SymAt,
+  SymBackslash,
+  SymBacktick,
+  SymCaret,
+  SymColon,
+  SymColonEquals,
+  SymComma,
+  SymDollar,
+  SymDot,
+  SymEquals,
+  SymExclamation,
+  SymHash,
+  SymLeftAngleBracket,
+  SymLeftCurlyBrace,
+  SymLeftParenthesis,
+  SymLeftSquareBracket,
+  SymMinus,
+  SymPercent,
+  SymPipe,
+  SymPlus,
+  SymQuestion,
+  SymRightAngleBracket,
+  SymRightCurlyBrace,
+  SymRightParenthesis,
+  SymRightSquareBracket,
+  SymSemi,
+  SymSlash,
+  SymTilde,
+}
+
+obj Token {
+  tokenType: TokenType
+  val: str
+  start: int
+  end: int
+}
+
+fn Character_isIdentifier (ch: char) bool {
+  return ch.isLetterOrDigit || ch == '_'
+}
+
+fn Character_isIdentifierFirst (ch: char) bool {
+  return ch.isLetter || ch == '_'
+}
+
+obj Scanner {
+  mut ch: char
+  content: str
+  contentLen: int
+  mut contentPos: int
+  mut errors: str[]
+  mut data: Token[]
+  mut dataCap: int
+  mut dataIdx: int
+  mut handled: bool
+  path: str
+  mut startPos: int
+}
+
+fn Scanner_init (pathOrCode: str) Scanner {
+  isCode :=
+    pathOrCode.slice(0, 2) != "./" &&
+    pathOrCode.slice(1, 3) != ":\\" &&
+    !(
+      pathOrCode.slice(0, 1) == "/" &&
+      pathOrCode.slice(1, 2) != "/" &&
+      pathOrCode.slice(1, 2) != "*"
+    )
+
+  if isCode {
+    return Scanner{path: "anonymous", content: pathOrCode, contentLen: pathOrCode.len}
+  }
+
+  mut path: str
+
+  try {
+    path = fs_realpathSync(pathOrCode)
+  } catch err: error_Error {
+    throw error_NewError("Path '" + pathOrCode + "' does not exists")
+  }
+
+  if !fs_isFileSync(path) {
+    throw error_NewError("Path '" + pathOrCode + "' is not a file")
+  }
+
+  content := fs_readFileSync(path).str()
+  return Scanner{path: path, content: content, contentLen: content.len}
+}
+
+fn Scanner_contentEof (self: ref Scanner) bool {
+  return self.contentPos >= self.contentLen
+}
+
+fn Scanner_contentLookahead (mut self: ref Scanner, check: char) bool {
+  if self.contentPos < self.contentLen && self.content[self.contentPos] == check {
+    self.contentPos += 1
+    return true
+  }
+
+  return false
+}
+
+fn Scanner_contentNext (mut self: ref Scanner) char {
+  if Scanner_contentEof(self) {
+    throw error_NewError("Tried next on eof")
+  }
+
+  return self.content[self.contentPos++]
+}
+
+fn Scanner_contentSeek (mut self: ref Scanner, pos: int) {
+  self.contentPos = pos < 0 ? self.contentPos + pos : pos
+}
+
+fn Scanner_contentSlice (self: ref Scanner, start: int, end: int) str {
+  return self.content.slice(start, end)
+}
+
+fn Scanner_endPos (mut self: ref Scanner) int {
+  return self.dataIdx == 0 ? 0 : self.data[self.dataIdx - 1].end
+}
+
+fn Scanner_idx (mut self: ref Scanner) int {
+  return self.dataIdx
+}
+
+fn Scanner_error (self: ref Scanner, errorType: str, message: str, start: int, end: int) str {
+  startLoc := Scanner_locate(self, start)
+  endLoc := Scanner_locate(self, end)
+  lines := self.content.lines()
+
+  mut errorLines: str[]
+  mut errorLinesNumbers: int[]
+
+  if startLoc.line != 1 {
+    errorLines.push(lines[startLoc.line - 2])
+    errorLinesNumbers.push(startLoc.line - 1)
+  }
+
+  errorLines.push(lines[startLoc.line - 1])
+  errorLinesNumbers.push(startLoc.line)
+
+  if startLoc.line == endLoc.line && (startLoc.col == endLoc.col || startLoc.col + 1 == endLoc.col) {
+    errorLines.push(' '.repeat(startLoc.col - 1) + "^")
+  } elif startLoc.line == endLoc.line {
+    errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(endLoc.col - startLoc.col))
+  } else {
+    errorLine := lines[startLoc.line - 1]
+    errorLines.push(' '.repeat(startLoc.col - 1) + '~'.repeat(errorLine.len - startLoc.col + 1))
+  }
+
+  errorLinesNumbers.push(startLoc.line)
+
+  if startLoc.line != lines.len && !lines[startLoc.line].empty {
+    errorLines.push(lines[startLoc.line])
+    errorLinesNumbers.push(startLoc.line + 1)
+  }
+
+  gutterLen := errorLinesNumbers[-1].str().len + 1
+
+  mut error := self.path + ":" + startLoc.line.str() + ":" +
+    startLoc.col.str() + ": " + errorType + ": " + message + os_EOL
+
+  mut prevLineNum := 0
+
+  loop i := 0; i < errorLinesNumbers.len; i++ {
+    errorLineNum := errorLinesNumbers[i]
+
+    if prevLineNum == errorLineNum {
+      error += ' '.repeat(gutterLen)
+    } else {
+      errorLineNumLen := errorLineNum.str().len
+      error += errorLineNum.str() + ' '.repeat(gutterLen - errorLineNumLen)
+    }
+
+    error += "| " + errorLines[i] + os_EOL
+    prevLineNum = errorLineNum
+  }
+
+  return error
+}
+
+fn Scanner_locate (self: ref Scanner, pos: int) Location {
+  if pos == 0 {
+    return Location{line: 1, col: 1}
+  }
+
+  lines := self.content.lines(keepLineBreaks: true)
+  mut curPos := 0
+
+  loop i := 0; i < lines.len; i++ {
+    line := lines[i]
+
+    if curPos + line.len > pos {
+      return Location{line: i + 1, col: pos - curPos + 1}
+    }
+
+    curPos += line.len
+  }
+
+  return Location{line: lines.len, col: lines[-1].len + 1}
+}
+
+fn Scanner_lookahead (mut self: ref Scanner, tokenType: TokenType) bool {
+  startPos := self.dataIdx
+  tk := Scanner_next(self)
+  result := tk.tokenType == tokenType
+
+  if !result {
+    self.dataIdx = startPos
+  }
+
+  return result
+}
+
+fn Scanner_maybeCharacter (mut self: ref Scanner) bool {
+  if self.ch != '\'' {
+    return false
+  }
+
+  if Scanner_contentEof(self) {
+    Scanner_raise(self, E0002(), self.startPos)
+    return Scanner_token(self, .CharacterLiteral)
+  }
+
+  pos1 := self.contentPos
+  ch1 := Scanner_contentNext(self)
+
+  if ch1 == '\'' {
+    return Scanner_token(self, .CharacterLiteral)
+  }
+
+  if ch1 == '\n' {
+    Scanner_raise(self, E0002(), self.startPos)
+    return Scanner_token(self, .CharacterLiteral)
+  }
+
+  if !Scanner_contentLookahead(self, '\'') {
+    loop {
+      if Scanner_contentEof(self) {
+        Scanner_raise(self, E0002(), self.startPos)
+        break
+      }
+
+      pos3 := self.contentPos
+      ch3 := Scanner_contentNext(self)
+
+      if ch3 == '\'' {
+        Scanner_raise(self, E0007(), self.startPos)
+        break
+      } elif ch3 == '\n' {
+        Scanner_contentSeek(self, pos3)
+        Scanner_raise(self, E0002(), self.startPos)
+        break
+      }
+    }
+  }
+
+  return Scanner_token(self, .CharacterLiteral)
+}
+
+fn Scanner_maybeComment (mut self: ref Scanner) bool {
+  if self.ch == '/' && Scanner_contentLookahead(self, '*') {
+    loop {
+      if Scanner_contentEof(self) {
+        Scanner_raise(self, E0001(), self.startPos)
+        break
+      }
+
+      ch := Scanner_contentNext(self)
+
+      if ch == '*' && Scanner_contentLookahead(self, '/') {
+        break
+      }
+    }
+
+    return Scanner_token(self, .BlockComment)
+  } elif self.ch == '/' && Scanner_contentLookahead(self, '/') {
+    loop {
+      if Scanner_contentEof(self) {
+        break
+      }
+
+      ch := Scanner_contentNext(self)
+
+      if ch == '\n' {
+        break
+      }
+    }
+
+    return Scanner_token(self, .LineComment)
+  }
+
+  return false
+}
+
+fn Scanner_maybeKeyword (mut self: ref Scanner) bool {
+  if !Character_isIdentifierFirst(self.ch) {
+    return false
+  }
+
+  loop {
+    if Scanner_contentEof(self) {
+      break
+    }
+
+    ch := Scanner_contentNext(self)
+
+    if !Character_isIdentifier(ch) {
+      Scanner_contentSeek(self, -1)
+      break
+    }
+  }
+
+  kw := Scanner_contentSlice(self, self.startPos, self.contentPos)
+
+  if kw == "as" { return Scanner_token(self, .KwAs) }
+  if kw == "break" { return Scanner_token(self, .KwBreak) }
+  if kw == "catch" { return Scanner_token(self, .KwCatch) }
+  if kw == "const" { return Scanner_token(self, .KwConst) }
+  if kw == "continue" { return Scanner_token(self, .KwContinue) }
+  if kw == "else" { return Scanner_token(self, .KwElse) }
+  if kw == "enum" { return Scanner_token(self, .KwEnum) }
+  if kw == "fn" { return Scanner_token(self, .KwFn) }
+  if kw == "if" { return Scanner_token(self, .KwIf) }
+  if kw == "is" { return Scanner_token(self, .KwIs) }
+  if kw == "loop" { return Scanner_token(self, .KwLoop) }
+  if kw == "main" { return Scanner_token(self, .KwMain) }
+  if kw == "mut" { return Scanner_token(self, .KwMut) }
+  if kw == "obj" { return Scanner_token(self, .KwObj) }
+  if kw == "ref" { return Scanner_token(self, .KwRef) }
+  if kw == "return" { return Scanner_token(self, .KwReturn) }
+  if kw == "throw" { return Scanner_token(self, .KwThrow) }
+  if kw == "try" { return Scanner_token(self, .KwTry) }
+  if kw == "type" { return Scanner_token(self, .KwType) }
+
+  return Scanner_token(self, .Identifier)
+}
+
+fn Scanner_maybeNumber (mut self: ref Scanner) bool {
+  if !self.ch.isDigit {
+    return false
+  }
+
+  if self.ch == '0' {
+    if Scanner_contentEof(self) {
+      return Scanner_token(self, .DecimalLiteral)
+    }
+
+    pos1 := self.contentPos
+    ch1 := Scanner_contentNext(self)
+
+    if ch1.isDigit {
+      loop {
+        if Scanner_contentEof(self) {
+          break
+        }
+
+        ch := Scanner_contentNext(self)
+
+        if !Character_isIdentifier(ch) {
+          Scanner_contentSeek(self, -1)
+          break
+        }
+      }
+
+      Scanner_raise(self, E0008(), self.startPos)
+      return Scanner_token(self, .DecimalLiteral)
+    }
+
+    Scanner_contentSeek(self, pos1)
+  }
+
+  loop {
+    if Scanner_contentEof(self) {
+      break
+    }
+
+    ch := Scanner_contentNext(self)
+
+    if !ch.isDigit {
+      Scanner_contentSeek(self, -1)
+      break
+    }
+  }
+
+  if Scanner_contentEof(self) {
+    return Scanner_token(self, .DecimalLiteral)
+  }
+
+  pos2 := self.contentPos
+  ch2 := Scanner_contentNext(self)
+
+  if Character_isIdentifier(ch2) {
+    loop {
+      if Scanner_contentEof(self) {
+        break
+      }
+
+      ch := Scanner_contentNext(self)
+
+      if !Character_isIdentifier(ch) {
+        Scanner_contentSeek(self, -1)
+        break
+      }
+    }
+
+    Scanner_raise(self, E0009("decimal"), self.startPos)
+    return Scanner_token(self, .DecimalLiteral)
+  }
+
+  if ch2 != '.' {
+    Scanner_contentSeek(self, pos2)
+    return Scanner_token(self, .DecimalLiteral)
+  }
+
+  if Scanner_contentEof(self) {
+    Scanner_raise(self, E0010(), self.startPos)
+    return Scanner_token(self, .FloatingPointLiteral)
+  }
+
+  ch3 := Scanner_contentNext(self)
+
+  if ch3 == '.' {
+    Scanner_contentSeek(self, pos2)
+    return Scanner_token(self, .DecimalLiteral)
+  }
+
+  if !ch3.isDigit {
+    loop {
+      if Scanner_contentEof(self) {
+        break
+      }
+
+      ch := Scanner_contentNext(self)
+
+      if !Character_isIdentifier(ch) {
+        Scanner_contentSeek(self, -1)
+        break
+      }
+    }
+
+    Scanner_raise(self, E0010(), self.startPos)
+    return Scanner_token(self, .FloatingPointLiteral)
+  }
+
+  loop {
+    if Scanner_contentEof(self) {
+      break
+    }
+
+    ch := Scanner_contentNext(self)
+
+    if !ch.isDigit {
+      Scanner_contentSeek(self, -1)
+      break
+    }
+  }
+
+  if Scanner_contentEof(self) {
+    return Scanner_token(self, .FloatingPointLiteral)
+  }
+
+  pos4 := self.contentPos
+  ch4 := Scanner_contentNext(self)
+
+  if Character_isIdentifier(ch4) {
+    loop {
+      if Scanner_contentEof(self) {
+        break
+      }
+
+      ch := Scanner_contentNext(self)
+
+      if !Character_isIdentifier(ch) {
+        Scanner_contentSeek(self, -1)
+        break
+      }
+    }
+
+    Scanner_raise(self, E0010(), self.startPos)
+    return Scanner_token(self, .FloatingPointLiteral)
+  }
+
+  Scanner_contentSeek(self, pos4)
+  return Scanner_token(self, .FloatingPointLiteral)
+}
+
+fn Scanner_maybeString (mut self: ref Scanner) bool {
+  if self.ch != '"' {
+    return false
+  }
+
+  loop {
+    if Scanner_contentEof(self) {
+      Scanner_raise(self, E0003(), self.startPos)
+      break
+    }
+
+    pos1 := self.contentPos
+    ch1 := Scanner_contentNext(self)
+
+    if ch1 == '"' {
+      break
+    }
+  }
+
+  return Scanner_token(self, .StringLiteral)
+}
+
+fn Scanner_maybeSymbol (mut self: ref Scanner) bool {
+  if self.ch == '&' {
+    return Scanner_token(self, .SymAmpersand)
+  } elif self.ch == '*' {
+    return Scanner_token(self, .SymAsterisk)
+  } elif self.ch == '@' {
+    return Scanner_token(self, .SymAt)
+  } elif self.ch == '`' {
+    return Scanner_token(self, .SymBacktick)
+  } elif self.ch == '\\' {
+    return Scanner_token(self, .SymBackslash)
+  } elif self.ch == '^' {
+    return Scanner_token(self, .SymCaret)
+  } elif self.ch == ':' {
+    if Scanner_contentLookahead(self, '=') {
+      return Scanner_token(self, .SymColonEquals)
+    } else {
+      return Scanner_token(self, .SymColon)
+    }
+  } elif self.ch == ',' {
+    return Scanner_token(self, .SymComma)
+  } elif self.ch == '$' {
+    return Scanner_token(self, .SymDollar)
+  } elif self.ch == '.' {
+    return Scanner_token(self, .SymDot)
+  } elif self.ch == '=' {
+    return Scanner_token(self, .SymEquals)
+  } elif self.ch == '!' {
+    return Scanner_token(self, .SymExclamation)
+  } elif self.ch == '#' {
+    return Scanner_token(self, .SymHash)
+  } elif self.ch == '<' {
+    return Scanner_token(self, .SymLeftAngleBracket)
+  } elif self.ch == '{' {
+    return Scanner_token(self, .SymLeftCurlyBrace)
+  } elif self.ch == '(' {
+    return Scanner_token(self, .SymLeftParenthesis)
+  } elif self.ch == '[' {
+    return Scanner_token(self, .SymLeftSquareBracket)
+  } elif self.ch == '-' {
+    return Scanner_token(self, .SymMinus)
+  } elif self.ch == '|' {
+    return Scanner_token(self, .SymPipe)
+  } elif self.ch == '%' {
+    return Scanner_token(self, .SymPercent)
+  } elif self.ch == '+' {
+    return Scanner_token(self, .SymPlus)
+  } elif self.ch == '?' {
+    return Scanner_token(self, .SymQuestion)
+  } elif self.ch == '>' {
+    return Scanner_token(self, .SymRightAngleBracket)
+  } elif self.ch == '}' {
+    return Scanner_token(self, .SymRightCurlyBrace)
+  } elif self.ch == ')' {
+    return Scanner_token(self, .SymRightParenthesis)
+  } elif self.ch == ']' {
+    return Scanner_token(self, .SymRightSquareBracket)
+  } elif self.ch == ';' {
+    return Scanner_token(self, .SymSemi)
+  } elif self.ch == '/' {
+    return Scanner_token(self, .SymSlash)
+  } elif self.ch == '~' {
+    return Scanner_token(self, .SymTilde)
+  }
+
+  return false
+}
+
+fn Scanner_maybeWhitespace (mut self: ref Scanner) bool {
+  if !self.ch.isWhitespace {
+    return false
+  }
+
+  loop {
+    if Scanner_contentEof(self) {
+      break
+    }
+
+    ch := Scanner_contentNext(self)
+
+    if !ch.isWhitespace {
+      Scanner_contentSeek(self, -1)
+      break
+    }
+  }
+
+  return Scanner_token(self, .Whitespace)
+}
+
+fn Scanner_next (mut self: ref Scanner) Token {
+  if self.dataCap != 0 && self.data[-1].tokenType == .Eof {
+    throw error_NewError("Tried next on eof")
+  }
+
+  loop {
+    if self.dataCap <= self.dataIdx {
+      if Scanner_contentEof(self) {
+        Scanner_token(self, .Eof)
+      } else {
+        self.startPos = self.contentPos
+        self.ch = Scanner_contentNext(self)
+        self.handled = false
+
+        if (
+          !Scanner_maybeWhitespace(self) &&
+          !Scanner_maybeComment(self) &&
+          !Scanner_maybeSymbol(self) &&
+          !Scanner_maybeKeyword(self) &&
+          !Scanner_maybeNumber(self) &&
+          !Scanner_maybeString(self) &&
+          !Scanner_maybeCharacter(self)
+        ) {
+          Scanner_raise(self, E0000(self.ch), self.contentPos)
+          Scanner_token(self, .Unknown)
+        }
+      }
+
+      self.dataCap++
+    }
+
+    tk := self.data[self.dataIdx++]
+
+    if tk.tokenType != .Whitespace {
+      return tk
+    }
+  }
+}
+
+fn Scanner_raise (mut self: ref Scanner, message: str, start: int, end := self.contentPos) {
+  if self.handled {
+    return
+  }
+
+  error := Scanner_error(self, "SyntaxError", message, start, end)
+  self.errors.push(error)
+  self.handled = true
+}
+
+fn Scanner_seek (mut self: ref Scanner, idx: int) int {
+  loop i := self.dataCap - 1; i >= 0; i-- {
+    if self.data[i].start <= idx && idx <= self.data[i].end {
+      self.dataIdx = i
+      return
+    }
+  }
+
+  self.dataIdx = 0
+}
+
+fn Scanner_startPos (mut self: ref Scanner) int {
+  return self.dataIdx == 0 ? 0 : self.data[self.dataIdx - 1].start
+}
+
+fn Scanner_token (mut self: ref Scanner, tokenType: TokenType) bool {
+  start := self.startPos
+
+  self.data.push(Token{
+    tokenType: tokenType,
+    val: Scanner_contentSlice(self, start, self.contentPos),
+    start: start,
+    end: self.contentPos,
+  })
+
+  self.startPos = self.contentPos
+  self.handled = true
+
+  return true
+}
+
+obj Identifier {
+  name: str
+  start: int
+  end: int
+}
+
+obj IdentifierType {
+  name: Identifier
+}
+
+type TypeBody =
+  IdentifierType
+
+obj Type {
+  mut leadingComments: Token[]
+  mut trailingComments: Token[]
+
+  body: TypeBody
+  mut start: int
+  mut end: int
+}
+
+type ExpressionBody =
+  Identifier
+
+obj Expression {
+  mut leadingComments: Token[]
+  mut trailingComments: Token[]
+
+  body: ExpressionBody
+  mut start: int
+  mut end: int
+
+  parent: (ref Expression)?
+  parentStatement: (ref Statement)?
+}
+
+obj BlockStatement {
+  body: Statement[]
+}
+
+obj EmptyStatement {}
+obj EofStatement {}
+
+obj ExpressionStatement {
+  expression: Expression
+}
+
+obj MainDeclaration {
+  body: Statement
+}
+
+obj TerminatedStatement {
+  statement: Statement
+}
+
+obj VariableDeclaration {
+  mutable: bool
+  name: Identifier
+  varType: Type?
+  initializer: Expression?
+}
+
+type StatementBody =
+  BlockStatement |
+  EmptyStatement |
+  EofStatement |
+  ExpressionStatement |
+  MainDeclaration |
+  TerminatedStatement |
+  VariableDeclaration
+
+obj Statement {
+  mut leadingComments: Token[]
+  mut trailingComments: Token[]
+
+  body: StatementBody
+  mut start: int
+  mut end: int
+
+  parent: (ref Statement)?
+  next: (ref Statement)?
+  prev: (ref Statement)?
+}
+
+obj Parser {
+  mut errors: str[]
+  mut scanner: ref Scanner
+}
+
+fn Parser_init (mut scanner: ref Scanner) Parser {
+  return Parser{scanner: scanner}
+}
+
+fn Parser_comments (mut self: ref Parser) Token[] {
+  mut result: Token[]
+
+  loop (
+    Scanner_lookahead(self.scanner, .BlockComment) ||
+    Scanner_lookahead(self.scanner, .LineComment)
+  ) {
+    result.push(Scanner_next(self.scanner))
+  }
+
+  return result
+}
+
+fn Parser_commentsStartPos (comments: ref Token[], fallback: int) int {
+  return comments.empty ? fallback : comments[0].start
+}
+
+fn Parser_next (mut self: ref Parser) Statement {
+  mut statement := Parser_nextStatement(self)
+
+  if statement != nil {
+    return statement
+  }
+
+  tk := Scanner_next(self.scanner)
+  Parser_raise(self, E0104(tk.val), tk.start, tk.end)
+
+  return Statement{}
+}
+
+fn Parser_nextExpression (mut self: ref Parser) Expression? {
+  startIdx := Scanner_idx(self.scanner)
+  leadingComments := Parser_comments(self)
+  mut expression: Expression?
+
+  if (
+    (expression = Parser_maybeIdentifier(self)) != nil
+  ) {
+    expression.leadingComments = leadingComments
+    expression.trailingComments = Parser_comments(self)
+    expression.start = Parser_commentsStartPos(ref leadingComments, expression.start)
+    expression.end = Scanner_endPos(self.scanner)
+
+    return expression
+  }
+
+  Scanner_seek(self.scanner, startIdx)
+  return nil
+}
+
+fn Parser_nextIdentifier (mut self: ref Parser) Identifier? {
+  startIdx := Scanner_idx(self.scanner)
+  tk := Scanner_next(self.scanner)
+
+  if (
+    tk.tokenType == .Identifier ||
+    tk.tokenType == .KwAs ||
+    tk.tokenType == .KwFn ||
+    tk.tokenType == .KwIs ||
+    tk.tokenType == .KwType
+  ) {
+    return Identifier{name: tk.val, start: tk.start, end: tk.end}
+  }
+
+  Scanner_seek(self.scanner, startIdx)
+  return nil
+}
+
+fn Parser_nextStatement (mut self: ref Parser, withBlockStatement := false) Statement? {
+  leadingComments := Parser_comments(self)
+  startIdx := Scanner_idx(self.scanner)
+  mut statement: Statement?
+
+  if Scanner_lookahead(self.scanner, .Eof) {
+    return Statement{
+      leadingComments: leadingComments,
+
+      body: EofStatement{},
+      start: Parser_commentsStartPos(ref leadingComments, Scanner_startPos(self.scanner)),
+      end: Scanner_endPos(self.scanner),
+    }
+  }
+
+  if (
+    (withBlockStatement && (statement = Parser_maybeBlockStatement(self)) != nil) ||
+    (statement = Parser_maybeMainDeclaration(self)) != nil ||
+    (statement = Parser_maybeVariableDeclaration(self)) != nil ||
+    (statement = Parser_maybeExpressionStatement(self)) != nil
+  ) {
+    statement.leadingComments = leadingComments
+    statement.trailingComments = Parser_comments(self)
+    statement.start = Parser_commentsStartPos(ref leadingComments, statement.start)
+    statement.end = Scanner_endPos(self.scanner)
+
+    return Parser_wrapStatement(self, statement)
+  } elif Scanner_lookahead(self.scanner, .SymSemi) {
+    trailingComments := Parser_comments(self)
+
+    return Statement{
+      leadingComments: leadingComments,
+      trailingComments: trailingComments,
+
+      body: EmptyStatement{},
+      start: Parser_commentsStartPos(ref leadingComments, Scanner_startPos(self.scanner)),
+      end: Scanner_endPos(self.scanner),
+    }
+  }
+
+  Scanner_seek(self.scanner, startIdx)
+  return nil
+}
+
+fn Parser_nextType (mut self: ref Parser) Type? {
+  leadingComments := Parser_comments(self)
+  mut t: Type?
+
+  if (
+    (t = Parser_maybeIdentifierType(self)) != nil
+  ) {
+    t.leadingComments = leadingComments
+    t.trailingComments = Parser_comments(self)
+    t.start = Parser_commentsStartPos(ref leadingComments, t.start)
+    t.end = Scanner_endPos(self.scanner)
+
+    return Parser_wrapType(self, t)
+  }
+
+  return nil
+}
+
+fn Parser_maybeBlockStatement (mut self: ref Parser) Statement? {
+  if !Scanner_lookahead(self.scanner, .SymLeftCurlyBrace) {
+    return nil
+  }
+
+  startPos := Scanner_startPos(self.scanner)
+  mut body: Statement[]
+
+  loop !Scanner_lookahead(self.scanner, .SymRightCurlyBrace) {
+    if Scanner_lookahead(self.scanner, .Eof) {
+      Parser_raise(self, E0101())
+      break
+    }
+
+    statement := Parser_next(self)
+    body.push(statement)
+  }
+
+  return Statement{
+    body: BlockStatement{body: body},
+    start: startPos,
+    end: Scanner_endPos(self.scanner),
+  }
+}
+
+fn Parser_maybeExpressionStatement (mut self: ref Parser) Statement? {
+  expression := Parser_nextExpression(self)
+
+  if expression != nil {
+    return Statement{
+      body: ExpressionStatement{expression: expression},
+      start: expression.start,
+      end: expression.end,
+    }
+  }
+
+  return nil
+}
+
+fn Parser_maybeIdentifier (mut self: ref Parser) Expression? {
+  id := Parser_nextIdentifier(self)
+
+  if id != nil {
+    return Expression{body: id, start: id.start, end: id.end}
+  }
+
+  return nil
+}
+
+fn Parser_maybeIdentifierType (mut self: ref Parser) Type? {
+  name := Parser_nextIdentifier(self)
+
+  if name != nil {
+    return Type{body: IdentifierType{name: name}, start: name.start, end: name.end}
+  }
+
+  return nil
+}
+
+fn Parser_maybeMainDeclaration (mut self: ref Parser) Statement? {
+  if !Scanner_lookahead(self.scanner, .KwMain) {
+    return nil
+  }
+
+  startPos := Scanner_startPos(self.scanner)
+  mut body: Statement
+
+  if Scanner_lookahead(self.scanner, .SymLeftCurlyBrace) {
+    body = Parser_nextStatement(self, withBlockStatement: true)
+  } else {
+    Parser_raise(self, E0100("main"))
+  }
+
+  return Statement{
+    body: MainDeclaration{body: body},
+    start: startPos,
+    end: Scanner_endPos(self.scanner),
+  }
+}
+
+fn Parser_maybeVariableDeclaration (mut self: ref Parser) Statement? {
+  startIdx := Scanner_idx(self.scanner)
+  mut startPos: int
+  mut mutable := false
+
+  if Scanner_lookahead(self.scanner, .KwMut) {
+    startPos = Scanner_startPos(self.scanner)
+    mutable = true
+  }
+
+  mut name: Identifier
+  possibleName := Parser_nextIdentifier(self)
+
+  if mutable {
+    if possibleName == nil {
+      Parser_raise(self, E0131("mut"))
+    } else {
+      name = possibleName
+    }
+  } else {
+    if possibleName == nil {
+      return nil
+    } else {
+      beforeLookaheadIdx := Scanner_idx(self.scanner)
+      startPos = Scanner_startPos(self.scanner)
+      name = possibleName
+
+      if !Scanner_lookahead(self.scanner, .SymColon) && !Scanner_lookahead(self.scanner, .SymColonEquals) {
+        Scanner_seek(self.scanner, startIdx)
+        return nil
+      }
+
+      Scanner_seek(self.scanner, beforeLookaheadIdx)
+    }
+  }
+
+  mut variableType: Type?
+  mut initializer: Expression?
+
+  if Scanner_lookahead(self.scanner, .SymColon) {
+    variableType = Parser_nextType(self)
+
+    if variableType == nil {
+      Parser_raise(self, E0133())
+    }
+
+    if Scanner_lookahead(self.scanner, .SymEquals) {
+      initializer = Parser_nextExpression(self)
+
+      if initializer == nil {
+        Parser_raise(self, E0134("equals sign"))
+      }
+    }
+  } elif Scanner_lookahead(self.scanner, .SymColonEquals) {
+    initializer = Parser_nextExpression(self)
+
+    if initializer == nil {
+      Parser_raise(self, E0134("colon equals sign"))
+    }
+  } else {
+    Parser_raise(self, E0132())
+  }
+
+  return Statement{
+    body: VariableDeclaration{
+      mutable: mutable,
+      name: name,
+      varType: variableType,
+      initializer: initializer,
+    },
+    start: startPos,
+    end: Scanner_endPos(self.scanner),
+  }
+}
+
+fn Parser_raise (mut self: ref Parser, message: str, start := Scanner_endPos(self.scanner), end := Scanner_endPos(self.scanner)) {
+  error := Scanner_error(self.scanner, "ParseError", message, start, end)
+  self.errors.push(error)
+}
+
+fn Parser_wrapExpression (mut self: ref Parser, expression: Expression) Expression {
+  return expression
+}
+
+fn Parser_wrapStatement (mut self: ref Parser, statement: Statement) Statement {
+  if Scanner_lookahead(self.scanner, .SymSemi) {
+    return Statement{
+      trailingComments: Parser_comments(self),
+      body: TerminatedStatement{statement: statement},
+      start: statement.start,
+      end: Scanner_endPos(self.scanner),
+    }
+  }
+
+  return statement
+}
+
+fn Parser_wrapType (mut self: ref Parser, t: Type) Type {
+  return t
+}
+
+main {
+  mut scanner := Scanner_init("./example")
+  mut parser := Parser_init(ref scanner)
+
+  loop {
+    statement := Parser_next(ref parser)
+
+    if statement.body is EofStatement {
+      break
+    }
+
+    // TODO: parent not set and print fails
+    // print(statement)
+  }
+}
