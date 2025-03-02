@@ -38,7 +38,7 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprObjDefaultField (const std::string
     return CodegenASTExprAccess::create(this->_("false"));
   } else if (typeInfo.type->isChar()) {
     return CodegenASTExprLiteral::create(R"('\0')");
-  } else if (typeInfo.type->isFn() || typeInfo.type->isRef() || typeInfo.type->isUnion()) {
+  } else if (typeInfo.type->isFn() || typeInfo.type->isRef()) {
     throw Error(
       "tried object expression default on field \"" + name + "\" "
       "on invalid type \"" + typeInfo.type->name + "\""
@@ -70,6 +70,11 @@ std::shared_ptr<CodegenASTExpr> Codegen::_exprObjDefaultField (const std::string
     return CodegenASTExprCall::create(
       CodegenASTExprAccess::create(this->_("str_alloc")),
       {CodegenASTExprLiteral::create(R"("")")}
+    );
+  } else if (typeInfo.type->isUnion()) {
+    return CodegenASTExprCall::create(
+      CodegenASTExprAccess::create(this->_(typeInfo.typeName + "_alloc")),
+      {CodegenASTExprLiteral::create("-1")}
     );
   } else {
     return CodegenASTExprLiteral::create("0");

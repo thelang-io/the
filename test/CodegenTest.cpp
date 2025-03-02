@@ -67,10 +67,6 @@ TEST(CodegenTest, ThrowsOnObjExprDefaultFieldInvalidType) {
   EXPECT_THROW_WITH_MESSAGE({
     codegenTestGen("obj Test { a: ref int } main { a: Test }");
   }, "tried object expression default on field \"a\" on invalid type \"ref_int\"");
-
-  EXPECT_THROW_WITH_MESSAGE({
-    codegenTestGen("obj Test { a: int | str } main { a: Test }");
-  }, "tried object expression default on field \"a\" on invalid type \"union_intUSstrUE\"");
 }
 
 TEST(CodegenTest, ThrowsOnVarDeclInitInvalidType) {
